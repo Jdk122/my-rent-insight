@@ -8,6 +8,8 @@ import CompLinks from './CompLinks';
 import NegotiationLetter from './NegotiationLetter';
 import LandlordCostLookup from './LandlordCostLookup';
 import { LandlordCostEstimate } from '@/data/landlordCosts';
+import RentcastCard from './RentcastCard';
+import { useRentcast } from '@/hooks/useRentcast';
 
 interface RentResultsProps {
   formData: RentFormData;
@@ -63,6 +65,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
   const isBelowMarket = calc?.verdict === 'below';
 
   const [landlordCosts, setLandlordCosts] = useState<LandlordCostEstimate | null>(null);
+  const rentcast = useRentcast(rentData.zip, formData.bedrooms);
 
   const verdictColor = isFair ? 'text-verdict-fair' : isAboveMarket ? 'text-verdict-overpaying' : 'text-verdict-good';
   const pillClass = isFair ? 'verdict-pill-fair' : isAboveMarket ? 'verdict-pill-overpaying' : 'verdict-pill-good';
@@ -229,9 +232,19 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
         )}
       </motion.div>
 
+      {/* ━━━ RENTCAST DATA ━━━ */}
+      <motion.div {...fade(0.12)} className="py-12 border-b border-border">
+        <RentcastCard
+          data={rentcast.data}
+          loading={rentcast.loading}
+          error={rentcast.error}
+          city={city}
+        />
+      </motion.div>
+
       {/* ━━━ BREAK-EVEN CALLOUT ━━━ */}
       {hasIncrease && (
-        <motion.div {...fade(0.13)} className="my-10">
+        <motion.div {...fade(0.15)} className="my-10">
           <div className="callout-box">
             <p className="callout-box-title">Should you move?</p>
             <p className="callout-box-body">
