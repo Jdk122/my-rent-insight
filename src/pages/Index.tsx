@@ -25,7 +25,7 @@ const Index = () => {
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 md:px-12 lg:px-20 py-5 border-b border-border/50">
         <span className="font-display text-xl text-foreground tracking-tight cursor-pointer" onClick={() => setResults(null)}>
-          Rent<span className="text-primary">Check</span>
+          Rent<span className="text-primary">Reply</span>
         </span>
         {!results && (
           <span className="text-xs text-muted-foreground hidden sm:block">
@@ -85,7 +85,7 @@ const Index = () => {
       <footer className="border-t border-border px-6 md:px-12 lg:px-20 py-8">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <span className="font-display text-base text-foreground">
-            Rent<span className="text-primary">Check</span>
+            Rent<span className="text-primary">Reply</span>
           </span>
           <p className="text-[11px] text-muted-foreground text-center sm:text-right max-w-xs leading-relaxed">
             Sources: HUD SAFMR FY2025, Census ACS 5-Year (2022). For informational purposes only.
