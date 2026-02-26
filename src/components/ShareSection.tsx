@@ -26,7 +26,8 @@ const ShareSection = ({ increasePct, marketPct, excessAnnual, multiplier, landlo
 
   return (
     <div>
-      <p className="text-[13px] text-muted-foreground mb-3">Know someone dealing with a rent increase?</p>
+      <p className="text-[13px] text-muted-foreground mb-1">Know a friend dealing with a rent increase?</p>
+      <p className="text-[13px] text-muted-foreground mb-3">Send them their free negotiation letter.</p>
       <button
         onClick={handleCopy}
         className="inline-flex items-center gap-2 px-5 py-2.5 border border-border rounded text-[13px] font-medium text-muted-foreground hover:border-foreground hover:text-foreground transition-colors"
