@@ -80,7 +80,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
       <motion.div {...fade(0)} className="py-14 text-center border-b border-border">
         {hasIncrease ? (
           <>
-            <div className={`verdict-pill ${pillClass} mb-5`}>{verdictLabel}</div>
+            <div className={`verdict-pill ${pillClass} mb-5 text-sm px-5 py-2`}>{verdictLabel}</div>
 
             <h1 className="font-display text-[32px] font-bold leading-[1.25] tracking-tight mx-auto max-w-[480px]" style={{ letterSpacing: '-0.02em' }}>
               {isAboveMarket ? (
