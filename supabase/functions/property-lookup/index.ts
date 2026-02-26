@@ -64,7 +64,7 @@ serve(async (req) => {
       .eq("ip_address", clientIP)
       .gte("created_at", oneHourAgo);
 
-    if ((hourCount || 0) >= 3) {
+    if ((hourCount || 0) >= 20) {
       return new Response(
         JSON.stringify({ error: "Rate limit exceeded. Try again later.", code: "RATE_LIMIT" }),
         { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -140,10 +140,12 @@ serve(async (req) => {
       lastSalePrice: property.lastSalePrice || null,
       lastSaleDate: property.lastSaleDate || null,
 
-      saleHistory: (property.history || []).map((h: any) => ({
-        date: h.date,
-        price: h.price,
-      })),
+      saleHistory: Array.isArray(property.history)
+        ? property.history.map((h: any) => ({
+            date: h.date,
+            price: h.price,
+          }))
+        : [],
 
       assessedValue: latestTax?.value || null,
       landValue: latestTax?.land || null,
