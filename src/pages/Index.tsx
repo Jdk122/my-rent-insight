@@ -23,14 +23,14 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Nav */}
-      <nav className="flex items-center justify-between px-6 md:px-12 lg:px-20 py-5 border-b border-border/50">
-        <span className="font-display text-xl text-foreground tracking-tight cursor-pointer" onClick={() => setResults(null)}>
-          Rent<span className="text-primary">Reply</span>
+      <nav className="flex items-center justify-between px-6 py-5 border-b border-border">
+        <span className="font-display text-lg font-bold text-foreground tracking-tight cursor-pointer" style={{ letterSpacing: '-0.02em' }} onClick={() => setResults(null)}>
+          Rent<span className="font-normal text-muted-foreground">Reply</span>
         </span>
-        {!results && (
-          <span className="text-xs text-muted-foreground hidden sm:block">
-            Free rent increase calculator
-          </span>
+        {results && (
+          <button onClick={() => setResults(null)} className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
+            ← New check
+          </button>
         )}
       </nav>
 
@@ -41,25 +41,16 @@ const Index = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.35 }}
+            transition={{ duration: 0.3 }}
           >
-            {/* Landing hero — full width feel */}
-            <div className="px-6 md:px-12 lg:px-20 pt-16 md:pt-24 lg:pt-32 pb-12 md:pb-16">
-              <div className="max-w-[620px]">
-                <h1 className="font-display text-[clamp(3rem,8vw,5.5rem)] text-foreground leading-[0.88] tracking-tight">
-                  Is your rent
-                  <br />
-                  increase <span className="text-primary">fair?</span>
-                </h1>
-                <p className="mt-6 md:mt-8 text-lg md:text-xl text-muted-foreground max-w-lg leading-relaxed">
-                  Find out instantly. Get a negotiation letter if it's not.
-                </p>
-              </div>
-            </div>
-
-            {/* Form — centered but not cramped */}
-            <div className="px-6 md:px-12 lg:px-20 pb-32">
-              <div className="max-w-[620px]">
+            <div className="max-w-[620px] mx-auto px-6 pt-16 md:pt-24 pb-32">
+              <h1 className="font-display text-[clamp(2.5rem,7vw,3.5rem)] text-foreground leading-[1.1] tracking-tight font-bold" style={{ letterSpacing: '-0.02em' }}>
+                Is your rent increase fair?
+              </h1>
+              <p className="mt-5 text-base text-muted-foreground max-w-md leading-relaxed">
+                Find out instantly. Get a negotiation letter if it's not.
+              </p>
+              <div className="mt-10">
                 <RentForm onSubmit={handleSubmit} />
               </div>
             </div>
@@ -70,7 +61,7 @@ const Index = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.35 }}
+            transition={{ duration: 0.3 }}
           >
             <RentResults
               formData={results.formData}
@@ -82,15 +73,10 @@ const Index = () => {
       </AnimatePresence>
 
       {/* Footer */}
-      <footer className="border-t border-border px-6 md:px-12 lg:px-20 py-8">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <span className="font-display text-base text-foreground">
-            Rent<span className="text-primary">Reply</span>
-          </span>
-          <p className="text-[11px] text-muted-foreground text-center sm:text-right max-w-xs leading-relaxed">
-            Sources: HUD SAFMR FY2025, Census ACS 5-Year (2022). For informational purposes only.
-          </p>
-        </div>
+      <footer className="border-t border-border px-6 py-6 text-center">
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          RentReply · Sources: HUD SAFMR FY2025, Census ACS 5-Year · For informational purposes only.
+        </p>
       </footer>
     </div>
   );
