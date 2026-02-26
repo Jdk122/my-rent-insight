@@ -52,7 +52,7 @@ const Index = () => {
                   increase <span className="text-primary">fair?</span>
                 </h1>
                 <p className="mt-6 md:mt-8 text-lg md:text-xl text-muted-foreground max-w-lg leading-relaxed">
-                  Enter your increase. We'll compare it to real market data in your neighborhood — and if your landlord's number is above market, we'll write your negotiation letter for you. Free. 60 seconds.
+                  Find out in 60 seconds. Get a negotiation letter if it's not.
                 </p>
               </div>
             </div>
