@@ -44,10 +44,10 @@ const Index = () => {
             transition={{ duration: 0.3 }}
           >
             <div className="max-w-[620px] mx-auto px-6 pt-16 md:pt-24 pb-32">
-              <h1 className="font-display text-[clamp(2.5rem,7vw,3.5rem)] text-foreground leading-[1.1] tracking-tight font-bold" style={{ letterSpacing: '-0.02em' }}>
+              <h1 className="font-display text-[clamp(3rem,8vw,5rem)] text-foreground leading-[1.05] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
                 Is your rent increase <span className="text-primary">fair?</span>
               </h1>
-              <p className="mt-5 text-base text-muted-foreground max-w-md leading-relaxed">
+              <p className="mt-5 text-lg md:text-xl text-muted-foreground max-w-md leading-relaxed">
                 Find out instantly. Get a negotiation letter if it's not.
               </p>
               <div className="mt-10">
