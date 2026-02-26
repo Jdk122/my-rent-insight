@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
-import { Copy, Download, FileText, Handshake, Shield } from 'lucide-react';
+import { Copy, Download, FileText, Handshake, Shield, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
 
@@ -110,15 +110,22 @@ ${dateStr}`;
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="w-full text-left group"
+        className="w-full text-left rounded-lg p-5 border-2 border-primary/20 bg-primary/[0.03] hover:border-primary/40 hover:bg-primary/[0.06] transition-all group"
       >
-        <h2 className="font-display text-xl text-foreground mb-1 group-hover:text-primary transition-colors">
-          Negotiation Letter
-        </h2>
-        <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-          <FileText className="w-3.5 h-3.5" />
-          Pre-written with your data — tap to customize and send
-        </p>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center justify-center w-11 h-11 rounded-lg bg-primary/10 shrink-0">
+            <FileText className="w-5 h-5 text-primary" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className="font-display text-lg text-foreground mb-0.5 group-hover:text-primary transition-colors">
+              Generate Your Negotiation Letter
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Pre-written with your data — customize tone, counter-offer, and send
+            </p>
+          </div>
+          <ArrowRight className="w-4 h-4 text-primary/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
+        </div>
       </button>
     );
   }
