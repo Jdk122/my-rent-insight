@@ -45,13 +45,13 @@ const CompLinks = ({ zip, city, state, bedrooms }: CompLinksProps) => {
   const links = buildLinks(zip, city, state, bedrooms);
 
   return (
-    <div>
+    <div className="text-center">
       <h2 className="section-title">See what's available</h2>
       <p className="text-sm text-muted-foreground mb-3">
         {bedroomLabel[bedrooms]} rentals in {city}, {state}
       </p>
 
-      <div className="flex flex-wrap gap-2 mt-3">
+      <div className="flex flex-wrap justify-center gap-2 mt-3">
         {links.map((link) => (
           <a
             key={link.name}
