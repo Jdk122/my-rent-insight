@@ -15,48 +15,28 @@ const Index = () => {
   const handleSubmit = async (data: RentFormData) => {
     setIsLoading(true);
 
-    // If address (not zip-only), start property lookup in parallel
-    if (data.fullAddress) {
-      propertyLookup.lookup(data.fullAddress).then((propResult) => {
-        // If we got a zip from Rentcast and didn't have one, update results
-        if (propResult?.zipCode && !data.zip) {
-          // Trigger zip-level data lookup with the extracted zip
-          lookupRentData(propResult.zipCode, data.bedrooms).then((rentData) => {
-            if (rentData) {
-              setResults((prev) => {
-                if (!prev) return prev;
-                return {
-                  formData: { ...prev.formData, zip: propResult.zipCode! },
-                  rentData,
-                };
-              });
-              // Load FRED trend in background
-              loadFredTrend(rentData.metro).then((fredTrend) => {
-                if (fredTrend) {
-                  setResults((prev) =>
-                    prev ? { ...prev, rentData: { ...prev.rentData, fredTrend } } : prev
-                  );
-                }
-              });
-            }
-          });
-        }
-      });
-    }
-
     try {
-      // For zip-only, proceed normally
-      // For address, we may not have zip yet — try with empty zip, results will update when property lookup returns
-      if (data.zip) {
-        const rentData = await lookupRentData(data.zip, data.bedrooms);
-        if (!rentData) {
-          toast.error(`We don't have data for ${data.zip} yet. Try a nearby zip code.`);
+      if (data.fullAddress) {
+        // Address path: call property lookup first to get zip
+        const propResult = await propertyLookup.lookup(data.fullAddress);
+        if (!propResult?.zipCode) {
+          toast.error("We couldn't find that address. Try entering your 5-digit zip code instead.");
           setIsLoading(false);
           return;
         }
-        setResults({ formData: data, rentData });
+
+        const zip = propResult.zipCode;
+        const rentData = await lookupRentData(zip, data.bedrooms);
+        if (!rentData) {
+          toast.error(`We don't have rent data for that area yet. Try entering your 5-digit zip code instead.`);
+          setIsLoading(false);
+          return;
+        }
+
+        setResults({ formData: { ...data, zip }, rentData });
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
+        // Load FRED trend in background
         loadFredTrend(rentData.metro).then((fredTrend) => {
           if (fredTrend) {
             setResults((prev) =>
@@ -64,33 +44,26 @@ const Index = () => {
             );
           }
         });
-      } else if (data.fullAddress) {
-        // Address entered — we need to wait for property lookup to get zip
-        // Show a temporary results state; it will update when property lookup completes
-        // For now, show loading and wait for property lookup
-        const propResult = await propertyLookup.lookup(data.fullAddress);
-        if (propResult?.zipCode) {
-          const rentData = await lookupRentData(propResult.zipCode, data.bedrooms);
-          if (!rentData) {
-            toast.error(`We couldn't find rent data for that address. Try entering your 5-digit zip code instead.`);
-            setIsLoading(false);
-            return;
-          }
-          setResults({ formData: { ...data, zip: propResult.zipCode }, rentData });
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-
-          loadFredTrend(rentData.metro).then((fredTrend) => {
-            if (fredTrend) {
-              setResults((prev) =>
-                prev ? { ...prev, rentData: { ...prev.rentData, fredTrend } } : prev
-              );
-            }
-          });
-        } else {
-          toast.error("We couldn't find that address. Try entering your 5-digit zip code instead.");
+      } else {
+        // Zip-only path
+        const rentData = await lookupRentData(data.zip, data.bedrooms);
+        if (!rentData) {
+          toast.error(`We don't have data for ${data.zip} yet. Try a nearby zip code.`);
           setIsLoading(false);
           return;
         }
+
+        setResults({ formData: data, rentData });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // Start property lookup only if NOT zip-only (skip here)
+        loadFredTrend(rentData.metro).then((fredTrend) => {
+          if (fredTrend) {
+            setResults((prev) =>
+              prev ? { ...prev, rentData: { ...prev.rentData, fredTrend } } : prev
+            );
+          }
+        });
       }
     } catch (err) {
       toast.error('Something went wrong loading rent data. Please try again.');
