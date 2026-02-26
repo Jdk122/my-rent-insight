@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Bell, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -28,9 +28,9 @@ const EmailCapture = () => {
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="brand-card text-center py-8"
+        className="text-center py-6"
       >
-        <div className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-verdict-good/10 mb-3">
+        <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-verdict-good/10 mb-3">
           <Check className="w-4 h-4 text-verdict-good" />
         </div>
         <h3 className="font-display text-lg text-foreground">You're all set</h3>
@@ -42,20 +42,11 @@ const EmailCapture = () => {
   }
 
   return (
-    <div className="brand-card">
-      <div className="flex items-start gap-3 mb-4">
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-secondary shrink-0 mt-0.5">
-          <Bell className="w-3.5 h-3.5 text-foreground" />
-        </div>
-        <div>
-          <h3 className="font-display text-base text-foreground leading-tight">
-            Get your updated report before renewal
-          </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Fresh rent data, 60 days before your lease expires.
-          </p>
-        </div>
-      </div>
+    <div>
+      <h2 className="font-display text-xl text-foreground mb-1">Stay Updated</h2>
+      <p className="text-[13px] text-muted-foreground mb-4">
+        Get fresh rent data 60 days before your lease expires.
+      </p>
       <form onSubmit={handleSubmit} className="space-y-2.5">
         <Input
           type="email"

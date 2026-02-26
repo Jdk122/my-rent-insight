@@ -37,17 +37,15 @@ const AffordabilityCard = ({ currentRent, newRent, medianHouseholdIncome, zip }:
       : 'hsl(var(--verdict-good))';
 
   return (
-    <div className="brand-card-afford space-y-4">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0" style={{ background: 'hsl(var(--accent-amber) / 0.1)' }}>
-          <span className="font-mono text-sm font-bold" style={{ color: 'hsl(var(--accent-amber))' }}>%</span>
-        </div>
+    <div>
+      <div className="flex items-center justify-between mb-4">
         <div>
-          <p className="data-label mb-0">Affordability</p>
-          <h3 className="font-display text-xl text-foreground leading-tight">
-            Rent burden analysis
-          </h3>
+          <h2 className="font-display text-xl text-foreground mb-0.5">Affordability</h2>
+          <p className="text-[13px] text-muted-foreground">Rent burden vs. area median income</p>
         </div>
+        <span className={`verdict-pill ${isSevereBurden ? 'verdict-pill-overpaying' : isCostBurdened ? 'verdict-pill-fair' : 'verdict-pill-good'}`}>
+          {burdenLabel}
+        </span>
       </div>
 
       <div className="divide-y divide-border">
@@ -70,7 +68,7 @@ const AffordabilityCard = ({ currentRent, newRent, medianHouseholdIncome, zip }:
       </div>
 
       {/* Burden bar */}
-      <div className="space-y-1.5">
+      <div className="mt-4 space-y-1.5">
         <div className="percentile-bar">
           <div
             className="percentile-fill"
@@ -88,20 +86,16 @@ const AffordabilityCard = ({ currentRent, newRent, medianHouseholdIncome, zip }:
         </div>
       </div>
 
-      <div className={`verdict-pill ${isSevereBurden ? 'verdict-pill-overpaying' : isCostBurdened ? 'verdict-pill-fair' : 'verdict-pill-good'}`}>
-        {burdenLabel}
-      </div>
-
       {isCostBurdened && (
-        <div className="flex items-start gap-2 p-3 rounded-lg" style={{ background: 'hsl(var(--accent-amber) / 0.06)', border: '1px solid hsl(var(--accent-amber) / 0.15)' }}>
-          <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: 'hsl(var(--accent-amber))' }} />
+        <div className="callout callout-warn mt-4">
+          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" style={{ color: 'hsl(var(--verdict-overpaying))' }} />
           <p className="text-xs text-foreground leading-relaxed">
             At ${fmt(newRent)}/mo, rent is {newBurden}% of area median income — {isSevereBurden ? 'well above' : 'above'} the 30% guideline.
           </p>
         </div>
       )}
 
-      <p className="text-[10px] text-muted-foreground">
+      <p className="text-[10px] text-muted-foreground mt-3">
         Census ACS median household income for {zip}. Your income may differ.
       </p>
     </div>

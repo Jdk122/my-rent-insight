@@ -110,19 +110,15 @@ ${dateStr}`;
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="w-full affiliate-cta group text-left"
+        className="w-full text-left group"
       >
-        <div className="w-9 h-9 rounded-lg bg-accent/8 flex items-center justify-center shrink-0">
-          <FileText className="w-4 h-4 text-accent" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-foreground leading-tight">
-            Generate your negotiation letter
-          </p>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Pre-written with your data — copy and send
-          </p>
-        </div>
+        <h2 className="font-display text-xl text-foreground mb-1 group-hover:text-primary transition-colors">
+          Negotiation Letter
+        </h2>
+        <p className="text-[13px] text-muted-foreground flex items-center gap-1.5">
+          <FileText className="w-3.5 h-3.5" />
+          Pre-written with your data — tap to customize and send
+        </p>
       </button>
     );
   }
@@ -131,11 +127,11 @@ ${dateStr}`;
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      className="brand-card space-y-5"
+      className="space-y-5"
     >
       <div>
-        <p className="data-label mb-1">Negotiation Letter</p>
-        <h3 className="font-display text-xl text-foreground">Send this to your landlord</h3>
+        <h2 className="font-display text-xl text-foreground mb-1">Negotiation Letter</h2>
+        <p className="text-[13px] text-muted-foreground">Send this to your landlord</p>
       </div>
 
       {/* Name inputs */}
@@ -164,9 +160,9 @@ ${dateStr}`;
       <div className="flex gap-2">
         <button
           onClick={() => setTone('friendly')}
-          className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg border text-xs font-mono transition-colors ${
+          className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md border text-xs font-mono transition-colors ${
             tone === 'friendly'
-              ? 'border-accent bg-accent/8 text-accent'
+              ? 'border-primary bg-primary/5 text-primary'
               : 'border-border text-muted-foreground hover:bg-secondary'
           }`}
         >
@@ -175,9 +171,9 @@ ${dateStr}`;
         </button>
         <button
           onClick={() => setTone('firm')}
-          className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg border text-xs font-mono transition-colors ${
+          className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md border text-xs font-mono transition-colors ${
             tone === 'firm'
-              ? 'border-accent bg-accent/8 text-accent'
+              ? 'border-primary bg-primary/5 text-primary'
               : 'border-border text-muted-foreground hover:bg-secondary'
           }`}
         >
@@ -189,7 +185,7 @@ ${dateStr}`;
       {/* Counter slider */}
       <div className="space-y-2">
         <Label className="text-xs font-medium">
-          Counter: <span className="font-mono text-accent">{counterPct}%</span>
+          Counter: <span className="font-mono text-primary">{counterPct}%</span>
           <span className="text-muted-foreground font-normal ml-1">(${fmt(counterRent)}/mo)</span>
         </Label>
         <Slider
@@ -206,7 +202,7 @@ ${dateStr}`;
       </div>
 
       {/* Preview */}
-      <div className="rounded-lg bg-secondary/50 border border-border p-4 max-h-64 overflow-y-auto">
+      <div className="rounded-md bg-secondary/50 border border-border p-4 max-h-64 overflow-y-auto">
         <pre className="whitespace-pre-wrap font-mono text-xs text-foreground leading-relaxed">
           {letter}
         </pre>
@@ -214,11 +210,11 @@ ${dateStr}`;
 
       {/* Actions */}
       <div className="flex gap-2">
-        <Button onClick={handleCopy} variant="default" className="flex-1 gap-1.5 h-9 text-xs rounded-lg">
+        <Button onClick={handleCopy} variant="default" className="flex-1 gap-1.5 h-9 text-xs rounded-md">
           <Copy className="w-3.5 h-3.5" />
           Copy
         </Button>
-        <Button onClick={handleDownload} variant="outline" className="flex-1 gap-1.5 h-9 text-xs rounded-lg">
+        <Button onClick={handleDownload} variant="outline" className="flex-1 gap-1.5 h-9 text-xs rounded-md">
           <Download className="w-3.5 h-3.5" />
           Download
         </Button>
