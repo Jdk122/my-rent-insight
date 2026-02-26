@@ -18,6 +18,15 @@ function isZipOnly(input: string): boolean {
   return /^\d{5}$/.test(input.trim());
 }
 
+function looksLikeAddressWithoutUnit(input: string): boolean {
+  const trimmed = input.trim();
+  if (isZipOnly(trimmed)) return false;
+  // Has a street number + street name but no unit/apt indicator
+  const hasStreet = /^\d+\s+\w+/.test(trimmed);
+  const hasUnit = /\b(apt|unit|suite|ste|#|floor|fl|bldg)\b/i.test(trimmed);
+  return hasStreet && !hasUnit;
+}
+
 interface RentFormProps {
   onSubmit: (data: RentFormData) => void;
   isLoading?: boolean;
@@ -63,7 +72,13 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
             className="h-11 text-sm bg-background"
             required
           />
-          <p className="text-[11px] text-muted-foreground mt-1">Include city & state for best results, or just enter a 5-digit zip</p>
+          {looksLikeAddressWithoutUnit(addressInput) ? (
+            <p className="text-[11px] text-destructive/80 mt-1">
+              💡 Adding your apt or unit number (e.g. Apt 3B) helps us find your exact building
+            </p>
+          ) : (
+            <p className="text-[11px] text-muted-foreground mt-1">Include city & state for best results, or just enter a 5-digit zip</p>
+          )}
         </div>
         <div className="space-y-1.5">
           <Label className="text-sm font-medium text-foreground">Bedrooms</Label>
