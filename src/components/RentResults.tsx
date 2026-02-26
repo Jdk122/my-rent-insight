@@ -19,9 +19,9 @@ interface RentResultsProps {
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
 const fade = (delay: number) => ({
-  initial: { opacity: 0, y: 12 },
+  initial: { opacity: 0, y: 16 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] as const },
+  transition: { duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] as const },
 });
 
 const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
@@ -79,220 +79,222 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
     : formData.bedrooms === 'threeBr' ? '3-bedrooms'
     : '4-bedrooms';
 
-  const stats = [
-    { label: 'Current', value: `$${fmt(formData.currentRent)}` },
-    { label: 'Proposed', value: `$${fmt(newRent)}`, highlight: true },
-    { label: 'Extra / year', value: `$${fmt(annualExtra)}` },
-    { label: 'Break-even', value: breakEven.months === Infinity ? '—' : `${breakEven.months.toFixed(0)} mo` },
-  ];
-
   return (
-    <div className="max-w-2xl mx-auto px-5 md:px-8 pb-16">
+    <div className="px-6 md:px-12 lg:px-20">
+      <div className="max-w-3xl">
 
-      {/* ━━━ VERDICT HERO ━━━ */}
-      <motion.div {...fade(0)} className="pt-8 md:pt-12 pb-8">
-        {hasIncrease ? (
-          <>
-            <div className="flex items-center gap-2.5 mb-4">
-              <span className={`verdict-pill ${pillClass}`}>{verdictLabel}</span>
-              <span className="text-xs text-muted-foreground font-mono">
-                {brLabel} · {city}, {rentData.state}
+        {/* ━━━ VERDICT ━━━ */}
+        <motion.div {...fade(0)} className="pt-12 md:pt-20 pb-10 md:pb-14">
+          {hasIncrease ? (
+            <>
+              <span className="text-xs font-mono text-muted-foreground tracking-wide">
+                {brLabel} · {city}, {rentData.state} {rentData.zip}
               </span>
-            </div>
 
-            <h2 className="font-display text-[clamp(2.4rem,6vw,4rem)] leading-[0.92] tracking-tight mb-3">
-              <span className={verdictColor}>{increasePct}%</span>
-              <span className="text-muted-foreground text-[0.35em] font-body font-normal mx-2 align-middle">vs</span>
-              <span className="text-foreground">{marketYoy}%</span>
-            </h2>
+              <h2 className="font-display text-[clamp(3rem,8vw,5.5rem)] leading-[0.88] tracking-tight mt-3">
+                <span className={verdictColor}>{increasePct}%</span>
+                <span className="text-muted-foreground text-[0.28em] font-body font-normal mx-3 align-middle">vs</span>
+                <span className="text-foreground">{marketYoy}%</span>
+              </h2>
 
-            <p className="text-muted-foreground text-[15px] leading-relaxed max-w-md">
-              Rents in {city} rose {marketYoy}% this year. Your landlord is asking for {increasePct}%.
-              {isAboveMarket && multiplier > 0 && (
-                <> That's <span className={`font-semibold ${verdictColor}`}>{multiplier}×</span> the market rate — <span className="font-mono font-semibold text-foreground">${fmt(excessAnnual)}</span>/yr above average.</>
-              )}
-              {isBelowMarket && (
-                <> That's below average — you're in good shape.</>
-              )}
-            </p>
+              <p className="text-muted-foreground text-base md:text-lg leading-relaxed mt-4 max-w-lg">
+                Rents in {city} rose {marketYoy}% this year. Your landlord is asking for {increasePct}%.
+                {isAboveMarket && multiplier > 0 && (
+                  <> That's <span className={`font-semibold ${verdictColor}`}>{multiplier}×</span> the local rate — <span className="font-mono font-semibold text-foreground">${fmt(excessAnnual)}</span> extra per year.</>
+                )}
+                {isBelowMarket && <> That's below the local average — you're in good shape.</>}
+              </p>
 
-            {/* Stats row */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-px mt-8 rounded-lg overflow-hidden border border-border bg-border">
-              {stats.map((s) => (
-                <div key={s.label} className="bg-card px-4 py-3.5">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium mb-1">{s.label}</p>
-                  <p className={`font-mono text-base md:text-lg font-bold tracking-tight ${s.highlight ? verdictColor : 'text-foreground'}`}>
-                    {s.value}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </>
-        ) : (
-          <>
-            <h2 className="font-display text-2xl text-foreground">No increase entered</h2>
-            <p className="text-muted-foreground mt-1 text-sm">Enter your proposed increase to compare.</p>
-          </>
-        )}
-      </motion.div>
+              <div className="flex items-center gap-2.5 mt-5">
+                <span className={`verdict-pill ${pillClass}`}>{verdictLabel}</span>
+              </div>
 
-      {/* ━━━ NEGOTIATE CTA ━━━ */}
-      {hasIncrease && isAboveMarket && (
-        <motion.div {...fade(0.06)} className="mb-6">
-          <div className="rounded-lg border border-border overflow-hidden">
+              {/* Key figures — open, no box */}
+              <div className="flex flex-wrap gap-x-10 gap-y-4 mt-10">
+                {[
+                  { label: 'Current rent', value: `$${fmt(formData.currentRent)}` },
+                  { label: 'Proposed rent', value: `$${fmt(newRent)}`, highlight: true },
+                  { label: 'Extra per year', value: `$${fmt(annualExtra)}` },
+                  { label: 'Break-even if you move', value: breakEven.months === Infinity ? 'n/a' : `${breakEven.months.toFixed(0)} months` },
+                ].map((s) => (
+                  <div key={s.label}>
+                    <p className="text-[11px] text-muted-foreground tracking-wide mb-0.5">{s.label}</p>
+                    <p className={`font-mono text-xl md:text-2xl font-bold tracking-tight ${s.highlight ? verdictColor : 'text-foreground'}`}>
+                      {s.value}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 className="font-display text-3xl md:text-4xl text-foreground">No increase entered</h2>
+              <p className="text-muted-foreground mt-2">Enter your proposed increase to compare.</p>
+            </>
+          )}
+        </motion.div>
+
+        {/* thin rule */}
+        <div className="h-px bg-border" />
+
+        {/* ━━━ TAKE ACTION ━━━ */}
+        {hasIncrease && isAboveMarket && (
+          <motion.div {...fade(0.06)} className="py-10 md:py-14">
             {!showLetter ? (
-              <div>
+              <div className="space-y-8">
                 <button
                   onClick={() => setShowLetter(true)}
-                  className="w-full text-left group flex items-center gap-3.5 px-5 py-4 hover:bg-secondary/50 transition-colors"
+                  className="w-full text-left group flex items-center gap-4"
                 >
-                  <div className="flex items-center justify-center w-9 h-9 rounded-md bg-primary/10 shrink-0 group-hover:bg-primary/15 transition-colors">
-                    <FileText className="w-4 h-4 text-primary" />
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/8 shrink-0 group-hover:bg-primary/12 transition-colors">
+                    <FileText className="w-[18px] h-[18px] text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-display text-base text-foreground group-hover:text-primary transition-colors leading-tight">
-                      Push back with {city} rent data
+                    <p className="font-display text-lg md:text-xl text-foreground group-hover:text-primary transition-colors">
+                      Push back with {city} data
                     </p>
-                    <p className="text-xs text-muted-foreground mt-0.5">Generate a counter-offer letter</p>
+                    <p className="text-sm text-muted-foreground mt-0.5">
+                      We'll draft a negotiation letter with your counter-offer
+                    </p>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
+                  <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
                 </button>
 
-                <div className="border-t border-border px-5 py-4">
-                  <ShareSection
-                    increasePct={increasePct}
-                    marketPct={marketYoy}
-                    excessAnnual={excessAnnual}
-                    multiplier={multiplier}
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="px-5 py-5">
-                <NegotiationLetter
-                  currentRent={formData.currentRent}
-                  newRent={newRent}
+                <ShareSection
                   increasePct={increasePct}
-                  marketYoy={marketYoy}
-                  fmr={fmr}
-                  censusMedian={rentData.censusMedian}
-                  medianHouseholdIncome={rentData.medianHouseholdIncome}
-                  zip={rentData.zip}
-                  city={rentData.city}
-                  state={rentData.state}
-                  bedrooms={formData.bedrooms}
+                  marketPct={marketYoy}
+                  excessAnnual={excessAnnual}
+                  multiplier={multiplier}
                 />
               </div>
-            )}
-          </div>
-        </motion.div>
-      )}
-
-      {/* ━━━ MARKET DATA ━━━ */}
-      <motion.div {...fade(0.1)} className="mb-6">
-        <div className="rounded-lg border border-border bg-card">
-          <div className="px-5 pt-5 pb-1">
-            <h3 className="font-display text-lg text-foreground">Rents in {city}</h3>
-            <p className="text-xs text-muted-foreground mt-0.5">What {brPlural} actually cost near {rentData.zip}</p>
-          </div>
-
-          <div className="px-5 pb-5">
-            <div className="divide-y divide-border">
-              {[
-                { label: `${city} rent trend`, value: `${rentData.yoyChange > 0 ? '+' : ''}${rentData.yoyChange}%`, trending: true },
-                { label: `Typical ${brPlural}`, value: `$${fmt(range.low)} – $${fmt(range.high)}` },
-                { label: `${brLabel} benchmark`, value: `$${fmt(fmr)}` },
-                ...(rentData.censusMedian ? [{ label: `Median rent`, value: `$${fmt(rentData.censusMedian)}` }] : []),
-                ...(hasIncrease ? [{ label: 'Your increase', value: `+${increasePct}%`, extra: `+$${fmt(increaseAmount)}/mo` }] : []),
-              ].map((row: any) => (
-                <div key={row.label} className="flex items-center justify-between py-3">
-                  <span className="text-sm text-muted-foreground">{row.label}</span>
-                  <span className={`font-mono text-sm font-semibold tabular-nums flex items-center gap-1.5 ${
-                    row.trending ? (rentData.yoyChange > 0 ? 'text-verdict-overpaying' : 'text-verdict-good') : 'text-foreground'
-                  }`}>
-                    {row.trending && (rentData.yoyChange > 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />)}
-                    {row.value}
-                    {row.extra && <span className="text-muted-foreground font-normal text-[11px] ml-1">({row.extra})</span>}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {hasIncrease && breakEven.verdict && (
-              <div className="mt-4 rounded-md bg-secondary/60 px-4 py-3 flex items-start gap-2.5">
-                <span className="font-mono text-xs font-bold text-foreground whitespace-nowrap mt-px">
-                  {breakEven.months === Infinity ? '∞' : `${breakEven.months.toFixed(0)} mo`}
-                </span>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  {breakEven.verdict === 'move' && `Moving saves ~$${fmt(Math.abs(breakEven.yearOneSavings))} in year one`}
-                  {breakEven.verdict === 'close' && `Close call — depends on your priorities`}
-                  {breakEven.verdict === 'stay' && `Staying is likely the smarter financial move`}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      </motion.div>
-
-      {/* ━━━ SCENARIOS + AFFORDABILITY ━━━ */}
-      {hasIncrease && (
-        <motion.div {...fade(0.13)} className="mb-6">
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="rounded-lg border border-border bg-card px-5 py-5">
-              <ScenarioToggles
-                currentRent={newRent}
-                fmr={fmr}
-                scenarioNewRent={scenarioNewRent}
-                setScenarioNewRent={setScenarioNewRent}
-                scenarioMovingCost={scenarioMovingCost}
-                setScenarioMovingCost={setScenarioMovingCost}
-                scenarioNegotiatedPct={scenarioNegotiatedPct}
-                setScenarioNegotiatedPct={setScenarioNegotiatedPct}
-                breakEven={breakEven}
-                hasIncrease={hasIncrease}
-              />
-            </div>
-            <div className="rounded-lg border border-border bg-card px-5 py-5">
-              <AffordabilityCard
+            ) : (
+              <NegotiationLetter
                 currentRent={formData.currentRent}
                 newRent={newRent}
+                increasePct={increasePct}
+                marketYoy={marketYoy}
+                fmr={fmr}
+                censusMedian={rentData.censusMedian}
                 medianHouseholdIncome={rentData.medianHouseholdIncome}
                 zip={rentData.zip}
-                city={city}
+                city={rentData.city}
+                state={rentData.state}
+                bedrooms={formData.bedrooms}
               />
-            </div>
-          </div>
-        </motion.div>
-      )}
+            )}
+          </motion.div>
+        )}
 
-      {/* ━━━ COMPS ━━━ */}
-      <motion.div {...fade(0.16)} className="mb-6" id="comps-section">
-        <div className="rounded-lg border border-border bg-card px-5 py-5">
+        <div className="h-px bg-border" />
+
+        {/* ━━━ MARKET CONTEXT ━━━ */}
+        <motion.div {...fade(0.1)} className="py-10 md:py-14">
+          <h3 className="font-display text-2xl md:text-3xl text-foreground mb-1">
+            Rents in {city}
+          </h3>
+          <p className="text-sm text-muted-foreground mb-8">
+            What {brPlural} actually cost near {rentData.zip}
+          </p>
+
+          <div className="space-y-0">
+            {[
+              { label: `${city} rent trend`, value: `${rentData.yoyChange > 0 ? '+' : ''}${rentData.yoyChange}%`, trending: true },
+              { label: `Typical ${brPlural}`, value: `$${fmt(range.low)} – $${fmt(range.high)}` },
+              { label: `${brLabel} benchmark`, value: `$${fmt(fmr)}` },
+              ...(rentData.censusMedian ? [{ label: `Median rent`, value: `$${fmt(rentData.censusMedian)}` }] : []),
+              ...(hasIncrease ? [{ label: 'Your proposed increase', value: `+${increasePct}%`, extra: `+$${fmt(increaseAmount)}/mo` }] : []),
+            ].map((row: any, i: number) => (
+              <div key={row.label} className={`flex items-center justify-between py-3.5 ${i > 0 ? 'border-t border-border/60' : ''}`}>
+                <span className="text-[13px] text-muted-foreground">{row.label}</span>
+                <span className={`font-mono text-[13px] font-semibold tabular-nums flex items-center gap-1.5 ${
+                  row.trending ? (rentData.yoyChange > 0 ? 'text-verdict-overpaying' : 'text-verdict-good') : 'text-foreground'
+                }`}>
+                  {row.trending && (rentData.yoyChange > 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />)}
+                  {row.value}
+                  {row.extra && <span className="text-muted-foreground font-normal text-[11px] ml-1.5">({row.extra})</span>}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {hasIncrease && breakEven.verdict && (
+            <p className="text-sm text-muted-foreground mt-6 leading-relaxed">
+              <span className="font-mono font-bold text-foreground">
+                {breakEven.months === Infinity ? 'No break-even' : `${breakEven.months.toFixed(0)}-month break-even`}
+              </span>
+              {' — '}
+              {breakEven.verdict === 'move' && `moving saves ~$${fmt(Math.abs(breakEven.yearOneSavings))} in year one.`}
+              {breakEven.verdict === 'close' && `it's a close call — depends on your priorities.`}
+              {breakEven.verdict === 'stay' && `staying is likely the smarter financial move.`}
+            </p>
+          )}
+        </motion.div>
+
+        {/* ━━━ SCENARIOS + AFFORDABILITY ━━━ */}
+        {hasIncrease && (
+          <>
+            <div className="h-px bg-border" />
+            <motion.div {...fade(0.13)} className="py-10 md:py-14">
+              <h3 className="font-display text-2xl md:text-3xl text-foreground mb-8">
+                What if…
+              </h3>
+              <div className="grid md:grid-cols-2 gap-12 lg:gap-16">
+                <ScenarioToggles
+                  currentRent={newRent}
+                  fmr={fmr}
+                  scenarioNewRent={scenarioNewRent}
+                  setScenarioNewRent={setScenarioNewRent}
+                  scenarioMovingCost={scenarioMovingCost}
+                  setScenarioMovingCost={setScenarioMovingCost}
+                  scenarioNegotiatedPct={scenarioNegotiatedPct}
+                  setScenarioNegotiatedPct={setScenarioNegotiatedPct}
+                  breakEven={breakEven}
+                  hasIncrease={hasIncrease}
+                />
+                <AffordabilityCard
+                  currentRent={formData.currentRent}
+                  newRent={newRent}
+                  medianHouseholdIncome={rentData.medianHouseholdIncome}
+                  zip={rentData.zip}
+                  city={city}
+                />
+              </div>
+            </motion.div>
+          </>
+        )}
+
+        <div className="h-px bg-border" />
+
+        {/* ━━━ COMPS ━━━ */}
+        <motion.div {...fade(0.16)} className="py-10 md:py-14" id="comps-section">
           <CompLinks
             zip={rentData.zip}
             city={rentData.city}
             state={rentData.state}
             bedrooms={formData.bedrooms}
           />
-        </div>
-      </motion.div>
+        </motion.div>
 
-      {/* ━━━ EMAIL ━━━ */}
-      <motion.div {...fade(0.18)} className="mb-8">
-        <div className="rounded-lg border border-border bg-card px-5 py-5">
-          <EmailCapture />
-        </div>
-      </motion.div>
+        <div className="h-px bg-border" />
 
-      {/* ━━━ BACK ━━━ */}
-      <div className="text-center pt-2 pb-4">
-        <button
-          onClick={onReset}
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          Check another increase
-        </button>
+        {/* ━━━ EMAIL ━━━ */}
+        <motion.div {...fade(0.18)} className="py-10 md:py-14">
+          <div className="max-w-sm">
+            <EmailCapture />
+          </div>
+        </motion.div>
+
+        {/* ━━━ BACK ━━━ */}
+        <div className="pb-12 pt-2">
+          <button
+            onClick={onReset}
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Check another increase
+          </button>
+        </div>
+
       </div>
     </div>
   );

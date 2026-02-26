@@ -32,7 +32,6 @@ const ScenarioToggles = ({
 }: ScenarioTogglesProps) => {
   return (
     <div>
-      <h2 className="font-display text-xl text-foreground mb-1">What If…</h2>
       <p className="text-sm text-muted-foreground mb-5">Adjust the numbers to explore your options</p>
 
       <div className="space-y-5">
