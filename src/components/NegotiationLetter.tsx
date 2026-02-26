@@ -15,6 +15,7 @@ interface NegotiationLetterProps {
   marketYoy: number;
   fmr: number;
   censusMedian: number | null;
+  medianHouseholdIncome: number | null;
   zip: string;
   city: string;
   state: string;
@@ -32,6 +33,7 @@ const NegotiationLetter = ({
   marketYoy,
   fmr,
   censusMedian,
+  medianHouseholdIncome,
   zip,
   city,
   state,
@@ -50,6 +52,9 @@ const NegotiationLetter = ({
     const sn = name || '[Your Name]';
     const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
     const brLabel = bedroomLabels[bedrooms];
+    const burdenLine = medianHouseholdIncome
+      ? `\n• Rent-to-income ratio at new rent: ${Math.round((newRent / (medianHouseholdIncome / 12)) * 100)}% of area median (HUD threshold: 30%)`
+      : '';
 
     if (tone === 'friendly') {
       return `Dear ${ln},
@@ -62,7 +67,7 @@ According to HUD Fair Market Rent data and Census Bureau estimates for ${zip} ($
 
 • Market-wide annual rent increase: ${marketYoy > 0 ? '+' : ''}${marketYoy}%
 • My proposed increase: +${increasePct}%
-• Federal Fair Market Rent (${brLabel}): $${fmt(fmr)}${censusMedian ? `\n• Census Median Gross Rent: $${fmt(censusMedian)}` : ''}
+• Federal Fair Market Rent (${brLabel}): $${fmt(fmr)}${censusMedian ? `\n• Census Median Gross Rent: $${fmt(censusMedian)}` : ''}${burdenLine}
 
 Rents in our area increased approximately ${Math.abs(marketYoy)}% year-over-year, while the proposed increase of ${increasePct}% is significantly above that trend.
 
@@ -83,7 +88,7 @@ I am writing in response to the proposed rent increase from $${fmt(currentRent)}
 
 I have reviewed current market data from federal and census sources for ${zip} (${city}, ${state}):
 
-• HUD Fair Market Rent (${brLabel}, FY2025): $${fmt(fmr)}${censusMedian ? `\n• Census Median Gross Rent (ACS 2022): $${fmt(censusMedian)}` : ''}
+• HUD Fair Market Rent (${brLabel}, FY2025): $${fmt(fmr)}${censusMedian ? `\n• Census Median Gross Rent (ACS 2022): $${fmt(censusMedian)}` : ''}${burdenLine}
 • Market-wide annual rent change: ${marketYoy > 0 ? '+' : ''}${marketYoy}%
 • Proposed increase: +${increasePct}%
 
@@ -96,7 +101,7 @@ Please let me know if you'd like to discuss. I have attached supporting data fro
 Sincerely,
 ${sn}
 ${dateStr}`;
-  }, [tone, name, landlordName, counterPct, counterRent, currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, zip, city, state, bedrooms]);
+  }, [tone, name, landlordName, counterPct, counterRent, currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, medianHouseholdIncome, zip, city, state, bedrooms]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(letter);

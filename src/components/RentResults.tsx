@@ -7,6 +7,8 @@ import ShareSection from './ShareSection';
 import EmailCapture from './EmailCapture';
 import CompLinks from './CompLinks';
 import NegotiationLetter from './NegotiationLetter';
+import RentControlCard from './RentControlCard';
+import AffordabilityCard from './AffordabilityCard';
 import { ArrowLeft, TrendingUp, TrendingDown, Scale } from 'lucide-react';
 
 interface RentResultsProps {
@@ -198,8 +200,27 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
         </div>
       </motion.div>
 
+      {/* Legal Context — rent control laws */}
+      {hasIncrease && (
+        <motion.div {...anim(0.16)}>
+          <RentControlCard zip={rentData.zip} increasePct={increasePct} />
+        </motion.div>
+      )}
+
+      {/* Affordability — rent burden analysis */}
+      {hasIncrease && (
+        <motion.div {...anim(0.17)}>
+          <AffordabilityCard
+            currentRent={formData.currentRent}
+            newRent={newRent}
+            medianHouseholdIncome={rentData.medianHouseholdIncome}
+            zip={rentData.zip}
+          />
+        </motion.div>
+      )}
+
       {/* Comp Links — see what's available */}
-      <motion.div {...anim(0.17)}>
+      <motion.div {...anim(0.18)}>
         <CompLinks
           zip={rentData.zip}
           city={rentData.city}
@@ -249,6 +270,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
             marketYoy={marketYoy}
             fmr={fmr}
             censusMedian={rentData.censusMedian}
+            medianHouseholdIncome={rentData.medianHouseholdIncome}
             zip={rentData.zip}
             city={rentData.city}
             state={rentData.state}
