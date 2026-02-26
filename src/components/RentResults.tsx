@@ -5,6 +5,7 @@ import { RentData, getFmrForBedrooms, getTypicalRange, getPercentile, calculateB
 import { Button } from '@/components/ui/button';
 import ScenarioToggles from './ScenarioToggles';
 import ShareSection from './ShareSection';
+import EmailCapture from './EmailCapture';
 
 interface RentResultsProps {
   formData: RentFormData;
@@ -24,7 +25,6 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
   const isOverpaying = diff > 0;
   const isFair = Math.abs(diff) <= fmr * 0.05;
 
-  // Rent increase calculations
   const increaseAmount = formData.rentIncrease
     ? formData.increaseIsPercent
       ? Math.round(formData.currentRent * (formData.rentIncrease / 100))
@@ -32,7 +32,6 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
     : 0;
   const newRent = formData.currentRent + increaseAmount;
 
-  // Scenario state
   const [scenarioNewRent, setScenarioNewRent] = useState<number>(fmr);
   const [scenarioMovingCost, setScenarioMovingCost] = useState<number>(formData.movingCosts);
   const [scenarioNegotiatedPct, setScenarioNegotiatedPct] = useState<number>(
@@ -49,26 +48,9 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
     return calculateBreakEven(effectiveCurrentRent, scenarioNewRent, scenarioMovingCost);
   }, [formData.currentRent, scenarioNewRent, scenarioMovingCost, scenarioNegotiatedPct]);
 
-  const verdictColor = isFair
-    ? 'text-verdict-fair'
-    : isOverpaying
-    ? 'text-verdict-overpaying'
-    : 'text-verdict-good';
-
-  const verdictBadge = isFair
-    ? 'verdict-badge-fair'
-    : isOverpaying
-    ? 'verdict-badge-overpaying'
-    : 'verdict-badge-good';
-
+  const verdictColor = isFair ? 'text-verdict-fair' : isOverpaying ? 'text-verdict-overpaying' : 'text-verdict-good';
+  const verdictBadge = isFair ? 'verdict-badge-fair' : isOverpaying ? 'verdict-badge-overpaying' : 'verdict-badge-good';
   const verdictEmoji = isFair ? '🟡' : isOverpaying ? '🔴' : '🟢';
-
-  const moveVerdictColor =
-    breakEven.verdict === 'move'
-      ? 'text-verdict-move'
-      : breakEven.verdict === 'close'
-      ? 'text-verdict-close'
-      : 'text-verdict-stay';
 
   return (
     <div className="space-y-6">
@@ -82,23 +64,31 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
         <span className={`verdict-badge ${verdictBadge} mb-4`}>
           {verdictEmoji} {isFair ? 'Your rent is about average' : isOverpaying ? "You're overpaying" : "You're getting a deal"}
         </span>
-
         <h2 className={`text-4xl md:text-5xl font-display mt-4 ${verdictColor}`}>
           {isOverpaying ? '+' : ''}${fmt(Math.abs(diff))}<span className="text-xl text-muted-foreground">/mo</span>
         </h2>
         <p className={`text-lg mt-1 ${verdictColor}`}>
-          {isOverpaying ? `above` : isFair ? 'near' : 'below'} typical rent
+          {isOverpaying ? 'above' : isFair ? 'near' : 'below'} typical rent
         </p>
         <p className="text-2xl font-semibold mt-3 text-foreground">
           💸 That's {isOverpaying ? '' : '-'}${fmt(Math.abs(annualDiff))}/year
         </p>
       </motion.div>
 
+      {/* Share — right after the emotional peak */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
+        <ShareSection diff={diff} annualDiff={annualDiff} isOverpaying={isOverpaying} />
+      </motion.div>
+
       {/* Market Context */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.15 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
         className="stat-card"
       >
         <h3 className="font-display text-xl mb-4">
@@ -146,9 +136,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
           <p className="text-foreground">
             Your rent is going from <span className="font-semibold">${fmt(formData.currentRent)}</span> →{' '}
             <span className="font-semibold">${fmt(newRent)}</span>{' '}
-            <span className="text-muted-foreground">
-              (+${fmt(increaseAmount)}/mo, +${fmt(increaseAmount * 12)}/yr)
-            </span>
+            <span className="text-muted-foreground">(+${fmt(increaseAmount)}/mo, +${fmt(increaseAmount * 12)}/yr)</span>
           </p>
           <div className="mt-4 flex items-center gap-3">
             <span className="text-2xl">⚖️</span>
@@ -168,7 +156,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.45 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
       >
         <ScenarioToggles
           currentRent={newRent || formData.currentRent}
@@ -184,25 +172,17 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
         />
       </motion.div>
 
-      {/* Share */}
+      {/* Email Capture — right after scenarios */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.6 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
       >
-        <ShareSection
-          diff={diff}
-          annualDiff={annualDiff}
-          isOverpaying={isOverpaying}
-        />
+        <EmailCapture />
       </motion.div>
 
       <div className="text-center pt-4">
-        <Button
-          variant="outline"
-          onClick={onReset}
-          className="text-muted-foreground"
-        >
+        <Button variant="outline" onClick={onReset} className="text-muted-foreground">
           ← Check another rent
         </Button>
       </div>
