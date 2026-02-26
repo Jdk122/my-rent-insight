@@ -40,7 +40,7 @@ const Index = () => {
           animate={{ opacity: 1 }}
           className="data-label mb-4"
         >
-          Free rent analysis tool
+          Free rent increase analyzer
         </motion.p>
         <motion.h1
           initial={{ opacity: 0, y: 12 }}
@@ -48,9 +48,9 @@ const Index = () => {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="font-display text-5xl md:text-7xl lg:text-8xl text-foreground leading-[0.95] tracking-tight"
         >
-          Are you overpaying
+          Is your rent
           <br />
-          for your apartment?
+          increase fair?
         </motion.h1>
         <motion.p
           initial={{ opacity: 0 }}
@@ -58,7 +58,7 @@ const Index = () => {
           transition={{ delay: 0.3 }}
           className="mt-6 text-lg md:text-xl text-muted-foreground max-w-lg leading-relaxed"
         >
-          Enter your rent. We'll compare it against federal and census data for your zip code — and tell you whether to renew or move.
+          Your landlord says the market went up. We'll check that against federal data — and tell you whether to accept, negotiate, or move.
         </motion.p>
         {!results && (
           <motion.div
