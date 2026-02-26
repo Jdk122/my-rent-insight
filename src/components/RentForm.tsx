@@ -138,7 +138,10 @@ const RentForm = ({ onSubmit }: RentFormProps) => {
         </div>
       </details>
 
-      <button type="submit" className="w-full h-12 bg-primary text-primary-foreground text-sm font-semibold rounded hover:opacity-90 transition-opacity">
+      <button
+        type="submit"
+        className="w-full h-14 bg-gradient-to-r from-primary to-accent text-primary-foreground text-base font-bold rounded-md shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
+      >
         Check my increase →
       </button>
     </form>
