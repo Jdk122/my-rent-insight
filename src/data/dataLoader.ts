@@ -29,6 +29,7 @@ export interface RentLookupResult {
   fmr: number;
   fmrPrior: number;
   yoyChange: number;
+  yoyCapped?: boolean;
   priorSource: 'f' | 'a' | 'm' | 'n';
   censusMedianRent: number | null;
   medianIncome: number | null;
@@ -120,6 +121,11 @@ async function fetchFredTrend(metro: string): Promise<FredTrendData | null> {
   }
 }
 
+// ─── Data quality constants ───
+const YOY_CAP = 30; // Cap displayed YoY at ±30%
+const MIN_VALID_INCOME = 10000; // Suppress income below this (bad Census data)
+const MAX_CENSUS_FMR_RATIO = 2.5; // Suppress census rent if it diverges >2.5x from FMR
+
 // ─── Main lookup function ───
 
 export async function lookupRentData(
@@ -135,21 +141,42 @@ export async function lookupRentData(
   const fmrPrior = raw.p[brIdx];
 
   // Calculate YoY for selected bedroom (more accurate than pre-computed 1BR)
-  const yoyChange = fmrPrior > 0
+  let yoyChange = fmrPrior > 0
     ? Math.round(((fmr - fmrPrior) / fmrPrior) * 1000) / 10
     : raw.y;
+
+  // Guard 1: Cap extreme YoY values
+  const yoyCapped = Math.abs(yoyChange) > YOY_CAP;
+  yoyChange = Math.max(-YOY_CAP, Math.min(YOY_CAP, yoyChange));
+
+  // Guard 2: Suppress clearly bad income data
+  const validIncome = (raw.i && raw.i >= MIN_VALID_INCOME) ? raw.i : null;
+
+  // Guard 3: Fix empty state (Puerto Rico nonmetro zips)
+  const state = raw.s || (raw.m.includes('PR') || raw.m.includes('Puerto Rico') ? 'PR' : '');
+
+  // Guard 4: Suppress census rent when it diverges wildly from FMR
+  let censusRent = raw.r ?? null;
+  if (censusRent) {
+    const fmr2br = raw.f[2];
+    const ratio = Math.max(censusRent / fmr2br, fmr2br / censusRent);
+    if (ratio > MAX_CENSUS_FMR_RATIO) {
+      censusRent = null; // Fall back to FMR-only range
+    }
+  }
 
   return {
     zip,
     city: raw.c || raw.m.split(',')[0] || `ZIP ${zip}`,
-    state: raw.s,
+    state,
     metro: raw.m,
     fmr,
     fmrPrior,
     yoyChange,
+    yoyCapped: yoyCapped || undefined,
     priorSource: raw.ps,
-    censusMedianRent: raw.r ?? null,
-    medianIncome: raw.i ?? null,
+    censusMedianRent: censusRent,
+    medianIncome: validIncome,
     fredTrend: null,
   };
 }
