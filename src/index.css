@@ -2,56 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Instrument+Serif&display=swap');
 
 @layer base {
   :root {
-    --background: 40 20% 98%;
-    --foreground: 220 40% 13%;
+    --background: 48 30% 96%;
+    --foreground: 200 15% 12%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 40% 13%;
+    --card: 48 25% 99%;
+    --card-foreground: 200 15% 12%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 40% 13%;
+    --popover: 48 25% 99%;
+    --popover-foreground: 200 15% 12%;
 
-    --primary: 220 55% 15%;
-    --primary-foreground: 40 20% 98%;
+    --primary: 200 15% 12%;
+    --primary-foreground: 48 30% 96%;
 
-    --secondary: 220 20% 94%;
-    --secondary-foreground: 220 40% 13%;
+    --secondary: 48 15% 91%;
+    --secondary-foreground: 200 15% 12%;
 
-    --muted: 220 15% 92%;
-    --muted-foreground: 220 10% 46%;
+    --muted: 48 12% 90%;
+    --muted-foreground: 200 8% 48%;
 
-    --accent: 220 80% 55%;
+    --accent: 4 80% 58%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 55%;
+    --destructive: 4 80% 58%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 88%;
-    --input: 220 15% 88%;
-    --ring: 220 80% 55%;
+    --border: 48 12% 86%;
+    --input: 48 12% 86%;
+    --ring: 200 15% 12%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    /* RentCheck custom tokens */
-    --verdict-overpaying: 0 72% 55%;
-    --verdict-fair: 38 92% 50%;
-    --verdict-good: 152 60% 40%;
-    --verdict-move: 152 60% 40%;
-    --verdict-stay: 220 80% 55%;
-    --verdict-close: 38 92% 50%;
+    /* Brand tokens */
+    --verdict-overpaying: 4 80% 58%;
+    --verdict-fair: 42 90% 52%;
+    --verdict-good: 160 55% 38%;
+    --verdict-move: 160 55% 38%;
+    --verdict-stay: 220 60% 50%;
+    --verdict-close: 42 90% 52%;
 
-    --surface-elevated: 0 0% 100%;
-    --surface-sunken: 220 20% 96%;
+    --ink: 200 15% 12%;
+    --cream: 48 30% 96%;
+    --warm-gray: 40 8% 70%;
 
-    --hero-gradient: linear-gradient(135deg, hsl(220 55% 15%), hsl(220 55% 22%));
-    --stat-shadow: 0 4px 24px -4px hsl(220 55% 15% / 0.12);
-
-    --font-display: 'DM Serif Display', serif;
-    --font-body: 'DM Sans', sans-serif;
+    --font-display: 'Instrument Serif', serif;
+    --font-body: 'Space Grotesk', sans-serif;
+    --font-mono: 'Space Mono', monospace;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -64,25 +63,25 @@
   }
 
   .dark {
-    --background: 220 40% 7%;
-    --foreground: 40 20% 96%;
-    --card: 220 35% 10%;
-    --card-foreground: 40 20% 96%;
-    --popover: 220 35% 10%;
-    --popover-foreground: 40 20% 96%;
-    --primary: 40 20% 96%;
-    --primary-foreground: 220 55% 15%;
-    --secondary: 220 25% 16%;
-    --secondary-foreground: 40 20% 96%;
-    --muted: 220 25% 16%;
-    --muted-foreground: 220 10% 60%;
-    --accent: 220 80% 55%;
+    --background: 200 15% 8%;
+    --foreground: 48 20% 92%;
+    --card: 200 12% 11%;
+    --card-foreground: 48 20% 92%;
+    --popover: 200 12% 11%;
+    --popover-foreground: 48 20% 92%;
+    --primary: 48 20% 92%;
+    --primary-foreground: 200 15% 8%;
+    --secondary: 200 10% 16%;
+    --secondary-foreground: 48 20% 92%;
+    --muted: 200 10% 16%;
+    --muted-foreground: 200 8% 55%;
+    --accent: 4 80% 58%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 4 62% 35%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 25% 18%;
-    --input: 220 25% 18%;
-    --ring: 220 80% 55%;
+    --border: 200 10% 18%;
+    --input: 200 10% 18%;
+    --ring: 48 20% 92%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -100,42 +99,68 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
     font-family: var(--font-body);
-  }
-
-  h1, h2, h3 {
-    font-family: var(--font-display);
+    font-feature-settings: 'ss01' on, 'cv01' on;
   }
 }
 
 @layer components {
-  .stat-card {
-    @apply rounded-xl bg-card p-6;
-    box-shadow: var(--stat-shadow);
+  .brand-card {
+    @apply rounded-lg bg-card border border-border p-6 md:p-8;
   }
 
-  .verdict-badge {
-    @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold;
+  .brand-card-dark {
+    background: hsl(var(--ink));
+    color: hsl(var(--cream));
+    @apply rounded-lg p-6 md:p-8 border-0;
   }
 
-  .verdict-badge-overpaying {
-    background: hsl(var(--verdict-overpaying) / 0.1);
+  .data-label {
+    font-family: var(--font-mono);
+    @apply text-xs uppercase tracking-widest text-muted-foreground;
+  }
+
+  .data-value {
+    font-family: var(--font-mono);
+    @apply text-lg font-bold tabular-nums;
+  }
+
+  .verdict-pill {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider;
+  }
+
+  .verdict-pill-overpaying {
+    background: hsl(var(--verdict-overpaying) / 0.12);
     color: hsl(var(--verdict-overpaying));
   }
 
-  .verdict-badge-fair {
-    background: hsl(var(--verdict-fair) / 0.1);
+  .verdict-pill-fair {
+    background: hsl(var(--verdict-fair) / 0.12);
     color: hsl(var(--verdict-fair));
   }
 
-  .verdict-badge-good {
-    background: hsl(var(--verdict-good) / 0.1);
+  .verdict-pill-good {
+    background: hsl(var(--verdict-good) / 0.12);
     color: hsl(var(--verdict-good));
   }
 
-  .hero-section {
-    background: var(--hero-gradient);
-    color: hsl(var(--primary-foreground));
+  .section-rule {
+    @apply border-t border-border pt-6 mt-6;
+  }
+
+  .percentile-bar {
+    @apply relative h-2 w-full rounded-full overflow-hidden;
+    background: hsl(var(--border));
+  }
+
+  .percentile-fill {
+    @apply absolute left-0 top-0 h-full rounded-full transition-all duration-700 ease-out;
+  }
+
+  .percentile-marker {
+    @apply absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 transition-all duration-700 ease-out;
+    border-color: hsl(var(--card));
+    transform: translateX(-50%) translateY(-50%);
   }
 }
