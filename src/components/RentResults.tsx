@@ -72,6 +72,11 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
     : isAboveMarket ? 'Above Market'
     : 'Below Market';
 
+  // Plain-language helpers
+  const city = rentData.city;
+  const brLabel = bedroomLabels[formData.bedrooms];
+  const brShort = formData.bedrooms === 'studio' ? 'studios' : brLabel.replace('-Bedroom', 'BR');
+
   // Shared section wrapper for consistent full-width + padding
   const Section = ({ children, className = '', ...props }: { children: React.ReactNode; className?: string; [key: string]: any }) => (
     <div className={`px-6 md:px-12 lg:px-20 ${className}`} {...props}>
@@ -102,18 +107,18 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
                     <span className="text-foreground">{marketYoy}%</span>
                   </h2>
 
-                  <p className="text-lg text-muted-foreground mt-4 max-w-md">
-                    Your proposed increase vs. the market average
+                  <p className="text-lg text-muted-foreground mt-5 max-w-lg leading-relaxed">
+                    Rents in {city} rose {marketYoy}% this year. Your landlord is raising yours {increasePct}%.
                   </p>
 
                   {isAboveMarket && multiplier > 0 && (
-                    <p className="text-lg mt-6 text-foreground">
-                      That's <span className={`font-bold ${verdictColor}`}>{multiplier}×</span> the market rate —{' '}
+                    <p className="text-lg mt-4 text-foreground">
+                      That's <span className={`font-bold ${verdictColor}`}>{multiplier}×</span> faster than {city} —{' '}
                       <span className="font-mono font-bold">${fmt(excessAnnual)}</span> extra per year
                     </p>
                   )}
                   {isBelowMarket && (
-                    <p className="text-lg mt-6 text-verdict-good font-medium">Below market — you're in good shape ✓</p>
+                    <p className="text-lg mt-4 text-verdict-good font-medium">Below the {city} average — you're in good shape ✓</p>
                   )}
                 </>
               ) : (
@@ -217,30 +222,30 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
         <div className="border-t border-border/50">
           <Section className="py-14 md:py-20">
             <div className="max-w-3xl">
-              <h2 className="font-display text-3xl md:text-4xl text-foreground mb-2">Market Data</h2>
+              <h2 className="font-display text-3xl md:text-4xl text-foreground mb-2">Rents in {city}</h2>
               <p className="text-muted-foreground text-base mb-10">
-                Federal benchmarks for {bedroomLabels[formData.bedrooms]} in {rentData.zip}
+                What {brShort} actually cost in your area
               </p>
 
               <div className="divide-y divide-border">
                 <div className="data-row py-5">
-                  <span className="data-row-label text-base">YoY rent change</span>
+                  <span className="data-row-label text-base">How fast {city} rents are rising</span>
                   <span className={`data-row-value text-base flex items-center gap-2 ${rentData.yoyChange > 0 ? 'text-verdict-overpaying' : 'text-verdict-good'}`}>
                     {rentData.yoyChange > 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                     {rentData.yoyChange > 0 ? '+' : ''}{rentData.yoyChange}%
                   </span>
                 </div>
                 <div className="data-row py-5">
-                  <span className="data-row-label text-base">Typical range</span>
+                  <span className="data-row-label text-base">What most {brShort} in {city} go for</span>
                   <span className="data-row-value text-base">${fmt(range.low)} – ${fmt(range.high)}</span>
                 </div>
                 <div className="data-row py-5">
-                  <span className="data-row-label text-base">HUD Fair Market Rent</span>
+                  <span className="data-row-label text-base">{city} {brLabel.toLowerCase()} benchmark</span>
                   <span className="data-row-value text-base">${fmt(fmr)}</span>
                 </div>
                 {rentData.censusMedian && (
                   <div className="data-row py-5">
-                    <span className="data-row-label text-base">Census median</span>
+                    <span className="data-row-label text-base">{city} median rent</span>
                     <span className="data-row-value text-base">${fmt(rentData.censusMedian)}</span>
                   </div>
                 )}
@@ -301,6 +306,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
                     newRent={newRent}
                     medianHouseholdIncome={rentData.medianHouseholdIncome}
                     zip={rentData.zip}
+                    city={city}
                   />
                 </div>
               </div>

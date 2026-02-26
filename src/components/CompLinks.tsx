@@ -59,9 +59,9 @@ const CompLinks = ({ zip, city, state, bedrooms }: CompLinksProps) => {
 
   return (
     <div>
-      <h2 className="font-display text-xl text-foreground mb-1">See What's Available</h2>
+      <h2 className="font-display text-xl text-foreground mb-1">What's available in {city}</h2>
       <p className="text-sm text-muted-foreground mb-4">
-        {bedroomLabel[bedrooms]} rentals in {zip} — verify your landlord's number
+        Browse {bedroomLabel[bedrooms]} rentals near {zip} — see what you'd actually pay
       </p>
 
       <div className="flex flex-wrap gap-2">

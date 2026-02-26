@@ -5,11 +5,12 @@ interface AffordabilityCardProps {
   newRent: number;
   medianHouseholdIncome: number | null;
   zip: string;
+  city?: string;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
-const AffordabilityCard = ({ currentRent, newRent, medianHouseholdIncome, zip }: AffordabilityCardProps) => {
+const AffordabilityCard = ({ currentRent, newRent, medianHouseholdIncome, zip, city }: AffordabilityCardProps) => {
   if (!medianHouseholdIncome) return null;
 
   const monthlyIncome = medianHouseholdIncome / 12;
@@ -40,8 +41,8 @@ const AffordabilityCard = ({ currentRent, newRent, medianHouseholdIncome, zip }:
     <div>
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="font-display text-xl text-foreground mb-0.5">Affordability</h2>
-          <p className="text-sm text-muted-foreground">Rent burden vs. area median income</p>
+          <h2 className="font-display text-xl text-foreground mb-0.5">Can you afford this?</h2>
+          <p className="text-sm text-muted-foreground">Your rent vs. what {city || 'local'} households earn</p>
         </div>
         <span className={`verdict-pill ${isSevereBurden ? 'verdict-pill-overpaying' : isCostBurdened ? 'verdict-pill-fair' : 'verdict-pill-good'}`}>
           {burdenLabel}
@@ -50,7 +51,7 @@ const AffordabilityCard = ({ currentRent, newRent, medianHouseholdIncome, zip }:
 
       <div className="divide-y divide-border">
         <div className="data-row">
-          <span className="data-row-label">Area median income</span>
+          <span className="data-row-label">{city || 'Area'} median income</span>
           <span className="data-row-value">${fmt(medianHouseholdIncome)}/yr</span>
         </div>
         <div className="data-row">
@@ -62,7 +63,7 @@ const AffordabilityCard = ({ currentRent, newRent, medianHouseholdIncome, zip }:
           <span className={`data-row-value ${burdenColor}`}>{newBurden}%</span>
         </div>
         <div className="data-row">
-          <span className="data-row-label">HUD threshold</span>
+          <span className="data-row-label">Affordability limit</span>
           <span className="data-row-value">30%</span>
         </div>
       </div>
@@ -96,7 +97,7 @@ const AffordabilityCard = ({ currentRent, newRent, medianHouseholdIncome, zip }:
       )}
 
       <p className="text-[10px] text-muted-foreground mt-3">
-        Census ACS median household income for {zip}. Your income may differ.
+        Based on median household income in {zip}. Your income may differ.
       </p>
     </div>
   );
