@@ -1,17 +1,54 @@
 import { motion } from 'framer-motion';
 import { RentcastResult } from '@/hooks/useRentcast';
 import { Loader2, MapPin } from 'lucide-react';
+import { BedroomType } from '@/data/rentData';
 
 interface RentcastCardProps {
   data: RentcastResult | null;
   loading: boolean;
   error: string | null;
   city: string;
+  zip: string;
+  state: string;
+  bedrooms: BedroomType;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
-const RentcastCard = ({ data, loading, error, city }: RentcastCardProps) => {
+const bedroomNum: Record<BedroomType, string> = {
+  studio: '0', oneBr: '1', twoBr: '2', threeBr: '3', fourBr: '4',
+};
+
+const bedroomLabel: Record<BedroomType, string> = {
+  studio: 'studio', oneBr: '1-bedroom', twoBr: '2-bedroom', threeBr: '3-bedroom', fourBr: '4-bedroom',
+};
+
+function buildLinks(zip: string, city: string, state: string, bedrooms: BedroomType) {
+  const citySlug = city.toLowerCase().replace(/\s+/g, '-');
+  const stateSlug = state.toLowerCase();
+  const beds = bedroomNum[bedrooms];
+  const isNYC = state === 'NY' && ['New York', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'].includes(city);
+
+  const links: { name: string; url: string }[] = [];
+
+  if (isNYC) {
+    links.push({
+      name: 'StreetEasy',
+      url: `https://streeteasy.com/for-rent/${citySlug}?bedrooms=${bedrooms === 'studio' ? 'studio' : beds}`,
+    });
+  }
+
+  links.push(
+    { name: 'Zillow', url: `https://www.zillow.com/homes/for_rent/${zip}/${beds}-_beds/` },
+    { name: 'Apartments.com', url: `https://www.apartments.com/${citySlug}-${stateSlug}-${zip}/${bedrooms === 'studio' ? 'studios' : beds + '-bedrooms'}/` },
+    { name: 'Realtor.com', url: `https://www.realtor.com/apartments/${zip}/beds-${beds}` },
+    { name: 'HotPads', url: `https://hotpads.com/${citySlug}-${stateSlug}/apartments-for-rent/${beds === '0' ? 'studio' : beds + '-beds'}` },
+  );
+
+  return links;
+}
+
+const RentcastCard = ({ data, loading, error, city, zip, state, bedrooms }: RentcastCardProps) => {
   if (loading) {
     return (
       <div className="text-center py-8">
@@ -28,6 +65,13 @@ const RentcastCard = ({ data, loading, error, city }: RentcastCardProps) => {
 
   if (!hasEstimate && !hasComps) return null;
 
+  // FIX 6: Wide range note
+  const rangeSpread = (data.rentRangeHigh ?? 0) - (data.rentRangeLow ?? 0);
+  const showRangeNote = hasEstimate && data.rentRangeLow !== null && data.rentRangeHigh !== null && rangeSpread > 1000;
+
+  // FIX 4: inline external links when comps exist
+  const externalLinks = buildLinks(zip, city, state, bedrooms);
+
   return (
     <div>
       <h2 className="section-title">Rentcast Market Data</h2>
@@ -41,6 +85,9 @@ const RentcastCard = ({ data, loading, error, city }: RentcastCardProps) => {
               <p className="font-display text-2xl tracking-tight text-foreground" style={{ letterSpacing: '-0.02em' }}>
                 ${fmt(data.rentRangeLow)} – ${fmt(data.rentRangeHigh)}
               </p>
+              {showRangeNote && (
+                <p className="text-xs text-muted-foreground mt-1">Range varies due to different building types and unit sizes in this area.</p>
+              )}
             </div>
           ) : (
             <div className="text-center">
@@ -90,6 +137,21 @@ const RentcastCard = ({ data, loading, error, city }: RentcastCardProps) => {
       )}
 
       <p className="text-[11px] text-muted-foreground mt-3 text-center">Source: Rentcast</p>
+
+      {/* FIX 4: Inline external links when comps exist */}
+      {hasComps && (
+        <p className="text-sm text-muted-foreground mt-4 text-center">
+          Want to browse more?{' '}
+          {externalLinks.map((link, i) => (
+            <span key={link.name}>
+              <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                {link.name} →
+              </a>
+              {i < externalLinks.length - 1 && <span className="mx-1.5">·</span>}
+            </span>
+          ))}
+        </p>
+      )}
     </div>
   );
 };
