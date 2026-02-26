@@ -69,7 +69,7 @@ Based on current rent data for ${city}, ${state} (${zip}):
 
 I'd love to discuss a renewal closer to what ${city} rents are actually doing — around ${counterPct}% ($${fmt(counterRent)}/month).
 
-I've included my rent analysis from RentCheck for your reference.
+I've included my rent analysis from RentReply for your reference.
 
 Thank you for your consideration.
 
