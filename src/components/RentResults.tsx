@@ -19,9 +19,9 @@ interface RentResultsProps {
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
 const fade = (delay: number) => ({
-  initial: { opacity: 0, y: 18 },
+  initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] as const },
+  transition: { duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] as const },
 });
 
 const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
@@ -72,223 +72,272 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
     : isAboveMarket ? 'Above Market'
     : 'Below Market';
 
+  // Shared section wrapper for consistent full-width + padding
+  const Section = ({ children, className = '', ...props }: { children: React.ReactNode; className?: string; [key: string]: any }) => (
+    <div className={`px-6 md:px-12 lg:px-20 ${className}`} {...props}>
+      {children}
+    </div>
+  );
+
   return (
-    <div className="space-y-16 md:space-y-20">
+    <div>
 
-      {/* ━━━ SECTION 1: Hero Verdict ━━━ */}
-      <motion.section {...fade(0)} className="text-center">
-        {hasIncrease ? (
-          <>
-            <span className={`verdict-pill ${pillClass}`}>{verdictLabel}</span>
+      {/* ━━━ HERO: Verdict — full-bleed background ━━━ */}
+      <motion.div {...fade(0)}>
+        <div className="bg-secondary/30 border-b border-border/50">
+          <Section className="py-16 md:py-24">
+            <div className="max-w-4xl">
+              {hasIncrease ? (
+                <>
+                  <div className="flex flex-wrap items-center gap-3 mb-6">
+                    <span className={`verdict-pill ${pillClass}`}>{verdictLabel}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {bedroomLabels[formData.bedrooms]} · {rentData.city}, {rentData.state} {rentData.zip}
+                    </span>
+                  </div>
 
-            <h2 className="font-display text-[clamp(3rem,9vw,5.5rem)] leading-[0.88] tracking-tight mt-6">
-              <span className={verdictColor}>{increasePct}%</span>
-              <span className="block text-[0.35em] text-muted-foreground font-body font-normal tracking-wide mt-3">
-                vs {marketYoy}% market average
-              </span>
-            </h2>
+                  <h2 className="font-display text-[clamp(3.5rem,10vw,7rem)] leading-[0.85] tracking-tight">
+                    <span className={verdictColor}>{increasePct}%</span>
+                    <span className="text-muted-foreground text-[0.3em] font-body font-normal mx-4 align-middle">vs</span>
+                    <span className="text-foreground">{marketYoy}%</span>
+                  </h2>
 
-            <p className="text-sm text-muted-foreground mt-4 max-w-sm mx-auto leading-relaxed">
-              {bedroomLabels[formData.bedrooms]} · {rentData.city}, {rentData.state} {rentData.zip}
-            </p>
+                  <p className="text-lg text-muted-foreground mt-4 max-w-md">
+                    Your proposed increase vs. the market average
+                  </p>
 
-            {isAboveMarket && multiplier > 0 && (
-              <p className="text-base mt-6 text-foreground">
-                Your increase is <span className={`font-bold ${verdictColor}`}>{multiplier}×</span> the market rate —{' '}
-                <span className="font-mono font-bold">${fmt(excessAnnual)}</span> extra per year
-              </p>
-            )}
-            {isBelowMarket && (
-              <p className="text-base mt-6 text-verdict-good font-medium">Below market — you're in good shape ✓</p>
-            )}
-          </>
-        ) : (
-          <>
-            <h2 className="font-display text-3xl text-foreground">No increase entered</h2>
-            <p className="text-muted-foreground mt-2">Enter your proposed increase to compare</p>
-          </>
-        )}
-      </motion.section>
+                  {isAboveMarket && multiplier > 0 && (
+                    <p className="text-lg mt-6 text-foreground">
+                      That's <span className={`font-bold ${verdictColor}`}>{multiplier}×</span> the market rate —{' '}
+                      <span className="font-mono font-bold">${fmt(excessAnnual)}</span> extra per year
+                    </p>
+                  )}
+                  {isBelowMarket && (
+                    <p className="text-lg mt-6 text-verdict-good font-medium">Below market — you're in good shape ✓</p>
+                  )}
+                </>
+              ) : (
+                <>
+                  <h2 className="font-display text-4xl text-foreground">No increase entered</h2>
+                  <p className="text-muted-foreground mt-2 text-lg">Enter your proposed increase to compare</p>
+                </>
+              )}
+            </div>
+          </Section>
+        </div>
+      </motion.div>
 
-      {/* ━━━ SECTION 2: Key Numbers ━━━ */}
+      {/* ━━━ KEY NUMBERS — full width grid ━━━ */}
       {hasIncrease && (
-        <motion.section {...fade(0.08)}>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            {[
-              { label: 'Current Rent', value: `$${fmt(formData.currentRent)}` },
-              { label: 'Proposed Rent', value: `$${fmt(newRent)}`, highlight: true },
-              { label: 'Extra Per Year', value: `$${fmt(annualExtra)}` },
-              { label: 'Break-even', value: breakEven.months === Infinity ? '—' : `${breakEven.months.toFixed(0)} mo` },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <p className="data-label mb-2">{stat.label}</p>
-                <p className={`font-mono text-2xl md:text-3xl font-bold tracking-tight ${stat.highlight ? verdictColor : 'text-foreground'}`}>
-                  {stat.value}
-                </p>
-              </div>
-            ))}
-          </div>
-        </motion.section>
-      )}
-
-      {/* ━━━ SECTION 3: Negotiate CTA ━━━ */}
-      {hasIncrease && isAboveMarket && (
-        <motion.section {...fade(0.12)}>
-          {!showLetter ? (
-            <button
-              onClick={() => setShowLetter(true)}
-              className="w-full text-left rounded-2xl p-8 md:p-10 border-2 border-primary/20 bg-primary/[0.03] hover:border-primary/40 hover:bg-primary/[0.06] transition-all group"
-            >
-              <div className="flex items-start gap-5">
-                <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-primary/10 shrink-0">
-                  <FileText className="w-6 h-6 text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-display text-2xl text-foreground mb-1.5 group-hover:text-primary transition-colors">
-                    Generate Your Negotiation Letter
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Pre-written with your data, backed by HUD and Census numbers. Customize the tone, set your counter-offer, and send it to your landlord.
+        <motion.div {...fade(0.06)}>
+          <Section className="py-12 md:py-16">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 max-w-4xl">
+              {[
+                { label: 'Current Rent', value: `$${fmt(formData.currentRent)}` },
+                { label: 'Proposed Rent', value: `$${fmt(newRent)}`, highlight: true },
+                { label: 'Extra Per Year', value: `$${fmt(annualExtra)}` },
+                { label: 'Break-even', value: breakEven.months === Infinity ? '—' : `${breakEven.months.toFixed(0)} months` },
+              ].map((stat) => (
+                <div key={stat.label}>
+                  <p className="data-label mb-2">{stat.label}</p>
+                  <p className={`font-mono text-3xl md:text-4xl font-bold tracking-tight ${stat.highlight ? verdictColor : 'text-foreground'}`}>
+                    {stat.value}
                   </p>
                 </div>
+              ))}
+            </div>
+          </Section>
+        </motion.div>
+      )}
+
+      {/* ━━━ NEGOTIATE CTA ━━━ */}
+      {hasIncrease && isAboveMarket && (
+        <motion.div {...fade(0.1)}>
+          <div className="border-y border-border/50 bg-primary/[0.02]">
+            <Section className="py-12 md:py-16">
+              <div className="max-w-3xl">
+                {!showLetter ? (
+                  <button
+                    onClick={() => setShowLetter(true)}
+                    className="w-full text-left group"
+                  >
+                    <div className="flex items-start gap-6">
+                      <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-primary/10 shrink-0 group-hover:bg-primary/15 transition-colors">
+                        <FileText className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-display text-2xl md:text-3xl text-foreground mb-2 group-hover:text-primary transition-colors">
+                          Generate Your Negotiation Letter
+                        </h3>
+                        <p className="text-muted-foreground text-base leading-relaxed max-w-lg">
+                          Pre-written with your data, backed by HUD and Census numbers. Customize the tone, set your counter-offer, and send it to your landlord.
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                ) : (
+                  <NegotiationLetter
+                    currentRent={formData.currentRent}
+                    newRent={newRent}
+                    increasePct={increasePct}
+                    marketYoy={marketYoy}
+                    fmr={fmr}
+                    censusMedian={rentData.censusMedian}
+                    medianHouseholdIncome={rentData.medianHouseholdIncome}
+                    zip={rentData.zip}
+                    city={rentData.city}
+                    state={rentData.state}
+                    bedrooms={formData.bedrooms}
+                  />
+                )}
               </div>
-            </button>
-          ) : (
-            <div className="rounded-2xl border border-border p-6 md:p-8">
-              <NegotiationLetter
-                currentRent={formData.currentRent}
-                newRent={newRent}
+            </Section>
+          </div>
+        </motion.div>
+      )}
+
+      {/* ━━━ SHARE ━━━ */}
+      {hasIncrease && isAboveMarket && (
+        <motion.div {...fade(0.12)}>
+          <Section className="py-10">
+            <div className="max-w-3xl">
+              <ShareSection
                 increasePct={increasePct}
-                marketYoy={marketYoy}
-                fmr={fmr}
-                censusMedian={rentData.censusMedian}
-                medianHouseholdIncome={rentData.medianHouseholdIncome}
+                marketPct={marketYoy}
+                excessAnnual={excessAnnual}
+                multiplier={multiplier}
+              />
+            </div>
+          </Section>
+        </motion.div>
+      )}
+
+      {/* ━━━ MARKET DATA ━━━ */}
+      <motion.div {...fade(0.14)}>
+        <div className="border-t border-border/50">
+          <Section className="py-14 md:py-20">
+            <div className="max-w-3xl">
+              <h2 className="font-display text-3xl md:text-4xl text-foreground mb-2">Market Data</h2>
+              <p className="text-muted-foreground text-base mb-10">
+                Federal benchmarks for {bedroomLabels[formData.bedrooms]} in {rentData.zip}
+              </p>
+
+              <div className="divide-y divide-border">
+                <div className="data-row py-5">
+                  <span className="data-row-label text-base">YoY rent change</span>
+                  <span className={`data-row-value text-base flex items-center gap-2 ${rentData.yoyChange > 0 ? 'text-verdict-overpaying' : 'text-verdict-good'}`}>
+                    {rentData.yoyChange > 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                    {rentData.yoyChange > 0 ? '+' : ''}{rentData.yoyChange}%
+                  </span>
+                </div>
+                <div className="data-row py-5">
+                  <span className="data-row-label text-base">Typical range</span>
+                  <span className="data-row-value text-base">${fmt(range.low)} – ${fmt(range.high)}</span>
+                </div>
+                <div className="data-row py-5">
+                  <span className="data-row-label text-base">HUD Fair Market Rent</span>
+                  <span className="data-row-value text-base">${fmt(fmr)}</span>
+                </div>
+                {rentData.censusMedian && (
+                  <div className="data-row py-5">
+                    <span className="data-row-label text-base">Census median</span>
+                    <span className="data-row-value text-base">${fmt(rentData.censusMedian)}</span>
+                  </div>
+                )}
+                {hasIncrease && (
+                  <div className="data-row py-5">
+                    <span className="data-row-label text-base">Your increase</span>
+                    <span className="data-row-value text-base">
+                      +{increasePct}%{' '}
+                      <span className="text-muted-foreground font-normal text-sm ml-2">(+${fmt(increaseAmount)}/mo)</span>
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {hasIncrease && (
+                <div className="callout mt-8">
+                  <Scale className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-mono text-base font-semibold text-foreground">
+                      Break-even: {breakEven.months === Infinity ? '∞' : breakEven.months.toFixed(1)} months
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {breakEven.verdict === 'move' && `Moving saves ~$${fmt(Math.abs(breakEven.yearOneSavings))} in year 1`}
+                      {breakEven.verdict === 'close' && `Close call — depends on your priorities`}
+                      {breakEven.verdict === 'stay' && `Staying is likely the smarter move`}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </Section>
+        </div>
+      </motion.div>
+
+      {/* ━━━ TWO-COLUMN: Scenarios + Affordability ━━━ */}
+      {hasIncrease && (
+        <motion.div {...fade(0.18)}>
+          <div className="border-t border-border/50 bg-secondary/20">
+            <Section className="py-14 md:py-20">
+              <div className="grid md:grid-cols-2 gap-12 lg:gap-20 max-w-5xl">
+                <div>
+                  <ScenarioToggles
+                    currentRent={newRent}
+                    fmr={fmr}
+                    scenarioNewRent={scenarioNewRent}
+                    setScenarioNewRent={setScenarioNewRent}
+                    scenarioMovingCost={scenarioMovingCost}
+                    setScenarioMovingCost={setScenarioMovingCost}
+                    scenarioNegotiatedPct={scenarioNegotiatedPct}
+                    setScenarioNegotiatedPct={setScenarioNegotiatedPct}
+                    breakEven={breakEven}
+                    hasIncrease={hasIncrease}
+                  />
+                </div>
+                <div>
+                  <AffordabilityCard
+                    currentRent={formData.currentRent}
+                    newRent={newRent}
+                    medianHouseholdIncome={rentData.medianHouseholdIncome}
+                    zip={rentData.zip}
+                  />
+                </div>
+              </div>
+            </Section>
+          </div>
+        </motion.div>
+      )}
+
+      {/* ━━━ COMPS ━━━ */}
+      <motion.div {...fade(0.22)} id="comps-section">
+        <div className="border-t border-border/50">
+          <Section className="py-14 md:py-20">
+            <div className="max-w-3xl">
+              <CompLinks
                 zip={rentData.zip}
                 city={rentData.city}
                 state={rentData.state}
                 bedrooms={formData.bedrooms}
               />
             </div>
-          )}
-        </motion.section>
-      )}
-
-      {/* ━━━ SECTION 4: Share ━━━ */}
-      {hasIncrease && isAboveMarket && (
-        <motion.section {...fade(0.14)}>
-          <ShareSection
-            increasePct={increasePct}
-            marketPct={marketYoy}
-            excessAnnual={excessAnnual}
-            multiplier={multiplier}
-          />
-        </motion.section>
-      )}
-
-      {/* ━━━ SECTION 5: Market Data ━━━ */}
-      <motion.section {...fade(0.16)}>
-        <h2 className="font-display text-2xl md:text-3xl text-foreground mb-2">Market Data</h2>
-        <p className="text-muted-foreground mb-8">
-          Federal benchmarks for {bedroomLabels[formData.bedrooms]} in {rentData.zip}
-        </p>
-
-        <div className="divide-y divide-border">
-          <div className="data-row py-4">
-            <span className="data-row-label">YoY rent change</span>
-            <span className={`data-row-value flex items-center gap-1.5 ${rentData.yoyChange > 0 ? 'text-verdict-overpaying' : 'text-verdict-good'}`}>
-              {rentData.yoyChange > 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
-              {rentData.yoyChange > 0 ? '+' : ''}{rentData.yoyChange}%
-            </span>
-          </div>
-          <div className="data-row py-4">
-            <span className="data-row-label">Typical range</span>
-            <span className="data-row-value">${fmt(range.low)} – ${fmt(range.high)}</span>
-          </div>
-          <div className="data-row py-4">
-            <span className="data-row-label">HUD Fair Market Rent</span>
-            <span className="data-row-value">${fmt(fmr)}</span>
-          </div>
-          {rentData.censusMedian && (
-            <div className="data-row py-4">
-              <span className="data-row-label">Census median</span>
-              <span className="data-row-value">${fmt(rentData.censusMedian)}</span>
-            </div>
-          )}
-          {hasIncrease && (
-            <div className="data-row py-4">
-              <span className="data-row-label">Your increase</span>
-              <span className="data-row-value">
-                +{increasePct}%{' '}
-                <span className="text-muted-foreground font-normal text-xs ml-1">(+${fmt(increaseAmount)}/mo)</span>
-              </span>
-            </div>
-          )}
+          </Section>
         </div>
+      </motion.div>
 
-        {hasIncrease && (
-          <div className="callout mt-6">
-            <Scale className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-            <div>
-              <p className="font-mono text-sm font-semibold text-foreground">
-                Break-even: {breakEven.months === Infinity ? '∞' : breakEven.months.toFixed(1)} months
-              </p>
-              <p className="text-sm text-muted-foreground mt-0.5">
-                {breakEven.verdict === 'move' && `Moving saves ~$${fmt(Math.abs(breakEven.yearOneSavings))} in year 1`}
-                {breakEven.verdict === 'close' && `Close call — depends on your priorities`}
-                {breakEven.verdict === 'stay' && `Staying is likely the smarter move`}
-              </p>
+      {/* ━━━ EMAIL ━━━ */}
+      <motion.div {...fade(0.24)}>
+        <div className="border-t border-border/50 bg-secondary/20">
+          <Section className="py-14 md:py-20">
+            <div className="max-w-md">
+              <EmailCapture />
             </div>
-          </div>
-        )}
-      </motion.section>
-
-      {/* ━━━ SECTION 6: What If ━━━ */}
-      {hasIncrease && (
-        <motion.section {...fade(0.2)}>
-          <ScenarioToggles
-            currentRent={newRent}
-            fmr={fmr}
-            scenarioNewRent={scenarioNewRent}
-            setScenarioNewRent={setScenarioNewRent}
-            scenarioMovingCost={scenarioMovingCost}
-            setScenarioMovingCost={setScenarioMovingCost}
-            scenarioNegotiatedPct={scenarioNegotiatedPct}
-            setScenarioNegotiatedPct={setScenarioNegotiatedPct}
-            breakEven={breakEven}
-            hasIncrease={hasIncrease}
-          />
-        </motion.section>
-      )}
-
-      {/* ━━━ SECTION 7: Affordability ━━━ */}
-      {hasIncrease && (
-        <motion.section {...fade(0.24)}>
-          <AffordabilityCard
-            currentRent={formData.currentRent}
-            newRent={newRent}
-            medianHouseholdIncome={rentData.medianHouseholdIncome}
-            zip={rentData.zip}
-          />
-        </motion.section>
-      )}
-
-      {/* ━━━ SECTION 8: Comps ━━━ */}
-      <motion.section {...fade(0.28)} id="comps-section">
-        <CompLinks
-          zip={rentData.zip}
-          city={rentData.city}
-          state={rentData.state}
-          bedrooms={formData.bedrooms}
-        />
-      </motion.section>
-
-      {/* ━━━ SECTION 9: Email ━━━ */}
-      <motion.section {...fade(0.3)}>
-        <EmailCapture />
-      </motion.section>
+          </Section>
+        </div>
+      </motion.div>
 
       {/* ━━━ Back ━━━ */}
-      <div className="text-center pb-8">
+      <Section className="py-10 text-center border-t border-border/50">
         <button
           onClick={onReset}
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -296,7 +345,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
           <ArrowLeft className="w-3.5 h-3.5" />
           Check another increase
         </button>
-      </div>
+      </Section>
     </div>
   );
 };

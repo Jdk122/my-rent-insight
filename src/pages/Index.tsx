@@ -23,7 +23,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Nav */}
-      <nav className="flex items-center justify-between px-6 md:px-10 py-5">
+      <nav className="flex items-center justify-between px-6 md:px-12 lg:px-20 py-5 border-b border-border/50">
         <span className="font-display text-xl text-foreground tracking-tight cursor-pointer" onClick={() => setResults(null)}>
           Rent<span className="text-primary">Check</span>
         </span>
@@ -32,77 +32,57 @@ const Index = () => {
         </span>
       </nav>
 
-      {/* Hero / Header */}
-      <header className={`px-6 md:px-10 max-w-2xl mx-auto ${results ? 'pt-6 pb-2' : 'pt-12 md:pt-20 pb-8 md:pb-12'}`}>
-        <AnimatePresence mode="wait">
-          {!results ? (
-            <motion.div
-              key="hero"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.4 }}
-            >
-              <h1 className="font-display text-[clamp(2.8rem,8vw,5rem)] text-foreground leading-[0.9] tracking-tight">
-                Is your rent
-                <br />
-                increase <span className="text-primary">fair?</span>
-              </h1>
-              <p className="mt-6 text-base md:text-lg text-muted-foreground max-w-md leading-relaxed">
-                Compare your landlord's number against federal data.
-                Get the facts, a negotiation letter, and your next move.
-              </p>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="results-header"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-            >
-              <p className="data-label mb-1">Your Report</p>
-              <h1 className="font-display text-2xl md:text-3xl text-foreground leading-tight tracking-tight">
-                {results.rentData.city}, {results.rentData.state} {results.rentData.zip}
-              </h1>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </header>
+      <AnimatePresence mode="wait">
+        {!results ? (
+          <motion.div
+            key="landing"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+          >
+            {/* Landing hero — full width feel */}
+            <div className="px-6 md:px-12 lg:px-20 pt-16 md:pt-24 lg:pt-32 pb-12 md:pb-16">
+              <div className="max-w-3xl">
+                <h1 className="font-display text-[clamp(3rem,8vw,5.5rem)] text-foreground leading-[0.88] tracking-tight">
+                  Is your rent
+                  <br />
+                  increase <span className="text-primary">fair?</span>
+                </h1>
+                <p className="mt-6 md:mt-8 text-lg md:text-xl text-muted-foreground max-w-lg leading-relaxed">
+                  Compare your landlord's number against federal data.
+                  Get the facts, a negotiation letter, and your next move.
+                </p>
+              </div>
+            </div>
 
-      {/* Main */}
-      <main className={`max-w-xl mx-auto px-6 md:px-10 ${results ? 'pb-12' : 'pb-24'}`}>
-        <AnimatePresence mode="wait">
-          {!results ? (
-            <motion.div
-              key="form"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.35 }}
-            >
-              <RentForm onSubmit={handleSubmit} />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="results"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.35 }}
-            >
-              <RentResults
-                formData={results.formData}
-                rentData={results.rentData}
-                onReset={() => setResults(null)}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
+            {/* Form — centered but not cramped */}
+            <div className="px-6 md:px-12 lg:px-20 pb-32">
+              <div className="max-w-lg">
+                <RentForm onSubmit={handleSubmit} />
+              </div>
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="results"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+          >
+            <RentResults
+              formData={results.formData}
+              rentData={results.rentData}
+              onReset={() => setResults(null)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Footer */}
-      <footer className="border-t border-border px-6 md:px-10 py-8">
-        <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+      <footer className="border-t border-border px-6 md:px-12 lg:px-20 py-8">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <span className="font-display text-base text-foreground">
             Rent<span className="text-primary">Check</span>
           </span>
