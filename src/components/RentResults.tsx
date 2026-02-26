@@ -92,10 +92,8 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
               )}
             </h1>
 
-            <p className="text-base text-muted-foreground max-w-[440px] mx-auto mt-4 leading-relaxed">
-              Rents in <strong className="text-foreground font-semibold">{city}, {rentData.state}</strong> rose <strong className="text-foreground font-semibold">{marketYoy}%</strong> this year.
-              Your landlord is raising yours <strong className="text-foreground font-semibold">{increasePct}%</strong>.
-              {isAboveMarket && <> That's <strong className="text-foreground font-semibold">${fmt(excessAnnual)}/year more</strong> than the typical increase in your area.</>}
+            <p className="text-lg text-muted-foreground max-w-[440px] mx-auto mt-4 leading-relaxed">
+              {city} rents rose <strong className="text-foreground font-bold text-xl">{marketYoy}%</strong> — yours is going up <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong>.
             </p>
 
             <button onClick={onReset} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mt-4">
