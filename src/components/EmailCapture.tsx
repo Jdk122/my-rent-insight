@@ -59,7 +59,7 @@ const EmailCapture = ({ city }: EmailCaptureProps) => {
           required
           className="flex-1 px-4 py-3 text-sm border border-border rounded bg-card text-foreground outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
         />
-        <button type="submit" className="bg-foreground text-background px-5 py-3 rounded text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap">
+        <button type="submit" className="bg-primary text-primary-foreground px-5 py-3 rounded text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap">
           Remind me
         </button>
       </form>

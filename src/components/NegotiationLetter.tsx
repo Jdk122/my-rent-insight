@@ -121,7 +121,7 @@ const NegotiationLetter = ({
 
       {/* Actions */}
       <div className="flex gap-3 mt-5">
-        <button onClick={handleCopy} className="bg-foreground text-background px-7 py-3 rounded text-sm font-semibold hover:opacity-90 transition-opacity">
+        <button onClick={handleCopy} className="bg-primary text-primary-foreground px-7 py-3 rounded text-sm font-semibold hover:opacity-90 transition-opacity">
           Copy letter
         </button>
         <button onClick={handleDownload} className="border border-border px-7 py-3 rounded text-sm font-medium text-foreground hover:border-foreground transition-colors">
