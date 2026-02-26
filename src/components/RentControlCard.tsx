@@ -18,7 +18,7 @@ const RentControlCard = ({ zip, increasePct }: RentControlCardProps) => {
   return (
     <div>
       <h2 className="font-display text-xl text-foreground mb-1">Legal Context</h2>
-      <p className="text-[13px] text-muted-foreground mb-4">Rent laws that apply to {zip}</p>
+      <p className="text-sm text-muted-foreground mb-4">Rent laws that apply to {zip}</p>
 
       <div className="divide-y divide-border">
         {hasCap && cap && (

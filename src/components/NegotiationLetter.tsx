@@ -115,7 +115,7 @@ ${dateStr}`;
         <h2 className="font-display text-xl text-foreground mb-1 group-hover:text-primary transition-colors">
           Negotiation Letter
         </h2>
-        <p className="text-[13px] text-muted-foreground flex items-center gap-1.5">
+        <p className="text-sm text-muted-foreground flex items-center gap-1.5">
           <FileText className="w-3.5 h-3.5" />
           Pre-written with your data — tap to customize and send
         </p>
@@ -131,7 +131,7 @@ ${dateStr}`;
     >
       <div>
         <h2 className="font-display text-xl text-foreground mb-1">Negotiation Letter</h2>
-        <p className="text-[13px] text-muted-foreground">Send this to your landlord</p>
+        <p className="text-sm text-muted-foreground">Send this to your landlord</p>
       </div>
 
       {/* Name inputs */}
