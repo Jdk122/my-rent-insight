@@ -150,12 +150,23 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
         <h2 className="section-title">{city}, {rentData.state} — {brLabel}</h2>
 
         <div className="context-row">
-          <span className="context-label">How fast rents are rising</span>
+          <span className="context-label">{city} rents this year</span>
           <span className="context-value">
             {marketYoy > 0 ? '+' : ''}{marketYoy}% this year
             {rentData.yoyCapped && <span className="context-sub"> (capped — unusually large shift)</span>}
           </span>
         </div>
+        {rentData.zillowMonthly !== null && rentData.zillowDirection && (
+          <div className="context-row">
+            <span className="context-label">Monthly trend</span>
+            <span className="context-value">
+              {rentData.zillowMonthly > 0 ? '+' : ''}{rentData.zillowMonthly}%/mo
+              <span className="context-sub">
+                {rentData.zillowDirection === 'rising' ? ' ↑ rising' : rentData.zillowDirection === 'falling' ? ' ↓ cooling' : ' → steady'}
+              </span>
+            </span>
+          </div>
+        )}
         {calc && (
           <div className="context-row">
             <span className="context-label">What most {brLabel.toLowerCase()}s go for</span>
@@ -187,7 +198,8 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
             </span>
           </div>
         )}
-        {rentData.fredTrend && (
+        {/* FRED trend (only show if no Zillow monthly — avoids duplication) */}
+        {rentData.fredTrend && rentData.zillowMonthly === null && (
           <div className="context-row">
             <span className="context-label">Monthly trend</span>
             <span className="context-value">
@@ -197,12 +209,15 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
           </div>
         )}
 
+        {/* Source attribution */}
+        <p className="text-[11px] text-muted-foreground mt-3">{rentData.yoySourceLabel}</p>
+
         {/* Prior source note */}
-        {rentData.priorSource === 'm' && (
-          <p className="text-[11px] text-muted-foreground mt-3">Based on {rentData.metro} area average trend.</p>
+        {rentData.yoySource === 'hud' && rentData.priorSource === 'm' && (
+          <p className="text-[11px] text-muted-foreground mt-1">Based on {rentData.metro} area average trend.</p>
         )}
-        {rentData.priorSource === 'n' && (
-          <p className="text-[11px] text-muted-foreground mt-3">Note: This uses the national rent trend because local data is limited for this area.</p>
+        {rentData.yoySource === 'hud' && rentData.priorSource === 'n' && (
+          <p className="text-[11px] text-muted-foreground mt-1">Note: This uses the national rent trend because local data is limited for this area.</p>
         )}
 
         {/* Below FMR note */}

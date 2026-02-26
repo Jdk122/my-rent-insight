@@ -11,6 +11,11 @@ export interface RentZipRaw {
   ps: 'f' | 'a' | 'm' | 'n'; // Prior source
   r?: number;          // Census median gross rent
   i?: number;          // Census median household income
+  // Zillow ZORI trend data (~15% of zips, covers ~80% of renters)
+  zy?: number;         // Zillow 12-month YoY % (capped ±35%) — PRIMARY when present
+  zm?: number;         // Month-over-month % change
+  zt?: number;         // 3-month trend (annualized %)
+  zd?: string;         // Direction: "rising" | "falling" | "flat"
 }
 
 export interface FredTrendData {
@@ -29,11 +34,17 @@ export interface RentLookupResult {
   fmr: number;
   fmrPrior: number;
   yoyChange: number;
+  yoySource: 'zillow' | 'hud';
+  yoySourceLabel: string;
   yoyCapped?: boolean;
   priorSource: 'f' | 'a' | 'm' | 'n';
   censusMedianRent: number | null;
   medianIncome: number | null;
   fredTrend: FredTrendData | null;
+  // Zillow trend data (when available)
+  zillowMonthly: number | null;
+  zillowDirection: string | null;
+  zillow3moTrend: number | null;
 }
 
 // ─── Bedroom mapping ───
@@ -140,10 +151,27 @@ export async function lookupRentData(
   const fmr = raw.f[brIdx];
   const fmrPrior = raw.p[brIdx];
 
-  // Calculate YoY for selected bedroom (more accurate than pre-computed 1BR)
-  let yoyChange = fmrPrior > 0
-    ? Math.round(((fmr - fmrPrior) / fmrPrior) * 1000) / 10
-    : raw.y;
+  // YoY Priority: Zillow ZORI > bedroom-specific HUD > pre-computed 1BR
+  let yoyChange: number;
+  let yoySource: 'zillow' | 'hud';
+  let yoySourceLabel: string;
+
+  if (raw.zy !== undefined && raw.zy !== null) {
+    // Priority 1: Zillow ZORI (monthly, from actual listings)
+    yoyChange = raw.zy;
+    yoySource = 'zillow';
+    yoySourceLabel = 'Based on Zillow rent data through Jan 2026';
+  } else if (fmrPrior > 0) {
+    // Priority 2: Bedroom-specific HUD FMR
+    yoyChange = Math.round(((fmr - fmrPrior) / fmrPrior) * 1000) / 10;
+    yoySource = 'hud';
+    yoySourceLabel = 'Based on HUD Fair Market Rent data';
+  } else {
+    // Priority 3: Pre-computed 1BR fallback
+    yoyChange = raw.y;
+    yoySource = 'hud';
+    yoySourceLabel = 'Based on HUD Fair Market Rent data';
+  }
 
   // Guard 1: Cap extreme YoY values
   const yoyCapped = Math.abs(yoyChange) > YOY_CAP;
@@ -161,7 +189,7 @@ export async function lookupRentData(
     const fmr2br = raw.f[2];
     const ratio = Math.max(censusRent / fmr2br, fmr2br / censusRent);
     if (ratio > MAX_CENSUS_FMR_RATIO) {
-      censusRent = null; // Fall back to FMR-only range
+      censusRent = null;
     }
   }
 
@@ -173,11 +201,16 @@ export async function lookupRentData(
     fmr,
     fmrPrior,
     yoyChange,
+    yoySource,
+    yoySourceLabel,
     yoyCapped: yoyCapped || undefined,
     priorSource: raw.ps,
     censusMedianRent: censusRent,
     medianIncome: validIncome,
     fredTrend: null,
+    zillowMonthly: raw.zm ?? null,
+    zillowDirection: raw.zd ?? null,
+    zillow3moTrend: raw.zt ?? null,
   };
 }
 
