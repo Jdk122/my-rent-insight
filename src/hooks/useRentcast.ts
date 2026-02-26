@@ -24,7 +24,7 @@ export interface RentcastResult {
   comparables: RentcastComparable[];
 }
 
-export function useRentcast(zip: string, bedrooms: BedroomType) {
+export function useRentcast(zip: string, bedrooms: BedroomType, fullAddress?: string | null) {
   const [data, setData] = useState<RentcastResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,9 +36,15 @@ export function useRentcast(zip: string, bedrooms: BedroomType) {
       setLoading(true);
       setError(null);
       try {
+        const body: Record<string, unknown> = { bedrooms: bedroomToNum[bedrooms] };
+        if (fullAddress) {
+          body.address = fullAddress;
+        } else {
+          body.zip = zip;
+        }
         const { data: result, error: fnError } = await supabase.functions.invoke(
           'rentcast-lookup',
-          { body: { zip, bedrooms: bedroomToNum[bedrooms] } }
+          { body }
         );
 
         if (cancelled) return;
@@ -58,7 +64,7 @@ export function useRentcast(zip: string, bedrooms: BedroomType) {
 
     fetch();
     return () => { cancelled = true; };
-  }, [zip, bedrooms]);
+  }, [zip, bedrooms, fullAddress]);
 
   return { data, loading, error };
 }

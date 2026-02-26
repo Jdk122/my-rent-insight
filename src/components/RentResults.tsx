@@ -77,7 +77,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     return generateInsights(propertyData, costs, formData.currentRent, newRent);
   }, [propertyData, formData.currentRent, newRent]);
 
-  const rentcast = useRentcast(rentData.zip, formData.bedrooms);
+  const rentcast = useRentcast(rentData.zip, formData.bedrooms, formData.fullAddress);
 
   const verdictColor = isFair ? 'text-verdict-fair' : isAboveMarket ? 'text-verdict-overpaying' : 'text-verdict-good';
   const pillClass = isFair ? 'verdict-pill-fair' : isAboveMarket ? 'verdict-pill-overpaying' : 'verdict-pill-good';

@@ -22,13 +22,16 @@ serve(async (req) => {
       );
     }
 
-    // Build query params
+    // Build query params — Rentcast AVM requires address or lat/lng, not just zip
     const params = new URLSearchParams();
     if (address) {
       params.set("address", address);
     } else if (zip) {
-      // Use zip code with a generic lookup
-      params.set("zipCode", zip);
+      // Zip-only: skip Rentcast AVM (it doesn't support zip-only queries)
+      return new Response(
+        JSON.stringify({ rentEstimate: null, rentRangeLow: null, rentRangeHigh: null, comparables: [] }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
     if (bedrooms !== undefined) {
       params.set("bedrooms", String(bedrooms));
