@@ -5,7 +5,7 @@ import RentResults from '@/components/RentResults';
 import { lookupZip, RentData, rentDatabase } from '@/data/rentData';
 import { toast } from 'sonner';
 
-const availableZips = Object.keys(rentDatabase).join(', ');
+const zipCount = Object.keys(rentDatabase).length;
 
 const Index = () => {
   const [results, setResults] = useState<{ formData: RentFormData; rentData: RentData } | null>(null);
@@ -13,7 +13,7 @@ const Index = () => {
   const handleSubmit = (data: RentFormData) => {
     const rentData = lookupZip(data.zip);
     if (!rentData) {
-      toast.error(`No data for ${data.zip} yet. Available: ${availableZips}`);
+      toast.error(`No data for ${data.zip} yet. We currently cover ${zipCount} zip codes across major metros.`);
       return;
     }
     setResults({ formData: data, rentData });
