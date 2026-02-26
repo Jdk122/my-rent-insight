@@ -83,7 +83,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
 
   return (
     <div className="px-6 md:px-12 lg:px-20">
-      <div className="max-w-[620px]">
+      <div className="max-w-[620px] mx-auto">
 
         {/* ━━━ VERDICT ━━━ */}
         <motion.div {...fade(0)} className="pt-14 md:pt-24 pb-12">
