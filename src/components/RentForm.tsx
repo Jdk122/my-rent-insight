@@ -6,11 +6,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 export interface RentFormData {
   zip: string;
+  fullAddress: string | null;
   bedrooms: BedroomType;
   currentRent: number;
   rentIncrease: number | null;
   increaseIsPercent: boolean;
   movingCosts: number;
+}
+
+function isZipOnly(input: string): boolean {
+  return /^\d{5}$/.test(input.trim());
 }
 
 interface RentFormProps {
@@ -19,7 +24,7 @@ interface RentFormProps {
 }
 
 const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
-  const [zip, setZip] = useState('');
+  const [addressInput, setAddressInput] = useState('');
   const [bedrooms, setBedrooms] = useState<BedroomType>('oneBr');
   const [currentRent, setCurrentRent] = useState('');
   const [rentIncrease, setRentIncrease] = useState('');
@@ -28,9 +33,14 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!zip || !currentRent) return;
+    const trimmed = addressInput.trim();
+    if (!trimmed || !currentRent) return;
+
+    const zipOnly = isZipOnly(trimmed);
+
     onSubmit({
-      zip: zip.trim(),
+      zip: zipOnly ? trimmed : '', // Will be filled from Rentcast response if address
+      fullAddress: zipOnly ? null : trimmed,
       bedrooms,
       currentRent: parseFloat(currentRent),
       rentIncrease: rentIncrease ? parseFloat(rentIncrease) : null,
@@ -41,17 +51,16 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {/* Zip + Bedrooms */}
-      <div className="grid grid-cols-2 gap-3">
+      {/* Address/Zip + Bedrooms */}
+      <div className="grid grid-cols-[1fr,140px] gap-3">
         <div className="space-y-1.5">
-          <Label className="text-sm font-medium text-foreground">Zip Code</Label>
+          <Label className="text-sm font-medium text-foreground">Address or Zip Code</Label>
           <Input
             type="text"
-            placeholder="07030"
-            value={zip}
-            onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
-            maxLength={5}
-            className="h-11 font-mono text-sm bg-background"
+            placeholder="Enter your address or zip code"
+            value={addressInput}
+            onChange={(e) => setAddressInput(e.target.value)}
+            className="h-11 text-sm bg-background"
             required
           />
         </div>
