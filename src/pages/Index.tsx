@@ -24,8 +24,8 @@ const Index = () => {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 py-5 border-b border-border">
-        <span className="font-display text-lg font-bold text-foreground tracking-tight cursor-pointer" style={{ letterSpacing: '-0.02em' }} onClick={() => setResults(null)}>
-          Rent<span className="font-normal text-muted-foreground">Reply</span>
+        <span className="font-display text-lg font-bold text-primary tracking-tight cursor-pointer" style={{ letterSpacing: '-0.02em' }} onClick={() => setResults(null)}>
+          Rent<span className="font-normal text-accent">Reply</span>
         </span>
         {results && (
           <button onClick={() => setResults(null)} className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
