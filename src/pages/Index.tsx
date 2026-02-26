@@ -27,9 +27,11 @@ const Index = () => {
         <span className="font-display text-xl text-foreground tracking-tight cursor-pointer" onClick={() => setResults(null)}>
           Rent<span className="text-primary">Check</span>
         </span>
-        <span className="data-label hidden sm:block">
-          HUD FY2025 · Census ACS
-        </span>
+        {!results && (
+          <span className="text-xs text-muted-foreground hidden sm:block">
+            Free rent increase calculator
+          </span>
+        )}
       </nav>
 
       <AnimatePresence mode="wait">

@@ -1,5 +1,5 @@
 import { toast } from 'sonner';
-import { Copy, Twitter } from 'lucide-react';
+import { Copy, Twitter, MessageCircle, Share2 } from 'lucide-react';
 
 interface ShareSectionProps {
   increasePct: number;
@@ -13,9 +13,10 @@ const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 
 const ShareSection = ({ increasePct, marketPct, excessAnnual, multiplier }: ShareSectionProps) => {
   const shareText = `My landlord is raising my rent ${increasePct}% when the market only moved ${marketPct}%. That's ${multiplier}× the market rate — $${fmt(excessAnnual)}/year above market.`;
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const fullText = `${shareText} Check yours: ${shareUrl}`;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(`${shareText} Check yours: ${shareUrl}`);
+    navigator.clipboard.writeText(fullText);
     toast.success('Copied to clipboard');
   };
 
@@ -24,25 +25,39 @@ const ShareSection = ({ increasePct, marketPct, excessAnnual, multiplier }: Shar
     window.open(url, '_blank');
   };
 
+  const handleReddit = () => {
+    const url = `https://www.reddit.com/submit?title=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+    window.open(url, '_blank');
+  };
+
+  const handleText = () => {
+    const url = `sms:?body=${encodeURIComponent(fullText)}`;
+    window.open(url);
+  };
+
+  const btnClass = "flex-1 flex items-center justify-center gap-2 h-10 rounded-lg border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors";
+
   return (
-    <div className="flex items-center gap-3">
-      <p className="text-xs text-muted-foreground italic flex-1 min-w-0 line-clamp-2 leading-relaxed">
-        "{shareText}"
+    <div>
+      <p className="text-sm text-muted-foreground mb-3">
+        Think others should see this?
       </p>
-      <div className="flex gap-1.5 shrink-0">
-        <button
-          onClick={handleCopy}
-          className="h-8 w-8 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-          title="Copy"
-        >
-          <Copy className="w-3.5 h-3.5" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        <button onClick={handleCopy} className={btnClass}>
+          <Copy className="w-4 h-4" />
+          Copy
         </button>
-        <button
-          onClick={handleTwitter}
-          className="h-8 w-8 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-          title="Share on X"
-        >
-          <Twitter className="w-3.5 h-3.5" />
+        <button onClick={handleTwitter} className={btnClass}>
+          <Twitter className="w-4 h-4" />
+          Post on X
+        </button>
+        <button onClick={handleReddit} className={btnClass}>
+          <Share2 className="w-4 h-4" />
+          Reddit
+        </button>
+        <button onClick={handleText} className={btnClass}>
+          <MessageCircle className="w-4 h-4" />
+          Text
         </button>
       </div>
     </div>
