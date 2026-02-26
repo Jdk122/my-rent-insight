@@ -21,7 +21,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 py-5 border-b border-border">
         <span className="font-display text-lg font-bold text-foreground tracking-tight cursor-pointer" style={{ letterSpacing: '-0.02em' }} onClick={() => setResults(null)}>
@@ -73,7 +73,7 @@ const Index = () => {
       </AnimatePresence>
 
       {/* Footer */}
-      <footer className="border-t border-border px-6 py-6 text-center">
+      <footer className="mt-auto border-t border-border px-6 py-6 text-center">
         <p className="text-xs text-muted-foreground leading-relaxed">
           RentReply · Sources: HUD SAFMR FY2025, Census ACS 5-Year · For informational purposes only.
         </p>
