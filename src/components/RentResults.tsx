@@ -5,6 +5,8 @@ import { RentData, getFmrForBedrooms, getTypicalRange, bedroomLabels, calculateB
 import ScenarioToggles from './ScenarioToggles';
 import ShareSection from './ShareSection';
 import EmailCapture from './EmailCapture';
+import CompLinks from './CompLinks';
+import NegotiationLetter from './NegotiationLetter';
 import { ArrowLeft, TrendingUp, TrendingDown, Scale } from 'lucide-react';
 
 interface RentResultsProps {
@@ -196,6 +198,16 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
         </div>
       </motion.div>
 
+      {/* Comp Links — see what's available */}
+      <motion.div {...anim(0.17)}>
+        <CompLinks
+          zip={rentData.zip}
+          city={rentData.city}
+          state={rentData.state}
+          bedrooms={formData.bedrooms}
+        />
+      </motion.div>
+
       {/* Stay or Move — the decision */}
       {hasIncrease && (
         <motion.div {...anim(0.2)} className="brand-card">
@@ -224,6 +236,24 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
               {breakEven.verdict === 'stay' && `Staying is probably smarter`}
             </div>
           </div>
+        </motion.div>
+      )}
+
+      {/* Negotiation Letter */}
+      {hasIncrease && isAboveMarket && (
+        <motion.div {...anim(0.22)}>
+          <NegotiationLetter
+            currentRent={formData.currentRent}
+            newRent={newRent}
+            increasePct={increasePct}
+            marketYoy={marketYoy}
+            fmr={fmr}
+            censusMedian={rentData.censusMedian}
+            zip={rentData.zip}
+            city={rentData.city}
+            state={rentData.state}
+            bedrooms={formData.bedrooms}
+          />
         </motion.div>
       )}
 
