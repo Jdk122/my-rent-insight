@@ -112,15 +112,15 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
 
       {/* ━━━ NUMBERS ROW ━━━ */}
       {hasIncrease && (
-        <motion.div {...fade(0.05)} className="flex justify-center gap-12 py-9 border-b border-border">
+        <motion.div {...fade(0.05)} className="flex justify-center gap-16 py-12 border-b border-border">
           {[
             { label: 'Your Rent', value: `$${fmt(formData.currentRent)}` },
             { label: 'Proposed', value: `$${fmt(newRent)}`, color: verdictColor },
             { label: 'Extra / Year', value: `$${fmt(annualExtra)}` },
           ].map((item) => (
             <div key={item.label} className="text-center">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">{item.label}</p>
-              <p className={`font-display text-[28px] font-bold tracking-tight ${item.color || 'text-foreground'}`} style={{ letterSpacing: '-0.02em' }}>
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{item.label}</p>
+              <p className={`font-display text-[36px] md:text-[42px] tracking-tight ${item.color || 'text-foreground'}`} style={{ letterSpacing: '-0.02em' }}>
                 {item.value}
               </p>
             </div>
