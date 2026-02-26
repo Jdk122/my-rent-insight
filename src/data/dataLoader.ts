@@ -300,6 +300,12 @@ export function calculateResults(
   const rentBurden = getRentBurden(proposedRent, data.medianIncome);
   const counter = getCounterOffer(currentRent, marketYoY);
 
+  // Cap counter-offer to ensure it's always below proposed rent
+  // $25 rounding can push counter above proposed when increase barely exceeds 1.3x threshold
+  const maxCounter = Math.floor(proposedRent / 25) * 25 - 25;
+  counter.counterLow = Math.min(counter.counterLow, Math.max(maxCounter, currentRent));
+  counter.counterHigh = Math.min(counter.counterHigh, Math.max(proposedRent - 25, currentRent));
+
   const increaseRatio = marketYoY > 0
     ? Math.round((increasePercent / marketYoY) * 10) / 10
     : 0;
