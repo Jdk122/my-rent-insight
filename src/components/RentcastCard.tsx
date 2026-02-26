@@ -75,14 +75,14 @@ const RentcastCard = ({ data, loading, error, city, zip, state, bedrooms, propos
 
   return (
     <div>
-      <h2 className="section-title">Rentcast Market Data</h2>
+      <h2 className="section-title">Market Data</h2>
 
       {/* Rent estimate */}
       {hasEstimate && (
         <div className="flex justify-center gap-10 mb-6">
           {data.rentRangeLow !== null && data.rentRangeHigh !== null ? (
             <div className="text-center">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Rentcast Estimate</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Estimated Range</p>
               <p className="font-display text-2xl tracking-tight text-foreground" style={{ letterSpacing: '-0.02em' }}>
                 ${fmt(data.rentRangeLow)} – ${fmt(data.rentRangeHigh)}
               </p>
@@ -92,7 +92,7 @@ const RentcastCard = ({ data, loading, error, city, zip, state, bedrooms, propos
             </div>
           ) : (
             <div className="text-center">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Rentcast Estimate</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Estimated Rent</p>
               <p className="font-display text-2xl tracking-tight text-foreground" style={{ letterSpacing: '-0.02em' }}>
                 ${fmt(data.rentEstimate!)}
               </p>
@@ -167,7 +167,7 @@ const RentcastCard = ({ data, loading, error, city, zip, state, bedrooms, propos
         );
       })()}
 
-      <p className="text-[11px] text-muted-foreground mt-3 text-center">Source: Rentcast</p>
+      <p className="text-[10px] text-muted-foreground/60 mt-3 text-center">Market data sources include MLS, public records & proprietary datasets</p>
 
       {/* FIX 4: Inline external links when comps exist */}
       {hasComps && (
