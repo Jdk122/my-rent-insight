@@ -332,31 +332,42 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         )}
       </motion.div>
 
-      {/* ━━━ 7. SHOULD YOU MOVE? (FIX 1: smart comparison rent) ━━━ */}
-      {hasIncrease && comparisonRent && (
-        <motion.div {...fade(0.21)} className="my-10">
-          <div className="callout-box">
-            <p className="callout-box-title">Should you move?</p>
-            {newRent > comparisonRent.rent ? (
-              <p className="callout-box-body">
-                If moving costs ${fmt(formData.movingCosts)} and you find a place at the {comparisonRent.label} (${fmt(comparisonRent.rent)}/mo),
-                you break even in <strong className="text-foreground font-semibold">
-                  {breakEvenMonths === Infinity
-                    ? 'never — staying is cheaper'
-                    : breakEvenMonths < 1
-                      ? `about ${Math.round(breakEvenMonths * 4.3)} week${Math.round(breakEvenMonths * 4.3) !== 1 ? 's' : ''}`
-                      : `${breakEvenMonths.toFixed(1)} months`}
-                </strong>.
+      {/* ━━━ 7. SHOULD YOU MOVE? ━━━ */}
+      {hasIncrease && comparisonRent && newRent > comparisonRent.rent && (() => {
+        const monthlySavings = newRent - comparisonRent.rent;
+        const annualSavings = monthlySavings * 12;
+        const movingCostLow = 1500;
+        const movingCostHigh = Math.max(5000, Math.round(newRent * 1.5));
+        const breakEvenLow = movingCostLow / monthlySavings;
+        const breakEvenHigh = movingCostHigh / monthlySavings;
+
+        const fmtBE = (months: number): string => {
+          if (months < 1) {
+            const weeks = Math.max(1, Math.round(months * 4.3));
+            return `${weeks} week${weeks !== 1 ? 's' : ''}`;
+          } else if (months > 18) {
+            return `${(months / 12).toFixed(1)} years`;
+          }
+          return `${Math.round(months)} month${Math.round(months) !== 1 ? 's' : ''}`;
+        };
+
+        return (
+          <motion.div {...fade(0.21)} className="my-10">
+            <div className="callout-box">
+              <p className="callout-box-title">Should you move?</p>
+              <p className="font-display text-[28px] md:text-[32px] tracking-tight text-foreground font-semibold mt-3" style={{ letterSpacing: '-0.02em' }}>
+                ${fmt(monthlySavings)}/mo savings
               </p>
-            ) : (
-              <p className="callout-box-body">
-                Your proposed rent of ${fmt(newRent)} is at or below the {comparisonRent.label} for this area.
-                Even with the increase, moving would likely cost you more.
+              <p className="text-sm text-muted-foreground mt-1">
+                ${fmt(annualSavings)}/yr at the {comparisonRent.label} (${fmt(comparisonRent.rent)}/mo)
               </p>
-            )}
-          </div>
-        </motion.div>
-      )}
+              <p className="text-[13px] text-muted-foreground/70 mt-3">
+                Break-even on moving costs: {fmtBE(breakEvenLow)}–{fmtBE(breakEvenHigh)} depending on your area
+              </p>
+            </div>
+          </motion.div>
+        );
+      })()}
 
       {/* ━━━ 8. EMAIL ━━━ */}
       <motion.div {...fade(0.24)} className="py-12 text-center">
