@@ -78,6 +78,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   }, [propertyData, formData.currentRent, newRent]);
 
   const rentcast = useRentcast(rentData.zip, formData.bedrooms, formData.fullAddress);
+  const hasRentcastComps = rentcast.data && rentcast.data.comparables.length > 0;
 
   const verdictColor = isFair ? 'text-verdict-fair' : isAboveMarket ? 'text-verdict-overpaying' : 'text-verdict-good';
   const pillClass = isFair ? 'verdict-pill-fair' : isAboveMarket ? 'verdict-pill-overpaying' : 'verdict-pill-good';
@@ -91,15 +92,20 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const brLabel = bedroomLabels[formData.bedrooms];
 
   const rentBurden = calc?.rentBurden ?? null;
+  const currentRentBurden = calc?.currentRentBurden ?? null;
   const isCostBurdened = calc?.isCostBurdened ?? false;
   const breakEvenMonths = calc?.breakEvenMonths ?? Infinity;
+
+  // FIX 1: Use HUD FMR for break-even
+  const hudBenchmark = rentData.fmr;
+  const proposedAboveFmr = newRent > hudBenchmark;
 
   let rowIdx = 0;
 
   return (
     <div className="max-w-[620px] mx-auto px-6">
 
-      {/* ━━━ VERDICT ━━━ */}
+      {/* ━━━ 1. VERDICT ━━━ */}
       <motion.div {...fade(0)} className="py-16 text-center border-b border-border">
         {hasIncrease ? (
           <>
@@ -138,7 +144,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         )}
       </motion.div>
 
-      {/* ━━━ NUMBERS ROW ━━━ */}
+      {/* ━━━ 2. NUMBERS ROW ━━━ */}
       {hasIncrease && (
         <motion.div {...fade(0.05)} className="flex justify-center gap-16 py-14 border-b border-border">
           {[
@@ -156,7 +162,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         </motion.div>
       )}
 
-      {/* ━━━ MARKET CONTEXT ━━━ */}
+      {/* ━━━ 3. MARKET CONTEXT ━━━ */}
       <motion.div {...fade(0.1)} className="py-12 border-b border-border">
         <h2 className="section-title">{city}, {rentData.state} — {brLabel}</h2>
         <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
@@ -183,9 +189,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             <span className="context-value">${fmt(calc.typicalRangeLow)} – ${fmt(calc.typicalRangeHigh)}</span>
           </div>
         )}
+        {/* FIX 2: Remove "HUD 40th pctl" jargon */}
         <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
           <span className="context-label">{city} benchmark</span>
-          <span className="context-value">${fmt(rentData.fmr)} <span className="context-sub">HUD 40th pctl</span></span>
+          <span className="context-value">${fmt(rentData.fmr)}</span>
         </div>
         {rentData.censusMedianRent && (
           <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
@@ -199,12 +206,21 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             <span className="context-value text-verdict-good font-semibold">${fmt(calc.counterLow)}–${fmt(calc.counterHigh)}/mo</span>
           </div>
         )}
+        {/* FIX 7: Show current → proposed rent burden */}
         {rentBurden && (
           <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
             <span className="context-label">Rent as % of area median income</span>
             <span className="context-value">
-              {rentBurden}%
-              {isCostBurdened && <span className="context-sub text-verdict-overpaying">cost-burdened</span>}
+              {currentRentBurden !== null ? (
+                <>
+                  {currentRentBurden}% → <span className={isCostBurdened ? 'text-verdict-overpaying' : ''}>{rentBurden}%</span>
+                </>
+              ) : (
+                <>
+                  {rentBurden}%
+                </>
+              )}
+              {isCostBurdened && <span className="context-sub text-verdict-overpaying ml-1">Above the 30% affordability threshold</span>}
             </span>
           </div>
         )}
@@ -229,29 +245,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         )}
       </motion.div>
 
-      {/* ━━━ RENTCAST DATA ━━━ */}
-      <motion.div {...fade(0.12)} className="py-12 border-b border-border">
-        <RentcastCard data={rentcast.data} loading={rentcast.loading} error={rentcast.error} city={city} />
-      </motion.div>
-
-      {/* ━━━ BREAK-EVEN CALLOUT ━━━ */}
-      {hasIncrease && (
-        <motion.div {...fade(0.15)} className="my-10">
-          <div className="callout-box">
-            <p className="callout-box-title">Should you move?</p>
-            <p className="callout-box-body">
-              If moving costs ${fmt(formData.movingCosts)} and you find a place at the benchmark (${fmt(rentData.censusMedianRent || rentData.fmr)}/mo),
-              you break even in <strong className="text-foreground font-semibold">
-                {breakEvenMonths === Infinity ? 'never — staying is cheaper' : `${breakEvenMonths.toFixed(1)} months`}
-              </strong>.
-            </p>
-          </div>
-        </motion.div>
-      )}
-
-      {/* ━━━ NEGOTIATION LETTER ━━━ */}
+      {/* ━━━ 4. NEGOTIATION LETTER ━━━ */}
       {hasIncrease && isAboveMarket && calc && (
-        <motion.div {...fade(0.16)} className="py-12 border-b border-border">
+        <motion.div {...fade(0.12)} className="py-12 border-b border-border">
           <NegotiationLetter
             currentRent={formData.currentRent}
             newRent={newRent}
@@ -275,9 +271,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         </motion.div>
       )}
 
-      {/* ━━━ LANDLORD COST SECTION ━━━ */}
+      {/* ━━━ 5. YOUR BUILDING (FIX 5: minimized on failure) ━━━ */}
       {hasIncrease && (
-        <motion.div {...fade(0.19)} className="py-12 border-b border-border">
+        <motion.div {...fade(0.15)} className="py-12 border-b border-border">
           <LandlordCostSection
             propertyData={propertyData}
             propertyLoading={propertyLoading}
@@ -291,18 +287,52 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         </motion.div>
       )}
 
-      {/* ━━━ COMPS ━━━ */}
-      <motion.div {...fade(0.22)} className="py-12 border-b border-border">
-        <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} />
+      {/* ━━━ 6. RENTCAST + COMP LINKS (FIX 4: merged) ━━━ */}
+      <motion.div {...fade(0.18)} className="py-12 border-b border-border">
+        <RentcastCard
+          data={rentcast.data}
+          loading={rentcast.loading}
+          error={rentcast.error}
+          city={city}
+          zip={rentData.zip}
+          state={rentData.state}
+          bedrooms={formData.bedrooms}
+        />
+        {/* If no Rentcast comps, show full CompLinks as fallback */}
+        {!rentcast.loading && !hasRentcastComps && (
+          <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} />
+        )}
       </motion.div>
 
-      {/* ━━━ EMAIL ━━━ */}
-      <motion.div {...fade(0.25)} className="py-12 text-center">
+      {/* ━━━ 7. SHOULD YOU MOVE? (FIX 1: uses HUD FMR) ━━━ */}
+      {hasIncrease && (
+        <motion.div {...fade(0.21)} className="my-10">
+          <div className="callout-box">
+            <p className="callout-box-title">Should you move?</p>
+            {proposedAboveFmr ? (
+              <p className="callout-box-body">
+                If moving costs ${fmt(formData.movingCosts)} and you find a place at the fair market rate (${fmt(hudBenchmark)}/mo),
+                you break even in <strong className="text-foreground font-semibold">
+                  {breakEvenMonths === Infinity ? 'never — staying is cheaper' : `${breakEvenMonths.toFixed(1)} months`}
+                </strong>.
+              </p>
+            ) : (
+              <p className="callout-box-body">
+                Your proposed rent of ${fmt(newRent)} is at or below the fair market rate for this area.
+                Even with the increase, moving would likely cost you more.
+              </p>
+            )}
+          </div>
+        </motion.div>
+      )}
+
+      {/* ━━━ 8. EMAIL ━━━ */}
+      <motion.div {...fade(0.24)} className="py-12 text-center">
         <EmailCapture city={city} />
       </motion.div>
 
-      {/* ━━━ SHARE ━━━ */}
-      <motion.div {...fade(0.28)} className="pb-12 text-center">
+      {/* ━━━ 9. SHARE ━━━ */}
+      <motion.div {...fade(0.27)} className="pb-12 text-center">
         <ShareSection
           increasePct={increasePct}
           marketPct={marketYoy}

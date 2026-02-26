@@ -310,10 +310,14 @@ export function calculateResults(
     ? Math.round((increasePercent / marketYoY) * 10) / 10
     : 0;
 
-  // Break-even
-  const benchmarkRent = data.censusMedianRent || data.fmr;
+  // Break-even: use HUD Fair Market Rent as the benchmark
+  const benchmarkRent = data.fmr;
   const monthlySavings = proposedRent - benchmarkRent;
   const breakEvenMonths = monthlySavings > 0 ? movingCosts / monthlySavings : Infinity;
+
+  // Rent burden for both current and proposed
+  const currentRentBurden = getRentBurden(currentRent, data.medianIncome);
+  const proposedRentBurden = rentBurden;
 
   return {
     proposedRent,
@@ -323,6 +327,7 @@ export function calculateResults(
     typicalRangeHigh: range.high,
     rangeLabel: range.label,
     rentBurden: rentBurden?.percent ?? null,
+    currentRentBurden: currentRentBurden?.percent ?? null,
     isCostBurdened: rentBurden?.isBurdened ?? false,
     increaseRatio,
     verdict,

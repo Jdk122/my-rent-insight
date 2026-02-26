@@ -95,61 +95,21 @@ const LandlordCostSection = ({
     );
   }
 
-  // Error states
-  if (propertyError === 'RATE_LIMIT') {
+  // FIX 5: Minimize failure states to a single quiet line
+  if (propertyError === 'RATE_LIMIT' || propertyError === 'NOT_FOUND' || propertyError === 'NETWORK' || !propertyData) {
     return (
-      <div className="py-8 text-center">
-        <p className="text-sm text-muted-foreground">
-          You've reached the lookup limit. Try again in an hour.
-        </p>
-      </div>
+      <p className="text-sm text-muted-foreground text-center py-4">
+        Property cost data unavailable for this address — your market analysis above is still accurate.
+      </p>
     );
   }
 
-  if (propertyError === 'NOT_FOUND') {
-    return (
-      <div className="py-8 text-center">
-        <p className="text-sm text-muted-foreground max-w-[400px] mx-auto">
-          We couldn't find detailed property records for this address.
-          This can happen with newer buildings or condos. Your market data
-          and negotiation letter above are still based on verified sources.
-        </p>
-      </div>
-    );
-  }
-
-  if (propertyError === 'NETWORK' || !propertyData) {
-    return (
-      <div className="py-8 text-center">
-        <p className="text-sm text-muted-foreground max-w-[400px] mx-auto">
-          Something went wrong looking up property data. Your market analysis above is still accurate.
-        </p>
-      </div>
-    );
-  }
-
-  // No sale price or tax data
+  // No sale price or tax data — still show basic info but keep it quiet
   if (!costs || !insights) {
-    const saleDate = propertyData.lastSaleDate
-      ? new Date(propertyData.lastSaleDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-      : null;
     return (
-      <div className="text-left">
-        <h2 className="section-title">Your Building</h2>
-        <p className="text-sm text-muted-foreground mb-2">
-          {propertyData.address}
-          {propertyData.yearBuilt && ` · Built ${propertyData.yearBuilt}`}
-          {` · ${propertyData.propertyType}`}
-        </p>
-        {saleDate && propertyData.lastSalePrice && (
-          <p className="text-sm text-muted-foreground">
-            Last sold {saleDate} for ${fmt(propertyData.lastSalePrice)}
-          </p>
-        )}
-        <p className="text-[11px] text-muted-foreground mt-4">
-          Insufficient tax/sale data to estimate costs for this property.
-        </p>
-      </div>
+      <p className="text-sm text-muted-foreground text-center py-4">
+        Property cost data unavailable for this address — your market analysis above is still accurate.
+      </p>
     );
   }
 
