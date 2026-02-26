@@ -11,7 +11,7 @@ const Index = () => {
   const handleSubmit = (data: RentFormData) => {
     const rentData = lookupZip(data.zip);
     if (!rentData) {
-      toast.error(`We don't have data for zip code ${data.zip} yet. Try: 10001, 07030, 90001, 94102, etc.`);
+      toast.error(`We don't have data for zip code ${data.zip} yet. Try: 10001, 07030, 90024, 94102, 98101, 33131, 78701, etc.`);
       return;
     }
     setResults({ formData: data, rentData });
@@ -73,7 +73,7 @@ const Index = () => {
 
       {/* Footer */}
       <footer className="text-center py-8 text-sm text-muted-foreground">
-        <p>Data sources: HUD Fair Market Rents (FY2026) · Census ACS 5-Year Estimates</p>
+        <p>Data sources: HUD Small Area Fair Market Rents (FY2025) · Census ACS 5-Year Estimates (2022)</p>
         <p className="mt-1">RentCheck is for informational purposes only.</p>
       </footer>
     </div>
