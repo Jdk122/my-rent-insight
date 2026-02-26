@@ -8,6 +8,8 @@ import EmailCapture from './EmailCapture';
 import CompLinks from './CompLinks';
 import NegotiationLetter from './NegotiationLetter';
 import AffordabilityCard from './AffordabilityCard';
+import LandlordCostLookup from './LandlordCostLookup';
+import { LandlordCostEstimate } from '@/data/landlordCosts';
 import { ArrowLeft, TrendingUp, TrendingDown, FileText, ChevronRight } from 'lucide-react';
 
 interface RentResultsProps {
@@ -56,6 +58,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
   const [scenarioMovingCost, setScenarioMovingCost] = useState<number>(formData.movingCosts);
   const [scenarioNegotiatedPct, setScenarioNegotiatedPct] = useState<number>(increasePct);
   const [showLetter, setShowLetter] = useState(false);
+  const [landlordCosts, setLandlordCosts] = useState<LandlordCostEstimate | null>(null);
 
   const breakEven = useMemo(() => {
     const negotiatedIncrease = Math.round(formData.currentRent * (scenarioNegotiatedPct / 100));
@@ -165,6 +168,8 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
                   marketPct={marketYoy}
                   excessAnnual={excessAnnual}
                   multiplier={multiplier}
+                  landlordCosts={landlordCosts}
+                  increaseAmount={increaseAmount}
                 />
               </div>
             ) : (
@@ -180,6 +185,8 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
                 city={rentData.city}
                 state={rentData.state}
                 bedrooms={formData.bedrooms}
+                landlordCosts={landlordCosts}
+                increaseAmount={increaseAmount}
               />
             )}
           </motion.div>
@@ -265,8 +272,23 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
 
         <div className="h-px bg-border" />
 
+        {/* ━━━ LANDLORD COST LOOKUP ━━━ */}
+        {hasIncrease && (
+          <motion.div {...fade(0.15)} className="py-10 md:py-14">
+            <LandlordCostLookup
+              rentData={rentData}
+              bedrooms={formData.bedrooms}
+              currentRent={formData.currentRent}
+              increaseAmount={increaseAmount}
+              onCostData={setLandlordCosts}
+            />
+          </motion.div>
+        )}
+
+        <div className="h-px bg-border" />
+
         {/* ━━━ COMPS ━━━ */}
-        <motion.div {...fade(0.16)} className="py-10 md:py-14" id="comps-section">
+        <motion.div {...fade(0.18)} className="py-10 md:py-14" id="comps-section">
           <CompLinks
             zip={rentData.zip}
             city={rentData.city}
