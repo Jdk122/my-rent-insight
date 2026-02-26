@@ -1,5 +1,5 @@
 import { toast } from 'sonner';
-import { Copy, Share2 } from 'lucide-react';
+import { Copy, Twitter } from 'lucide-react';
 
 interface ShareSectionProps {
   increasePct: number;
@@ -11,8 +11,7 @@ interface ShareSectionProps {
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
 const ShareSection = ({ increasePct, marketPct, excessAnnual, multiplier }: ShareSectionProps) => {
-  const shareText = `My landlord is raising my rent ${increasePct}% when the market only moved ${marketPct}%. That's ${multiplier}× the market rate — $${fmt(excessAnnual)}/year more than the typical renter.`;
-
+  const shareText = `My landlord is raising my rent ${increasePct}% when the market only moved ${marketPct}%. That's ${multiplier}× the market rate — $${fmt(excessAnnual)}/year above market.`;
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
 
   const handleCopy = () => {
@@ -26,24 +25,24 @@ const ShareSection = ({ increasePct, marketPct, excessAnnual, multiplier }: Shar
   };
 
   return (
-    <div className="flex items-center justify-between gap-4 px-1">
-      <p className="text-sm text-muted-foreground italic flex-1 min-w-0 truncate">
+    <div className="flex items-center gap-3">
+      <p className="text-xs text-muted-foreground italic flex-1 min-w-0 line-clamp-2 leading-relaxed">
         "{shareText}"
       </p>
-      <div className="flex gap-2 shrink-0">
+      <div className="flex gap-1.5 shrink-0">
         <button
           onClick={handleCopy}
-          className="inline-flex items-center gap-1.5 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors px-2.5 py-1.5 rounded-md border border-border hover:bg-secondary"
+          className="h-8 w-8 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+          title="Copy"
         >
-          <Copy className="w-3 h-3" />
-          Copy
+          <Copy className="w-3.5 h-3.5" />
         </button>
         <button
           onClick={handleTwitter}
-          className="inline-flex items-center gap-1.5 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors px-2.5 py-1.5 rounded-md border border-border hover:bg-secondary"
+          className="h-8 w-8 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+          title="Share on X"
         >
-          <Share2 className="w-3 h-3" />
-          Share
+          <Twitter className="w-3.5 h-3.5" />
         </button>
       </div>
     </div>
