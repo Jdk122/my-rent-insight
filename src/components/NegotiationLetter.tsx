@@ -30,7 +30,7 @@ const NegotiationLetter = ({
   currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, medianHouseholdIncome,
   zip, city, state, bedrooms,
 }: NegotiationLetterProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [tone, setTone] = useState<Tone>('friendly');
   const [name, setName] = useState('');
   const [landlordName, setLandlordName] = useState('');
