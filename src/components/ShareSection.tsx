@@ -1,17 +1,22 @@
 import { toast } from 'sonner';
 import { Copy, Twitter, MessageCircle, Share2 } from 'lucide-react';
+import { LandlordCostEstimate } from '@/data/landlordCosts';
 
 interface ShareSectionProps {
   increasePct: number;
   marketPct: number;
   excessAnnual: number;
   multiplier: number;
+  landlordCosts?: LandlordCostEstimate | null;
+  increaseAmount?: number;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
-const ShareSection = ({ increasePct, marketPct, excessAnnual, multiplier }: ShareSectionProps) => {
-  const shareText = `My landlord is raising my rent ${increasePct}% when the market only moved ${marketPct}%. That's ${multiplier}× the market rate — $${fmt(excessAnnual)}/year above market.`;
+const ShareSection = ({ increasePct, marketPct, excessAnnual, multiplier, landlordCosts, increaseAmount }: ShareSectionProps) => {
+  const shareText = landlordCosts && increaseAmount
+    ? `My landlord's costs went up $${fmt(landlordCosts.monthlyCostIncrease)}/month but they're raising my rent $${fmt(increaseAmount)}/month. RentCheck showed me the math.`
+    : `My landlord is raising my rent ${increasePct}% when the market only moved ${marketPct}%. That's ${multiplier}× the market rate — $${fmt(excessAnnual)}/year above market.`;
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
   const fullText = `${shareText} Check yours: ${shareUrl}`;
 

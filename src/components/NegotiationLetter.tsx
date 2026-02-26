@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Copy, Download, FileText, Handshake, Shield, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
+import { LandlordCostEstimate } from '@/data/landlordCosts';
 
 interface NegotiationLetterProps {
   currentRent: number;
@@ -20,6 +21,8 @@ interface NegotiationLetterProps {
   city: string;
   state: string;
   bedrooms: BedroomType;
+  landlordCosts?: LandlordCostEstimate | null;
+  increaseAmount?: number;
 }
 
 type Tone = 'friendly' | 'firm';
@@ -28,7 +31,7 @@ const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 
 
 const NegotiationLetter = ({
   currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, medianHouseholdIncome,
-  zip, city, state, bedrooms,
+  zip, city, state, bedrooms, landlordCosts, increaseAmount,
 }: NegotiationLetterProps) => {
   const [isOpen, setIsOpen] = useState(true);
   const [tone, setTone] = useState<Tone>('friendly');
@@ -47,6 +50,10 @@ const NegotiationLetter = ({
       ? `\n• At $${fmt(newRent)}/mo, rent would be ${Math.round((newRent / (medianHouseholdIncome / 12)) * 100)}% of ${city} median household income (affordability limit: 30%)`
       : '';
 
+    const costLine = landlordCosts && increaseAmount
+      ? `\n\nFor reference, public records suggest this unit was purchased for $${fmt(landlordCosts.purchasePrice)} in ${landlordCosts.purchaseYear}. Based on typical carrying costs, the annual increase in ownership expenses is approximately $${fmt(landlordCosts.annualCostIncrease)} — significantly less than the $${fmt(increaseAmount * 12)} annual increase being proposed.`
+      : '';
+
     if (tone === 'friendly') {
       return `Dear ${ln},
 
@@ -58,7 +65,7 @@ Based on current rent data for ${city}, ${state} (${zip}):
 
 • Rents in ${city} rose ${marketYoy > 0 ? '' : ''}${marketYoy}% this year
 • My proposed increase: +${increasePct}%
-• Typical ${brLabel} rent in ${city}: $${fmt(fmr)}${censusMedian ? `\n• ${city} median rent: $${fmt(censusMedian)}` : ''}${burdenLine}
+• Typical ${brLabel} rent in ${city}: $${fmt(fmr)}${censusMedian ? `\n• ${city} median rent: $${fmt(censusMedian)}` : ''}${burdenLine}${costLine}
 
 I'd love to discuss a renewal closer to what ${city} rents are actually doing — around ${counterPct}% ($${fmt(counterRent)}/month).
 
@@ -81,14 +88,14 @@ I have reviewed current rent data for ${city}, ${state} (${zip}):
 • Rents in ${city} rose ${marketYoy > 0 ? '' : ''}${marketYoy}% this year
 • Proposed increase: +${increasePct}%
 
-The proposed increase of ${increasePct}% is ${(increasePct / marketYoy).toFixed(1)}× faster than rents are rising in ${city}.
+The proposed increase of ${increasePct}% is ${(increasePct / marketYoy).toFixed(1)}× faster than rents are rising in ${city}.${costLine}
 
 I am prepared to renew at ${counterPct}% ($${fmt(counterRent)}/month), in line with ${city}'s trend.
 
 Sincerely,
 ${sn}
 ${dateStr}`;
-  }, [tone, name, landlordName, counterPct, counterRent, currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, medianHouseholdIncome, zip, city, state, bedrooms]);
+  }, [tone, name, landlordName, counterPct, counterRent, currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, medianHouseholdIncome, zip, city, state, bedrooms, landlordCosts, increaseAmount]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(letter);
