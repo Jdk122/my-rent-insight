@@ -41,10 +41,10 @@ const RentForm = ({ onSubmit }: RentFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Primary fields — side by side */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
+    <form onSubmit={handleSubmit} className="space-y-5">
+      {/* Zip + Bedrooms */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
           <Label className="data-label">Zip Code</Label>
           <Input
             type="text"
@@ -52,14 +52,14 @@ const RentForm = ({ onSubmit }: RentFormProps) => {
             value={zip}
             onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
             maxLength={5}
-            className="h-12 font-mono text-base bg-background"
+            className="h-11 font-mono text-sm bg-background"
             required
           />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Label className="data-label">Bedrooms</Label>
           <Select value={bedrooms} onValueChange={(v) => setBedrooms(v as BedroomType)}>
-            <SelectTrigger className="h-12 text-base bg-background">
+            <SelectTrigger className="h-11 text-sm bg-background">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -72,31 +72,29 @@ const RentForm = ({ onSubmit }: RentFormProps) => {
       </div>
 
       {/* Current rent */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <Label className="data-label">Current Monthly Rent</Label>
         <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-muted-foreground">$</span>
+          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
           <Input
             type="number"
             placeholder="2,500"
             value={currentRent}
             onChange={(e) => setCurrentRent(e.target.value)}
-            className="h-14 pl-9 font-mono text-xl bg-background"
+            className="h-12 pl-8 font-mono text-lg bg-background"
             min={0}
             required
           />
         </div>
       </div>
 
-      {/* Rent increase — now the PRIMARY question */}
-      <div className="border-t border-border pt-5 space-y-2">
-        <Label className="data-label text-accent">Your Proposed Increase</Label>
-        <p className="text-sm text-muted-foreground mb-3">
-          How much is your landlord raising your rent?
-        </p>
-        <div className="flex gap-2">
+      {/* Rent increase */}
+      <div className="space-y-1.5 pt-3 border-t border-border">
+        <Label className="data-label text-accent">Proposed Increase</Label>
+        <p className="text-sm text-muted-foreground">How much is your landlord raising your rent?</p>
+        <div className="flex gap-2 mt-2">
           <div className="relative flex-1">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">
               {increaseIsPercent ? '%' : '$'}
             </span>
             <Input
@@ -104,39 +102,43 @@ const RentForm = ({ onSubmit }: RentFormProps) => {
               placeholder={increaseIsPercent ? "8.5" : "200"}
               value={rentIncrease}
               onChange={(e) => setRentIncrease(e.target.value)}
-              className="h-14 pl-9 font-mono text-xl bg-background"
+              className="h-12 pl-8 font-mono text-lg bg-background"
               min={0}
               step={increaseIsPercent ? 0.1 : 1}
             />
           </div>
           <button
             type="button"
-            className="h-14 px-4 rounded-md border border-border text-xs font-mono text-muted-foreground hover:bg-secondary transition-colors"
+            className="h-12 w-12 rounded-lg border border-border text-xs font-mono text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors flex items-center justify-center"
             onClick={() => setIncreaseIsPercent(!increaseIsPercent)}
+            title={increaseIsPercent ? 'Switch to dollar amount' : 'Switch to percentage'}
           >
-            {increaseIsPercent ? '%→$' : '$→%'}
+            {increaseIsPercent ? '%' : '$'}
           </button>
         </div>
       </div>
 
-      {/* Moving costs — optional */}
-      <div className="space-y-2">
-        <p className="data-label">Optional</p>
-        <Label className="text-sm font-medium text-foreground">Estimated Moving Costs</Label>
-        <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
-          <Input
-            type="number"
-            placeholder="2,500"
-            value={movingCosts}
-            onChange={(e) => setMovingCosts(e.target.value)}
-            className="h-11 pl-9 font-mono bg-background"
-            min={0}
-          />
+      {/* Moving costs — collapsed feel */}
+      <details className="group">
+        <summary className="data-label cursor-pointer select-none py-1 hover:text-foreground transition-colors">
+          <span className="ml-1">Moving costs (optional)</span>
+        </summary>
+        <div className="mt-2">
+          <div className="relative">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
+            <Input
+              type="number"
+              placeholder="2,500"
+              value={movingCosts}
+              onChange={(e) => setMovingCosts(e.target.value)}
+              className="h-10 pl-8 font-mono text-sm bg-background"
+              min={0}
+            />
+          </div>
         </div>
-      </div>
+      </details>
 
-      <Button type="submit" size="lg" className="w-full h-13 text-base font-semibold gap-2 group">
+      <Button type="submit" size="lg" className="w-full h-12 text-sm font-semibold gap-2 group rounded-xl">
         Check My Increase
         <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
       </Button>

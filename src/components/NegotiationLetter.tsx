@@ -6,7 +6,7 @@ import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { Copy, Download, FileText, Handshake, Shield } from 'lucide-react';
 import { toast } from 'sonner';
-import { RentData, getFmrForBedrooms, BedroomType, bedroomLabels } from '@/data/rentData';
+import { BedroomType, bedroomLabels } from '@/data/rentData';
 
 interface NegotiationLetterProps {
   currentRent: number;
@@ -27,17 +27,8 @@ type Tone = 'friendly' | 'firm';
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
 const NegotiationLetter = ({
-  currentRent,
-  newRent,
-  increasePct,
-  marketYoy,
-  fmr,
-  censusMedian,
-  medianHouseholdIncome,
-  zip,
-  city,
-  state,
-  bedrooms,
+  currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, medianHouseholdIncome,
+  zip, city, state, bedrooms,
 }: NegotiationLetterProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [tone, setTone] = useState<Tone>('friendly');
@@ -61,7 +52,7 @@ const NegotiationLetter = ({
 
 Thank you for the lease renewal offer. I received your notice of a rent increase from $${fmt(currentRent)} to $${fmt(newRent)} per month, which represents a ${increasePct}% increase.
 
-I've been a reliable tenant and I'd like to continue living here. However, I wanted to share some market data I found that suggests this increase may be above current market trends.
+I've been a reliable tenant and I'd like to continue living here. However, I wanted to share some market data that suggests this increase may be above current trends.
 
 According to HUD Fair Market Rent data and Census Bureau estimates for ${zip} (${city}, ${state}):
 
@@ -69,9 +60,7 @@ According to HUD Fair Market Rent data and Census Bureau estimates for ${zip} ($
 • My proposed increase: +${increasePct}%
 • Federal Fair Market Rent (${brLabel}): $${fmt(fmr)}${censusMedian ? `\n• Census Median Gross Rent: $${fmt(censusMedian)}` : ''}${burdenLine}
 
-Rents in our area increased approximately ${Math.abs(marketYoy)}% year-over-year, while the proposed increase of ${increasePct}% is significantly above that trend.
-
-I'd love to discuss a renewal at an increase closer to market conditions — around ${counterPct}% ($${fmt(counterRent)}/month). I believe this is fair for both of us and reflects the current rental market.
+I'd love to discuss a renewal closer to market conditions — around ${counterPct}% ($${fmt(counterRent)}/month).
 
 I've included my rent analysis from RentCheck for your reference.
 
@@ -86,17 +75,15 @@ ${dateStr}`;
 
 I am writing in response to the proposed rent increase from $${fmt(currentRent)} to $${fmt(newRent)} per month — a ${increasePct}% increase effective with my lease renewal.
 
-I have reviewed current market data from federal and census sources for ${zip} (${city}, ${state}):
+I have reviewed current market data for ${zip} (${city}, ${state}):
 
 • HUD Fair Market Rent (${brLabel}, FY2025): $${fmt(fmr)}${censusMedian ? `\n• Census Median Gross Rent (ACS 2022): $${fmt(censusMedian)}` : ''}${burdenLine}
 • Market-wide annual rent change: ${marketYoy > 0 ? '+' : ''}${marketYoy}%
 • Proposed increase: +${increasePct}%
 
-The proposed increase of ${increasePct}% is ${(increasePct / marketYoy).toFixed(1)}× the market rate of increase in this zip code. This is not consistent with prevailing market conditions.
+The proposed increase of ${increasePct}% is ${(increasePct / marketYoy).toFixed(1)}× the market rate of increase in this zip code.
 
-I am prepared to renew at an increase of ${counterPct}% ($${fmt(counterRent)}/month), which is in line with the area's year-over-year trend. I have been a consistent, on-time tenant and would prefer to continue this arrangement at a fair rate.
-
-Please let me know if you'd like to discuss. I have attached supporting data from RentCheck.
+I am prepared to renew at ${counterPct}% ($${fmt(counterRent)}/month), in line with the area's trend.
 
 Sincerely,
 ${sn}
@@ -105,7 +92,7 @@ ${dateStr}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(letter);
-    toast.success('Letter copied to clipboard');
+    toast.success('Letter copied');
   };
 
   const handleDownload = () => {
@@ -113,30 +100,28 @@ ${dateStr}`;
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `rent-negotiation-letter-${zip}.txt`;
+    a.download = `rent-negotiation-${zip}.txt`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success('Letter downloaded');
+    toast.success('Downloaded');
   };
 
   if (!isOpen) {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="w-full brand-card group cursor-pointer hover:border-accent/40 transition-colors text-left"
+        className="w-full affiliate-cta group text-left"
       >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-md bg-accent/10 flex items-center justify-center shrink-0">
-            <FileText className="w-5 h-5 text-accent" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="font-display text-xl text-foreground group-hover:text-accent transition-colors">
-              Generate your negotiation letter
-            </h3>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              Pre-written with your data. Copy it, send it, save money.
-            </p>
-          </div>
+        <div className="w-9 h-9 rounded-lg bg-accent/8 flex items-center justify-center shrink-0">
+          <FileText className="w-4 h-4 text-accent" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium text-foreground leading-tight">
+            Generate your negotiation letter
+          </p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Pre-written with your data — copy and send
+          </p>
         </div>
       </button>
     );
@@ -144,68 +129,68 @@ ${dateStr}`;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
+      initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      className="brand-card space-y-6"
+      className="brand-card space-y-5"
     >
       <div>
         <p className="data-label mb-1">Negotiation Letter</p>
-        <h3 className="font-display text-2xl text-foreground">Send this to your landlord</h3>
+        <h3 className="font-display text-xl text-foreground">Send this to your landlord</h3>
       </div>
 
-      {/* Controls */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label className="text-sm font-medium">Your Name</Label>
+      {/* Name inputs */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <Label className="text-xs font-medium">Your Name</Label>
           <Input
             placeholder="Jane Doe"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="h-10 font-mono bg-background"
+            className="h-9 font-mono text-sm bg-background"
           />
         </div>
-        <div className="space-y-2">
-          <Label className="text-sm font-medium">Landlord / Management</Label>
+        <div className="space-y-1.5">
+          <Label className="text-xs font-medium">Landlord / Mgmt</Label>
           <Input
             placeholder="ABC Properties"
             value={landlordName}
             onChange={(e) => setLandlordName(e.target.value)}
-            className="h-10 font-mono bg-background"
+            className="h-9 font-mono text-sm bg-background"
           />
         </div>
       </div>
 
-      {/* Tone toggle */}
+      {/* Tone */}
       <div className="flex gap-2">
         <button
           onClick={() => setTone('friendly')}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-md border text-sm font-mono transition-colors ${
+          className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg border text-xs font-mono transition-colors ${
             tone === 'friendly'
-              ? 'border-accent bg-accent/10 text-accent'
+              ? 'border-accent bg-accent/8 text-accent'
               : 'border-border text-muted-foreground hover:bg-secondary'
           }`}
         >
-          <Handshake className="w-4 h-4" />
+          <Handshake className="w-3.5 h-3.5" />
           Friendly
         </button>
         <button
           onClick={() => setTone('firm')}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-md border text-sm font-mono transition-colors ${
+          className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg border text-xs font-mono transition-colors ${
             tone === 'firm'
-              ? 'border-accent bg-accent/10 text-accent'
+              ? 'border-accent bg-accent/8 text-accent'
               : 'border-border text-muted-foreground hover:bg-secondary'
           }`}
         >
-          <Shield className="w-4 h-4" />
+          <Shield className="w-3.5 h-3.5" />
           Firm
         </button>
       </div>
 
-      {/* Counter-offer slider */}
-      <div className="space-y-3">
-        <Label className="text-sm font-medium">
-          Your counter-offer: <span className="font-mono text-accent">{counterPct}%</span>
-          <span className="text-muted-foreground font-normal"> (${fmt(counterRent)}/mo)</span>
+      {/* Counter slider */}
+      <div className="space-y-2">
+        <Label className="text-xs font-medium">
+          Counter: <span className="font-mono text-accent">{counterPct}%</span>
+          <span className="text-muted-foreground font-normal ml-1">(${fmt(counterRent)}/mo)</span>
         </Label>
         <Slider
           value={[counterPct]}
@@ -214,27 +199,27 @@ ${dateStr}`;
           max={increasePct}
           step={0.5}
         />
-        <div className="flex justify-between text-xs font-mono text-muted-foreground">
-          <span>0% (no increase)</span>
-          <span>{increasePct}% (accept as-is)</span>
+        <div className="flex justify-between text-[10px] font-mono text-muted-foreground">
+          <span>0%</span>
+          <span>{increasePct}% (accept)</span>
         </div>
       </div>
 
-      {/* Letter preview */}
-      <div className="rounded-md bg-secondary/50 border border-border p-5 max-h-80 overflow-y-auto">
-        <pre className="whitespace-pre-wrap font-mono text-sm text-foreground leading-relaxed">
+      {/* Preview */}
+      <div className="rounded-lg bg-secondary/50 border border-border p-4 max-h-64 overflow-y-auto">
+        <pre className="whitespace-pre-wrap font-mono text-xs text-foreground leading-relaxed">
           {letter}
         </pre>
       </div>
 
       {/* Actions */}
-      <div className="flex gap-3">
-        <Button onClick={handleCopy} variant="default" className="flex-1 gap-2">
-          <Copy className="w-4 h-4" />
-          Copy Letter
+      <div className="flex gap-2">
+        <Button onClick={handleCopy} variant="default" className="flex-1 gap-1.5 h-9 text-xs rounded-lg">
+          <Copy className="w-3.5 h-3.5" />
+          Copy
         </Button>
-        <Button onClick={handleDownload} variant="outline" className="flex-1 gap-2">
-          <Download className="w-4 h-4" />
+        <Button onClick={handleDownload} variant="outline" className="flex-1 gap-1.5 h-9 text-xs rounded-lg">
+          <Download className="w-3.5 h-3.5" />
           Download
         </Button>
       </div>

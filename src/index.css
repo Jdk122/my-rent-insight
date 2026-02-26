@@ -6,47 +6,47 @@
 
 @layer base {
   :root {
-    --background: 48 30% 96%;
-    --foreground: 200 15% 12%;
+    --background: 40 24% 96%;
+    --foreground: 220 20% 10%;
 
-    --card: 48 25% 99%;
-    --card-foreground: 200 15% 12%;
+    --card: 40 20% 99%;
+    --card-foreground: 220 20% 10%;
 
-    --popover: 48 25% 99%;
-    --popover-foreground: 200 15% 12%;
+    --popover: 40 20% 99%;
+    --popover-foreground: 220 20% 10%;
 
-    --primary: 200 15% 12%;
-    --primary-foreground: 48 30% 96%;
+    --primary: 220 20% 10%;
+    --primary-foreground: 40 24% 96%;
 
-    --secondary: 48 15% 91%;
-    --secondary-foreground: 200 15% 12%;
+    --secondary: 40 12% 92%;
+    --secondary-foreground: 220 20% 10%;
 
-    --muted: 48 12% 90%;
-    --muted-foreground: 200 8% 48%;
+    --muted: 40 8% 90%;
+    --muted-foreground: 220 8% 50%;
 
-    --accent: 4 80% 58%;
+    --accent: 2 72% 52%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 4 80% 58%;
+    --destructive: 2 72% 52%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 48 12% 86%;
-    --input: 48 12% 86%;
-    --ring: 200 15% 12%;
+    --border: 40 10% 88%;
+    --input: 40 10% 88%;
+    --ring: 220 20% 10%;
 
-    --radius: 0.5rem;
+    --radius: 0.625rem;
 
     /* Brand tokens */
-    --verdict-overpaying: 4 80% 58%;
-    --verdict-fair: 42 90% 52%;
-    --verdict-good: 160 55% 38%;
-    --verdict-move: 160 55% 38%;
-    --verdict-stay: 220 60% 50%;
-    --verdict-close: 42 90% 52%;
+    --verdict-overpaying: 2 72% 52%;
+    --verdict-fair: 38 92% 50%;
+    --verdict-good: 155 50% 38%;
+    --verdict-move: 155 50% 38%;
+    --verdict-stay: 220 55% 50%;
+    --verdict-close: 38 92% 50%;
 
-    --ink: 200 15% 12%;
-    --cream: 48 30% 96%;
-    --warm-gray: 40 8% 70%;
+    --ink: 220 20% 10%;
+    --cream: 40 24% 96%;
+    --warm-gray: 35 6% 58%;
 
     --font-display: 'Instrument Serif', serif;
     --font-body: 'Space Grotesk', sans-serif;
@@ -63,25 +63,25 @@
   }
 
   .dark {
-    --background: 200 15% 8%;
-    --foreground: 48 20% 92%;
-    --card: 200 12% 11%;
-    --card-foreground: 48 20% 92%;
-    --popover: 200 12% 11%;
-    --popover-foreground: 48 20% 92%;
-    --primary: 48 20% 92%;
-    --primary-foreground: 200 15% 8%;
-    --secondary: 200 10% 16%;
-    --secondary-foreground: 48 20% 92%;
-    --muted: 200 10% 16%;
-    --muted-foreground: 200 8% 55%;
-    --accent: 4 80% 58%;
+    --background: 220 18% 7%;
+    --foreground: 40 16% 93%;
+    --card: 220 15% 10%;
+    --card-foreground: 40 16% 93%;
+    --popover: 220 15% 10%;
+    --popover-foreground: 40 16% 93%;
+    --primary: 40 16% 93%;
+    --primary-foreground: 220 18% 7%;
+    --secondary: 220 12% 14%;
+    --secondary-foreground: 40 16% 93%;
+    --muted: 220 12% 14%;
+    --muted-foreground: 220 8% 55%;
+    --accent: 2 72% 52%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 4 62% 35%;
+    --destructive: 2 62% 35%;
     --destructive-foreground: 0 0% 100%;
-    --border: 200 10% 18%;
-    --input: 200 10% 18%;
-    --ring: 48 20% 92%;
+    --border: 220 12% 16%;
+    --input: 220 12% 16%;
+    --ring: 40 16% 93%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -107,18 +107,19 @@
 
 @layer components {
   .brand-card {
-    @apply rounded-lg bg-card border border-border p-6 md:p-8;
+    @apply rounded-xl bg-card border border-border p-6 md:p-8 shadow-sm;
   }
 
   .brand-card-dark {
     background: hsl(var(--ink));
     color: hsl(var(--cream));
-    @apply rounded-lg p-6 md:p-8 border-0;
+    @apply rounded-xl p-6 md:p-8 border-0 shadow-lg;
+    box-shadow: 0 8px 32px -8px hsl(var(--ink) / 0.3), 0 2px 8px -2px hsl(var(--ink) / 0.15);
   }
 
   .data-label {
     font-family: var(--font-mono);
-    @apply text-xs uppercase tracking-widest text-muted-foreground;
+    @apply text-[11px] uppercase tracking-[0.15em] text-muted-foreground font-medium;
   }
 
   .data-value {
@@ -127,21 +128,21 @@
   }
 
   .verdict-pill {
-    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider;
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em];
   }
 
   .verdict-pill-overpaying {
-    background: hsl(var(--verdict-overpaying) / 0.12);
+    background: hsl(var(--verdict-overpaying) / 0.1);
     color: hsl(var(--verdict-overpaying));
   }
 
   .verdict-pill-fair {
-    background: hsl(var(--verdict-fair) / 0.12);
+    background: hsl(var(--verdict-fair) / 0.1);
     color: hsl(var(--verdict-fair));
   }
 
   .verdict-pill-good {
-    background: hsl(var(--verdict-good) / 0.12);
+    background: hsl(var(--verdict-good) / 0.1);
     color: hsl(var(--verdict-good));
   }
 
@@ -150,7 +151,7 @@
   }
 
   .percentile-bar {
-    @apply relative h-2 w-full rounded-full overflow-hidden;
+    @apply relative h-1.5 w-full rounded-full overflow-hidden;
     background: hsl(var(--border));
   }
 
@@ -162,5 +163,28 @@
     @apply absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 transition-all duration-700 ease-out;
     border-color: hsl(var(--card));
     transform: translateX(-50%) translateY(-50%);
+  }
+
+  /* Data table rows */
+  .data-row {
+    @apply flex items-center justify-between py-3 text-sm;
+  }
+
+  .data-row-label {
+    @apply text-muted-foreground;
+  }
+
+  .data-row-value {
+    @apply font-mono font-semibold text-foreground tabular-nums;
+  }
+
+  /* Affiliate CTA */
+  .affiliate-cta {
+    @apply flex items-center gap-4 rounded-xl border border-border p-5 transition-all duration-200 cursor-pointer no-underline;
+    background: hsl(var(--card));
+  }
+  .affiliate-cta:hover {
+    border-color: hsl(var(--muted-foreground) / 0.3);
+    box-shadow: 0 2px 12px -4px hsl(var(--foreground) / 0.08);
   }
 }

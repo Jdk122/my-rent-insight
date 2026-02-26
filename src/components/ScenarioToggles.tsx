@@ -31,24 +31,23 @@ const ScenarioToggles = ({
   hasIncrease,
 }: ScenarioTogglesProps) => {
   return (
-    <div className="brand-card space-y-6">
+    <div className="brand-card space-y-5">
       <div>
         <p className="data-label mb-1">Scenario Calculator</p>
-        <h3 className="font-display text-2xl text-foreground">What If…</h3>
+        <h3 className="font-display text-xl text-foreground">What If…</h3>
       </div>
 
-      <div className="space-y-5">
-        <div className="space-y-3">
-          <Label className="text-sm font-medium text-foreground">
-            I find a place for…
-          </Label>
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-sm text-muted-foreground">$</span>
+      <div className="space-y-4">
+        {/* New rent */}
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-foreground">I find a place for…</Label>
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-xs text-muted-foreground">$</span>
             <Input
               type="number"
               value={scenarioNewRent}
               onChange={(e) => setScenarioNewRent(Number(e.target.value))}
-              className="h-10 w-32 font-mono bg-background"
+              className="h-9 w-28 font-mono text-sm bg-background"
               min={0}
             />
             <span className="font-mono text-xs text-muted-foreground">/mo</span>
@@ -59,20 +58,20 @@ const ScenarioToggles = ({
             min={Math.round(fmr * 0.6)}
             max={Math.round(currentRent * 1.2)}
             step={25}
+            className="mt-1"
           />
         </div>
 
-        <div className="space-y-3">
-          <Label className="text-sm font-medium text-foreground">
-            Moving costs…
-          </Label>
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-sm text-muted-foreground">$</span>
+        {/* Moving costs */}
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-foreground">Moving costs…</Label>
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-xs text-muted-foreground">$</span>
             <Input
               type="number"
               value={scenarioMovingCost}
               onChange={(e) => setScenarioMovingCost(Number(e.target.value))}
-              className="h-10 w-32 font-mono bg-background"
+              className="h-9 w-28 font-mono text-sm bg-background"
               min={0}
             />
           </div>
@@ -82,20 +81,20 @@ const ScenarioToggles = ({
             min={500}
             max={10000}
             step={100}
+            className="mt-1"
           />
         </div>
 
+        {/* Negotiated % */}
         {hasIncrease && (
-          <div className="space-y-3">
-            <Label className="text-sm font-medium text-foreground">
-              I negotiate my increase down to…
-            </Label>
-            <div className="flex items-center gap-3">
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-foreground">I negotiate down to…</Label>
+            <div className="flex items-center gap-2">
               <Input
                 type="number"
                 value={scenarioNegotiatedPct}
                 onChange={(e) => setScenarioNegotiatedPct(Number(e.target.value))}
-                className="h-10 w-24 font-mono bg-background"
+                className="h-9 w-20 font-mono text-sm bg-background"
                 min={0}
                 step={0.5}
               />
@@ -107,26 +106,27 @@ const ScenarioToggles = ({
               min={0}
               max={20}
               step={0.5}
+              className="mt-1"
             />
           </div>
         )}
       </div>
 
-      {/* Live verdict */}
-      <div className="p-4 rounded-md bg-secondary border border-border">
+      {/* Live result */}
+      <div className="p-3.5 rounded-lg bg-secondary/70 border border-border">
         <div className="flex items-center gap-2">
-          <Calculator className="w-4 h-4 text-muted-foreground" />
+          <Calculator className="w-3.5 h-3.5 text-muted-foreground" />
           <span className="font-mono text-sm font-semibold text-foreground">
             {breakEven.months === Infinity
-              ? 'Moving would cost you more'
+              ? 'Moving would cost more'
               : `Break-even: ${breakEven.months.toFixed(1)} months`}
           </span>
         </div>
         {breakEven.yearOneSavings !== 0 && (
-          <p className="font-mono text-xs text-muted-foreground mt-1.5 ml-6">
+          <p className="font-mono text-xs text-muted-foreground mt-1 ml-5">
             {breakEven.yearOneSavings > 0
-              ? `Saves ~$${fmt(breakEven.yearOneSavings)} in year one after moving costs`
-              : `Costs ~$${fmt(Math.abs(breakEven.yearOneSavings))} more in year one`}
+              ? `Saves ~$${fmt(breakEven.yearOneSavings)} yr 1 after moving costs`
+              : `Costs ~$${fmt(Math.abs(breakEven.yearOneSavings))} more yr 1`}
           </p>
         )}
       </div>

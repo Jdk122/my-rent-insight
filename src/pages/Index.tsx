@@ -4,7 +4,6 @@ import RentForm, { RentFormData } from '@/components/RentForm';
 import RentResults from '@/components/RentResults';
 import { lookupZip, RentData, rentDatabase } from '@/data/rentData';
 import { toast } from 'sonner';
-import { ArrowDown } from 'lucide-react';
 
 const availableZips = Object.keys(rentDatabase).join(', ');
 
@@ -24,53 +23,50 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Nav */}
-      <nav className="flex items-center justify-between px-6 md:px-10 py-5">
-        <span className="font-display text-2xl text-foreground tracking-tight">
+      <nav className="flex items-center justify-between px-6 md:px-10 py-4 border-b border-border/60">
+        <span className="font-display text-xl text-foreground tracking-tight">
           Rent<span className="text-accent">Check</span>
         </span>
         <span className="data-label hidden sm:block">
-          HUD FY2025 · Census ACS 2022
+          HUD FY2025 · Census ACS
         </span>
       </nav>
 
-      {/* Hero */}
-      <header className="px-6 md:px-10 pt-12 md:pt-24 pb-16 md:pb-32 max-w-3xl mx-auto">
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="data-label mb-4"
-        >
-          Free rent increase analyzer
-        </motion.p>
-        <motion.h1
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="font-display text-5xl md:text-7xl lg:text-8xl text-foreground leading-[0.95] tracking-tight"
-        >
-          Is your rent
-          <br />
-          increase fair?
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="mt-6 text-lg md:text-xl text-muted-foreground max-w-lg leading-relaxed"
-        >
-          Your landlord says the market went up. We'll check that against federal data — and tell you whether to accept, negotiate, or move.
-        </motion.p>
-        {!results && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="mt-10 flex items-center gap-2 text-muted-foreground"
-          >
-            <ArrowDown className="w-4 h-4 animate-bounce" />
-            <span className="text-sm font-medium">Start below</span>
-          </motion.div>
-        )}
+      {/* Hero — tight, editorial */}
+      <header className="px-6 md:px-10 pt-16 md:pt-28 pb-12 md:pb-20 max-w-2xl mx-auto">
+        <AnimatePresence mode="wait">
+          {!results ? (
+            <motion.div
+              key="hero"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.4 }}
+            >
+              <h1 className="font-display text-[clamp(2.5rem,7vw,5rem)] text-foreground leading-[0.92] tracking-tight">
+                Is your rent
+                <br />
+                increase fair?
+              </h1>
+              <p className="mt-5 text-base md:text-lg text-muted-foreground max-w-md leading-relaxed">
+                Compare your landlord's number against federal data.
+                Get the facts, a negotiation letter, and your next move.
+              </p>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="results-header"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <p className="data-label mb-2">Your Results</p>
+              <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight tracking-tight">
+                {results.rentData.city}, {results.rentData.state} {results.rentData.zip}
+              </h1>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* Main Content */}
@@ -79,21 +75,20 @@ const Index = () => {
           {!results ? (
             <motion.div
               key="form"
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.4 }}
-              className="brand-card"
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35 }}
             >
               <RentForm onSubmit={handleSubmit} />
             </motion.div>
           ) : (
             <motion.div
               key="results"
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.4 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35 }}
             >
               <RentResults
                 formData={results.formData}
@@ -106,13 +101,15 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border px-6 md:px-10 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-3xl mx-auto">
-        <span className="font-display text-lg text-foreground">
-          Rent<span className="text-accent">Check</span>
-        </span>
-        <p className="text-xs text-muted-foreground text-center sm:text-right max-w-sm">
-          Data: HUD Small Area Fair Market Rents (FY2025) and Census ACS 5-Year Estimates (2022). For informational purposes only.
-        </p>
+      <footer className="border-t border-border/60 px-6 md:px-10 py-6">
+        <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+          <span className="font-display text-base text-foreground">
+            Rent<span className="text-accent">Check</span>
+          </span>
+          <p className="text-[11px] text-muted-foreground text-center sm:text-right max-w-xs leading-relaxed">
+            Sources: HUD SAFMR FY2025, Census ACS 5-Year (2022). For informational purposes only.
+          </p>
+        </div>
       </footer>
     </div>
   );
