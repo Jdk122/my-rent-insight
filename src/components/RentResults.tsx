@@ -151,7 +151,10 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
 
         <div className="context-row">
           <span className="context-label">How fast rents are rising</span>
-          <span className="context-value">{marketYoy > 0 ? '+' : ''}{marketYoy}% this year</span>
+          <span className="context-value">
+            {marketYoy > 0 ? '+' : ''}{marketYoy}% this year
+            {rentData.yoyCapped && <span className="context-sub"> (capped — unusually large shift)</span>}
+          </span>
         </div>
         {calc && (
           <div className="context-row">
