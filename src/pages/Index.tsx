@@ -24,7 +24,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 md:px-10 py-5">
-        <span className="font-display text-xl text-foreground tracking-tight">
+        <span className="font-display text-xl text-foreground tracking-tight cursor-pointer" onClick={() => setResults(null)}>
           Rent<span className="text-primary">Check</span>
         </span>
         <span className="data-label hidden sm:block">
@@ -32,8 +32,8 @@ const Index = () => {
         </span>
       </nav>
 
-      {/* Hero */}
-      <header className="px-6 md:px-10 pt-8 md:pt-14 pb-4 md:pb-8 max-w-2xl mx-auto">
+      {/* Hero / Header */}
+      <header className={`px-6 md:px-10 max-w-2xl mx-auto ${results ? 'pt-6 pb-2' : 'pt-12 md:pt-20 pb-8 md:pb-12'}`}>
         <AnimatePresence mode="wait">
           {!results ? (
             <motion.div
@@ -43,12 +43,12 @@ const Index = () => {
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.4 }}
             >
-              <h1 className="font-display text-[clamp(2.5rem,7vw,4.5rem)] text-foreground leading-[0.92] tracking-tight">
+              <h1 className="font-display text-[clamp(2.8rem,8vw,5rem)] text-foreground leading-[0.9] tracking-tight">
                 Is your rent
                 <br />
                 increase <span className="text-primary">fair?</span>
               </h1>
-              <p className="mt-5 text-base md:text-lg text-muted-foreground max-w-md leading-relaxed">
+              <p className="mt-6 text-base md:text-lg text-muted-foreground max-w-md leading-relaxed">
                 Compare your landlord's number against federal data.
                 Get the facts, a negotiation letter, and your next move.
               </p>
@@ -70,7 +70,7 @@ const Index = () => {
       </header>
 
       {/* Main */}
-      <main className="max-w-xl mx-auto px-6 md:px-10 pb-24">
+      <main className={`max-w-xl mx-auto px-6 md:px-10 ${results ? 'pb-12' : 'pb-24'}`}>
         <AnimatePresence mode="wait">
           {!results ? (
             <motion.div
@@ -101,7 +101,7 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border px-6 md:px-10 py-6">
+      <footer className="border-t border-border px-6 md:px-10 py-8">
         <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <span className="font-display text-base text-foreground">
             Rent<span className="text-primary">Check</span>
