@@ -1,0 +1,12 @@
+{
+  "07030": { "median_rent": 2520, "median_income": 152680 },
+  "10001": { "median_rent": 2495, "median_income": 84710 },
+  "90210": { "median_rent": 3250, "median_income": 142680 },
+  "60601": { "median_rent": 1825, "median_income": 98520 },
+  "94102": { "median_rent": 2150, "median_income": 54830 },
+  "77001": { "median_rent": 1380, "median_income": 52340 },
+  "30301": { "median_rent": 1520, "median_income": 62340 },
+  "98101": { "median_rent": 2075, "median_income": 68740 },
+  "02101": { "median_rent": 2680, "median_income": 95320 },
+  "85001": { "median_rent": 1340, "median_income": 52680 }
+}

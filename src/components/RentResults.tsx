@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { RentFormData } from './RentForm';
-import { RentData, getFmrForBedrooms, getTypicalRange, bedroomLabels, calculateBreakEven } from '@/data/rentData';
+import { RentLookupResult, bedroomLabels, calculateResults } from '@/data/rentData';
 import ShareSection from './ShareSection';
 import EmailCapture from './EmailCapture';
 import CompLinks from './CompLinks';
@@ -11,7 +11,7 @@ import { LandlordCostEstimate } from '@/data/landlordCosts';
 
 interface RentResultsProps {
   formData: RentFormData;
-  rentData: RentData;
+  rentData: RentLookupResult;
   onReset: () => void;
 }
 
@@ -24,10 +24,7 @@ const fade = (delay: number) => ({
 });
 
 const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
-  const fmr = getFmrForBedrooms(rentData, formData.bedrooms);
-  const range = getTypicalRange(rentData, formData.bedrooms);
-  const marketYoy = rentData.yoyChange;
-
+  // Compute increase amounts
   const increaseAmount = formData.rentIncrease
     ? formData.increaseIsPercent
       ? Math.round(formData.currentRent * (formData.rentIncrease / 100))
@@ -40,22 +37,32 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
       : Math.round((formData.rentIncrease / formData.currentRent) * 1000) / 10
     : 0;
 
+  const hasIncrease = increaseAmount > 0;
+
+  // Use the new calculation engine
+  const calc = useMemo(() => {
+    if (!hasIncrease) return null;
+    return calculateResults(
+      formData.currentRent,
+      increasePct,
+      formData.movingCosts,
+      rentData
+    );
+  }, [formData.currentRent, increasePct, formData.movingCosts, rentData, hasIncrease]);
+
   const newRent = formData.currentRent + increaseAmount;
   const annualExtra = increaseAmount * 12;
-  const increaseVsMarket = increasePct - marketYoy;
-  const multiplier = marketYoy > 0 ? Math.round((increasePct / marketYoy) * 10) / 10 : 0;
-  const excessAnnual = Math.round((formData.currentRent * (increaseVsMarket / 100)) * 12);
+  const marketYoy = rentData.yoyChange;
+  const multiplier = calc?.increaseRatio ?? 0;
+  const excessAnnual = hasIncrease
+    ? Math.round(formData.currentRent * ((increasePct - marketYoy) / 100) * 12)
+    : 0;
 
-  const hasIncrease = increaseAmount > 0;
-  const isAboveMarket = increaseVsMarket > 1;
-  const isFair = Math.abs(increaseVsMarket) <= 1;
-  const isBelowMarket = increaseVsMarket < -1;
+  const isAboveMarket = calc?.verdict === 'above';
+  const isFair = calc?.verdict === 'at-market';
+  const isBelowMarket = calc?.verdict === 'below';
 
   const [landlordCosts, setLandlordCosts] = useState<LandlordCostEstimate | null>(null);
-
-  const breakEven = useMemo(() => {
-    return calculateBreakEven(newRent, fmr, formData.movingCosts);
-  }, [newRent, fmr, formData.movingCosts]);
 
   const verdictColor = isFair ? 'text-verdict-fair' : isAboveMarket ? 'text-verdict-overpaying' : 'text-verdict-good';
   const pillClass = isFair ? 'verdict-pill-fair' : isAboveMarket ? 'verdict-pill-overpaying' : 'verdict-pill-good';
@@ -69,9 +76,11 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
   const brLabel = bedroomLabels[formData.bedrooms];
 
   // Affordability
-  const monthlyIncome = rentData.medianHouseholdIncome ? rentData.medianHouseholdIncome / 12 : null;
-  const rentBurden = monthlyIncome ? Math.round((newRent / monthlyIncome) * 100) : null;
-  const isCostBurdened = rentBurden ? rentBurden > 30 : false;
+  const rentBurden = calc?.rentBurden ?? null;
+  const isCostBurdened = calc?.isCostBurdened ?? false;
+
+  // Break-even
+  const breakEvenMonths = calc?.breakEvenMonths ?? Infinity;
 
   return (
     <div className="max-w-[620px] mx-auto px-6">
@@ -93,7 +102,13 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
             </h1>
 
             <p className="text-lg text-muted-foreground max-w-[440px] mx-auto mt-4 leading-relaxed">
-              {city} rents rose <strong className="text-foreground font-bold text-xl">{marketYoy}%</strong> — yours is going up <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong>.
+              {isAboveMarket ? (
+                <>Rents in {city} rose <strong className="text-foreground font-bold text-xl">{marketYoy}%</strong> this year. Your landlord is raising yours <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong>. That's ${fmt(annualExtra)}/year more than the typical increase in your area.</>
+              ) : isFair ? (
+                <>Your increase is roughly in line with what rents are doing in {city}. You're not being overcharged.</>
+              ) : (
+                <>Rents in {city} rose <strong className="text-foreground font-bold text-xl">{marketYoy}%</strong> and your landlord is only raising yours <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong>. This is a fair deal.</>
+              )}
             </p>
 
             <button onClick={onReset} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mt-4">
@@ -132,25 +147,27 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
 
         <div className="context-row">
           <span className="context-label">How fast rents are rising</span>
-          <span className="context-value">{rentData.yoyChange > 0 ? '+' : ''}{rentData.yoyChange}% / year</span>
+          <span className="context-value">{marketYoy > 0 ? '+' : ''}{marketYoy}% this year</span>
         </div>
-        <div className="context-row">
-          <span className="context-label">What most {brLabel.toLowerCase()}s go for</span>
-          <span className="context-value">${fmt(range.low)} – ${fmt(range.high)}</span>
-        </div>
+        {calc && (
+          <div className="context-row">
+            <span className="context-label">What most {brLabel.toLowerCase()}s go for</span>
+            <span className="context-value">${fmt(calc.typicalRangeLow)} – ${fmt(calc.typicalRangeHigh)}</span>
+          </div>
+        )}
         <div className="context-row">
           <span className="context-label">{city} benchmark</span>
-          <span className="context-value">${fmt(fmr)} <span className="context-sub">HUD 40th pctl</span></span>
+          <span className="context-value">${fmt(rentData.fmr)} <span className="context-sub">HUD 40th pctl</span></span>
         </div>
-        {rentData.censusMedian && (
+        {rentData.censusMedianRent && (
           <div className="context-row">
-            <span className="context-label">{city} median rent</span>
-            <span className="context-value">${fmt(rentData.censusMedian)}</span>
+            <span className="context-label">What the typical renter pays</span>
+            <span className="context-value">${fmt(rentData.censusMedianRent)}</span>
           </div>
         )}
         {hasIncrease && (
           <div className="context-row">
-            <span className="context-label">Your increase</span>
+            <span className="context-label">What your landlord wants</span>
             <span className={`context-value ${verdictColor}`}>+{increasePct}% <span className="context-sub">+${fmt(increaseAmount)}/mo</span></span>
           </div>
         )}
@@ -163,6 +180,15 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
             </span>
           </div>
         )}
+        {rentData.fredTrend && (
+          <div className="context-row">
+            <span className="context-label">Monthly trend</span>
+            <span className="context-value">
+              {rentData.fredTrend.monthlyRate > 0 ? '+' : ''}{rentData.fredTrend.monthlyRate}%/mo
+              <span className="context-sub">({rentData.fredTrend.trend})</span>
+            </span>
+          </div>
+        )}
       </motion.div>
 
       {/* ━━━ BREAK-EVEN CALLOUT ━━━ */}
@@ -171,35 +197,36 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
           <div className="callout-box">
             <p className="callout-box-title">Should you move?</p>
             <p className="callout-box-body">
-              If moving costs ${fmt(formData.movingCosts)} and you find a place for ${fmt(Math.abs(newRent - fmr))}/month less,
+              If moving costs ${fmt(formData.movingCosts)} and you find a place at the benchmark (${fmt(rentData.censusMedianRent || rentData.fmr)}/mo),
               you break even in <strong className="text-foreground font-semibold">
-                {breakEven.months === Infinity ? 'never — staying is cheaper' : `${breakEven.months.toFixed(1)} months`}
+                {breakEvenMonths === Infinity ? 'never — staying is cheaper' : `${breakEvenMonths.toFixed(1)} months`}
               </strong>.
-              {breakEven.verdict === 'move' && ` After that, you'd save about $${fmt(Math.abs(breakEven.yearOneSavings))} in year one.`}
-              {breakEven.verdict === 'stay' && ` Staying put is probably the smarter financial move.`}
-              {breakEven.verdict === 'close' && ` It's close — depends on how much you value staying.`}
             </p>
           </div>
         </motion.div>
       )}
 
       {/* ━━━ NEGOTIATION LETTER ━━━ */}
-      {hasIncrease && isAboveMarket && (
+      {hasIncrease && isAboveMarket && calc && (
         <motion.div {...fade(0.16)} className="py-9 border-b border-border">
           <NegotiationLetter
             currentRent={formData.currentRent}
             newRent={newRent}
             increasePct={increasePct}
             marketYoy={marketYoy}
-            fmr={fmr}
-            censusMedian={rentData.censusMedian}
-            medianHouseholdIncome={rentData.medianHouseholdIncome}
+            fmr={rentData.fmr}
+            censusMedian={rentData.censusMedianRent}
+            medianIncome={rentData.medianIncome}
             zip={rentData.zip}
             city={rentData.city}
             state={rentData.state}
             bedrooms={formData.bedrooms}
             landlordCosts={landlordCosts}
             increaseAmount={increaseAmount}
+            counterLow={calc.counterLow}
+            counterHigh={calc.counterHigh}
+            counterLowPercent={calc.counterLowPercent}
+            counterHighPercent={calc.counterHighPercent}
           />
         </motion.div>
       )}
