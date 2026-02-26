@@ -278,14 +278,14 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
         <div className="h-px bg-border" />
 
         {/* ━━━ EMAIL ━━━ */}
-        <motion.div {...fade(0.18)} className="py-10 md:py-14">
-          <div className="max-w-sm">
+        <motion.div {...fade(0.18)} className="py-10 md:py-14 text-center">
+          <div className="max-w-sm mx-auto">
             <EmailCapture />
           </div>
         </motion.div>
 
         {/* ━━━ BACK ━━━ */}
-        <div className="pb-12 pt-2">
+        <div className="pb-12 pt-2 text-center">
           <button
             onClick={onReset}
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
