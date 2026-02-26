@@ -35,7 +35,7 @@ const NegotiationLetter = ({
   const [tone, setTone] = useState<Tone>('friendly');
 
   const brLabel = bedroomLabels[bedrooms];
-  const increaseRatio = marketYoy > 0 ? Math.round(increasePct / marketYoy) : 0;
+  const increaseRatio = marketYoy > 0 ? Math.round((increasePct / marketYoy) * 10) / 10 : 0;
 
   const costLine = landlordCosts && increaseAmount
     ? `\n\nFor reference, public records suggest this unit was purchased for $${fmt(landlordCosts.purchasePrice)} in ${landlordCosts.purchaseYear}. Based on typical carrying costs, the annual increase in ownership expenses is approximately $${fmt(landlordCosts.annualCostIncrease)} — significantly less than the $${fmt(increaseAmount * 12)} annual increase being proposed.`
@@ -59,7 +59,7 @@ const NegotiationLetter = ({
       `I am writing regarding the proposed lease renewal at $${fmt(newRent)}/month — a ${increasePct}% increase from my current rent of $${fmt(currentRent)}/month.`,
       `I have reviewed current market data for ${city}, ${state} (${zip}):`,
       `• Typical ${brLabel.toLowerCase()} rent in ${city}: $${fmt(fmr)}\n${censusMedian ? `• ${city} median rent: $${fmt(censusMedian)}\n` : ''}• Rents in ${city} rose ${marketYoy}% this year\n• Proposed increase: ${increasePct}%`,
-      `The proposed increase of ${increasePct}% is ${(increasePct / marketYoy).toFixed(1)}× faster than rents are rising in ${city}.`,
+      `The proposed increase of ${increasePct}% is ${increaseRatio}× faster than rents are rising in ${city}.`,
       costLine ? costLine.trim() : null,
       `I am prepared to renew at ${counterLowPercent}% ($${fmt(counterLow)}/month), in line with ${city}'s market trend.`,
       `Sincerely,\n[Your name]`,
