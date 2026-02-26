@@ -275,9 +275,61 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
         </motion.div>
       )}
 
+      {/* Affiliate: Renters Insurance — contextual after move/stay decision */}
+      {hasIncrease && (
+        <motion.div {...anim(0.28)}>
+          <a
+            href="#lemonade-affiliate"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="brand-card group flex items-center gap-4 hover:border-accent/40 transition-colors cursor-pointer no-underline"
+          >
+            <div className="flex items-center justify-center w-10 h-10 rounded-md bg-accent/10 shrink-0">
+              <span className="text-lg">🛡️</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-display text-base text-foreground leading-tight">
+                Protect your belongings wherever you live
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Renters insurance from ~$5/mo. Takes 90 seconds.
+              </p>
+            </div>
+            <span className="text-xs font-mono font-semibold text-accent group-hover:underline shrink-0">
+              Get Covered →
+            </span>
+          </a>
+        </motion.div>
+      )}
+
       {/* Email Capture */}
       <motion.div {...anim(0.3)}>
         <EmailCapture />
+      </motion.div>
+
+      {/* Affiliate: Credit Score — after email capture */}
+      <motion.div {...anim(0.32)}>
+        <a
+          href="#credit-karma-affiliate"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="brand-card group flex items-center gap-4 hover:border-accent/40 transition-colors cursor-pointer no-underline"
+        >
+          <div className="flex items-center justify-center w-10 h-10 rounded-md bg-verdict-good/10 shrink-0">
+            <span className="text-lg">📊</span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="font-display text-base text-foreground leading-tight">
+              Check your credit score free before signing a new lease
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Landlords pull credit. Know your number first.
+            </p>
+          </div>
+          <span className="text-xs font-mono font-semibold text-verdict-good group-hover:underline shrink-0">
+            Check Now →
+          </span>
+        </a>
       </motion.div>
 
       <div className="text-center pt-2">
