@@ -2,22 +2,38 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import RentForm, { RentFormData } from '@/components/RentForm';
 import RentResults from '@/components/RentResults';
-import { lookupZip, RentData, rentDatabase } from '@/data/rentData';
+import { lookupRentData, loadFredTrend, RentLookupResult } from '@/data/rentData';
 import { toast } from 'sonner';
 
-const zipCount = Object.keys(rentDatabase).length;
-
 const Index = () => {
-  const [results, setResults] = useState<{ formData: RentFormData; rentData: RentData } | null>(null);
+  const [results, setResults] = useState<{ formData: RentFormData; rentData: RentLookupResult } | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (data: RentFormData) => {
-    const rentData = lookupZip(data.zip);
-    if (!rentData) {
-      toast.error(`No data for ${data.zip} yet. We currently cover ${zipCount} zip codes across major metros.`);
-      return;
+  const handleSubmit = async (data: RentFormData) => {
+    setIsLoading(true);
+    try {
+      const rentData = await lookupRentData(data.zip, data.bedrooms);
+      if (!rentData) {
+        toast.error(`We don't have data for ${data.zip} yet. Try a nearby zip code.`);
+        setIsLoading(false);
+        return;
+      }
+      setResults({ formData: data, rentData });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Load FRED trend data in background (non-blocking)
+      loadFredTrend(rentData.metro).then((fredTrend) => {
+        if (fredTrend) {
+          setResults((prev) =>
+            prev ? { ...prev, rentData: { ...prev.rentData, fredTrend } } : prev
+          );
+        }
+      });
+    } catch (err) {
+      toast.error('Something went wrong loading rent data. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
-    setResults({ formData: data, rentData });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -51,7 +67,7 @@ const Index = () => {
                 Find out instantly. Get a negotiation letter if it's not.
               </p>
               <div className="mt-10">
-                <RentForm onSubmit={handleSubmit} />
+                <RentForm onSubmit={handleSubmit} isLoading={isLoading} />
               </div>
             </div>
           </motion.div>

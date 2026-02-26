@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Lock } from 'lucide-react';
-import { RentData } from '@/data/rentData';
-import { BedroomType } from '@/data/rentData';
+import { RentLookupResult, BedroomType } from '@/data/rentData';
 import { estimateLandlordCosts, LandlordCostEstimate } from '@/data/landlordCosts';
 
 interface LandlordCostLookupProps {
-  rentData: RentData;
+  rentData: RentLookupResult;
   bedrooms: BedroomType;
   currentRent: number;
   increaseAmount: number;
@@ -30,7 +29,8 @@ const LandlordCostLookup = ({
     if (!address.trim()) return;
     setIsLoading(true);
     setTimeout(() => {
-      const data = estimateLandlordCosts(address, rentData, bedrooms);
+      // Create a minimal RentData-like object for the estimator
+      const data = estimateLandlordCosts(address, rentData.fmr);
       setCostData(data);
       onCostData(data);
       setIsLoading(false);
@@ -99,7 +99,7 @@ const LandlordCostLookup = ({
         {address}, {rentData.city}
       </p>
 
-      {costRows.map((row, i) => (
+      {costRows.map((row) => (
         <div
           key={row.label}
           className={`context-row ${row.bold ? 'pt-4' : ''}`}

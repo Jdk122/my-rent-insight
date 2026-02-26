@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowRight } from 'lucide-react';
 
 export interface RentFormData {
   zip: string;
@@ -17,9 +15,10 @@ export interface RentFormData {
 
 interface RentFormProps {
   onSubmit: (data: RentFormData) => void;
+  isLoading?: boolean;
 }
 
-const RentForm = ({ onSubmit }: RentFormProps) => {
+const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
   const [zip, setZip] = useState('');
   const [bedrooms, setBedrooms] = useState<BedroomType>('oneBr');
   const [currentRent, setCurrentRent] = useState('');
@@ -140,9 +139,10 @@ const RentForm = ({ onSubmit }: RentFormProps) => {
 
       <button
         type="submit"
-        className="w-full h-14 bg-gradient-to-r from-primary to-accent text-primary-foreground text-base font-bold rounded-md shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
+        disabled={isLoading}
+        className="w-full h-14 bg-gradient-to-r from-primary to-accent text-primary-foreground text-base font-bold rounded-md shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
       >
-        Check my increase →
+        {isLoading ? 'Loading data…' : 'Check my increase →'}
       </button>
     </form>
   );

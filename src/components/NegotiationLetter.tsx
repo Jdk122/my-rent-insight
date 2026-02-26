@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
 import { LandlordCostEstimate } from '@/data/landlordCosts';
@@ -11,13 +10,17 @@ interface NegotiationLetterProps {
   marketYoy: number;
   fmr: number;
   censusMedian: number | null;
-  medianHouseholdIncome: number | null;
+  medianIncome: number | null;
   zip: string;
   city: string;
   state: string;
   bedrooms: BedroomType;
   landlordCosts?: LandlordCostEstimate | null;
   increaseAmount?: number;
+  counterLow: number;
+  counterHigh: number;
+  counterLowPercent: number;
+  counterHighPercent: number;
 }
 
 type Tone = 'friendly' | 'firm';
@@ -25,16 +28,14 @@ type Tone = 'friendly' | 'firm';
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
 const NegotiationLetter = ({
-  currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, medianHouseholdIncome,
+  currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, medianIncome,
   zip, city, state, bedrooms, landlordCosts, increaseAmount,
+  counterLow, counterHigh, counterLowPercent, counterHighPercent,
 }: NegotiationLetterProps) => {
   const [tone, setTone] = useState<Tone>('friendly');
 
-  const counterPct = Math.max(Math.round(marketYoy * 10) / 10, 1);
-  const counterRent = Math.round(currentRent * (1 + counterPct / 100));
-  const counterHigh = Math.round(currentRent * (1 + (counterPct + 1) / 100));
-
   const brLabel = bedroomLabels[bedrooms];
+  const increaseRatio = marketYoy > 0 ? Math.round(increasePct / marketYoy) : 0;
 
   const costLine = landlordCosts && increaseAmount
     ? `\n\nFor reference, public records suggest this unit was purchased for $${fmt(landlordCosts.purchasePrice)} in ${landlordCosts.purchaseYear}. Based on typical carrying costs, the annual increase in ownership expenses is approximately $${fmt(landlordCosts.annualCostIncrease)} — significantly less than the $${fmt(increaseAmount * 12)} annual increase being proposed.`
@@ -43,28 +44,27 @@ const NegotiationLetter = ({
   const letterHtml = useMemo(() => {
     if (tone === 'friendly') {
       return [
-        `Hi [Landlord],`,
+        `Hi [Landlord name],`,
         `Thanks for letting me know about the lease renewal. I'd like to stay and I appreciate the notice.`,
-        `Before I sign, I looked into what rents have done in ${city} this year. The market-wide increase for a ${brLabel.toLowerCase()} was about ${marketYoy}%, and my proposed increase of ${increasePct}% is roughly ${(increasePct / marketYoy).toFixed(0)}× that.`,
-        `For context:`,
-        `• ${city} median rent (${brLabel}): $${fmt(censusMedian || fmr)}\n• Area-wide increase this year: ${marketYoy}%\n• My proposed increase: ${increasePct}%`,
+        `Before I sign, I looked into what rents have done in ${city} this year. The market-wide increase for a ${brLabel.toLowerCase()} was about ${marketYoy}%, and my proposed increase of ${increasePct}% is roughly ${increaseRatio}× that.`,
+        `For context:\n• ${city} median rent (${brLabel}): $${fmt(censusMedian || fmr)}\n• Area-wide increase this year: ${marketYoy}%\n• My proposed increase: ${increasePct}%`,
         costLine ? costLine.trim() : null,
-        `I'd love to find a number that works for both of us — something closer to ${counterPct}–${counterPct + 1}%, which would put the rent around $${fmt(counterRent)}–$${fmt(counterHigh)}. Happy to discuss.`,
+        `I'd love to find a number that works for both of us — something closer to ${counterLowPercent}–${counterHighPercent}%, which would put the rent around $${fmt(counterLow)}–$${fmt(counterHigh)}. Happy to discuss.`,
         `Best,\n[Your name]`,
       ].filter(Boolean);
     }
 
     return [
-      `Dear [Landlord],`,
+      `Dear [Landlord name],`,
       `I am writing regarding the proposed lease renewal at $${fmt(newRent)}/month — a ${increasePct}% increase from my current rent of $${fmt(currentRent)}/month.`,
       `I have reviewed current market data for ${city}, ${state} (${zip}):`,
       `• Typical ${brLabel.toLowerCase()} rent in ${city}: $${fmt(fmr)}\n${censusMedian ? `• ${city} median rent: $${fmt(censusMedian)}\n` : ''}• Rents in ${city} rose ${marketYoy}% this year\n• Proposed increase: ${increasePct}%`,
       `The proposed increase of ${increasePct}% is ${(increasePct / marketYoy).toFixed(1)}× faster than rents are rising in ${city}.`,
       costLine ? costLine.trim() : null,
-      `I am prepared to renew at ${counterPct}% ($${fmt(counterRent)}/month), in line with ${city}'s market trend.`,
+      `I am prepared to renew at ${counterLowPercent}% ($${fmt(counterLow)}/month), in line with ${city}'s market trend.`,
       `Sincerely,\n[Your name]`,
     ].filter(Boolean);
-  }, [tone, currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, zip, city, state, brLabel, counterPct, counterRent, counterHigh, costLine]);
+  }, [tone, currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, zip, city, state, brLabel, counterLow, counterHigh, counterLowPercent, counterHighPercent, costLine, increaseRatio]);
 
   const letterText = letterHtml.join('\n\n');
 
