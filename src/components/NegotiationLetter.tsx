@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
-import { LandlordCostEstimate } from '@/data/landlordCosts';
+import { LandlordCostEstimate, LandlordInsights } from '@/data/landlordCosts';
 
 interface NegotiationLetterProps {
   currentRent: number;
@@ -16,6 +16,7 @@ interface NegotiationLetterProps {
   state: string;
   bedrooms: BedroomType;
   landlordCosts?: LandlordCostEstimate | null;
+  landlordInsights?: LandlordInsights | null;
   increaseAmount?: number;
   counterLow: number;
   counterHigh: number;
@@ -29,7 +30,7 @@ const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 
 
 const NegotiationLetter = ({
   currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, medianIncome,
-  zip, city, state, bedrooms, landlordCosts, increaseAmount,
+  zip, city, state, bedrooms, landlordCosts, landlordInsights, increaseAmount,
   counterLow, counterHigh, counterLowPercent, counterHighPercent,
 }: NegotiationLetterProps) => {
   const [tone, setTone] = useState<Tone>('friendly');
@@ -37,8 +38,18 @@ const NegotiationLetter = ({
   const brLabel = bedroomLabels[bedrooms];
   const increaseRatio = marketYoy > 0 ? Math.round((increasePct / marketYoy) * 10) / 10 : 0;
 
-  const costLine = landlordCosts && increaseAmount
-    ? `\n\nFor reference, public records suggest this unit was purchased for $${fmt(landlordCosts.purchasePrice)} in ${landlordCosts.purchaseYear}. Based on typical carrying costs, the annual increase in ownership expenses is approximately $${fmt(landlordCosts.annualCostIncrease)} — significantly less than the $${fmt(increaseAmount * 12)} annual increase being proposed.`
+  // Only include cost data when we have enough data and profit is positive
+  const showCostData = landlordCosts && landlordInsights && increaseAmount &&
+    landlordInsights.hasEnoughData &&
+    landlordInsights.costIncreaseMarkup !== null && landlordInsights.costIncreaseMarkup > 1 &&
+    landlordInsights.profitMargin > 0;
+
+  const friendlyCostLine = showCostData
+    ? `I also looked into typical operating costs for a building like ours. Based on public records, the property was purchased in ${landlordCosts!.purchaseYear} for $${fmt(landlordCosts!.purchasePrice)}, and operating costs for a building at this price point likely increased around $${fmt(landlordCosts!.monthlyCostIncrease)}/month per unit this year — well below the $${fmt(increaseAmount!)}/month increase proposed.`
+    : '';
+
+  const firmCostBullets = showCostData
+    ? `\n• Based on the ${landlordCosts!.purchaseYear} purchase price and current tax records, estimated operating cost increases for this building are ~$${fmt(landlordCosts!.monthlyCostIncrease)}/mo per unit — the proposed $${fmt(increaseAmount!)}/mo increase represents a ${landlordInsights!.costIncreaseMarkup}× markup on actual cost increases\n• At current rents, the estimated monthly profit on each unit already exceeds $${fmt(landlordInsights!.profitMargin)} before the proposed increase`
     : '';
 
   const letterHtml = useMemo(() => {
@@ -48,7 +59,7 @@ const NegotiationLetter = ({
         `Thanks for letting me know about the lease renewal. I'd like to stay and I appreciate the notice.`,
         `Before I sign, I looked into what rents have done in ${city} this year. The market-wide increase for a ${brLabel.toLowerCase()} was about ${marketYoy}%, and my proposed increase of ${increasePct}% is roughly ${increaseRatio}× that.`,
         `For context:\n• ${city} median rent (${brLabel}): $${fmt(censusMedian || fmr)}\n• Area-wide increase this year: ${marketYoy}%\n• My proposed increase: ${increasePct}%`,
-        costLine ? costLine.trim() : null,
+        friendlyCostLine || null,
         `I'd love to find a number that works for both of us — something closer to ${counterLowPercent}–${counterHighPercent}%, which would put the rent around $${fmt(counterLow)}–$${fmt(counterHigh)}. Happy to discuss.`,
         `Best,\n[Your name]`,
       ].filter(Boolean);
@@ -58,13 +69,12 @@ const NegotiationLetter = ({
       `Dear [Landlord name],`,
       `I am writing regarding the proposed lease renewal at $${fmt(newRent)}/month — a ${increasePct}% increase from my current rent of $${fmt(currentRent)}/month.`,
       `I have reviewed current market data for ${city}, ${state} (${zip}):`,
-      `• Typical ${brLabel.toLowerCase()} rent in ${city}: $${fmt(fmr)}\n${censusMedian ? `• ${city} median rent: $${fmt(censusMedian)}\n` : ''}• Rents in ${city} rose ${marketYoy}% this year\n• Proposed increase: ${increasePct}%`,
+      `• Typical ${brLabel.toLowerCase()} rent in ${city}: $${fmt(fmr)}\n${censusMedian ? `• ${city} median rent: $${fmt(censusMedian)}\n` : ''}• Rents in ${city} rose ${marketYoy}% this year\n• Proposed increase: ${increasePct}%${firmCostBullets}`,
       `The proposed increase of ${increasePct}% is ${increaseRatio}× faster than rents are rising in ${city}.`,
-      costLine ? costLine.trim() : null,
       `I am prepared to renew at ${counterLowPercent}% ($${fmt(counterLow)}/month), in line with ${city}'s market trend.`,
       `Sincerely,\n[Your name]`,
     ].filter(Boolean);
-  }, [tone, currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, zip, city, state, brLabel, counterLow, counterHigh, counterLowPercent, counterHighPercent, costLine, increaseRatio]);
+  }, [tone, currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, zip, city, state, brLabel, counterLow, counterHigh, counterLowPercent, counterHighPercent, friendlyCostLine, firmCostBullets, increaseRatio]);
 
   const letterText = letterHtml.join('\n\n');
 
@@ -87,24 +97,10 @@ const NegotiationLetter = ({
   return (
     <div>
       <h2 className="section-title">Your negotiation letter</h2>
-
-      {/* Tone toggle — segmented control */}
       <div className="tone-toggle">
-        <button
-          onClick={() => setTone('friendly')}
-          className={`tone-option ${tone === 'friendly' ? 'active' : ''}`}
-        >
-          Friendly
-        </button>
-        <button
-          onClick={() => setTone('firm')}
-          className={`tone-option ${tone === 'firm' ? 'active' : ''}`}
-        >
-          Firm
-        </button>
+        <button onClick={() => setTone('friendly')} className={`tone-option ${tone === 'friendly' ? 'active' : ''}`}>Friendly</button>
+        <button onClick={() => setTone('firm')} className={`tone-option ${tone === 'firm' ? 'active' : ''}`}>Firm</button>
       </div>
-
-      {/* Letter preview */}
       <div className="bg-card border border-border rounded-lg border-l-[3px] border-l-muted p-6 md:p-8 mt-4">
         <div className="text-xs text-muted-foreground mb-4 pb-4 border-b border-border flex gap-4">
           <span>To: Your landlord</span>
@@ -112,21 +108,13 @@ const NegotiationLetter = ({
         </div>
         <div className="space-y-4">
           {letterHtml.map((para, i) => (
-            <p key={i} className="text-sm text-foreground/80 leading-[1.7] whitespace-pre-line">
-              {para}
-            </p>
+            <p key={i} className="text-sm text-foreground/80 leading-[1.7] whitespace-pre-line">{para}</p>
           ))}
         </div>
       </div>
-
-      {/* Actions */}
       <div className="flex gap-3 mt-5">
-        <button onClick={handleCopy} className="bg-primary text-primary-foreground px-7 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20">
-          Copy letter
-        </button>
-        <button onClick={handleDownload} className="border border-border px-7 py-3 rounded-lg text-sm font-medium text-foreground hover:border-foreground transition-colors">
-          Download
-        </button>
+        <button onClick={handleCopy} className="bg-primary text-primary-foreground px-7 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20">Copy letter</button>
+        <button onClick={handleDownload} className="border border-border px-7 py-3 rounded-lg text-sm font-medium text-foreground hover:border-foreground transition-colors">Download</button>
       </div>
     </div>
   );

@@ -6,15 +6,20 @@ import ShareSection from './ShareSection';
 import EmailCapture from './EmailCapture';
 import CompLinks from './CompLinks';
 import NegotiationLetter from './NegotiationLetter';
-import LandlordCostLookup from './LandlordCostLookup';
-import { LandlordCostEstimate } from '@/data/landlordCosts';
+import { PropertyLookupResult, PropertyLookupError } from '@/hooks/usePropertyLookup';
+import { calculateLandlordCosts, generateInsights, toLegacyCostEstimate, LandlordCostEstimate } from '@/data/landlordCosts';
+import LandlordCostSection from './LandlordCostSection';
 import RentcastCard from './RentcastCard';
 import { useRentcast } from '@/hooks/useRentcast';
 
 interface RentResultsProps {
   formData: RentFormData;
   rentData: RentLookupResult;
+  propertyData: PropertyLookupResult | null;
+  propertyLoading: boolean;
+  propertyError: PropertyLookupError;
   onReset: () => void;
+  onScrollToTop: () => void;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -25,8 +30,7 @@ const fade = (delay: number) => ({
   transition: { duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] as const },
 });
 
-const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
-  // Compute increase amounts
+const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop }: RentResultsProps) => {
   const increaseAmount = formData.rentIncrease
     ? formData.increaseIsPercent
       ? Math.round(formData.currentRent * (formData.rentIncrease / 100))
@@ -41,15 +45,9 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
 
   const hasIncrease = increaseAmount > 0;
 
-  // Use the new calculation engine
   const calc = useMemo(() => {
     if (!hasIncrease) return null;
-    return calculateResults(
-      formData.currentRent,
-      increasePct,
-      formData.movingCosts,
-      rentData
-    );
+    return calculateResults(formData.currentRent, increasePct, formData.movingCosts, rentData);
   }, [formData.currentRent, increasePct, formData.movingCosts, rentData, hasIncrease]);
 
   const newRent = formData.currentRent + increaseAmount;
@@ -64,7 +62,21 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
   const isFair = calc?.verdict === 'at-market';
   const isBelowMarket = calc?.verdict === 'below';
 
-  const [landlordCosts, setLandlordCosts] = useState<LandlordCostEstimate | null>(null);
+  // Compute landlord cost data from property lookup
+  const landlordCosts = useMemo<LandlordCostEstimate | null>(() => {
+    if (!propertyData) return null;
+    const costs = calculateLandlordCosts(propertyData);
+    if (!costs) return null;
+    return toLegacyCostEstimate(propertyData, costs);
+  }, [propertyData]);
+
+  const landlordInsights = useMemo(() => {
+    if (!propertyData) return null;
+    const costs = calculateLandlordCosts(propertyData);
+    if (!costs) return null;
+    return generateInsights(propertyData, costs, formData.currentRent, newRent);
+  }, [propertyData, formData.currentRent, newRent]);
+
   const rentcast = useRentcast(rentData.zip, formData.bedrooms);
 
   const verdictColor = isFair ? 'text-verdict-fair' : isAboveMarket ? 'text-verdict-overpaying' : 'text-verdict-good';
@@ -78,14 +90,10 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
   const city = rentData.city;
   const brLabel = bedroomLabels[formData.bedrooms];
 
-  // Affordability
   const rentBurden = calc?.rentBurden ?? null;
   const isCostBurdened = calc?.isCostBurdened ?? false;
-
-  // Break-even
   const breakEvenMonths = calc?.breakEvenMonths ?? Infinity;
 
-  // Alternating row index counter
   let rowIdx = 0;
 
   return (
@@ -96,7 +104,6 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
         {hasIncrease ? (
           <>
             <div className={`verdict-pill ${pillClass} mb-5`}>{verdictLabel}</div>
-
             <h1 className="font-body text-[32px] font-semibold leading-[1.25] tracking-tight mx-auto max-w-[480px]" style={{ letterSpacing: '-0.02em' }}>
               {isAboveMarket ? (
                 marketYoy <= 0
@@ -108,7 +115,6 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
                 <>Your increase is <span className={verdictColor}>right at market.</span></>
               )}
             </h1>
-
             <p className="text-lg text-muted-foreground max-w-[440px] mx-auto mt-4 leading-relaxed">
               {marketYoy <= 0 && isAboveMarket ? (
                 <>Market rents {marketYoy < 0 ? <><em>decreased</em> {Math.abs(marketYoy)}%</> : 'held flat'} in {city}. An increase of <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong> is going against the trend.</>
@@ -120,7 +126,6 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
                 <>Rents in {city} rose <strong className="text-foreground font-bold text-xl">{marketYoy}%</strong> and your landlord is only raising yours <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong>. This is a fair deal.</>
               )}
             </p>
-
             <button onClick={onReset} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mt-4">
               ← Check a different address
             </button>
@@ -154,7 +159,6 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
       {/* ━━━ MARKET CONTEXT ━━━ */}
       <motion.div {...fade(0.1)} className="py-12 border-b border-border">
         <h2 className="section-title">{city}, {rentData.state} — {brLabel}</h2>
-
         <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
           <span className="context-label">{city} rents this year</span>
           <span className="context-value">
@@ -204,7 +208,6 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
             </span>
           </div>
         )}
-        {/* FRED trend (only show if no Zillow monthly — avoids duplication) */}
         {rentData.fredTrend && rentData.zillowMonthly === null && (
           <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
             <span className="context-label">Monthly trend</span>
@@ -214,19 +217,13 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
             </span>
           </div>
         )}
-
-        {/* Source attribution */}
         <p className="text-[11px] text-muted-foreground mt-3">{rentData.yoySourceLabel}</p>
-
-        {/* Prior source note */}
         {rentData.yoySource === 'hud' && rentData.priorSource === 'm' && (
           <p className="text-[11px] text-muted-foreground mt-1">Based on {rentData.metro} area average trend.</p>
         )}
         {rentData.yoySource === 'hud' && rentData.priorSource === 'n' && (
           <p className="text-[11px] text-muted-foreground mt-1">Note: This uses the national rent trend because local data is limited for this area.</p>
         )}
-
-        {/* Below FMR note — rent is reasonable, increase rate is the issue */}
         {hasIncrease && isAboveMarket && newRent < rentData.fmr && (
           <p className="text-[11px] text-verdict-good mt-3">Your overall rent is reasonable for {city} — it's the rate of increase that's out of line with the market.</p>
         )}
@@ -234,12 +231,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
 
       {/* ━━━ RENTCAST DATA ━━━ */}
       <motion.div {...fade(0.12)} className="py-12 border-b border-border">
-        <RentcastCard
-          data={rentcast.data}
-          loading={rentcast.loading}
-          error={rentcast.error}
-          city={city}
-        />
+        <RentcastCard data={rentcast.data} loading={rentcast.loading} error={rentcast.error} city={city} />
       </motion.div>
 
       {/* ━━━ BREAK-EVEN CALLOUT ━━━ */}
@@ -273,6 +265,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
             state={rentData.state}
             bedrooms={formData.bedrooms}
             landlordCosts={landlordCosts}
+            landlordInsights={landlordInsights}
             increaseAmount={increaseAmount}
             counterLow={calc.counterLow}
             counterHigh={calc.counterHigh}
@@ -282,27 +275,25 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
         </motion.div>
       )}
 
-      {/* ━━━ LANDLORD COST LOOKUP ━━━ */}
+      {/* ━━━ LANDLORD COST SECTION ━━━ */}
       {hasIncrease && (
-        <motion.div {...fade(0.19)} className="py-12 border-b border-border text-center">
-          <LandlordCostLookup
-            rentData={rentData}
-            bedrooms={formData.bedrooms}
+        <motion.div {...fade(0.19)} className="py-12 border-b border-border">
+          <LandlordCostSection
+            propertyData={propertyData}
+            propertyLoading={propertyLoading}
+            propertyError={propertyError}
             currentRent={formData.currentRent}
+            proposedRent={newRent}
             increaseAmount={increaseAmount}
-            onCostData={setLandlordCosts}
+            hasAddress={!!formData.fullAddress}
+            onScrollToTop={onScrollToTop}
           />
         </motion.div>
       )}
 
       {/* ━━━ COMPS ━━━ */}
       <motion.div {...fade(0.22)} className="py-12 border-b border-border">
-        <CompLinks
-          zip={rentData.zip}
-          city={rentData.city}
-          state={rentData.state}
-          bedrooms={formData.bedrooms}
-        />
+        <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} />
       </motion.div>
 
       {/* ━━━ EMAIL ━━━ */}
@@ -321,7 +312,6 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
           increaseAmount={increaseAmount}
         />
       </motion.div>
-
     </div>
   );
 };

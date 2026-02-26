@@ -2,3 +2,6 @@ project_id = "piwahxgtsxpcrgoyuedy"
 
 [functions.rentcast-lookup]
 verify_jwt = false
+
+[functions.property-lookup]
+verify_jwt = false

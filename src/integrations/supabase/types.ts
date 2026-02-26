@@ -14,7 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      lookup_rate_limits: {
+        Row: {
+          created_at: string | null
+          id: string
+          ip_address: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          ip_address: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          ip_address?: string
+        }
+        Relationships: []
+      }
+      property_cache: {
+        Row: {
+          address_normalized: string
+          created_at: string | null
+          data: Json
+          id: string
+        }
+        Insert: {
+          address_normalized: string
+          created_at?: string | null
+          data: Json
+          id?: string
+        }
+        Update: {
+          address_normalized?: string
+          created_at?: string | null
+          data?: Json
+          id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
