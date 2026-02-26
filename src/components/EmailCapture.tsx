@@ -44,7 +44,7 @@ const EmailCapture = () => {
   return (
     <div>
       <h2 className="font-display text-xl text-foreground mb-1">Stay Updated</h2>
-      <p className="text-[13px] text-muted-foreground mb-4">
+      <p className="text-sm text-muted-foreground mb-4">
         Get fresh rent data 60 days before your lease expires.
       </p>
       <form onSubmit={handleSubmit} className="space-y-2.5">

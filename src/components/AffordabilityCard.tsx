@@ -41,7 +41,7 @@ const AffordabilityCard = ({ currentRent, newRent, medianHouseholdIncome, zip }:
       <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="font-display text-xl text-foreground mb-0.5">Affordability</h2>
-          <p className="text-[13px] text-muted-foreground">Rent burden vs. area median income</p>
+          <p className="text-sm text-muted-foreground">Rent burden vs. area median income</p>
         </div>
         <span className={`verdict-pill ${isSevereBurden ? 'verdict-pill-overpaying' : isCostBurdened ? 'verdict-pill-fair' : 'verdict-pill-good'}`}>
           {burdenLabel}

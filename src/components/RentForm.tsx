@@ -45,7 +45,7 @@ const RentForm = ({ onSubmit }: RentFormProps) => {
       {/* Zip + Bedrooms */}
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
-          <Label className="data-label">Zip Code</Label>
+          <Label className="text-sm font-medium text-foreground">Zip Code</Label>
           <Input
             type="text"
             placeholder="07030"
@@ -57,7 +57,7 @@ const RentForm = ({ onSubmit }: RentFormProps) => {
           />
         </div>
         <div className="space-y-1.5">
-          <Label className="data-label">Bedrooms</Label>
+          <Label className="text-sm font-medium text-foreground">Bedrooms</Label>
           <Select value={bedrooms} onValueChange={(v) => setBedrooms(v as BedroomType)}>
             <SelectTrigger className="h-11 text-sm bg-background">
               <SelectValue />
@@ -73,7 +73,7 @@ const RentForm = ({ onSubmit }: RentFormProps) => {
 
       {/* Current rent */}
       <div className="space-y-1.5">
-        <Label className="data-label">Current Monthly Rent</Label>
+        <Label className="text-sm font-medium text-foreground">Current Monthly Rent</Label>
         <div className="relative">
           <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
           <Input
@@ -90,8 +90,8 @@ const RentForm = ({ onSubmit }: RentFormProps) => {
 
       {/* Rent increase */}
       <div className="space-y-1.5 pt-3 border-t border-border">
-        <Label className="data-label text-accent">Proposed Increase</Label>
-        <p className="text-sm text-muted-foreground">How much is your landlord raising your rent?</p>
+        <Label className="text-sm font-medium text-primary">Proposed Increase</Label>
+        <p className="text-sm text-muted-foreground leading-relaxed">How much is your landlord raising your rent?</p>
         <div className="flex gap-2 mt-2">
           <div className="relative flex-1">
             <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">
@@ -120,7 +120,7 @@ const RentForm = ({ onSubmit }: RentFormProps) => {
 
       {/* Moving costs — collapsed feel */}
       <details className="group">
-        <summary className="data-label cursor-pointer select-none py-1 hover:text-foreground transition-colors">
+        <summary className="text-sm font-medium text-muted-foreground cursor-pointer select-none py-1 hover:text-foreground transition-colors">
           <span className="ml-1">Moving costs (optional)</span>
         </summary>
         <div className="mt-2">

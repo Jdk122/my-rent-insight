@@ -87,19 +87,19 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
                 <span className="text-muted-foreground mx-3 text-[0.4em] align-middle">vs</span>
                 <span className="text-foreground">{marketYoy}%</span>
               </p>
-              <p className="font-mono text-[11px] text-muted-foreground mt-4 tracking-wide uppercase">
+              <p className="text-xs text-muted-foreground mt-4 tracking-wide uppercase">
                 Your Increase vs. Market · {bedroomLabels[formData.bedrooms]} · {rentData.zip}
               </p>
             </div>
 
             {isAboveMarket && multiplier > 0 && (
-              <p className="font-mono text-sm mt-6 text-foreground">
+            <p className="text-sm mt-6 text-foreground">
                 That's <span className={`font-bold ${verdictColor}`}>{multiplier}×</span> the market rate —{' '}
-                <span className="font-bold">${fmt(excessAnnual)}</span> above market per year
+                <span className="font-mono font-bold">${fmt(excessAnnual)}</span> above market per year
               </p>
             )}
             {isBelowMarket && (
-              <p className="font-mono text-sm mt-6 text-verdict-good">
+            <p className="text-sm mt-6 text-verdict-good">
                 Below the local market trend — you're in good shape
               </p>
             )}
@@ -107,7 +107,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
         ) : (
           <>
             <p className="font-display text-2xl md:text-3xl text-foreground">No increase entered</p>
-            <p className="font-mono text-xs text-muted-foreground mt-2">Enter your proposed increase to compare</p>
+            <p className="text-sm text-muted-foreground mt-2">Enter your proposed increase to compare</p>
           </>
         )}
       </motion.div>
@@ -231,10 +231,10 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
             <div className="callout">
               <Scale className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
               <div>
-                <p className="font-mono text-sm font-semibold text-foreground">
+              <p className="font-mono text-sm font-semibold text-foreground">
                   Break-even: {breakEven.months === Infinity ? '∞' : breakEven.months.toFixed(1)} months
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   {breakEven.verdict === 'move' && `Moving saves ~$${fmt(Math.abs(breakEven.yearOneSavings))} in year 1`}
                   {breakEven.verdict === 'close' && `Close call — depends on your priorities`}
                   {breakEven.verdict === 'stay' && `Staying is likely the smarter move`}
