@@ -107,7 +107,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
               {marketYoy <= 0 && isAboveMarket ? (
                 <>Market rents {marketYoy < 0 ? <><em>decreased</em> {Math.abs(marketYoy)}%</> : 'held flat'} in {city}. An increase of <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong> is going against the trend.</>
               ) : isAboveMarket ? (
-                <>Rents in {city} rose <strong className="text-foreground font-bold text-xl">{marketYoy}%</strong> this year. Your landlord is raising yours <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong>. That's ${fmt(annualExtra)}/year more than the typical increase in your area.</>
+                <>Rents in {city} rose <strong className="text-foreground font-bold text-xl">{marketYoy}%</strong> this year. Your landlord is raising yours <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong>. That's <strong>${fmt(annualExtra)} extra per year.</strong></>
               ) : isFair ? (
                 <>Your increase is roughly in line with what rents are doing in {city}. You're not being overcharged.</>
               ) : (
@@ -183,10 +183,10 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
             <span className="context-value">${fmt(rentData.censusMedianRent)}</span>
           </div>
         )}
-        {hasIncrease && (
+        {hasIncrease && isAboveMarket && calc && (
           <div className="context-row">
-            <span className="context-label">What your landlord wants</span>
-            <span className={`context-value ${verdictColor}`}>+{increasePct}% <span className="context-sub">+${fmt(increaseAmount)}/mo</span></span>
+            <span className="context-label">Fair counter-offer</span>
+            <span className="context-value text-verdict-good font-semibold">${fmt(calc.counterLow)}–${fmt(calc.counterHigh)}/mo</span>
           </div>
         )}
         {rentBurden && (
@@ -220,9 +220,9 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
           <p className="text-[11px] text-muted-foreground mt-1">Note: This uses the national rent trend because local data is limited for this area.</p>
         )}
 
-        {/* Below FMR note */}
-        {hasIncrease && newRent < rentData.fmr && (
-          <p className="text-[11px] text-verdict-good mt-3">Even with this increase, you'd still be below the {city} benchmark.</p>
+        {/* Below FMR note — rent is reasonable, increase rate is the issue */}
+        {hasIncrease && isAboveMarket && newRent < rentData.fmr && (
+          <p className="text-[11px] text-verdict-good mt-3">Your overall rent is reasonable for {city} — it's the rate of increase that's out of line with the market.</p>
         )}
       </motion.div>
 
