@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['Source Serif 4', 'serif'],
+        display: ['DM Serif Display', 'serif'],
         body: ['DM Sans', 'sans-serif'],
         mono: ['DM Sans', 'sans-serif'],
       },
