@@ -82,16 +82,19 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
   // Break-even
   const breakEvenMonths = calc?.breakEvenMonths ?? Infinity;
 
+  // Alternating row index counter
+  let rowIdx = 0;
+
   return (
     <div className="max-w-[620px] mx-auto px-6">
 
       {/* ━━━ VERDICT ━━━ */}
-      <motion.div {...fade(0)} className="py-14 text-center border-b border-border">
+      <motion.div {...fade(0)} className="py-16 text-center border-b border-border">
         {hasIncrease ? (
           <>
-            <div className={`verdict-pill ${pillClass} mb-5 text-sm px-5 py-2`}>{verdictLabel}</div>
+            <div className={`verdict-pill ${pillClass} mb-5`}>{verdictLabel}</div>
 
-            <h1 className="font-display text-[32px] font-bold leading-[1.25] tracking-tight mx-auto max-w-[480px]" style={{ letterSpacing: '-0.02em' }}>
+            <h1 className="font-body text-[32px] font-semibold leading-[1.25] tracking-tight mx-auto max-w-[480px]" style={{ letterSpacing: '-0.02em' }}>
               {isAboveMarket ? (
                 marketYoy <= 0
                   ? <>Your increase is <span className={verdictColor}>above the market trend.</span></>
@@ -121,7 +124,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
           </>
         ) : (
           <>
-            <h1 className="font-display text-[32px] font-bold text-foreground">No increase entered</h1>
+            <h1 className="font-body text-[32px] font-semibold text-foreground">No increase entered</h1>
             <p className="text-muted-foreground mt-2">Enter your proposed increase to compare.</p>
           </>
         )}
@@ -129,15 +132,15 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
 
       {/* ━━━ NUMBERS ROW ━━━ */}
       {hasIncrease && (
-        <motion.div {...fade(0.05)} className="flex justify-center gap-16 py-12 border-b border-border">
+        <motion.div {...fade(0.05)} className="flex justify-center gap-16 py-14 border-b border-border">
           {[
             { label: 'Your Rent', value: `$${fmt(formData.currentRent)}` },
-            { label: 'Proposed', value: `$${fmt(newRent)}`, color: verdictColor },
+            { label: 'Proposed', value: `$${fmt(newRent)}`, isProposed: true },
             { label: 'Extra / Year', value: `$${fmt(annualExtra)}` },
           ].map((item) => (
             <div key={item.label} className="text-center">
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{item.label}</p>
-              <p className={`font-display text-[36px] md:text-[42px] tracking-tight ${item.color || 'text-foreground'}`} style={{ letterSpacing: '-0.02em' }}>
+              <p className={`font-display text-[36px] md:text-[42px] tracking-tight ${item.isProposed ? 'text-destructive' : 'text-foreground'}`} style={{ letterSpacing: '-0.02em' }}>
                 {item.value}
               </p>
             </div>
@@ -146,10 +149,10 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
       )}
 
       {/* ━━━ MARKET CONTEXT ━━━ */}
-      <motion.div {...fade(0.1)} className="py-9 border-b border-border">
+      <motion.div {...fade(0.1)} className="py-12 border-b border-border">
         <h2 className="section-title">{city}, {rentData.state} — {brLabel}</h2>
 
-        <div className="context-row">
+        <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
           <span className="context-label">{city} rents this year</span>
           <span className="context-value">
             {marketYoy > 0 ? '+' : ''}{marketYoy}% this year
@@ -157,7 +160,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
           </span>
         </div>
         {rentData.zillowMonthly !== null && rentData.zillowDirection && (
-          <div className="context-row">
+          <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
             <span className="context-label">Monthly trend</span>
             <span className="context-value">
               {rentData.zillowMonthly > 0 ? '+' : ''}{rentData.zillowMonthly}%/mo
@@ -168,29 +171,29 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
           </div>
         )}
         {calc && (
-          <div className="context-row">
+          <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
             <span className="context-label">What most {brLabel.toLowerCase()}s go for</span>
             <span className="context-value">${fmt(calc.typicalRangeLow)} – ${fmt(calc.typicalRangeHigh)}</span>
           </div>
         )}
-        <div className="context-row">
+        <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
           <span className="context-label">{city} benchmark</span>
           <span className="context-value">${fmt(rentData.fmr)} <span className="context-sub">HUD 40th pctl</span></span>
         </div>
         {rentData.censusMedianRent && (
-          <div className="context-row">
+          <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
             <span className="context-label">What the typical renter pays</span>
             <span className="context-value">${fmt(rentData.censusMedianRent)}</span>
           </div>
         )}
         {hasIncrease && isAboveMarket && calc && (
-          <div className="context-row">
+          <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
             <span className="context-label">Fair counter-offer</span>
             <span className="context-value text-verdict-good font-semibold">${fmt(calc.counterLow)}–${fmt(calc.counterHigh)}/mo</span>
           </div>
         )}
         {rentBurden && (
-          <div className="context-row">
+          <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
             <span className="context-label">Rent as % of area median income</span>
             <span className="context-value">
               {rentBurden}%
@@ -200,7 +203,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
         )}
         {/* FRED trend (only show if no Zillow monthly — avoids duplication) */}
         {rentData.fredTrend && rentData.zillowMonthly === null && (
-          <div className="context-row">
+          <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
             <span className="context-label">Monthly trend</span>
             <span className="context-value">
               {rentData.fredTrend.monthlyChange > 0 ? '+' : ''}{rentData.fredTrend.monthlyChange}%/mo
@@ -228,7 +231,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
 
       {/* ━━━ BREAK-EVEN CALLOUT ━━━ */}
       {hasIncrease && (
-        <motion.div {...fade(0.13)} className="my-8">
+        <motion.div {...fade(0.13)} className="my-10">
           <div className="callout-box">
             <p className="callout-box-title">Should you move?</p>
             <p className="callout-box-body">
@@ -243,7 +246,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
 
       {/* ━━━ NEGOTIATION LETTER ━━━ */}
       {hasIncrease && isAboveMarket && calc && (
-        <motion.div {...fade(0.16)} className="py-9 border-b border-border">
+        <motion.div {...fade(0.16)} className="py-12 border-b border-border">
           <NegotiationLetter
             currentRent={formData.currentRent}
             newRent={newRent}
@@ -280,7 +283,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
       )}
 
       {/* ━━━ COMPS ━━━ */}
-      <motion.div {...fade(0.22)} className="py-9 border-b border-border">
+      <motion.div {...fade(0.22)} className="py-12 border-b border-border">
         <CompLinks
           zip={rentData.zip}
           city={rentData.city}

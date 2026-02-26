@@ -114,21 +114,21 @@
 
 @layer components {
   .verdict-pill {
-    @apply inline-block text-[11px] font-semibold uppercase tracking-widest px-3.5 py-1 rounded;
+    @apply inline-block text-xs font-bold uppercase tracking-widest px-5 py-1.5 rounded-md;
   }
 
   .verdict-pill-overpaying {
-    background: hsl(6 60% 46% / 0.08);
-    color: hsl(var(--accent-red));
+    background: hsl(6 60% 46%);
+    color: white;
   }
 
   .verdict-pill-fair {
-    background: hsl(38 85% 36% / 0.1);
+    background: hsl(38 85% 36% / 0.12);
     color: hsl(var(--accent-amber));
   }
 
   .verdict-pill-good {
-    background: hsl(152 50% 33% / 0.08);
+    background: hsl(152 50% 33% / 0.1);
     color: hsl(var(--accent-green));
   }
 
@@ -147,11 +147,19 @@
   }
 
   .context-row {
-    @apply flex items-baseline justify-between py-3 border-b border-border/60;
+    @apply flex items-baseline justify-between py-3 px-3 border-b border-border/60 rounded-sm;
   }
 
   .context-row:last-child {
     @apply border-b-0;
+  }
+
+  .context-row-even {
+    background: transparent;
+  }
+
+  .context-row-odd {
+    background: hsl(210 12% 96%);
   }
 
   .context-label {
