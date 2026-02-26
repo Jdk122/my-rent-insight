@@ -1,1 +1,4 @@
 project_id = "piwahxgtsxpcrgoyuedy"
+
+[functions.rentcast-lookup]
+verify_jwt = false
