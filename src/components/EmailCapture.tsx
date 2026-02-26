@@ -57,16 +57,16 @@ const EmailCapture = ({ city }: EmailCaptureProps) => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="flex-1 px-4 py-3 text-sm border border-border rounded bg-card text-foreground outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
+          className="flex-1 px-4 py-3 text-sm border border-border rounded-lg bg-card text-foreground outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
         />
-        <button type="submit" className="bg-primary text-primary-foreground px-5 py-3 rounded text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap">
+        <button type="submit" className="bg-primary text-primary-foreground px-5 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap">
           Remind me
         </button>
       </form>
       <select
         value={leaseMonth}
         onChange={(e) => setLeaseMonth(e.target.value)}
-        className="w-full max-w-[440px] mx-auto block px-4 py-3 text-sm border border-border rounded bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
+        className="w-full max-w-[440px] mx-auto block px-4 py-3 text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
       >
         <option disabled value="">Lease expiration month</option>
         {months.map((m) => (

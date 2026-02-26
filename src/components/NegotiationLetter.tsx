@@ -105,7 +105,7 @@ const NegotiationLetter = ({
       </div>
 
       {/* Letter preview */}
-      <div className="bg-card border border-border rounded p-6 md:p-8 mt-4">
+      <div className="bg-card border border-border rounded-lg border-l-[3px] border-l-muted p-6 md:p-8 mt-4">
         <div className="text-xs text-muted-foreground mb-4 pb-4 border-b border-border flex gap-4">
           <span>To: Your landlord</span>
           <span>Re: Lease renewal</span>
@@ -121,10 +121,10 @@ const NegotiationLetter = ({
 
       {/* Actions */}
       <div className="flex gap-3 mt-5">
-        <button onClick={handleCopy} className="bg-primary text-primary-foreground px-7 py-3 rounded text-sm font-semibold hover:opacity-90 transition-opacity">
+        <button onClick={handleCopy} className="bg-primary text-primary-foreground px-7 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20">
           Copy letter
         </button>
-        <button onClick={handleDownload} className="border border-border px-7 py-3 rounded text-sm font-medium text-foreground hover:border-foreground transition-colors">
+        <button onClick={handleDownload} className="border border-border px-7 py-3 rounded-lg text-sm font-medium text-foreground hover:border-foreground transition-colors">
           Download
         </button>
       </div>

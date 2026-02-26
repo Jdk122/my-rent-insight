@@ -24,7 +24,7 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
   const [currentRent, setCurrentRent] = useState('');
   const [rentIncrease, setRentIncrease] = useState('');
   const [increaseIsPercent, setIncreaseIsPercent] = useState(true);
-  const [movingCosts, setMovingCosts] = useState('2500');
+  const [movingCosts] = useState('2500');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,19 +89,18 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
 
       {/* Rent increase */}
       <div className="space-y-1.5 pt-3 border-t border-border">
-        <Label className="text-sm font-medium text-primary">Proposed Increase</Label>
-        <p className="text-sm text-muted-foreground leading-relaxed">How much is your landlord raising your rent?</p>
+        <Label className="text-sm font-medium text-foreground">How much is your landlord raising your rent?</Label>
         <div className="flex gap-2 mt-2">
           <div className="relative flex-1">
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">
-              {increaseIsPercent ? '%' : '$'}
-            </span>
+            {!increaseIsPercent && (
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
+            )}
             <Input
               type="number"
               placeholder={increaseIsPercent ? "8.5" : "200"}
               value={rentIncrease}
               onChange={(e) => setRentIncrease(e.target.value)}
-              className="h-12 pl-8 font-mono text-lg bg-background"
+              className={`h-12 font-mono text-lg bg-background ${!increaseIsPercent ? 'pl-8' : 'pl-3.5'}`}
               min={0}
               step={increaseIsPercent ? 0.1 : 1}
             />
@@ -117,33 +116,14 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
         </div>
       </div>
 
-      {/* Moving costs — collapsed feel */}
-      <details className="group">
-        <summary className="text-sm font-medium text-muted-foreground cursor-pointer select-none py-1 hover:text-foreground transition-colors">
-          <span className="ml-1">Moving costs (optional)</span>
-        </summary>
-        <div className="mt-2">
-          <div className="relative">
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
-            <Input
-              type="number"
-              placeholder="2,500"
-              value={movingCosts}
-              onChange={(e) => setMovingCosts(e.target.value)}
-              className="h-10 pl-8 font-mono text-sm bg-background"
-              min={0}
-            />
-          </div>
-        </div>
-      </details>
-
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full h-14 bg-gradient-to-r from-primary to-accent text-primary-foreground text-base font-bold rounded-md shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
+        className="w-full h-14 bg-primary text-primary-foreground text-base font-bold rounded-lg hover:opacity-90 active:scale-[0.99] transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
       >
         {isLoading ? 'Loading data…' : 'Check my increase →'}
       </button>
+      <p className="text-center text-xs text-muted-foreground mt-6">38,000+ zip codes · Data from HUD, Census & Zillow</p>
     </form>
   );
 };
