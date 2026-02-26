@@ -44,7 +44,7 @@ const NegotiationLetter = ({
     const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
     const brLabel = bedroomLabels[bedrooms];
     const burdenLine = medianHouseholdIncome
-      ? `\n• Rent-to-income ratio at new rent: ${Math.round((newRent / (medianHouseholdIncome / 12)) * 100)}% of area median (HUD threshold: 30%)`
+      ? `\n• At $${fmt(newRent)}/mo, rent would be ${Math.round((newRent / (medianHouseholdIncome / 12)) * 100)}% of ${city} median household income (affordability limit: 30%)`
       : '';
 
     if (tone === 'friendly') {
@@ -52,15 +52,15 @@ const NegotiationLetter = ({
 
 Thank you for the lease renewal offer. I received your notice of a rent increase from $${fmt(currentRent)} to $${fmt(newRent)} per month, which represents a ${increasePct}% increase.
 
-I've been a reliable tenant and I'd like to continue living here. However, I wanted to share some market data that suggests this increase may be above current trends.
+I've been a reliable tenant and I'd like to continue living here. However, I wanted to share some data about rents in ${city} that suggests this increase may be above current trends.
 
-According to HUD Fair Market Rent data and Census Bureau estimates for ${zip} (${city}, ${state}):
+Based on current rent data for ${city}, ${state} (${zip}):
 
-• Market-wide annual rent increase: ${marketYoy > 0 ? '+' : ''}${marketYoy}%
+• Rents in ${city} rose ${marketYoy > 0 ? '' : ''}${marketYoy}% this year
 • My proposed increase: +${increasePct}%
-• Federal Fair Market Rent (${brLabel}): $${fmt(fmr)}${censusMedian ? `\n• Census Median Gross Rent: $${fmt(censusMedian)}` : ''}${burdenLine}
+• Typical ${brLabel} rent in ${city}: $${fmt(fmr)}${censusMedian ? `\n• ${city} median rent: $${fmt(censusMedian)}` : ''}${burdenLine}
 
-I'd love to discuss a renewal closer to market conditions — around ${counterPct}% ($${fmt(counterRent)}/month).
+I'd love to discuss a renewal closer to what ${city} rents are actually doing — around ${counterPct}% ($${fmt(counterRent)}/month).
 
 I've included my rent analysis from RentCheck for your reference.
 
@@ -75,15 +75,15 @@ ${dateStr}`;
 
 I am writing in response to the proposed rent increase from $${fmt(currentRent)} to $${fmt(newRent)} per month — a ${increasePct}% increase effective with my lease renewal.
 
-I have reviewed current market data for ${zip} (${city}, ${state}):
+I have reviewed current rent data for ${city}, ${state} (${zip}):
 
-• HUD Fair Market Rent (${brLabel}, FY2025): $${fmt(fmr)}${censusMedian ? `\n• Census Median Gross Rent (ACS 2022): $${fmt(censusMedian)}` : ''}${burdenLine}
-• Market-wide annual rent change: ${marketYoy > 0 ? '+' : ''}${marketYoy}%
+• Typical ${brLabel} rent in ${city}: $${fmt(fmr)}${censusMedian ? `\n• ${city} median rent: $${fmt(censusMedian)}` : ''}${burdenLine}
+• Rents in ${city} rose ${marketYoy > 0 ? '' : ''}${marketYoy}% this year
 • Proposed increase: +${increasePct}%
 
-The proposed increase of ${increasePct}% is ${(increasePct / marketYoy).toFixed(1)}× the market rate of increase in this zip code.
+The proposed increase of ${increasePct}% is ${(increasePct / marketYoy).toFixed(1)}× faster than rents are rising in ${city}.
 
-I am prepared to renew at ${counterPct}% ($${fmt(counterRent)}/month), in line with the area's trend.
+I am prepared to renew at ${counterPct}% ($${fmt(counterRent)}/month), in line with ${city}'s trend.
 
 Sincerely,
 ${sn}
