@@ -58,13 +58,10 @@ const CompLinks = ({ zip, city, state, bedrooms }: CompLinksProps) => {
   const links = buildLinks(zip, city, state, bedrooms);
 
   return (
-    <div className="brand-card">
-      <p className="data-label mb-1">Before you decide</p>
-      <h3 className="font-display text-xl text-foreground mb-1">
-        See what's actually available
-      </h3>
-      <p className="text-xs text-muted-foreground mb-4">
-        Showing {bedroomLabel[bedrooms]} rentals in {zip}
+    <div>
+      <h2 className="font-display text-xl text-foreground mb-1">See What's Available</h2>
+      <p className="text-[13px] text-muted-foreground mb-4">
+        {bedroomLabel[bedrooms]} rentals in {zip} — verify your landlord's number
       </p>
 
       <div className="flex flex-wrap gap-2">
@@ -74,9 +71,9 @@ const CompLinks = ({ zip, city, state, bedrooms }: CompLinksProps) => {
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-border text-xs font-mono font-medium text-foreground hover:bg-secondary transition-colors"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-md border border-border text-xs font-mono font-medium text-foreground hover:border-primary hover:text-primary transition-colors"
           >
-            <Search className="w-3 h-3 text-muted-foreground" />
+            <Search className="w-3 h-3" />
             {link.name}
           </a>
         ))}

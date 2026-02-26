@@ -1,5 +1,5 @@
 import { getRentControlForZip, getApplicableCap, getNoticeRequirement, RentControlResult } from '@/data/rentControlData';
-import { Gavel, ExternalLink, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { ExternalLink, AlertTriangle, ShieldCheck } from 'lucide-react';
 
 interface RentControlCardProps {
   zip: string;
@@ -16,32 +16,23 @@ const RentControlCard = ({ zip, increasePct }: RentControlCardProps) => {
   const hasCap = !!cap;
 
   return (
-    <div className="brand-card-legal space-y-4">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0" style={{ background: 'hsl(var(--accent-indigo) / 0.1)' }}>
-          <Gavel className="w-4 h-4" style={{ color: 'hsl(var(--accent-indigo))' }} />
-        </div>
-        <div>
-          <p className="data-label mb-0">Legal Context</p>
-          <h3 className="font-display text-xl text-foreground leading-tight">
-            Rent laws in your area
-          </h3>
-        </div>
-      </div>
+    <div>
+      <h2 className="font-display text-xl text-foreground mb-1">Legal Context</h2>
+      <p className="text-[13px] text-muted-foreground mb-4">Rent laws that apply to {zip}</p>
 
       <div className="divide-y divide-border">
         {hasCap && cap && (
           <>
             <div className="data-row">
               <span className="data-row-label">Rent control</span>
-              <span className="data-row-value text-verdict-good flex items-center gap-1">
+              <span className="data-row-value text-verdict-good flex items-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                Yes — {cap.jurisdiction}
+                {cap.jurisdiction}
               </span>
             </div>
             <div className="data-row">
               <span className="data-row-label">Max increase</span>
-              <span className="data-row-value text-sm">{cap.maxIncreaseFormula}</span>
+              <span className="data-row-value text-[12px]">{cap.maxIncreaseFormula}</span>
             </div>
             <div className="data-row items-start">
               <span className="data-row-label">Applies to</span>
@@ -55,7 +46,7 @@ const RentControlCard = ({ zip, increasePct }: RentControlCardProps) => {
         {!hasCap && (
           <div className="data-row">
             <span className="data-row-label">Rent control</span>
-            <span className="font-mono text-sm text-muted-foreground">No statutory cap</span>
+            <span className="font-mono text-[13px] text-muted-foreground">No statutory cap</span>
           </div>
         )}
 
@@ -68,8 +59,8 @@ const RentControlCard = ({ zip, increasePct }: RentControlCardProps) => {
       </div>
 
       {hasCap && cap?.maxIncreasePct && increasePct > cap.maxIncreasePct && (
-        <div className="flex items-start gap-2 p-3 rounded-lg" style={{ background: 'hsl(var(--accent-indigo) / 0.06)', border: '1px solid hsl(var(--accent-indigo) / 0.15)' }}>
-          <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: 'hsl(var(--accent-indigo))' }} />
+        <div className="callout callout-warn mt-4">
+          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" style={{ color: 'hsl(var(--verdict-overpaying))' }} />
           <p className="text-xs text-foreground leading-relaxed">
             Your increase of {increasePct}% may exceed the legal maximum.
           </p>
@@ -77,7 +68,7 @@ const RentControlCard = ({ zip, increasePct }: RentControlCardProps) => {
       )}
 
       {(result.cityLaw?.notes || result.stateLaw?.notes) && (
-        <p className="text-[11px] text-muted-foreground leading-relaxed">
+        <p className="text-[11px] text-muted-foreground leading-relaxed mt-3">
           {result.cityLaw?.notes || result.stateLaw?.notes}
         </p>
       )}
@@ -87,8 +78,7 @@ const RentControlCard = ({ zip, increasePct }: RentControlCardProps) => {
           href={cap.ordinanceUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-[11px] font-mono hover:underline"
-          style={{ color: 'hsl(var(--accent-indigo))' }}
+          className="inline-flex items-center gap-1.5 text-[11px] font-mono mt-3 text-primary hover:underline"
         >
           View ordinance <ExternalLink className="w-2.5 h-2.5" />
         </a>

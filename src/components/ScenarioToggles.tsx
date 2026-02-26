@@ -31,16 +31,13 @@ const ScenarioToggles = ({
   hasIncrease,
 }: ScenarioTogglesProps) => {
   return (
-    <div className="brand-card space-y-5">
-      <div>
-        <p className="data-label mb-1">Scenario Calculator</p>
-        <h3 className="font-display text-xl text-foreground">What If…</h3>
-      </div>
+    <div>
+      <h2 className="font-display text-xl text-foreground mb-1">What If…</h2>
+      <p className="text-[13px] text-muted-foreground mb-5">Adjust the numbers to explore your options</p>
 
-      <div className="space-y-4">
-        {/* New rent */}
+      <div className="space-y-5">
         <div className="space-y-2">
-          <Label className="text-sm font-medium text-foreground">I find a place for…</Label>
+          <Label className="text-[13px] font-medium text-foreground">I find a place for…</Label>
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs text-muted-foreground">$</span>
             <Input
@@ -58,13 +55,11 @@ const ScenarioToggles = ({
             min={Math.round(fmr * 0.6)}
             max={Math.round(currentRent * 1.2)}
             step={25}
-            className="mt-1"
           />
         </div>
 
-        {/* Moving costs */}
         <div className="space-y-2">
-          <Label className="text-sm font-medium text-foreground">Moving costs…</Label>
+          <Label className="text-[13px] font-medium text-foreground">Moving costs…</Label>
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs text-muted-foreground">$</span>
             <Input
@@ -81,14 +76,12 @@ const ScenarioToggles = ({
             min={500}
             max={10000}
             step={100}
-            className="mt-1"
           />
         </div>
 
-        {/* Negotiated % */}
         {hasIncrease && (
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-foreground">I negotiate down to…</Label>
+            <Label className="text-[13px] font-medium text-foreground">I negotiate down to…</Label>
             <div className="flex items-center gap-2">
               <Input
                 type="number"
@@ -106,29 +99,28 @@ const ScenarioToggles = ({
               min={0}
               max={20}
               step={0.5}
-              className="mt-1"
             />
           </div>
         )}
       </div>
 
-      {/* Live result */}
-      <div className="p-3.5 rounded-lg bg-secondary/70 border border-border">
-        <div className="flex items-center gap-2">
-          <Calculator className="w-3.5 h-3.5 text-muted-foreground" />
-          <span className="font-mono text-sm font-semibold text-foreground">
+      {/* Result */}
+      <div className="callout mt-5">
+        <Calculator className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+        <div>
+          <p className="font-mono text-sm font-semibold text-foreground">
             {breakEven.months === Infinity
               ? 'Moving would cost more'
               : `Break-even: ${breakEven.months.toFixed(1)} months`}
-          </span>
-        </div>
-        {breakEven.yearOneSavings !== 0 && (
-          <p className="font-mono text-xs text-muted-foreground mt-1 ml-5">
-            {breakEven.yearOneSavings > 0
-              ? `Saves ~$${fmt(breakEven.yearOneSavings)} yr 1 after moving costs`
-              : `Costs ~$${fmt(Math.abs(breakEven.yearOneSavings))} more yr 1`}
           </p>
-        )}
+          {breakEven.yearOneSavings !== 0 && (
+            <p className="font-mono text-xs text-muted-foreground mt-0.5">
+              {breakEven.yearOneSavings > 0
+                ? `Saves ~$${fmt(breakEven.yearOneSavings)} yr 1 after moving costs`
+                : `Costs ~$${fmt(Math.abs(breakEven.yearOneSavings))} more yr 1`}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );
