@@ -24,7 +24,7 @@ const RentForm = ({ onSubmit }: RentFormProps) => {
   const [bedrooms, setBedrooms] = useState<BedroomType>('oneBr');
   const [currentRent, setCurrentRent] = useState('');
   const [rentIncrease, setRentIncrease] = useState('');
-  const [increaseIsPercent, setIncreaseIsPercent] = useState(false);
+  const [increaseIsPercent, setIncreaseIsPercent] = useState(true);
   const [movingCosts, setMovingCosts] = useState('2500');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -71,7 +71,7 @@ const RentForm = ({ onSubmit }: RentFormProps) => {
         </div>
       </div>
 
-      {/* Current rent — full width, prominent */}
+      {/* Current rent */}
       <div className="space-y-2">
         <Label className="data-label">Current Monthly Rent</Label>
         <div className="relative">
@@ -88,53 +88,56 @@ const RentForm = ({ onSubmit }: RentFormProps) => {
         </div>
       </div>
 
-      {/* Optional fields */}
-      <div className="border-t border-border pt-5 space-y-4">
-        <p className="data-label">Optional</p>
-        <div className="space-y-2">
-          <Label className="text-sm font-medium text-foreground">Rent Increase</Label>
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">
-                {increaseIsPercent ? '%' : '$'}
-              </span>
-              <Input
-                type="number"
-                placeholder={increaseIsPercent ? "6.6" : "165"}
-                value={rentIncrease}
-                onChange={(e) => setRentIncrease(e.target.value)}
-                className="h-11 pl-9 font-mono bg-background"
-                min={0}
-              />
-            </div>
-            <button
-              type="button"
-              className="h-11 px-3 rounded-md border border-border text-xs font-mono text-muted-foreground hover:bg-secondary transition-colors"
-              onClick={() => setIncreaseIsPercent(!increaseIsPercent)}
-            >
-              {increaseIsPercent ? '%→$' : '$→%'}
-            </button>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label className="text-sm font-medium text-foreground">Moving Costs</Label>
-          <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
+      {/* Rent increase — now the PRIMARY question */}
+      <div className="border-t border-border pt-5 space-y-2">
+        <Label className="data-label text-accent">Your Proposed Increase</Label>
+        <p className="text-sm text-muted-foreground mb-3">
+          How much is your landlord raising your rent?
+        </p>
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">
+              {increaseIsPercent ? '%' : '$'}
+            </span>
             <Input
               type="number"
-              placeholder="2,500"
-              value={movingCosts}
-              onChange={(e) => setMovingCosts(e.target.value)}
-              className="h-11 pl-9 font-mono bg-background"
+              placeholder={increaseIsPercent ? "8.5" : "200"}
+              value={rentIncrease}
+              onChange={(e) => setRentIncrease(e.target.value)}
+              className="h-14 pl-9 font-mono text-xl bg-background"
               min={0}
+              step={increaseIsPercent ? 0.1 : 1}
             />
           </div>
+          <button
+            type="button"
+            className="h-14 px-4 rounded-md border border-border text-xs font-mono text-muted-foreground hover:bg-secondary transition-colors"
+            onClick={() => setIncreaseIsPercent(!increaseIsPercent)}
+          >
+            {increaseIsPercent ? '%→$' : '$→%'}
+          </button>
+        </div>
+      </div>
+
+      {/* Moving costs — optional */}
+      <div className="space-y-2">
+        <p className="data-label">Optional</p>
+        <Label className="text-sm font-medium text-foreground">Estimated Moving Costs</Label>
+        <div className="relative">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
+          <Input
+            type="number"
+            placeholder="2,500"
+            value={movingCosts}
+            onChange={(e) => setMovingCosts(e.target.value)}
+            className="h-11 pl-9 font-mono bg-background"
+            min={0}
+          />
         </div>
       </div>
 
       <Button type="submit" size="lg" className="w-full h-13 text-base font-semibold gap-2 group">
-        Analyze My Rent
+        Check My Increase
         <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
       </Button>
     </form>

@@ -1,19 +1,17 @@
-import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Copy, Share2 } from 'lucide-react';
 
 interface ShareSectionProps {
-  diff: number;
-  annualDiff: number;
-  isOverpaying: boolean;
+  increasePct: number;
+  marketPct: number;
+  excessAnnual: number;
+  multiplier: number;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
-const ShareSection = ({ diff, annualDiff, isOverpaying }: ShareSectionProps) => {
-  const shareText = isOverpaying
-    ? `I just found out I'm overpaying $${fmt(Math.abs(annualDiff))}/year for my apartment.`
-    : `I just found out I'm saving $${fmt(Math.abs(annualDiff))}/year on rent.`;
+const ShareSection = ({ increasePct, marketPct, excessAnnual, multiplier }: ShareSectionProps) => {
+  const shareText = `My landlord is raising my rent ${increasePct}% when the market only moved ${marketPct}%. That's ${multiplier}× the market rate — $${fmt(excessAnnual)}/year more than the typical renter.`;
 
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
 
