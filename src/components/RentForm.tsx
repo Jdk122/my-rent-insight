@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowRight } from 'lucide-react';
 
 export interface RentFormData {
   zip: string;
@@ -29,7 +30,6 @@ const RentForm = ({ onSubmit }: RentFormProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!zip || !currentRent) return;
-
     onSubmit({
       zip: zip.trim(),
       bedrooms,
@@ -41,108 +41,101 @@ const RentForm = ({ onSubmit }: RentFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="space-y-2">
-        <Label htmlFor="zip" className="text-sm font-medium text-foreground">
-          Zip Code
-        </Label>
-        <Input
-          id="zip"
-          type="text"
-          placeholder="e.g. 07030"
-          value={zip}
-          onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
-          maxLength={5}
-          className="h-12 text-lg"
-          required
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="bedrooms" className="text-sm font-medium text-foreground">
-          Bedrooms
-        </Label>
-        <Select value={bedrooms} onValueChange={(v) => setBedrooms(v as BedroomType)}>
-          <SelectTrigger className="h-12 text-lg">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.entries(bedroomLabels).map(([key, label]) => (
-              <SelectItem key={key} value={key}>{label}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="rent" className="text-sm font-medium text-foreground">
-          Your Current Monthly Rent
-        </Label>
-        <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg text-muted-foreground">$</span>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Primary fields — side by side */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label className="data-label">Zip Code</Label>
           <Input
-            id="rent"
+            type="text"
+            placeholder="07030"
+            value={zip}
+            onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
+            maxLength={5}
+            className="h-12 font-mono text-base bg-background"
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <Label className="data-label">Bedrooms</Label>
+          <Select value={bedrooms} onValueChange={(v) => setBedrooms(v as BedroomType)}>
+            <SelectTrigger className="h-12 text-base bg-background">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(bedroomLabels).map(([key, label]) => (
+                <SelectItem key={key} value={key}>{label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* Current rent — full width, prominent */}
+      <div className="space-y-2">
+        <Label className="data-label">Current Monthly Rent</Label>
+        <div className="relative">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-muted-foreground">$</span>
+          <Input
             type="number"
             placeholder="2,500"
             value={currentRent}
             onChange={(e) => setCurrentRent(e.target.value)}
-            className="h-12 pl-8 text-lg"
+            className="h-14 pl-9 font-mono text-xl bg-background"
             min={0}
             required
           />
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="increase" className="text-sm font-medium text-foreground">
-          Rent Increase <span className="text-muted-foreground font-normal">(optional)</span>
-        </Label>
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg text-muted-foreground">
-              {increaseIsPercent ? '%' : '$'}
-            </span>
+      {/* Optional fields */}
+      <div className="border-t border-border pt-5 space-y-4">
+        <p className="data-label">Optional</p>
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-foreground">Rent Increase</Label>
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">
+                {increaseIsPercent ? '%' : '$'}
+              </span>
+              <Input
+                type="number"
+                placeholder={increaseIsPercent ? "6.6" : "165"}
+                value={rentIncrease}
+                onChange={(e) => setRentIncrease(e.target.value)}
+                className="h-11 pl-9 font-mono bg-background"
+                min={0}
+              />
+            </div>
+            <button
+              type="button"
+              className="h-11 px-3 rounded-md border border-border text-xs font-mono text-muted-foreground hover:bg-secondary transition-colors"
+              onClick={() => setIncreaseIsPercent(!increaseIsPercent)}
+            >
+              {increaseIsPercent ? '%→$' : '$→%'}
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-foreground">Moving Costs</Label>
+          <div className="relative">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
             <Input
-              id="increase"
               type="number"
-              placeholder={increaseIsPercent ? "6.6" : "165"}
-              value={rentIncrease}
-              onChange={(e) => setRentIncrease(e.target.value)}
-              className="h-12 pl-8 text-lg"
+              placeholder="2,500"
+              value={movingCosts}
+              onChange={(e) => setMovingCosts(e.target.value)}
+              className="h-11 pl-9 font-mono bg-background"
               min={0}
             />
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            className="h-12 px-4 text-sm"
-            onClick={() => setIncreaseIsPercent(!increaseIsPercent)}
-          >
-            {increaseIsPercent ? '% → $' : '$ → %'}
-          </Button>
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="moving" className="text-sm font-medium text-foreground">
-          Estimated Moving Costs <span className="text-muted-foreground font-normal">(optional)</span>
-        </Label>
-        <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg text-muted-foreground">$</span>
-          <Input
-            id="moving"
-            type="number"
-            placeholder="2,500"
-            value={movingCosts}
-            onChange={(e) => setMovingCosts(e.target.value)}
-            className="h-12 pl-8 text-lg"
-            min={0}
-          />
-        </div>
-      </div>
-
-      <Button type="submit" className="w-full h-14 text-lg font-semibold mt-4">
-        Check My Rent
+      <Button type="submit" size="lg" className="w-full h-13 text-base font-semibold gap-2 group">
+        Analyze My Rent
+        <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
       </Button>
     </form>
   );

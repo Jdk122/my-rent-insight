@@ -2,8 +2,11 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import RentForm, { RentFormData } from '@/components/RentForm';
 import RentResults from '@/components/RentResults';
-import { lookupZip, RentData } from '@/data/rentData';
+import { lookupZip, RentData, rentDatabase } from '@/data/rentData';
 import { toast } from 'sonner';
+import { ArrowDown } from 'lucide-react';
+
+const availableZips = Object.keys(rentDatabase).join(', ');
 
 const Index = () => {
   const [results, setResults] = useState<{ formData: RentFormData; rentData: RentData } | null>(null);
@@ -11,7 +14,7 @@ const Index = () => {
   const handleSubmit = (data: RentFormData) => {
     const rentData = lookupZip(data.zip);
     if (!rentData) {
-      toast.error(`We don't have data for zip code ${data.zip} yet. Try: 10001, 07030, 90024, 94102, 98101, 33131, 78701, etc.`);
+      toast.error(`No data for ${data.zip} yet. Available: ${availableZips}`);
       return;
     }
     setResults({ formData: data, rentData });
@@ -20,46 +23,77 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Nav */}
+      <nav className="flex items-center justify-between px-6 md:px-10 py-5">
+        <span className="font-display text-2xl text-foreground tracking-tight">
+          Rent<span className="text-accent">Check</span>
+        </span>
+        <span className="data-label hidden sm:block">
+          HUD FY2025 · Census ACS 2022
+        </span>
+      </nav>
+
       {/* Hero */}
-      <header className="hero-section py-12 md:py-20 px-4">
-        <div className="max-w-2xl mx-auto text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-display leading-tight"
-          >
-            Are you overpaying<br />for rent?
-          </motion.h1>
-          <motion.p
+      <header className="px-6 md:px-10 pt-12 md:pt-24 pb-16 md:pb-32 max-w-3xl mx-auto">
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="data-label mb-4"
+        >
+          Free rent analysis tool
+        </motion.p>
+        <motion.h1
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="font-display text-5xl md:text-7xl lg:text-8xl text-foreground leading-[0.95] tracking-tight"
+        >
+          Are you overpaying
+          <br />
+          for your apartment?
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="mt-6 text-lg md:text-xl text-muted-foreground max-w-lg leading-relaxed"
+        >
+          Enter your rent. We'll compare it against federal and census data for your zip code — and tell you whether to renew or move.
+        </motion.p>
+        {!results && (
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="mt-4 text-lg md:text-xl opacity-80"
+            transition={{ delay: 0.5 }}
+            className="mt-10 flex items-center gap-2 text-muted-foreground"
           >
-            Enter your rent. Find out if you're overpaying. Decide whether to renew or move.
-          </motion.p>
-        </div>
+            <ArrowDown className="w-4 h-4 animate-bounce" />
+            <span className="text-sm font-medium">Start below</span>
+          </motion.div>
+        )}
       </header>
 
       {/* Main Content */}
-      <main className="max-w-xl mx-auto px-4 -mt-6 pb-16 relative z-10">
+      <main className="max-w-xl mx-auto px-6 md:px-10 pb-24">
         <AnimatePresence mode="wait">
           {!results ? (
             <motion.div
               key="form"
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="stat-card"
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.4 }}
+              className="brand-card"
             >
               <RentForm onSubmit={handleSubmit} />
             </motion.div>
           ) : (
             <motion.div
               key="results"
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.4 }}
             >
               <RentResults
                 formData={results.formData}
@@ -72,9 +106,13 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="text-center py-8 text-sm text-muted-foreground">
-        <p>Data sources: HUD Small Area Fair Market Rents (FY2025) · Census ACS 5-Year Estimates (2022)</p>
-        <p className="mt-1">RentCheck is for informational purposes only.</p>
+      <footer className="border-t border-border px-6 md:px-10 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-3xl mx-auto">
+        <span className="font-display text-lg text-foreground">
+          Rent<span className="text-accent">Check</span>
+        </span>
+        <p className="text-xs text-muted-foreground text-center sm:text-right max-w-sm">
+          Data: HUD Small Area Fair Market Rents (FY2025) and Census ACS 5-Year Estimates (2022). For informational purposes only.
+        </p>
       </footer>
     </div>
   );

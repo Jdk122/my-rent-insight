@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import ScenarioToggles from './ScenarioToggles';
 import ShareSection from './ShareSection';
 import EmailCapture from './EmailCapture';
+import { ArrowLeft, TrendingUp, TrendingDown, Minus, Scale } from 'lucide-react';
 
 interface RentResultsProps {
   formData: RentFormData;
@@ -14,6 +15,12 @@ interface RentResultsProps {
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+
+const anim = (delay: number) => ({
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] as const },
+});
 
 const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
   const fmr = getFmrForBedrooms(rentData, formData.bedrooms);
@@ -49,76 +56,110 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
   }, [formData.currentRent, scenarioNewRent, scenarioMovingCost, scenarioNegotiatedPct]);
 
   const verdictColor = isFair ? 'text-verdict-fair' : isOverpaying ? 'text-verdict-overpaying' : 'text-verdict-good';
-  const verdictBadge = isFair ? 'verdict-badge-fair' : isOverpaying ? 'verdict-badge-overpaying' : 'verdict-badge-good';
-  const verdictEmoji = isFair ? '🟡' : isOverpaying ? '🔴' : '🟢';
+  const pillClass = isFair ? 'verdict-pill-fair' : isOverpaying ? 'verdict-pill-overpaying' : 'verdict-pill-good';
+  const verdictLabel = isFair ? 'About Average' : isOverpaying ? 'Overpaying' : 'Below Average';
+
+  // Percentile bar position
+  const barPosition = Math.min(Math.max(percentile, 5), 95);
 
   return (
-    <div className="space-y-6">
-      {/* Primary Result */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="stat-card text-center"
-      >
-        <span className={`verdict-badge ${verdictBadge} mb-4`}>
-          {verdictEmoji} {isFair ? 'Your rent is about average' : isOverpaying ? "You're overpaying" : "You're getting a deal"}
-        </span>
-        <h2 className={`text-4xl md:text-5xl font-display mt-4 ${verdictColor}`}>
-          {isOverpaying ? '+' : ''}${fmt(Math.abs(diff))}<span className="text-xl text-muted-foreground">/mo</span>
-        </h2>
-        <p className={`text-lg mt-1 ${verdictColor}`}>
-          {isOverpaying ? 'above' : isFair ? 'near' : 'below'} typical rent
-        </p>
-        <p className="text-2xl font-semibold mt-3 text-foreground">
-          💸 That's {isOverpaying ? '' : '-'}${fmt(Math.abs(annualDiff))}/year
-        </p>
+    <div className="space-y-8">
+      {/* Primary Result — Hero card */}
+      <motion.div {...anim(0)} className="brand-card-dark">
+        <div className="flex items-center justify-between mb-8">
+          <span className="data-label" style={{ color: 'hsl(var(--warm-gray))' }}>
+            Your Rent Report
+          </span>
+          <span className={`verdict-pill ${pillClass}`}>
+            {verdictLabel}
+          </span>
+        </div>
+
+        <div className="text-center py-4">
+          <p className={`font-mono text-6xl md:text-7xl font-bold tracking-tight ${verdictColor}`}>
+            {isOverpaying ? '+' : isFair ? '~' : '-'}${fmt(Math.abs(diff))}
+          </p>
+          <p className="font-mono text-sm mt-2" style={{ color: 'hsl(var(--warm-gray))' }}>
+            per month {isOverpaying ? 'above' : isFair ? 'near' : 'below'} typical rent
+          </p>
+        </div>
+
+        <div className="border-t mt-6 pt-5" style={{ borderColor: 'hsl(var(--warm-gray) / 0.2)' }}>
+          <div className="grid grid-cols-2 gap-6">
+            <div>
+              <p className="text-xs font-mono uppercase tracking-widest mb-1" style={{ color: 'hsl(var(--warm-gray))' }}>
+                Annual Impact
+              </p>
+              <p className={`font-mono text-2xl font-bold ${verdictColor}`}>
+                ${fmt(Math.abs(annualDiff))}
+                <span className="text-sm font-normal" style={{ color: 'hsl(var(--warm-gray))' }}>/yr</span>
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-mono uppercase tracking-widest mb-1" style={{ color: 'hsl(var(--warm-gray))' }}>
+                Percentile
+              </p>
+              <p className="font-mono text-2xl font-bold" style={{ color: 'hsl(var(--cream))' }}>
+                {percentile}<span className="text-sm font-normal" style={{ color: 'hsl(var(--warm-gray))' }}>th</span>
+              </p>
+            </div>
+          </div>
+        </div>
       </motion.div>
 
-      {/* Share — right after the emotional peak */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
+      {/* Share — emotional peak */}
+      <motion.div {...anim(0.1)}>
         <ShareSection diff={diff} annualDiff={annualDiff} isOverpaying={isOverpaying} />
       </motion.div>
 
       {/* Market Context */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="stat-card"
-      >
-        <h3 className="font-display text-xl mb-4">
-          Market Context — {bedroomLabels[formData.bedrooms]} in {rentData.zip}
+      <motion.div {...anim(0.15)} className="brand-card">
+        <p className="data-label mb-1">Market Data</p>
+        <h3 className="font-display text-2xl text-foreground mb-6">
+          {bedroomLabels[formData.bedrooms]} in {rentData.city}, {rentData.state} ({rentData.zip})
         </h3>
-        <div className="space-y-3 text-sm">
-          <div className="flex justify-between py-2 border-b border-border">
-            <span className="text-muted-foreground">Typical rent range</span>
-            <span className="font-semibold">${fmt(range.low)} – ${fmt(range.high)}</span>
+
+        {/* Percentile bar */}
+        <div className="mb-6">
+          <div className="flex justify-between mb-2">
+            <span className="text-xs font-mono text-muted-foreground">${fmt(range.low)}</span>
+            <span className="text-xs font-mono text-muted-foreground">${fmt(range.high)}</span>
           </div>
-          <div className="flex justify-between py-2 border-b border-border">
-            <span className="text-muted-foreground">Federal benchmark (HUD FMR)</span>
-            <span className="font-semibold">${fmt(fmr)}</span>
+          <div className="percentile-bar">
+            <div
+              className="percentile-fill bg-accent"
+              style={{ width: `${barPosition}%` }}
+            />
+            <div
+              className="percentile-marker bg-accent"
+              style={{ left: `${barPosition}%` }}
+            />
+          </div>
+          <p className="text-xs font-mono text-muted-foreground mt-2 text-center">
+            Your rent: ${fmt(formData.currentRent)} — {percentile}th percentile
+          </p>
+        </div>
+
+        <div className="space-y-0 divide-y divide-border text-sm">
+          <div className="flex justify-between py-3">
+            <span className="text-muted-foreground">Typical range</span>
+            <span className="font-mono font-semibold">${fmt(range.low)} – ${fmt(range.high)}</span>
+          </div>
+          <div className="flex justify-between py-3">
+            <span className="text-muted-foreground">HUD Fair Market Rent</span>
+            <span className="font-mono font-semibold">${fmt(fmr)}</span>
           </div>
           {rentData.censusMedian && (
-            <div className="flex justify-between py-2 border-b border-border">
-              <span className="text-muted-foreground">Census median gross rent</span>
-              <span className="font-semibold">${fmt(rentData.censusMedian)}</span>
+            <div className="flex justify-between py-3">
+              <span className="text-muted-foreground">Census median</span>
+              <span className="font-mono font-semibold">${fmt(rentData.censusMedian)}</span>
             </div>
           )}
-          <div className="flex justify-between py-2 border-b border-border">
-            <span className="text-muted-foreground">Year-over-year change</span>
-            <span className={`font-semibold ${rentData.yoyChange > 0 ? 'text-verdict-overpaying' : 'text-verdict-good'}`}>
+          <div className="flex justify-between py-3">
+            <span className="text-muted-foreground">Year-over-year</span>
+            <span className={`font-mono font-semibold flex items-center gap-1 ${rentData.yoyChange > 0 ? 'text-verdict-overpaying' : 'text-verdict-good'}`}>
+              {rentData.yoyChange > 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
               {rentData.yoyChange > 0 ? '+' : ''}{rentData.yoyChange}%
-            </span>
-          </div>
-          <div className="flex justify-between py-2">
-            <span className="text-muted-foreground">Your rent</span>
-            <span className="font-semibold">
-              ${fmt(formData.currentRent)} — <span className={verdictColor}>{percentile}th percentile</span>
             </span>
           </div>
         </div>
@@ -126,38 +167,37 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
 
       {/* Rent Increase & Decision */}
       {increaseAmount > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="stat-card"
-        >
-          <h3 className="font-display text-xl mb-4">Rent Increase Impact</h3>
-          <p className="text-foreground">
-            Your rent is going from <span className="font-semibold">${fmt(formData.currentRent)}</span> →{' '}
-            <span className="font-semibold">${fmt(newRent)}</span>{' '}
-            <span className="text-muted-foreground">(+${fmt(increaseAmount)}/mo, +${fmt(increaseAmount * 12)}/yr)</span>
-          </p>
-          <div className="mt-4 flex items-center gap-3">
-            <span className="text-2xl">⚖️</span>
-            <span className="text-foreground">
-              Break-even to move: <span className="font-semibold">{breakEven.months === Infinity ? '∞' : breakEven.months.toFixed(1)} months</span>
+        <motion.div {...anim(0.2)} className="brand-card">
+          <p className="data-label mb-1">Increase Analysis</p>
+          <h3 className="font-display text-2xl text-foreground mb-5">Rent Increase Impact</h3>
+
+          <div className="flex items-center gap-3 font-mono text-lg">
+            <span className="text-foreground">${fmt(formData.currentRent)}</span>
+            <ArrowLeft className="w-4 h-4 text-muted-foreground rotate-180" />
+            <span className="font-bold text-foreground">${fmt(newRent)}</span>
+            <span className="text-sm text-muted-foreground">
+              +${fmt(increaseAmount)}/mo
             </span>
           </div>
-          <div className={`mt-3 verdict-badge ${breakEven.verdict === 'move' ? 'verdict-badge-good' : breakEven.verdict === 'close' ? 'verdict-badge-fair' : 'verdict-badge-overpaying'}`}>
-            {breakEven.verdict === 'move' && `🟢 MOVING IS FINANCIALLY BETTER (saves ~$${fmt(Math.abs(breakEven.yearOneSavings))} in year one)`}
-            {breakEven.verdict === 'close' && `🟡 CLOSE CALL — depends on your situation`}
-            {breakEven.verdict === 'stay' && `🔵 STAYING IS PROBABLY SMARTER`}
+
+          <div className="mt-5 p-4 rounded-md bg-secondary">
+            <div className="flex items-center gap-2">
+              <Scale className="w-4 h-4 text-muted-foreground" />
+              <span className="font-mono text-sm font-semibold">
+                Break-even: {breakEven.months === Infinity ? '∞' : breakEven.months.toFixed(1)} months
+              </span>
+            </div>
+            <div className={`mt-3 verdict-pill ${breakEven.verdict === 'move' ? 'verdict-pill-good' : breakEven.verdict === 'close' ? 'verdict-pill-fair' : 'verdict-pill-overpaying'}`}>
+              {breakEven.verdict === 'move' && `Moving saves ~$${fmt(Math.abs(breakEven.yearOneSavings))} in year one`}
+              {breakEven.verdict === 'close' && `Close call — depends on your situation`}
+              {breakEven.verdict === 'stay' && `Staying is probably smarter`}
+            </div>
           </div>
         </motion.div>
       )}
 
       {/* Scenario Toggles */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
-      >
+      <motion.div {...anim(0.25)}>
         <ScenarioToggles
           currentRent={newRent || formData.currentRent}
           fmr={fmr}
@@ -172,19 +212,19 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
         />
       </motion.div>
 
-      {/* Email Capture — right after scenarios */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.5 }}
-      >
+      {/* Email Capture */}
+      <motion.div {...anim(0.3)}>
         <EmailCapture />
       </motion.div>
 
-      <div className="text-center pt-4">
-        <Button variant="outline" onClick={onReset} className="text-muted-foreground">
-          ← Check another rent
-        </Button>
+      <div className="text-center pt-2">
+        <button
+          onClick={onReset}
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors font-mono"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Check another rent
+        </button>
       </div>
     </div>
   );
