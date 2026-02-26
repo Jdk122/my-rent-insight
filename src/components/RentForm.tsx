@@ -57,12 +57,13 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
           <Label className="text-sm font-medium text-foreground">Address or Zip Code</Label>
           <Input
             type="text"
-            placeholder="Enter your address or zip code"
+            placeholder="e.g. 123 Main St, Austin, TX 78701"
             value={addressInput}
             onChange={(e) => setAddressInput(e.target.value)}
             className="h-11 text-sm bg-background"
             required
           />
+          <p className="text-[11px] text-muted-foreground mt-1">Include city & state for best results, or just enter a 5-digit zip</p>
         </div>
         <div className="space-y-1.5">
           <Label className="text-sm font-medium text-foreground">Bedrooms</Label>
