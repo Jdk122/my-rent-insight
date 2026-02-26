@@ -93,7 +93,9 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
 
             <h1 className="font-display text-[32px] font-bold leading-[1.25] tracking-tight mx-auto max-w-[480px]" style={{ letterSpacing: '-0.02em' }}>
               {isAboveMarket ? (
-                <>Your increase is <span className={verdictColor}>{multiplier}× the market rate.</span></>
+                marketYoy <= 0
+                  ? <>Your increase is <span className={verdictColor}>above the market trend.</span></>
+                  : <>Your increase is <span className={verdictColor}>{multiplier}× the market rate.</span></>
               ) : isBelowMarket ? (
                 <>Your increase is <span className={verdictColor}>below the market rate.</span></>
               ) : (
@@ -102,7 +104,9 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
             </h1>
 
             <p className="text-lg text-muted-foreground max-w-[440px] mx-auto mt-4 leading-relaxed">
-              {isAboveMarket ? (
+              {marketYoy <= 0 && isAboveMarket ? (
+                <>Market rents {marketYoy < 0 ? <><em>decreased</em> {Math.abs(marketYoy)}%</> : 'held flat'} in {city}. An increase of <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong> is going against the trend.</>
+              ) : isAboveMarket ? (
                 <>Rents in {city} rose <strong className="text-foreground font-bold text-xl">{marketYoy}%</strong> this year. Your landlord is raising yours <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong>. That's ${fmt(annualExtra)}/year more than the typical increase in your area.</>
               ) : isFair ? (
                 <>Your increase is roughly in line with what rents are doing in {city}. You're not being overcharged.</>
@@ -184,10 +188,23 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
           <div className="context-row">
             <span className="context-label">Monthly trend</span>
             <span className="context-value">
-              {rentData.fredTrend.monthlyRate > 0 ? '+' : ''}{rentData.fredTrend.monthlyRate}%/mo
-              <span className="context-sub">({rentData.fredTrend.trend})</span>
+              {rentData.fredTrend.monthlyChange > 0 ? '+' : ''}{rentData.fredTrend.monthlyChange}%/mo
+              <span className="context-sub">({rentData.fredTrend.direction})</span>
             </span>
           </div>
+        )}
+
+        {/* Prior source note */}
+        {rentData.priorSource === 'm' && (
+          <p className="text-[11px] text-muted-foreground mt-3">Based on {rentData.metro} area average trend.</p>
+        )}
+        {rentData.priorSource === 'n' && (
+          <p className="text-[11px] text-muted-foreground mt-3">Note: This uses the national rent trend because local data is limited for this area.</p>
+        )}
+
+        {/* Below FMR note */}
+        {hasIncrease && newRent < rentData.fmr && (
+          <p className="text-[11px] text-verdict-good mt-3">Even with this increase, you'd still be below the {city} benchmark.</p>
         )}
       </motion.div>
 

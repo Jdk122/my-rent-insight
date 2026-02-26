@@ -1,31 +1,23 @@
 import { BedroomType } from './rentData';
 
-// ─── HUD Data Types ───
-export interface HudZipData {
-  state: string;
-  city: string;
-  county: string;
-  metro: string;
-  fmr_0br: number;
-  fmr_1br: number;
-  fmr_2br: number;
-  fmr_3br: number;
-  fmr_4br: number;
-  fmr_0br_prior: number;
-  fmr_1br_prior: number;
-  fmr_2br_prior: number;
-  fmr_3br_prior: number;
-  fmr_4br_prior: number;
-}
-
-export interface CensusZipData {
-  median_rent: number;
-  median_income: number;
+// ─── Raw JSON schema (compact keys for file size) ───
+export interface RentZipRaw {
+  c: string;           // City name
+  s: string;           // State abbreviation
+  m: string;           // Metro area name (for FRED lookup)
+  f: number[];         // Current FMR: [0BR, 1BR, 2BR, 3BR, 4BR]
+  p: number[];         // Prior year FMR
+  y: number;           // Pre-computed YoY % change for 1BR
+  ps: 'f' | 'a' | 'm' | 'n'; // Prior source
+  r?: number;          // Census median gross rent
+  i?: number;          // Census median household income
 }
 
 export interface FredTrendData {
-  monthlyRate: number;
-  trend: 'accelerating' | 'decelerating';
+  monthlyChange: number;
+  yearlyChange: number | null;
+  direction: 'rising' | 'falling' | 'flat';
+  label: string;
 }
 
 // ─── Combined result from all data layers ───
@@ -33,46 +25,37 @@ export interface RentLookupResult {
   zip: string;
   city: string;
   state: string;
-  county: string;
   metro: string;
-  fmr: number;           // Current FMR for selected bedroom count
-  fmrPrior: number;      // Prior year FMR for selected bedroom count
-  yoyChange: number;     // ((fmr - fmrPrior) / fmrPrior) * 100
+  fmr: number;
+  fmrPrior: number;
+  yoyChange: number;
+  priorSource: 'f' | 'a' | 'm' | 'n';
   censusMedianRent: number | null;
   medianIncome: number | null;
   fredTrend: FredTrendData | null;
 }
 
 // ─── Bedroom mapping ───
-const bedroomToFmrKey: Record<BedroomType, string> = {
-  studio: '0br',
-  oneBr: '1br',
-  twoBr: '2br',
-  threeBr: '3br',
-  fourBr: '4br',
+const bedroomToIndex: Record<BedroomType, number> = {
+  studio: 0,
+  oneBr: 1,
+  twoBr: 2,
+  threeBr: 3,
+  fourBr: 4,
 };
 
-// ─── Caches ───
-let hudCache: Record<string, HudZipData> | null = null;
-let censusCache: Record<string, CensusZipData> | null = null;
+// ─── Cache ───
+let rentDataCache: Record<string, RentZipRaw> | null = null;
 let fredMetroMapCache: Record<string, string> | null = null;
 
 // ─── Lazy loaders ───
 
-async function getHudData(): Promise<Record<string, HudZipData>> {
-  if (!hudCache) {
-    const response = await fetch('/data/hudData.json');
-    hudCache = await response.json();
+async function getRentData(): Promise<Record<string, RentZipRaw>> {
+  if (!rentDataCache) {
+    const response = await fetch('/data/rentData.json');
+    rentDataCache = await response.json();
   }
-  return hudCache!;
-}
-
-async function getCensusData(): Promise<Record<string, CensusZipData>> {
-  if (!censusCache) {
-    const response = await fetch('/data/censusData.json');
-    censusCache = await response.json();
-  }
-  return censusCache!;
+  return rentDataCache!;
 }
 
 async function getFredMetroMap(): Promise<Record<string, string>> {
@@ -85,62 +68,56 @@ async function getFredMetroMap(): Promise<Record<string, string>> {
 
 // ─── FRED API (optional, silent failure) ───
 
+function getFredSeriesFromMetro(metroName: string, metroMap: Record<string, string>): string | null {
+  // Try matching first city in metro name
+  const city = metroName.split('-')[0].split(',')[0].trim();
+  return metroMap[city] || null;
+}
+
 async function fetchFredTrend(metro: string): Promise<FredTrendData | null> {
   try {
     const metroMap = await getFredMetroMap();
-    const seriesId = metroMap[metro];
+    const seriesId = getFredSeriesFromMetro(metro, metroMap);
     if (!seriesId) return null;
 
-    // Check for API key — stored as env var or skip silently
     const apiKey = import.meta.env.VITE_FRED_API_KEY;
     if (!apiKey) return null;
 
-    const twoYearsAgo = new Date();
-    twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
-    const startDate = twoYearsAgo.toISOString().split('T')[0];
-
-    const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&observation_start=${startDate}&frequency=m`;
+    const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=13`;
 
     const response = await fetch(url);
     if (!response.ok) return null;
 
     const data = await response.json();
-    return calculateMonthlyTrend(data.observations);
+    const observations = data.observations
+      .filter((o: { value: string }) => o.value !== '.')
+      .map((o: { date: string; value: string }) => ({
+        date: o.date,
+        value: parseFloat(o.value),
+      }));
+
+    if (observations.length < 2) return null;
+
+    const latest = observations[0].value;
+    const prior = observations[1].value;
+    const monthlyChange = ((latest - prior) / prior) * 100;
+
+    const yearAgo = observations.length >= 12 ? observations[11] : null;
+    const yearlyChange = yearAgo
+      ? Math.round(((latest - yearAgo.value) / yearAgo.value) * 100 * 100) / 100
+      : null;
+
+    const roundedMonthly = Math.round(monthlyChange * 100) / 100;
+
+    return {
+      monthlyChange: roundedMonthly,
+      yearlyChange,
+      direction: monthlyChange > 0.1 ? 'rising' : monthlyChange < -0.1 ? 'falling' : 'flat',
+      label: `Rents ${monthlyChange > 0.1 ? 'rising' : monthlyChange < -0.1 ? 'falling' : 'flat'} ${Math.abs(roundedMonthly).toFixed(1)}%/mo`,
+    };
   } catch {
     return null;
   }
-}
-
-function calculateMonthlyTrend(
-  observations: Array<{ date: string; value: string }>
-): FredTrendData | null {
-  const values = observations
-    .filter((o) => o.value !== '.')
-    .map((o) => ({ date: o.date, value: parseFloat(o.value) }))
-    .slice(-7); // Last 7 to get 6 month-over-month changes
-
-  if (values.length < 4) return null;
-
-  const changes: number[] = [];
-  for (let i = 1; i < values.length; i++) {
-    const change =
-      ((values[i].value - values[i - 1].value) / values[i - 1].value) * 100;
-    changes.push(change);
-  }
-
-  const avgChange = changes.reduce((a, b) => a + b, 0) / changes.length;
-
-  // Compare recent 3 months to prior 3 months
-  const recent = changes.slice(-3);
-  const prior = changes.slice(0, Math.min(3, changes.length - 3));
-  const recentAvg = recent.reduce((a, b) => a + b, 0) / recent.length;
-  const priorAvg =
-    prior.length > 0 ? prior.reduce((a, b) => a + b, 0) / prior.length : recentAvg;
-
-  return {
-    monthlyRate: Math.round(avgChange * 100) / 100,
-    trend: recentAvg > priorAvg ? 'accelerating' : 'decelerating',
-  };
 }
 
 // ─── Main lookup function ───
@@ -149,31 +126,31 @@ export async function lookupRentData(
   zip: string,
   bedrooms: BedroomType
 ): Promise<RentLookupResult | null> {
-  // Load HUD + Census in parallel
-  const [hudAll, censusAll] = await Promise.all([getHudData(), getCensusData()]);
+  const allData = await getRentData();
+  const raw = allData[zip];
+  if (!raw) return null;
 
-  const hud = hudAll[zip];
-  if (!hud) return null; // No HUD data = no results
+  const brIdx = bedroomToIndex[bedrooms];
+  const fmr = raw.f[brIdx];
+  const fmrPrior = raw.p[brIdx];
 
-  const brKey = bedroomToFmrKey[bedrooms];
-  const fmr = hud[`fmr_${brKey}` as keyof HudZipData] as number;
-  const fmrPrior = hud[`fmr_${brKey}_prior` as keyof HudZipData] as number;
-  const yoyChange = Math.round(((fmr - fmrPrior) / fmrPrior) * 1000) / 10;
-
-  const census = censusAll[zip] || null;
+  // Calculate YoY for selected bedroom (more accurate than pre-computed 1BR)
+  const yoyChange = fmrPrior > 0
+    ? Math.round(((fmr - fmrPrior) / fmrPrior) * 1000) / 10
+    : raw.y;
 
   return {
     zip,
-    city: hud.city,
-    state: hud.state,
-    county: hud.county,
-    metro: hud.metro,
+    city: raw.c,
+    state: raw.s,
+    metro: raw.m,
     fmr,
     fmrPrior,
     yoyChange,
-    censusMedianRent: census?.median_rent ?? null,
-    medianIncome: census?.median_income ?? null,
-    fredTrend: null, // Loaded separately
+    priorSource: raw.ps,
+    censusMedianRent: raw.r ?? null,
+    medianIncome: raw.i ?? null,
+    fredTrend: null,
   };
 }
 
@@ -184,6 +161,70 @@ export async function loadFredTrend(metro: string): Promise<FredTrendData | null
 
 // ─── Calculation helpers ───
 
+export function getTypicalRange(fmr: number, censusRent: number | null, city: string) {
+  if (censusRent) {
+    const low = Math.min(fmr, censusRent);
+    const high = Math.max(fmr, Math.round(censusRent * 1.15));
+
+    // If range is too narrow (< 10% spread), widen it
+    if ((high - low) / low < 0.10) {
+      return {
+        low: Math.round(fmr * 0.90),
+        high: Math.round(fmr * 1.15),
+        label: `${city} typical range`,
+      };
+    }
+    return { low, high, label: `${city} typical range` };
+  }
+
+  // No census data: FMR ±15%
+  return {
+    low: Math.round(fmr * 0.85),
+    high: Math.round(fmr * 1.15),
+    label: `${city} estimated range`,
+  };
+}
+
+export function getVerdict(increasePct: number, marketYoY: number): 'below' | 'at-market' | 'above' {
+  if (marketYoY <= 0) {
+    return increasePct > 0 ? 'above' : 'at-market';
+  }
+  const ratio = increasePct / marketYoY;
+  if (ratio <= 0.8) return 'below';
+  if (ratio <= 1.3) return 'at-market';
+  return 'above';
+}
+
+export function getCounterOffer(currentRent: number, marketYoY: number) {
+  if (marketYoY <= 0) {
+    return {
+      counterLow: currentRent,
+      counterHigh: currentRent,
+      counterLowPercent: 0,
+      counterHighPercent: 0,
+    };
+  }
+  const counterPct = Math.max(marketYoY, 1.0);
+  const counterLow = Math.ceil((currentRent * (1 + counterPct / 100)) / 25) * 25;
+  const counterHighPct = Math.round(counterPct) + 1;
+  const counterHigh = Math.ceil((currentRent * (1 + counterHighPct / 100)) / 25) * 25;
+  return {
+    counterLow,
+    counterHigh,
+    counterLowPercent: Math.round(counterPct * 10) / 10,
+    counterHighPercent: counterHighPct,
+  };
+}
+
+export function getRentBurden(proposedRent: number, medianIncome: number | null) {
+  if (!medianIncome) return null;
+  const burden = ((proposedRent * 12) / medianIncome) * 100;
+  return {
+    percent: Math.round(burden),
+    isBurdened: burden > 30,
+  };
+}
+
 export function calculateResults(
   currentRent: number,
   increasePercent: number,
@@ -192,55 +233,34 @@ export function calculateResults(
 ) {
   const proposedRent = Math.round(currentRent * (1 + increasePercent / 100));
   const extraPerYear = (proposedRent - currentRent) * 12;
-  const marketYoyChange = data.yoyChange;
-  const typicalRangeLow = data.fmr;
-  const typicalRangeHigh = data.censusMedianRent
-    ? Math.round(data.censusMedianRent * 1.15)
-    : Math.round(data.fmr * 1.3);
+  const marketYoY = data.yoyChange;
 
-  const rentBurden = data.medianIncome
-    ? Math.round(((proposedRent * 12) / data.medianIncome) * 100)
-    : null;
-  const isCostBurdened = rentBurden !== null && rentBurden > 30;
+  const range = getTypicalRange(data.fmr, data.censusMedianRent, data.city);
+  const verdict = getVerdict(increasePercent, marketYoY);
+  const rentBurden = getRentBurden(proposedRent, data.medianIncome);
+  const counter = getCounterOffer(currentRent, marketYoY);
 
-  const increaseRatio =
-    marketYoyChange > 0
-      ? Math.round((increasePercent / marketYoyChange) * 10) / 10
-      : 0;
-
-  let verdict: 'below' | 'at-market' | 'above';
-  if (increaseRatio <= 0.8) verdict = 'below';
-  else if (increaseRatio <= 1.3) verdict = 'at-market';
-  else verdict = 'above';
+  const increaseRatio = marketYoY > 0
+    ? Math.round((increasePercent / marketYoY) * 10) / 10
+    : 0;
 
   // Break-even
   const benchmarkRent = data.censusMedianRent || data.fmr;
   const monthlySavings = proposedRent - benchmarkRent;
-  const breakEvenMonths =
-    monthlySavings > 0 ? movingCosts / monthlySavings : Infinity;
-
-  // Counter offer
-  const counterLowPercent = Math.round(marketYoyChange);
-  const counterHighPercent = Math.round(marketYoyChange) + 1;
-  const counterLow =
-    Math.round((currentRent * (1 + counterLowPercent / 100)) / 25) * 25;
-  const counterHigh =
-    Math.round((currentRent * (1 + counterHighPercent / 100)) / 25) * 25;
+  const breakEvenMonths = monthlySavings > 0 ? movingCosts / monthlySavings : Infinity;
 
   return {
     proposedRent,
     extraPerYear,
-    marketYoyChange,
-    typicalRangeLow,
-    typicalRangeHigh,
-    rentBurden,
-    isCostBurdened,
+    marketYoY,
+    typicalRangeLow: range.low,
+    typicalRangeHigh: range.high,
+    rangeLabel: range.label,
+    rentBurden: rentBurden?.percent ?? null,
+    isCostBurdened: rentBurden?.isBurdened ?? false,
     increaseRatio,
     verdict,
     breakEvenMonths,
-    counterLowPercent,
-    counterHighPercent,
-    counterLow,
-    counterHigh,
+    ...counter,
   };
 }
