@@ -33,7 +33,7 @@ const Index = () => {
       </nav>
 
       {/* Hero */}
-      <header className="px-6 md:px-10 pt-12 md:pt-24 pb-10 md:pb-16 max-w-2xl mx-auto">
+      <header className="px-6 md:px-10 pt-8 md:pt-14 pb-4 md:pb-8 max-w-2xl mx-auto">
         <AnimatePresence mode="wait">
           {!results ? (
             <motion.div
@@ -60,8 +60,8 @@ const Index = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
-              <p className="data-label mb-2">Your Report</p>
-              <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight tracking-tight">
+              <p className="data-label mb-1">Your Report</p>
+              <h1 className="font-display text-2xl md:text-3xl text-foreground leading-tight tracking-tight">
                 {results.rentData.city}, {results.rentData.state} {results.rentData.zip}
               </h1>
             </motion.div>
