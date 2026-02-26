@@ -7,7 +7,7 @@ import ShareSection from './ShareSection';
 import EmailCapture from './EmailCapture';
 import CompLinks from './CompLinks';
 import NegotiationLetter from './NegotiationLetter';
-import RentControlCard from './RentControlCard';
+
 import AffordabilityCard from './AffordabilityCard';
 import { ArrowLeft, TrendingUp, TrendingDown, Scale, ArrowRight } from 'lucide-react';
 
@@ -176,15 +176,6 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
         </div>
       </motion.div>
 
-      {/* ━━━ LEGAL ━━━ */}
-      {hasIncrease && (
-        <motion.div {...fade(0.09)}>
-          <div className="report-rule" />
-          <div className="report-section">
-            <RentControlCard zip={rentData.zip} increasePct={increasePct} />
-          </div>
-        </motion.div>
-      )}
 
       {/* ━━━ AFFORDABILITY ━━━ */}
       {hasIncrease && (
