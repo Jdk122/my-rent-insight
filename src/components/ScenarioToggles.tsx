@@ -32,11 +32,11 @@ const ScenarioToggles = ({
 }: ScenarioTogglesProps) => {
   return (
     <div>
-      <p className="text-sm text-muted-foreground mb-5">Adjust the numbers to explore your options</p>
+      <p className="text-sm text-muted-foreground mb-6">Slide the numbers around and see what changes.</p>
 
       <div className="space-y-5">
         <div className="space-y-2">
-          <Label className="text-[13px] font-medium text-foreground">I find a place for…</Label>
+          <Label className="text-[13px] font-medium text-foreground">If I found a new place for…</Label>
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs text-muted-foreground">$</span>
             <Input
@@ -58,7 +58,7 @@ const ScenarioToggles = ({
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[13px] font-medium text-foreground">Moving costs…</Label>
+          <Label className="text-[13px] font-medium text-foreground">And it cost me this much to move…</Label>
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs text-muted-foreground">$</span>
             <Input
@@ -80,7 +80,7 @@ const ScenarioToggles = ({
 
         {hasIncrease && (
           <div className="space-y-2">
-            <Label className="text-[13px] font-medium text-foreground">I negotiate down to…</Label>
+            <Label className="text-[13px] font-medium text-foreground">Or if I talked them down to…</Label>
             <div className="flex items-center gap-2">
               <Input
                 type="number"

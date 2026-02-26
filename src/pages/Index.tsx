@@ -45,7 +45,7 @@ const Index = () => {
           >
             {/* Landing hero — full width feel */}
             <div className="px-6 md:px-12 lg:px-20 pt-16 md:pt-24 lg:pt-32 pb-12 md:pb-16">
-              <div className="max-w-3xl">
+              <div className="max-w-[620px]">
                 <h1 className="font-display text-[clamp(3rem,8vw,5.5rem)] text-foreground leading-[0.88] tracking-tight">
                   Is your rent
                   <br />
@@ -59,7 +59,7 @@ const Index = () => {
 
             {/* Form — centered but not cramped */}
             <div className="px-6 md:px-12 lg:px-20 pb-32">
-              <div className="max-w-lg">
+              <div className="max-w-[620px]">
                 <RentForm onSubmit={handleSubmit} />
               </div>
             </div>
