@@ -51,11 +51,11 @@ const LandlordCostLookup = ({
         <div className="flex items-start gap-3 mb-5">
           <Building2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
           <div>
-            <h3 className="font-display text-2xl md:text-3xl text-foreground">
-              What does your landlord actually pay?
+            <h3 className="font-display text-2xl text-foreground">
+              Want to know what your landlord actually pays?
             </h3>
             <p className="text-sm text-muted-foreground mt-2 max-w-md leading-relaxed">
-              Enter your address and we'll estimate your landlord's mortgage, taxes, HOA, and profit margin — so you know exactly where you stand.
+              Enter your address and we'll estimate their mortgage, taxes, and fees — so you can see the real margin on your unit.
             </p>
           </div>
         </div>

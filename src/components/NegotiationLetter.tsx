@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
-import { Copy, Download, FileText, Handshake, Shield, ArrowRight } from 'lucide-react';
+import { Copy, Download, Handshake, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
 import { LandlordCostEstimate } from '@/data/landlordCosts';
@@ -33,7 +33,6 @@ const NegotiationLetter = ({
   currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, medianHouseholdIncome,
   zip, city, state, bedrooms, landlordCosts, increaseAmount,
 }: NegotiationLetterProps) => {
-  const [isOpen, setIsOpen] = useState(true);
   const [tone, setTone] = useState<Tone>('friendly');
   const [name, setName] = useState('');
   const [landlordName, setLandlordName] = useState('');
@@ -113,68 +112,20 @@ ${dateStr}`;
     toast.success('Downloaded');
   };
 
-  if (!isOpen) {
-    return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="w-full text-left rounded-lg p-5 border-2 border-primary/20 bg-primary/[0.03] hover:border-primary/40 hover:bg-primary/[0.06] transition-all group"
-      >
-        <div className="flex items-center gap-4">
-          <div className="flex items-center justify-center w-11 h-11 rounded-lg bg-primary/10 shrink-0">
-            <FileText className="w-5 h-5 text-primary" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h2 className="font-display text-lg text-foreground mb-0.5 group-hover:text-primary transition-colors">
-              Generate Your Negotiation Letter
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Pre-written with your data — customize tone, counter-offer, and send
-            </p>
-          </div>
-          <ArrowRight className="w-4 h-4 text-primary/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
-        </div>
-      </button>
-    );
-  }
-
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-5"
-    >
+    <div className="space-y-6">
       <div>
-        <h2 className="font-display text-xl text-foreground mb-1">Negotiation Letter</h2>
-        <p className="text-sm text-muted-foreground">Send this to your landlord</p>
+        <h3 className="font-display text-2xl text-foreground mb-1">Your negotiation letter</h3>
+        <p className="text-sm text-muted-foreground">
+          Customize it, then copy or download. Ready to send.
+        </p>
       </div>
 
-      {/* Name inputs */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-1.5">
-          <Label className="text-xs font-medium">Your Name</Label>
-          <Input
-            placeholder="Jane Doe"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="h-9 font-mono text-sm bg-background"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label className="text-xs font-medium">Landlord / Mgmt</Label>
-          <Input
-            placeholder="ABC Properties"
-            value={landlordName}
-            onChange={(e) => setLandlordName(e.target.value)}
-            className="h-9 font-mono text-sm bg-background"
-          />
-        </div>
-      </div>
-
-      {/* Tone */}
+      {/* Tone toggle — right here, no fuss */}
       <div className="flex gap-2">
         <button
           onClick={() => setTone('friendly')}
-          className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md border text-xs font-mono transition-colors ${
+          className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg border text-xs font-mono transition-colors ${
             tone === 'friendly'
               ? 'border-primary bg-primary/5 text-primary'
               : 'border-border text-muted-foreground hover:bg-secondary'
@@ -185,7 +136,7 @@ ${dateStr}`;
         </button>
         <button
           onClick={() => setTone('firm')}
-          className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md border text-xs font-mono transition-colors ${
+          className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg border text-xs font-mono transition-colors ${
             tone === 'firm'
               ? 'border-primary bg-primary/5 text-primary'
               : 'border-border text-muted-foreground hover:bg-secondary'
@@ -196,11 +147,32 @@ ${dateStr}`;
         </button>
       </div>
 
-      {/* Counter slider */}
+      {/* Names + counter */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <Label className="text-xs font-medium text-muted-foreground">Your name</Label>
+          <Input
+            placeholder="Jane Doe"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="h-9 font-mono text-sm bg-background"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs font-medium text-muted-foreground">Landlord / management</Label>
+          <Input
+            placeholder="ABC Properties"
+            value={landlordName}
+            onChange={(e) => setLandlordName(e.target.value)}
+            className="h-9 font-mono text-sm bg-background"
+          />
+        </div>
+      </div>
+
       <div className="space-y-2">
-        <Label className="text-xs font-medium">
-          Counter: <span className="font-mono text-primary">{counterPct}%</span>
-          <span className="text-muted-foreground font-normal ml-1">(${fmt(counterRent)}/mo)</span>
+        <Label className="text-xs font-medium text-muted-foreground">
+          Your counter-offer: <span className="font-mono text-primary">{counterPct}%</span>
+          <span className="text-muted-foreground ml-1">(${fmt(counterRent)}/mo)</span>
         </Label>
         <Slider
           value={[counterPct]}
@@ -211,29 +183,29 @@ ${dateStr}`;
         />
         <div className="flex justify-between text-[10px] font-mono text-muted-foreground">
           <span>0%</span>
-          <span>{increasePct}% (accept)</span>
+          <span>{increasePct}% (accept as-is)</span>
         </div>
       </div>
 
-      {/* Preview */}
-      <div className="rounded-md bg-secondary/50 border border-border p-4 max-h-64 overflow-y-auto">
-        <pre className="whitespace-pre-wrap font-mono text-xs text-foreground leading-relaxed">
+      {/* The letter itself */}
+      <div className="rounded-lg border border-border bg-card p-5 md:p-6">
+        <pre className="whitespace-pre-wrap font-mono text-[13px] text-foreground leading-relaxed">
           {letter}
         </pre>
       </div>
 
       {/* Actions */}
       <div className="flex gap-2">
-        <Button onClick={handleCopy} variant="default" className="flex-1 gap-1.5 h-9 text-xs rounded-md">
+        <Button onClick={handleCopy} variant="default" className="flex-1 gap-1.5 h-10 text-sm rounded-lg">
           <Copy className="w-3.5 h-3.5" />
-          Copy
+          Copy letter
         </Button>
-        <Button onClick={handleDownload} variant="outline" className="flex-1 gap-1.5 h-9 text-xs rounded-md">
+        <Button onClick={handleDownload} variant="outline" className="flex-1 gap-1.5 h-10 text-sm rounded-lg">
           <Download className="w-3.5 h-3.5" />
           Download
         </Button>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

@@ -39,10 +39,10 @@ const AffordabilityCard = ({ currentRent, newRent, medianHouseholdIncome, zip, c
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="font-display text-xl text-foreground mb-0.5">Can you afford this?</h2>
-          <p className="text-sm text-muted-foreground">Your rent vs. what {city || 'local'} households earn</p>
+          <h3 className="font-display text-xl text-foreground mb-0.5">Can you actually afford this?</h3>
+          <p className="text-sm text-muted-foreground">How your rent stacks up against what people in {city || 'your area'} earn</p>
         </div>
         <span className={`verdict-pill ${isSevereBurden ? 'verdict-pill-overpaying' : isCostBurdened ? 'verdict-pill-fair' : 'verdict-pill-good'}`}>
           {burdenLabel}
@@ -51,19 +51,19 @@ const AffordabilityCard = ({ currentRent, newRent, medianHouseholdIncome, zip, c
 
       <div className="divide-y divide-border">
         <div className="data-row">
-          <span className="data-row-label">{city || 'Area'} median income</span>
+          <span className="data-row-label">What households here earn</span>
           <span className="data-row-value">${fmt(medianHouseholdIncome)}/yr</span>
         </div>
         <div className="data-row">
-          <span className="data-row-label">Current burden</span>
+          <span className="data-row-label">How much of that goes to rent now</span>
           <span className="data-row-value">{currentBurden}%</span>
         </div>
         <div className="data-row">
-          <span className="data-row-label">New burden</span>
+          <span className="data-row-label">After the increase</span>
           <span className={`data-row-value ${burdenColor}`}>{newBurden}%</span>
         </div>
         <div className="data-row">
-          <span className="data-row-label">Affordability limit</span>
+          <span className="data-row-label">The rule of thumb</span>
           <span className="data-row-value">30%</span>
         </div>
       </div>
