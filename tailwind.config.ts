@@ -72,6 +72,10 @@ export default {
         },
         ink: "hsl(var(--ink))",
         cream: "hsl(var(--cream))",
+        "accent-blue": "hsl(var(--accent-blue))",
+        "accent-indigo": "hsl(var(--accent-indigo))",
+        "accent-emerald": "hsl(var(--accent-emerald))",
+        "accent-amber": "hsl(var(--accent-amber))",
       },
       borderRadius: {
         lg: "var(--radius)",

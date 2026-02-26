@@ -16,12 +16,17 @@ const RentControlCard = ({ zip, increasePct }: RentControlCardProps) => {
   const hasCap = !!cap;
 
   return (
-    <div className="brand-card space-y-4">
-      <div>
-        <p className="data-label mb-1">Legal Context</p>
-        <h3 className="font-display text-xl text-foreground leading-tight">
-          Rent laws in your area
-        </h3>
+    <div className="brand-card-legal space-y-4">
+      <div className="flex items-center gap-3">
+        <div className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0" style={{ background: 'hsl(var(--accent-indigo) / 0.1)' }}>
+          <Gavel className="w-4 h-4" style={{ color: 'hsl(var(--accent-indigo))' }} />
+        </div>
+        <div>
+          <p className="data-label mb-0">Legal Context</p>
+          <h3 className="font-display text-xl text-foreground leading-tight">
+            Rent laws in your area
+          </h3>
+        </div>
       </div>
 
       <div className="divide-y divide-border">
@@ -63,8 +68,8 @@ const RentControlCard = ({ zip, increasePct }: RentControlCardProps) => {
       </div>
 
       {hasCap && cap?.maxIncreasePct && increasePct > cap.maxIncreasePct && (
-        <div className="flex items-start gap-2 p-3 rounded-lg bg-accent/8 border border-accent/15">
-          <AlertTriangle className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
+        <div className="flex items-start gap-2 p-3 rounded-lg" style={{ background: 'hsl(var(--accent-indigo) / 0.06)', border: '1px solid hsl(var(--accent-indigo) / 0.15)' }}>
+          <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: 'hsl(var(--accent-indigo))' }} />
           <p className="text-xs text-foreground leading-relaxed">
             Your increase of {increasePct}% may exceed the legal maximum.
           </p>
@@ -82,7 +87,8 @@ const RentControlCard = ({ zip, increasePct }: RentControlCardProps) => {
           href={cap.ordinanceUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-[11px] font-mono text-accent hover:underline"
+          className="inline-flex items-center gap-1.5 text-[11px] font-mono hover:underline"
+          style={{ color: 'hsl(var(--accent-indigo))' }}
         >
           View ordinance <ExternalLink className="w-2.5 h-2.5" />
         </a>

@@ -46,7 +46,7 @@ const Index = () => {
               <h1 className="font-display text-[clamp(2.5rem,7vw,5rem)] text-foreground leading-[0.92] tracking-tight">
                 Is your rent
                 <br />
-                increase fair?
+                increase <span className="text-accent">fair?</span>
               </h1>
               <p className="mt-5 text-base md:text-lg text-muted-foreground max-w-md leading-relaxed">
                 Compare your landlord's number against federal data.

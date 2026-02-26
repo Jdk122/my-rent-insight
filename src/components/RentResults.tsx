@@ -75,8 +75,12 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
   return (
     <div className="space-y-6">
       {/* ━━━ PRIMARY VERDICT ━━━ */}
-      <motion.div {...anim(0)} className="brand-card-dark">
-        <div className="flex items-center justify-between mb-6">
+      <motion.div {...anim(0)} className="brand-card-dark relative overflow-hidden">
+        {/* Subtle gradient glow */}
+        {hasIncrease && isAboveMarket && (
+          <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full opacity-[0.07]" style={{ background: 'radial-gradient(circle, hsl(var(--verdict-overpaying)), transparent)' }} />
+        )}
+        <div className="relative flex items-center justify-between mb-6">
           <span className="data-label" style={{ color: 'hsl(var(--warm-gray))' }}>
             Increase Report
           </span>
@@ -86,7 +90,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
         </div>
 
         {hasIncrease ? (
-          <div className="text-center py-2">
+          <div className="relative text-center py-2">
             <p className={`font-mono text-4xl md:text-5xl font-bold tracking-tight ${verdictColor}`}>
               {increasePct}%
               <span className="text-lg font-normal mx-2" style={{ color: 'hsl(var(--warm-gray))' }}>vs</span>
@@ -154,7 +158,7 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
 
       {/* ━━━ MARKET DATA ━━━ */}
       <motion.div {...anim(0.1)} className="brand-card">
-        <p className="data-label mb-1">Market Data</p>
+        <p className="data-label mb-1" style={{ color: 'hsl(var(--accent-emerald))' }}>Market Data</p>
         <h3 className="font-display text-xl text-foreground mb-5">
           {bedroomLabels[formData.bedrooms]} · {rentData.city}, {rentData.state}
         </h3>
@@ -224,8 +228,8 @@ const RentResults = ({ formData, rentData, onReset }: RentResultsProps) => {
 
       {/* ━━━ DECISION ━━━ */}
       {hasIncrease && (
-        <motion.div {...anim(0.19)} className="brand-card">
-          <p className="data-label mb-1">Decision</p>
+        <motion.div {...anim(0.19)} className="brand-card-decision">
+          <p className="data-label mb-1" style={{ color: 'hsl(var(--accent-blue))' }}>Decision</p>
           <h3 className="font-display text-xl text-foreground mb-4">Accept, Negotiate, or Move?</h3>
 
           <div className="flex items-baseline gap-2 font-mono text-lg">

@@ -48,6 +48,12 @@
     --cream: 40 24% 96%;
     --warm-gray: 35 6% 58%;
 
+    /* Accent palette for card variety */
+    --accent-blue: 215 75% 52%;
+    --accent-indigo: 240 60% 58%;
+    --accent-emerald: 155 55% 40%;
+    --accent-amber: 38 92% 50%;
+
     --font-display: 'Instrument Serif', serif;
     --font-body: 'Space Grotesk', sans-serif;
     --font-mono: 'Space Mono', monospace;
@@ -113,8 +119,24 @@
   .brand-card-dark {
     background: hsl(var(--ink));
     color: hsl(var(--cream));
-    @apply rounded-xl p-6 md:p-8 border-0 shadow-lg;
-    box-shadow: 0 8px 32px -8px hsl(var(--ink) / 0.3), 0 2px 8px -2px hsl(var(--ink) / 0.15);
+    @apply rounded-xl p-6 md:p-8 border-0;
+    box-shadow: 0 8px 32px -8px hsl(var(--ink) / 0.35), 0 2px 8px -2px hsl(var(--ink) / 0.2);
+  }
+
+  /* Colored left-border card variants */
+  .brand-card-legal {
+    @apply brand-card;
+    border-left: 3px solid hsl(var(--accent-indigo));
+  }
+
+  .brand-card-afford {
+    @apply brand-card;
+    border-left: 3px solid hsl(var(--accent-amber));
+  }
+
+  .brand-card-decision {
+    @apply brand-card;
+    border-left: 3px solid hsl(var(--accent-blue));
   }
 
   .data-label {
