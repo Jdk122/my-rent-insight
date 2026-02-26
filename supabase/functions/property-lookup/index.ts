@@ -67,7 +67,7 @@ serve(async (req) => {
     if ((hourCount || 0) >= 20) {
       return new Response(
         JSON.stringify({ error: "Rate limit exceeded. Try again later.", code: "RATE_LIMIT" }),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -90,7 +90,7 @@ serve(async (req) => {
       console.error("Rentcast property error:", propertyRes.status, errText);
       return new Response(
         JSON.stringify({ error: "Property not found", code: "NOT_FOUND" }),
-        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -100,7 +100,7 @@ serve(async (req) => {
     if (!property) {
       return new Response(
         JSON.stringify({ error: "Property not found", code: "NOT_FOUND" }),
-        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
