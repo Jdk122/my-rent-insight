@@ -63,7 +63,7 @@ const LandlordCostLookup = ({
           <button
             onClick={handleLookup}
             disabled={!address.trim() || isLoading}
-            className="bg-foreground text-background px-5 py-3 rounded text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap disabled:opacity-50"
+            className="bg-primary text-primary-foreground px-5 py-3 rounded text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap disabled:opacity-50"
           >
             {isLoading ? 'Looking up…' : 'Look up'}
           </button>

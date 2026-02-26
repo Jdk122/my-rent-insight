@@ -6,23 +6,23 @@
 
 @layer base {
   :root {
-    --background: 36 25% 97%;
-    --foreground: 0 0% 10%;
+    --background: 200 15% 97%;
+    --foreground: 220 18% 13%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 220 18% 13%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover-foreground: 220 18% 13%;
 
-    --primary: 0 0% 10%;
+    --primary: 200 80% 44%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 36 18% 94%;
-    --secondary-foreground: 0 0% 10%;
+    --secondary: 200 15% 94%;
+    --secondary-foreground: 220 18% 13%;
 
-    --muted: 30 8% 90%;
-    --muted-foreground: 24 6% 39%;
+    --muted: 210 10% 90%;
+    --muted-foreground: 215 10% 46%;
 
     --accent: 162 55% 40%;
     --accent-foreground: 0 0% 100%;
@@ -30,24 +30,24 @@
     --destructive: 6 60% 46%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 30 14% 82%;
-    --input: 30 14% 82%;
-    --ring: 0 0% 10%;
+    --border: 210 12% 86%;
+    --input: 210 12% 86%;
+    --ring: 200 80% 44%;
 
     --radius: 0.25rem;
 
     /* Verdicts */
     --verdict-overpaying: 6 60% 46%;
     --verdict-fair: 38 85% 36%;
-    --verdict-good: 152 50% 33%;
-    --verdict-move: 152 50% 33%;
-    --verdict-stay: 0 0% 10%;
+    --verdict-good: 162 55% 40%;
+    --verdict-move: 162 55% 40%;
+    --verdict-stay: 200 80% 44%;
     --verdict-close: 38 85% 36%;
 
-    --ink: 0 0% 10%;
-    --paper: 36 25% 97%;
-    --warm-gray: 24 6% 39%;
-    --rule: 30 14% 82%;
+    --ink: 220 18% 13%;
+    --paper: 200 15% 97%;
+    --warm-gray: 215 10% 46%;
+    --rule: 210 12% 86%;
     --highlight-bg: 39 70% 96%;
 
     /* Accent palette */
@@ -185,6 +185,7 @@
   }
 
   .tone-option.active {
-    @apply bg-foreground text-background;
+    background: hsl(var(--primary));
+    @apply text-primary-foreground;
   }
 }
