@@ -11,6 +11,7 @@ interface RentcastCardProps {
   zip: string;
   state: string;
   bedrooms: BedroomType;
+  proposedRent?: number;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -48,7 +49,7 @@ function buildLinks(zip: string, city: string, state: string, bedrooms: BedroomT
   return links;
 }
 
-const RentcastCard = ({ data, loading, error, city, zip, state, bedrooms }: RentcastCardProps) => {
+const RentcastCard = ({ data, loading, error, city, zip, state, bedrooms, proposedRent }: RentcastCardProps) => {
   if (loading) {
     return (
       <div className="text-center py-8">
@@ -100,41 +101,71 @@ const RentcastCard = ({ data, loading, error, city, zip, state, bedrooms }: Rent
         </div>
       )}
 
-      {/* Comparable listings */}
-      {hasComps && (
-        <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 text-center">
-            Nearby Comparable Listings
-          </p>
-          {data.comparables.map((comp, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05, duration: 0.3 }}
-              className={`flex items-start justify-between gap-4 px-4 py-3 rounded-md ${i % 2 === 0 ? 'bg-muted/40' : ''}`}
-            >
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground truncate flex items-center gap-1.5">
-                  <MapPin className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-                  {comp.formattedAddress}
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
-                  {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
-                  {comp.squareFootage !== null && ` · ${fmt(comp.squareFootage)} sqft`}
-                  {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
-                </p>
+      {/* FIX 2: Comparable listings sorted low-to-high with reference line */}
+      {hasComps && (() => {
+        const sortedComps = [...data.comparables].filter(c => c.rent !== null).sort((a, b) => (a.rent ?? 0) - (b.rent ?? 0));
+        // Find where proposed rent falls in sorted order
+        let refIndex = sortedComps.length; // default: at bottom
+        if (proposedRent) {
+          refIndex = sortedComps.findIndex(c => (c.rent ?? 0) >= proposedRent);
+          if (refIndex === -1) refIndex = sortedComps.length;
+        }
+
+        return (
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 text-center">
+              Nearby Comparable Listings
+            </p>
+            {sortedComps.map((comp, i) => (
+              <div key={i}>
+                {proposedRent && i === refIndex && (
+                  <div className="flex items-center gap-3 px-4 py-2">
+                    <div className="flex-1 h-px bg-destructive" />
+                    <span className="text-[13px] text-destructive font-semibold whitespace-nowrap">
+                      Your proposed rent: ${fmt(proposedRent)}/mo
+                    </span>
+                    <div className="flex-1 h-px bg-destructive" />
+                  </div>
+                )}
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05, duration: 0.3 }}
+                  className={`flex items-start justify-between gap-4 px-4 py-3 rounded-md ${i % 2 === 0 ? 'bg-muted/40' : ''}`}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground truncate flex items-center gap-1.5">
+                      <MapPin className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                      {comp.formattedAddress}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
+                      {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
+                      {comp.squareFootage !== null && ` · ${fmt(comp.squareFootage)} sqft`}
+                      {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
+                    </p>
+                  </div>
+                  {comp.rent !== null && (
+                    <span className="text-sm font-semibold text-foreground whitespace-nowrap">
+                      ${fmt(comp.rent)}/mo
+                    </span>
+                  )}
+                </motion.div>
               </div>
-              {comp.rent !== null && (
-                <span className="text-sm font-semibold text-foreground whitespace-nowrap">
-                  ${fmt(comp.rent)}/mo
+            ))}
+            {/* Reference line at bottom if all comps are cheaper */}
+            {proposedRent && refIndex === sortedComps.length && (
+              <div className="flex items-center gap-3 px-4 py-2">
+                <div className="flex-1 h-px bg-destructive" />
+                <span className="text-[13px] text-destructive font-semibold whitespace-nowrap">
+                  Your proposed rent: ${fmt(proposedRent)}/mo
                 </span>
-              )}
-            </motion.div>
-          ))}
-        </div>
-      )}
+                <div className="flex-1 h-px bg-destructive" />
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       <p className="text-[11px] text-muted-foreground mt-3 text-center">Source: Rentcast</p>
 

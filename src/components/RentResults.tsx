@@ -80,6 +80,21 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const rentcast = useRentcast(rentData.zip, formData.bedrooms, formData.fullAddress);
   const hasRentcastComps = rentcast.data && rentcast.data.comparables.length > 0;
 
+  // FIX 1: Smart comparison rent for "Should you move?"
+  const comparisonRent = useMemo<{ rent: number; label: string } | null>(() => {
+    const ratio = formData.currentRent / rentData.fmr;
+    if (ratio <= 1.5) {
+      return { rent: rentData.fmr, label: 'fair market rate' };
+    } else if (rentcast.data?.rentRangeLow && rentcast.data.rentRangeLow > rentData.fmr) {
+      return { rent: rentcast.data.rentRangeLow, label: 'low end of comparable units' };
+    } else {
+      return null;
+    }
+  }, [formData.currentRent, rentData.fmr, rentcast.data]);
+
+  // FIX 5: High-rent verdict nuance
+  const isHighRent = formData.currentRent > rentData.fmr * 1.5;
+
   const verdictColor = isFair ? 'text-verdict-fair' : isAboveMarket ? 'text-verdict-overpaying' : 'text-verdict-good';
   const pillClass = isFair ? 'verdict-pill-fair' : isAboveMarket ? 'verdict-pill-overpaying' : 'verdict-pill-good';
   const verdictLabel = !hasIncrease
@@ -89,16 +104,14 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     : 'Below Market';
 
   const city = rentData.city;
-  const brLabel = bedroomLabels[formData.bedrooms];
+  // FIX 3: Avoid double-s in "bedroomss"
+  const brLabel = bedroomLabels[formData.bedrooms].toLowerCase();
 
   const rentBurden = calc?.rentBurden ?? null;
   const currentRentBurden = calc?.currentRentBurden ?? null;
   const isCostBurdened = calc?.isCostBurdened ?? false;
   const breakEvenMonths = calc?.breakEvenMonths ?? Infinity;
 
-  // FIX 1: Use HUD FMR for break-even
-  const hudBenchmark = rentData.fmr;
-  const proposedAboveFmr = newRent > hudBenchmark;
 
   let rowIdx = 0;
 
@@ -125,11 +138,15 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               {marketYoy <= 0 && isAboveMarket ? (
                 <>Market rents {marketYoy < 0 ? <><em>decreased</em> {Math.abs(marketYoy)}%</> : 'held flat'} in {city}. An increase of <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong> is going against the trend.</>
               ) : isAboveMarket ? (
-                <>Rents in {city} rose <strong className="text-foreground font-bold text-xl">{marketYoy}%</strong> this year. Your landlord is raising yours <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong>. That's <strong>${fmt(annualExtra)} extra per year.</strong></>
+              <>Rents in {city} rose <strong className="text-foreground font-bold text-xl">{marketYoy}%</strong> this year. Your landlord is raising yours <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong>. That's <strong>${fmt(annualExtra)} extra per year.</strong></>
               ) : isFair ? (
-                <>Your increase is roughly in line with what rents are doing in {city}. You're not being overcharged.</>
+                isHighRent
+                  ? <>Your increase rate is roughly in line with what rents are doing in {city}. Note: your rent is well above the area median — this assessment is about the rate of increase, not the rent amount.</>
+                  : <>Your increase is roughly in line with what rents are doing in {city}. You're not being overcharged.</>
               ) : (
-                <>Rents in {city} rose <strong className="text-foreground font-bold text-xl">{marketYoy}%</strong> and your landlord is only raising yours <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong>. This is a fair deal.</>
+                isHighRent
+                  ? <>Rents in {city} rose <strong className="text-foreground font-bold text-xl">{marketYoy}%</strong> and your landlord is only raising yours <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong>. Note: your rent is well above the area median — this assessment is about the rate of increase, not the rent amount.</>
+                  : <>Rents in {city} rose <strong className="text-foreground font-bold text-xl">{marketYoy}%</strong> and your landlord is only raising yours <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong>. This is a fair deal.</>
               )}
             </p>
             <button onClick={onReset} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mt-4">
@@ -164,7 +181,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
       {/* ━━━ 3. MARKET CONTEXT ━━━ */}
       <motion.div {...fade(0.1)} className="py-12 border-b border-border">
-        <h2 className="section-title">{city}, {rentData.state} — {brLabel}</h2>
+        <h2 className="section-title">{city}, {rentData.state} — {bedroomLabels[formData.bedrooms]}</h2>
         <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
           <span className="context-label">{city} rents this year</span>
           <span className="context-value">
@@ -185,7 +202,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         )}
         {calc && (
           <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
-            <span className="context-label">What most {brLabel.toLowerCase()}s go for</span>
+            <span className="context-label">What most {brLabel} go for</span>
             <span className="context-value">${fmt(calc.typicalRangeLow)} – ${fmt(calc.typicalRangeHigh)}</span>
           </div>
         )}
@@ -206,8 +223,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             <span className="context-value text-verdict-good font-semibold">${fmt(calc.counterLow)}–${fmt(calc.counterHigh)}/mo</span>
           </div>
         )}
-        {/* FIX 7: Show current → proposed rent burden */}
-        {rentBurden && (
+        {/* FIX 4: Tiered rent burden display */}
+        {rentBurden && rentBurden <= 50 && (
           <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
             <span className="context-label">Rent as % of area median income</span>
             <span className="context-value">
@@ -216,11 +233,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   {currentRentBurden}% → <span className={isCostBurdened ? 'text-verdict-overpaying' : ''}>{rentBurden}%</span>
                 </>
               ) : (
-                <>
-                  {rentBurden}%
-                </>
+                <>{rentBurden}%</>
               )}
-              {isCostBurdened && <span className="context-sub text-verdict-overpaying ml-1">Above the 30% affordability threshold</span>}
+              {isCostBurdened && rentBurden <= 40 && <span className="context-sub text-verdict-overpaying ml-1">Above the 30% affordability guideline</span>}
+              {rentBurden > 40 && rentBurden <= 50 && <span className="context-sub text-verdict-overpaying ml-1">Well above the 30% affordability guideline</span>}
             </span>
           </div>
         )}
@@ -231,6 +247,17 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               {rentData.fredTrend.monthlyChange > 0 ? '+' : ''}{rentData.fredTrend.monthlyChange}%/mo
               <span className="context-sub">({rentData.fredTrend.direction})</span>
             </span>
+          </div>
+        )}
+        {/* FIX 4: Severe rent burden callout (50%+) */}
+        {rentBurden && rentBurden > 50 && (
+          <div className="bg-destructive/10 border-l-[3px] border-destructive px-4 py-3 mt-3 rounded-sm">
+            <p className="text-sm font-semibold text-destructive">
+              Rent burden: {currentRentBurden !== null ? `${currentRentBurden}% → ` : ''}{rentBurden}% of area median income
+            </p>
+            <p className="text-[13px] text-destructive/80 mt-1">
+              Financial experts recommend spending no more than 30% of income on rent.
+            </p>
           </div>
         )}
         <p className="text-[11px] text-muted-foreground mt-3">{rentData.yoySourceLabel}</p>
@@ -297,6 +324,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           zip={rentData.zip}
           state={rentData.state}
           bedrooms={formData.bedrooms}
+          proposedRent={hasIncrease ? newRent : undefined}
         />
         {/* If no Rentcast comps, show full CompLinks as fallback */}
         {!rentcast.loading && !hasRentcastComps && (
@@ -304,21 +332,25 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         )}
       </motion.div>
 
-      {/* ━━━ 7. SHOULD YOU MOVE? (FIX 1: uses HUD FMR) ━━━ */}
-      {hasIncrease && (
+      {/* ━━━ 7. SHOULD YOU MOVE? (FIX 1: smart comparison rent) ━━━ */}
+      {hasIncrease && comparisonRent && (
         <motion.div {...fade(0.21)} className="my-10">
           <div className="callout-box">
             <p className="callout-box-title">Should you move?</p>
-            {proposedAboveFmr ? (
+            {newRent > comparisonRent.rent ? (
               <p className="callout-box-body">
-                If moving costs ${fmt(formData.movingCosts)} and you find a place at the fair market rate (${fmt(hudBenchmark)}/mo),
+                If moving costs ${fmt(formData.movingCosts)} and you find a place at the {comparisonRent.label} (${fmt(comparisonRent.rent)}/mo),
                 you break even in <strong className="text-foreground font-semibold">
-                  {breakEvenMonths === Infinity ? 'never — staying is cheaper' : `${breakEvenMonths.toFixed(1)} months`}
+                  {breakEvenMonths === Infinity
+                    ? 'never — staying is cheaper'
+                    : breakEvenMonths < 1
+                      ? `about ${Math.round(breakEvenMonths * 4.3)} week${Math.round(breakEvenMonths * 4.3) !== 1 ? 's' : ''}`
+                      : `${breakEvenMonths.toFixed(1)} months`}
                 </strong>.
               </p>
             ) : (
               <p className="callout-box-body">
-                Your proposed rent of ${fmt(newRent)} is at or below the fair market rate for this area.
+                Your proposed rent of ${fmt(newRent)} is at or below the {comparisonRent.label} for this area.
                 Even with the increase, moving would likely cost you more.
               </p>
             )}
