@@ -141,7 +141,7 @@ export async function lookupRentData(
 
   return {
     zip,
-    city: raw.c,
+    city: raw.c || raw.m.split(',')[0] || `ZIP ${zip}`,
     state: raw.s,
     metro: raw.m,
     fmr,
