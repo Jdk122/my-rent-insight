@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Building2, Search, Lock } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Lock } from 'lucide-react';
 import { RentData } from '@/data/rentData';
 import { BedroomType } from '@/data/rentData';
 import { estimateLandlordCosts, LandlordCostEstimate } from '@/data/landlordCosts';
@@ -31,8 +29,6 @@ const LandlordCostLookup = ({
   const handleLookup = () => {
     if (!address.trim()) return;
     setIsLoading(true);
-
-    // Simulate API delay
     setTimeout(() => {
       const data = estimateLandlordCosts(address, rentData, bedrooms);
       setCostData(data);
@@ -43,50 +39,39 @@ const LandlordCostLookup = ({
 
   const profit = costData ? currentRent - costData.totalCosts : 0;
   const annualProfit = profit * 12;
-  const annualIncreaseAmount = increaseAmount * 12;
 
   if (!costData) {
     return (
       <div>
-        <div className="flex items-start gap-3 mb-5">
-          <Building2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-          <div>
-            <h3 className="font-display text-2xl text-foreground">
-              Want to know what your landlord actually pays?
-            </h3>
-            <p className="text-sm text-muted-foreground mt-2 max-w-md leading-relaxed">
-              Enter your address and we'll estimate their mortgage, taxes, and fees — so you can see the real margin on your unit.
-            </p>
-          </div>
-        </div>
+        <div className="text-3xl mb-3 opacity-70">🔍</div>
+        <h2 className="font-display text-[22px] font-semibold text-foreground mb-2" style={{ letterSpacing: '-0.01em' }}>
+          Want to see what your landlord actually pays?
+        </h2>
+        <p className="text-[15px] text-muted-foreground max-w-[380px] mx-auto mb-6 leading-relaxed">
+          Enter your address and we'll estimate their mortgage, taxes, HOA, and profit margin.
+        </p>
 
-        <div className="flex gap-2 max-w-md">
-          <Input
-            placeholder="123 Main St, Apt 4B"
+        <div className="flex gap-2 max-w-[440px] mx-auto">
+          <input
+            type="text"
+            placeholder="123 Washington St, Apt 4B"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleLookup()}
-            className="h-10 font-mono text-sm bg-background flex-1"
+            className="flex-1 px-4 py-3 text-sm border border-border rounded bg-card text-foreground outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
           />
-          <Button
+          <button
             onClick={handleLookup}
             disabled={!address.trim() || isLoading}
-            className="h-10 px-5 gap-2 text-sm font-semibold shrink-0"
+            className="bg-foreground text-background px-5 py-3 rounded text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap disabled:opacity-50"
           >
-            {isLoading ? (
-              <span className="animate-pulse">Looking up…</span>
-            ) : (
-              <>
-                <Search className="w-3.5 h-3.5" />
-                Look Up
-              </>
-            )}
-          </Button>
+            {isLoading ? 'Looking up…' : 'Look up'}
+          </button>
         </div>
 
-        <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground mt-3">
+        <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground mt-3">
           <Lock className="w-3 h-3" />
-          We only use public records. Your address is never shared.
+          Public records only. Your address is never shared.
         </p>
       </div>
     );
@@ -104,48 +89,40 @@ const LandlordCostLookup = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="text-left"
     >
-      <h3 className="font-display text-2xl md:text-3xl text-foreground mb-1">
-        Your Landlord's Estimated Costs
-      </h3>
+      <h2 className="section-title">Your landlord's estimated costs</h2>
       <p className="text-sm text-muted-foreground mb-6">
         {address}, {rentData.city}
       </p>
 
-      <div className="space-y-0">
-        {costRows.map((row, i) => (
-          <div
-            key={row.label}
-            className={`flex items-center justify-between py-3 ${
-              i > 0 ? 'border-t border-border/60' : ''
-            } ${row.bold ? 'pt-4' : ''}`}
-          >
-            <span className={`text-[13px] ${row.bold || row.highlight ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
-              {row.label}
-            </span>
-            <span className={`font-mono text-[13px] font-semibold tabular-nums ${
-              row.highlight ? 'text-verdict-good text-base' : 'text-foreground'
-            }`}>
-              {row.value}
-            </span>
-          </div>
-        ))}
-      </div>
+      {costRows.map((row, i) => (
+        <div
+          key={row.label}
+          className={`context-row ${row.bold ? 'pt-4' : ''}`}
+        >
+          <span className={`context-label ${row.bold || row.highlight ? '!text-foreground !font-medium' : ''}`}>
+            {row.label}
+          </span>
+          <span className={`context-value ${row.highlight ? '!text-verdict-good !text-lg' : ''}`}>
+            {row.value}
+          </span>
+        </div>
+      ))}
 
-      {/* Summary insight */}
-      <p className="text-sm text-muted-foreground mt-6 leading-relaxed">
+      <p className="text-sm text-muted-foreground mt-6 leading-relaxed text-left">
         Your landlord is estimated to clear{' '}
-        <span className="font-mono font-bold text-foreground">~${fmt(annualProfit)}/year</span> on your unit.
+        <strong className="text-foreground font-semibold">~${fmt(annualProfit)}/year</strong> on your unit.
         {increaseAmount > 0 && (
-          <> They're asking for a <span className="font-mono font-semibold text-foreground">${fmt(increaseAmount)}/month</span> increase
-          when their costs likely went up <span className="font-mono font-semibold text-foreground">${fmt(costData.monthlyCostIncrease)}/month</span>.</>
+          <> They're asking for a <strong className="text-foreground font-semibold">${fmt(increaseAmount)}/month</strong> increase
+          when their costs likely went up <strong className="text-foreground font-semibold">${fmt(costData.monthlyCostIncrease)}/month</strong>.</>
         )}
       </p>
 
-      <p className="text-[10px] text-muted-foreground mt-4">
+      <p className="text-[11px] text-muted-foreground mt-4 text-left">
         Estimates based on public records and typical financing for a {costData.purchaseYear} purchase at ~${fmt(costData.purchasePrice)}. Actual costs may vary.
       </p>
     </motion.div>

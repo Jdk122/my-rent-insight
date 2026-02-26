@@ -31,25 +31,12 @@ function buildLinks(zip: string, city: string, state: string, bedrooms: BedroomT
     });
   }
 
-  links.push({
-    name: 'Zillow',
-    url: `https://www.zillow.com/homes/for_rent/${zip}/${beds}-_beds/`,
-  });
-
-  links.push({
-    name: 'Apartments.com',
-    url: `https://www.apartments.com/${citySlug}-${stateSlug}-${zip}/${bedrooms === 'studio' ? 'studios' : beds + '-bedrooms'}/`,
-  });
-
-  links.push({
-    name: 'Realtor.com',
-    url: `https://www.realtor.com/apartments/${zip}/beds-${beds}`,
-  });
-
-  links.push({
-    name: 'HotPads',
-    url: `https://hotpads.com/${citySlug}-${stateSlug}/apartments-for-rent/${beds === '0' ? 'studio' : beds + '-beds'}`,
-  });
+  links.push(
+    { name: 'Zillow', url: `https://www.zillow.com/homes/for_rent/${zip}/${beds}-_beds/` },
+    { name: 'Apartments.com', url: `https://www.apartments.com/${citySlug}-${stateSlug}-${zip}/${bedrooms === 'studio' ? 'studios' : beds + '-bedrooms'}/` },
+    { name: 'Realtor.com', url: `https://www.realtor.com/apartments/${zip}/beds-${beds}` },
+    { name: 'HotPads', url: `https://hotpads.com/${citySlug}-${stateSlug}/apartments-for-rent/${beds === '0' ? 'studio' : beds + '-beds'}` },
+  );
 
   return links;
 }
@@ -59,22 +46,22 @@ const CompLinks = ({ zip, city, state, bedrooms }: CompLinksProps) => {
 
   return (
     <div>
-      <h3 className="font-display text-xl text-foreground mb-1">See what's out there</h3>
-      <p className="text-sm text-muted-foreground mb-5">
-        Browse {bedroomLabel[bedrooms]} rentals near {zip} — see what you'd actually pay if you moved
+      <h2 className="section-title">See what's available</h2>
+      <p className="text-sm text-muted-foreground mb-3">
+        {bedroomLabel[bedrooms]} rentals in {city}, {state}
       </p>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 mt-3">
         {links.map((link) => (
           <a
             key={link.name}
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-md border border-border text-xs font-mono font-medium text-foreground hover:border-primary hover:text-primary transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-border rounded text-sm font-medium text-foreground bg-card hover:border-foreground transition-colors"
           >
-            <Search className="w-3 h-3" />
             {link.name}
+            <span className="text-xs text-muted-foreground">→</span>
           </a>
         ))}
       </div>
