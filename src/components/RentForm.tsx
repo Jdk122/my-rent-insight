@@ -14,18 +14,12 @@ export interface RentFormData {
   movingCosts: number;
 }
 
-function isZipOnly(input: string): boolean {
-  return /^\d{5}$/.test(input.trim());
-}
-
-function looksLikeAddressWithoutUnit(input: string): boolean {
-  const trimmed = input.trim();
-  if (isZipOnly(trimmed)) return false;
-  // Has a street number + street name but no unit/apt indicator
-  const hasStreet = /^\d+\s+\w+/.test(trimmed);
-  const hasUnit = /\b(apt|unit|suite|ste|#|floor|fl|bldg)\b/i.test(trimmed);
-  return hasStreet && !hasUnit;
-}
+const US_STATES = [
+  'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA',
+  'KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ',
+  'NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT',
+  'VA','WA','WV','WI','WY','DC',
+];
 
 interface RentFormProps {
   onSubmit: (data: RentFormData) => void;
@@ -33,23 +27,36 @@ interface RentFormProps {
 }
 
 const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
-  const [addressInput, setAddressInput] = useState('');
+  const [street, setStreet] = useState('');
+  const [unit, setUnit] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [zip, setZip] = useState('');
   const [bedrooms, setBedrooms] = useState<BedroomType>('oneBr');
   const [currentRent, setCurrentRent] = useState('');
   const [rentIncrease, setRentIncrease] = useState('');
   const [increaseIsPercent, setIncreaseIsPercent] = useState(true);
   const [movingCosts] = useState('2500');
 
+  const hasStreet = street.trim().length > 0;
+  const hasFullAddress = hasStreet && city.trim().length > 0 && state.length > 0 && zip.trim().length === 5;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmed = addressInput.trim();
-    if (!trimmed || !currentRent) return;
+    const trimmedZip = zip.trim();
+    if (!trimmedZip || trimmedZip.length !== 5 || !currentRent) return;
 
-    const zipOnly = isZipOnly(trimmed);
+    let fullAddress: string | null = null;
+    if (hasFullAddress) {
+      const parts = [street.trim()];
+      if (unit.trim()) parts[0] += ` ${unit.trim()}`;
+      parts.push(`${city.trim()}, ${state} ${trimmedZip}`);
+      fullAddress = parts.join(', ');
+    }
 
     onSubmit({
-      zip: zipOnly ? trimmed : '', // Will be filled from Rentcast response if address
-      fullAddress: zipOnly ? null : trimmed,
+      zip: trimmedZip,
+      fullAddress,
       bedrooms,
       currentRent: parseFloat(currentRent),
       rentIncrease: rentIncrease ? parseFloat(rentIncrease) : null,
@@ -60,39 +67,96 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {/* Address/Zip + Bedrooms */}
-      <div className="grid grid-cols-[1fr,140px] gap-3">
+      {/* Street Address */}
+      <div className="space-y-1.5">
+        <Label className="text-sm font-medium text-foreground">Street Address <span className="text-muted-foreground font-normal">(optional — zip is enough)</span></Label>
+        <Input
+          type="text"
+          placeholder="123 Main St"
+          value={street}
+          onChange={(e) => setStreet(e.target.value)}
+          className="h-11 text-sm bg-background"
+        />
+      </div>
+
+      {/* Apt/Unit + City + State + Zip */}
+      <div className="grid grid-cols-[72px,1fr,72px,88px] gap-2">
         <div className="space-y-1.5">
-          <Label className="text-sm font-medium text-foreground">Address or Zip Code</Label>
+          <Label className="text-xs font-medium text-muted-foreground">Apt/Unit</Label>
           <Input
             type="text"
-            placeholder="e.g. 123 Main St, Austin, TX 78701"
-            value={addressInput}
-            onChange={(e) => setAddressInput(e.target.value)}
+            placeholder="#3B"
+            value={unit}
+            onChange={(e) => setUnit(e.target.value)}
             className="h-11 text-sm bg-background"
-            required
           />
-          {looksLikeAddressWithoutUnit(addressInput) ? (
-            <p className="text-[11px] text-destructive/80 mt-1">
-              💡 Adding your apt or unit number (e.g. Apt 3B) helps us find your exact building
-            </p>
-          ) : (
-            <p className="text-[11px] text-muted-foreground mt-1">Include city & state for best results, or just enter a 5-digit zip</p>
-          )}
         </div>
         <div className="space-y-1.5">
-          <Label className="text-sm font-medium text-foreground">Bedrooms</Label>
-          <Select value={bedrooms} onValueChange={(v) => setBedrooms(v as BedroomType)}>
-            <SelectTrigger className="h-11 text-sm bg-background">
-              <SelectValue />
+          <Label className="text-xs font-medium text-muted-foreground">City</Label>
+          <Input
+            type="text"
+            placeholder="Austin"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            className="h-11 text-sm bg-background"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs font-medium text-muted-foreground">State</Label>
+          <Select value={state} onValueChange={setState}>
+            <SelectTrigger className="h-11 text-xs bg-background">
+              <SelectValue placeholder="—" />
             </SelectTrigger>
             <SelectContent>
-              {Object.entries(bedroomLabels).map(([key, label]) => (
-                <SelectItem key={key} value={key}>{label}</SelectItem>
+              {US_STATES.map((s) => (
+                <SelectItem key={s} value={s}>{s}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs font-medium text-foreground">Zip Code<span className="text-destructive">*</span></Label>
+          <Input
+            type="text"
+            inputMode="numeric"
+            placeholder="78701"
+            value={zip}
+            onChange={(e) => {
+              const v = e.target.value.replace(/\D/g, '').slice(0, 5);
+              setZip(v);
+            }}
+            className="h-11 text-sm font-mono bg-background"
+            required
+            maxLength={5}
+          />
+        </div>
+      </div>
+
+      {/* Helper text */}
+      {hasStreet && !hasFullAddress && (
+        <p className="text-[11px] text-destructive/70 -mt-2">
+          Fill in city, state & zip for building-specific data
+        </p>
+      )}
+      {!hasStreet && (
+        <p className="text-[11px] text-muted-foreground -mt-2">
+          Just a zip code works — add your address for building-specific insights
+        </p>
+      )}
+
+      {/* Bedrooms */}
+      <div className="space-y-1.5">
+        <Label className="text-sm font-medium text-foreground">Bedrooms</Label>
+        <Select value={bedrooms} onValueChange={(v) => setBedrooms(v as BedroomType)}>
+          <SelectTrigger className="h-11 text-sm bg-background">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.entries(bedroomLabels).map(([key, label]) => (
+              <SelectItem key={key} value={key}>{label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Current rent */}
