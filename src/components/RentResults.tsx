@@ -127,7 +127,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               {isAboveMarket ? (
                 marketYoy <= 0
                   ? <>Your increase is <span className={verdictColor}>above the market trend.</span></>
-                  : <>Your increase is <span className={verdictColor}>{multiplier}× the market rate.</span></>
+                  : <>Your increase is <span className={verdictColor}>{increasePct}% — but the market only moved {marketYoy}%.</span></>
               ) : isBelowMarket ? (
                 <>Your increase is <span className={verdictColor}>below the market rate.</span></>
               ) : (
