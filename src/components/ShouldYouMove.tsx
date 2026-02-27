@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Home, ExternalLink } from 'lucide-react';
+import { MapPin, ExternalLink } from 'lucide-react';
 import { RentcastComparable } from '@/hooks/useRentcast';
-import { BedroomType, bedroomLabels } from '@/data/rentData';
+import { BedroomType } from '@/data/rentData';
 
 interface ShouldYouMoveProps {
   proposedRent: number;
@@ -23,17 +23,93 @@ const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 
 
 const brokerFeeStates = ['NJ', 'NY', 'MA'];
 
-function buildListingLinks(zip: string, city: string, state: string, bedrooms: BedroomType) {
+const bedroomNum: Record<BedroomType, string> = {
+  studio: '0', oneBr: '1', twoBr: '2', threeBr: '3', fourBr: '4',
+};
+
+function buildBrowseLinks(zip: string, city: string, state: string, bedrooms: BedroomType) {
   const citySlug = city.toLowerCase().replace(/\s+/g, '-');
   const stateSlug = state.toLowerCase();
-  const beds: Record<BedroomType, string> = {
-    studio: '0', oneBr: '1', twoBr: '2', threeBr: '3', fourBr: '4',
-  };
-  const b = beds[bedrooms];
-  return [
-    { name: 'Zillow', url: `https://www.zillow.com/homes/for_rent/${zip}/${b}-_beds/` },
-    { name: 'Apartments.com', url: `https://www.apartments.com/${citySlug}-${stateSlug}-${zip}/${bedrooms === 'studio' ? 'studios' : b + '-bedrooms'}/` },
-  ];
+  const beds = bedroomNum[bedrooms];
+  const isNYC = state === 'NY' && ['New York', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'].includes(city);
+
+  const links: { name: string; url: string }[] = [];
+  if (isNYC) {
+    links.push({ name: 'StreetEasy', url: `https://streeteasy.com/for-rent/${citySlug}?bedrooms=${bedrooms === 'studio' ? 'studio' : beds}` });
+  }
+  links.push(
+    { name: 'Zillow', url: `https://www.zillow.com/homes/for_rent/${zip}/${beds}-_beds/` },
+    { name: 'Apartments.com', url: `https://www.apartments.com/${citySlug}-${stateSlug}-${zip}/${bedrooms === 'studio' ? 'studios' : beds + '-bedrooms'}/` },
+    { name: 'Realtor.com', url: `https://www.realtor.com/apartments/${zip}/beds-${beds}` },
+    { name: 'HotPads', url: `https://hotpads.com/${citySlug}-${stateSlug}/apartments-for-rent/${beds === '0' ? 'studio' : beds + '-beds'}` },
+  );
+  return links;
+}
+
+/** Comparable listings sorted by rent with the orange proposed-rent divider */
+function CompsWithRentLine({
+  comparables,
+  proposedRent,
+}: {
+  comparables: RentcastComparable[];
+  proposedRent: number;
+}) {
+  const sorted = useMemo(() => {
+    return [...comparables]
+      .filter(c => c.rent !== null && c.rent > 0)
+      .sort((a, b) => (a.rent ?? 0) - (b.rent ?? 0))
+      .slice(0, 6);
+  }, [comparables]);
+
+  // Find where proposed rent falls
+  let refIndex = sorted.length;
+  const idx = sorted.findIndex(c => (c.rent ?? 0) >= proposedRent);
+  if (idx !== -1) refIndex = idx;
+
+  const rentLine = (
+    <div className="flex items-center gap-3 px-4 py-2">
+      <div className="flex-1 h-px bg-destructive" />
+      <span className="text-[13px] text-destructive font-semibold whitespace-nowrap">
+        Your proposed rent: ${fmt(proposedRent)}/mo
+      </span>
+      <div className="flex-1 h-px bg-destructive" />
+    </div>
+  );
+
+  return (
+    <div className="space-y-1">
+      {sorted.map((comp, i) => (
+        <div key={i}>
+          {i === refIndex && rentLine}
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.04, duration: 0.3 }}
+            className={`flex items-start justify-between gap-4 px-4 py-3 rounded-md ${i % 2 === 0 ? 'bg-muted/40' : ''}`}
+          >
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground truncate flex items-center gap-1.5">
+                <MapPin className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                {comp.formattedAddress}
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
+                {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
+                {comp.squareFootage !== null && ` · ${fmt(comp.squareFootage)} sqft`}
+                {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
+              </p>
+            </div>
+            {comp.rent !== null && (
+              <span className="text-sm font-semibold text-foreground whitespace-nowrap">
+                ${fmt(comp.rent)}/mo
+              </span>
+            )}
+          </motion.div>
+        </div>
+      ))}
+      {refIndex === sorted.length && rentLine}
+    </div>
+  );
 }
 
 const ShouldYouMove = ({
@@ -53,95 +129,77 @@ const ShouldYouMove = ({
   const isAboveMedian = proposedRent > medianCompRent;
   const difference = Math.abs(proposedRent - medianCompRent);
 
-  // Sort comps by distance, take top 5
-  const topComps = useMemo(() => {
-    return [...comparables]
-      .filter(c => c.rent && c.rent > 0)
-      .sort((a, b) => (a.distance ?? 99) - (b.distance ?? 99))
-      .slice(0, 5);
-  }, [comparables]);
-
-  // Moving cost estimate
   const hasBrokerFee = brokerFeeStates.includes(state);
-  const estimatedMovingCost = medianCompRent * 2 + 2500 + (hasBrokerFee ? medianCompRent : 0);
+  // Moving cost: first month + 1.5× security + broker (if applicable) + $1,500 moving
+  const estimatedMovingCost = Math.round(
+    medianCompRent + (medianCompRent * 1.5) + (hasBrokerFee ? medianCompRent : 0) + 1500
+  );
 
-  // Percentile calculation for below-market scenario
   const percentileBelow = useMemo(() => {
     if (isAboveMedian) return null;
     const rents = comparables.map(c => c.rent).filter((r): r is number => r !== null && r > 0);
     if (rents.length < 3) return null;
-    const below = rents.filter(r => r >= proposedRent).length;
-    return Math.round((below / rents.length) * 100);
+    const higher = rents.filter(r => r > proposedRent).length;
+    return Math.round((higher / rents.length) * 100);
   }, [comparables, proposedRent, isAboveMedian]);
 
-  const listingLinks = buildListingLinks(zip, city, state, bedrooms);
-
+  const browseLinks = buildBrowseLinks(zip, city, state, bedrooms);
   const negotiationSavings = counterOffer ? proposedRent - counterOffer : null;
 
   return (
-    <div className="callout-box">
+    <div>
       {isAboveMedian ? (
-        /* ━━━ SCENARIO 1: Above median — you might save ━━━ */
+        /* ━━━ SCENARIO 1: Above median ━━━ */
         <>
-          <p className="callout-box-title">You might save by moving</p>
+          <h2 className="section-title">Should you move?</h2>
 
-          <div className="mt-4 px-4 py-3 rounded-md border text-sm font-medium text-foreground bg-destructive/10 border-destructive/20">
+          <div className="mt-3 px-4 py-3 rounded-md border text-sm font-medium text-foreground bg-destructive/10 border-destructive/20">
             Your proposed rent of ${fmt(proposedRent)}/mo is{' '}
             <span className="font-bold text-destructive">${fmt(difference)} above</span>{' '}
-            the median for similar units nearby.
+            the area median of ${fmt(medianCompRent)} for similar units.
+          </div>
+
+          {/* Comp listings with orange line */}
+          <div className="mt-6">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 text-center">
+              Nearby Comparable Listings
+            </p>
+            <CompsWithRentLine comparables={comparables} proposedRent={proposedRent} />
           </div>
 
           {/* Savings */}
-          <div className="mt-5">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-              Potential savings
-            </p>
-            <p className="font-display text-[28px] md:text-[32px] tracking-tight text-foreground font-semibold" style={{ letterSpacing: '-0.02em' }}>
-              ${fmt(difference)}/mo
-            </p>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              ${fmt(difference * 12)}/yr vs. the median comparable ({brLabel} near you: ${fmt(medianCompRent)}/mo)
-            </p>
-          </div>
-
-          {/* Comp listings */}
-          {topComps.length > 0 && (
-            <div className="mt-6">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                Nearby comparable rentals
-              </p>
-              <div className="space-y-2">
-                {topComps.map((comp, i) => (
-                  <div key={i} className={`flex items-start gap-3 p-3 rounded-md text-sm ${i % 2 === 0 ? 'bg-muted/30' : ''}`}>
-                    <Home className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-foreground font-medium truncate">{comp.formattedAddress}</p>
-                      <p className="text-muted-foreground text-[12px]">
-                        {comp.bedrooms != null && `${comp.bedrooms} bed`}
-                        {comp.bathrooms != null && ` · ${comp.bathrooms} bath`}
-                        {comp.distance != null && ` · ${comp.distance.toFixed(1)} mi away`}
-                      </p>
-                    </div>
-                    <span className={`font-semibold shrink-0 ${comp.rent && comp.rent < proposedRent ? 'text-verdict-good' : 'text-foreground'}`}>
-                      ${comp.rent ? fmt(comp.rent) : '—'}/mo
-                    </span>
-                  </div>
-                ))}
+          <div className="mt-6">
+            <div className="flex gap-8">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                  Potential monthly savings
+                </p>
+                <p className="font-display text-[24px] tracking-tight text-foreground font-semibold" style={{ letterSpacing: '-0.02em' }}>
+                  ${fmt(difference)}/mo
+                </p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                  Potential annual savings
+                </p>
+                <p className="font-display text-[24px] tracking-tight text-foreground font-semibold" style={{ letterSpacing: '-0.02em' }}>
+                  ${fmt(difference * 12)}/yr
+                </p>
               </div>
             </div>
-          )}
+          </div>
 
-          {/* CTA: Browse listings */}
+          {/* Primary CTA */}
           <div className="mt-5 flex flex-wrap gap-2">
-            {listingLinks.map(link => (
+            {browseLinks.slice(0, 2).map(link => (
               <a
                 key={link.name}
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-border rounded text-sm font-medium text-foreground bg-card hover:border-foreground transition-colors"
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
               >
-                Browse {link.name}
+                Browse available rentals nearby
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
             ))}
@@ -170,18 +228,33 @@ const ShouldYouMove = ({
           )}
         </>
       ) : (
-        /* ━━━ SCENARIO 2: At or below median — your rent is competitive ━━━ */
+        /* ━━━ SCENARIO 2: At or below median ━━━ */
         <>
-          <p className="callout-box-title">Your rent is competitive</p>
+          <h2 className="section-title">Your rent is competitive</h2>
 
-          <div className="mt-4 px-4 py-3 rounded-md border text-sm font-medium text-foreground bg-verdict-good/10 border-verdict-good/20">
+          <div className="mt-3 px-4 py-3 rounded-md border text-sm font-medium text-foreground bg-verdict-good/10 border-verdict-good/20">
             Even after the increase, your proposed rent of ${fmt(proposedRent)}/mo is{' '}
             <span className="font-bold text-verdict-good">${fmt(difference)} below</span>{' '}
             the area median of ${fmt(medianCompRent)} for similar units.
           </div>
 
+          {/* Comp listings with orange line */}
+          <div className="mt-6">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 text-center">
+              Nearby Comparable Listings
+            </p>
+            <CompsWithRentLine comparables={comparables} proposedRent={proposedRent} />
+          </div>
+
+          {/* Percentile callout */}
+          {percentileBelow !== null && percentileBelow >= 40 && (
+            <p className="text-sm text-verdict-good font-medium mt-4">
+              Your rent is in the bottom {100 - percentileBelow}% of comparable units nearby.
+            </p>
+          )}
+
           {/* Cost of moving */}
-          <div className="mt-5">
+          <div className="mt-6">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
               What it would cost to move
             </p>
@@ -189,46 +262,12 @@ const ShouldYouMove = ({
               ~${fmt(estimatedMovingCost)}
             </p>
             <p className="text-[12px] text-muted-foreground mt-1">
-              First month + security deposit + moving expenses{hasBrokerFee ? ` + broker fee (common in ${state})` : ''}
+              First month + security deposit (1.5 mo) + moving expenses{hasBrokerFee ? ` + broker fee (common in ${state})` : ''}
             </p>
             <p className="text-sm text-muted-foreground mt-3">
               Moving would likely cost you more — plus you'd be paying a higher monthly rent at most nearby units.
             </p>
           </div>
-
-          {/* Percentile callout */}
-          {percentileBelow && percentileBelow >= 50 && (
-            <p className="text-sm text-verdict-good font-medium mt-4">
-              Your rent is in the bottom {100 - percentileBelow}% of comparable units nearby.
-            </p>
-          )}
-
-          {/* Comp listings */}
-          {topComps.length > 0 && (
-            <div className="mt-6">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                Nearby comparable rentals
-              </p>
-              <div className="space-y-2">
-                {topComps.map((comp, i) => (
-                  <div key={i} className={`flex items-start gap-3 p-3 rounded-md text-sm ${i % 2 === 0 ? 'bg-muted/30' : ''}`}>
-                    <Home className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-foreground font-medium truncate">{comp.formattedAddress}</p>
-                      <p className="text-muted-foreground text-[12px]">
-                        {comp.bedrooms != null && `${comp.bedrooms} bed`}
-                        {comp.bathrooms != null && ` · ${comp.bathrooms} bath`}
-                        {comp.distance != null && ` · ${comp.distance.toFixed(1)} mi away`}
-                      </p>
-                    </div>
-                    <span className={`font-semibold shrink-0 ${comp.rent && comp.rent > proposedRent ? 'text-destructive' : 'text-foreground'}`}>
-                      ${comp.rent ? fmt(comp.rent) : '—'}/mo
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* CTA: Negotiate anyway */}
           {isAboveMarket && (
@@ -244,6 +283,23 @@ const ShouldYouMove = ({
           )}
         </>
       )}
+
+      {/* Browse more links — both scenarios */}
+      <p className="text-sm text-muted-foreground mt-6 text-center">
+        Want to browse more?{' '}
+        {browseLinks.map((link, i) => (
+          <span key={link.name}>
+            <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+              {link.name} →
+            </a>
+            {i < browseLinks.length - 1 && <span className="mx-1.5">·</span>}
+          </span>
+        ))}
+      </p>
+
+      <p className="text-[10px] text-muted-foreground/60 mt-3 text-center">
+        Market data sources include MLS, public records & proprietary datasets.
+      </p>
     </div>
   );
 };

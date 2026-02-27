@@ -10,7 +10,6 @@ import NegotiationLetter from './NegotiationLetter';
 import { PropertyLookupResult, PropertyLookupError } from '@/hooks/usePropertyLookup';
 import { calculateLandlordCosts, generateInsights, toLegacyCostEstimate, LandlordCostEstimate } from '@/data/landlordCosts';
 import LandlordCostSection from './LandlordCostSection';
-import RentcastCard from './RentcastCard';
 import { useRentcast } from '@/hooks/useRentcast';
 
 interface RentResultsProps {
@@ -310,26 +309,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         </motion.div>
       )}
 
-      {/* ━━━ 5. RENTCAST + COMP LINKS ━━━ */}
-      <motion.div {...fade(0.15)} className="py-12 border-b border-border">
-        <RentcastCard
-          data={rentcast.data}
-          loading={rentcast.loading}
-          error={rentcast.error}
-          city={city}
-          zip={rentData.zip}
-          state={rentData.state}
-          bedrooms={formData.bedrooms}
-          proposedRent={hasIncrease ? newRent : undefined}
-        />
-        {!rentcast.loading && !hasRentcastComps && (
-          <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} />
-        )}
-      </motion.div>
-
-      {/* ━━━ 6. SHOULD YOU MOVE? ━━━ */}
+      {/* ━━━ 5. SHOULD YOU MOVE? / YOUR RENT IS COMPETITIVE ━━━ */}
       {hasIncrease && medianCompRent && hasEnoughComps && (
-        <motion.div {...fade(0.18)} className="py-12 border-b border-border">
+        <motion.div {...fade(0.15)} className="py-12 border-b border-border">
           <ShouldYouMove
             proposedRent={newRent}
             currentRent={formData.currentRent}
@@ -346,8 +328,15 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           />
         </motion.div>
       )}
+      {/* Fallback: no comps but still show browse links */}
+      {!hasEnoughComps && !rentcast.loading && (
+        <motion.div {...fade(0.15)} className="py-12 border-b border-border">
+          <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} />
+        </motion.div>
+      )}
 
-      {/* ━━━ 7. NEGOTIATION LETTER ━━━ */}
+
+      {/* ━━━ 6. NEGOTIATION LETTER ━━━ */}
       {hasIncrease && isAboveMarket && calc && (
         <motion.div id="negotiation-letter" {...fade(0.21)} className="py-12 border-b border-border">
           <NegotiationLetter
