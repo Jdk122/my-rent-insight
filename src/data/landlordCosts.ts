@@ -14,7 +14,7 @@ export interface LandlordCostEstimate {
   monthlyCostIncrease: number;
 }
 
-const MORTGAGE_RATES: Record<number, number> = {
+export const MORTGAGE_RATES: Record<number, number> = {
   2005: 0.059, 2006: 0.064, 2007: 0.063, 2008: 0.061,
   2009: 0.051, 2010: 0.047, 2011: 0.045, 2012: 0.037,
   2013: 0.040, 2014: 0.042, 2015: 0.039, 2016: 0.037,
@@ -54,10 +54,10 @@ export interface LandlordInsights {
   mortgageRate: number;
 }
 
-function estimateMortgage(salePrice: number, saleYear: number): number {
-  const downPct = salePrice > 1_000_000 ? 0.30 : 0.25;
+export function estimateMortgage(salePrice: number, saleYear: number, customDownPct?: number, customRate?: number): number {
+  const downPct = customDownPct ?? (salePrice > 1_000_000 ? 0.30 : 0.25);
   const principal = salePrice * (1 - downPct);
-  const rate = MORTGAGE_RATES[saleYear] || 0.055;
+  const rate = customRate ?? (MORTGAGE_RATES[saleYear] || 0.055);
   const monthlyRate = rate / 12;
   const months = 360;
   return Math.round(
@@ -99,7 +99,7 @@ function estimateAnnualTax(prop: PropertyLookupResult): number | null {
   return Math.round(baseValue * fallbackRate);
 }
 
-export function calculateLandlordCosts(prop: PropertyLookupResult): LandlordCosts | null {
+export function calculateLandlordCosts(prop: PropertyLookupResult, customDownPct?: number, customRate?: number): LandlordCosts | null {
   if (!prop.lastSalePrice) return null;
 
   const annualTax = estimateAnnualTax(prop);
@@ -108,7 +108,7 @@ export function calculateLandlordCosts(prop: PropertyLookupResult): LandlordCost
   const saleYear = prop.lastSaleDate ? new Date(prop.lastSaleDate).getFullYear() : 2020;
   const units = Math.max(prop.units || 1, 1);
 
-  const totalMortgage = estimateMortgage(prop.lastSalePrice, saleYear);
+  const totalMortgage = estimateMortgage(prop.lastSalePrice, saleYear, customDownPct, customRate);
   const mortgage = Math.round(totalMortgage / units);
 
   const propertyTax = Math.round((annualTax / 12) / units);
