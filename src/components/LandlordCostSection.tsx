@@ -319,41 +319,33 @@ const LandlordCostSection = ({
               <span className="context-value">${fmt(costs.total)}</span>
             </div>
 
-            {/* Profit range */}
-            <div className="mt-5 p-4 rounded-lg border border-border bg-card">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                What your landlord might be making
+            {/* The bottom line */}
+            <div className="mt-5 p-5 rounded-lg border border-border bg-card">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                The bottom line
               </p>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">With these assumptions:</span>
-                  <span className={`font-semibold ${profitAtCurrent > 0 ? 'text-verdict-good' : 'text-muted-foreground'}`}>
-                    {profitAtCurrent > 0 ? '+' : ''}${fmt(profitAtCurrent)}/mo
-                    {profitAtCurrent <= 0 && ' (losing money)'}
-                  </span>
-                </div>
-                {costsAt50Down !== null && downPaymentPct < 50 && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">If they put 50% down:</span>
-                    <span className={`font-semibold ${costsAt50Down > 0 ? 'text-verdict-good' : 'text-muted-foreground'}`}>
-                      {costsAt50Down > 0 ? '+' : ''}${fmt(costsAt50Down)}/mo
-                    </span>
-                  </div>
-                )}
-                {costsAtCash !== null && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">If they paid all cash:</span>
-                    <span className={`font-semibold ${costsAtCash > 0 ? 'text-verdict-good' : 'text-muted-foreground'}`}>
-                      {costsAtCash > 0 ? '+' : ''}${fmt(costsAtCash)}/mo
-                    </span>
-                  </div>
-                )}
+              <p className="text-sm text-muted-foreground mb-4">
+                Your rent (${fmt(currentRent)}/mo) minus estimated costs (${fmt(costs.total)}/mo):
+              </p>
+              <div className="flex items-baseline gap-2">
+                <span className={`font-display text-[28px] font-bold tracking-tight ${profitAtCurrent > 0 ? 'text-verdict-good' : 'text-destructive'}`} style={{ letterSpacing: '-0.02em' }}>
+                  {profitAtCurrent > 0 ? '+' : ''}${fmt(profitAtCurrent)}/mo
+                </span>
+                <span className="text-sm text-muted-foreground">
+                  {profitAtCurrent > 0 ? 'estimated profit' : 'estimated loss'}
+                </span>
               </div>
+              {profitAtCurrent <= 0 && (
+                <p className="text-[13px] text-muted-foreground mt-2">
+                  With a {downPaymentPct}% down payment, your landlord may be underwater on monthly costs.
+                  Try adjusting the down payment above — many investors put more down or paid cash.
+                </p>
+              )}
               {insights.costIncreaseMarkup !== null && insights.costIncreaseMarkup > 1 && (
                 <p className="text-sm text-foreground mt-4 pt-3 border-t border-border">
-                  Even with conservative estimates, your rent increase is{' '}
+                  Regardless of profit, your rent increase is{' '}
                   <span className="font-bold text-destructive">{insights.costIncreaseMarkup}×</span>{' '}
-                  their cost increase.
+                  their actual cost increase this year.
                 </p>
               )}
             </div>
