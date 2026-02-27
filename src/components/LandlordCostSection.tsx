@@ -129,7 +129,7 @@ const LandlordCostSection = ({
     {
       label: 'Mortgage',
       value: `$${fmt(costs.mortgage)}`,
-      sub: `Based on $${fmt(propertyData.lastSalePrice!)} purchase (${insights.saleYear}), ${insights.downPaymentPct}% down, ${insights.mortgageRate}% rate`,
+      sub: `Based on $${fmt(propertyData.lastSalePrice!)} purchase (${insights.saleYear}), ${insights.downPaymentPct}% down, ${insights.mortgageRate.toFixed(1)}% rate`,
     },
     {
       label: 'Property taxes',
@@ -141,6 +141,15 @@ const LandlordCostSection = ({
       value: `$${fmt(costs.insurance)}`,
       sub: 'Estimated at 0.5% of assessed value',
     },
+    ...(costs.hoa > 0
+      ? [
+          {
+            label: 'HOA / condo fee',
+            value: `$${fmt(costs.hoa)}`,
+            sub: costs.hoaEstimated ? `Estimated at $0.60/sqft` : 'From public records',
+          },
+        ]
+      : []),
     {
       label: 'Maintenance & reserves',
       value: `$${fmt(costs.maintenance)}`,
@@ -295,8 +304,8 @@ const LandlordCostSection = ({
       {/* Disclaimer */}
       <p className="text-[11px] text-muted-foreground mt-6">
         Property data from public records. Costs are estimates based on standard assumptions
-        ({insights.downPaymentPct}% down payment, 30-year fixed mortgage at {insights.mortgageRate}% rate,
-        0.5% insurance rate, standard maintenance reserves). Actual costs may vary. This is not financial or legal advice.
+        ({insights.downPaymentPct}% down payment, 30-year fixed mortgage at {insights.mortgageRate.toFixed(1)}% rate,
+        0.5% insurance rate, HOA/condo fees, standard maintenance reserves). Actual costs may vary. This is not financial or legal advice.
       </p>
     </div>
   );
