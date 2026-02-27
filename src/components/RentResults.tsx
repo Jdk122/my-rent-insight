@@ -136,19 +136,37 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 <>Your increase is <span className={verdictColor}>right at market.</span></>
               )}
             </h1>
-            <p className="text-lg text-muted-foreground max-w-[440px] mx-auto mt-4 leading-relaxed">
+
+            {/* Key comparison — the most important visual on the page */}
+            <div className="flex justify-center gap-8 mt-8 mb-2">
+              <div className="text-center">
+                <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">{city} rents</p>
+                <p className="font-display text-[40px] md:text-[48px] text-foreground" style={{ letterSpacing: '-0.03em' }}>
+                  {marketYoy > 0 ? '+' : ''}{marketYoy}%
+                </p>
+              </div>
+              <div className="flex items-center text-muted-foreground/40 text-2xl font-light">vs</div>
+              <div className="text-center">
+                <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your increase</p>
+                <p className={`font-display text-[40px] md:text-[48px] ${verdictColor}`} style={{ letterSpacing: '-0.03em' }}>
+                  {increasePct}%
+                </p>
+              </div>
+            </div>
+
+            <p className="text-base text-muted-foreground max-w-[440px] mx-auto mt-4 leading-relaxed">
               {marketYoy <= 0 && isAboveMarket ? (
-                <>Market rents {marketYoy < 0 ? <><em>decreased</em> {Math.abs(marketYoy)}%</> : 'held flat'} in {city}. An increase of <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong> is going against the trend.</>
+                <>Market rents {marketYoy < 0 ? <><em>decreased</em> {Math.abs(marketYoy)}%</> : 'held flat'} in {city}. An increase of {increasePct}% is going against the trend.</>
               ) : isAboveMarket ? (
-                <>Rents in {city} went up <strong className="text-foreground font-bold text-xl">{marketYoy}%</strong> this year. Yours is going up <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong> — that's {multiplier >= 1.8 ? 'nearly double' : multiplier >= 1.4 ? 'well above' : 'noticeably more than'} what other renters are seeing.</>
+                <>That's {multiplier >= 1.8 ? 'nearly double' : multiplier >= 1.4 ? 'well above' : 'noticeably more than'} what other renters in {city} are seeing this year.</>
               ) : isFair ? (
                 isHighRent
                   ? <>Your increase rate is roughly in line with what rents are doing in {city}. Note: your rent is well above the area median — this assessment is about the rate of increase, not the rent amount.</>
                   : <>Your increase is roughly in line with what rents are doing in {city}. You're not being overcharged.</>
               ) : (
                 isHighRent
-                  ? <>Rents in {city} rose <strong className="text-foreground font-bold text-xl">{marketYoy}%</strong> and your landlord is only raising yours <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong>. Note: your rent is well above the area median — this assessment is about the rate of increase, not the rent amount.</>
-                  : <>Rents in {city} rose <strong className="text-foreground font-bold text-xl">{marketYoy}%</strong> and your landlord is only raising yours <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong>. This is a fair deal.</>
+                  ? <>Your landlord is only raising yours {increasePct}%. Note: your rent is well above the area median — this assessment is about the rate of increase, not the rent amount.</>
+                  : <>Your landlord is only raising yours {increasePct}%. This is a fair deal.</>
               )}
             </p>
             <button onClick={onReset} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mt-4">
@@ -179,17 +197,19 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </div>
             ))}
           </div>
-          <div className="flex justify-center mt-6">
-            <p className="text-sm font-medium text-destructive px-5 py-2.5 rounded-lg" style={{ backgroundColor: '#FDF0ED', border: '1px solid #F2C8BD' }}>
-              {isAboveMarket && calc
-                ? `That's $${fmt((newRent - calc.counterHigh) * 12)} more per year than the market supports.`
-                : `That's $${fmt(annualExtra)} more per year than you're paying now.`
-              }
-            </p>
+          <div className="flex justify-center mt-8">
+            <div className="px-6 py-4 rounded-xl" style={{ backgroundColor: '#FDF0ED', border: '1px solid #F2C8BD' }}>
+              <p className="text-sm text-muted-foreground mb-1">
+                {isAboveMarket && calc ? 'More than the market supports per year' : 'Extra per year'}
+              </p>
+              <p className="font-display text-[28px] text-destructive tracking-tight" style={{ letterSpacing: '-0.02em' }}>
+                ${fmt(isAboveMarket && calc ? (newRent - calc.counterHigh) * 12 : annualExtra)}
+              </p>
+            </div>
           </div>
           {/* CTA to skip to letter */}
           {isAboveMarket && calc && (
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-center mt-5">
               <button
                 onClick={() => document.getElementById('negotiation-letter')?.scrollIntoView({ behavior: 'smooth' })}
                 className="text-sm font-semibold text-primary hover:underline"
@@ -229,9 +249,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           </div>
         )}
         {hasIncrease && isAboveMarket && calc && (
-          <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
+          <div className="context-row-highlight mt-2">
             <span className="context-label">Fair counter-offer</span>
-            <span className="context-value text-verdict-good font-semibold">${fmt(calc.counterLow)}–${fmt(calc.counterHigh)}/mo</span>
+            <span className="context-value text-verdict-good font-bold">${fmt(calc.counterLow)}–${fmt(calc.counterHigh)}/mo</span>
           </div>
         )}
         <p className="text-[11px] text-muted-foreground mt-3">{rentData.yoySourceLabel}</p>
