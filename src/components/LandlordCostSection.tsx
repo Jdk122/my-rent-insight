@@ -251,19 +251,23 @@ const LandlordCostSection = ({
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.4 }}
-          className="mt-6 p-6 rounded-lg"
+          className="mt-8 p-7 rounded-xl border border-border/80"
           style={{ background: 'hsl(var(--highlight-bg))' }}
         >
-          <p className="text-sm text-muted-foreground">
-            Your landlord's costs went up ~${fmt(costs.totalCostChangePerMonth)}/mo this year.
-            They're raising you ${fmt(increaseAmount)}/mo.
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3">
+            Cost markup
           </p>
-          <p className="mt-3 text-foreground">
-            That's a{' '}
-            <span className="font-display text-3xl font-bold text-destructive">
+          <div className="flex items-baseline gap-3">
+            <span className="font-display text-[52px] font-bold text-destructive leading-none" style={{ letterSpacing: '-0.03em' }}>
               {insights.costIncreaseMarkup}×
-            </span>{' '}
-            markup on their actual cost increase.
+            </span>
+            <p className="text-base text-muted-foreground leading-snug max-w-[280px]">
+              markup on their actual cost increase
+            </p>
+          </div>
+          <p className="text-sm text-muted-foreground mt-4 pt-4 border-t border-border/60">
+            Their costs went up ~${fmt(costs.totalCostChangePerMonth)}/mo this year.
+            They're raising you ${fmt(increaseAmount)}/mo.
           </p>
         </motion.div>
       )}

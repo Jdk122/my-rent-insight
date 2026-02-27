@@ -147,7 +147,7 @@
   }
 
   .context-row {
-    @apply flex items-baseline justify-between py-3 px-3 border-b border-border/60 rounded-sm;
+    @apply flex items-baseline justify-between py-3.5 px-4 border-b border-border/60 rounded-sm;
   }
 
   .context-row:last-child {
@@ -174,9 +174,24 @@
     @apply font-normal text-muted-foreground text-[13px] ml-1.5;
   }
 
+  /* Highlighted row for key data */
+  .context-row-highlight {
+    @apply flex items-baseline justify-between py-4 px-4 rounded-md border-0;
+    background: hsl(152 50% 33% / 0.06);
+    border-left: 3px solid hsl(var(--accent-green));
+  }
+
+  .context-row-highlight .context-label {
+    @apply text-[15px] font-medium text-foreground;
+  }
+
+  .context-row-highlight .context-value {
+    @apply text-lg;
+  }
+
   .section-title {
     font-family: var(--font-display);
-    @apply text-xl font-semibold text-foreground tracking-tight mb-5;
+    @apply text-[22px] font-semibold text-foreground tracking-tight mb-6;
   }
 
   .tone-toggle {
