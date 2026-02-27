@@ -80,17 +80,25 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const rentcast = useRentcast(rentData.zip, formData.bedrooms, formData.fullAddress);
   const hasRentcastComps = rentcast.data && rentcast.data.comparables.length > 0;
 
-  // FIX 1: Smart comparison rent for "Should you move?"
-  const comparisonRent = useMemo<{ rent: number; label: string } | null>(() => {
-    const ratio = formData.currentRent / rentData.fmr;
-    if (ratio <= 1.5) {
-      return { rent: rentData.fmr, label: 'fair market rate' };
-    } else if (rentcast.data?.rentRangeLow && rentcast.data.rentRangeLow > rentData.fmr) {
-      return { rent: rentcast.data.rentRangeLow, label: 'low end of comparable units' };
-    } else {
-      return null;
+  // Median comparable rent for "Should you move?"
+  const medianCompRent = useMemo<number | null>(() => {
+    if (rentcast.data?.comparables && rentcast.data.comparables.length >= 3) {
+      const rents = rentcast.data.comparables
+        .map(c => c.rent)
+        .filter((r): r is number => r !== null && r > 0)
+        .sort((a, b) => a - b);
+      if (rents.length >= 2) {
+        const mid = Math.floor(rents.length / 2);
+        return rents.length % 2 === 0 ? Math.round((rents[mid - 1] + rents[mid]) / 2) : rents[mid];
+      }
     }
-  }, [formData.currentRent, rentData.fmr, rentcast.data]);
+    // Fall back to rentcast estimate or FMR
+    if (rentcast.data?.rentEstimate) return rentcast.data.rentEstimate;
+    return null;
+  }, [rentcast.data]);
+
+  // Broker fee states
+  const brokerFeeStates = ['NJ', 'NY', 'MA'];
 
   // FIX 5: High-rent verdict nuance
   const isHighRent = formData.currentRent > rentData.fmr * 1.5;
@@ -337,11 +345,15 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       </motion.div>
 
       {/* ━━━ 7. SHOULD YOU MOVE? ━━━ */}
-      {hasIncrease && comparisonRent && newRent > comparisonRent.rent && (() => {
-        const monthlySavings = newRent - comparisonRent.rent;
+      {hasIncrease && medianCompRent && newRent > medianCompRent && (() => {
+        const monthlySavings = newRent - medianCompRent;
         const annualSavings = monthlySavings * 12;
-        const movingCostLow = 1500;
-        const movingCostHigh = Math.max(5000, Math.round(newRent * 1.5));
+
+        // Upfront moving costs
+        const hasBrokerFee = brokerFeeStates.includes(rentData.state);
+        const movingCostLow = medianCompRent + medianCompRent + 1500; // first month + security + DIY move
+        const movingCostHigh = medianCompRent + medianCompRent + 5000 + (hasBrokerFee ? medianCompRent : 0); // + full-service + broker
+
         const breakEvenLow = movingCostLow / monthlySavings;
         const breakEvenHigh = movingCostHigh / monthlySavings;
 
@@ -355,19 +367,59 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           return `${Math.round(months)} month${Math.round(months) !== 1 ? 's' : ''}`;
         };
 
+        // Negotiation comparison
+        const counterOffer = calc?.counterHigh ?? null;
+        const negotiationSavings = counterOffer ? newRent - counterOffer : null;
+
         return (
           <motion.div {...fade(0.21)} className="my-10">
             <div className="callout-box">
               <p className="callout-box-title">Should you move?</p>
-              <p className="font-display text-[28px] md:text-[32px] tracking-tight text-foreground font-semibold mt-3" style={{ letterSpacing: '-0.02em' }}>
-                ${fmt(monthlySavings)}/mo savings
+
+              {/* Moving savings */}
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mt-4 mb-1">
+                Typical savings if you moved
+              </p>
+              <p className="font-display text-[28px] md:text-[32px] tracking-tight text-foreground font-semibold" style={{ letterSpacing: '-0.02em' }}>
+                ${fmt(monthlySavings)}/mo
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                ${fmt(annualSavings)}/yr at the {comparisonRent.label} (${fmt(comparisonRent.rent)}/mo)
+                ${fmt(annualSavings)}/yr vs. the median comparable ({brLabel} near you: ${fmt(medianCompRent)}/mo)
               </p>
-              <p className="text-[13px] text-muted-foreground/70 mt-3">
-                Break-even on moving costs: {fmtBE(breakEvenLow)}–{fmtBE(breakEvenHigh)} depending on your area
+
+              {/* Upfront costs */}
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mt-6 mb-1">
+                Estimated upfront cost to move
               </p>
+              <p className="text-lg font-semibold text-foreground">
+                ${fmt(movingCostLow)} – ${fmt(movingCostHigh)}
+              </p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">
+                First month + security deposit + moving expenses{hasBrokerFee ? ' + broker fee (common in ' + rentData.state + ')' : ''}
+              </p>
+
+              {/* Break-even */}
+              <p className="text-[13px] text-muted-foreground mt-4">
+                <span className="font-medium text-foreground">Break-even:</span>{' '}
+                ${fmt(movingCostLow)}–${fmt(movingCostHigh)} ÷ ${fmt(monthlySavings)}/mo ={' '}
+                <span className="font-semibold text-foreground">{fmtBE(breakEvenLow)}–{fmtBE(breakEvenHigh)}</span>
+              </p>
+
+              {/* vs Negotiating */}
+              {negotiationSavings && negotiationSavings > 0 && counterOffer && (
+                <div className="mt-6 pt-5 border-t border-border">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                    Or just negotiate
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    If you negotiate to the fair counter-offer (
+                    <span className="font-semibold text-verdict-good">${fmt(counterOffer)}/mo</span>
+                    ), you save{' '}
+                    <span className="font-semibold text-verdict-good">${fmt(negotiationSavings)}/mo</span>
+                    {' '}starting immediately — with no moving costs.
+                  </p>
+                </div>
+              )}
             </div>
           </motion.div>
         );
