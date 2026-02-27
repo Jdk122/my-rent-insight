@@ -322,17 +322,17 @@ const LandlordCostSection = ({
             {/* The bottom line */}
             <div className="mt-5 p-5 rounded-lg border border-border bg-card">
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-                The bottom line
+                Your landlord's estimated profit
               </p>
               <p className="text-sm text-muted-foreground mb-4">
-                Your rent (${fmt(currentRent)}/mo) minus estimated costs (${fmt(costs.total)}/mo):
+                Your rent (${fmt(currentRent)}/mo) minus their estimated costs (${fmt(costs.total)}/mo):
               </p>
               <div className="flex items-baseline gap-2">
                 <span className={`font-display text-[28px] font-bold tracking-tight ${profitAtCurrent > 0 ? 'text-verdict-good' : 'text-destructive'}`} style={{ letterSpacing: '-0.02em' }}>
                   {profitAtCurrent > 0 ? '+' : ''}${fmt(profitAtCurrent)}/mo
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  {profitAtCurrent > 0 ? 'estimated profit' : 'estimated loss'}
+                  {profitAtCurrent > 0 ? 'profit to your landlord' : 'estimated loss'}
                 </span>
               </div>
               {profitAtCurrent <= 0 && (
