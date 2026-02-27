@@ -161,19 +161,25 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
       {/* ━━━ 2. NUMBERS ROW ━━━ */}
       {hasIncrease && (
-        <motion.div {...fade(0.05)} className="flex justify-center gap-16 py-14 border-b border-border">
-          {[
-            { label: 'You pay now', value: `$${fmt(formData.currentRent)}` },
-            { label: 'They want', value: `$${fmt(newRent)}`, isProposed: true },
-            { label: 'Extra / Year', value: `$${fmt(annualExtra)}` },
-          ].map((item) => (
-            <div key={item.label} className="text-center">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{item.label}</p>
-              <p className={`font-display text-[36px] md:text-[42px] tracking-tight ${item.isProposed ? 'text-destructive' : 'text-foreground'}`} style={{ letterSpacing: '-0.02em' }}>
-                {item.value}
-              </p>
-            </div>
-          ))}
+      <motion.div {...fade(0.05)} className="py-14 border-b border-border">
+          <div className="flex justify-center gap-16">
+            {[
+              { label: 'You pay now', value: `$${fmt(formData.currentRent)}` },
+              { label: 'They want', value: `$${fmt(newRent)}`, isProposed: true },
+            ].map((item) => (
+              <div key={item.label} className="text-center">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{item.label}</p>
+                <p className={`font-display text-[36px] md:text-[42px] tracking-tight ${item.isProposed ? 'text-destructive' : 'text-foreground'}`} style={{ letterSpacing: '-0.02em' }}>
+                  {item.value}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-center mt-6">
+            <p className="text-sm font-medium text-destructive px-5 py-2.5 rounded-lg" style={{ backgroundColor: '#FDF0ED', border: '1px solid #F2C8BD' }}>
+              That's ${fmt(annualExtra)} more per year than you're paying now.
+            </p>
+          </div>
         </motion.div>
       )}
 
