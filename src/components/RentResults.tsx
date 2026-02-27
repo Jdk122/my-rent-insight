@@ -114,9 +114,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   // FIX 3: Avoid double-s in "bedroomss"
   const brLabel = bedroomLabels[formData.bedrooms].toLowerCase();
 
-  const rentBurden = calc?.rentBurden ?? null;
-  const currentRentBurden = calc?.currentRentBurden ?? null;
-  const isCostBurdened = calc?.isCostBurdened ?? false;
   const breakEvenMonths = calc?.breakEvenMonths ?? Infinity;
 
 
@@ -231,54 +228,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             <span className="context-value">${fmt(calc.typicalRangeLow)} – ${fmt(calc.typicalRangeHigh)}</span>
           </div>
         )}
-        {/* FIX 2: Remove "HUD 40th pctl" jargon */}
-        {rentData.censusMedianRent && (
-          <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
-            <span className="context-label">What the typical renter pays</span>
-            <span className="context-value">${fmt(rentData.censusMedianRent)}</span>
-          </div>
-        )}
         {hasIncrease && isAboveMarket && calc && (
           <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
             <span className="context-label">Fair counter-offer</span>
             <span className="context-value text-verdict-good font-semibold">${fmt(calc.counterLow)}–${fmt(calc.counterHigh)}/mo</span>
-          </div>
-        )}
-        {/* FIX 4: Tiered rent burden display */}
-        {rentBurden && rentBurden <= 50 && (
-          <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
-            <span className="context-label">How much of your income goes to rent</span>
-            <span className="context-value">
-              {currentRentBurden !== null ? (
-                <>
-                  {currentRentBurden}% → <span className={isCostBurdened ? 'text-verdict-overpaying' : ''}>{rentBurden}%</span>
-                </>
-              ) : (
-                <>{rentBurden}%</>
-              )}
-              {isCostBurdened && rentBurden <= 40 && <span className="context-sub text-verdict-overpaying ml-1">Above what experts recommend</span>}
-              {rentBurden > 40 && rentBurden <= 50 && <span className="context-sub text-verdict-overpaying ml-1">Well above what experts recommend</span>}
-            </span>
-          </div>
-        )}
-        {rentData.fredTrend && rentData.zillowMonthly === null && (
-          <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
-            <span className="context-label">Monthly trend</span>
-            <span className="context-value">
-              {rentData.fredTrend.monthlyChange > 0 ? '+' : ''}{rentData.fredTrend.monthlyChange}%/mo
-              <span className="context-sub">({rentData.fredTrend.direction})</span>
-            </span>
-          </div>
-        )}
-        {/* FIX 4: Severe rent burden callout (50%+) */}
-        {rentBurden && rentBurden > 50 && (
-          <div className="bg-destructive/10 border-l-[3px] border-destructive px-4 py-3 mt-3 rounded-sm">
-            <p className="text-sm font-semibold text-destructive">
-              Rent burden: {currentRentBurden !== null ? `${currentRentBurden}% → ` : ''}{rentBurden}% of typical income in {city}
-            </p>
-            <p className="text-[13px] text-destructive/80 mt-1">
-              Experts recommend spending no more than 30% of income on rent.
-            </p>
           </div>
         )}
         <p className="text-[11px] text-muted-foreground mt-3">{rentData.yoySourceLabel}</p>
