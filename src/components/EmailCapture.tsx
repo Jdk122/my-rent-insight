@@ -8,6 +8,16 @@ const months = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
+const currentYear = new Date().getFullYear();
+const years = [currentYear, currentYear + 1, currentYear + 2];
+
+const leaseOptions: { label: string; value: string }[] = [];
+for (const year of years) {
+  for (const month of months) {
+    leaseOptions.push({ label: `${month} ${year}`, value: `${month} ${year}` });
+  }
+}
+
 interface EmailCaptureProps {
   city?: string;
 }
@@ -68,9 +78,9 @@ const EmailCapture = ({ city }: EmailCaptureProps) => {
         onChange={(e) => setLeaseMonth(e.target.value)}
         className="w-full max-w-[440px] mx-auto block px-4 py-3 text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
       >
-        <option disabled value="">Lease expiration month</option>
-        {months.map((m) => (
-          <option key={m} value={m}>{m}</option>
+        <option disabled value="">Lease expiration month & year</option>
+        {leaseOptions.map((opt) => (
+          <option key={opt.value} value={opt.value}>{opt.label}</option>
         ))}
       </select>
     </div>
