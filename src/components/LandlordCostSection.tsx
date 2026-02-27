@@ -268,27 +268,6 @@ const LandlordCostSection = ({
         </motion.div>
       )}
 
-      {/* Wealth Built Card */}
-      {insights.yearsOwned >= 2 && insights.yearsOwned <= 25 && (
-        <div className="mt-6 p-5 rounded-lg border border-border bg-card">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-            Wealth Built
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Your landlord has built ~
-            <span className="font-semibold text-foreground">
-              ${fmt(insights.totalWealthBuilt)}
-            </span>{' '}
-            in wealth from this building.
-          </p>
-          <p className="text-xs text-muted-foreground mt-2">
-            ${fmt(insights.equityGained)} in appreciation + ${fmt(insights.principalPaid)} in mortgage paydown
-          </p>
-          <p className="text-[11px] text-muted-foreground mt-1">
-            This is on top of monthly rent profits.
-          </p>
-        </div>
-      )}
 
       {/* Cost Breakdown */}
       <div className="mt-8">
