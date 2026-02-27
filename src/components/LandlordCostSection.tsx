@@ -181,7 +181,7 @@ const LandlordCostSection = ({
   return (
     <div className="text-left">
       {/* Building Profile */}
-      <h2 className="section-title">Your Building</h2>
+      <h2 className="section-title">Your Landlord's Property</h2>
       <p className="text-sm text-muted-foreground">
         {propertyData.address}
         {propertyData.yearBuilt && ` · Built ${propertyData.yearBuilt}`}
