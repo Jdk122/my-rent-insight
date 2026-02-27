@@ -286,7 +286,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
       {/* ━━━ 4. NEGOTIATION LETTER ━━━ */}
       {hasIncrease && isAboveMarket && calc && (
-        <motion.div {...fade(0.12)} className="py-12 border-b border-border">
+        <motion.div id="negotiation-letter" {...fade(0.12)} className="py-12 border-b border-border">
           <NegotiationLetter
             currentRent={formData.currentRent}
             newRent={newRent}
@@ -371,53 +371,111 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         const counterOffer = calc?.counterHigh ?? null;
         const negotiationSavings = counterOffer ? newRent - counterOffer : null;
 
+        const dailySavings = Math.round((monthlySavings / 30) * 2) / 2; // round to nearest $0.50
+
+        // Determine verdict tier based on high-end break-even
+        const breakEvenAvg = (breakEvenLow + breakEvenHigh) / 2;
+        const movingWins = breakEvenAvg < 6;
+        const closeCall = breakEvenAvg >= 6 && breakEvenAvg <= 24;
+        const negotiateWins = breakEvenAvg > 24;
+        const showNegotiateFirst = breakEvenAvg > 12 && negotiationSavings && negotiationSavings > 0 && counterOffer;
+
+        const verdictBanner = movingWins
+          ? { bg: 'bg-destructive/10 border-destructive/20', text: `Moving could make sense — you'd recoup costs in under 6 months.` }
+          : negotiateWins
+          ? { bg: 'bg-verdict-good/10 border-verdict-good/20', text: `Negotiating is the smarter move. Moving would take ${fmtBE(breakEvenAvg)} to pay off.` }
+          : { bg: 'bg-amber-50 border-amber-200', text: `It's a close call. Here's the math on both options.` };
+
+        const scrollToLetter = () => {
+          document.getElementById('negotiation-letter')?.scrollIntoView({ behavior: 'smooth' });
+        };
+
+        const movingSection = (
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mt-4 mb-1">
+              {showNegotiateFirst ? 'What if you moved instead?' : 'Typical savings if you moved'}
+            </p>
+            <p className="font-display text-[28px] md:text-[32px] tracking-tight text-foreground font-semibold" style={{ letterSpacing: '-0.02em' }}>
+              ${fmt(monthlySavings)}/mo
+            </p>
+            <p className="text-[13px] text-muted-foreground mt-0.5">
+              That's about ${dailySavings.toFixed(2)}/day
+            </p>
+            <p className="text-sm text-muted-foreground mt-1">
+              ${fmt(annualSavings)}/yr vs. the median comparable ({brLabel} near you: ${fmt(medianCompRent)}/mo)
+            </p>
+
+            {/* Upfront costs */}
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mt-6 mb-1">
+              Estimated upfront cost to move
+            </p>
+            <p className="text-lg font-semibold text-foreground">
+              ${fmt(movingCostLow)} – ${fmt(movingCostHigh)}
+            </p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">
+              First month + security deposit + moving expenses{hasBrokerFee ? ' + broker fee (common in ' + rentData.state + ')' : ''}
+            </p>
+
+            {/* Break-even */}
+            <p className="text-[13px] text-muted-foreground mt-4">
+              <span className="font-medium text-foreground">Break-even:</span>{' '}
+              ${fmt(movingCostLow)}–${fmt(movingCostHigh)} ÷ ${fmt(monthlySavings)}/mo ={' '}
+              <span className="font-semibold text-foreground">{fmtBE(breakEvenLow)}–{fmtBE(breakEvenHigh)}</span>
+            </p>
+          </div>
+        );
+
+        const negotiateSection = negotiationSavings && negotiationSavings > 0 && counterOffer ? (
+          <div className="mt-6 p-5 rounded-lg bg-verdict-good/10 border border-verdict-good/20">
+            <p className="text-xs font-semibold uppercase tracking-wider text-verdict-good mb-3">
+              {showNegotiateFirst ? 'The better option: negotiate' : 'Or just negotiate'}
+            </p>
+            <p className="font-display text-[28px] md:text-[32px] tracking-tight text-verdict-good font-semibold" style={{ letterSpacing: '-0.02em' }}>
+              ${fmt(negotiationSavings)}/mo savings
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              If you negotiate to the fair counter-offer (
+              <span className="font-semibold text-verdict-good">${fmt(counterOffer)}/mo</span>
+              ), you save{' '}
+              <span className="font-semibold text-verdict-good">${fmt(negotiationSavings)}/mo</span>
+              {' '}starting immediately — with zero upfront costs.
+            </p>
+          </div>
+        ) : null;
+
         return (
           <motion.div {...fade(0.21)} className="my-10">
             <div className="callout-box">
               <p className="callout-box-title">Should you move?</p>
 
-              {/* Moving savings */}
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mt-4 mb-1">
-                Typical savings if you moved
-              </p>
-              <p className="font-display text-[28px] md:text-[32px] tracking-tight text-foreground font-semibold" style={{ letterSpacing: '-0.02em' }}>
-                ${fmt(monthlySavings)}/mo
-              </p>
-              <p className="text-sm text-muted-foreground mt-1">
-                ${fmt(annualSavings)}/yr vs. the median comparable ({brLabel} near you: ${fmt(medianCompRent)}/mo)
-              </p>
+              {/* Verdict banner */}
+              <div className={`mt-4 px-4 py-3 rounded-md border text-sm font-medium text-foreground ${verdictBanner.bg}`}>
+                {verdictBanner.text}
+              </div>
 
-              {/* Upfront costs */}
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mt-6 mb-1">
-                Estimated upfront cost to move
-              </p>
-              <p className="text-lg font-semibold text-foreground">
-                ${fmt(movingCostLow)} – ${fmt(movingCostHigh)}
-              </p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
-                First month + security deposit + moving expenses{hasBrokerFee ? ' + broker fee (common in ' + rentData.state + ')' : ''}
-              </p>
+              {/* Order depends on whether negotiating wins */}
+              {showNegotiateFirst ? (
+                <>
+                  {negotiateSection}
+                  {movingSection}
+                </>
+              ) : (
+                <>
+                  {movingSection}
+                  {negotiateSection}
+                </>
+              )}
 
-              {/* Break-even */}
-              <p className="text-[13px] text-muted-foreground mt-4">
-                <span className="font-medium text-foreground">Break-even:</span>{' '}
-                ${fmt(movingCostLow)}–${fmt(movingCostHigh)} ÷ ${fmt(monthlySavings)}/mo ={' '}
-                <span className="font-semibold text-foreground">{fmtBE(breakEvenLow)}–{fmtBE(breakEvenHigh)}</span>
-              </p>
-
-              {/* vs Negotiating */}
-              {negotiationSavings && negotiationSavings > 0 && counterOffer && (
-                <div className="mt-6 pt-5 border-t border-border">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-                    Or just negotiate
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    If you negotiate to the fair counter-offer (
-                    <span className="font-semibold text-verdict-good">${fmt(counterOffer)}/mo</span>
-                    ), you save{' '}
-                    <span className="font-semibold text-verdict-good">${fmt(negotiationSavings)}/mo</span>
-                    {' '}starting immediately — with no moving costs.
-                  </p>
+              {/* Scroll to letter CTA */}
+              {isAboveMarket && calc && (
+                <div className="mt-6 pt-4 border-t border-border text-center">
+                  <p className="text-sm text-muted-foreground">Ready to negotiate?</p>
+                  <button
+                    onClick={scrollToLetter}
+                    className="text-sm font-semibold text-primary hover:underline mt-1"
+                  >
+                    See your letter above ↑
+                  </button>
                 </div>
               )}
             </div>
