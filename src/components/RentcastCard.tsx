@@ -61,14 +61,9 @@ const RentcastCard = ({ data, loading, error, city, zip, state, bedrooms, propos
 
   if (error || !data) return null;
 
-  const hasEstimate = data.rentEstimate !== null;
   const hasComps = data.comparables.length > 0;
 
-  if (!hasEstimate && !hasComps) return null;
-
-  // FIX 6: Wide range note
-  const rangeSpread = (data.rentRangeHigh ?? 0) - (data.rentRangeLow ?? 0);
-  const showRangeNote = hasEstimate && data.rentRangeLow !== null && data.rentRangeHigh !== null && rangeSpread > 1000;
+  if (!hasComps) return null;
 
   // FIX 4: inline external links when comps exist
   const externalLinks = buildLinks(zip, city, state, bedrooms);
@@ -77,29 +72,6 @@ const RentcastCard = ({ data, loading, error, city, zip, state, bedrooms, propos
     <div>
       <h2 className="section-title">Market Data</h2>
 
-      {/* Rent estimate */}
-      {hasEstimate && (
-        <div className="flex justify-center gap-10 mb-6">
-          {data.rentRangeLow !== null && data.rentRangeHigh !== null ? (
-            <div className="text-center">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Estimated Range</p>
-              <p className="font-display text-2xl tracking-tight text-foreground" style={{ letterSpacing: '-0.02em' }}>
-                ${fmt(data.rentRangeLow)} – ${fmt(data.rentRangeHigh)}
-              </p>
-              {showRangeNote && (
-                <p className="text-xs text-muted-foreground mt-1">Range varies due to different building types and unit sizes in this area.</p>
-              )}
-            </div>
-          ) : (
-            <div className="text-center">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Estimated Rent</p>
-              <p className="font-display text-2xl tracking-tight text-foreground" style={{ letterSpacing: '-0.02em' }}>
-                ${fmt(data.rentEstimate!)}
-              </p>
-            </div>
-          )}
-        </div>
-      )}
 
       {/* FIX 2: Comparable listings sorted low-to-high with reference line */}
       {hasComps && (() => {
