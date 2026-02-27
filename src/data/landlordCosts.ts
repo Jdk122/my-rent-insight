@@ -28,6 +28,8 @@ export interface LandlordCosts {
   propertyTax: number;
   insurance: number;
   maintenance: number;
+  hoa: number;
+  hoaEstimated: boolean;
   total: number;
   totalCostChangePerMonth: number;
   taxChange: number;
@@ -131,11 +133,23 @@ export function calculateLandlordCosts(prop: PropertyLookupResult): LandlordCost
   else maintenance = 250;
   const maintenanceChange = Math.round(maintenance * 0.03);
 
-  const total = mortgage + propertyTax + insurance + maintenance + Math.round((prop.hoaFee || 0) / units);
+  // HOA / condo fee logic
+  let hoa = 0;
+  let hoaEstimated = false;
+  const pType = (prop.propertyType || '').toLowerCase();
+  if (prop.hoaFee && prop.hoaFee > 0) {
+    hoa = Math.round(prop.hoaFee / units);
+  } else if ((pType.includes('condo') || pType.includes('townhouse')) && prop.squareFootage && prop.squareFootage > 0) {
+    hoa = Math.round((prop.squareFootage * 0.60) / units);
+    hoaEstimated = true;
+  }
+  // Single Family → skip (hoa stays 0)
+
+  const total = mortgage + propertyTax + insurance + maintenance + hoa;
   const totalCostChangePerMonth = taxChange + insuranceChange + maintenanceChange;
 
   return {
-    mortgage, propertyTax, insurance, maintenance, total,
+    mortgage, propertyTax, insurance, maintenance, hoa, hoaEstimated, total,
     totalCostChangePerMonth, taxChange, insuranceChange, maintenanceChange,
   };
 }
@@ -198,7 +212,7 @@ export function toLegacyCostEstimate(
     purchaseYear: saleYear,
     mortgage: costs.mortgage,
     propertyTax: costs.propertyTax,
-    hoa: Math.round((prop.hoaFee || 0) / Math.max(prop.units, 1)),
+    hoa: costs.hoa,
     insurance: costs.insurance,
     totalCosts: costs.total,
     annualCostIncrease: costs.totalCostChangePerMonth * 12,
