@@ -264,19 +264,21 @@ const LandlordCostSection = ({
                 <div>
                   <div className="flex justify-between items-center mb-1.5">
                     <label className="text-sm text-muted-foreground">Down payment</label>
-                    <span className="text-sm font-semibold text-foreground">{downPaymentPct}%</span>
+                    <span className="text-sm font-semibold text-foreground">
+                      {downPaymentPct === 100 ? 'All cash' : `${downPaymentPct}%`}
+                    </span>
                   </div>
                   <Slider
                     value={[downPaymentPct]}
                     onValueChange={([v]) => setDownPaymentPct(v)}
                     min={0}
-                    max={50}
+                    max={100}
                     step={5}
                     className="w-full"
                   />
                   <div className="flex justify-between text-[11px] text-muted-foreground mt-1">
                     <span>0%</span>
-                    <span>50%</span>
+                    <span>All cash</span>
                   </div>
                 </div>
                 <div>
