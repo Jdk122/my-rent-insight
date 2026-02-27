@@ -122,6 +122,9 @@ const LandlordCostSection = ({
   const showWealthCard = insights.yearsOwned >= 2 && insights.yearsOwned <= 25;
   const isNegativeProfit = insights.profitMargin <= 0;
 
+  const annualTaxForDisplay = propertyData.annualTax
+    ?? Math.round(costs.propertyTax * 12 * Math.max(propertyData.units, 1));
+
   const costRows = [
     {
       label: 'Mortgage',
@@ -131,7 +134,7 @@ const LandlordCostSection = ({
     {
       label: 'Property taxes',
       value: `$${fmt(costs.propertyTax)}`,
-      sub: `$${fmt(propertyData.annualTax!)}/yr ÷ ${propertyData.units} unit${propertyData.units > 1 ? 's' : ''}`,
+      sub: `$${fmt(annualTaxForDisplay)}/yr ÷ ${propertyData.units} unit${propertyData.units > 1 ? 's' : ''}`,
     },
     {
       label: 'Insurance',
