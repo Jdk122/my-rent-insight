@@ -198,7 +198,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             ))}
           </div>
           <div className="flex justify-center mt-8">
-            <div className="px-6 py-4 rounded-xl" style={{ backgroundColor: '#FDF0ED', border: '1px solid #F2C8BD' }}>
+            <div className="px-6 py-4 rounded-xl text-center" style={{ backgroundColor: '#FDF0ED', border: '1px solid #F2C8BD' }}>
               <p className="text-sm text-muted-foreground mb-1">
                 {isAboveMarket && calc ? 'More than the market supports per year' : 'Extra per year'}
               </p>
