@@ -91,13 +91,13 @@ const AffordabilityCard = ({ currentRent, newRent, medianHouseholdIncome, zip, c
         <div className="callout callout-warn mt-4">
           <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" style={{ color: 'hsl(var(--verdict-overpaying))' }} />
           <p className="text-xs text-foreground leading-relaxed">
-            At ${fmt(newRent)}/mo, rent is {newBurden}% of area median income — {isSevereBurden ? 'well above' : 'above'} the 30% guideline.
+            At ${fmt(newRent)}/mo, rent is {newBurden}% of typical income in {city || 'your area'} — {isSevereBurden ? 'well above' : 'above'} what experts recommend.
           </p>
         </div>
       )}
 
       <p className="text-[10px] text-muted-foreground mt-3">
-        Based on median household income in {zip}. Your income may differ.
+        Based on typical household income in {zip}. Your income may differ.
       </p>
     </div>
   );

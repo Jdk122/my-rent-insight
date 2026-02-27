@@ -124,10 +124,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           <>
             <div className={`verdict-pill ${pillClass} mb-5`}>{verdictLabel}</div>
             <h1 className="font-body text-[32px] font-semibold leading-[1.25] tracking-tight mx-auto max-w-[480px]" style={{ letterSpacing: '-0.02em' }}>
-              {isAboveMarket ? (
-                marketYoy <= 0
-                  ? <>Your increase is <span className={verdictColor}>above the market trend.</span></>
-                  : <>Your increase is <span className={verdictColor}>{increasePct}% — but the market only moved {marketYoy}%.</span></>
+              {isAboveMarket && calc ? (
+                <>Your landlord is asking for <span className={verdictColor}>${fmt(newRent - calc.counterHigh)}/mo more</span> than the market supports.</>
               ) : isBelowMarket ? (
                 <>Your increase is <span className={verdictColor}>below the market rate.</span></>
               ) : (
@@ -138,7 +136,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               {marketYoy <= 0 && isAboveMarket ? (
                 <>Market rents {marketYoy < 0 ? <><em>decreased</em> {Math.abs(marketYoy)}%</> : 'held flat'} in {city}. An increase of <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong> is going against the trend.</>
               ) : isAboveMarket ? (
-              <>Rents in {city} rose <strong className="text-foreground font-bold text-xl">{marketYoy}%</strong> this year. Your landlord is raising yours <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong>. That's <strong>${fmt(annualExtra)} extra per year.</strong></>
+                <>Rents in {city} went up <strong className="text-foreground font-bold text-xl">{marketYoy}%</strong> this year. Yours is going up <strong className={`font-bold text-xl ${verdictColor}`}>{increasePct}%</strong> — that's {multiplier >= 1.8 ? 'nearly double' : multiplier >= 1.4 ? 'well above' : 'noticeably more than'} what other renters are seeing.</>
               ) : isFair ? (
                 isHighRent
                   ? <>Your increase rate is roughly in line with what rents are doing in {city}. Note: your rent is well above the area median — this assessment is about the rate of increase, not the rent amount.</>
@@ -165,8 +163,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       {hasIncrease && (
         <motion.div {...fade(0.05)} className="flex justify-center gap-16 py-14 border-b border-border">
           {[
-            { label: 'Your Rent', value: `$${fmt(formData.currentRent)}` },
-            { label: 'Proposed', value: `$${fmt(newRent)}`, isProposed: true },
+            { label: 'You pay now', value: `$${fmt(formData.currentRent)}` },
+            { label: 'They want', value: `$${fmt(newRent)}`, isProposed: true },
             { label: 'Extra / Year', value: `$${fmt(annualExtra)}` },
           ].map((item) => (
             <div key={item.label} className="text-center">
@@ -226,7 +224,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         {/* FIX 4: Tiered rent burden display */}
         {rentBurden && rentBurden <= 50 && (
           <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
-            <span className="context-label">Rent as % of area median income</span>
+            <span className="context-label">How much of your income goes to rent</span>
             <span className="context-value">
               {currentRentBurden !== null ? (
                 <>
@@ -235,8 +233,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               ) : (
                 <>{rentBurden}%</>
               )}
-              {isCostBurdened && rentBurden <= 40 && <span className="context-sub text-verdict-overpaying ml-1">Above the 30% affordability guideline</span>}
-              {rentBurden > 40 && rentBurden <= 50 && <span className="context-sub text-verdict-overpaying ml-1">Well above the 30% affordability guideline</span>}
+              {isCostBurdened && rentBurden <= 40 && <span className="context-sub text-verdict-overpaying ml-1">Above what experts recommend</span>}
+              {rentBurden > 40 && rentBurden <= 50 && <span className="context-sub text-verdict-overpaying ml-1">Well above what experts recommend</span>}
             </span>
           </div>
         )}
@@ -253,10 +251,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         {rentBurden && rentBurden > 50 && (
           <div className="bg-destructive/10 border-l-[3px] border-destructive px-4 py-3 mt-3 rounded-sm">
             <p className="text-sm font-semibold text-destructive">
-              Rent burden: {currentRentBurden !== null ? `${currentRentBurden}% → ` : ''}{rentBurden}% of area median income
+              Rent burden: {currentRentBurden !== null ? `${currentRentBurden}% → ` : ''}{rentBurden}% of typical income in {city}
             </p>
             <p className="text-[13px] text-destructive/80 mt-1">
-              Financial experts recommend spending no more than 30% of income on rent.
+              Experts recommend spending no more than 30% of income on rent.
             </p>
           </div>
         )}
