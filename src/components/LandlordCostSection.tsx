@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 import { PropertyLookupResult, PropertyLookupError } from '@/hooks/usePropertyLookup';
@@ -25,6 +25,32 @@ interface LandlordCostSectionProps {
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
+/** Fetch Freddie Mac 30-year fixed rate for a given sale date from FRED API */
+async function fetchFredMortgageRate(saleDate: string): Promise<number | null> {
+  try {
+    const apiKey = import.meta.env.VITE_FRED_API_KEY;
+    if (!apiKey) return null;
+
+    const date = new Date(saleDate);
+    const start = new Date(date);
+    start.setDate(start.getDate() - 14);
+    const end = new Date(date);
+    end.setDate(end.getDate() + 14);
+
+    const fmt = (d: Date) => d.toISOString().split('T')[0];
+    const url = `https://api.stlouisfed.org/fred/series/observations?series_id=MORTGAGE30US&api_key=${apiKey}&file_type=json&observation_start=${fmt(start)}&observation_end=${fmt(end)}&sort_order=desc&limit=1`;
+
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const obs = data.observations?.filter((o: { value: string }) => o.value !== '.');
+    if (!obs || obs.length === 0) return null;
+    return parseFloat(obs[0].value) / 100; // e.g. 6.42 → 0.0642
+  } catch {
+    return null;
+  }
+}
+
 const LandlordCostSection = ({
   propertyData,
   propertyLoading,
@@ -37,12 +63,25 @@ const LandlordCostSection = ({
 }: LandlordCostSectionProps) => {
   // Default assumptions based on property data
   const saleYear = propertyData?.lastSaleDate ? new Date(propertyData.lastSaleDate).getFullYear() : 2020;
-  const defaultRate = MORTGAGE_RATES[saleYear] || 0.055;
+  const fallbackRate = MORTGAGE_RATES[saleYear] || 0.055;
   const defaultDownPct = 25;
 
   const [downPaymentPct, setDownPaymentPct] = useState(defaultDownPct);
-  const [mortgageRateInput, setMortgageRateInput] = useState((defaultRate * 100).toFixed(2));
-  const [expanded, setExpanded] = useState(true); // Start expanded now
+  const [mortgageRateInput, setMortgageRateInput] = useState((fallbackRate * 100).toFixed(2));
+  const [fredRateLoaded, setFredRateLoaded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
+
+  // Try to fetch actual FRED rate for the sale date
+  useEffect(() => {
+    if (!propertyData?.lastSaleDate || fredRateLoaded) return;
+    fetchFredMortgageRate(propertyData.lastSaleDate).then((rate) => {
+      if (rate) {
+        setMortgageRateInput((rate * 100).toFixed(2));
+      }
+      setFredRateLoaded(true);
+    });
+  }, [propertyData?.lastSaleDate, fredRateLoaded]);
+  
 
   const customRate = parseFloat(mortgageRateInput) / 100;
   const customDownPct = downPaymentPct / 100;
@@ -184,9 +223,22 @@ const LandlordCostSection = ({
       <h2 className="section-title">Your Landlord's Property</h2>
       <p className="text-sm text-muted-foreground">
         {propertyData.address}
-        {propertyData.yearBuilt && ` · Built ${propertyData.yearBuilt}`}
-        {` · ${propertyData.propertyType}`}
       </p>
+      {(() => {
+        const pType = (propertyData.propertyType || '').toLowerCase();
+        const showUnitDetails = pType.includes('condo') || pType.includes('townho');
+        const details: string[] = [];
+        if (showUnitDetails && propertyData.bedrooms) details.push(`${propertyData.bedrooms} bed`);
+        if (showUnitDetails && propertyData.bathrooms) details.push(`${propertyData.bathrooms} bath`);
+        if (showUnitDetails && propertyData.squareFootage) details.push(`${fmt(propertyData.squareFootage)} sqft`);
+        details.push(propertyData.propertyType);
+        if (propertyData.yearBuilt) details.push(`Built ${propertyData.yearBuilt}`);
+        return (
+          <p className="text-sm text-muted-foreground mt-0.5">
+            {details.join(' · ')}
+          </p>
+        );
+      })()}
       {saleDate && propertyData.lastSalePrice && (
         <p className="text-sm text-muted-foreground mt-0.5">
           Purchased {saleDate} for ${fmt(propertyData.lastSalePrice)}
