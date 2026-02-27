@@ -35,7 +35,7 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
   const [bedrooms, setBedrooms] = useState<BedroomType>('oneBr');
   const [currentRent, setCurrentRent] = useState('');
   const [rentIncrease, setRentIncrease] = useState('');
-  const [increaseIsPercent, setIncreaseIsPercent] = useState(true);
+  const [increaseIsPercent, setIncreaseIsPercent] = useState(false);
   const [movingCosts] = useState('2500');
 
   const hasStreet = street.trim().length > 0;
