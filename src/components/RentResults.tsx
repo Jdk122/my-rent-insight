@@ -185,9 +185,23 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           </div>
           <div className="flex justify-center mt-6">
             <p className="text-sm font-medium text-destructive px-5 py-2.5 rounded-lg" style={{ backgroundColor: '#FDF0ED', border: '1px solid #F2C8BD' }}>
-              That's ${fmt(annualExtra)} more per year than you're paying now.
+              {isAboveMarket && calc
+                ? `That's $${fmt((newRent - calc.counterHigh) * 12)} more per year than the market supports.`
+                : `That's $${fmt(annualExtra)} more per year than you're paying now.`
+              }
             </p>
           </div>
+          {/* CTA to skip to letter */}
+          {isAboveMarket && calc && (
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={() => document.getElementById('negotiation-letter')?.scrollIntoView({ behavior: 'smooth' })}
+                className="text-sm font-semibold text-primary hover:underline"
+              >
+                Get your negotiation letter ↓
+              </button>
+            </div>
+          )}
         </motion.div>
       )}
 
@@ -219,10 +233,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           </div>
         )}
         {/* FIX 2: Remove "HUD 40th pctl" jargon */}
-        <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
-          <span className="context-label">{city} benchmark</span>
-          <span className="context-value">${fmt(rentData.fmr)}</span>
-        </div>
         {rentData.censusMedianRent && (
           <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
             <span className="context-label">What the typical renter pays</span>
@@ -284,9 +294,42 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         )}
       </motion.div>
 
-      {/* ━━━ 4. NEGOTIATION LETTER ━━━ */}
+      {/* ━━━ 4. YOUR BUILDING ━━━ */}
+      {hasIncrease && (
+        <motion.div {...fade(0.12)} className="py-12 border-b border-border">
+          <LandlordCostSection
+            propertyData={propertyData}
+            propertyLoading={propertyLoading}
+            propertyError={propertyError}
+            currentRent={formData.currentRent}
+            proposedRent={newRent}
+            increaseAmount={increaseAmount}
+            hasAddress={!!formData.fullAddress}
+            onScrollToTop={onScrollToTop}
+          />
+        </motion.div>
+      )}
+
+      {/* ━━━ 5. RENTCAST + COMP LINKS ━━━ */}
+      <motion.div {...fade(0.15)} className="py-12 border-b border-border">
+        <RentcastCard
+          data={rentcast.data}
+          loading={rentcast.loading}
+          error={rentcast.error}
+          city={city}
+          zip={rentData.zip}
+          state={rentData.state}
+          bedrooms={formData.bedrooms}
+          proposedRent={hasIncrease ? newRent : undefined}
+        />
+        {!rentcast.loading && !hasRentcastComps && (
+          <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} />
+        )}
+      </motion.div>
+
+      {/* ━━━ 6. NEGOTIATION LETTER (after evidence) ━━━ */}
       {hasIncrease && isAboveMarket && calc && (
-        <motion.div id="negotiation-letter" {...fade(0.12)} className="py-12 border-b border-border">
+        <motion.div id="negotiation-letter" {...fade(0.18)} className="py-12 border-b border-border">
           <NegotiationLetter
             currentRent={formData.currentRent}
             newRent={newRent}
@@ -309,40 +352,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           />
         </motion.div>
       )}
-
-      {/* ━━━ 5. YOUR BUILDING (FIX 5: minimized on failure) ━━━ */}
-      {hasIncrease && (
-        <motion.div {...fade(0.15)} className="py-12 border-b border-border">
-          <LandlordCostSection
-            propertyData={propertyData}
-            propertyLoading={propertyLoading}
-            propertyError={propertyError}
-            currentRent={formData.currentRent}
-            proposedRent={newRent}
-            increaseAmount={increaseAmount}
-            hasAddress={!!formData.fullAddress}
-            onScrollToTop={onScrollToTop}
-          />
-        </motion.div>
-      )}
-
-      {/* ━━━ 6. RENTCAST + COMP LINKS (FIX 4: merged) ━━━ */}
-      <motion.div {...fade(0.18)} className="py-12 border-b border-border">
-        <RentcastCard
-          data={rentcast.data}
-          loading={rentcast.loading}
-          error={rentcast.error}
-          city={city}
-          zip={rentData.zip}
-          state={rentData.state}
-          bedrooms={formData.bedrooms}
-          proposedRent={hasIncrease ? newRent : undefined}
-        />
-        {/* If no Rentcast comps, show full CompLinks as fallback */}
-        {!rentcast.loading && !hasRentcastComps && (
-          <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} />
-        )}
-      </motion.div>
 
       {/* ━━━ 7. SHOULD YOU MOVE? ━━━ */}
       {hasIncrease && medianCompRent && newRent > medianCompRent && (() => {
@@ -470,11 +479,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               {isAboveMarket && calc && (
                 <div className="mt-6 pt-4 border-t border-border text-center">
                   <p className="text-sm text-muted-foreground">Ready to negotiate?</p>
-                  <button
+              <button
                     onClick={scrollToLetter}
                     className="text-sm font-semibold text-primary hover:underline mt-1"
                   >
-                    See your letter above ↑
+                    See your letter below ↓
                   </button>
                 </div>
               )}
