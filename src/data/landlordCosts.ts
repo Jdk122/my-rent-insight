@@ -78,8 +78,30 @@ function estimatePrincipalPaid(salePrice: number, saleYear: number): number {
   return Math.round(principal - remaining);
 }
 
+function estimateAnnualTax(prop: PropertyLookupResult): number | null {
+  if (prop.annualTax && prop.annualTax > 0) return prop.annualTax;
+
+  const effectiveTaxRatesByState: Record<string, number> = {
+    NJ: 0.0189,
+    IL: 0.021,
+    TX: 0.016,
+    CA: 0.011,
+    FL: 0.009,
+    NY: 0.014,
+  };
+
+  const fallbackRate = prop.state ? (effectiveTaxRatesByState[prop.state] || 0.011) : 0.011;
+  const baseValue = prop.assessedValue || prop.lastSalePrice;
+
+  if (!baseValue || baseValue <= 0) return null;
+  return Math.round(baseValue * fallbackRate);
+}
+
 export function calculateLandlordCosts(prop: PropertyLookupResult): LandlordCosts | null {
-  if (!prop.lastSalePrice || !prop.annualTax) return null;
+  if (!prop.lastSalePrice) return null;
+
+  const annualTax = estimateAnnualTax(prop);
+  if (!annualTax) return null;
 
   const saleYear = prop.lastSaleDate ? new Date(prop.lastSaleDate).getFullYear() : 2020;
   const units = Math.max(prop.units || 1, 1);
@@ -87,7 +109,7 @@ export function calculateLandlordCosts(prop: PropertyLookupResult): LandlordCost
   const totalMortgage = estimateMortgage(prop.lastSalePrice, saleYear);
   const mortgage = Math.round(totalMortgage / units);
 
-  const propertyTax = Math.round((prop.annualTax / 12) / units);
+  const propertyTax = Math.round((annualTax / 12) / units);
 
   let taxChange: number;
   if (prop.priorYearTax && prop.priorYearTax > 0) {
@@ -154,7 +176,7 @@ export function generateInsights(
     totalWealthBuilt: equityGained + principalPaid,
     isInvestor: prop.isInvestor,
     buildingAge: prop.yearBuilt ? (currentYear - prop.yearBuilt) : null,
-    hasEnoughData: !!(prop.lastSalePrice && prop.annualTax),
+    hasEnoughData: !!(prop.lastSalePrice && (prop.annualTax || prop.assessedValue)),
     saleYear,
     downPaymentPct: downPct * 100,
     mortgageRate: rate * 100,
