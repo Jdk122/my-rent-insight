@@ -38,19 +38,8 @@ const NegotiationLetter = ({
   const brLabel = bedroomLabels[bedrooms];
   const increaseRatio = marketYoy > 0 ? Math.round((increasePct / marketYoy) * 10) / 10 : 0;
 
-  // Only include cost data when we have enough data and profit is positive
-  const showCostData = landlordCosts && landlordInsights && increaseAmount &&
-    landlordInsights.hasEnoughData &&
-    landlordInsights.costIncreaseMarkup !== null && landlordInsights.costIncreaseMarkup > 1 &&
-    landlordInsights.profitMargin > 0;
-
-  const friendlyCostLine = showCostData
-    ? `I also looked into typical operating costs for a building like ours. Based on public records, the property was purchased in ${landlordCosts!.purchaseYear} for $${fmt(landlordCosts!.purchasePrice)}, and operating costs for a building at this price point likely increased around $${fmt(landlordCosts!.monthlyCostIncrease)}/month per unit this year — well below the $${fmt(increaseAmount!)}/month increase proposed.`
-    : '';
-
-  const firmCostBullets = showCostData
-    ? `\n• Based on the ${landlordCosts!.purchaseYear} purchase price and current tax records, estimated operating cost increases for this building are ~$${fmt(landlordCosts!.monthlyCostIncrease)}/mo per unit — the proposed $${fmt(increaseAmount!)}/mo increase represents a ${landlordInsights!.costIncreaseMarkup}× markup on actual cost increases\n• At current rents, the estimated monthly profit on each unit already exceeds $${fmt(landlordInsights!.profitMargin)} before the proposed increase`
-    : '';
+  const friendlyCostLine = '';
+  const firmCostBullets = '';
 
   const letterHtml = useMemo(() => {
     if (tone === 'friendly') {
