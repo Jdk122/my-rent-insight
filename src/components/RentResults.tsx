@@ -199,18 +199,23 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         >
           {hasIncrease ? (
             <>
-              {/* Headline */}
+              {/* Dollar-first headline */}
               <h1
                 className="font-display text-[clamp(1.75rem,5vw,2.5rem)] text-foreground leading-[1.15] tracking-tight max-w-[520px]"
                 style={{ letterSpacing: '-0.02em' }}
               >
-                Your rent increase is{' '}
-                <span className={verdictColor}>
-                  {isAboveMarket ? 'above market' : isFair ? 'right at market' : 'below market'}.
-                </span>
+                {isAboveMarket && calc ? (
+                  <>Your landlord is asking for{' '}
+                    <span className="text-destructive">${fmt(newRent - calc.counterHigh)}/mo more</span>{' '}
+                    than the market supports.</>
+                ) : isFair ? (
+                  <>Your rent increase is <span className="text-verdict-fair">right at market.</span></>
+                ) : (
+                  <>Your rent increase is <span className="text-verdict-good">below market.</span></>
+                )}
               </h1>
 
-              {/* Subline: market vs yours */}
+              {/* Subline */}
               <p className="text-lg md:text-xl text-muted-foreground mt-5 max-w-[460px] leading-relaxed">
                 The market moved {marketYoy > 0 ? '+' : ''}{marketYoy}% this year.
                 Your landlord is asking for {increasePct}%.
@@ -229,6 +234,39 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   on their actual cost increase.
                 </motion.p>
               )}
+
+              {/* ── Stat dashboard strip ── */}
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+                className="mt-10 w-full grid grid-cols-2 md:grid-cols-4 gap-4 max-w-[540px]"
+              >
+                <div className="text-center">
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">You pay now</p>
+                  <p className="font-display text-[24px] md:text-[28px] text-foreground tracking-tight" style={{ letterSpacing: '-0.02em' }}>
+                    ${fmt(formData.currentRent)}
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">They want</p>
+                  <p className="font-display text-[24px] md:text-[28px] text-destructive tracking-tight" style={{ letterSpacing: '-0.02em' }}>
+                    ${fmt(newRent)}
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">{city} trend</p>
+                  <p className="font-display text-[24px] md:text-[28px] text-foreground tracking-tight" style={{ letterSpacing: '-0.02em' }}>
+                    {marketYoy > 0 ? '+' : ''}{marketYoy}%
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your increase</p>
+                  <p className={`font-display text-[24px] md:text-[28px] tracking-tight ${verdictColor}`} style={{ letterSpacing: '-0.02em' }}>
+                    {increasePct}%
+                  </p>
+                </div>
+              </motion.div>
 
               {/* Overcharge callout */}
               {isAboveMarket && calc && (
@@ -309,7 +347,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   </div>
                 )}
 
-                <p className="text-[11px] text-muted-foreground mt-3">{rentData.yoySourceLabel}</p>
+                <p className="text-[11px] text-muted-foreground mt-3">
+                  {rentData.yoySourceLabel}
+                </p>
                 {rentData.yoySource === 'hud' && rentData.priorSource === 'm' && (
                   <p className="text-[11px] text-muted-foreground mt-1">Based on {rentData.metro} area average trend.</p>
                 )}

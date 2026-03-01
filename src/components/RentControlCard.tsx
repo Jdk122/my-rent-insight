@@ -18,33 +18,48 @@ const RentControlCard = ({ state, city, zip, increasePct }: RentControlCardProps
 
   return (
     <div>
-      <h2 className="section-title">📋 Know Your Rights</h2>
+      <h3 className="evidence-card-header">📋 Know Your Rights</h3>
 
       {hasCap && cap ? (
         <div className="mt-3">
-          <div className="px-4 py-4 rounded-lg border border-verdict-good/30 bg-verdict-good/5">
-            <p className="text-sm text-foreground leading-relaxed">
-              <strong>{cap.jurisdiction}</strong> limits rent increases to <strong>{cap.maxIncreaseFormula}</strong> per year for qualifying units.
-              {exceedsCap && (
-                <span className="text-verdict-overpaying font-medium">
-                  {' '}Your proposed increase of {increasePct}% may exceed this limit.
-                </span>
+          {/* Exceedance warning */}
+          {exceedsCap && (
+            <div className="px-4 py-3 rounded-lg border border-destructive/30 bg-destructive/5 mb-4">
+              <p className="text-sm font-medium text-destructive">
+                Your proposed increase of {increasePct}% may exceed the local cap.
+              </p>
+            </div>
+          )}
+
+          {/* Structured details */}
+          <div className="rounded-lg border border-border overflow-hidden">
+            <div className="px-4 py-3 bg-muted/30 border-b border-border">
+              <p className="text-sm font-semibold text-foreground">{cap.jurisdiction}</p>
+              <p className="text-sm text-foreground mt-1">
+                Rent increases capped at <strong>{cap.maxIncreaseFormula}</strong> per year
+              </p>
+            </div>
+
+            <div className="divide-y divide-border">
+              <div className="px-4 py-3 flex gap-3">
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground w-28 flex-shrink-0 pt-0.5">Applies to</span>
+                <span className="text-sm text-foreground">{cap.applicability}</span>
+              </div>
+              {cap.exemptions && (
+                <div className="px-4 py-3 flex gap-3">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground w-28 flex-shrink-0 pt-0.5">Exemptions</span>
+                  <span className="text-sm text-foreground">{cap.exemptions}</span>
+                </div>
               )}
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              Applies to: {cap.applicability}
-            </p>
-            {cap.exemptions && (
-              <p className="text-xs text-muted-foreground mt-1">
-                Exemptions: {cap.exemptions}
-              </p>
-            )}
-            {notice && (
-              <p className="text-xs text-muted-foreground mt-1">
-                Required notice: {notice.days} days ({notice.source})
-              </p>
-            )}
+              {notice && (
+                <div className="px-4 py-3 flex gap-3">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground w-28 flex-shrink-0 pt-0.5">Required notice</span>
+                  <span className="text-sm text-foreground">{notice.days} days ({notice.source})</span>
+                </div>
+              )}
+            </div>
           </div>
+
           {cap.ordinanceUrl && (
             <a
               href={cap.ordinanceUrl}
@@ -58,19 +73,26 @@ const RentControlCard = ({ state, city, zip, increasePct }: RentControlCardProps
         </div>
       ) : result.stateLaw ? (
         <div className="mt-3">
-          <div className="px-4 py-4 rounded-lg border border-border bg-muted/30">
-            <p className="text-sm text-foreground leading-relaxed">
-              <strong>{result.stateLaw.jurisdiction}</strong> does not cap rent increases statewide, but some cities do.
-              Check your local tenant rights.
-            </p>
-            {notice && (
-              <p className="text-xs text-muted-foreground mt-2">
-                Required notice for increases: {notice.days} days
+          <div className="rounded-lg border border-border overflow-hidden">
+            <div className="px-4 py-3 bg-muted/30 border-b border-border">
+              <p className="text-sm font-semibold text-foreground">{result.stateLaw.jurisdiction}</p>
+              <p className="text-sm text-foreground mt-1">
+                No statewide rent increase cap, but some cities may have local protections.
               </p>
-            )}
-            {result.stateLaw.notes && (
-              <p className="text-xs text-muted-foreground mt-1">{result.stateLaw.notes}</p>
-            )}
+            </div>
+            <div className="divide-y divide-border">
+              {notice && (
+                <div className="px-4 py-3 flex gap-3">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground w-28 flex-shrink-0 pt-0.5">Required notice</span>
+                  <span className="text-sm text-foreground">{notice.days} days</span>
+                </div>
+              )}
+              {result.stateLaw.notes && (
+                <div className="px-4 py-3">
+                  <p className="text-sm text-muted-foreground">{result.stateLaw.notes}</p>
+                </div>
+              )}
+            </div>
           </div>
           {result.stateLaw.ordinanceUrl && (
             <a
