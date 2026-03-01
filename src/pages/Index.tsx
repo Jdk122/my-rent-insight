@@ -100,7 +100,7 @@ const Index = () => {
                 Is your rent increase <span className="text-primary">fair?</span>
               </h1>
               <p className="mt-6 text-xl md:text-2xl text-foreground/60 max-w-md leading-relaxed font-medium">
-                Find out instantly. Get a negotiation letter if it's not.
+                Find out instantly. Get a data-backed negotiation letter if it's not.
               </p>
               <div className="mt-10">
                 <RentForm onSubmit={handleSubmit} isLoading={isLoading} />
