@@ -254,7 +254,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               {/* CTA */}
               <button
                 onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
-                className="mt-10 text-sm font-semibold text-primary hover:text-primary/80 transition-colors duration-150"
+                className="mt-10 text-base font-semibold text-primary hover:text-primary/80 transition-colors duration-150"
               >
                 See the evidence ↓
               </button>
