@@ -187,17 +187,17 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     <>
       <SectionNav sections={navSections} />
 
-      <div className="max-w-[620px] mx-auto px-6">
-
-        {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            SECTION 1: THE VERDICT — warm tinted hero zone
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <motion.section
-          id="section-verdict"
-          {...fade(0)}
-          className="min-h-[85vh] flex flex-col items-center justify-start text-center pt-6 md:pt-[12vh] pb-12 rounded-2xl -mx-2 px-2"
-          style={{ background: 'hsl(var(--verdict-bg))' }}
-        >
+      {/* ━━━ ACT 1: THE VERDICT — full-width warm hero zone ━━━ */}
+      <div
+        className="w-full"
+        style={{ background: 'hsl(var(--verdict-bg))' }}
+      >
+        <div className="max-w-[620px] mx-auto px-6">
+          <motion.section
+            id="section-verdict"
+            {...fade(0)}
+            className="min-h-[100vh] flex flex-col items-center justify-center text-center py-12"
+          >
           {hasIncrease ? (
             <>
               {/* Dollar-first headline */}
@@ -270,12 +270,18 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             </>
           )}
         </motion.section>
+        </div>
+      </div>
 
-        {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            SECTION 2: THE EVIDENCE — card-based layout
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      {/* ━━━ Transition edge ━━━ */}
+      <div className="w-full h-px" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} />
+
+      {/* ━━━ ACT 2: THE EVIDENCE — white background ━━━ */}
+      <div className="w-full bg-card">
+        <div className="max-w-[620px] mx-auto px-6">
+
         {hasIncrease && (
-          <section id="section-evidence" className="pt-12 pb-8">
+          <section id="section-evidence" className="pt-16 pb-8">
             <motion.h2 {...fade(0.05)} className="results-section-header mb-10">
               The Evidence
             </motion.h2>
@@ -445,6 +451,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             increaseAmount={increaseAmount}
           />
         </section>
+        </div>
       </div>
     </>
   );
