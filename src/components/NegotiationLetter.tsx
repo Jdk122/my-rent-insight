@@ -121,6 +121,13 @@ const NegotiationLetter = ({
       } catch {}
     }
 
+    // Store letter_generated_at timestamp
+    if (analysisId) {
+      try {
+        await supabase.from('leads').update({ letter_generated_at: new Date().toISOString() } as any).eq('email', gateEmail);
+      } catch {}
+    }
+
     onEmailCaptured?.(gateEmail);
     setUnlocked(true);
     toast.success('Letter unlocked!');

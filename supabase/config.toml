@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.property-lookup]
 verify_jwt = false
+
+[functions.send-letter-followup]
+verify_jwt = false

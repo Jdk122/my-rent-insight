@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { RentFormData } from './RentForm';
 import { RentLookupResult, bedroomLabels, calculateResults } from '@/data/rentData';
 import ShareSection from './ShareSection';
+import ShareableCard from './ShareableCard';
 import EmailCapture from './EmailCapture';
 import CompLinks from './CompLinks';
 import ShouldYouMove from './ShouldYouMove';
@@ -258,13 +259,30 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 ))}
               </motion.div>
 
-              {/* CTA */}
-              <button
-                onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
-                className="mt-10 text-base font-semibold text-primary hover:text-primary/80 transition-colors duration-150"
-              >
-                See the evidence ↓
-              </button>
+              {/* CTAs */}
+              <div className="mt-10 flex flex-col sm:flex-row items-center gap-4">
+                <button
+                  onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="text-base font-semibold text-primary hover:text-primary/80 transition-colors duration-150"
+                >
+                  See the evidence ↓
+                </button>
+                <ShareableCard
+                  headline={
+                    isAboveMarket && calc
+                      ? `My landlord is asking for $${fmt(newRent - calc.counterHigh)}/mo more than the market supports.`
+                      : isFair
+                      ? `My rent increase is right at market.`
+                      : `My rent increase is below market.`
+                  }
+                  stats={[
+                    { label: 'You pay now', value: `$${fmt(formData.currentRent)}` },
+                    { label: 'They want', value: `$${fmt(newRent)}`, color: 'hsl(0, 72%, 51%)' },
+                    { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
+                    { label: 'Your increase', value: `${increasePct}%`, color: isAboveMarket ? 'hsl(0, 72%, 51%)' : isFair ? 'hsl(45, 80%, 45%)' : 'hsl(151, 50%, 38%)' },
+                  ]}
+                />
+              </div>
 
               <button onClick={onReset} className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors">
                 ← Check a different address

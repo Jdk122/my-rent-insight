@@ -86,12 +86,15 @@ export type Database = {
           current_rent: number | null
           email: string
           fair_counter_offer: string | null
+          followup_sent_at: string | null
           id: string
           increase_pct: number | null
           lease_expiration_month: number | null
           lease_expiration_year: number | null
           letter_generated: boolean | null
+          letter_generated_at: string | null
           market_trend_pct: number | null
+          outcome: string | null
           proposed_rent: number | null
           reminder_sent_at: string | null
           state: string | null
@@ -109,12 +112,15 @@ export type Database = {
           current_rent?: number | null
           email: string
           fair_counter_offer?: string | null
+          followup_sent_at?: string | null
           id?: string
           increase_pct?: number | null
           lease_expiration_month?: number | null
           lease_expiration_year?: number | null
           letter_generated?: boolean | null
+          letter_generated_at?: string | null
           market_trend_pct?: number | null
+          outcome?: string | null
           proposed_rent?: number | null
           reminder_sent_at?: string | null
           state?: string | null
@@ -132,12 +138,15 @@ export type Database = {
           current_rent?: number | null
           email?: string
           fair_counter_offer?: string | null
+          followup_sent_at?: string | null
           id?: string
           increase_pct?: number | null
           lease_expiration_month?: number | null
           lease_expiration_year?: number | null
           letter_generated?: boolean | null
+          letter_generated_at?: string | null
           market_trend_pct?: number | null
+          outcome?: string | null
           proposed_rent?: number | null
           reminder_sent_at?: string | null
           state?: string | null
@@ -198,7 +207,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_analyses_count: { Args: never; Returns: number }
     }
     Enums: {
       [_ in never]: never
