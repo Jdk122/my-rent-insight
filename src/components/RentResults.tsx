@@ -190,12 +190,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       <div className="max-w-[620px] mx-auto px-6">
 
         {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            SECTION 1: THE VERDICT — full viewport, centered, high impact
+            SECTION 1: THE VERDICT — warm tinted hero zone
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <motion.section
           id="section-verdict"
           {...fade(0)}
-          className="min-h-[85vh] flex flex-col items-center justify-center text-center"
+          className="min-h-[85vh] flex flex-col items-center justify-center text-center rounded-2xl -mx-2 px-2"
+          style={{ background: 'hsl(var(--verdict-bg))' }}
         >
           {hasIncrease ? (
             <>
@@ -242,36 +243,29 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 transition={{ delay: 0.2, duration: 0.5 }}
                 className="mt-10 w-full grid grid-cols-2 md:grid-cols-4 gap-4 max-w-[540px]"
               >
-                <div className="text-center">
-                  <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">You pay now</p>
-                  <p className="font-display text-[24px] md:text-[28px] text-foreground tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-                    ${fmt(formData.currentRent)}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">They want</p>
-                  <p className="font-display text-[24px] md:text-[28px] text-destructive tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-                    ${fmt(newRent)}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">{city} trend</p>
-                  <p className="font-display text-[24px] md:text-[28px] text-foreground tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-                    {marketYoy > 0 ? '+' : ''}{marketYoy}%
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your increase</p>
-                  <p className={`font-display text-[24px] md:text-[28px] tracking-tight ${verdictColor}`} style={{ letterSpacing: '-0.02em' }}>
-                    {increasePct}%
-                  </p>
-                </div>
+                {[
+                  { label: 'You pay now', value: `$${fmt(formData.currentRent)}`, color: 'text-foreground' },
+                  { label: 'They want', value: `$${fmt(newRent)}`, color: 'text-destructive' },
+                  { label: `${city} trend`, value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%`, color: 'text-foreground' },
+                  { label: 'Your increase', value: `${increasePct}%`, color: verdictColor },
+                ].map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="text-center rounded-lg border border-border/80 bg-card px-3 py-4"
+                    style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
+                  >
+                    <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">{stat.label}</p>
+                    <p className={`font-display text-[24px] md:text-[28px] tracking-tight ${stat.color}`} style={{ letterSpacing: '-0.02em' }}>
+                      {stat.value}
+                    </p>
+                  </div>
+                ))}
               </motion.div>
 
               {/* CTA */}
               <button
                 onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
-                className="mt-10 text-sm font-semibold text-primary hover:underline transition-colors"
+                className="mt-10 text-sm font-semibold text-primary hover:text-primary/80 transition-colors duration-150"
               >
                 See the evidence ↓
               </button>
@@ -378,7 +372,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             SECTION 3: COMPARABLE LISTINGS
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         {hasIncrease && medianCompRent && hasEnoughComps && (
-          <motion.section id="section-comps" {...fade(0.15)} className="py-12">
+          <motion.section id="section-comps" {...fade(0.15)} className="py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>
             <h2 className="results-section-header mb-8">
               How your rent compares to nearby units
             </h2>
