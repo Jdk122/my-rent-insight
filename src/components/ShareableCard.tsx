@@ -68,18 +68,18 @@ const ShareableCard = ({ headline, stats }: ShareableCardProps) => {
             padding: 40,
             background: 'linear-gradient(135deg, hsl(45, 30%, 97%), hsl(45, 20%, 93%))',
             borderRadius: 20,
-            fontFamily: "'DM Sans', 'DM Serif Display', sans-serif",
+            fontFamily: "Georgia, 'Times New Roman', serif",
           }}
         >
           {/* Brand */}
           <div style={{ marginBottom: 24 }}>
-            <span style={{ fontFamily: "'DM Serif Display', serif", fontSize: 22, fontWeight: 700, color: 'hsl(151, 50%, 38%)' }}>
-              Renewal<span style={{ fontWeight: 400, color: 'hsl(30, 60%, 55%)' }}>Reply</span>
+            <span style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 22, fontWeight: 700, color: '#2d6a4f' }}>
+              Renewal<span style={{ fontWeight: 400, color: '#c77d3c' }}>Reply</span>
             </span>
           </div>
 
           {/* Headline */}
-          <p style={{ fontFamily: "'DM Serif Display', serif", fontSize: 22, lineHeight: 1.3, color: 'hsl(30, 10%, 15%)', marginBottom: 28, letterSpacing: '-0.01em' }}>
+          <p style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 22, lineHeight: 1.3, color: '#1a1a1a', marginBottom: 28, letterSpacing: '-0.01em' }}>
             {headline}
           </p>
 
@@ -99,9 +99,9 @@ const ShareableCard = ({ headline, stats }: ShareableCardProps) => {
                   {stat.label}
                 </p>
                 <p style={{
-                  fontFamily: "'DM Serif Display', serif",
+                  fontFamily: "Georgia, 'Times New Roman', serif",
                   fontSize: 26,
-                  color: stat.color || 'hsl(30, 10%, 15%)',
+                  color: stat.color || '#1a1a1a',
                   letterSpacing: '-0.02em',
                   lineHeight: 1,
                 }}>
