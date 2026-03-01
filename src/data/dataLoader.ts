@@ -160,17 +160,18 @@ export async function lookupRentData(
     // Priority 1: Zillow ZORI (monthly, from actual listings)
     yoyChange = raw.zy;
     yoySource = 'zillow';
-    yoySourceLabel = 'Based on Zillow rent data through Jan 2026';
+    const cityName = raw.c || raw.m.split(',')[0] || `ZIP ${zip}`;
+    yoySourceLabel = `Based on ${cityName} market data through Jan 2026`;
   } else if (fmrPrior > 0) {
     // Priority 2: Bedroom-specific HUD FMR
     yoyChange = Math.round(((fmr - fmrPrior) / fmrPrior) * 1000) / 10;
     yoySource = 'hud';
-    yoySourceLabel = 'Based on HUD Fair Market Rent data';
+    yoySourceLabel = 'Based on HUD Fair Market Rent data (FY 2025)';
   } else {
     // Priority 3: Pre-computed 1BR fallback
     yoyChange = raw.y;
     yoySource = 'hud';
-    yoySourceLabel = 'Based on HUD Fair Market Rent data';
+    yoySourceLabel = 'Based on HUD Fair Market Rent data (FY 2025)';
   }
 
   // Guard 1: Cap extreme YoY values
