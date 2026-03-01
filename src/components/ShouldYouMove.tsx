@@ -189,22 +189,6 @@ const ShouldYouMove = ({
             </div>
           </div>
 
-          {/* Primary CTA */}
-          <div className="mt-5 flex flex-wrap gap-2">
-            {browseLinks.slice(0, 2).map(link => (
-              <a
-                key={link.name}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-              >
-                Browse available rentals nearby
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
-            ))}
-          </div>
-
           {/* Secondary CTA: negotiate */}
           {isAboveMarket && negotiationSavings && negotiationSavings > 0 && counterOffer && (
             <div className="mt-6 p-5 rounded-lg bg-verdict-good/10 border border-verdict-good/20">
