@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -18,18 +20,67 @@ for (const year of years) {
   }
 }
 
-interface EmailCaptureProps {
+export interface LeadContext {
+  address?: string;
   city?: string;
+  state?: string;
+  zip?: string;
+  bedrooms?: number;
+  currentRent?: number;
+  proposedRent?: number;
+  increasePct?: number;
+  marketTrendPct?: number;
+  fairCounterOffer?: number;
+  compsPosition?: string;
+  letterGenerated?: boolean;
 }
 
-const EmailCapture = ({ city }: EmailCaptureProps) => {
+interface EmailCaptureProps {
+  city?: string;
+  leadContext?: LeadContext;
+}
+
+const EmailCapture = ({ city, leadContext }: EmailCaptureProps) => {
   const [email, setEmail] = useState('');
   const [leaseMonth, setLeaseMonth] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
+
+    // Parse lease month/year
+    let leaseExpirationMonth: string | null = null;
+    let leaseExpirationYear: number | null = null;
+    if (leaseMonth) {
+      const parts = leaseMonth.split(' ');
+      leaseExpirationMonth = parts[0] || null;
+      leaseExpirationYear = parts[1] ? parseInt(parts[1], 10) : null;
+    }
+
+    // Store lead in database
+    try {
+      await supabase.from('leads').insert({
+        email,
+        address: leadContext?.address || null,
+        city: leadContext?.city || null,
+        state: leadContext?.state || null,
+        zip: leadContext?.zip || null,
+        bedrooms: leadContext?.bedrooms ?? null,
+        current_rent: leadContext?.currentRent ?? null,
+        proposed_rent: leadContext?.proposedRent ?? null,
+        increase_pct: leadContext?.increasePct ?? null,
+        market_trend_pct: leadContext?.marketTrendPct ?? null,
+        fair_counter_offer: leadContext?.fairCounterOffer ?? null,
+        comps_position: leadContext?.compsPosition || null,
+        letter_generated: leadContext?.letterGenerated ?? false,
+        lease_expiration_month: leaseExpirationMonth,
+        lease_expiration_year: leaseExpirationYear,
+      } as any);
+    } catch {
+      // Don't block UX on storage failure
+    }
+
     setSubmitted(true);
     toast.success("You're on the list.");
   };
@@ -60,7 +111,7 @@ const EmailCapture = ({ city }: EmailCaptureProps) => {
       <p className="text-sm text-muted-foreground mb-5">
         We'll send updated market data for {city || 'your area'} 60 days before your renewal.
       </p>
-      <form onSubmit={handleSubmit} className="flex gap-2 max-w-[440px] mx-auto mb-3">
+      <form onSubmit={handleSubmit} className="flex gap-2 max-w-[440px] mx-auto mb-2">
         <input
           type="email"
           placeholder="you@email.com"
@@ -73,6 +124,10 @@ const EmailCapture = ({ city }: EmailCaptureProps) => {
           Remind me
         </button>
       </form>
+      <p className="text-[12px] text-muted-foreground/70 text-center mb-4 max-w-[440px] mx-auto">
+        We'll only email you about your lease. See our{' '}
+        <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
+      </p>
       <select
         value={leaseMonth}
         onChange={(e) => setLeaseMonth(e.target.value)}

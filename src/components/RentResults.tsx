@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { RentFormData } from './RentForm';
 import { RentLookupResult, bedroomLabels, calculateResults } from '@/data/rentData';
 import ShareSection from './ShareSection';
-import EmailCapture from './EmailCapture';
+import EmailCapture, { LeadContext } from './EmailCapture';
 import CompLinks from './CompLinks';
 import ShouldYouMove from './ShouldYouMove';
 import NegotiationLetter from './NegotiationLetter';
@@ -337,7 +337,20 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
       {/* ━━━ 8. EMAIL ━━━ */}
       <motion.div {...fade(0.24)} className="py-12 text-center">
-        <EmailCapture city={city} />
+        <EmailCapture city={city} leadContext={{
+          address: formData.fullAddress,
+          city: rentData.city,
+          state: rentData.state,
+          zip: rentData.zip,
+          bedrooms: formData.bedrooms === 'studio' ? 0 : formData.bedrooms === 'oneBr' ? 1 : formData.bedrooms === 'twoBr' ? 2 : formData.bedrooms === 'threeBr' ? 3 : 4,
+          currentRent: formData.currentRent,
+          proposedRent: newRent,
+          increasePct: increasePct,
+          marketTrendPct: marketYoy,
+          fairCounterOffer: calc?.counterHigh ?? undefined,
+          compsPosition: medianCompRent ? (newRent > medianCompRent ? 'above' : 'below') : undefined,
+          letterGenerated: !!(hasIncrease && isAboveMarket && calc),
+        }} />
       </motion.div>
 
       {/* ━━━ 9. SHARE ━━━ */}
