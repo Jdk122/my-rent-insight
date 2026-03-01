@@ -17,7 +17,7 @@ const Privacy = () => (
         <section>
           <h2 className="text-lg font-semibold text-foreground mb-2">What we collect</h2>
           <p>
-            When you sign up for a lease renewal reminder, we store your email address, lease expiration date,
+            When you use RenewalReply, we store your email address, lease expiration date,
             and the property details you entered (address, city, state, zip, bedrooms, and rent amounts).
             We also save the market context from your session so we can send you a useful, personalized report.
           </p>
@@ -26,8 +26,8 @@ const Privacy = () => (
         <section>
           <h2 className="text-lg font-semibold text-foreground mb-2">How we use it</h2>
           <p>
-            We use your information to send you a rent market update roughly 60&nbsp;days before your lease
-            renews. We may also send occasional housing-related tips that are relevant to your area.
+            We use your information to send you lease renewal reminders and your negotiation letter.
+            We may occasionally send relevant housing-related information and offers from partners.
             That's it — no spam, no marketing blasts.
           </p>
         </section>
@@ -44,14 +44,21 @@ const Privacy = () => (
           <h2 className="text-lg font-semibold text-foreground mb-2">Unsubscribe anytime</h2>
           <p>
             Every email we send includes an unsubscribe link. One click and you're off the list —
-            no hoops, no guilt trips.
+            no hoops, no guilt trips. To delete your data entirely, email{' '}
+            <a href="mailto:privacy@renewalreply.com" className="text-primary hover:underline">
+              privacy@renewalreply.com
+            </a>.
           </p>
         </section>
 
         <section>
           <h2 className="text-lg font-semibold text-foreground mb-2">Questions?</h2>
           <p>
-            If you have any questions about how we handle your data, reach out and we'll get back to you.
+            If you have any questions about how we handle your data, reach out at{' '}
+            <a href="mailto:privacy@renewalreply.com" className="text-primary hover:underline">
+              privacy@renewalreply.com
+            </a>{' '}
+            and we'll get back to you.
           </p>
         </section>
       </div>

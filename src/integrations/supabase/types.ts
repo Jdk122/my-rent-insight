@@ -14,23 +14,23 @@ export type Database = {
   }
   public: {
     Tables: {
-      leads: {
+      analyses: {
         Row: {
           address: string | null
           bedrooms: number | null
           city: string | null
+          comps_count: number | null
           comps_position: string | null
           created_at: string
           current_rent: number | null
-          email: string
-          fair_counter_offer: number | null
+          fair_counter_offer: string | null
           id: string
           increase_pct: number | null
-          lease_expiration_month: string | null
-          lease_expiration_year: number | null
           letter_generated: boolean | null
           market_trend_pct: number | null
+          markup_multiplier: number | null
           proposed_rent: number | null
+          sale_data_found: boolean | null
           state: string | null
           zip: string | null
         }
@@ -38,18 +38,18 @@ export type Database = {
           address?: string | null
           bedrooms?: number | null
           city?: string | null
+          comps_count?: number | null
           comps_position?: string | null
           created_at?: string
           current_rent?: number | null
-          email: string
-          fair_counter_offer?: number | null
+          fair_counter_offer?: string | null
           id?: string
           increase_pct?: number | null
-          lease_expiration_month?: string | null
-          lease_expiration_year?: number | null
           letter_generated?: boolean | null
           market_trend_pct?: number | null
+          markup_multiplier?: number | null
           proposed_rent?: number | null
+          sale_data_found?: boolean | null
           state?: string | null
           zip?: string | null
         }
@@ -57,22 +57,102 @@ export type Database = {
           address?: string | null
           bedrooms?: number | null
           city?: string | null
+          comps_count?: number | null
           comps_position?: string | null
           created_at?: string
           current_rent?: number | null
-          email?: string
-          fair_counter_offer?: number | null
+          fair_counter_offer?: string | null
           id?: string
           increase_pct?: number | null
-          lease_expiration_month?: string | null
-          lease_expiration_year?: number | null
           letter_generated?: boolean | null
           market_trend_pct?: number | null
+          markup_multiplier?: number | null
           proposed_rent?: number | null
+          sale_data_found?: boolean | null
           state?: string | null
           zip?: string | null
         }
         Relationships: []
+      }
+      leads: {
+        Row: {
+          address: string | null
+          analysis_id: string | null
+          bedrooms: number | null
+          capture_source: string | null
+          city: string | null
+          comps_position: string | null
+          created_at: string
+          current_rent: number | null
+          email: string
+          fair_counter_offer: string | null
+          id: string
+          increase_pct: number | null
+          lease_expiration_month: number | null
+          lease_expiration_year: number | null
+          letter_generated: boolean | null
+          market_trend_pct: number | null
+          proposed_rent: number | null
+          reminder_sent_at: string | null
+          state: string | null
+          unsubscribed: boolean | null
+          zip: string | null
+        }
+        Insert: {
+          address?: string | null
+          analysis_id?: string | null
+          bedrooms?: number | null
+          capture_source?: string | null
+          city?: string | null
+          comps_position?: string | null
+          created_at?: string
+          current_rent?: number | null
+          email: string
+          fair_counter_offer?: string | null
+          id?: string
+          increase_pct?: number | null
+          lease_expiration_month?: number | null
+          lease_expiration_year?: number | null
+          letter_generated?: boolean | null
+          market_trend_pct?: number | null
+          proposed_rent?: number | null
+          reminder_sent_at?: string | null
+          state?: string | null
+          unsubscribed?: boolean | null
+          zip?: string | null
+        }
+        Update: {
+          address?: string | null
+          analysis_id?: string | null
+          bedrooms?: number | null
+          capture_source?: string | null
+          city?: string | null
+          comps_position?: string | null
+          created_at?: string
+          current_rent?: number | null
+          email?: string
+          fair_counter_offer?: string | null
+          id?: string
+          increase_pct?: number | null
+          lease_expiration_month?: number | null
+          lease_expiration_year?: number | null
+          letter_generated?: boolean | null
+          market_trend_pct?: number | null
+          proposed_rent?: number | null
+          reminder_sent_at?: string | null
+          state?: string | null
+          unsubscribed?: boolean | null
+          zip?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_analysis_id_fkey"
+            columns: ["analysis_id"]
+            isOneToOne: false
+            referencedRelation: "analyses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       lookup_rate_limits: {
         Row: {

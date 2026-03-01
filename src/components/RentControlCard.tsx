@@ -1,88 +1,109 @@
-import { getRentControlForZip, getApplicableCap, getNoticeRequirement, RentControlResult } from '@/data/rentControlData';
-import { ExternalLink, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
+import { getRentControlByStateCity, getApplicableCap, getNoticeRequirement, RentControlResult } from '@/data/rentControlData';
 
 interface RentControlCardProps {
+  state: string;
+  city: string;
   zip: string;
   increasePct: number;
 }
 
-const RentControlCard = ({ zip, increasePct }: RentControlCardProps) => {
-  const result: RentControlResult = getRentControlForZip(zip);
+const RentControlCard = ({ state, city, zip, increasePct }: RentControlCardProps) => {
+  const result: RentControlResult = getRentControlByStateCity(state, city);
   const cap = getApplicableCap(result);
   const notice = getNoticeRequirement(result);
 
-  if (!result.stateLaw && !result.cityLaw) return null;
-
   const hasCap = !!cap;
+  const exceedsCap = hasCap && cap?.maxIncreasePct && increasePct > cap.maxIncreasePct;
 
   return (
     <div>
-      <h2 className="font-display text-xl text-foreground mb-1">Legal Context</h2>
-      <p className="text-sm text-muted-foreground mb-4">Rent laws that apply to {zip}</p>
+      <h2 className="section-title">📋 Know Your Rights</h2>
 
-      <div className="divide-y divide-border">
-        {hasCap && cap && (
-          <>
-            <div className="data-row">
-              <span className="data-row-label">Rent control</span>
-              <span className="data-row-value text-verdict-good flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5" />
-                {cap.jurisdiction}
-              </span>
-            </div>
-            <div className="data-row">
-              <span className="data-row-label">Max increase</span>
-              <span className="data-row-value text-[12px]">{cap.maxIncreaseFormula}</span>
-            </div>
-            <div className="data-row items-start">
-              <span className="data-row-label">Applies to</span>
-              <span className="text-foreground text-right text-xs max-w-[55%] leading-relaxed">
-                {cap.applicability}
-              </span>
-            </div>
-          </>
-        )}
-
-        {!hasCap && (
-          <div className="data-row">
-            <span className="data-row-label">Rent control</span>
-            <span className="font-mono text-[13px] text-muted-foreground">No statutory cap</span>
+      {hasCap && cap ? (
+        <div className="mt-3">
+          <div className="px-4 py-4 rounded-lg border border-verdict-good/30 bg-verdict-good/5">
+            <p className="text-sm text-foreground leading-relaxed">
+              <strong>{cap.jurisdiction}</strong> limits rent increases to <strong>{cap.maxIncreaseFormula}</strong> per year for qualifying units.
+              {exceedsCap && (
+                <span className="text-verdict-overpaying font-medium">
+                  {' '}Your proposed increase of {increasePct}% may exceed this limit.
+                </span>
+              )}
+            </p>
+            <p className="text-xs text-muted-foreground mt-2">
+              Applies to: {cap.applicability}
+            </p>
+            {cap.exemptions && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Exemptions: {cap.exemptions}
+              </p>
+            )}
+            {notice && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Required notice: {notice.days} days ({notice.source})
+              </p>
+            )}
           </div>
-        )}
-
-        {notice && (
-          <div className="data-row">
-            <span className="data-row-label">Required notice</span>
-            <span className="data-row-value">{notice.days} days</span>
+          {cap.ordinanceUrl && (
+            <a
+              href={cap.ordinanceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline mt-3"
+            >
+              Read the full rule → <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
+        </div>
+      ) : result.stateLaw ? (
+        <div className="mt-3">
+          <div className="px-4 py-4 rounded-lg border border-border bg-muted/30">
+            <p className="text-sm text-foreground leading-relaxed">
+              <strong>{result.stateLaw.jurisdiction}</strong> does not cap rent increases statewide, but some cities do.
+              Check your local tenant rights.
+            </p>
+            {notice && (
+              <p className="text-xs text-muted-foreground mt-2">
+                Required notice for increases: {notice.days} days
+              </p>
+            )}
+            {result.stateLaw.notes && (
+              <p className="text-xs text-muted-foreground mt-1">{result.stateLaw.notes}</p>
+            )}
           </div>
-        )}
-      </div>
-
-      {hasCap && cap?.maxIncreasePct && increasePct > cap.maxIncreasePct && (
-        <div className="callout callout-warn mt-4">
-          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" style={{ color: 'hsl(var(--verdict-overpaying))' }} />
-          <p className="text-xs text-foreground leading-relaxed">
-            Your increase of {increasePct}% may exceed the legal maximum.
-          </p>
+          {result.stateLaw.ordinanceUrl && (
+            <a
+              href={result.stateLaw.ordinanceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline mt-3"
+            >
+              View state tenant rights → <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
+        </div>
+      ) : (
+        <div className="mt-3">
+          <div className="px-4 py-4 rounded-lg border border-border bg-muted/30">
+            <p className="text-sm text-foreground leading-relaxed">
+              We don't have legal data for your area yet. Check your local tenant rights office.
+            </p>
+          </div>
+          <a
+            href="https://www.nolo.com/legal-encyclopedia/renters-rights"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline mt-3"
+          >
+            Browse tenant rights by state → <ExternalLink className="w-3 h-3" />
+          </a>
         </div>
       )}
 
-      {(result.cityLaw?.notes || result.stateLaw?.notes) && (
-        <p className="text-[11px] text-muted-foreground leading-relaxed mt-3">
-          {result.cityLaw?.notes || result.stateLaw?.notes}
-        </p>
-      )}
-
-      {cap?.ordinanceUrl && (
-        <a
-          href={cap.ordinanceUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-[11px] font-mono mt-3 text-primary hover:underline"
-        >
-          View ordinance <ExternalLink className="w-2.5 h-2.5" />
-        </a>
-      )}
+      <p className="text-[11px] text-muted-foreground mt-4">
+        This is general information, not legal advice. Laws may have exemptions based on building age, unit count, or lease type.
+      </p>
     </div>
   );
 };

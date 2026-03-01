@@ -206,6 +206,30 @@ const cityLaws: Record<string, RentControlLaw> = {
     ordinanceUrl: 'https://www.hobokennj.gov/resources/rent-control',
     notes: 'Hoboken Rent Leveling & Stabilization Board oversees disputes.',
   },
+  'Jersey City': {
+    jurisdiction: 'Jersey City',
+    level: 'city',
+    hasRentControl: true,
+    maxIncreasePct: null,
+    maxIncreaseFormula: 'CPI-based (typically 2–4%)',
+    noticePeriodDays: 30,
+    applicability: 'Most multi-family rental units',
+    exemptions: 'New construction (30-year tax abatement exemption), owner-occupied 2-3 unit buildings',
+    ordinanceUrl: 'https://www.jerseycitynj.gov/community/rentcontrol',
+    notes: 'Jersey City Rent Leveling Board oversees disputes.',
+  },
+  'Washington': {
+    jurisdiction: 'Washington, DC',
+    level: 'city',
+    hasRentControl: true,
+    maxIncreasePct: null,
+    maxIncreaseFormula: 'CPI + 2% (max 10%)',
+    noticePeriodDays: 30,
+    applicability: 'Rental units built before 1975',
+    exemptions: 'Units built after 1975, federally or DC-subsidized units',
+    ordinanceUrl: 'https://ota.dc.gov/page/rent-stabilization-program',
+    notes: 'Elderly and disabled tenants have a lower cap (CPI only). Registration with OTA required.',
+  },
 };
 
 // Map zip codes to city law jurisdictions
@@ -244,6 +268,14 @@ export function getRentControlForZip(zip: string): RentControlResult {
   return {
     stateLaw: stateAbbr ? stateLaws[stateAbbr] || null : null,
     cityLaw: cityName ? cityLaws[cityName] || null : null,
+  };
+}
+
+/** Look up rent control by state abbreviation and city name (more reliable than zip-only lookup) */
+export function getRentControlByStateCity(stateAbbr: string, cityName: string): RentControlResult {
+  return {
+    stateLaw: stateLaws[stateAbbr] || null,
+    cityLaw: cityLaws[cityName] || null,
   };
 }
 

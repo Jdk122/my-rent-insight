@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Check } from 'lucide-react';
@@ -11,17 +11,11 @@ const months = [
 ];
 
 const currentYear = new Date().getFullYear();
-const years = [currentYear, currentYear + 1, currentYear + 2];
-
-const leaseOptions: { label: string; value: string }[] = [];
-for (const year of years) {
-  for (const month of months) {
-    leaseOptions.push({ label: `${month} ${year}`, value: `${month} ${year}` });
-  }
-}
+const years = Array.from({ length: 6 }, (_, i) => currentYear + i);
 
 export interface LeadContext {
-  address?: string;
+  analysisId?: string | null;
+  address?: string | null;
   city?: string;
   state?: string;
   zip?: string;
@@ -30,38 +24,41 @@ export interface LeadContext {
   proposedRent?: number;
   increasePct?: number;
   marketTrendPct?: number;
-  fairCounterOffer?: number;
+  fairCounterOffer?: string;
   compsPosition?: string;
   letterGenerated?: boolean;
 }
 
 interface EmailCaptureProps {
   city?: string;
+  captureSource?: string;
+  prefilledEmail?: string;
+  onEmailCaptured?: (email: string) => void;
   leadContext?: LeadContext;
 }
 
-const EmailCapture = ({ city, leadContext }: EmailCaptureProps) => {
-  const [email, setEmail] = useState('');
+const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, onEmailCaptured, leadContext }: EmailCaptureProps) => {
+  const [email, setEmail] = useState(prefilledEmail || '');
   const [leaseMonth, setLeaseMonth] = useState('');
+  const [leaseYear, setLeaseYear] = useState('');
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (prefilledEmail && !email) setEmail(prefilledEmail);
+  }, [prefilledEmail]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
 
-    // Parse lease month/year
-    let leaseExpirationMonth: string | null = null;
-    let leaseExpirationYear: number | null = null;
-    if (leaseMonth) {
-      const parts = leaseMonth.split(' ');
-      leaseExpirationMonth = parts[0] || null;
-      leaseExpirationYear = parts[1] ? parseInt(parts[1], 10) : null;
-    }
+    const leaseMonthNum = leaseMonth ? months.indexOf(leaseMonth) + 1 : null;
+    const leaseYearNum = leaseYear ? parseInt(leaseYear, 10) : null;
 
-    // Store lead in database
     try {
-      await supabase.from('leads').insert({
+      await supabase.from('leads').upsert({
         email,
+        analysis_id: leadContext?.analysisId || null,
+        capture_source: captureSource,
         address: leadContext?.address || null,
         city: leadContext?.city || null,
         state: leadContext?.state || null,
@@ -71,16 +68,17 @@ const EmailCapture = ({ city, leadContext }: EmailCaptureProps) => {
         proposed_rent: leadContext?.proposedRent ?? null,
         increase_pct: leadContext?.increasePct ?? null,
         market_trend_pct: leadContext?.marketTrendPct ?? null,
-        fair_counter_offer: leadContext?.fairCounterOffer ?? null,
+        fair_counter_offer: leadContext?.fairCounterOffer || null,
         comps_position: leadContext?.compsPosition || null,
         letter_generated: leadContext?.letterGenerated ?? false,
-        lease_expiration_month: leaseExpirationMonth,
-        lease_expiration_year: leaseExpirationYear,
-      } as any);
+        lease_expiration_month: leaseMonthNum,
+        lease_expiration_year: leaseYearNum,
+      } as any, { onConflict: 'email' });
     } catch {
       // Don't block UX on storage failure
     }
 
+    onEmailCaptured?.(email);
     setSubmitted(true);
     toast.success("You're on the list.");
   };
@@ -97,7 +95,7 @@ const EmailCapture = ({ city, leadContext }: EmailCaptureProps) => {
         </div>
         <h3 className="font-display text-lg font-semibold text-foreground">You're all set</h3>
         <p className="text-xs text-muted-foreground mt-1.5 max-w-xs mx-auto">
-          We'll send you updated market data{leaseMonth ? ` 60 days before your lease renews in ${leaseMonth}` : ' before your lease renews'}.
+          We'll send you updated market data{leaseMonth && leaseYear ? ` 60 days before your lease renews in ${leaseMonth} ${leaseYear}` : ' before your lease renews'}.
         </p>
       </motion.div>
     );
@@ -128,16 +126,28 @@ const EmailCapture = ({ city, leadContext }: EmailCaptureProps) => {
         We'll only email you about your lease. See our{' '}
         <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
       </p>
-      <select
-        value={leaseMonth}
-        onChange={(e) => setLeaseMonth(e.target.value)}
-        className="w-full max-w-[440px] mx-auto block px-4 py-3 text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
-      >
-        <option disabled value="">Lease expiration month & year</option>
-        {leaseOptions.map((opt) => (
-          <option key={opt.value} value={opt.value}>{opt.label}</option>
-        ))}
-      </select>
+      <div className="flex gap-2 max-w-[440px] mx-auto">
+        <select
+          value={leaseMonth}
+          onChange={(e) => setLeaseMonth(e.target.value)}
+          className="flex-1 px-4 py-3 text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
+        >
+          <option disabled value="">Month</option>
+          {months.map((m) => (
+            <option key={m} value={m}>{m}</option>
+          ))}
+        </select>
+        <select
+          value={leaseYear}
+          onChange={(e) => setLeaseYear(e.target.value)}
+          className="w-[120px] px-4 py-3 text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
+        >
+          <option disabled value="">Year</option>
+          {years.map((y) => (
+            <option key={y} value={String(y)}>{y}</option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 };
