@@ -1,16 +1,18 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { RentFormData } from './RentForm';
 import { RentLookupResult, bedroomLabels, calculateResults } from '@/data/rentData';
 import ShareSection from './ShareSection';
-import EmailCapture, { LeadContext } from './EmailCapture';
+import EmailCapture from './EmailCapture';
 import CompLinks from './CompLinks';
 import ShouldYouMove from './ShouldYouMove';
 import NegotiationLetter from './NegotiationLetter';
+import RentControlCard from './RentControlCard';
 import { PropertyLookupResult, PropertyLookupError } from '@/hooks/usePropertyLookup';
 import { calculateLandlordCosts, generateInsights, toLegacyCostEstimate, LandlordCostEstimate } from '@/data/landlordCosts';
 import LandlordCostSection from './LandlordCostSection';
 import { useRentcast } from '@/hooks/useRentcast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface RentResultsProps {
   formData: RentFormData;
@@ -31,6 +33,10 @@ const fade = (delay: number) => ({
 });
 
 const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop }: RentResultsProps) => {
+  const [capturedEmail, setCapturedEmail] = useState('');
+  const [analysisId, setAnalysisId] = useState<string | null>(null);
+  const analysisLogged = useRef(false);
+
   const increaseAmount = formData.rentIncrease
     ? formData.increaseIsPercent
       ? Math.round(formData.currentRent * (formData.rentIncrease / 100))
@@ -92,14 +98,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         return rents.length % 2 === 0 ? Math.round((rents[mid - 1] + rents[mid]) / 2) : rents[mid];
       }
     }
-    // Fall back to rentcast estimate or FMR
     if (rentcast.data?.rentEstimate) return rentcast.data.rentEstimate;
     return null;
   }, [rentcast.data]);
 
   const hasEnoughComps = rentcast.data?.comparables && rentcast.data.comparables.length >= 3;
 
-  // FIX 5: High-rent verdict nuance
   const isHighRent = formData.currentRent > rentData.fmr * 1.5;
 
   const verdictColor = isFair ? 'text-verdict-fair' : isAboveMarket ? 'text-verdict-overpaying' : 'text-verdict-good';
@@ -111,11 +115,58 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     : 'Below Market';
 
   const city = rentData.city;
-  // FIX 3: Avoid double-s in "bedroomss"
   const brLabel = bedroomLabels[formData.bedrooms].toLowerCase();
 
-  const breakEvenMonths = calc?.breakEvenMonths ?? Infinity;
+  // ━━━ Anonymous analysis logging ━━━
+  useEffect(() => {
+    if (analysisLogged.current) return;
+    analysisLogged.current = true;
 
+    const compsPosition = medianCompRent
+      ? (newRent > medianCompRent ? 'above' : 'below')
+      : hasEnoughComps === false ? 'insufficient' : null;
+
+    const counterStr = calc
+      ? `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}`
+      : null;
+
+    supabase.from('analyses').insert({
+      address: formData.fullAddress || null,
+      city: rentData.city,
+      state: rentData.state,
+      zip: rentData.zip,
+      bedrooms: formData.bedrooms === 'studio' ? 0 : formData.bedrooms === 'oneBr' ? 1 : formData.bedrooms === 'twoBr' ? 2 : formData.bedrooms === 'threeBr' ? 3 : 4,
+      current_rent: formData.currentRent,
+      proposed_rent: newRent,
+      increase_pct: increasePct,
+      market_trend_pct: marketYoy,
+      fair_counter_offer: counterStr,
+      comps_count: rentcast.data?.comparables?.length ?? 0,
+      comps_position: compsPosition,
+      sale_data_found: !!propertyData?.lastSalePrice,
+      markup_multiplier: landlordInsights?.costIncreaseMarkup ?? null,
+      letter_generated: false,
+    } as any).select('id').single().then(({ data }) => {
+      if (data?.id) setAnalysisId(data.id);
+    });
+  }, []); // intentionally run once on mount
+
+  // Lead context for email captures
+  const leadContext = useMemo(() => ({
+    analysisId,
+    address: formData.fullAddress,
+    city: rentData.city,
+    state: rentData.state,
+    zip: rentData.zip,
+    bedrooms: formData.bedrooms === 'studio' ? 0 : formData.bedrooms === 'oneBr' ? 1 : formData.bedrooms === 'twoBr' ? 2 : formData.bedrooms === 'threeBr' ? 3 : 4,
+    currentRent: formData.currentRent,
+    proposedRent: newRent,
+    increasePct,
+    marketTrendPct: marketYoy,
+    fairCounterOffer: calc ? `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}` : undefined,
+    compsPosition: medianCompRent ? (newRent > medianCompRent ? 'above' : 'below') : undefined,
+    letterGenerated: !!(hasIncrease && isAboveMarket && calc),
+  }), [analysisId, formData, rentData, newRent, increasePct, marketYoy, calc, medianCompRent, hasIncrease, isAboveMarket]);
 
   let rowIdx = 0;
 
@@ -137,7 +188,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               )}
             </h1>
 
-            {/* Key comparison — the most important visual on the page */}
             <div className="flex justify-center gap-8 mt-8 mb-2">
               <div className="text-center">
                 <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">{city} rents</p>
@@ -207,7 +257,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </p>
             </div>
           </div>
-          {/* CTA to skip to letter */}
           {isAboveMarket && calc && (
             <div className="flex justify-center mt-5">
               <button
@@ -282,7 +331,17 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         </motion.div>
       )}
 
-      {/* ━━━ 5. SHOULD YOU MOVE? / YOUR RENT IS COMPETITIVE ━━━ */}
+      {/* ━━━ 5. KNOW YOUR RIGHTS ━━━ */}
+      <motion.div {...fade(0.13)} className="py-12 border-b border-border">
+        <RentControlCard
+          state={rentData.state}
+          city={rentData.city}
+          zip={rentData.zip}
+          increasePct={increasePct}
+        />
+      </motion.div>
+
+      {/* ━━━ 6. COMPS / SHOULD YOU MOVE? ━━━ */}
       {hasIncrease && medianCompRent && hasEnoughComps && (
         <motion.div {...fade(0.15)} className="py-12 border-b border-border">
           <ShouldYouMove
@@ -301,15 +360,24 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           />
         </motion.div>
       )}
-      {/* Fallback: no comps but still show browse links */}
       {!hasEnoughComps && !rentcast.loading && (
         <motion.div {...fade(0.15)} className="py-12 border-b border-border">
           <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} />
         </motion.div>
       )}
 
+      {/* ━━━ 7. LEASE REMINDER ━━━ */}
+      <motion.div {...fade(0.18)} className="py-12 border-b border-border text-center">
+        <EmailCapture
+          city={city}
+          captureSource="lease_reminder"
+          prefilledEmail={capturedEmail}
+          onEmailCaptured={setCapturedEmail}
+          leadContext={leadContext}
+        />
+      </motion.div>
 
-      {/* ━━━ 6. NEGOTIATION LETTER ━━━ */}
+      {/* ━━━ 8. NEGOTIATION LETTER ━━━ */}
       {hasIncrease && isAboveMarket && calc && (
         <motion.div id="negotiation-letter" {...fade(0.21)} className="py-12 border-b border-border">
           <NegotiationLetter
@@ -324,37 +392,21 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             city={rentData.city}
             state={rentData.state}
             bedrooms={formData.bedrooms}
-            landlordCosts={landlordCosts}
-            landlordInsights={landlordInsights}
             increaseAmount={increaseAmount}
             counterLow={calc.counterLow}
             counterHigh={calc.counterHigh}
             counterLowPercent={calc.counterLowPercent}
             counterHighPercent={calc.counterHighPercent}
+            analysisId={analysisId}
+            prefilledEmail={capturedEmail}
+            onEmailCaptured={setCapturedEmail}
+            leadContext={leadContext}
           />
         </motion.div>
       )}
 
-      {/* ━━━ 8. EMAIL ━━━ */}
-      <motion.div {...fade(0.24)} className="py-12 text-center">
-        <EmailCapture city={city} leadContext={{
-          address: formData.fullAddress,
-          city: rentData.city,
-          state: rentData.state,
-          zip: rentData.zip,
-          bedrooms: formData.bedrooms === 'studio' ? 0 : formData.bedrooms === 'oneBr' ? 1 : formData.bedrooms === 'twoBr' ? 2 : formData.bedrooms === 'threeBr' ? 3 : 4,
-          currentRent: formData.currentRent,
-          proposedRent: newRent,
-          increasePct: increasePct,
-          marketTrendPct: marketYoy,
-          fairCounterOffer: calc?.counterHigh ?? undefined,
-          compsPosition: medianCompRent ? (newRent > medianCompRent ? 'above' : 'below') : undefined,
-          letterGenerated: !!(hasIncrease && isAboveMarket && calc),
-        }} />
-      </motion.div>
-
       {/* ━━━ 9. SHARE ━━━ */}
-      <motion.div {...fade(0.27)} className="pb-12 text-center">
+      <motion.div {...fade(0.27)} className="py-12 text-center">
         <ShareSection
           increasePct={increasePct}
           marketPct={marketYoy}

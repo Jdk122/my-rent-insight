@@ -1,7 +1,10 @@
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
+import { Check, Lock } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
-import { LandlordCostEstimate, LandlordInsights } from '@/data/landlordCosts';
+import { supabase } from '@/integrations/supabase/client';
+import { LeadContext } from './EmailCapture';
 
 interface NegotiationLetterProps {
   currentRent: number;
@@ -15,13 +18,15 @@ interface NegotiationLetterProps {
   city: string;
   state: string;
   bedrooms: BedroomType;
-  landlordCosts?: LandlordCostEstimate | null;
-  landlordInsights?: LandlordInsights | null;
   increaseAmount?: number;
   counterLow: number;
   counterHigh: number;
   counterLowPercent: number;
   counterHighPercent: number;
+  analysisId?: string | null;
+  prefilledEmail?: string;
+  onEmailCaptured?: (email: string) => void;
+  leadContext?: LeadContext;
 }
 
 type Tone = 'friendly' | 'firm';
@@ -30,16 +35,16 @@ const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 
 
 const NegotiationLetter = ({
   currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, medianIncome,
-  zip, city, state, bedrooms, landlordCosts, landlordInsights, increaseAmount,
+  zip, city, state, bedrooms, increaseAmount,
   counterLow, counterHigh, counterLowPercent, counterHighPercent,
+  analysisId, prefilledEmail, onEmailCaptured, leadContext,
 }: NegotiationLetterProps) => {
   const [tone, setTone] = useState<Tone>('friendly');
+  const [unlocked, setUnlocked] = useState(!!prefilledEmail);
+  const [gateEmail, setGateEmail] = useState(prefilledEmail || '');
 
   const brLabel = bedroomLabels[bedrooms];
   const increaseRatio = marketYoy > 0 ? Math.round((increasePct / marketYoy) * 10) / 10 : 0;
-
-  const friendlyCostLine = '';
-  const firmCostBullets = '';
 
   const letterHtml = useMemo(() => {
     if (tone === 'friendly') {
@@ -48,7 +53,6 @@ const NegotiationLetter = ({
         `Thanks for letting me know about the lease renewal. I'd like to stay and I appreciate the notice.`,
         `Before I sign, I looked into what rents have done in ${city} this year. The market-wide increase for a ${brLabel.toLowerCase()} was about ${marketYoy}%, and my proposed increase of ${increasePct}% is ${increaseRatio >= 1.8 ? 'nearly double that' : increaseRatio >= 1.4 ? 'well above that' : 'noticeably higher'}.`,
         `For context:\n• ${city} median rent (${brLabel}): $${fmt(censusMedian || fmr)}\n• Area-wide increase this year: ${marketYoy}%\n• My proposed increase: ${increasePct}%`,
-        friendlyCostLine || null,
         `I'd love to find a number that works for both of us — something closer to ${counterLowPercent}–${counterHighPercent}%, which would put the rent around $${fmt(counterLow)}–$${fmt(counterHigh)}. Happy to discuss.`,
         `Best,\n[Your name]`,
       ].filter(Boolean);
@@ -58,12 +62,12 @@ const NegotiationLetter = ({
       `Dear [Landlord name],`,
       `I am writing regarding the proposed lease renewal at $${fmt(newRent)}/month — a ${increasePct}% increase from my current rent of $${fmt(currentRent)}/month.`,
       `I have reviewed current market data for ${city}, ${state} (${zip}):`,
-      `• Typical ${brLabel.toLowerCase()} rent in ${city}: $${fmt(fmr)}\n${censusMedian ? `• ${city} median rent: $${fmt(censusMedian)}\n` : ''}• Rents in ${city} rose ${marketYoy}% this year\n• Proposed increase: ${increasePct}%${firmCostBullets}`,
+      `• Typical ${brLabel.toLowerCase()} rent in ${city}: $${fmt(fmr)}\n${censusMedian ? `• ${city} median rent: $${fmt(censusMedian)}\n` : ''}• Rents in ${city} rose ${marketYoy}% this year\n• Proposed increase: ${increasePct}%`,
       `The proposed increase of ${increasePct}% is ${increaseRatio >= 1.8 ? 'nearly double' : increaseRatio >= 1.4 ? 'well above' : 'noticeably above'} the rate at which rents are rising in ${city}.`,
       `I am prepared to renew at ${counterLowPercent}% ($${fmt(counterLow)}/month), in line with ${city}'s market trend.`,
       `Sincerely,\n[Your name]`,
     ].filter(Boolean);
-  }, [tone, currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, zip, city, state, brLabel, counterLow, counterHigh, counterLowPercent, counterHighPercent, friendlyCostLine, firmCostBullets, increaseRatio]);
+  }, [tone, currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, zip, city, state, brLabel, counterLow, counterHigh, counterLowPercent, counterHighPercent, increaseRatio]);
 
   const letterText = letterHtml.join('\n\n');
 
@@ -81,6 +85,45 @@ const NegotiationLetter = ({
     a.click();
     URL.revokeObjectURL(url);
     toast.success('Downloaded');
+  };
+
+  const handleUnlock = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!gateEmail) return;
+
+    // Store lead
+    try {
+      await supabase.from('leads').upsert({
+        email: gateEmail,
+        analysis_id: leadContext?.analysisId || null,
+        capture_source: 'letter_gate',
+        address: leadContext?.address || null,
+        city: leadContext?.city || null,
+        state: leadContext?.state || null,
+        zip: leadContext?.zip || null,
+        bedrooms: leadContext?.bedrooms ?? null,
+        current_rent: leadContext?.currentRent ?? null,
+        proposed_rent: leadContext?.proposedRent ?? null,
+        increase_pct: leadContext?.increasePct ?? null,
+        market_trend_pct: leadContext?.marketTrendPct ?? null,
+        fair_counter_offer: leadContext?.fairCounterOffer || null,
+        comps_position: leadContext?.compsPosition || null,
+        letter_generated: true,
+      } as any, { onConflict: 'email' });
+    } catch {
+      // Don't block UX
+    }
+
+    // Update analysis record
+    if (analysisId) {
+      try {
+        await supabase.from('analyses').update({ letter_generated: true } as any).eq('id', analysisId);
+      } catch {}
+    }
+
+    onEmailCaptured?.(gateEmail);
+    setUnlocked(true);
+    toast.success('Letter unlocked!');
   };
 
   return (
@@ -101,10 +144,37 @@ const NegotiationLetter = ({
           ))}
         </div>
       </div>
-      <div className="flex gap-3 mt-5">
-        <button onClick={handleCopy} className="bg-primary text-primary-foreground px-7 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20">Copy letter</button>
-        <button onClick={handleDownload} className="border border-border px-7 py-3 rounded-lg text-sm font-medium text-foreground hover:border-foreground transition-colors">Download</button>
-      </div>
+
+      {/* Soft gate: email to unlock copy/download */}
+      {!unlocked ? (
+        <div className="mt-5">
+          <form onSubmit={handleUnlock} className="flex gap-2 max-w-[440px]">
+            <div className="relative flex-1">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <input
+                type="email"
+                placeholder="Enter your email to unlock copy & download"
+                value={gateEmail}
+                onChange={(e) => setGateEmail(e.target.value)}
+                required
+                className="w-full pl-9 pr-4 py-3 text-sm border border-border rounded-lg bg-card text-foreground outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
+              />
+            </div>
+            <button type="submit" className="bg-primary text-primary-foreground px-5 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap">
+              Unlock
+            </button>
+          </form>
+          <p className="text-[12px] text-muted-foreground/70 mt-2 max-w-[440px]">
+            We'll only email you about your lease. See our{' '}
+            <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
+          </p>
+        </div>
+      ) : (
+        <div className="flex gap-3 mt-5">
+          <button onClick={handleCopy} className="bg-primary text-primary-foreground px-7 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20">Copy letter</button>
+          <button onClick={handleDownload} className="border border-border px-7 py-3 rounded-lg text-sm font-medium text-foreground hover:border-foreground transition-colors">Download</button>
+        </div>
+      )}
     </div>
   );
 };
