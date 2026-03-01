@@ -222,19 +222,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 Your landlord is asking for {increasePct}%.
               </p>
 
-              {/* Markup multiplier (if sale data exists) */}
-              {showMarkupInVerdict && (
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3, duration: 0.5 }}
-                  className="text-base text-muted-foreground mt-4"
-                >
-                  That's a{' '}
-                  <span className="font-semibold text-destructive">{costMarkup}× markup</span>{' '}
-                  on their actual cost increase.
-                </motion.p>
-              )}
+
+
 
               {/* ── Stat dashboard strip ── */}
               <motion.div
