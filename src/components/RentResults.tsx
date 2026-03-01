@@ -246,7 +246,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 {[
                   { label: 'You pay now', value: `$${fmt(formData.currentRent)}`, color: 'text-foreground' },
                   { label: 'They want', value: `$${fmt(newRent)}`, color: 'text-destructive' },
-                  { label: `${city} trend`, value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%`, color: 'text-foreground' },
+                  { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%`, color: 'text-foreground' },
                   { label: 'Your increase', value: `${increasePct}%`, color: verdictColor },
                 ].map((stat) => (
                   <div
