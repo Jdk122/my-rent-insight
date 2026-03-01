@@ -104,7 +104,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
   return (
     <div>
       <h2 className="font-display text-xl font-semibold text-foreground mb-1.5" style={{ letterSpacing: '-0.01em' }}>
-        Get reminded before your lease is up
+        Get Reminded Before Your Lease Is Up
       </h2>
       <p className="text-sm text-muted-foreground mb-5">
         We'll send updated market data for {city || 'your area'} 60 days before your renewal.
