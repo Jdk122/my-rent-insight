@@ -268,18 +268,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </div>
               </motion.div>
 
-              {/* Overcharge callout */}
-              {isAboveMarket && calc && (
-                <div className="mt-8 px-6 py-4 rounded-xl text-center" style={{ backgroundColor: '#FDF0ED', border: '1px solid #F2C8BD' }}>
-                  <p className="text-sm text-muted-foreground mb-1">
-                    More than the market supports per year
-                  </p>
-                  <p className="font-display text-[28px] text-destructive tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-                    ${fmt((newRent - calc.counterHigh) * 12)}
-                  </p>
-                </div>
-              )}
-
               {/* CTA */}
               <button
                 onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
