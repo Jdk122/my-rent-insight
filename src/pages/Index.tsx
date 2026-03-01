@@ -101,7 +101,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col" ref={topRef}>
+    <div className="min-h-screen bg-background flex flex-col overflow-x-hidden" ref={topRef}>
       {/* Sticky Nav */}
       <nav
         className={`fixed top-0 left-0 right-0 z-[60] flex items-center justify-between px-6 py-4 transition-all duration-200 ${

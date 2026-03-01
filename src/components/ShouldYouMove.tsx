@@ -170,7 +170,7 @@ const ShouldYouMove = ({
 
           {/* Savings */}
           <div className="mt-6">
-            <div className="flex gap-8">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
                   Potential monthly savings

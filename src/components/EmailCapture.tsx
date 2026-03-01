@@ -109,7 +109,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
       <p className="text-sm text-muted-foreground mb-5">
         We'll send updated market data for {city || 'your area'} 60 days before your renewal.
       </p>
-      <form onSubmit={handleSubmit} className="flex gap-2 max-w-[440px] mx-auto mb-2">
+      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 max-w-[440px] mx-auto mb-2">
         <input
           type="email"
           placeholder="you@email.com"
