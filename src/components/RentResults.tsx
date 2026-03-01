@@ -240,11 +240,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 ].map((stat) => (
                   <div
                     key={stat.label}
-                    className="text-center rounded-lg border border-border/80 bg-card px-3 py-4"
+                    className="text-center rounded-lg border border-border/80 bg-card px-3 py-4 flex flex-col justify-between"
                     style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
                   >
                     <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">{stat.label}</p>
-                    <p className={`font-display text-[24px] md:text-[28px] tracking-tight ${stat.color}`} style={{ letterSpacing: '-0.02em' }}>
+                    <p className={`font-display text-[24px] md:text-[28px] tracking-tight tabular-nums ${stat.color}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
                       {stat.value}
                     </p>
                   </div>
