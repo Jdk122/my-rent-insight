@@ -99,7 +99,7 @@ const Index = () => {
               <h1 className="font-display text-[clamp(3rem,8vw,5rem)] text-foreground leading-[1.05] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
                 Is your rent increase <span className="text-primary">fair?</span>
               </h1>
-              <p className="mt-6 text-xl md:text-2xl text-foreground/60 max-w-md leading-relaxed font-medium">
+              <p className="mt-6 text-xl md:text-2xl text-foreground/60 max-w-[620px] leading-relaxed font-medium">
                 Find out instantly. Get a data-backed negotiation letter if it's not.
               </p>
               <div className="mt-10">
