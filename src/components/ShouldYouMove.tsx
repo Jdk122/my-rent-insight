@@ -196,11 +196,11 @@ const ShouldYouMove = ({
               <p className="text-xs font-semibold uppercase tracking-wider text-verdict-good mb-2">
                 Or negotiate your current rent first
               </p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-base font-medium text-foreground leading-relaxed">
                 If you negotiate to the fair counter-offer (
-                <span className="font-semibold text-verdict-good">${fmt(counterOffer)}/mo</span>
+                <span className="font-bold text-verdict-good text-lg">${fmt(counterOffer)}/mo</span>
                 ), you save{' '}
-                <span className="font-semibold text-verdict-good">${fmt(negotiationSavings)}/mo</span>
+                <span className="font-bold text-verdict-good text-lg">${fmt(negotiationSavings)}/mo</span>
                 {' '}starting immediately — with zero upfront costs.
               </p>
               <button
