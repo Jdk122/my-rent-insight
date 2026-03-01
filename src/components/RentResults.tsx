@@ -195,7 +195,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         <motion.section
           id="section-verdict"
           {...fade(0)}
-          className="min-h-[85vh] flex flex-col items-center justify-center text-center rounded-2xl -mx-2 px-2"
+          className="min-h-[85vh] flex flex-col items-center justify-start text-center pt-6 md:pt-[12vh] pb-12 rounded-2xl -mx-2 px-2"
           style={{ background: 'hsl(var(--verdict-bg))' }}
         >
           {hasIncrease ? (
