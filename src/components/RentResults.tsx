@@ -292,7 +292,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             SECTION 2: THE EVIDENCE — card-based layout
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         {hasIncrease && (
-          <section id="section-evidence" className="pt-16 pb-8">
+          <section id="section-evidence" className="pt-12 pb-8">
             <motion.h2 {...fade(0.05)} className="results-section-header mb-10">
               The evidence
             </motion.h2>
@@ -378,7 +378,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             SECTION 3: COMPARABLE LISTINGS
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         {hasIncrease && medianCompRent && hasEnoughComps && (
-          <motion.section id="section-comps" {...fade(0.15)} className="py-16">
+          <motion.section id="section-comps" {...fade(0.15)} className="py-12">
             <h2 className="results-section-header mb-8">
               How your rent compares to nearby units
             </h2>
@@ -399,15 +399,15 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           </motion.section>
         )}
         {!hasEnoughComps && !rentcast.loading && (
-          <motion.section {...fade(0.15)} className="py-16">
+          <motion.section {...fade(0.15)} className="py-12">
             <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} />
           </motion.section>
         )}
 
         {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            SECTION 4: LEASE REMINDER
+            SECTION 4: LEASE REMINDER — after comps, before letter
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <section className="py-16">
+        <section className="py-12">
           <div className="rounded-xl px-8 py-10 text-center" style={{ background: 'hsl(var(--secondary))' }}>
             <EmailCapture
               city={city}
@@ -423,7 +423,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             SECTION 5: NEGOTIATION LETTER
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         {hasIncrease && isAboveMarket && calc && (
-          <motion.section id="section-letter" {...fade(0.21)} className="py-16">
+          <motion.section id="section-letter" {...fade(0.21)} className="py-12">
             <NegotiationLetter
               currentRent={formData.currentRent}
               newRent={newRent}
@@ -452,7 +452,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             SECTION 6: SHARE
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <section className="py-16 text-center">
+        <section className="py-12 text-center">
           <ShareSection
             increasePct={increasePct}
             marketPct={marketYoy}
