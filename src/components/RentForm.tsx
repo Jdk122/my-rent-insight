@@ -37,6 +37,7 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
   const [rentIncrease, setRentIncrease] = useState('');
   const [increaseIsPercent, setIncreaseIsPercent] = useState(false);
   const [movingCosts] = useState('2500');
+  const [showAddress, setShowAddress] = useState(false);
 
   const hasStreet = street.trim().length > 0;
   const hasFullAddress = hasStreet && city.trim().length > 0 && state.length > 0 && zip.trim().length === 5;
@@ -66,154 +67,200 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      {/* Street Address */}
-      <div className="space-y-1.5">
-        <Label className="text-sm font-medium text-foreground">Street Address <span className="text-muted-foreground font-normal">(optional — zip is enough)</span></Label>
-        <Input
-          type="text"
-          placeholder="123 Main St"
-          value={street}
-          onChange={(e) => setStreet(e.target.value)}
-          className="h-11 text-sm bg-background"
-        />
-      </div>
-
-      {/* Apt/Unit + City + State + Zip */}
-      <div className="grid grid-cols-[72px,1fr,72px,88px] gap-2">
+    <div>
+      <form onSubmit={handleSubmit} className="border border-border rounded-2xl p-6 md:p-8 bg-card space-y-5">
+        {/* Zip Code — first and prominent */}
         <div className="space-y-1.5">
-          <Label className="text-xs font-medium text-muted-foreground">Apt/Unit</Label>
-          <Input
-            type="text"
-            placeholder="#3B"
-            value={unit}
-            onChange={(e) => setUnit(e.target.value)}
-            className="h-11 text-sm bg-background"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label className="text-xs font-medium text-muted-foreground">City</Label>
-          <Input
-            type="text"
-            placeholder="Austin"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            className="h-11 text-sm bg-background"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label className="text-xs font-medium text-muted-foreground">State</Label>
-          <Select value={state} onValueChange={setState}>
-            <SelectTrigger className="h-11 text-xs bg-background">
-              <SelectValue placeholder="—" />
-            </SelectTrigger>
-            <SelectContent>
-              {US_STATES.map((s) => (
-                <SelectItem key={s} value={s}>{s}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-1.5">
-          <Label className="text-xs font-medium text-foreground">Zip Code<span className="text-destructive">*</span></Label>
+          <Label className="text-sm font-medium text-foreground">Zip Code <span className="text-destructive">*</span></Label>
           <Input
             type="text"
             inputMode="numeric"
-            placeholder="78701"
+            placeholder="e.g. 78701"
             value={zip}
             onChange={(e) => {
               const v = e.target.value.replace(/\D/g, '').slice(0, 5);
               setZip(v);
             }}
-            className="h-11 text-sm font-mono bg-background"
+            className="h-12 text-sm bg-background"
             required
             maxLength={5}
           />
+          <p className="text-xs text-muted-foreground">
+            This is the only required field. Add details below for sharper insights.
+          </p>
         </div>
-      </div>
 
-      {/* Helper text */}
-      {hasStreet && !hasFullAddress && (
-        <p className="text-[11px] text-destructive/70 -mt-2">
-          Fill in city, state & zip for building-specific data
-        </p>
-      )}
-      {!hasStreet && (
-        <p className="text-[11px] text-muted-foreground -mt-2">
-          Just a zip code works — add your address for building-specific insights
-        </p>
-      )}
-
-      {/* Bedrooms */}
-      <div className="space-y-1.5">
-        <Label className="text-sm font-medium text-foreground">Bedrooms</Label>
-        <Select value={bedrooms} onValueChange={(v) => setBedrooms(v as BedroomType)}>
-          <SelectTrigger className="h-11 text-sm bg-background">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.entries(bedroomLabels).map(([key, label]) => (
-              <SelectItem key={key} value={key}>{label}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Current rent */}
-      <div className="space-y-1.5">
-        <Label className="text-sm font-medium text-foreground">Current Monthly Rent</Label>
-        <div className="relative">
-          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
-          <Input
-            type="number"
-            placeholder="2,500"
-            value={currentRent}
-            onChange={(e) => setCurrentRent(e.target.value)}
-            className="h-12 pl-8 font-mono text-lg bg-background"
-            min={0}
-            required
-          />
-        </div>
-      </div>
-
-      {/* Rent increase */}
-      <div className="space-y-1.5 pt-3 border-t border-border">
-        <Label className="text-sm font-medium text-foreground">How much is your landlord raising your rent?</Label>
-        <div className="flex gap-2 mt-2">
-          <div className="relative flex-1">
-            {!increaseIsPercent && (
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
-            )}
-            <Input
-              type="number"
-              placeholder={increaseIsPercent ? "8.5" : "200"}
-              value={rentIncrease}
-              onChange={(e) => setRentIncrease(e.target.value)}
-              className={`h-12 font-mono text-lg bg-background ${!increaseIsPercent ? 'pl-8' : 'pl-3.5'}`}
-              min={0}
-              step={increaseIsPercent ? 0.1 : 1}
-            />
-          </div>
+        {/* Collapsible address section */}
+        {!showAddress ? (
           <button
             type="button"
-            className="h-12 w-12 rounded-lg border border-border text-xs font-mono text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors flex items-center justify-center"
-            onClick={() => setIncreaseIsPercent(!increaseIsPercent)}
-            title={increaseIsPercent ? 'Switch to dollar amount' : 'Switch to percentage'}
+            onClick={() => setShowAddress(true)}
+            className="text-sm text-primary font-medium hover:underline transition-colors flex items-center gap-1.5"
           >
-            {increaseIsPercent ? '%' : '$'}
+            <span>→</span> Add your full address for building-specific data
           </button>
-        </div>
-      </div>
+        ) : (
+          <div className="space-y-3 animate-fade-in">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">Street Address</Label>
+              <Input
+                type="text"
+                placeholder="123 Main St"
+                value={street}
+                onChange={(e) => setStreet(e.target.value)}
+                className="h-11 text-sm bg-background"
+              />
+            </div>
+            <div className="grid grid-cols-[72px,1fr,72px] gap-2">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-muted-foreground">Apt/Unit</Label>
+                <Input
+                  type="text"
+                  placeholder="#3B"
+                  value={unit}
+                  onChange={(e) => setUnit(e.target.value)}
+                  className="h-11 text-sm bg-background"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-muted-foreground">City</Label>
+                <Input
+                  type="text"
+                  placeholder="Austin"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  className="h-11 text-sm bg-background"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-muted-foreground">State</Label>
+                <Select value={state} onValueChange={setState}>
+                  <SelectTrigger className="h-11 text-xs bg-background">
+                    <SelectValue placeholder="—" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {US_STATES.map((s) => (
+                      <SelectItem key={s} value={s}>{s}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            {hasStreet && !hasFullAddress && (
+              <p className="text-[11px] text-destructive/70">
+                Fill in city & state for building-specific data
+              </p>
+            )}
+          </div>
+        )}
 
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="w-full h-14 bg-primary text-primary-foreground text-base font-bold rounded-lg hover:opacity-90 active:scale-[0.99] transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
-      >
-        {isLoading ? 'Loading data…' : 'Check my increase →'}
-      </button>
-      <p className="text-center text-xs text-muted-foreground mt-6">38,000+ zip codes · Data from HUD, Census & Zillow</p>
-    </form>
+        <div className="border-t border-border" />
+
+        {/* Bedrooms */}
+        <div className="space-y-1.5">
+          <Label className="text-sm font-medium text-foreground">Bedrooms</Label>
+          <Select value={bedrooms} onValueChange={(v) => setBedrooms(v as BedroomType)}>
+            <SelectTrigger className="h-11 text-sm bg-background">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(bedroomLabels).map(([key, label]) => (
+                <SelectItem key={key} value={key}>{label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Current rent */}
+        <div className="space-y-1.5">
+          <Label className="text-sm font-medium text-foreground">Current Monthly Rent</Label>
+          <div className="relative">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
+            <Input
+              type="number"
+              placeholder="2,500"
+              value={currentRent}
+              onChange={(e) => setCurrentRent(e.target.value)}
+              className="h-12 pl-8 font-mono text-lg bg-background"
+              min={0}
+              required
+            />
+          </div>
+        </div>
+
+        {/* Proposed increase */}
+        <div className="space-y-1.5">
+          <Label className="text-sm font-medium text-foreground">Proposed Increase</Label>
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              {!increaseIsPercent && (
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
+              )}
+              <Input
+                type="number"
+                placeholder={increaseIsPercent ? "8.5" : "200"}
+                value={rentIncrease}
+                onChange={(e) => setRentIncrease(e.target.value)}
+                className={`h-12 font-mono text-lg bg-background ${!increaseIsPercent ? 'pl-8' : 'pl-3.5'}`}
+                min={0}
+                step={increaseIsPercent ? 0.1 : 1}
+              />
+            </div>
+            <div className="flex rounded-lg border border-border overflow-hidden">
+              <button
+                type="button"
+                className={`h-12 w-11 text-sm font-mono flex items-center justify-center transition-colors ${
+                  !increaseIsPercent
+                    ? 'bg-foreground text-background font-bold'
+                    : 'bg-background text-muted-foreground hover:bg-secondary'
+                }`}
+                onClick={() => setIncreaseIsPercent(false)}
+              >
+                $
+              </button>
+              <button
+                type="button"
+                className={`h-12 w-11 text-sm font-mono flex items-center justify-center transition-colors ${
+                  increaseIsPercent
+                    ? 'bg-foreground text-background font-bold'
+                    : 'bg-background text-muted-foreground hover:bg-secondary'
+                }`}
+                onClick={() => setIncreaseIsPercent(true)}
+              >
+                %
+              </button>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            The amount your landlord wants to raise your rent by.
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full h-14 bg-primary text-primary-foreground text-base font-bold rounded-lg hover:opacity-90 active:scale-[0.99] transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
+        >
+          {isLoading ? 'Loading data…' : 'Check my increase →'}
+        </button>
+      </form>
+
+      {/* Credibility badges */}
+      <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-6 text-xs text-muted-foreground">
+        <span className="flex items-center gap-1.5">
+          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8M8 12h8M8 17h4"/></svg>
+          38,000+ zip codes covered
+        </span>
+        <span className="flex items-center gap-1.5">
+          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+          Data from HUD, Census & Zillow
+        </span>
+        <span className="flex items-center gap-1.5">
+          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>
+          Free negotiation letter included
+        </span>
+      </div>
+    </div>
   );
 };
 
