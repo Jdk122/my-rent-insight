@@ -128,7 +128,7 @@ const NegotiationLetter = ({
 
   return (
     <div>
-      <h2 className="section-title">Your negotiation letter</h2>
+      <h2 className="section-title">Your Negotiation Letter</h2>
       <div className="tone-toggle">
         <button onClick={() => setTone('friendly')} className={`tone-option ${tone === 'friendly' ? 'active' : ''}`}>Friendly</button>
         <button onClick={() => setTone('firm')} className={`tone-option ${tone === 'firm' ? 'active' : ''}`}>Firm</button>

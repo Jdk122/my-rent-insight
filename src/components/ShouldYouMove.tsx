@@ -152,7 +152,7 @@ const ShouldYouMove = ({
       {isAboveMedian ? (
         /* ━━━ SCENARIO 1: Above median ━━━ */
         <>
-          <h2 className="section-title">Should you move?</h2>
+          <h2 className="section-title">Should You Move?</h2>
 
           <div className="mt-3 px-4 py-3 rounded-md border text-sm font-medium text-foreground bg-destructive/10 border-destructive/20">
             Your proposed rent of ${fmt(proposedRent)}/mo is{' '}
@@ -215,7 +215,7 @@ const ShouldYouMove = ({
       ) : (
         /* ━━━ SCENARIO 2: At or below median ━━━ */
         <>
-          <h2 className="section-title">Your rent is competitive</h2>
+          <h2 className="section-title">Your Rent Is Competitive</h2>
 
           <div className={`mt-3 px-4 py-3 rounded-md border text-sm font-medium text-foreground ${isAtMedian ? 'bg-muted border-border' : 'bg-verdict-good/10 border-verdict-good/20'}`}>
             {isAtMedian ? (
