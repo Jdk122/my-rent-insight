@@ -6,6 +6,7 @@ import { lookupRentData, loadFredTrend, RentLookupResult, calculateResults } fro
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
 import { toast } from 'sonner';
 import SaveResultsDropdown from '@/components/SaveResultsDropdown';
+import SocialProofCounter from '@/components/SocialProofCounter';
 
 const Index = () => {
   const [results, setResults] = useState<{ formData: RentFormData; rentData: RentLookupResult } | null>(null);
@@ -159,6 +160,7 @@ const Index = () => {
               </p>
               <div className="mt-10">
                 <RentForm onSubmit={handleSubmit} isLoading={isLoading} />
+                <SocialProofCounter />
               </div>
             </div>
           </motion.div>
