@@ -262,11 +262,11 @@ const LandlordCostSection = ({
               {insights.costIncreaseMarkup}×
             </span>
             <p className="text-base text-muted-foreground leading-snug max-w-[280px]">
-              markup on their actual cost increase
+              markup on their estimated cost increase
             </p>
           </div>
           <p className="text-sm text-muted-foreground mt-4 pt-4 border-t border-border/60">
-            Their costs went up ~${fmt(costs.totalCostChangePerMonth)}/mo this year.
+            Their estimated costs went up ~${fmt(costs.totalCostChangePerMonth)}/mo this year.
             They're raising you ${fmt(increaseAmount)}/mo.
           </p>
         </motion.div>
@@ -380,7 +380,7 @@ const LandlordCostSection = ({
                 <p className="text-sm text-foreground mt-4 pt-3 border-t border-border">
                   Regardless of profit, your rent increase is{' '}
                   <span className="font-bold text-destructive">{insights.costIncreaseMarkup}×</span>{' '}
-                  their actual cost increase this year.
+                  their estimated cost increase this year.
                 </p>
               )}
             </div>
