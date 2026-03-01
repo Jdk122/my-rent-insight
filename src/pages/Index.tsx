@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import RentForm, { RentFormData } from '@/components/RentForm';
 import RentResults from '@/components/RentResults';
@@ -9,15 +9,22 @@ import { toast } from 'sonner';
 const Index = () => {
   const [results, setResults] = useState<{ formData: RentFormData; rentData: RentLookupResult } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [navScrolled, setNavScrolled] = useState(false);
   const propertyLookup = usePropertyLookup();
   const topRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!results) { setNavScrolled(false); return; }
+    const onScroll = () => setNavScrolled(window.scrollY > window.innerHeight * 0.7);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [results]);
 
   const handleSubmit = async (data: RentFormData) => {
     setIsLoading(true);
 
     try {
       if (data.fullAddress) {
-        // Address path: call property lookup first to get zip
         const propResult = await propertyLookup.lookup(data.fullAddress);
         if (!propResult?.zipCode) {
           toast.error("We couldn't find that address. Try entering your 5-digit zip code instead.");
@@ -36,7 +43,6 @@ const Index = () => {
         setResults({ formData: { ...data, zip }, rentData });
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        // Load FRED trend in background
         loadFredTrend(rentData.metro).then((fredTrend) => {
           if (fredTrend) {
             setResults((prev) =>
@@ -45,7 +51,6 @@ const Index = () => {
           }
         });
       } else {
-        // Zip-only path
         const rentData = await lookupRentData(data.zip, data.bedrooms);
         if (!rentData) {
           toast.error(`We don't have data for ${data.zip} yet. Try a nearby zip code.`);
@@ -56,7 +61,6 @@ const Index = () => {
         setResults({ formData: data, rentData });
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        // Start property lookup only if NOT zip-only (skip here)
         loadFredTrend(rentData.metro).then((fredTrend) => {
           if (fredTrend) {
             setResults((prev) =>
@@ -72,19 +76,42 @@ const Index = () => {
     }
   };
 
+  const showLetterCta = results && results.formData.rentIncrease && results.formData.rentIncrease > 0;
+
   return (
     <div className="min-h-screen bg-background flex flex-col" ref={topRef}>
-      {/* Nav */}
-      <nav className="flex items-center justify-between px-6 py-5 border-b border-border">
-        <span className="font-display text-xl font-bold text-primary tracking-tight cursor-pointer hover:scale-105 transition-transform duration-200" style={{ letterSpacing: '-0.02em' }} onClick={() => { setResults(null); }}>
+      {/* Sticky Nav */}
+      <nav
+        className={`fixed top-0 left-0 right-0 z-[60] flex items-center justify-between px-6 py-4 transition-all duration-200 ${
+          results && !navScrolled ? 'bg-transparent' : 'bg-card'
+        }`}
+        style={{
+          boxShadow: !results || !navScrolled ? 'none' : '0 1px 3px rgba(0,0,0,0.08)',
+        }}
+      >
+        <span className="font-display text-xl font-bold text-primary tracking-tight cursor-pointer hover:scale-105 transition-transform duration-200" style={{ letterSpacing: '-0.02em' }} onClick={() => { setResults(null); window.scrollTo({ top: 0 }); }}>
           Renewal<span className="font-normal text-accent">Reply</span>
         </span>
-        {results && (
-          <button onClick={() => setResults(null)} className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
-            ← New check
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {results && (
+            <button onClick={() => setResults(null)} className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
+              ← New check
+            </button>
+          )}
+          {showLetterCta && (
+            <button
+              onClick={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
+              className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
+            >
+              <span className="hidden sm:inline">Get your letter →</span>
+              <span className="sm:hidden">Get letter →</span>
+            </button>
+          )}
+        </div>
       </nav>
+
+      {/* Spacer for fixed nav */}
+      <div className="h-[56px]" />
 
       <AnimatePresence mode="wait">
         {!results ? (
