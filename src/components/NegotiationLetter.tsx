@@ -133,7 +133,15 @@ const NegotiationLetter = ({
         <button onClick={() => setTone('friendly')} className={`tone-option ${tone === 'friendly' ? 'active' : ''}`}>Friendly</button>
         <button onClick={() => setTone('firm')} className={`tone-option ${tone === 'firm' ? 'active' : ''}`}>Firm</button>
       </div>
-      <div className="rounded-lg border border-border border-l-[3px] border-l-muted p-6 md:p-8 mt-4" style={{ background: 'hsl(var(--letter-bg))', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+      <div
+        className="rounded-lg border border-border border-l-[3px] border-l-muted p-6 md:p-8 mt-4"
+        style={{
+          background: 'hsl(var(--letter-bg))',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+          userSelect: unlocked ? 'auto' : 'none',
+          WebkitUserSelect: unlocked ? 'auto' : 'none',
+        }}
+      >
         <div className="text-xs text-muted-foreground mb-4 pb-4 border-b border-border flex gap-4">
           <span>To: Your landlord</span>
           <span>Re: Lease renewal</span>
