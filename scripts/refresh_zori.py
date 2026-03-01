@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-RentReply ZORI Auto-Refresh Script
+RenewalReply ZORI Auto-Refresh Script
 Run monthly. ~10 seconds. Updates Zillow trend data in rentData.json.
 
 We only use Zillow's YoY/monthly trend — NOT the absolute rent (ZORI blends

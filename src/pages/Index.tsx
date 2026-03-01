@@ -134,7 +134,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="mt-auto border-t border-border px-6 py-6 text-center">
         <p className="text-xs text-muted-foreground leading-relaxed">
-          RentReply · Sources: HUD SAFMR FY2025, Census ACS 2023, Zillow ZORI · For informational purposes only.
+          RenewalReply · Sources: HUD SAFMR FY2025, Census ACS 2023, Zillow ZORI · For informational purposes only.
         </p>
       </footer>
     </div>
