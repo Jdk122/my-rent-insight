@@ -50,6 +50,11 @@
     --rule: 210 12% 86%;
     --highlight-bg: 39 70% 96%;
 
+    /* Surface tints */
+    --verdict-bg: 45 30% 97%;
+    --comps-bg: 200 20% 97%;
+    --letter-bg: 0 0% 99.5%;
+
     /* Accent palette */
     --accent-red: 6 60% 46%;
     --accent-green: 152 50% 33%;
@@ -174,19 +179,19 @@
     @apply font-normal text-muted-foreground text-[13px] ml-1.5;
   }
 
-  /* Highlighted row for key data */
+  /* Highlighted row for key data — the fair counter-offer */
   .context-row-highlight {
-    @apply flex items-baseline justify-between py-4 px-4 rounded-md border-0;
-    background: hsl(152 50% 33% / 0.06);
+    @apply flex items-baseline justify-between py-4 px-5 rounded-lg border-0;
+    background: hsl(152 50% 33% / 0.08);
     border-left: 3px solid hsl(var(--accent-green));
   }
 
   .context-row-highlight .context-label {
-    @apply text-[15px] font-medium text-foreground;
+    @apply text-[15px] font-semibold text-foreground;
   }
 
   .context-row-highlight .context-value {
-    @apply text-lg;
+    @apply text-[18px] md:text-[20px];
   }
 
   .section-title {
@@ -201,13 +206,15 @@
     letter-spacing: -0.02em;
   }
 
-  /* Evidence cards — light border, no shadow, clean */
+  /* Evidence cards — subtle shadow for depth */
   .evidence-card {
     @apply p-6 md:p-8 rounded-xl border border-border bg-card;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   }
 
   .evidence-card-header {
-    @apply text-[18px] md:text-[20px] font-semibold text-foreground mb-4;
+    @apply text-[18px] md:text-[20px] text-foreground mb-4;
+    font-weight: 500;
     letter-spacing: -0.01em;
   }
 
