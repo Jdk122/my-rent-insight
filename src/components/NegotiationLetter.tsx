@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
-import { Check, Lock } from 'lucide-react';
+
 import { Link } from 'react-router-dom';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
 import { supabase } from '@/integrations/supabase/client';
@@ -145,23 +145,20 @@ const NegotiationLetter = ({
         </div>
       </div>
 
-      {/* Soft gate: email to unlock copy/download */}
+      {/* Soft gate: email to copy/download/email */}
       {!unlocked ? (
         <div className="mt-5">
           <form onSubmit={handleUnlock} className="flex gap-2 max-w-[440px]">
-            <div className="relative flex-1">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <input
-                type="email"
-                placeholder="Enter your email to unlock copy & download"
-                value={gateEmail}
-                onChange={(e) => setGateEmail(e.target.value)}
-                required
-                className="w-full pl-9 pr-4 py-3 text-sm border border-border rounded-lg bg-card text-foreground outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
-              />
-            </div>
+            <input
+              type="email"
+              placeholder="Enter your email to copy, download, or email this letter"
+              value={gateEmail}
+              onChange={(e) => setGateEmail(e.target.value)}
+              required
+              className="flex-1 px-4 py-3 text-sm border border-border rounded-lg bg-card text-foreground outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
+            />
             <button type="submit" className="bg-primary text-primary-foreground px-5 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap">
-              Unlock
+              Continue
             </button>
           </form>
           <p className="text-[12px] text-muted-foreground/70 mt-2 max-w-[440px]">
@@ -173,6 +170,7 @@ const NegotiationLetter = ({
         <div className="flex gap-3 mt-5">
           <button onClick={handleCopy} className="bg-primary text-primary-foreground px-7 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20">Copy letter</button>
           <button onClick={handleDownload} className="border border-border px-7 py-3 rounded-lg text-sm font-medium text-foreground hover:border-foreground transition-colors">Download</button>
+          <button onClick={() => toast.info('Email delivery coming soon!')} className="border border-border px-7 py-3 rounded-lg text-sm font-medium text-foreground hover:border-foreground transition-colors">Email me this letter</button>
         </div>
       )}
     </div>
