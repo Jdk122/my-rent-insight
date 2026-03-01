@@ -41,31 +41,32 @@ const SectionNav = ({ sections }: SectionNavProps) => {
 
   return (
     <nav className="fixed right-4 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col items-end gap-3">
-      {sections.map((s) => (
-        <button
-          key={s.id}
-          onClick={() => handleClick(s.id)}
-          className="group flex items-center gap-2"
-          aria-label={`Jump to ${s.label}`}
-        >
-          <span
-            className={`text-[11px] font-medium transition-all duration-200 ${
-              activeId === s.id
-                ? 'text-foreground opacity-100 translate-x-0'
-                : 'text-muted-foreground opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0'
-            }`}
+      {sections.map((s) => {
+        const isActive = activeId === s.id;
+        return (
+          <button
+            key={s.id}
+            onClick={() => handleClick(s.id)}
+            className="flex items-center gap-2 group"
+            aria-label={`Jump to ${s.label}`}
           >
-            {s.label}
-          </span>
-          <span
-            className={`rounded-full transition-all duration-200 ${
-              activeId === s.id
-                ? 'w-2.5 h-2.5 bg-primary'
-                : 'w-1.5 h-1.5 bg-muted-foreground/40 group-hover:bg-muted-foreground'
-            }`}
-          />
-        </button>
-      ))}
+            <span
+              className={`text-[12px] font-medium transition-colors duration-200 ${
+                isActive ? 'text-primary' : 'text-muted-foreground/60 group-hover:text-muted-foreground'
+              }`}
+            >
+              {s.label}
+            </span>
+            <span
+              className={`rounded-full transition-all duration-200 ${
+                isActive
+                  ? 'w-2.5 h-2.5 bg-primary'
+                  : 'w-1.5 h-1.5 bg-muted-foreground/30 group-hover:bg-muted-foreground'
+              }`}
+            />
+          </button>
+        );
+      })}
     </nav>
   );
 };
