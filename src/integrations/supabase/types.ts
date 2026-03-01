@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      leads: {
+        Row: {
+          address: string | null
+          bedrooms: number | null
+          city: string | null
+          comps_position: string | null
+          created_at: string
+          current_rent: number | null
+          email: string
+          fair_counter_offer: number | null
+          id: string
+          increase_pct: number | null
+          lease_expiration_month: string | null
+          lease_expiration_year: number | null
+          letter_generated: boolean | null
+          market_trend_pct: number | null
+          proposed_rent: number | null
+          state: string | null
+          zip: string | null
+        }
+        Insert: {
+          address?: string | null
+          bedrooms?: number | null
+          city?: string | null
+          comps_position?: string | null
+          created_at?: string
+          current_rent?: number | null
+          email: string
+          fair_counter_offer?: number | null
+          id?: string
+          increase_pct?: number | null
+          lease_expiration_month?: string | null
+          lease_expiration_year?: number | null
+          letter_generated?: boolean | null
+          market_trend_pct?: number | null
+          proposed_rent?: number | null
+          state?: string | null
+          zip?: string | null
+        }
+        Update: {
+          address?: string | null
+          bedrooms?: number | null
+          city?: string | null
+          comps_position?: string | null
+          created_at?: string
+          current_rent?: number | null
+          email?: string
+          fair_counter_offer?: number | null
+          id?: string
+          increase_pct?: number | null
+          lease_expiration_month?: string | null
+          lease_expiration_year?: number | null
+          letter_generated?: boolean | null
+          market_trend_pct?: number | null
+          proposed_rent?: number | null
+          state?: string | null
+          zip?: string | null
+        }
+        Relationships: []
+      }
       lookup_rate_limits: {
         Row: {
           created_at: string | null
