@@ -127,6 +127,7 @@ const ShouldYouMove = ({
   onScrollToLetter,
 }: ShouldYouMoveProps) => {
   const isAboveMedian = proposedRent > medianCompRent;
+  const isAtMedian = proposedRent === medianCompRent;
   const difference = Math.abs(proposedRent - medianCompRent);
 
   const hasBrokerFee = brokerFeeStates.includes(state);
@@ -216,10 +217,14 @@ const ShouldYouMove = ({
         <>
           <h2 className="section-title">Your rent is competitive</h2>
 
-          <div className="mt-3 px-4 py-3 rounded-md border text-sm font-medium text-foreground bg-verdict-good/10 border-verdict-good/20">
-            Even after the increase, your proposed rent of ${fmt(proposedRent)}/mo is{' '}
-            <span className="font-bold text-verdict-good">${fmt(difference)} below</span>{' '}
-            the area median of ${fmt(medianCompRent)} for similar units.
+          <div className={`mt-3 px-4 py-3 rounded-md border text-sm font-medium text-foreground ${isAtMedian ? 'bg-muted border-border' : 'bg-verdict-good/10 border-verdict-good/20'}`}>
+            {isAtMedian ? (
+              <>Your proposed rent of ${fmt(proposedRent)}/mo is <span className="font-bold">at the area median</span> for similar units.</>
+            ) : (
+              <>Even after the increase, your proposed rent of ${fmt(proposedRent)}/mo is{' '}
+                <span className="font-bold text-verdict-good">${fmt(difference)} below</span>{' '}
+                the area median of ${fmt(medianCompRent)} for similar units.</>
+            )}
           </div>
 
           {/* Comp listings with orange line */}
@@ -253,18 +258,6 @@ const ShouldYouMove = ({
             </p>
           </div>
 
-          {/* CTA: Negotiate anyway */}
-          {isAboveMarket && (
-            <div className="mt-6 pt-4 border-t border-border text-center">
-              <p className="text-sm text-muted-foreground">Still want to push back on the increase?</p>
-              <button
-                onClick={onScrollToLetter}
-                className="text-sm font-semibold text-primary hover:underline mt-1"
-              >
-                Generate negotiation letter →
-              </button>
-            </div>
-          )}
         </>
       )}
 
