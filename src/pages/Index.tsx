@@ -77,7 +77,7 @@ const Index = () => {
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 py-5 border-b border-border">
         <span className="font-display text-xl font-bold text-primary tracking-tight cursor-pointer hover:scale-105 transition-transform duration-200" style={{ letterSpacing: '-0.02em' }} onClick={() => { setResults(null); }}>
-          Rent<span className="font-normal text-accent">Reply</span>
+          Renewal<span className="font-normal text-accent">Reply</span>
         </span>
         {results && (
           <button onClick={() => setResults(null)} className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
