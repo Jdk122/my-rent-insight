@@ -14,7 +14,7 @@ const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 
 
 const ShareSection = ({ increasePct, marketPct, excessAnnual, multiplier, landlordCosts, increaseAmount }: ShareSectionProps) => {
   const shareText = landlordCosts && increaseAmount
-    ? `My landlord's costs went up $${fmt(landlordCosts.monthlyCostIncrease)}/month but they're raising my rent $${fmt(increaseAmount)}/month. RentReply showed me the math.`
+    ? `My landlord's costs went up $${fmt(landlordCosts.monthlyCostIncrease)}/month but they're raising my rent $${fmt(increaseAmount)}/month. RenewalReply showed me the math.`
     : `My landlord is raising my rent ${increasePct}% when the market only moved ${marketPct}%. That's $${fmt(excessAnnual)}/year above what the market justifies.`;
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
   const fullText = `${shareText} Check yours: ${shareUrl}`;
