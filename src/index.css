@@ -194,6 +194,23 @@
     @apply text-[22px] font-semibold text-foreground tracking-tight mb-6;
   }
 
+  /* Results page section headers */
+  .results-section-header {
+    font-family: var(--font-display);
+    @apply text-[24px] md:text-[28px] font-bold text-foreground tracking-tight;
+    letter-spacing: -0.02em;
+  }
+
+  /* Evidence cards — light border, no shadow, clean */
+  .evidence-card {
+    @apply p-6 md:p-8 rounded-xl border border-border bg-card;
+  }
+
+  .evidence-card-header {
+    @apply text-[18px] md:text-[20px] font-semibold text-foreground mb-4;
+    letter-spacing: -0.01em;
+  }
+
   .tone-toggle {
     @apply flex w-fit border border-border rounded overflow-hidden mb-4;
   }
