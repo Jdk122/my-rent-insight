@@ -18,7 +18,7 @@ const RentControlCard = ({ state, city, zip, increasePct }: RentControlCardProps
 
   return (
     <div>
-      <h3 className="evidence-card-header">📋 Know Your Rights</h3>
+      <h3 className="evidence-card-header">Know Your Rights</h3>
 
       {hasCap && cap ? (
         <div className="mt-3">
