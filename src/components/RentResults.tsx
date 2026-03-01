@@ -277,14 +277,14 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         {hasIncrease && (
           <section id="section-evidence" className="pt-12 pb-8">
             <motion.h2 {...fade(0.05)} className="results-section-header mb-10">
-              The evidence
+              The Evidence
             </motion.h2>
 
             <div className="space-y-6">
 
               {/* Card A: Market Context */}
               <motion.div {...fade(0.08)} className="evidence-card">
-                <h3 className="evidence-card-header">What the market says</h3>
+                <h3 className="evidence-card-header">What the Market Says</h3>
                 <p className="text-xs text-muted-foreground mb-4">{city}, {rentData.state} — {bedroomLabels[formData.bedrooms]}</p>
 
                 <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
@@ -363,7 +363,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         {hasIncrease && medianCompRent && hasEnoughComps && (
           <motion.section id="section-comps" {...fade(0.15)} className="py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>
             <h2 className="results-section-header mb-8">
-              How your rent compares to nearby units
+              How Your Rent Compares to Nearby Units
             </h2>
             <ShouldYouMove
               proposedRent={newRent}
