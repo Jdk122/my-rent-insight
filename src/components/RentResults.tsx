@@ -23,6 +23,8 @@ interface RentResultsProps {
   propertyError: PropertyLookupError;
   onReset: () => void;
   onScrollToTop: () => void;
+  capturedEmail?: string;
+  onEmailCaptured?: (email: string) => void;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -33,8 +35,13 @@ const fade = (delay: number) => ({
   transition: { duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] as const },
 });
 
-const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop }: RentResultsProps) => {
-  const [capturedEmail, setCapturedEmail] = useState('');
+const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop, capturedEmail: externalEmail, onEmailCaptured: externalOnEmail }: RentResultsProps) => {
+  const [internalEmail, setInternalEmail] = useState('');
+  const capturedEmail = externalEmail ?? internalEmail;
+  const setCapturedEmail = (email: string) => {
+    setInternalEmail(email);
+    externalOnEmail?.(email);
+  };
   const [analysisId, setAnalysisId] = useState<string | null>(null);
   const analysisLogged = useRef(false);
 

@@ -1,15 +1,17 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import RentForm, { RentFormData } from '@/components/RentForm';
 import RentResults from '@/components/RentResults';
-import { lookupRentData, loadFredTrend, RentLookupResult } from '@/data/rentData';
+import { lookupRentData, loadFredTrend, RentLookupResult, calculateResults } from '@/data/rentData';
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
 import { toast } from 'sonner';
+import SaveResultsDropdown from '@/components/SaveResultsDropdown';
 
 const Index = () => {
   const [results, setResults] = useState<{ formData: RentFormData; rentData: RentLookupResult } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [navScrolled, setNavScrolled] = useState(false);
+  const [capturedEmail, setCapturedEmail] = useState('');
   const propertyLookup = usePropertyLookup();
   const topRef = useRef<HTMLDivElement>(null);
 
@@ -20,8 +22,30 @@ const Index = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, [results]);
 
+  // Compute verdict for navbar CTA
+  const isAboveMarket = useMemo(() => {
+    if (!results) return false;
+    const { formData, rentData } = results;
+    const increaseAmount = formData.rentIncrease
+      ? formData.increaseIsPercent
+        ? Math.round(formData.currentRent * (formData.rentIncrease / 100))
+        : formData.rentIncrease
+      : 0;
+    if (increaseAmount <= 0) return false;
+    const increasePct = formData.rentIncrease
+      ? formData.increaseIsPercent
+        ? formData.rentIncrease
+        : Math.round((formData.rentIncrease / formData.currentRent) * 1000) / 10
+      : 0;
+    const calc = calculateResults(formData.currentRent, increasePct, formData.movingCosts, rentData);
+    return calc?.verdict === 'above';
+  }, [results]);
+
+  const hasIncrease = results && results.formData.rentIncrease && results.formData.rentIncrease > 0;
+
   const handleSubmit = async (data: RentFormData) => {
     setIsLoading(true);
+    setCapturedEmail('');
 
     try {
       if (data.fullAddress) {
@@ -76,8 +100,6 @@ const Index = () => {
     }
   };
 
-  const showLetterCta = results && results.formData.rentIncrease && results.formData.rentIncrease > 0;
-
   return (
     <div className="min-h-screen bg-background flex flex-col" ref={topRef}>
       {/* Sticky Nav */}
@@ -98,7 +120,7 @@ const Index = () => {
               ← New check
             </button>
           )}
-          {showLetterCta && (
+          {hasIncrease && isAboveMarket && (
             <button
               onClick={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
               className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
@@ -106,6 +128,12 @@ const Index = () => {
               <span className="hidden sm:inline">Get your letter →</span>
               <span className="sm:hidden">Get letter →</span>
             </button>
+          )}
+          {hasIncrease && !isAboveMarket && (
+            <SaveResultsDropdown
+              prefilledEmail={capturedEmail}
+              onEmailCaptured={setCapturedEmail}
+            />
           )}
         </div>
       </nav>
@@ -153,6 +181,8 @@ const Index = () => {
                 setResults(null);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
+              capturedEmail={capturedEmail}
+              onEmailCaptured={setCapturedEmail}
             />
           </motion.div>
         )}
