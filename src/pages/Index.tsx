@@ -206,8 +206,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="mt-auto border-t border-border px-6 py-6 text-center">
         <p className="text-xs text-muted-foreground leading-relaxed">
-          RenewalReply · Sources: HUD SAFMR FY2025, Census ACS 2023, Zillow ZORI & proprietary APIs · For informational purposes only.
-          {' · '}
+          RenewalReply · Sources: HUD SAFMR FY2025, Census ACS 2023, Zillow ZORI, FRED, Rentcast · Analysis powered by RenewalReply's proprietary methodology · For informational purposes only · Not legal or financial advice ·{' '}
           <button onClick={() => setContactOpen(true)} className="underline hover:text-foreground transition-colors">Contact us</button>
         </p>
       </footer>
