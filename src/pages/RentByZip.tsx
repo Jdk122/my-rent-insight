@@ -570,6 +570,11 @@ const RentByZip = () => {
           </div>
         </section>
 
+        {/* Inline disclaimer */}
+        <p className="mb-12 text-xs text-muted-foreground/70 italic leading-relaxed">
+          Data reflects HUD FY2025 fair market rent benchmarks and U.S. Census estimates. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
+        </p>
+
         {/* SECTION 7 — Bottom CTA */}
         <section className="text-center py-10">
           <h2 className="font-display text-2xl text-foreground mb-3 tracking-tight">
