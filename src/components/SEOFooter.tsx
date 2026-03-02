@@ -6,12 +6,6 @@ interface SEOFooterProps {
 
 const SEOFooter = ({ onContactClick }: SEOFooterProps) => (
   <footer className="mt-auto border-t border-border bg-secondary/40">
-    {/* Legal disclaimer */}
-    <div className="border-b border-border/50 px-6 py-6">
-      <p className="max-w-3xl mx-auto text-xs text-muted-foreground/70 leading-relaxed">
-        RenewalReply provides general information based on publicly available federal and state housing data. It is not legal advice, and should not be treated as a substitute for professional legal counsel. Rent laws vary by building type, lease terms, and local ordinances. Consult a licensed attorney or your local tenant rights organization before taking action. Data sourced from HUD, U.S. Census Bureau, and FRED; updated annually and may not reflect current market conditions.
-      </p>
-    </div>
     <div className="max-w-5xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 gap-10">
       {/* Brand column */}
       <div>
@@ -61,6 +55,13 @@ const SEOFooter = ({ onContactClick }: SEOFooterProps) => (
           </li>
         </ul>
       </div>
+    </div>
+
+    {/* Legal disclaimer */}
+    <div className="border-t border-border/50 px-6 py-5">
+      <p className="max-w-3xl mx-auto text-xs text-muted-foreground/60 leading-relaxed">
+        RenewalReply provides general information based on publicly available federal and state housing data. It is not legal advice, and should not be treated as a substitute for professional legal counsel. Rent laws vary by building type, lease terms, and local ordinances. Consult a licensed attorney or your local tenant rights organization before taking action. Data sourced from HUD, U.S. Census Bureau, and FRED; updated annually and may not reflect current market conditions.
+      </p>
     </div>
 
     {/* Source attribution bar */}
