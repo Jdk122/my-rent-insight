@@ -261,7 +261,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           <motion.section
             id="section-verdict"
             {...fade(0)}
-            className="min-h-[70vh] flex flex-col items-center justify-center text-center py-12"
+            className="min-h-[50vh] flex flex-col items-center justify-center text-center py-12"
           >
           {hasIncrease ? (
             <>
@@ -275,14 +275,24 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     <>Your landlord is asking for{' '}
                       <span className="text-destructive">${fmt(newRent - calc.counterHigh)}/mo more</span>{' '}
                       than the market supports.</>
+                  ) : marketYoy < -0.5 ? (
+                    <>Rents near you dropped {Math.abs(marketYoy)}% — but your landlord wants{' '}
+                      <span className="text-destructive">{increasePct}% more.</span></>
+                  ) : marketYoy >= -0.5 && marketYoy <= 0.5 ? (
+                    <>Rents near you have been flat — but your landlord wants{' '}
+                      <span className="text-destructive">{increasePct}% more.</span></>
                   ) : (
-                    <>Your landlord is asking for{' '}
-                      <span className="text-destructive">{marketMultiple}× the market rate increase.</span></>
+                    <>Rents near you went up {marketYoy}% — but your landlord wants{' '}
+                      <span className="text-destructive">{increasePct}% more.</span></>
                   )
                 ) : isFair ? (
                   <>Your rent increase is <span className="text-verdict-fair">right at market.</span></>
                 ) : increasePct > 0 && increasePct <= marketYoy ? (
-                  <>Your rent increase is <span className="text-verdict-good">in line with the market.</span></>
+                  <>Your increase of {increasePct}% is{' '}
+                    <span className="text-verdict-good">in line with the {marketYoy}% trend</span> in your area.</>
+                ) : increasePct <= 0 ? (
+                  <>Your rent is staying the same or going down — that's{' '}
+                    <span className="text-verdict-good">below the {marketYoy}% area trend.</span></>
                 ) : (
                   <>Your rent increase is <span className="text-verdict-good">below market.</span></>
                 )}
@@ -334,7 +344,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     isAboveMarket && calc
                       ? isPath1
                         ? `My landlord is asking for $${fmt(newRent - calc.counterHigh)}/mo more than the market supports.`
-                        : `My landlord is asking for ${marketMultiple}× the market rate increase.`
+                        : `Rents near me moved ${marketYoy}% but my landlord wants ${increasePct}%.`
                       : isFair
                       ? `My rent increase is right at market.`
                       : increasePct > 0 && increasePct <= marketYoy
@@ -526,22 +536,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         )}
 
         {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            SECTION 4: LEASE REMINDER — after comps, before letter
+            SECTION 4: NEGOTIATION LETTER
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <section className="py-12">
-          <div className="rounded-xl px-8 py-10 text-center" style={{ background: 'hsl(var(--secondary))' }}>
-            <EmailCapture
-              city={city}
-              captureSource="lease_reminder"
-              prefilledEmail={capturedEmail}
-              onEmailCaptured={setCapturedEmail}
-              leadContext={leadContext}
-            />
-          </div>
-        </section>
 
         {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            SECTION 5: NEGOTIATION LETTER
+            SECTION 5: NEGOTIATION LETTER (old numbering kept for section nav IDs)
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         {hasIncrease && isAboveMarket && calc && (
           <motion.section id="section-letter" {...fade(0.21)} className="py-12">
@@ -569,6 +568,21 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             />
           </motion.section>
         )}
+
+        {/* ━━━ Consolidated email capture ━━━ */}
+        <section className="py-12">
+          <div className="rounded-xl px-8 py-10 text-center" style={{ background: 'hsl(var(--secondary))' }}>
+            <EmailCapture
+              city={city}
+              captureSource={hasIncrease && isAboveMarket ? 'letter_plus_reminder' : 'lease_reminder'}
+              prefilledEmail={capturedEmail}
+              onEmailCaptured={setCapturedEmail}
+              leadContext={leadContext}
+              heading={hasIncrease && isAboveMarket ? 'Get this letter + a renewal reminder' : undefined}
+              subtext={hasIncrease && isAboveMarket ? `We'll email you this letter and remind you 60 days before your lease is up.` : undefined}
+            />
+          </div>
+        </section>
 
         {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             SECTION 6: BUILDING SHARE — Viral Loop

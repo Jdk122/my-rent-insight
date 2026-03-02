@@ -7,6 +7,7 @@ import { lazy, Suspense } from "react";
 import Index from "./pages/Index";
 import Privacy from "./pages/Privacy";
 import Outcome from "./pages/Outcome";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 const RentByZip = lazy(() => import("./pages/RentByZip"));
 const RentData = lazy(() => import("./pages/RentData"));
@@ -24,6 +25,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/outcome" element={<Outcome />} />
           <Route path="/rent-data" element={<Suspense fallback={null}><RentData /></Suspense>} />
           <Route path="/rent/:zip" element={<Suspense fallback={null}><RentByZip /></Suspense>} />

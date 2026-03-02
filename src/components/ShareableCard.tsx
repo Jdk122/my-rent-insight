@@ -124,7 +124,7 @@ const ShareableCard = ({ headline, stats }: ShareableCardProps) => {
         disabled={generating}
         className="inline-flex items-center gap-2 text-base font-semibold text-muted-foreground hover:text-foreground transition-colors duration-150 disabled:opacity-50"
       >
-        {generating ? 'Generating…' : '📸 Share your result'}
+        {generating ? 'Generating…' : '🔗 Share your result'}
       </button>
     </>
   );

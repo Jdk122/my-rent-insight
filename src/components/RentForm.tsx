@@ -33,8 +33,8 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
   const [fullAddress, setFullAddress] = useState<string | null>(null);
   const [unit, setUnit] = useState('');
   const [bedrooms, setBedrooms] = useState<BedroomType>('oneBr');
-  const [currentRent, setCurrentRent] = useState('');
-  const [rentIncrease, setRentIncrease] = useState('');
+  const [currentRent, setCurrentRent] = useState('2,500');
+  const [rentIncrease, setRentIncrease] = useState('200');
   const [increaseIsPercent, setIncreaseIsPercent] = useState(false);
   const [movingCosts] = useState('2500');
   const [showZipOnly, setShowZipOnly] = useState(false);

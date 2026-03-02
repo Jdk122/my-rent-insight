@@ -1,11 +1,9 @@
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
-import { trackEvent } from '@/lib/analytics'; // GA4
-
+import { trackEvent } from '@/lib/analytics';
 import { Link } from 'react-router-dom';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
-import { supabase } from '@/integrations/supabase/client';
-import { LeadContext } from './EmailCapture';
+import { Check, Copy, Download } from 'lucide-react';
 
 interface NegotiationLetterProps {
   currentRent: number;
@@ -27,7 +25,7 @@ interface NegotiationLetterProps {
   analysisId?: string | null;
   prefilledEmail?: string;
   onEmailCaptured?: (email: string) => void;
-  leadContext?: LeadContext;
+  leadContext?: any;
 }
 
 type Tone = 'friendly' | 'firm';
@@ -41,9 +39,7 @@ const NegotiationLetter = ({
   analysisId, prefilledEmail, onEmailCaptured, leadContext,
 }: NegotiationLetterProps) => {
   const [tone, setTone] = useState<Tone>('friendly');
-  const [unlocked, setUnlocked] = useState(!!prefilledEmail);
-  const [gateEmail, setGateEmail] = useState(prefilledEmail || '');
-  const [partnerOptIn, setPartnerOptIn] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const brLabel = bedroomLabels[bedrooms];
   const increaseRatio = marketYoy > 0 ? Math.round((increasePct / marketYoy) * 10) / 10 : 0;
@@ -80,7 +76,9 @@ const NegotiationLetter = ({
 
   const handleCopy = () => {
     navigator.clipboard.writeText(letterText);
-    toast.success('Letter copied to clipboard');
+    trackEvent('letter_copied');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
   };
 
   const handleDownload = () => {
@@ -92,66 +90,18 @@ const NegotiationLetter = ({
     a.click();
     URL.revokeObjectURL(url);
     toast.success('Downloaded');
-  };
-
-  const handleUnlock = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!gateEmail) return;
-
-    // Store lead
-    try {
-      await supabase.from('leads').upsert({
-        email: gateEmail,
-        analysis_id: leadContext?.analysisId || null,
-        capture_source: 'letter_gate',
-        address: leadContext?.address || null,
-        city: leadContext?.city || null,
-        state: leadContext?.state || null,
-        zip: leadContext?.zip || null,
-        bedrooms: leadContext?.bedrooms ?? null,
-        current_rent: leadContext?.currentRent ?? null,
-        proposed_rent: leadContext?.proposedRent ?? null,
-        increase_pct: leadContext?.increasePct ?? null,
-        market_trend_pct: leadContext?.marketTrendPct ?? null,
-        fair_counter_offer: leadContext?.fairCounterOffer || null,
-        comps_position: leadContext?.compsPosition || null,
-        letter_generated: true,
-        partner_opt_in: partnerOptIn,
-      } as any, { onConflict: 'email' });
-    } catch {
-      // Don't block UX
-    }
-
-    // Update analysis record
-    if (analysisId) {
-      try {
-        await supabase.from('analyses').update({ letter_generated: true } as any).eq('id', analysisId);
-      } catch {}
-    }
-
-    // Store letter_generated_at timestamp
-    if (analysisId) {
-      try {
-        await supabase.from('leads').update({ letter_generated_at: new Date().toISOString() } as any).eq('email', gateEmail);
-      } catch {}
-    }
-
-    onEmailCaptured?.(gateEmail);
-    trackEvent('letter_generated');
-    trackEvent('email_captured', { capture_source: 'letter_gate' });
-    setUnlocked(true);
-    toast.success('Letter unlocked!');
+    trackEvent('letter_downloaded');
   };
 
   return (
     <div>
       <h2 className="section-title">Your Negotiation Letter</h2>
 
-      {/* Legal disclaimer — above letter */}
+      {/* Legal disclaimer */}
       <div className="rounded-lg border border-border bg-muted/40 p-4 mt-2 mb-4 flex gap-3 items-start">
         <span className="text-base leading-none mt-0.5">⚠️</span>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          This is a template based on public housing data — not legal advice. Review and customize before sending. Rent regulations vary by building type, location, and lease terms. If your apartment is rent-stabilized or subject to local rent control, consult your local tenant rights organization or a licensed attorney to confirm the rules that apply to your specific situation.
+          This is a template based on public housing data — not legal advice. Review and customize before sending. Rent regulations vary by building type, location, and lease terms. If your apartment is rent-stabilized or subject to local rent control, consult your local tenant rights organization or a licensed attorney.
         </p>
       </div>
       <div className="tone-toggle">
@@ -163,8 +113,6 @@ const NegotiationLetter = ({
         style={{
           background: 'hsl(var(--letter-bg))',
           boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
-          userSelect: unlocked ? 'auto' : 'none',
-          WebkitUserSelect: unlocked ? 'auto' : 'none',
         }}
       >
         <div className="text-xs text-muted-foreground mb-4 pb-4 border-b border-border flex gap-4">
@@ -178,42 +126,21 @@ const NegotiationLetter = ({
         </div>
       </div>
 
-      {/* Soft gate: email to copy/download/email */}
-      {!unlocked ? (
-        <div className="mt-5">
-          <form onSubmit={handleUnlock} className="flex gap-2 max-w-[440px]">
-            <input
-              type="email"
-              placeholder="Enter your email to copy, download, or email this letter"
-              value={gateEmail}
-              onChange={(e) => setGateEmail(e.target.value)}
-              required
-              className="flex-1 px-4 py-3 text-sm border border-border rounded-lg bg-card text-foreground outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
-            />
-            <button type="submit" className="bg-primary text-primary-foreground px-5 py-3 rounded-lg text-sm font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap">
-              Continue
-            </button>
-          </form>
-          <div className="mt-2 max-w-[440px] space-y-1.5">
-            <p className="text-[12px] text-muted-foreground/70">
-              We'll email you about your lease and relevant housing info. See our{' '}
-              <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
-            </p>
-            <label className="flex items-start gap-2 cursor-pointer select-none">
-              <input type="checkbox" checked={partnerOptIn} onChange={(e) => setPartnerOptIn(e.target.checked)} className="mt-[3px] accent-primary" />
-              <span className="text-[13px] text-muted-foreground/70 leading-snug">
-                I'm open to hearing from trusted partners about housing-related services.
-              </span>
-            </label>
-          </div>
-        </div>
-      ) : (
-        <div className="flex gap-3 mt-5">
-          <button onClick={handleCopy} className="bg-primary text-primary-foreground px-7 py-3 rounded-lg text-sm font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">Copy letter</button>
-          <button onClick={handleDownload} className="border border-border px-7 py-3 rounded-lg text-sm font-medium text-foreground hover:border-foreground transition-colors">Download</button>
-          <button onClick={() => toast.info('Email delivery coming soon!')} className="border border-border px-7 py-3 rounded-lg text-sm font-medium text-foreground hover:border-foreground transition-colors">Email me this letter</button>
-        </div>
-      )}
+      {/* Action buttons — no gate */}
+      <div className="flex gap-3 mt-5">
+        <button
+          onClick={handleCopy}
+          className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-7 py-3 rounded-lg text-sm font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
+        >
+          {copied ? <><Check size={16} /> Copied!</> : <><Copy size={16} /> Copy letter</>}
+        </button>
+        <button
+          onClick={handleDownload}
+          className="inline-flex items-center gap-2 border border-border px-7 py-3 rounded-lg text-sm font-medium text-foreground hover:border-foreground transition-colors"
+        >
+          <Download size={16} /> Download
+        </button>
+      </div>
     </div>
   );
 };

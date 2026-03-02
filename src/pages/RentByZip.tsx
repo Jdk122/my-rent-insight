@@ -134,7 +134,7 @@ const RentByZip = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEO
-        title={`Fair Market Rent in ${zip} (${city}, ${state}) — 2025 HUD Data | RenewalReply`}
+        title={`Fair Market Rent in ${zip} (${city}, ${state}) — FY2026 HUD Data | RenewalReply`}
         description={`HUD fair market rent for ${zip} is ${fmt(fmr1br)}/mo for a 1-bedroom. Compare rents, see trends, and check if your rent increase is fair. Free analysis for ${city}, ${state}.`}
         canonical={`/rent/${zip}`}
         jsonLd={[
