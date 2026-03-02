@@ -454,6 +454,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   city={rentData.city}
                   zip={rentData.zip}
                   increasePct={increasePct}
+                  address={formData.fullAddress}
                 />
               </motion.div>
 

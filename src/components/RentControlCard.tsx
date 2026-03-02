@@ -1,14 +1,16 @@
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Loader2, ShieldCheck } from 'lucide-react';
 import { getRentControlByStateCity, getApplicableCap, getNoticeRequirement, RentControlResult } from '@/data/rentControlData';
+import { useHcrLookup } from '@/hooks/useHcrLookup';
 
 interface RentControlCardProps {
   state: string;
   city: string;
   zip: string;
   increasePct: number;
+  address?: string | null;
 }
 
-const RentControlCard = ({ state, city, zip, increasePct }: RentControlCardProps) => {
+const RentControlCard = ({ state, city, zip, increasePct, address }: RentControlCardProps) => {
   const result: RentControlResult = getRentControlByStateCity(state, city);
   const cap = getApplicableCap(result);
   const notice = getNoticeRequirement(result);
@@ -16,20 +18,69 @@ const RentControlCard = ({ state, city, zip, increasePct }: RentControlCardProps
   const hasCap = !!cap;
   const exceedsCap = hasCap && cap?.maxIncreasePct && increasePct > cap.maxIncreasePct;
 
+  const { result: hcrResult, loading: hcrLoading } = useHcrLookup(address || null, zip);
+
   return (
     <div>
       <h3 className="evidence-card-header">Know Your Rights</h3>
 
       {hasCap && cap ? (
         <div className="mt-3">
-          {/* NYC stabilization check prompt */}
-          {cap.jurisdiction === 'New York City' && (
+          {/* HCR stabilization auto-check result */}
+          {hcrLoading && address && (
+            <div className="px-4 py-3 rounded-lg border border-primary/30 bg-primary/5 mb-4 flex items-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin text-primary" />
+              <p className="text-sm text-muted-foreground">Checking if your building is rent-stabilized…</p>
+            </div>
+          )}
+
+          {hcrResult?.found && hcrResult.stabilized && (
+            <div className="px-4 py-3 rounded-lg border border-verdict-good/30 bg-verdict-good/5 mb-4">
+              <div className="flex items-start gap-2">
+                <ShieldCheck className="w-5 h-5 text-verdict-good flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-foreground">
+                    Your building is rent-stabilized.
+                  </p>
+                  <p className="text-sm text-foreground/80 mt-1 leading-relaxed">
+                    Your legal maximum increase is <strong>3% (1-year)</strong> or <strong>4.5% (2-year)</strong> under the 2025–26 RGB guidelines (Order #57).
+                    {increasePct > 4.5 && (
+                      <span className="text-destructive font-medium"> Your proposed increase of {increasePct}% exceeds the legal cap.</span>
+                    )}
+                  </p>
+                  {hcrResult.taxBenefit && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Tax benefit program: {hcrResult.taxBenefit}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {hcrResult?.found === false && hcrResult.reason === 'no_match' && address && (
+            <div className="px-4 py-3 rounded-lg border border-border bg-muted/30 mb-4">
+              <p className="text-sm text-foreground">
+                ✅ Your building was <strong>not found</strong> in the HCR rent-stabilization registry.
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                This doesn't guarantee your unit isn't stabilized — some buildings aren't registered. You can{' '}
+                <a href="https://portal.hcr.ny.gov/app/ask" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:no-underline">
+                  request your rental history from HCR
+                </a>{' '}
+                to confirm.
+              </p>
+            </div>
+          )}
+
+          {/* Fallback prompt if no address was provided */}
+          {!address && cap.jurisdiction === 'New York City' && (
             <div className="px-4 py-3 rounded-lg border border-primary/30 bg-primary/5 mb-4">
               <p className="text-sm font-medium text-foreground">
                 ⚡ Is your apartment rent-stabilized?
               </p>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                About 1 million NYC units are rent-stabilized. If yours is, your landlord can only raise rent by the RGB-approved amount — not the market rate. Check your lease for "rent stabilized" language, or{' '}
+                Add your full address above and we'll check automatically. Or{' '}
                 <a href="https://apps.hcr.ny.gov/BuildingSearch/" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:no-underline">
                   look up your building here
                 </a>.
@@ -37,8 +88,8 @@ const RentControlCard = ({ state, city, zip, increasePct }: RentControlCardProps
             </div>
           )}
 
-          {/* Exceedance warning */}
-          {exceedsCap && (
+          {/* Exceedance warning (non-stabilized) */}
+          {exceedsCap && !(hcrResult?.found && hcrResult.stabilized) && (
             <div className="px-4 py-3 rounded-lg border border-destructive/30 bg-destructive/5 mb-4">
               <p className="text-sm font-medium text-destructive">
                 Your proposed increase of {increasePct}% may exceed the local cap.
