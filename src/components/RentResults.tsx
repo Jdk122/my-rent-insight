@@ -150,7 +150,35 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   // ━━━ Anonymous analysis logging ━━━
   useEffect(() => {
     trackEvent('results_viewed', { zip: rentData.zip, verdict: verdictLabel });
-    if (analysisLogged.current) return;
+
+    // Track time on results
+    const startTime = Date.now();
+    const handleUnload = () => {
+      const seconds = Math.round((Date.now() - startTime) / 1000);
+      trackEvent('time_on_results', { seconds });
+    };
+    window.addEventListener('beforeunload', handleUnload);
+
+    // Track section scroll visibility
+    const sectionIds = ['section-verdict', 'section-evidence', 'section-comps', 'section-letter'];
+    const firedSections = new Set<string>();
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !firedSections.has(entry.target.id)) {
+            firedSections.add(entry.target.id);
+            trackEvent('results_scrolled_to_section', { section: entry.target.id.replace('section-', '') });
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) sectionObserver.observe(el);
+    });
+
+    if (analysisLogged.current) return () => { window.removeEventListener('beforeunload', handleUnload); sectionObserver.disconnect(); };
     analysisLogged.current = true;
 
     const compsPosition = medianCompRent
@@ -181,6 +209,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     } as any).select('id').single().then(({ data }) => {
       if (data?.id) setAnalysisId(data.id);
     });
+
+    return () => { window.removeEventListener('beforeunload', handleUnload); sectionObserver.disconnect(); };
   }, []); // intentionally run once on mount
 
   const leadContext = useMemo(() => ({

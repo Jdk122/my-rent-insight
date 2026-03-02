@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
-import { trackEvent } from '@/lib/analytics';
+import { trackEvent } from '@/lib/analytics'; // GA4
 
 import { Link } from 'react-router-dom';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
@@ -147,8 +147,8 @@ const NegotiationLetter = ({
     <div>
       <h2 className="section-title">Your Negotiation Letter</h2>
       <div className="tone-toggle">
-        <button onClick={() => setTone('friendly')} className={`tone-option ${tone === 'friendly' ? 'active' : ''}`}>Friendly</button>
-        <button onClick={() => setTone('firm')} className={`tone-option ${tone === 'firm' ? 'active' : ''}`}>Firm</button>
+        <button onClick={() => { setTone('friendly'); trackEvent('letter_tone_toggled', { tone: 'friendly' }); }} className={`tone-option ${tone === 'friendly' ? 'active' : ''}`}>Friendly</button>
+        <button onClick={() => { setTone('firm'); trackEvent('letter_tone_toggled', { tone: 'firm' }); }} className={`tone-option ${tone === 'firm' ? 'active' : ''}`}>Firm</button>
       </div>
       <div
         className="rounded-lg border border-border border-l-[3px] border-l-muted p-6 md:p-8 mt-4"
