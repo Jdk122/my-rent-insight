@@ -12,13 +12,74 @@
       gtag('js', new Date());
       gtag('config', 'G-8RN57799GY');
     </script>
+
+    <!-- Primary meta (Helmet overrides these client-side for JS-capable crawlers) -->
     <title>RenewalReply — Is your rent increase fair?</title>
-    <meta name="description" content="Compare your rent increase to real market data. Get a free negotiation letter if your landlord is overcharging.">
+    <meta name="description" content="Compare your rent increase to real market data. Get a free negotiation letter if your landlord is overcharging." />
     <meta name="author" content="RenewalReply" />
+    <link rel="canonical" href="https://renewalreply.com/" />
+
+    <!-- Open Graph (static fallback for social bots that don't run JS) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="RenewalReply — Is your rent increase fair?" />
+    <meta property="og:description" content="Compare your rent increase to real market data. Get a free negotiation letter if your landlord is overcharging." />
+    <meta property="og:url" content="https://renewalreply.com/" />
+    <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/63d37e0d-9623-4178-b761-2e515c3e1b5a/id-preview-c3fbbd3c--0221e31a-4fe7-41b1-93b2-bac89ac9d373.lovable.app-1772400915913.png" />
+
+    <!-- Twitter Card (static fallback) -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="RenewalReply — Is your rent increase fair?" />
+    <meta name="twitter:description" content="Compare your rent increase to real market data. Get a free negotiation letter if your landlord is overcharging." />
+    <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/63d37e0d-9623-4178-b761-2e515c3e1b5a/id-preview-c3fbbd3c--0221e31a-4fe7-41b1-93b2-bac89ac9d373.lovable.app-1772400915913.png" />
+
+    <!-- JSON-LD (static fallback — Helmet adds richer version client-side) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "RenewalReply",
+      "url": "https://renewalreply.com",
+      "description": "Compare your rent increase to real market data. Get a free negotiation letter if your landlord is overcharging.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    }
+    </script>
   </head>
 
   <body>
-    <div id="root"></div>
+    <!-- Inline critical content: crawlers see this before JS hydrates -->
+    <div id="root">
+      <div style="max-width:620px;margin:0 auto;padding:80px 24px 128px">
+        <h1 style="font-size:clamp(3rem,8vw,5rem);line-height:1.05;letter-spacing:-0.02em;font-family:'DM Serif Display',serif">
+          Is your rent increase <span style="color:hsl(200,80%,44%)">fair?</span>
+        </h1>
+        <p style="margin-top:24px;font-size:20px;color:#666;line-height:1.6;font-family:'DM Sans',sans-serif">
+          Find out instantly. Get a data-backed negotiation letter if it's not.
+        </p>
+      </div>
+    </div>
+
+    <!-- Fallback for crawlers/browsers with JS disabled -->
+    <noscript>
+      <div style="max-width:620px;margin:0 auto;padding:40px 24px;font-family:sans-serif">
+        <h2>How RenewalReply Works</h2>
+        <p>RenewalReply compares your rent increase to real market data from HUD Fair Market Rents, Census ACS, Zillow, and FRED. If your landlord is overcharging, we generate a free, data-backed negotiation letter you can send immediately.</p>
+        <h3>What You Get</h3>
+        <ul>
+          <li>Instant rent increase analysis for 38,000+ zip codes</li>
+          <li>Comparison to HUD Fair Market Rents and local Zillow trends</li>
+          <li>A fair counter-offer range based on real market movement</li>
+          <li>Free negotiation letter in friendly or firm tone</li>
+          <li>Rent control and stabilization check for your address</li>
+          <li>Landlord cost breakdown and profit margin estimate</li>
+        </ul>
+        <h3>Data Sources</h3>
+        <p>HUD SAFMR FY2025 · Census ACS 2023 · Zillow ZORI · FRED · NY DHCR</p>
+        <p><a href="https://renewalreply.com/">Enable JavaScript to use RenewalReply →</a></p>
+      </div>
+    </noscript>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
