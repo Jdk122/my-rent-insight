@@ -238,24 +238,25 @@ export async function fetchStateVacancyRate(stateAbbr: string, stateName: string
   const fallback: VacancyRateResult = { rate: NATIONAL_AVG_VACANCY, year: '2024', stateName, isFallback: true };
 
   try {
-    const apiKey = import.meta.env.VITE_FRED_API_KEY || '2f091940133b890134935950c4f22eec';
-    if (!apiKey) return fallback;
+    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+    if (!projectId) return fallback;
 
-    const seriesId = `${stateAbbr}RVAC`;
-    const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=1`;
-
-    const response = await fetch(url);
+    const response = await fetch(
+      `https://${projectId}.supabase.co/functions/v1/fred-vacancy`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ state: stateAbbr }),
+      }
+    );
     if (!response.ok) return fallback;
 
     const data = await response.json();
-    const obs = data.observations?.filter((o: { value: string }) => o.value !== '.');
-    if (!obs || obs.length === 0) return fallback;
-
     const result: VacancyRateResult = {
-      rate: parseFloat(obs[0].value),
-      year: obs[0].date?.split('-')[0] || '2024',
+      rate: data.rate ?? NATIONAL_AVG_VACANCY,
+      year: data.year ?? '2024',
       stateName,
-      isFallback: false,
+      isFallback: data.isFallback ?? true,
     };
     vacancyCache[stateAbbr] = result;
     return result;
