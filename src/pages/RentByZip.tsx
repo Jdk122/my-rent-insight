@@ -38,6 +38,12 @@ function fmtIncome(n: number) {
 interface ZipPageData {
   raw: RentZipRaw;
   nearby: { zip: string; raw: RentZipRaw }[];
+  sameCity: { zip: string; raw: RentZipRaw }[];
+  sameMetro: { zip: string; raw: RentZipRaw }[];
+}
+
+function slugify(str: string) {
+  return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
 
 const RentByZip = () => {
@@ -83,7 +89,24 @@ const RentByZip = () => {
         }
       }
 
-      setData({ raw, nearby });
+      // Find same-city zips
+      const sameCity: { zip: string; raw: RentZipRaw }[] = [];
+      const sameMetro: { zip: string; raw: RentZipRaw }[] = [];
+      const thisCity = raw.c?.toLowerCase();
+      const thisState = raw.s?.toLowerCase();
+      const thisMetro = raw.m?.toLowerCase();
+
+      for (const [z, r] of Object.entries(allData)) {
+        if (z === zip) continue;
+        if (sameCity.length >= 5 && sameMetro.length >= 5) break;
+        if (sameCity.length < 5 && r.c?.toLowerCase() === thisCity && r.s?.toLowerCase() === thisState) {
+          sameCity.push({ zip: z, raw: r });
+        } else if (sameMetro.length < 5 && r.m?.toLowerCase() === thisMetro && (r.c?.toLowerCase() !== thisCity || r.s?.toLowerCase() !== thisState)) {
+          sameMetro.push({ zip: z, raw: r });
+        }
+      }
+
+      setData({ raw, nearby, sameCity, sameMetro });
       setLoading(false);
     })();
 
@@ -95,7 +118,7 @@ const RentByZip = () => {
   if (loading) return <LoadingSkeleton />;
   if (notFound || !data || !zip) return <NotFoundPage zip={zip} />;
 
-  const { raw, nearby } = data;
+  const { raw, nearby, sameCity, sameMetro } = data;
   const city = raw.c || 'Unknown';
   const state = raw.s || '';
   const fmr1br = raw.f[1];
@@ -106,6 +129,8 @@ const RentByZip = () => {
 
   // Census-derived renter % estimate (rough: if median rent exists, area is renter-heavy)
   const rentBurdenPct = raw.i && raw.r ? Math.round(((raw.r * 12) / raw.i) * 100) : null;
+  const stateSlug = slugify(state === 'NY' ? 'new-york' : state === 'CA' ? 'california' : state === 'TX' ? 'texas' : state === 'FL' ? 'florida' : state);
+  const citySlug = slugify(city);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -114,6 +139,17 @@ const RentByZip = () => {
         description={`HUD fair market rent for ${zip} is ${fmt(fmr1br)}/mo for a 1-bedroom. Compare rents, see trends, and check if your rent increase is fair. Free analysis for ${city}, ${state}.`}
         canonical={`/rent/${zip}`}
         jsonLd={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.renewalreply.com/' },
+              { '@type': 'ListItem', position: 2, name: 'Rent Data', item: 'https://www.renewalreply.com/rent-data' },
+              { '@type': 'ListItem', position: 3, name: state, item: `https://www.renewalreply.com/rent-data#${stateSlug}` },
+              { '@type': 'ListItem', position: 4, name: `${city}, ${state}`, item: `https://www.renewalreply.com/rent-data#${stateSlug}` },
+              { '@type': 'ListItem', position: 5, name: zip, item: `https://www.renewalreply.com/rent/${zip}` },
+            ],
+          },
           {
             '@context': 'https://schema.org',
             '@type': 'Dataset',
@@ -244,6 +280,16 @@ const RentByZip = () => {
       </nav>
 
       <main className="max-w-3xl mx-auto px-6 py-12 md:py-16 flex-1 w-full">
+        {/* Visible breadcrumbs */}
+        <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
+          <ol className="flex flex-wrap items-center gap-1">
+            <li><Link to="/" className="hover:text-foreground transition-colors">Home</Link></li>
+            <li className="before:content-['›'] before:mx-1"><Link to="/rent-data" className="hover:text-foreground transition-colors">Rent Data</Link></li>
+            <li className="before:content-['›'] before:mx-1"><Link to={`/rent-data#${stateSlug}`} className="hover:text-foreground transition-colors">{state}</Link></li>
+            <li className="before:content-['›'] before:mx-1"><span aria-current="page">{zip}</span></li>
+          </ol>
+        </nav>
+
         {/* SECTION 1 — Hero */}
         <section className="mb-12">
           <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight tracking-tight" style={{ letterSpacing: '-0.02em' }}>
@@ -431,36 +477,98 @@ const RentByZip = () => {
           </Accordion>
         </section>
 
-        {/* SECTION 6 — Nearby Zip Codes */}
-        {nearby.length > 0 && (
-          <section className="mb-12">
-            <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Nearby Zip Codes</h2>
-            <div className="rounded-lg border border-border overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Zip Code</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead className="text-right">1-BR FMR</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {nearby.map(({ zip: nZip, raw: nRaw }) => (
-                    <TableRow key={nZip}>
-                      <TableCell>
-                        <Link to={`/rent/${nZip}`} className="text-primary underline hover:text-primary/80 font-medium">
-                          {nZip}
-                        </Link>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">{nRaw.c || 'Unknown'}, {nRaw.s}</TableCell>
-                      <TableCell className="text-right tabular-nums">{fmt(nRaw.f[1])}</TableCell>
+        {/* SECTION 6 — Related Zip Codes */}
+        <section className="mb-12">
+          {sameCity.length > 0 && (
+            <>
+              <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Other zip codes in {city}, {state}</h2>
+              <div className="rounded-lg border border-border overflow-hidden mb-8">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Zip Code</TableHead>
+                      <TableHead>Location</TableHead>
+                      <TableHead className="text-right">1-BR FMR</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </section>
-        )}
+                  </TableHeader>
+                  <TableBody>
+                    {sameCity.map(({ zip: nZip, raw: nRaw }) => (
+                      <TableRow key={nZip}>
+                        <TableCell>
+                          <Link to={`/rent/${nZip}`} className="text-primary underline hover:text-primary/80 font-medium">{nZip}</Link>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">{nRaw.c || 'Unknown'}, {nRaw.s}</TableCell>
+                        <TableCell className="text-right tabular-nums">{fmt(nRaw.f[1])}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
+          )}
+
+          {sameMetro.length > 0 && (
+            <>
+              <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Nearby metro area</h2>
+              <div className="rounded-lg border border-border overflow-hidden mb-8">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Zip Code</TableHead>
+                      <TableHead>Location</TableHead>
+                      <TableHead className="text-right">1-BR FMR</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {sameMetro.map(({ zip: nZip, raw: nRaw }) => (
+                      <TableRow key={nZip}>
+                        <TableCell>
+                          <Link to={`/rent/${nZip}`} className="text-primary underline hover:text-primary/80 font-medium">{nZip}</Link>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">{nRaw.c || 'Unknown'}, {nRaw.s}</TableCell>
+                        <TableCell className="text-right tabular-nums">{fmt(nRaw.f[1])}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
+          )}
+
+          {/* Fallback: numerically adjacent if no city/metro matches */}
+          {sameCity.length === 0 && sameMetro.length === 0 && nearby.length > 0 && (
+            <>
+              <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Nearby Zip Codes</h2>
+              <div className="rounded-lg border border-border overflow-hidden mb-8">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Zip Code</TableHead>
+                      <TableHead>Location</TableHead>
+                      <TableHead className="text-right">1-BR FMR</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {nearby.map(({ zip: nZip, raw: nRaw }) => (
+                      <TableRow key={nZip}>
+                        <TableCell>
+                          <Link to={`/rent/${nZip}`} className="text-primary underline hover:text-primary/80 font-medium">{nZip}</Link>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">{nRaw.c || 'Unknown'}, {nRaw.s}</TableCell>
+                        <TableCell className="text-right tabular-nums">{fmt(nRaw.f[1])}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
+          )}
+
+          {/* Hub links */}
+          <div className="flex flex-col gap-2 text-sm">
+            <Link to="/rent-data" className="text-primary underline hover:text-primary/80">Browse all rent data →</Link>
+          </div>
+        </section>
 
         {/* SECTION 7 — Bottom CTA */}
         <section className="text-center py-10">

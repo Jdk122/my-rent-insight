@@ -28,8 +28,13 @@ const SEOFooter = ({ onContactClick }: SEOFooterProps) => (
             </Link>
           </li>
           <li>
+            <Link to="/rent-data" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Browse Rent Data
+            </Link>
+          </li>
+          <li>
             <Link to="/rent/10001" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Browse Rent Data by Zip Code
+              Example: NYC 10001
             </Link>
           </li>
           <li>

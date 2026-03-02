@@ -9,6 +9,7 @@ import Privacy from "./pages/Privacy";
 import Outcome from "./pages/Outcome";
 import NotFound from "./pages/NotFound";
 const RentByZip = lazy(() => import("./pages/RentByZip"));
+const RentData = lazy(() => import("./pages/RentData"));
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/outcome" element={<Outcome />} />
+          <Route path="/rent-data" element={<Suspense fallback={null}><RentData /></Suspense>} />
           <Route path="/rent/:zip" element={<Suspense fallback={null}><RentByZip /></Suspense>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
