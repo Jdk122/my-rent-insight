@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-
+import SEO from '@/components/SEO';
 const Outcome = () => {
   const [params] = useSearchParams();
   const leadId = params.get('id');
@@ -29,6 +29,7 @@ const Outcome = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6 text-center">
+      <SEO title="Your Outcome — RenewalReply" noindex />
       <span className="font-display text-xl font-bold text-primary tracking-tight mb-8" style={{ letterSpacing: '-0.02em' }}>
         Renewal<span className="font-normal text-accent">Reply</span>
       </span>

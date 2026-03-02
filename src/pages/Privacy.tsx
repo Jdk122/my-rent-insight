@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
-
-const Privacy = () => (
-  <div className="min-h-screen bg-background text-foreground">
+import SEOFooter from '@/components/SEOFooter';
+import ContactModal from '@/components/ContactModal';
+const Privacy = () => {
+  const [contactOpen, setContactOpen] = useState(false);
+  return (
+  <div className="min-h-screen bg-background text-foreground flex flex-col">
     <SEO
       title="Privacy Policy — RenewalReply"
       description="How RenewalReply collects, uses, and protects your data. Read our privacy policy."
@@ -76,7 +80,11 @@ const Privacy = () => (
         <Link to="/" className="text-sm text-primary hover:underline">← Back to RenewalReply</Link>
       </div>
     </main>
+
+    <SEOFooter onContactClick={() => setContactOpen(true)} />
+    <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
   </div>
-);
+  );
+};
 
 export default Privacy;
