@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.hcr-lookup]
 verify_jwt = false
+
+[functions.sitemap-zips]
+verify_jwt = false
