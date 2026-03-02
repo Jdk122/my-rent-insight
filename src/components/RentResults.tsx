@@ -263,7 +263,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
 
 
-
               {/* ── Stat dashboard strip ── */}
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
@@ -290,21 +289,20 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 ))}
               </motion.div>
 
-              {/* CTAs */}
-              <div className="mt-5 flex flex-col sm:flex-row items-center gap-4">
-                <button
-                  onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="text-base font-semibold text-primary hover:text-primary/80 transition-colors duration-150"
-                >
-                  See the evidence ↓
-                </button>
+              {/* Share — prominent, right after stats */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.35, duration: 0.4 }}
+                className="mt-5"
+              >
                 <ShareableCard
                   headline={
                     isAboveMarket && calc
                       ? isPath1
                         ? `My landlord is asking for $${fmt(newRent - calc.counterHigh)}/mo more than the market supports.`
                         : `My landlord is asking for ${marketMultiple}× the market rate increase.`
-               : isFair
+                      : isFair
                       ? `My rent increase is right at market.`
                       : increasePct > 0 && increasePct <= marketYoy
                       ? `My rent increase is in line with the market.`
@@ -317,11 +315,20 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     { label: 'Your increase', value: `${increasePct}%`, color: isAboveMarket ? 'hsl(0, 72%, 51%)' : isFair ? 'hsl(45, 80%, 45%)' : 'hsl(151, 50%, 38%)' },
                   ]}
                 />
-              </div>
+              </motion.div>
 
-              <button onClick={onReset} className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors">
-                ← Check a different address
-              </button>
+              {/* See evidence + reset */}
+              <div className="mt-4 flex flex-col items-center gap-2">
+                <button
+                  onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="text-base font-semibold text-primary hover:text-primary/80 transition-colors duration-150"
+                >
+                  See the evidence ↓
+                </button>
+                <button onClick={onReset} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+                  ← Check a different address
+                </button>
+              </div>
             </>
           ) : (
             <>
