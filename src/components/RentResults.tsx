@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { RentFormData } from './RentForm';
 import { RentLookupResult, bedroomLabels, calculateResults } from '@/data/rentData';
 import ShareSection from './ShareSection';
+import BuildingShareCard from './BuildingShareCard';
 import ShareableCard from './ShareableCard';
 import EmailCapture from './EmailCapture';
 import CompLinks from './CompLinks';
@@ -585,6 +586,23 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             marketMultiple={marketMultiple}
           />
         </section>
+
+        {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            SECTION 7: BUILDING SHARE — Viral Loop
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        {hasIncrease && (
+          <section className="pb-12">
+            <BuildingShareCard
+              zipCode={rentData.zip}
+              city={rentData.city}
+              state={rentData.state}
+              bedrooms={bedroomNum}
+              hudFMR={rentData.fmr}
+              proposedRent={newRent}
+              increasePercent={increasePct}
+            />
+          </section>
+        )}
         </div>
       </div>
     </>
