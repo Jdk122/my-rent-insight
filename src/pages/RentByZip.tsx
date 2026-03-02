@@ -106,14 +106,116 @@ const RentByZip = () => {
         title={`Fair Market Rent in ${zip} (${city}, ${state}) — 2025 HUD Data | RenewalReply`}
         description={`HUD fair market rent for ${zip} is ${fmt(fmr1br)}/mo for a 1-bedroom. Compare rents, see trends, and check if your rent increase is fair. Free analysis for ${city}, ${state}.`}
         canonical={`/rent/${zip}`}
-        jsonLd={{
-          '@context': 'https://schema.org',
-          '@type': 'WebPage',
-          name: `Fair Market Rent in ${zip} — ${city}, ${state}`,
-          description: `HUD fair market rent data for zip code ${zip} in ${city}, ${state}.`,
-          url: `https://www.renewalreply.com/rent/${zip}`,
-        }}
+        jsonLd={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Dataset',
+            name: `Fair Market Rent Data for ${zip}`,
+            description: `HUD Fair Market Rent (SAFMR FY2025) and local rent market data for zip code ${zip} in ${city}, ${state}`,
+            url: `https://www.renewalreply.com/rent/${zip}`,
+            creator: { '@type': 'Organization', name: 'RenewalReply' },
+            temporalCoverage: '2025',
+            spatialCoverage: {
+              '@type': 'Place',
+              address: {
+                '@type': 'PostalAddress',
+                postalCode: zip,
+                addressLocality: city,
+                addressRegion: state,
+              },
+            },
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: [
+              {
+                '@type': 'Question',
+                name: `What is fair market rent in ${zip}?`,
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: `The HUD fair market rent for a 1-bedroom in ${zip} (${city}, ${state}) is ${fmt(fmr1br)}/month for FY2025. Studio: ${fmt(raw.f[0])}, 2-BR: ${fmt(raw.f[2])}, 3-BR: ${fmt(raw.f[3])}, 4-BR: ${fmt(raw.f[4])}.`,
+                },
+              },
+              {
+                '@type': 'Question',
+                name: `How much can my landlord raise my rent in ${city}?`,
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: cap
+                    ? `${cap.jurisdiction} has rent increase protections. ${cap.maxIncreaseFormula ? `The cap is generally ${cap.maxIncreaseFormula}.` : ''}`
+                    : `There are no specific rent control laws covering ${city}, ${state} at this time. Landlords can raise rent by any amount with proper notice.`,
+                },
+              },
+              {
+                '@type': 'Question',
+                name: `Is my rent increase fair in ${zip}?`,
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: `Use the free RenewalReply rent increase calculator to compare your proposed increase to HUD fair market rent and local market trends for ${zip}.`,
+                },
+              },
+            ],
+          },
+        ]}
       />
+
+      {/* Noscript fallback for crawlers */}
+      <noscript>
+        <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
+          <h1>{`Fair Market Rent in ${zip} — ${city}, ${state}`}</h1>
+          <p>{`See how rents in ${zip} compare to HUD fair market rent benchmarks. Data updated for FY2025.`}</p>
+          <p><a href={`https://www.renewalreply.com/?zip=${zip}`}>{`Check if your rent increase is fair in ${zip} →`}</a></p>
+
+          <h2>{`HUD Fair Market Rent for ${zip}`}</h2>
+          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+            <thead>
+              <tr><th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: 8 }}>Bedroom Size</th><th style={{ textAlign: 'right', borderBottom: '1px solid #ccc', padding: 8 }}>FMR Monthly Rent</th></tr>
+            </thead>
+            <tbody>
+              {BEDROOM_LABELS.map((label, i) => (
+                <tr key={label}><td style={{ padding: 8, borderBottom: '1px solid #eee' }}>{label}</td><td style={{ padding: 8, borderBottom: '1px solid #eee', textAlign: 'right' }}>{fmt(raw.f[i])}</td></tr>
+              ))}
+            </tbody>
+          </table>
+          <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY2025</small></p>
+
+          {hasZillow && (
+            <>
+              <h2>{`Rent Trends in ${city}, ${state}`}</h2>
+              <p>{`Year-over-Year change: ${raw.zy! > 0 ? '+' : ''}${raw.zy!.toFixed(1)}%. Rents in ${zip} have ${raw.zy! > 0 ? 'increased' : raw.zy! < 0 ? 'decreased' : 'remained flat'} by ${Math.abs(raw.zy!).toFixed(1)}% over the past year.`}</p>
+            </>
+          )}
+
+          {hasCensus && (
+            <>
+              <h2>{`Renter Demographics in ${zip}`}</h2>
+              <p>{`Median Household Income: ${fmtIncome(raw.i!)}.`}{raw.r ? ` Median Gross Rent: ${fmt(raw.r)}/mo.` : ''}{rentBurdenPct !== null ? ` Rent-to-Income Ratio: ${rentBurdenPct}%.` : ''}</p>
+            </>
+          )}
+
+          <h2>{`Frequently Asked Questions About Rent in ${zip}`}</h2>
+          <h3>{`What is fair market rent in ${zip}?`}</h3>
+          <p>{`The HUD fair market rent for a 1-bedroom in ${zip} (${city}, ${state}) is ${fmt(fmr1br)}/month for FY2025. Studio: ${fmt(raw.f[0])}, 2-BR: ${fmt(raw.f[2])}, 3-BR: ${fmt(raw.f[3])}, 4-BR: ${fmt(raw.f[4])}.`}</p>
+          <h3>{`How much can my landlord raise my rent in ${city}?`}</h3>
+          <p>{cap ? `${cap.jurisdiction} has rent increase protections. ${cap.maxIncreaseFormula ? `The cap is generally ${cap.maxIncreaseFormula}.` : ''}` : `There are no specific rent control laws covering ${city}, ${state} at this time.`}</p>
+          <h3>{`Is my rent increase fair in ${zip}?`}</h3>
+          <p>{`Use our free rent increase calculator to compare your proposed increase to HUD fair market rent for ${zip}.`} <a href={`https://www.renewalreply.com/?zip=${zip}`}>Check now</a></p>
+
+          {nearby.length > 0 && (
+            <>
+              <h2>Nearby Zip Codes</h2>
+              <ul>
+                {nearby.map(({ zip: nZip, raw: nRaw }) => (
+                  <li key={nZip}><a href={`https://www.renewalreply.com/rent/${nZip}`}>{nZip} — {nRaw.c || 'Unknown'}, {nRaw.s} — 1-BR FMR: {fmt(nRaw.f[1])}</a></li>
+                ))}
+              </ul>
+            </>
+          )}
+
+          <p><a href="https://www.renewalreply.com/">← Back to RenewalReply Homepage</a></p>
+        </div>
+      </noscript>
 
       {/* Nav */}
       <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
