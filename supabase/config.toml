@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.sitemap-zips]
 verify_jwt = false
+
+[functions.rentcast-market]
+verify_jwt = false
