@@ -356,10 +356,19 @@ function LoadingSkeleton() {
 
 function NotFoundPage() {
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center">
-      <h1 className="font-display text-3xl text-foreground mb-4">City Not Found</h1>
-      <p className="text-muted-foreground mb-6">We don't have rent data for this city yet.</p>
-      <Link to="/rent-data" className="text-primary hover:underline">← Browse all rent data</Link>
+    <div className="min-h-screen bg-background flex flex-col">
+      <SEO title="City Not Found — RenewalReply" noindex />
+      <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+        <Link to="/" className="font-display text-xl font-bold text-primary tracking-tight" style={{ letterSpacing: '-0.02em' }}>
+          Renewal<span className="font-normal text-accent">Reply</span>
+        </Link>
+      </nav>
+      <main className="flex-1 flex flex-col items-center justify-center">
+        <h1 className="font-display text-3xl text-foreground mb-4">City Not Found</h1>
+        <p className="text-muted-foreground mb-6">We don't have rent data for this city yet.</p>
+        <Link to="/rent-data" className="text-primary hover:underline">← Browse all rent data</Link>
+      </main>
+      <SEOFooter />
     </div>
   );
 }

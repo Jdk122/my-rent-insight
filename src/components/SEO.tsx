@@ -30,6 +30,7 @@ const SEO = ({
   const fullCanonical = canonical ? `${SITE_URL}${canonical}` : SITE_URL;
   const prevRef = useRef<{ title: string } | null>(null);
   const jsonLdIdsRef = useRef<string[]>([]);
+  const managedMetaRef = useRef<string[]>([]);
 
   useEffect(() => {
     // Save previous title for cleanup
@@ -84,25 +85,32 @@ const SEO = ({
       document.head.appendChild(canonicalEl);
     }
     canonicalEl.setAttribute('href', fullCanonical);
+    // Remove stale JSON-LD scripts from previous render
+    for (const oldId of jsonLdIdsRef.current) {
+      document.getElementById(oldId)?.remove();
+    }
+
     const ids: string[] = [];
     if (jsonLd) {
       const schemas = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
+      const prefix = `seo-jsonld-${fullCanonical.replace(/\W/g, '-')}`;
       schemas.forEach((schema, i) => {
-        const id = `seo-jsonld-${i}`;
+        const id = `${prefix}-${i}`;
         ids.push(id);
-        let el = document.getElementById(id) as HTMLScriptElement | null;
-        if (!el) {
-          el = document.createElement('script');
-          el.type = 'application/ld+json';
-          el.id = id;
-          document.head.appendChild(el);
-        }
+        const el = document.createElement('script');
+        el.type = 'application/ld+json';
+        el.id = id;
         el.text = JSON.stringify(schema);
+        document.head.appendChild(el);
       });
     }
     jsonLdIdsRef.current = ids;
 
     return () => {
+      // Restore title
+      if (prevRef.current) {
+        document.title = prevRef.current.title;
+      }
       // Clean up JSON-LD scripts added by this instance
       for (const id of jsonLdIdsRef.current) {
         document.getElementById(id)?.remove();
