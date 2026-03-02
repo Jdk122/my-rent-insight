@@ -233,7 +233,7 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
           disabled={isLoading}
           className="w-full h-14 bg-primary text-primary-foreground text-base font-bold rounded-lg hover:opacity-90 active:scale-[0.99] transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
         >
-          {isLoading ? 'Loading data…' : 'Check my increase →'}
+          {isLoading ? 'Loading data…' : 'Get my rent report →'}
         </button>
         <p className="text-xs text-muted-foreground/60 text-center mt-3">
           This tool provides estimates based on federal housing data. It is not financial or legal advice.
