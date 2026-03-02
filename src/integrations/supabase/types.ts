@@ -119,6 +119,7 @@ export type Database = {
           letter_generated_at: string | null
           market_trend_pct: number | null
           outcome: string | null
+          partner_opt_in: boolean | null
           proposed_rent: number | null
           reminder_sent_at: string | null
           state: string | null
@@ -145,6 +146,7 @@ export type Database = {
           letter_generated_at?: string | null
           market_trend_pct?: number | null
           outcome?: string | null
+          partner_opt_in?: boolean | null
           proposed_rent?: number | null
           reminder_sent_at?: string | null
           state?: string | null
@@ -171,6 +173,7 @@ export type Database = {
           letter_generated_at?: string | null
           market_trend_pct?: number | null
           outcome?: string | null
+          partner_opt_in?: boolean | null
           proposed_rent?: number | null
           reminder_sent_at?: string | null
           state?: string | null

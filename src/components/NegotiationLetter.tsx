@@ -42,6 +42,7 @@ const NegotiationLetter = ({
   const [tone, setTone] = useState<Tone>('friendly');
   const [unlocked, setUnlocked] = useState(!!prefilledEmail);
   const [gateEmail, setGateEmail] = useState(prefilledEmail || '');
+  const [partnerOptIn, setPartnerOptIn] = useState(false);
 
   const brLabel = bedroomLabels[bedrooms];
   const increaseRatio = marketYoy > 0 ? Math.round((increasePct / marketYoy) * 10) / 10 : 0;
@@ -114,6 +115,7 @@ const NegotiationLetter = ({
         fair_counter_offer: leadContext?.fairCounterOffer || null,
         comps_position: leadContext?.compsPosition || null,
         letter_generated: true,
+        partner_opt_in: partnerOptIn,
       } as any, { onConflict: 'email' });
     } catch {
       // Don't block UX
@@ -187,7 +189,7 @@ const NegotiationLetter = ({
               <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
             </p>
             <label className="flex items-start gap-2 cursor-pointer select-none">
-              <input type="checkbox" className="mt-[3px] accent-primary" />
+              <input type="checkbox" checked={partnerOptIn} onChange={(e) => setPartnerOptIn(e.target.checked)} className="mt-[3px] accent-primary" />
               <span className="text-[13px] text-muted-foreground/70 leading-snug">
                 I'm open to hearing from trusted partners about housing-related services.
               </span>
