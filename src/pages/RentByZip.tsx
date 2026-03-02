@@ -593,6 +593,20 @@ const RentByZip = () => {
         </section>
       </main>
 
+      {/* Data factsheet for AI extraction */}
+      <div className="max-w-3xl mx-auto px-6 pb-4">
+        <p className="text-sm text-muted-foreground/50">
+          {[
+            `Zip code: ${zip}`,
+            `City: ${city}, ${state}`,
+            `1-BR FMR: ${fmt(raw.f[1])}/mo`,
+            `2-BR FMR: ${fmt(raw.f[2])}/mo`,
+            ...(raw.i && raw.i >= 10000 ? [`Median household income: ${fmtIncome(raw.i)}`] : []),
+            ...(rentBurdenPct ? [`Rent burden: ${rentBurdenPct}%`] : []),
+          ].join(' | ')}
+        </p>
+      </div>
+
       <SEOFooter onContactClick={() => setContactOpen(true)} />
       <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
     </div>
