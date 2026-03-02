@@ -201,8 +201,8 @@ const cityLaws: Record<string, RentControlLaw> = {
     noticePeriodDays: 90, // for increases >5%
     applicability: 'Rent-stabilized units (buildings with 6+ units built before 1974, ~1 million units citywide)',
     exemptions: 'New construction, buildings with fewer than 6 units, owner-occupied small buildings',
-    ordinanceUrl: 'https://hcr.ny.gov/rent-stabilization',
-    notes: 'RGB 2024–25 guidelines: 2.75% for 1-year renewals, 5.25% for 2-year renewals. If your unit is rent-stabilized, these caps apply — not the market trend. Check your lease or ask your landlord. You can verify stabilization status at hcr.ny.gov.',
+    ordinanceUrl: 'https://rentguidelinesboard.cityofnewyork.us/2025-26-apartment-loft-order-57/',
+    notes: 'RGB 2025–26 guidelines (Order #57): 3% for 1-year renewals, 4.5% for 2-year renewals. Effective for leases commencing October 1, 2025 through September 30, 2026. If your unit is rent-stabilized, these caps apply — not the market trend. Check your lease or ask your landlord. You can verify stabilization status at hcr.ny.gov.',
   },
   'San Francisco': {
     jurisdiction: 'San Francisco',
