@@ -25,8 +25,13 @@ serve(async (req) => {
       );
     }
 
+    // Strip unit/apt from address for better geocoding (Rentcast needs street-level)
+    const cleanAddress = address
+      ? address.replace(/\s*(apt|unit|suite|ste|#)\s*\S+/gi, '').replace(/\s+/g, ' ').trim()
+      : null;
+
     // Need either address or zip for listings search
-    if (!address && !zip) {
+    if (!cleanAddress && !zip) {
       return new Response(
         JSON.stringify({ rentEstimate: null, rentRangeLow: null, rentRangeHigh: null, comparables: [], cacheHit: false }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -39,8 +44,8 @@ serve(async (req) => {
     );
 
     // Build cache key
-    const lookupKey = address
-      ? `listings|${address.toLowerCase().trim()}|br${bedrooms ?? "any"}`
+    const lookupKey = cleanAddress
+      ? `listings|${cleanAddress.toLowerCase().trim()}|br${bedrooms ?? "any"}`
       : `listings|${zip}|br${bedrooms ?? "any"}`;
     const endpoint = "rental-listings";
 
@@ -65,9 +70,9 @@ serve(async (req) => {
 
     // Build query params for /v1/listings/rental/long-term
     const params = new URLSearchParams();
-    if (address) {
-      params.set("address", address);
-      params.set("radius", "3"); // 3 mile radius for address-based search
+    if (cleanAddress) {
+      params.set("address", cleanAddress);
+      params.set("radius", "1"); // 1 mile radius to keep comps local
     } else {
       params.set("zipCode", zip);
     }
