@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.rentcast-market]
 verify_jwt = false
+
+[functions.sitemap-cities]
+verify_jwt = false
