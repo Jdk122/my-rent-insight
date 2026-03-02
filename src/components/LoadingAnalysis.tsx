@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const messages = [
-  'Checking your market…',
-  'Pulling comparable listings…',
-  'Analyzing your increase…',
+  'Checking HUD fair market rent data…',
+  'Analyzing local rent trends…',
+  'Comparing to Zillow market data…',
+  'Calculating your rent fairness score…',
+  'Preparing your results…',
 ];
 
 const LoadingAnalysis = () => {

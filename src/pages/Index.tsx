@@ -20,8 +20,10 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [navScrolled, setNavScrolled] = useState(false);
   const [capturedEmail, setCapturedEmail] = useState('');
+  const [formKey, setFormKey] = useState(0); // key to force form remount/reset
   const propertyLookup = usePropertyLookup();
   const topRef = useRef<HTMLDivElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!results) { setNavScrolled(false); return; }
@@ -74,7 +76,7 @@ const Index = () => {
 
         setResults({ formData: { ...data, zip }, rentData });
         trackEvent('form_submitted', { zip, bedrooms: data.bedrooms, has_address: true });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
 
         loadFredTrend(rentData.metro).then((fredTrend) => {
           if (fredTrend) {
@@ -94,7 +96,7 @@ const Index = () => {
         setResults({ formData: data, rentData });
         trackEvent('form_submitted', { zip: data.zip, bedrooms: data.bedrooms, has_address: false });
         trackEvent('address_entered', { method: 'zip_only' });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
 
         loadFredTrend(rentData.metro).then((fredTrend) => {
           if (fredTrend) {
@@ -147,12 +149,12 @@ const Index = () => {
           boxShadow: !results || !navScrolled ? 'none' : '0 1px 3px rgba(0,0,0,0.08)',
         }}
       >
-        <span className="font-display text-xl font-bold text-primary tracking-tight cursor-pointer hover:scale-105 transition-transform duration-200" style={{ letterSpacing: '-0.02em' }} onClick={() => { setResults(null); window.scrollTo({ top: 0 }); }}>
+        <span className="font-display text-xl font-bold text-primary tracking-tight cursor-pointer hover:scale-105 transition-transform duration-200" style={{ letterSpacing: '-0.02em' }} onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0 }); }}>
           Renewal<span className="font-normal text-accent">Reply</span>
         </span>
         <div className="flex items-center gap-3">
           {results && (
-            <button onClick={() => setResults(null)} className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
+            <button onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
               ← New check
             </button>
           )}
@@ -204,7 +206,7 @@ const Index = () => {
                 Find out instantly. Get a data-backed negotiation letter if it's not.
               </p>
               <section className="mt-10" aria-label="Rent increase checker">
-                <RentForm onSubmit={handleSubmit} isLoading={isLoading} />
+                <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} />
                 <SocialProofCounter />
               </section>
             </main>
@@ -212,6 +214,7 @@ const Index = () => {
         ) : (
           <motion.div
             key="results"
+            ref={resultsRef}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -223,9 +226,11 @@ const Index = () => {
               propertyData={propertyLookup.data}
               propertyLoading={propertyLookup.loading}
               propertyError={propertyLookup.error}
-              onReset={() => setResults(null)}
+              onReset={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               onScrollToTop={() => {
                 setResults(null);
+                setFormKey(k => k + 1);
+                setCapturedEmail('');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               capturedEmail={capturedEmail}
