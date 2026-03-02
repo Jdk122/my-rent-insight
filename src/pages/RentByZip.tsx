@@ -249,7 +249,10 @@ const RentByZip = () => {
           <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight tracking-tight" style={{ letterSpacing: '-0.02em' }}>
             Fair Market Rent in {zip} — {city}, {state}
           </h1>
-          <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
+          <p className="mt-3 text-muted-foreground leading-relaxed" style={{ fontSize: '1.05rem' }}>
+            The HUD fair market rent for a 1-bedroom in {zip} ({city}, {state}) is {fmt(raw.f[1])}/month. Studio: {fmt(raw.f[0])}, 2-BR: {fmt(raw.f[2])}, 3-BR: {fmt(raw.f[3])}, 4-BR: {fmt(raw.f[4])}.{hasZillow ? ` Rents changed ${raw.zy! > 0 ? '+' : ''}${raw.zy!.toFixed(1)}% year-over-year.` : ''}
+          </p>
+          <p className="mt-2 text-lg text-muted-foreground leading-relaxed">
             See how rents in {zip} compare to HUD fair market rent benchmarks. Data updated for FY2025.
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -384,6 +387,11 @@ const RentByZip = () => {
             <p className="mt-3 text-xs text-muted-foreground">Source: Census ACS 2023</p>
           </section>
         )}
+
+        {/* Data summary for AI extraction */}
+        <p className="mb-12 text-sm text-muted-foreground">
+          Zip code: {zip} | City: {city}, {state} | 1-BR FMR: {fmt(raw.f[1])}/mo{hasCensus ? ` | Median household income: ${fmtIncome(raw.i!)}` : ''}{rentBurdenPct !== null ? ` | Rent burden: ${rentBurdenPct}%` : ''}
+        </p>
 
         {/* SECTION 5 — FAQ */}
         <section className="mb-12">
