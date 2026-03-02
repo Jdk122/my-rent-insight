@@ -64,6 +64,39 @@ const RentByState = () => {
         ]}
       />
 
+      {/* Noscript fallback for crawlers */}
+      <noscript>
+        <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
+          <h1>{`Rent Data for ${stateName} — Average Rent by City (2025)`}</h1>
+          <p>{`The average fair market rent for a 1-bedroom in ${stateName} is ${fmt(avgFmr1br)}/month. Browse rent data for ${cities.length} cities across ${totalZips.toLocaleString()} zip codes.`}</p>
+          <p><a href="https://www.renewalreply.com/">{`Check if your rent increase is fair →`}</a></p>
+
+          <h2>{`Cities in ${stateName}`}</h2>
+          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+            <thead>
+              <tr>
+                <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: 8 }}>City</th>
+                <th style={{ textAlign: 'right', borderBottom: '1px solid #ccc', padding: 8 }}>1-BR FMR</th>
+                <th style={{ textAlign: 'right', borderBottom: '1px solid #ccc', padding: 8 }}>Zip Codes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cities.map(c => (
+                <tr key={c.citySlug}>
+                  <td style={{ padding: 8, borderBottom: '1px solid #eee' }}>
+                    <a href={`https://www.renewalreply.com/rent-data/${stateSlug}/${c.citySlug}`}>{c.city}</a>
+                  </td>
+                  <td style={{ padding: 8, borderBottom: '1px solid #eee', textAlign: 'right' }}>{fmt(c.avgFmr[1])}</td>
+                  <td style={{ padding: 8, borderBottom: '1px solid #eee', textAlign: 'right' }}>{c.zips.length}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY2025</small></p>
+          <p><a href="https://www.renewalreply.com/rent-data">← Browse all rent data</a></p>
+        </div>
+      </noscript>
+
       {/* Nav */}
       <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
         <Link to="/" className="font-display text-xl font-bold text-primary tracking-tight" style={{ letterSpacing: '-0.02em' }}>
