@@ -1,4 +1,5 @@
 import { toast } from 'sonner';
+import { trackEvent } from '@/lib/analytics';
 import { LandlordCostEstimate } from '@/data/landlordCosts';
 
 interface ShareSectionProps {
@@ -25,6 +26,7 @@ const ShareSection = ({ increasePct, marketPct, excessAnnual, multiplier, landlo
 
   const handleCopy = () => {
     navigator.clipboard.writeText(fullText);
+    trackEvent('share_clicked');
     toast.success('Copied to clipboard');
   };
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { trackEvent } from '@/lib/analytics';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Check } from 'lucide-react';
@@ -88,6 +89,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
     }
 
     onEmailCaptured?.(email);
+    trackEvent('email_captured', { capture_source: captureSource });
     setSubmitted(true);
     toast.success("You're on the list.");
   };
