@@ -14,7 +14,7 @@ const SocialProofCounter = () => {
 
   return (
     <p className="text-sm text-muted-foreground text-center mt-4">
-      🔍 {count.toLocaleString()} rent increases checked
+      🔍 {count.toLocaleString()} renewals analyzed
     </p>
   );
 };
