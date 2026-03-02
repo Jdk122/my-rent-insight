@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getRentData, type RentZipRaw } from '@/data/dataLoader';
+import { slugify, STATE_NAMES } from '@/data/cityStateUtils';
 import { Input } from '@/components/ui/input';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
@@ -11,19 +12,7 @@ function fmt(n: number) {
   return n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 }
 
-const STATE_NAMES: Record<string, string> = {
-  AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California',
-  CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', DC: 'District of Columbia', FL: 'Florida',
-  GA: 'Georgia', HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana',
-  IA: 'Iowa', KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine',
-  MD: 'Maryland', MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi',
-  MO: 'Missouri', MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire',
-  NJ: 'New Jersey', NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota',
-  OH: 'Ohio', OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island',
-  SC: 'South Carolina', SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah',
-  VT: 'Vermont', VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin',
-  WY: 'Wyoming', PR: 'Puerto Rico', GU: 'Guam', VI: 'Virgin Islands',
-};
+// STATE_NAMES moved to cityStateUtils
 
 // Top 25 cities by renter population (representative zip for each)
 const TOP_CITIES: { city: string; state: string; zip: string }[] = [
@@ -54,9 +43,7 @@ const TOP_CITIES: { city: string; state: string; zip: string }[] = [
   { city: 'Minneapolis', state: 'MN', zip: '55401' },
 ];
 
-function slugify(str: string) {
-  return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-}
+// slugify moved to cityStateUtils
 
 const RentData = () => {
   const navigate = useNavigate();
@@ -213,7 +200,7 @@ const RentData = () => {
                 {topCityData.map(tc => (
                   <Link
                     key={tc.zip}
-                    to={`/rent/${tc.zip}`}
+                    to={`/rent-data/${slugify(STATE_NAMES[tc.state] || tc.state)}/${slugify(tc.city)}`}
                     className="flex items-center justify-between rounded-lg border border-border p-4 bg-card hover:bg-muted/50 transition-colors"
                   >
                     <div>
@@ -231,13 +218,13 @@ const RentData = () => {
               <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Browse by State</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                 {sortedStates.map(s => (
-                  <a
+                  <Link
                     key={s}
-                    href={`#${slugify(STATE_NAMES[s])}`}
+                    to={`/rent-data/${slugify(STATE_NAMES[s])}`}
                     className="text-sm text-primary hover:text-primary/80 underline"
                   >
                     {STATE_NAMES[s]} <span className="text-muted-foreground no-underline">({stateGroups[s]})</span>
-                  </a>
+                  </Link>
                 ))}
               </div>
             </section>

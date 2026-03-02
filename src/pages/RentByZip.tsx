@@ -2,6 +2,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { getRentData, type RentZipRaw } from '@/data/dataLoader';
+import { slugify, stateNameFromAbbr } from '@/data/cityStateUtils';
 import { getRentControlForZip, getApplicableCap, isNycZip } from '@/data/rentControlData';
 import RentcastMarketSection from '@/components/RentcastMarketSection';
 import DhcrAlertSection from '@/components/DhcrAlertSection';
@@ -42,9 +43,7 @@ interface ZipPageData {
   sameMetro: { zip: string; raw: RentZipRaw }[];
 }
 
-function slugify(str: string) {
-  return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-}
+// slugify moved to cityStateUtils
 
 const RentByZip = () => {
   const { zip } = useParams<{ zip: string }>();
@@ -129,7 +128,7 @@ const RentByZip = () => {
 
   // Census-derived renter % estimate (rough: if median rent exists, area is renter-heavy)
   const rentBurdenPct = raw.i && raw.r ? Math.round(((raw.r * 12) / raw.i) * 100) : null;
-  const stateSlug = slugify(state === 'NY' ? 'new-york' : state === 'CA' ? 'california' : state === 'TX' ? 'texas' : state === 'FL' ? 'florida' : state);
+  const stateSlug = slugify(stateNameFromAbbr(state));
   const citySlug = slugify(city);
 
   return (
@@ -145,8 +144,8 @@ const RentByZip = () => {
             itemListElement: [
               { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.renewalreply.com/' },
               { '@type': 'ListItem', position: 2, name: 'Rent Data', item: 'https://www.renewalreply.com/rent-data' },
-              { '@type': 'ListItem', position: 3, name: state, item: `https://www.renewalreply.com/rent-data#${stateSlug}` },
-              { '@type': 'ListItem', position: 4, name: `${city}, ${state}`, item: `https://www.renewalreply.com/rent-data#${stateSlug}` },
+              { '@type': 'ListItem', position: 3, name: state, item: `https://www.renewalreply.com/rent-data/${stateSlug}` },
+              { '@type': 'ListItem', position: 4, name: `${city}, ${state}`, item: `https://www.renewalreply.com/rent-data/${stateSlug}/${citySlug}` },
               { '@type': 'ListItem', position: 5, name: zip, item: `https://www.renewalreply.com/rent/${zip}` },
             ],
           },
@@ -285,7 +284,8 @@ const RentByZip = () => {
           <ol className="flex flex-wrap items-center gap-1">
             <li><Link to="/" className="hover:text-foreground transition-colors">Home</Link></li>
             <li className="before:content-['›'] before:mx-1"><Link to="/rent-data" className="hover:text-foreground transition-colors">Rent Data</Link></li>
-            <li className="before:content-['›'] before:mx-1"><Link to={`/rent-data#${stateSlug}`} className="hover:text-foreground transition-colors">{state}</Link></li>
+            <li className="before:content-['›'] before:mx-1"><Link to={`/rent-data/${stateSlug}`} className="hover:text-foreground transition-colors">{state}</Link></li>
+            <li className="before:content-['›'] before:mx-1"><Link to={`/rent-data/${stateSlug}/${citySlug}`} className="hover:text-foreground transition-colors">{city}, {state}</Link></li>
             <li className="before:content-['›'] before:mx-1"><span aria-current="page">{zip}</span></li>
           </ol>
         </nav>
@@ -339,6 +339,9 @@ const RentByZip = () => {
               </button>
             </form>
           </div>
+          <Link to={`/rent-data/${stateSlug}/${citySlug}`} className="inline-block mt-4 text-sm text-primary hover:underline">
+            See all rent data for {city} →
+          </Link>
         </section>
 
         {/* SECTION 2 — HUD FMR Table */}
