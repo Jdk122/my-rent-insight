@@ -36,9 +36,11 @@ interface EmailCaptureProps {
   prefilledEmail?: string;
   onEmailCaptured?: (email: string) => void;
   leadContext?: LeadContext;
+  heading?: string;
+  subtext?: string;
 }
 
-const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, onEmailCaptured, leadContext }: EmailCaptureProps) => {
+const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, onEmailCaptured, leadContext, heading, subtext }: EmailCaptureProps) => {
   const [email, setEmail] = useState(prefilledEmail || '');
   const [leaseMonth, setLeaseMonth] = useState('');
   const [leaseYear, setLeaseYear] = useState('');
@@ -118,10 +120,10 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
   return (
     <div>
       <h2 className="font-display text-xl font-semibold text-foreground mb-1.5" style={{ letterSpacing: '-0.01em' }}>
-        Get Reminded Before Your Lease Is Up
+        {heading || 'Get Reminded Before Your Lease Is Up'}
       </h2>
       <p className="text-sm text-foreground/70 mb-5">
-        We'll send updated market data for {city || 'your area'} 60 days before your renewal.
+        {subtext || `We'll send updated market data for ${city || 'your area'} 60 days before your renewal.`}
       </p>
       <form onSubmit={handleSubmit} className="max-w-[440px] mx-auto space-y-2">
         {/* Lease date row */}

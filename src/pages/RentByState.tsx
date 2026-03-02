@@ -35,9 +35,10 @@ const RentByState = () => {
 
   const filteredCities = useMemo(() => {
     if (!data) return [];
-    if (!search.trim()) return data.cities;
+    const sorted = [...data.cities].sort((a, b) => b.zips.length - a.zips.length);
+    if (!search.trim()) return sorted;
     const q = search.toLowerCase();
-    return data.cities.filter(c => c.city.toLowerCase().includes(q));
+    return sorted.filter(c => c.city.toLowerCase().includes(q));
   }, [data, search]);
 
   if (loading) return <LoadingSkeleton />;
@@ -176,7 +177,7 @@ const RentByState = () => {
           {filteredCities.length === 0 && (
             <p className="text-sm text-muted-foreground mt-4 text-center">No cities match "{search}"</p>
           )}
-          <p className="mt-2 text-xs text-muted-foreground">Sorted by 1-BR FMR (cheapest first). Source: HUD SAFMR FY2026.</p>
+          <p className="mt-2 text-xs text-muted-foreground">Sorted by number of zip codes (most first). Source: HUD SAFMR FY2026.</p>
         </section>
 
         {/* CTA */}

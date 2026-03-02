@@ -166,12 +166,12 @@ export async function lookupRentData(
     // Priority 2: Bedroom-specific HUD FMR
     yoyChange = Math.round(((fmr - fmrPrior) / fmrPrior) * 1000) / 10;
     yoySource = 'hud';
-    yoySourceLabel = 'Based on HUD Fair Market Rent data (FY 2025)';
+    yoySourceLabel = 'Based on HUD Fair Market Rent data (FY2026)';
   } else {
     // Priority 3: Pre-computed 1BR fallback
     yoyChange = raw.y;
     yoySource = 'hud';
-    yoySourceLabel = 'Based on HUD Fair Market Rent data (FY 2025)';
+    yoySourceLabel = 'Based on HUD Fair Market Rent data (FY2026)';
   }
 
   // Guard 1: Cap extreme YoY values

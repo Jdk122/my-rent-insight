@@ -233,7 +233,7 @@ const RentData = () => {
             <section className="mb-12">
               <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Data Sources</h2>
               <p className="text-muted-foreground leading-relaxed text-sm">
-                All rent data is sourced from official federal datasets: HUD Small Area Fair Market Rents (updated annually), U.S. Census Bureau American Community Survey median gross rent estimates, and Federal Reserve Economic Data (FRED) for metro-level rent trends. Data reflects FY2025 federal housing benchmarks.
+                All rent data is sourced from official federal datasets: HUD Small Area Fair Market Rents (updated annually), U.S. Census Bureau American Community Survey median gross rent estimates, and Federal Reserve Economic Data (FRED) for metro-level rent trends. Data reflects FY2026 federal housing benchmarks.
               </p>
             </section>
 

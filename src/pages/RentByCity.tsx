@@ -5,6 +5,7 @@ import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import ContactModal from '@/components/ContactModal';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Input } from '@/components/ui/input';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
@@ -21,6 +22,7 @@ const RentByCity = () => {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  const [zipSearch, setZipSearch] = useState('');
 
   useEffect(() => {
     if (!stateSlug || !citySlug) { setNotFound(true); setLoading(false); return; }
@@ -218,6 +220,18 @@ const RentByCity = () => {
           <p className="text-sm text-muted-foreground mb-3">
             Click any zip code for detailed rent data, nearby comparables, and a free rent increase check.
           </p>
+          {zips.length > 10 && (
+            <div className="mb-3">
+              <Input
+                type="text"
+                inputMode="numeric"
+                placeholder="Filter by zip code..."
+                value={zipSearch}
+                onChange={(e) => setZipSearch(e.target.value.replace(/\D/g, ''))}
+                className="h-10 w-48"
+              />
+            </div>
+          )}
           <div className="rounded-lg border border-border overflow-hidden">
             <Table>
               <TableHeader>
@@ -230,7 +244,9 @@ const RentByCity = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {zips.map(({ zip, raw }) => {
+                {zips
+                  .filter(({ zip }) => !zipSearch || zip.includes(zipSearch))
+                  .map(({ zip, raw }) => {
                   const zipYoy = raw.zy ?? (raw.p[1] > 0 ? Math.round(((raw.f[1] - raw.p[1]) / raw.p[1]) * 1000) / 10 : null);
                   return (
                     <TableRow key={zip}>
