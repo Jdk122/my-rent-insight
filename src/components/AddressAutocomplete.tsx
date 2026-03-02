@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, forwardRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
 
@@ -22,7 +22,7 @@ interface AddressAutocompleteProps {
   className?: string;
 }
 
-const AddressAutocomplete = ({ onSelect, placeholder = '123 Main St, Austin, TX', className }: AddressAutocompleteProps) => {
+const AddressAutocomplete = forwardRef<HTMLInputElement, AddressAutocompleteProps>(({ onSelect, placeholder = '123 Main St, Austin, TX', className }, ref) => {
   const [query, setQuery] = useState('');
   const [predictions, setPredictions] = useState<PlacePrediction[]>([]);
   const [open, setOpen] = useState(false);
@@ -125,6 +125,8 @@ const AddressAutocomplete = ({ onSelect, placeholder = '123 Main St, Austin, TX'
       )}
     </div>
   );
-};
+});
+
+AddressAutocomplete.displayName = 'AddressAutocomplete';
 
 export default AddressAutocomplete;
