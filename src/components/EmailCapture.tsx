@@ -42,6 +42,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
   const [leaseMonth, setLeaseMonth] = useState('');
   const [leaseYear, setLeaseYear] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [dateError, setDateError] = useState('');
 
   useEffect(() => {
     if (prefilledEmail && !email) setEmail(prefilledEmail);
@@ -51,8 +52,14 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
     e.preventDefault();
     if (!email) return;
 
-    const leaseMonthNum = leaseMonth ? months.indexOf(leaseMonth) + 1 : null;
-    const leaseYearNum = leaseYear ? parseInt(leaseYear, 10) : null;
+    if (!leaseMonth || !leaseYear) {
+      setDateError('Please select both month and year so we can time your reminder.');
+      return;
+    }
+    setDateError('');
+
+    const leaseMonthNum = months.indexOf(leaseMonth) + 1;
+    const leaseYearNum = parseInt(leaseYear, 10);
 
     try {
       await supabase.from('leads').upsert({
@@ -109,45 +116,52 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
       <p className="text-sm text-foreground/70 mb-5">
         We'll send updated market data for {city || 'your area'} 60 days before your renewal.
       </p>
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 max-w-[440px] mx-auto mb-2">
-        <input
-          type="email"
-          placeholder="you@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="flex-1 px-4 py-3 text-sm border border-border rounded-lg bg-card text-foreground outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
-        />
-        <button type="submit" className="bg-primary text-primary-foreground px-5 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap">
-          Remind me
-        </button>
+      <form onSubmit={handleSubmit} className="max-w-[440px] mx-auto space-y-2">
+        {/* Lease date row */}
+        <div className="flex gap-2">
+          <select
+            value={leaseMonth}
+            onChange={(e) => { setLeaseMonth(e.target.value); setDateError(''); }}
+            className="flex-1 px-4 py-3 text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
+          >
+            <option disabled value="">Lease renewal month</option>
+            {months.map((m) => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
+          <select
+            value={leaseYear}
+            onChange={(e) => { setLeaseYear(e.target.value); setDateError(''); }}
+            className="w-[100px] px-4 py-3 text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
+          >
+            <option disabled value="">Year</option>
+            {years.map((y) => (
+              <option key={y} value={String(y)}>{y}</option>
+            ))}
+          </select>
+        </div>
+        {dateError && (
+          <p className="text-[12px] text-destructive">{dateError}</p>
+        )}
+        {/* Email + button row */}
+        <div className="flex gap-2">
+          <input
+            type="email"
+            placeholder="you@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="flex-1 px-4 py-3 text-sm border border-border rounded-lg bg-card text-foreground outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
+          />
+          <button type="submit" className="bg-primary text-primary-foreground px-5 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap">
+            Remind me
+          </button>
+        </div>
       </form>
-      <p className="text-[12px] text-muted-foreground/70 text-center mb-4 max-w-[440px] mx-auto">
+      <p className="text-[12px] text-muted-foreground/70 text-center mt-2 max-w-[440px] mx-auto">
         We'll only email you about your lease. See our{' '}
         <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
       </p>
-      <div className="flex gap-2 max-w-[440px] mx-auto">
-        <select
-          value={leaseMonth}
-          onChange={(e) => setLeaseMonth(e.target.value)}
-          className="flex-1 px-4 py-3 text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
-        >
-          <option disabled value="">Month</option>
-          {months.map((m) => (
-            <option key={m} value={m}>{m}</option>
-          ))}
-        </select>
-        <select
-          value={leaseYear}
-          onChange={(e) => setLeaseYear(e.target.value)}
-          className="w-[120px] px-4 py-3 text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
-        >
-          <option disabled value="">Year</option>
-          {years.map((y) => (
-            <option key={y} value={String(y)}>{y}</option>
-          ))}
-        </select>
-      </div>
     </div>
   );
 };

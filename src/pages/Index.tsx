@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import SaveResultsDropdown from '@/components/SaveResultsDropdown';
 import SocialProofCounter from '@/components/SocialProofCounter';
 import ContactModal from '@/components/ContactModal';
+import LoadingAnalysis from '@/components/LoadingAnalysis';
 
 const Index = () => {
   const [results, setResults] = useState<{ formData: RentFormData; rentData: RentLookupResult } | null>(null);
@@ -145,7 +146,17 @@ const Index = () => {
       <div className="h-[56px]" />
 
       <AnimatePresence mode="wait">
-        {!results ? (
+        {isLoading ? (
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <LoadingAnalysis />
+          </motion.div>
+        ) : !results ? (
           <motion.div
             key="landing"
             initial={{ opacity: 0 }}

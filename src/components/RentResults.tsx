@@ -228,7 +228,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           <motion.section
             id="section-verdict"
             {...fade(0)}
-            className="min-h-[100vh] flex flex-col items-center justify-center text-center py-12"
+            className="min-h-[70vh] flex flex-col items-center justify-center text-center py-12"
           >
           {hasIncrease ? (
             <>
@@ -269,7 +269,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
-                className="mt-10 w-full grid grid-cols-2 md:grid-cols-4 gap-4 max-w-[540px]"
+                className="mt-6 w-full grid grid-cols-2 md:grid-cols-4 gap-4 max-w-[540px]"
               >
                 {[
                   { label: 'You pay now', value: `$${fmt(formData.currentRent)}`, color: 'text-foreground' },
@@ -291,7 +291,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </motion.div>
 
               {/* CTAs */}
-              <div className="mt-10 flex flex-col sm:flex-row items-center gap-4">
+              <div className="mt-5 flex flex-col sm:flex-row items-center gap-4">
                 <button
                   onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
                   className="text-base font-semibold text-primary hover:text-primary/80 transition-colors duration-150"
@@ -346,7 +346,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         <div className="max-w-[620px] mx-auto px-6">
 
         {(
-          <section id="section-evidence" className="pt-16 pb-8">
+          <section id="section-evidence" className="pt-10 pb-8">
             <motion.h2 {...fade(0.05)} className="results-section-header mb-10">
               {hasIncrease ? 'The Evidence' : 'What the Market Says'}
             </motion.h2>
@@ -380,6 +380,26 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
                     <span className="context-label">What most {brLabel} go for</span>
                     <span className="context-value">${fmt(calc.typicalRangeLow)} – ${fmt(calc.typicalRangeHigh)}</span>
+                  </div>
+                )}
+                {calc && (
+                  <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
+                    <span className="context-label">Your current rent</span>
+                    <span className={`context-value ${
+                      formData.currentRent < calc.typicalRangeLow
+                        ? 'text-verdict-good'
+                        : formData.currentRent > calc.typicalRangeHigh
+                        ? 'text-destructive'
+                        : 'text-muted-foreground'
+                    }`}>
+                      ${fmt(formData.currentRent)} — {
+                        formData.currentRent < calc.typicalRangeLow
+                          ? 'below this range'
+                          : formData.currentRent > calc.typicalRangeHigh
+                          ? 'above this range'
+                          : 'within this range'
+                      }
+                    </span>
                   </div>
                 )}
                 {isAboveMarket && calc && (
