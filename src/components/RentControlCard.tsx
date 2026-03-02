@@ -61,14 +61,13 @@ const RentControlCard = ({ state, city, zip, increasePct, address }: RentControl
           {hcrResult?.found === false && hcrResult.reason === 'no_match' && address && (
             <div className="px-4 py-3 rounded-lg border border-border bg-muted/30 mb-4">
               <p className="text-sm text-foreground">
-                ✅ Your building was <strong>not found</strong> in the HCR rent-stabilization registry.
+                ✅ Your building was <strong>not found</strong> in the DHCR rent-stabilization registry.
               </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                This doesn't guarantee your unit isn't stabilized — some buildings aren't registered. You can{' '}
+              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                Based on 2024 DHCR registrations. Buildings registered after November 2025 may not appear. The only way to confirm is through HCR directly →{' '}
                 <a href="https://portal.hcr.ny.gov/app/ask" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:no-underline">
-                  request your rental history from HCR
-                </a>{' '}
-                to confirm.
+                  Ask HCR
+                </a>
               </p>
             </div>
           )}
