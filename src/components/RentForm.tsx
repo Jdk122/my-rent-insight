@@ -3,6 +3,7 @@ import { BedroomType, bedroomLabels } from '@/data/rentData';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import AddressAutocomplete from '@/components/AddressAutocomplete';
 
 export interface RentFormData {
   zip: string;
@@ -14,12 +15,6 @@ export interface RentFormData {
   movingCosts: number;
 }
 
-const US_STATES = [
-  'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA',
-  'KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ',
-  'NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT',
-  'VA','WA','WV','WI','WY','DC',
-];
 
 const fmtInput = (val: string) => {
   const digits = val.replace(/[^\d]/g, '');
@@ -35,11 +30,8 @@ interface RentFormProps {
 }
 
 const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
-  const [street, setStreet] = useState('');
-  const [unit, setUnit] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
   const [zip, setZip] = useState('');
+  const [fullAddress, setFullAddress] = useState<string | null>(null);
   const [bedrooms, setBedrooms] = useState<BedroomType>('oneBr');
   const [currentRent, setCurrentRent] = useState('');
   const [rentIncrease, setRentIncrease] = useState('');
@@ -47,21 +39,10 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
   const [movingCosts] = useState('2500');
   const [showAddress, setShowAddress] = useState(false);
 
-  const hasStreet = street.trim().length > 0;
-  const hasFullAddress = hasStreet && city.trim().length > 0 && state.length > 0 && zip.trim().length === 5;
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmedZip = zip.trim();
     if (!trimmedZip || trimmedZip.length !== 5 || !currentRent) return;
-
-    let fullAddress: string | null = null;
-    if (hasFullAddress) {
-      const parts = [street.trim()];
-      if (unit.trim()) parts[0] += ` ${unit.trim()}`;
-      parts.push(`${city.trim()}, ${state} ${trimmedZip}`);
-      fullAddress = parts.join(', ');
-    }
 
     onSubmit({
       zip: trimmedZip,
@@ -98,7 +79,7 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
           </p>
         </div>
 
-        {/* Collapsible address section */}
+        {/* Address autocomplete */}
         {!showAddress ? (
           <button
             type="button"
@@ -108,56 +89,17 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
             <span>→</span> Add your full address for building-specific data
           </button>
         ) : (
-          <div className="space-y-3 animate-fade-in">
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground">Street Address</Label>
-              <Input
-                type="text"
-                placeholder="123 Main St"
-                value={street}
-                onChange={(e) => setStreet(e.target.value)}
-                className="h-11 text-sm bg-background"
-              />
-            </div>
-            <div className="grid grid-cols-[72px,1fr,72px] gap-2">
-              <div className="space-y-1.5">
-                <Label className="text-xs font-medium text-muted-foreground">Apt/Unit</Label>
-                <Input
-                  type="text"
-                  placeholder="#3B"
-                  value={unit}
-                  onChange={(e) => setUnit(e.target.value)}
-                  className="h-11 text-sm bg-background"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs font-medium text-muted-foreground">City</Label>
-                <Input
-                  type="text"
-                  placeholder="Austin"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  className="h-11 text-sm bg-background"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs font-medium text-muted-foreground">State</Label>
-                <Select value={state} onValueChange={setState}>
-                  <SelectTrigger className="h-11 text-xs bg-background">
-                    <SelectValue placeholder="—" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {US_STATES.map((s) => (
-                      <SelectItem key={s} value={s}>{s}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            {hasStreet && !hasFullAddress && (
-              <p className="text-[11px] text-destructive/70">
-                Fill in city & state for building-specific data
-              </p>
+          <div className="space-y-1.5 animate-fade-in">
+            <Label className="text-xs font-medium text-muted-foreground">Address</Label>
+            <AddressAutocomplete
+              className="h-11 text-sm bg-background"
+              onSelect={(addr) => {
+                if (addr.zip) setZip(addr.zip);
+                setFullAddress(addr.fullAddress);
+              }}
+            />
+            {fullAddress && (
+              <p className="text-[11px] text-muted-foreground truncate">✓ {fullAddress}</p>
             )}
           </div>
         )}
