@@ -10,6 +10,7 @@ import SaveResultsDropdown from '@/components/SaveResultsDropdown';
 import SocialProofCounter from '@/components/SocialProofCounter';
 import ContactModal from '@/components/ContactModal';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
+import SEO from '@/components/SEO';
 
 const Index = () => {
   const [results, setResults] = useState<{ formData: RentFormData; rentData: RentLookupResult } | null>(null);
@@ -110,6 +111,43 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col overflow-x-hidden" ref={topRef}>
+      <SEO
+        canonical="/"
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "RenewalReply",
+            "url": "https://renewalreply.com",
+            "description": "Compare your rent increase to real market data. Get a free negotiation letter if your landlord is overcharging.",
+            "applicationCategory": "FinanceApplication",
+            "operatingSystem": "Web",
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "How do I know if my rent increase is fair?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Enter your address and current rent on RenewalReply. We compare your increase to HUD Fair Market Rents, Census data, and Zillow trends for your zip code to determine if it's above, at, or below market rate."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is RenewalReply free?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Checking your rent increase and generating a negotiation letter are completely free."
+                }
+              }
+            ]
+          }
+        ]}
+      />
       {/* Sticky Nav */}
       <nav
         className={`fixed top-0 left-0 right-0 z-[60] flex items-center justify-between px-6 py-4 transition-all duration-200 ${
@@ -168,18 +206,18 @@ const Index = () => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="max-w-[620px] mx-auto px-6 pt-16 md:pt-24 pb-32">
+            <main className="max-w-[620px] mx-auto px-6 pt-16 md:pt-24 pb-32">
               <h1 className="font-display text-[clamp(3rem,8vw,5rem)] text-foreground leading-[1.05] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
                 Is your rent increase <span className="text-primary">fair?</span>
               </h1>
               <p className="mt-6 text-xl md:text-2xl text-foreground/60 max-w-[620px] leading-relaxed font-medium">
                 Find out instantly. Get a data-backed negotiation letter if it's not.
               </p>
-              <div className="mt-10">
+              <section className="mt-10" aria-label="Rent increase checker">
                 <RentForm onSubmit={handleSubmit} isLoading={isLoading} />
                 <SocialProofCounter />
-              </div>
-            </div>
+              </section>
+            </main>
           </motion.div>
         ) : (
           <motion.div
