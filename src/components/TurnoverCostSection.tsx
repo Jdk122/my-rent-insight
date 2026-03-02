@@ -164,10 +164,10 @@ const TurnoverCostSection = ({
         {version === 'C' && (
           <>
             <p className="text-sm text-foreground leading-relaxed">
-              Your proposed rent is competitive with nearby units. Turnover on a {bedroomLabel.toLowerCase()} in {city} typically costs a property owner an estimated <strong>{fmt(costs.total)}</strong> before accounting for any rent adjustment on the new lease. With your rent already in line with the market, there's a strong case for both sides to continue the tenancy.
+              Your increase is in line with the local market. That said, turnover on a {bedroomLabel.toLowerCase()} in {city} still carries an estimated cost of <strong>{fmt(costs.total)}</strong> before accounting for any rent adjustment on the new lease. Even modest negotiations can be worth exploring.
             </p>
             <p className="text-[13px] text-muted-foreground mt-3">
-              If you'd still like to negotiate, even a modest reduction adds up over a full lease term.
+              You're in a reasonable position — but asking never hurts.
             </p>
           </>
         )}

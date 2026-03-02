@@ -222,11 +222,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     if (hasIncrease && medianCompRent && hasEnoughComps) {
       sections.push({ id: 'section-comps', label: 'Comps' });
     }
-    if (hasIncrease && isAboveMarket && calc) {
+    if (hasIncrease && calc) {
       sections.push({ id: 'section-letter', label: 'Letter' });
     }
     return sections;
-  }, [hasIncrease, medianCompRent, hasEnoughComps, isAboveMarket, calc]);
+  }, [hasIncrease, medianCompRent, hasEnoughComps, calc]);
 
   // Compute annual savings for turnover section
   const annualSavingsForTurnover = useMemo(() => {
@@ -546,7 +546,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         )}
 
         {/* ━━━ NEGOTIATION LETTER ━━━ */}
-        {hasIncrease && isAboveMarket && calc && (
+        {hasIncrease && calc && (
           <motion.section id="section-letter" {...fade(0.21)} className="pt-8 pb-8">
             <NegotiationLetter
               currentRent={formData.currentRent}
@@ -574,7 +574,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         )}
 
         {/* ━━━ Consolidated email capture ━━━ */}
-        <section className="pt-8 pb-12">
+        <section id="section-email-capture" className="pt-8 pb-12">
           <div className="rounded-xl px-8 py-10 text-center" style={{ background: 'hsl(var(--secondary))' }}>
             <EmailCapture
               city={city}

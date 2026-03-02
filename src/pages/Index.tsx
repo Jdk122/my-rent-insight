@@ -5,7 +5,6 @@ import { lookupRentData, loadFredTrend, RentLookupResult, calculateResults } fro
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
 import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
-import SaveResultsDropdown from '@/components/SaveResultsDropdown';
 import SocialProofCounter from '@/components/SocialProofCounter';
 import ContactModal from '@/components/ContactModal';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
@@ -188,20 +187,19 @@ const Index = () => {
               ← New check
             </button>
           )}
-          {hasIncrease && isAboveMarket && (
+          {results && (
             <button
-              onClick={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => {
+                const target = hasIncrease && isAboveMarket
+                  ? document.getElementById('section-letter')
+                  : document.getElementById('section-email-capture');
+                target?.scrollIntoView({ behavior: 'smooth' });
+              }}
               className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
             >
-              <span className="hidden sm:inline">Get your letter →</span>
-              <span className="sm:hidden">Get letter →</span>
+              <span className="hidden sm:inline">{hasIncrease && isAboveMarket ? 'Get your letter →' : 'Save your results →'}</span>
+              <span className="sm:hidden">{hasIncrease && isAboveMarket ? 'Get letter →' : 'Save →'}</span>
             </button>
-          )}
-          {hasIncrease && !isAboveMarket && (
-            <SaveResultsDropdown
-              prefilledEmail={capturedEmail}
-              onEmailCaptured={setCapturedEmail}
-            />
           )}
         </div>
       </nav>
