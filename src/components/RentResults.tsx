@@ -10,8 +10,7 @@ import ShouldYouMove, { CompsList } from './ShouldYouMove';
 import NegotiationLetter from './NegotiationLetter';
 import RentControlCard from './RentControlCard';
 import { PropertyLookupResult, PropertyLookupError } from '@/hooks/usePropertyLookup';
-import { calculateLandlordCosts, generateInsights, toLegacyCostEstimate, LandlordCostEstimate } from '@/data/landlordCosts';
-import LandlordCostSection from './LandlordCostSection';
+import TurnoverCostSection from './TurnoverCostSection';
 import { useRentcast } from '@/hooks/useRentcast';
 import { supabase } from '@/integrations/supabase/client';
 import SectionNav from './SectionNav';
@@ -102,19 +101,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const isPath1 = hasSaleData && !forceMarketOnly;
   const marketMultiple = marketYoy > 0 ? Math.round((increasePct / marketYoy) * 10) / 10 : 0;
 
-  const landlordCosts = useMemo<LandlordCostEstimate | null>(() => {
-    if (!propertyData) return null;
-    const costs = calculateLandlordCosts(propertyData);
-    if (!costs) return null;
-    return toLegacyCostEstimate(propertyData, costs);
-  }, [propertyData]);
-
-  const landlordInsights = useMemo(() => {
-    if (!propertyData) return null;
-    const costs = calculateLandlordCosts(propertyData);
-    if (!costs) return null;
-    return generateInsights(propertyData, costs, formData.currentRent, newRent);
-  }, [propertyData, formData.currentRent, newRent]);
 
   const rentcast = useRentcast(rentData.zip, formData.bedrooms, formData.fullAddress);
   const hasRentcastComps = rentcast.data && rentcast.data.comparables.length > 0;
@@ -203,7 +189,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       comps_count: rentcast.data?.comparables?.length ?? 0,
       comps_position: compsPosition,
       sale_data_found: !!propertyData?.lastSalePrice,
-      markup_multiplier: landlordInsights?.costIncreaseMarkup ?? null,
+      markup_multiplier: null,
       letter_generated: false,
       cache_hit: !!(rentcast.data as any)?.cacheHit || !!(propertyData as any)?.cacheHit,
     } as any).select('id').single().then(({ data }) => {
@@ -242,9 +228,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     return sections;
   }, [hasIncrease, medianCompRent, hasEnoughComps, isAboveMarket, calc]);
 
-  // Markup insight for verdict (only for Path 1)
-  const costMarkup = landlordInsights?.costIncreaseMarkup ?? null;
-  const showMarkupInVerdict = isPath1 && costMarkup !== null && costMarkup > 1;
+  // Compute annual savings for turnover section
+  const annualSavingsForTurnover = useMemo(() => {
+    if (!medianCompRent || !hasIncrease) return 0;
+    const diff = newRent - medianCompRent;
+    return diff > 0 ? Math.round(diff * 12) : 0;
+  }, [medianCompRent, newRent, hasIncrease]);
+  const proposedRentAboveMedian = medianCompRent ? newRent > medianCompRent : false;
 
   let rowIdx = 0;
 
@@ -539,23 +529,18 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           </motion.section>
         )}
 
-        {/* ━━━ Understanding Your Building's Economics (Path 1 only) ━━━ */}
-        {isPath1 && (
-          <motion.section {...fade(0.18)} className="py-12">
-            <div className="evidence-card">
-              <h2 className="results-section-header mb-1">Understanding Your Building's Economics</h2>
-              <p className="text-[13px] text-muted-foreground mb-8">Estimates based on public records. These figures are approximate and shouldn't be cited in negotiations.</p>
-              <LandlordCostSection
-                propertyData={propertyData}
-                propertyLoading={propertyLoading}
-                propertyError={propertyError}
-                currentRent={formData.currentRent}
-                proposedRent={newRent}
-                increaseAmount={increaseAmount}
-                hasAddress={!!formData.fullAddress}
-                onScrollToTop={onScrollToTop}
-              />
-            </div>
+        {/* ━━━ The Cost of Turnover ━━━ */}
+        {hasIncrease && (
+          <motion.section {...fade(0.21)} className="py-12">
+            <TurnoverCostSection
+              currentRent={formData.currentRent}
+              bedrooms={bedroomNum}
+              bedroomLabel={bedroomLabels[formData.bedrooms]}
+              city={city}
+              annualSavings={annualSavingsForTurnover}
+              proposedRentAboveMedian={proposedRentAboveMedian}
+              onScrollToLetter={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
+            />
           </motion.section>
         )}
 
