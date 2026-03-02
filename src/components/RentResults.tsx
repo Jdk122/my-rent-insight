@@ -6,7 +6,7 @@ import BuildingShareCard from './BuildingShareCard';
 import ShareableCard from './ShareableCard';
 import EmailCapture from './EmailCapture';
 import CompLinks from './CompLinks';
-import ShouldYouMove from './ShouldYouMove';
+import ShouldYouMove, { CompsList } from './ShouldYouMove';
 import NegotiationLetter from './NegotiationLetter';
 import RentControlCard from './RentControlCard';
 import { PropertyLookupResult, PropertyLookupError } from '@/hooks/usePropertyLookup';
@@ -497,6 +497,28 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             <h2 className="results-section-header mb-8">
               How Your Rent Compares to Nearby Units
             </h2>
+            <CompsList
+              proposedRent={newRent}
+              comparables={rentcast.data!.comparables}
+              medianCompRent={medianCompRent}
+              brLabel={brLabel}
+              city={city}
+              state={rentData.state}
+              zip={rentData.zip}
+              bedrooms={formData.bedrooms}
+            />
+          </motion.section>
+        )}
+        {!hasEnoughComps && !rentcast.loading && (
+          <motion.section {...fade(0.15)} className="py-12">
+            <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} />
+          </motion.section>
+        )}
+
+        {/* ━━━ Should You Move? ━━━ */}
+        {hasIncrease && medianCompRent && hasEnoughComps && (
+          <motion.section {...fade(0.17)} className="py-12">
+            <h2 className="results-section-header mb-8">Should You Move?</h2>
             <ShouldYouMove
               proposedRent={newRent}
               currentRent={formData.currentRent}
