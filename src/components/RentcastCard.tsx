@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { RentcastResult } from '@/hooks/useRentcast';
-import { Loader2, MapPin } from 'lucide-react';
+import { Loader2, MapPin, Clock, Home } from 'lucide-react';
 import { BedroomType } from '@/data/rentData';
 
 interface RentcastCardProps {
@@ -49,12 +49,23 @@ function buildLinks(zip: string, city: string, state: string, bedrooms: BedroomT
   return links;
 }
 
+function formatDaysAgo(daysOnMarket: number | null | undefined): string | null {
+  if (daysOnMarket === null || daysOnMarket === undefined) return null;
+  if (daysOnMarket === 0) return 'Listed today';
+  if (daysOnMarket === 1) return '1 day ago';
+  if (daysOnMarket <= 30) return `${daysOnMarket}d ago`;
+  const weeks = Math.round(daysOnMarket / 7);
+  if (weeks <= 8) return `${weeks}w ago`;
+  const months = Math.round(daysOnMarket / 30);
+  return `${months}mo ago`;
+}
+
 const RentcastCard = ({ data, loading, error, city, zip, state, bedrooms, proposedRent }: RentcastCardProps) => {
   if (loading) {
     return (
       <div className="text-center py-8">
         <Loader2 className="w-5 h-5 animate-spin mx-auto text-muted-foreground" />
-        <p className="text-sm text-muted-foreground mt-2">Loading Rentcast data…</p>
+        <p className="text-sm text-muted-foreground mt-2">Finding active listings nearby…</p>
       </div>
     );
   }
@@ -65,19 +76,17 @@ const RentcastCard = ({ data, loading, error, city, zip, state, bedrooms, propos
 
   if (!hasComps) return null;
 
-  // FIX 4: inline external links when comps exist
+  const isActiveListing = data.source === 'active-listings';
   const externalLinks = buildLinks(zip, city, state, bedrooms);
 
   return (
     <div>
       <h2 className="section-title">Market Data</h2>
 
-
-      {/* FIX 2: Comparable listings sorted low-to-high with reference line */}
+      {/* Comparable listings sorted low-to-high with reference line */}
       {hasComps && (() => {
         const sortedComps = [...data.comparables].filter(c => c.rent !== null).sort((a, b) => (a.rent ?? 0) - (b.rent ?? 0));
-        // Find where proposed rent falls in sorted order
-        let refIndex = sortedComps.length; // default: at bottom
+        let refIndex = sortedComps.length;
         if (proposedRent) {
           refIndex = sortedComps.findIndex(c => (c.rent ?? 0) >= proposedRent);
           if (refIndex === -1) refIndex = sortedComps.length;
@@ -86,7 +95,10 @@ const RentcastCard = ({ data, loading, error, city, zip, state, bedrooms, propos
         return (
           <div className="space-y-2">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 text-center">
-              Nearby Comparable Listings
+              {isActiveListing ? 'Active Listings Nearby' : 'Nearby Comparable Listings'}
+              {data.totalListings && data.totalListings > data.comparables.length && (
+                <span className="font-normal ml-1">({data.totalListings} found)</span>
+              )}
             </p>
             {sortedComps.map((comp, i) => (
               <div key={i}>
@@ -110,18 +122,35 @@ const RentcastCard = ({ data, loading, error, city, zip, state, bedrooms, propos
                       <MapPin className="w-3 h-3 text-muted-foreground flex-shrink-0" />
                       {comp.formattedAddress}
                     </p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
-                      {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
-                      {comp.squareFootage !== null && ` · ${fmt(comp.squareFootage)} sqft`}
-                      {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
+                    <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1 flex-wrap">
+                      {comp.bedrooms !== null && (
+                        <span>{comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}</span>
+                      )}
+                      {comp.bathrooms !== null && <span>· {comp.bathrooms}BA</span>}
+                      {comp.squareFootage !== null && <span>· {fmt(comp.squareFootage)} sqft</span>}
+                      {comp.distance !== null && <span>· {comp.distance.toFixed(1)} mi</span>}
+                      {comp.daysOnMarket !== null && comp.daysOnMarket !== undefined && (
+                        <span className="inline-flex items-center gap-0.5">
+                          · <Clock className="w-3 h-3" /> {formatDaysAgo(comp.daysOnMarket)}
+                        </span>
+                      )}
+                      {comp.propertyType && (
+                        <span className="inline-flex items-center gap-0.5">
+                          · <Home className="w-3 h-3" /> {comp.propertyType}
+                        </span>
+                      )}
                     </p>
                   </div>
-                  {comp.rent !== null && (
-                    <span className="text-sm font-semibold text-foreground whitespace-nowrap">
-                      ${fmt(comp.rent)}/mo
-                    </span>
-                  )}
+                  <div className="text-right flex-shrink-0">
+                    {comp.rent !== null && (
+                      <span className="text-sm font-semibold text-foreground whitespace-nowrap">
+                        ${fmt(comp.rent)}/mo
+                      </span>
+                    )}
+                    {comp.status === 'Active' && (
+                      <p className="text-[10px] text-primary font-medium">Active</p>
+                    )}
+                  </div>
                 </motion.div>
               </div>
             ))}
@@ -139,9 +168,13 @@ const RentcastCard = ({ data, loading, error, city, zip, state, bedrooms, propos
         );
       })()}
 
-      <p className="text-[10px] text-muted-foreground/60 mt-3 text-center">Market data sources include MLS, public records & proprietary datasets</p>
+      <p className="text-[10px] text-muted-foreground/60 mt-3 text-center">
+        {isActiveListing
+          ? 'Showing active rental listings from MLS & proprietary feeds'
+          : 'Market data sources include MLS, public records & proprietary datasets'}
+      </p>
 
-      {/* FIX 4: Inline external links when comps exist */}
+      {/* Inline external links */}
       {hasComps && (
         <p className="text-sm text-muted-foreground mt-4 text-center">
           Want to browse more?{' '}
