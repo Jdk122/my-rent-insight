@@ -1,0 +1,1 @@
+DELETE FROM rentcast_cache WHERE lookup_key = 'market|10001' AND endpoint = 'market-statistics';
