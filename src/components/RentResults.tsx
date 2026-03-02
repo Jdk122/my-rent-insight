@@ -474,24 +474,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 )}
               </motion.div>
 
-              {/* Card B: Your Landlord's Property (Path 1 only) */}
-              {isPath1 && (
+              {/* Card B: Know Your Rights */}
               <motion.div {...fade(0.12)} className="evidence-card">
-                <LandlordCostSection
-                  propertyData={propertyData}
-                  propertyLoading={propertyLoading}
-                  propertyError={propertyError}
-                  currentRent={formData.currentRent}
-                  proposedRent={newRent}
-                  increaseAmount={increaseAmount}
-                  hasAddress={!!formData.fullAddress}
-                  onScrollToTop={onScrollToTop}
-                />
-              </motion.div>
-              )}
-
-              {/* Card C: Know Your Rights */}
-              <motion.div {...fade(0.14)} className="evidence-card">
                 <RentControlCard
                   state={rentData.state}
                   city={rentData.city}
@@ -535,13 +519,42 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           </motion.section>
         )}
 
-        {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            SECTION 4: NEGOTIATION LETTER
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        {/* ━━━ Understanding Your Building's Economics (Path 1 only) ━━━ */}
+        {isPath1 && (
+          <motion.section {...fade(0.18)} className="py-12">
+            <div className="evidence-card">
+              <h2 className="results-section-header mb-1">Understanding Your Building's Economics</h2>
+              <p className="text-[13px] text-muted-foreground mb-8">Estimates based on public records. These figures are approximate and shouldn't be cited in negotiations.</p>
+              <LandlordCostSection
+                propertyData={propertyData}
+                propertyLoading={propertyLoading}
+                propertyError={propertyError}
+                currentRent={formData.currentRent}
+                proposedRent={newRent}
+                increaseAmount={increaseAmount}
+                hasAddress={!!formData.fullAddress}
+                onScrollToTop={onScrollToTop}
+              />
+            </div>
+          </motion.section>
+        )}
 
-        {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            SECTION 5: NEGOTIATION LETTER (old numbering kept for section nav IDs)
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        {/* ━━━ Consolidated email capture ━━━ */}
+        <section className="py-12">
+          <div className="rounded-xl px-8 py-10 text-center" style={{ background: 'hsl(var(--secondary))' }}>
+            <EmailCapture
+              city={city}
+              captureSource={hasIncrease && isAboveMarket ? 'letter_plus_reminder' : 'lease_reminder'}
+              prefilledEmail={capturedEmail}
+              onEmailCaptured={setCapturedEmail}
+              leadContext={leadContext}
+              heading={hasIncrease && isAboveMarket ? 'Get this letter + a renewal reminder' : undefined}
+              subtext={hasIncrease && isAboveMarket ? `We'll email you this letter and remind you 60 days before your lease is up.` : undefined}
+            />
+          </div>
+        </section>
+
+        {/* ━━━ NEGOTIATION LETTER ━━━ */}
         {hasIncrease && isAboveMarket && calc && (
           <motion.section id="section-letter" {...fade(0.21)} className="py-12">
             <NegotiationLetter
@@ -569,25 +582,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           </motion.section>
         )}
 
-        {/* ━━━ Consolidated email capture ━━━ */}
-        <section className="py-12">
-          <div className="rounded-xl px-8 py-10 text-center" style={{ background: 'hsl(var(--secondary))' }}>
-            <EmailCapture
-              city={city}
-              captureSource={hasIncrease && isAboveMarket ? 'letter_plus_reminder' : 'lease_reminder'}
-              prefilledEmail={capturedEmail}
-              onEmailCaptured={setCapturedEmail}
-              leadContext={leadContext}
-              heading={hasIncrease && isAboveMarket ? 'Get this letter + a renewal reminder' : undefined}
-              subtext={hasIncrease && isAboveMarket ? `We'll email you this letter and remind you 60 days before your lease is up.` : undefined}
-            />
-          </div>
-        </section>
-
-        {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            SECTION 6: BUILDING SHARE — Viral Loop
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-
+        {/* ━━━ BUILDING SHARE — Viral Loop ━━━ */}
         {hasIncrease && (
           <section className="pb-12">
             <BuildingShareCard
