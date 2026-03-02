@@ -43,6 +43,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
   const [leaseYear, setLeaseYear] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [dateError, setDateError] = useState('');
+  const [partnerOptIn, setPartnerOptIn] = useState(false);
 
   useEffect(() => {
     if (prefilledEmail && !email) setEmail(prefilledEmail);
@@ -80,6 +81,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
         letter_generated: leadContext?.letterGenerated ?? false,
         lease_expiration_month: leaseMonthNum,
         lease_expiration_year: leaseYearNum,
+        partner_opt_in: partnerOptIn,
       } as any, { onConflict: 'email' });
     } catch {
       // Don't block UX on storage failure
@@ -151,9 +153,9 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="flex-1 px-4 py-3 text-sm border border-border rounded-lg bg-card text-foreground outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
+            className="flex-1 min-w-0 px-4 py-3 text-sm border border-border rounded-lg bg-card text-foreground outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
           />
-          <button type="submit" className="bg-primary text-primary-foreground px-5 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap">
+          <button type="submit" className="bg-primary text-primary-foreground px-4 sm:px-5 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap shrink-0">
             Remind me
           </button>
         </div>
@@ -164,7 +166,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
           <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
         </p>
         <label className="flex items-start gap-2 justify-center cursor-pointer select-none">
-          <input type="checkbox" className="mt-[3px] accent-primary" />
+          <input type="checkbox" checked={partnerOptIn} onChange={(e) => setPartnerOptIn(e.target.checked)} className="mt-[3px] accent-primary" />
           <span className="text-[13px] text-muted-foreground/70 leading-snug">
             I'm open to hearing from trusted partners about housing-related services.
           </span>
