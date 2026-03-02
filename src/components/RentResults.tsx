@@ -531,7 +531,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
         {/* ━━━ The Cost of Turnover ━━━ */}
         {hasIncrease && (
-          <motion.section {...fade(0.21)} className="py-12">
+          <motion.section {...fade(0.21)} className="pt-12 pb-8">
             <TurnoverCostSection
               currentRent={formData.currentRent}
               bedrooms={bedroomNum}
@@ -547,7 +547,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
         {/* ━━━ NEGOTIATION LETTER ━━━ */}
         {hasIncrease && isAboveMarket && calc && (
-          <motion.section id="section-letter" {...fade(0.21)} className="py-12">
+          <motion.section id="section-letter" {...fade(0.21)} className="pt-8 pb-8">
             <NegotiationLetter
               currentRent={formData.currentRent}
               newRent={newRent}
@@ -574,7 +574,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         )}
 
         {/* ━━━ Consolidated email capture ━━━ */}
-        <section className="py-12">
+        <section className="pt-8 pb-12">
           <div className="rounded-xl px-8 py-10 text-center" style={{ background: 'hsl(var(--secondary))' }}>
             <EmailCapture
               city={city}
