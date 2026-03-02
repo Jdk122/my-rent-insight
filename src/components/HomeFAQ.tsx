@@ -20,7 +20,7 @@ const faqs = [
   },
   {
     q: 'What data sources does RenewalReply use?',
-    a: 'We use HUD Small Area Fair Market Rents (SAFMR) FY2025, the Zillow Observed Rent Index (ZORI), U.S. Census American Community Survey (ACS) 2023, and Federal Reserve (FRED) data. This gives you a multi-source view of whether your rent increase is justified by actual market conditions.',
+    a: 'We use HUD Small Area Fair Market Rents (SAFMR) FY2025 for federal rent benchmarks, real-time nearby rental listings to show you what apartments are actually renting for in your area, Zillow Observed Rent Index (ZORI) for local trends, and U.S. Census ACS data for income and demographics. This gives you both the government benchmark and real market data to evaluate your rent increase.',
   },
   {
     q: 'Is RenewalReply really free?',
