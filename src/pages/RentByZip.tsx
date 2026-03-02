@@ -113,7 +113,7 @@ const RentByZip = () => {
             name: `Fair Market Rent Data for ${zip}`,
             description: `HUD Fair Market Rent (SAFMR FY2025) and local rent market data for zip code ${zip} in ${city}, ${state}`,
             url: `https://www.renewalreply.com/rent/${zip}`,
-            creator: { '@type': 'Organization', name: 'RenewalReply' },
+            creator: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
             temporalCoverage: '2025',
             spatialCoverage: {
               '@type': 'Place',
@@ -122,7 +122,13 @@ const RentByZip = () => {
                 postalCode: zip,
                 addressLocality: city,
                 addressRegion: state,
+                addressCountry: 'US',
               },
+            },
+            distribution: {
+              '@type': 'DataDownload',
+              encodingFormat: 'text/html',
+              contentUrl: `https://www.renewalreply.com/rent/${zip}`,
             },
           },
           {
