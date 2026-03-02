@@ -196,7 +196,7 @@ const Index = () => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <main className="max-w-[620px] mx-auto px-6 pt-16 md:pt-24 pb-32">
+            <main className="max-w-[620px] mx-auto px-6 pt-16 md:pt-24 pb-16">
               <h1 className="font-display text-[clamp(3rem,8vw,5rem)] text-foreground leading-[1.05] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
                 Is your rent increase <span className="text-primary">fair?</span>
               </h1>

@@ -33,7 +33,7 @@ const faqs = [
 ];
 
 const HomeFAQ = () => (
-  <section className="max-w-[620px] mx-auto px-6 py-16" aria-label="Frequently asked questions">
+  <section className="max-w-[620px] mx-auto px-6 pt-12 pb-16 border-t border-border" aria-label="Frequently asked questions">
     <h2 className="font-display text-[24px] md:text-[28px] font-semibold text-foreground tracking-tight mb-8" style={{ letterSpacing: '-0.02em' }}>
       Frequently Asked Questions
     </h2>
