@@ -33,10 +33,13 @@ const Privacy = () => (
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-foreground mb-2">We don't sell your data</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-2">Your data stays with us — unless you say otherwise</h2>
           <p>
-            Your personal information is never sold, rented, or shared with third parties for their
-            marketing purposes. Period.
+            We never sell, rent, or share your personal information without your permission.
+            If you opt in to hear from trusted partners about housing-related services, we may
+            share your contact details and housing preferences with vetted third parties.
+            You're always in control — only users who actively check the partner opt-in box
+            will ever be contacted by third parties.
           </p>
         </section>
 
