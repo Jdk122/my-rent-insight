@@ -545,21 +545,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           </motion.section>
         )}
 
-        {/* ━━━ Consolidated email capture ━━━ */}
-        <section className="py-12">
-          <div className="rounded-xl px-8 py-10 text-center" style={{ background: 'hsl(var(--secondary))' }}>
-            <EmailCapture
-              city={city}
-              captureSource={hasIncrease && isAboveMarket ? 'letter_plus_reminder' : 'lease_reminder'}
-              prefilledEmail={capturedEmail}
-              onEmailCaptured={setCapturedEmail}
-              leadContext={leadContext}
-              heading={hasIncrease && isAboveMarket ? 'Get this letter + a renewal reminder' : undefined}
-              subtext={hasIncrease && isAboveMarket ? `We'll email you this letter and remind you 60 days before your lease is up.` : undefined}
-            />
-          </div>
-        </section>
-
         {/* ━━━ NEGOTIATION LETTER ━━━ */}
         {hasIncrease && isAboveMarket && calc && (
           <motion.section id="section-letter" {...fade(0.21)} className="py-12">
@@ -587,6 +572,21 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             />
           </motion.section>
         )}
+
+        {/* ━━━ Consolidated email capture ━━━ */}
+        <section className="py-12">
+          <div className="rounded-xl px-8 py-10 text-center" style={{ background: 'hsl(var(--secondary))' }}>
+            <EmailCapture
+              city={city}
+              captureSource={hasIncrease && isAboveMarket ? 'letter_plus_reminder' : 'lease_reminder'}
+              prefilledEmail={capturedEmail}
+              onEmailCaptured={setCapturedEmail}
+              leadContext={leadContext}
+              heading={hasIncrease && isAboveMarket ? 'Get this letter + a renewal reminder' : undefined}
+              subtext={hasIncrease && isAboveMarket ? `We'll email you this letter and remind you 60 days before your lease is up.` : undefined}
+            />
+          </div>
+        </section>
 
         {/* ━━━ BUILDING SHARE — Viral Loop ━━━ */}
         {hasIncrease && (
