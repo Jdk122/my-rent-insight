@@ -98,6 +98,63 @@ export type Database = {
         }
         Relationships: []
       }
+      dhcr_buildings: {
+        Row: {
+          bldg_no: string
+          bldg_no2: string | null
+          block: string | null
+          borough: string
+          city: string | null
+          county: string | null
+          id: string
+          lot: string | null
+          status1: string | null
+          status2: string | null
+          status3: string | null
+          street: string
+          street_suffix: string | null
+          street_suffix2: string | null
+          street2: string | null
+          zip: string
+        }
+        Insert: {
+          bldg_no: string
+          bldg_no2?: string | null
+          block?: string | null
+          borough: string
+          city?: string | null
+          county?: string | null
+          id?: string
+          lot?: string | null
+          status1?: string | null
+          status2?: string | null
+          status3?: string | null
+          street: string
+          street_suffix?: string | null
+          street_suffix2?: string | null
+          street2?: string | null
+          zip: string
+        }
+        Update: {
+          bldg_no?: string
+          bldg_no2?: string | null
+          block?: string | null
+          borough?: string
+          city?: string | null
+          county?: string | null
+          id?: string
+          lot?: string | null
+          status1?: string | null
+          status2?: string | null
+          status3?: string | null
+          street?: string
+          street_suffix?: string | null
+          street_suffix2?: string | null
+          street2?: string | null
+          zip?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           address: string | null
