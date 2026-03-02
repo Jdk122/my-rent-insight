@@ -37,7 +37,7 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
   const [rentIncrease, setRentIncrease] = useState('');
   const [increaseIsPercent, setIncreaseIsPercent] = useState(false);
   const [movingCosts] = useState('2500');
-  const [showAddress, setShowAddress] = useState(false);
+  const [showZipOnly, setShowZipOnly] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,41 +58,13 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
   return (
     <div>
       <form onSubmit={handleSubmit} className="border border-border rounded-2xl p-6 md:p-8 bg-card space-y-5">
-        {/* Zip Code — first and prominent */}
-        <div className="space-y-1.5">
-          <Label className="text-sm font-medium text-foreground">Zip Code <span className="text-destructive">*</span></Label>
-          <Input
-            type="text"
-            inputMode="numeric"
-            placeholder="e.g. 78701"
-            value={zip}
-            onChange={(e) => {
-              const v = e.target.value.replace(/\D/g, '').slice(0, 5);
-              setZip(v);
-            }}
-            className="h-12 text-sm bg-background"
-            required
-            maxLength={5}
-          />
-          <p className="text-xs text-muted-foreground">
-            This is the only required field. Add details below for sharper insights.
-          </p>
-        </div>
-
-        {/* Address autocomplete */}
-        {!showAddress ? (
-          <button
-            type="button"
-            onClick={() => setShowAddress(true)}
-            className="text-sm text-primary font-medium hover:underline transition-colors flex items-center gap-1.5"
-          >
-            <span>→</span> Add your full address for building-specific data
-          </button>
-        ) : (
-          <div className="space-y-1.5 animate-fade-in">
-            <Label className="text-xs font-medium text-muted-foreground">Address</Label>
+        {/* Address — primary input */}
+        {!showZipOnly && (
+          <div className="space-y-1.5">
+            <Label className="text-sm font-medium text-foreground">Your Address</Label>
             <AddressAutocomplete
-              className="h-11 text-sm bg-background"
+              className="h-12 text-sm bg-background"
+              placeholder="Start typing your address..."
               onSelect={(addr) => {
                 if (addr.zip) setZip(addr.zip);
                 setFullAddress(addr.fullAddress);
@@ -101,7 +73,48 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
             {fullAddress && (
               <p className="text-[11px] text-muted-foreground truncate">✓ {fullAddress}</p>
             )}
+            <button
+              type="button"
+              onClick={() => setShowZipOnly(true)}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Don't want to enter your address? Just use your zip code →
+            </button>
           </div>
+        )}
+
+        {/* Zip Code — shown standalone when toggled, or as auto-filled hidden field */}
+        {showZipOnly && (
+          <div className="space-y-1.5 animate-fade-in">
+            <Label className="text-sm font-medium text-foreground">Zip Code <span className="text-destructive">*</span></Label>
+            <Input
+              type="text"
+              inputMode="numeric"
+              placeholder="e.g. 78701"
+              value={zip}
+              onChange={(e) => {
+                const v = e.target.value.replace(/\D/g, '').slice(0, 5);
+                setZip(v);
+              }}
+              className="h-12 text-sm bg-background"
+              required
+              maxLength={5}
+            />
+            <button
+              type="button"
+              onClick={() => setShowZipOnly(false)}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              ← Enter your full address instead
+            </button>
+          </div>
+        )}
+
+        {/* Auto-filled zip indicator when using address mode */}
+        {!showZipOnly && zip && (
+          <p className="text-xs text-muted-foreground">
+            Zip code: <span className="font-mono font-medium text-foreground">{zip}</span>
+          </p>
         )}
 
         <div className="border-t border-border" />
