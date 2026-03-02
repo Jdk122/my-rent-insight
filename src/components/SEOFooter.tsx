@@ -57,23 +57,16 @@ const SEOFooter = ({ onContactClick }: SEOFooterProps) => (
       </div>
     </div>
 
-    {/* Legal disclaimer */}
-    <div className="border-t border-border/50 px-6 py-5">
-      <p className="max-w-3xl mx-auto text-xs text-muted-foreground/60 leading-relaxed">
-        RenewalReply provides general information based on publicly available federal and state housing data. It is not legal advice, and should not be treated as a substitute for professional legal counsel. Rent laws vary by building type, lease terms, and local ordinances. Consult a licensed attorney or your local tenant rights organization before taking action. Data sourced from HUD, U.S. Census Bureau, and FRED; updated annually and may not reflect current market conditions.
-      </p>
-    </div>
-
-    {/* Source attribution bar */}
-    <div className="border-t border-border px-6 py-4 text-center">
-      <p className="text-xs text-muted-foreground leading-relaxed">
-        Sources: HUD SAFMR FY2025, Census ACS 2023, Zillow ZORI, FRED, DHCR · For informational purposes only · Not legal or financial advice ·{' '}
-        <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy</Link>
+    {/* Combined disclaimer + attribution */}
+    <div className="border-t border-border px-6 py-5">
+      <p className="max-w-3xl mx-auto text-[11px] text-muted-foreground/50 leading-relaxed text-center">
+        Data sourced from HUD SAFMR FY2025, Census ACS 2023, Zillow ZORI, FRED, and DHCR. For informational purposes only — not legal or financial advice. Rent laws vary by building type, lease terms, and local ordinances. Consult a licensed attorney or tenant rights organization before taking action.{' '}
+        <Link to="/privacy" className="underline hover:text-muted-foreground transition-colors">Privacy</Link>
         {onContactClick && (
           <>
             {' · '}
-            <button onClick={onContactClick} className="underline hover:text-foreground transition-colors">
-              Contact us
+            <button onClick={onContactClick} className="underline hover:text-muted-foreground transition-colors">
+              Contact
             </button>
           </>
         )}
