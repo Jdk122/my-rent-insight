@@ -77,6 +77,30 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const isFair = calc?.verdict === 'at-market';
   const isBelowMarket = calc?.verdict === 'below';
 
+  // ━━━ Path 1 vs Path 2 detection ━━━
+  // Path 1: sale data exists AND passes secondary checks → show landlord cost breakdown
+  // Path 2: no sale data OR fails secondary checks → market-only experience
+  const hasSaleData = !!(propertyData?.lastSalePrice && propertyData?.lastSaleDate);
+  const bedroomNum = formData.bedrooms === 'studio' ? 0 : formData.bedrooms === 'oneBr' ? 1 : formData.bedrooms === 'twoBr' ? 2 : formData.bedrooms === 'threeBr' ? 3 : 4;
+  const forceMarketOnly = useMemo(() => {
+    // No street address → force Path 2
+    if (!formData.fullAddress) return true;
+    if (!propertyData) return true;
+    // Multi-family 5+ units
+    if (propertyData.propertyType?.toLowerCase().includes('multi') && propertyData.units >= 5) return true;
+    // Unreasonable sale price for a single unit
+    if (propertyData.lastSalePrice) {
+      const price = propertyData.lastSalePrice;
+      if (bedroomNum <= 1 && price > 3_000_000) return true;
+      if (bedroomNum === 2 && price > 5_000_000) return true;
+      if (bedroomNum >= 3 && price > 7_000_000) return true;
+    }
+    return false;
+  }, [formData.fullAddress, propertyData, bedroomNum]);
+
+  const isPath1 = hasSaleData && !forceMarketOnly;
+  const marketMultiple = marketYoy > 0 ? Math.round((increasePct / marketYoy) * 10) / 10 : 0;
+
   const landlordCosts = useMemo<LandlordCostEstimate | null>(() => {
     if (!propertyData) return null;
     const costs = calculateLandlordCosts(propertyData);
@@ -185,9 +209,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     return sections;
   }, [hasIncrease, medianCompRent, hasEnoughComps, isAboveMarket, calc]);
 
-  // Markup insight for verdict
+  // Markup insight for verdict (only for Path 1)
   const costMarkup = landlordInsights?.costIncreaseMarkup ?? null;
-  const showMarkupInVerdict = costMarkup !== null && costMarkup > 1 && !!propertyData?.lastSalePrice;
+  const showMarkupInVerdict = isPath1 && costMarkup !== null && costMarkup > 1;
 
   let rowIdx = 0;
 
@@ -214,11 +238,18 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 style={{ letterSpacing: '-0.02em' }}
               >
                 {isAboveMarket && calc ? (
-                  <>Your landlord is asking for{' '}
-                    <span className="text-destructive">${fmt(newRent - calc.counterHigh)}/mo more</span>{' '}
-                    than the market supports.</>
+                  isPath1 ? (
+                    <>Your landlord is asking for{' '}
+                      <span className="text-destructive">${fmt(newRent - calc.counterHigh)}/mo more</span>{' '}
+                      than the market supports.</>
+                  ) : (
+                    <>Your landlord is asking for{' '}
+                      <span className="text-destructive">{marketMultiple}× the market rate increase.</span></>
+                  )
                 ) : isFair ? (
                   <>Your rent increase is <span className="text-verdict-fair">right at market.</span></>
+                ) : increasePct > 0 && increasePct <= marketYoy ? (
+                  <>Your rent increase is <span className="text-verdict-good">in line with the market.</span></>
                 ) : (
                   <>Your rent increase is <span className="text-verdict-good">below market.</span></>
                 )}
@@ -270,7 +301,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 <ShareableCard
                   headline={
                     isAboveMarket && calc
-                      ? `My landlord is asking for $${fmt(newRent - calc.counterHigh)}/mo more than the market supports.`
+                      ? isPath1
+                        ? `My landlord is asking for $${fmt(newRent - calc.counterHigh)}/mo more than the market supports.`
+                        : `My landlord is asking for ${marketMultiple}× the market rate increase.`
                       : isFair
                       ? `My rent increase is right at market.`
                       : `My rent increase is below market.`
@@ -360,7 +393,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 )}
               </motion.div>
 
-              {/* Card B: Your Landlord's Property */}
+              {/* Card B: Your Landlord's Property (Path 1 only) */}
+              {isPath1 && (
               <motion.div {...fade(0.12)} className="evidence-card">
                 <LandlordCostSection
                   propertyData={propertyData}
@@ -373,6 +407,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   onScrollToTop={onScrollToTop}
                 />
               </motion.div>
+              )}
 
               {/* Card C: Know Your Rights */}
               <motion.div {...fade(0.14)} className="evidence-card">
@@ -474,6 +509,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             multiplier={multiplier}
             landlordCosts={landlordCosts}
             increaseAmount={increaseAmount}
+            isPath1={isPath1}
+            marketMultiple={marketMultiple}
           />
         </section>
         </div>
