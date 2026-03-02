@@ -92,7 +92,7 @@ async function fetchFredTrend(metro: string): Promise<FredTrendData | null> {
     const seriesId = getFredSeriesFromMetro(metro, metroMap);
     if (!seriesId) return null;
 
-    const apiKey = import.meta.env.VITE_FRED_API_KEY;
+    const apiKey = import.meta.env.VITE_FRED_API_KEY || '2f091940133b890134935950c4f22eec';
     if (!apiKey) return null;
 
     const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=13`;
@@ -238,7 +238,7 @@ export async function fetchStateVacancyRate(stateAbbr: string, stateName: string
   const fallback: VacancyRateResult = { rate: NATIONAL_AVG_VACANCY, year: '2024', stateName, isFallback: true };
 
   try {
-    const apiKey = import.meta.env.VITE_FRED_API_KEY;
+    const apiKey = import.meta.env.VITE_FRED_API_KEY || '2f091940133b890134935950c4f22eec';
     if (!apiKey) return fallback;
 
     const seriesId = `${stateAbbr}RVAC`;
