@@ -153,10 +153,10 @@ const RentByZip = () => {
             '@context': 'https://schema.org',
             '@type': 'Dataset',
             name: `Fair Market Rent Data for ${zip}`,
-            description: `HUD Fair Market Rent (SAFMR FY2025) and local rent market data for zip code ${zip} in ${city}, ${state}`,
+            description: `HUD Fair Market Rent (SAFMR FY2026) and local rent market data for zip code ${zip} in ${city}, ${state}`,
             url: `https://www.renewalreply.com/rent/${zip}`,
             creator: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
-            temporalCoverage: '2025',
+            temporalCoverage: '2026',
             spatialCoverage: {
               '@type': 'Place',
               address: {
@@ -182,7 +182,7 @@ const RentByZip = () => {
                 name: `What is fair market rent in ${zip}?`,
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: `The HUD fair market rent for a 1-bedroom in ${zip} (${city}, ${state}) is ${fmt(fmr1br)}/month for FY2025. Studio: ${fmt(raw.f[0])}, 2-BR: ${fmt(raw.f[2])}, 3-BR: ${fmt(raw.f[3])}, 4-BR: ${fmt(raw.f[4])}.`,
+                  text: `The HUD fair market rent for a 1-bedroom in ${zip} (${city}, ${state}) is ${fmt(fmr1br)}/month for FY2026. Studio: ${fmt(raw.f[0])}, 2-BR: ${fmt(raw.f[2])}, 3-BR: ${fmt(raw.f[3])}, 4-BR: ${fmt(raw.f[4])}.`,
                 },
               },
               {
@@ -212,7 +212,7 @@ const RentByZip = () => {
       <noscript>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
           <h1>{`Fair Market Rent in ${zip} — ${city}, ${state}`}</h1>
-          <p>{`See how rents in ${zip} compare to HUD fair market rent benchmarks. Data updated for FY2025.`}</p>
+          <p>{`See how rents in ${zip} compare to HUD fair market rent benchmarks. Data updated for FY2026.`}</p>
           <p><a href={`https://www.renewalreply.com/?zip=${zip}`}>{`Check if your rent increase is fair in ${zip} →`}</a></p>
 
           <h2>{`HUD Fair Market Rent for ${zip}`}</h2>
@@ -226,7 +226,7 @@ const RentByZip = () => {
               ))}
             </tbody>
           </table>
-          <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY2025</small></p>
+          <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY2026</small></p>
 
           {hasZillow && (
             <>
@@ -244,7 +244,7 @@ const RentByZip = () => {
 
           <h2>{`Frequently Asked Questions About Rent in ${zip}`}</h2>
           <h3>{`What is fair market rent in ${zip}?`}</h3>
-          <p>{`The HUD fair market rent for a 1-bedroom in ${zip} (${city}, ${state}) is ${fmt(fmr1br)}/month for FY2025. Studio: ${fmt(raw.f[0])}, 2-BR: ${fmt(raw.f[2])}, 3-BR: ${fmt(raw.f[3])}, 4-BR: ${fmt(raw.f[4])}.`}</p>
+          <p>{`The HUD fair market rent for a 1-bedroom in ${zip} (${city}, ${state}) is ${fmt(fmr1br)}/month for FY2026. Studio: ${fmt(raw.f[0])}, 2-BR: ${fmt(raw.f[2])}, 3-BR: ${fmt(raw.f[3])}, 4-BR: ${fmt(raw.f[4])}.`}</p>
           <h3>{`How much can my landlord raise my rent in ${city}?`}</h3>
           <p>{cap ? `${cap.jurisdiction} has rent increase protections. ${cap.maxIncreaseFormula ? `The cap is generally ${cap.maxIncreaseFormula}.` : ''}` : `There are no specific rent control laws covering ${city}, ${state} at this time.`}</p>
           <h3>{`Is my rent increase fair in ${zip}?`}</h3>
@@ -299,7 +299,7 @@ const RentByZip = () => {
             The HUD fair market rent for a 1-bedroom in {zip} ({city}, {state}) is {fmt(raw.f[1])}/month. Studio: {fmt(raw.f[0])}, 2-BR: {fmt(raw.f[2])}, 3-BR: {fmt(raw.f[3])}, 4-BR: {fmt(raw.f[4])}.{hasZillow ? ` Rents changed ${raw.zy! > 0 ? '+' : ''}${raw.zy!.toFixed(1)}% year-over-year.` : ''}
           </p>
           <p className="mt-2 text-lg text-muted-foreground leading-relaxed">
-            See how rents in {zip} compare to HUD fair market rent benchmarks. Data updated for FY2025.
+            See how rents in {zip} compare to HUD fair market rent benchmarks. Data updated for FY2026.
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link
@@ -366,7 +366,7 @@ const RentByZip = () => {
             </Table>
           </div>
           <p className="mt-3 text-xs text-muted-foreground">
-            Source: HUD Small Area Fair Market Rents (SAFMR) FY2025
+            Source: HUD Small Area Fair Market Rents (SAFMR) FY2026
           </p>
         </section>
 
@@ -450,7 +450,7 @@ const RentByZip = () => {
               <AccordionTrigger>What is fair market rent in {zip}?</AccordionTrigger>
               <AccordionContent>
                 <p className="text-muted-foreground leading-relaxed">
-                  The HUD fair market rent for a 1-bedroom in {zip} ({city}, {state}) is {fmt(fmr1br)}/month for FY2025.
+                  The HUD fair market rent for a 1-bedroom in {zip} ({city}, {state}) is {fmt(fmr1br)}/month for FY2026.
                   This represents what HUD considers a moderately-priced rental in this area.
                   Other bedroom sizes: Studio {fmt(raw.f[0])}, 2-BR {fmt(raw.f[2])}, 3-BR {fmt(raw.f[3])}, 4-BR {fmt(raw.f[4])}.
                 </p>
@@ -575,7 +575,7 @@ const RentByZip = () => {
 
         {/* Inline disclaimer */}
         <p className="mb-12 text-xs text-muted-foreground/70 italic leading-relaxed">
-          Data reflects HUD FY2025 fair market rent benchmarks and U.S. Census estimates. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
+          Data reflects HUD FY2026 fair market rent benchmarks and U.S. Census estimates. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
         </p>
 
         {/* SECTION 7 — Bottom CTA */}
