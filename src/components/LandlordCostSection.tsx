@@ -69,7 +69,7 @@ const LandlordCostSection = ({
   const [downPaymentPct, setDownPaymentPct] = useState(defaultDownPct);
   const [mortgageRateInput, setMortgageRateInput] = useState((fallbackRate * 100).toFixed(2));
   const [fredRateLoaded, setFredRateLoaded] = useState(false);
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
 
   // Try to fetch actual FRED rate for the sale date
   useEffect(() => {
@@ -280,7 +280,7 @@ const LandlordCostSection = ({
           className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
         >
           {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          {expanded ? 'Hide' : 'Show'} estimated landlord costs per month
+          {expanded ? 'Hide cost breakdown' : 'See the full cost breakdown'}
         </button>
 
         {expanded && (
