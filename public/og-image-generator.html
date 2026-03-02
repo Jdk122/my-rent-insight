@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OG Image Generator — RenewalReply</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #eee; }
+    .card {
+      width: 1200px;
+      height: 630px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 60px 72px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      color: hsl(200, 80%, 44%);
+      letter-spacing: -0.02em;
+    }
+    .logo span {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      color: hsl(162, 55%, 40%);
+    }
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+    }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 64px;
+      color: hsl(220, 18%, 13%);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    .hero h1 em {
+      color: hsl(200, 80%, 44%);
+      font-style: normal;
+    }
+    .hero p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 26px;
+      color: hsl(162, 55%, 40%);
+      font-weight: 600;
+    }
+    .bottom-bar {
+      background: hsl(200, 15%, 97%);
+      margin: 0 -72px -48px;
+      padding: 20px 72px;
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      color: hsl(215, 10%, 46%);
+      font-weight: 500;
+    }
+    .bottom-bar span::before {
+      content: '•';
+      margin-right: 8px;
+      color: hsl(200, 80%, 44%);
+    }
+    .bottom-bar span:first-child::before { content: ''; margin: 0; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">Renewal<span>Reply</span></div>
+    <div class="hero">
+      <h1>Is your rent increase <em>fair?</em></h1>
+      <p>Free data-backed rent calculator</p>
+    </div>
+    <div class="bottom-bar">
+      <span>38,000+ zip codes</span>
+      <span>HUD &amp; Zillow data</span>
+      <span>Free negotiation letter</span>
+    </div>
+  </div>
+</body>
+</html>
