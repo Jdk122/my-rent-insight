@@ -216,8 +216,8 @@ const Index = () => {
           <h1 className="font-display text-[clamp(3rem,8vw,5rem)] text-foreground leading-[1.05] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
             Is your rent increase <span className="text-primary">fair?</span>
           </h1>
-          <p className="mt-6 text-xl md:text-2xl text-foreground/60 max-w-[620px] leading-relaxed font-medium">
-            See real nearby listings, get your savings if you move, and a negotiation letter if you stay — instantly.
+          <p className="mt-6 text-lg md:text-xl text-foreground/50 max-w-[540px] leading-relaxed font-normal tracking-tight">
+            See real nearby listings, calculate your savings if you move, and get a negotiation letter if you stay<span className="text-primary font-medium"> — instantly</span>.
           </p>
           <section className="mt-10" aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} />
