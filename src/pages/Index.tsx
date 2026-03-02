@@ -11,6 +11,8 @@ import SocialProofCounter from '@/components/SocialProofCounter';
 import ContactModal from '@/components/ContactModal';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
 import SEO from '@/components/SEO';
+import HomeFAQ from '@/components/HomeFAQ';
+import SEOFooter from '@/components/SEOFooter';
 
 const Index = () => {
   const [results, setResults] = useState<{ formData: RentFormData; rentData: RentLookupResult } | null>(null);
@@ -112,39 +114,27 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col overflow-x-hidden" ref={topRef}>
       <SEO
+        title="Is Your Rent Increase Fair? Free Rent Increase Calculator | RenewalReply"
+        description="Check if your rent increase is fair in 10 seconds. Compare your landlord's proposed increase to HUD fair market rent data for 38,000+ zip codes. Free negotiation letter included."
         canonical="/"
         jsonLd={[
           {
             "@context": "https://schema.org",
             "@type": "WebApplication",
-            "name": "RenewalReply",
-            "url": "https://renewalreply.com",
-            "description": "Compare your rent increase to real market data. Get a free negotiation letter if your landlord is overcharging.",
+            "name": "RenewalReply Rent Increase Calculator",
+            "url": "https://www.renewalreply.com",
+            "description": "Free tool to check if your rent increase is fair using HUD, Census, and Zillow data for 38,000+ US zip codes.",
             "applicationCategory": "FinanceApplication",
             "operatingSystem": "Web",
+            "browserRequirements": "Requires JavaScript",
             "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-          },
-          {
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": [
-              {
-                "@type": "Question",
-                "name": "How do I know if my rent increase is fair?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Enter your address and current rent on RenewalReply. We compare your increase to HUD Fair Market Rents, Census data, and Zillow trends for your zip code to determine if it's above, at, or below market rate."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "Is RenewalReply free?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Yes. Checking your rent increase and generating a negotiation letter are completely free."
-                }
-              }
-            ]
+            "featureList": [
+              "Compare rent increases to HUD Fair Market Rent",
+              "Generate free negotiation letter",
+              "Coverage for 38,000+ US zip codes",
+              "Uses HUD SAFMR, Zillow ZORI, and Census data"
+            ],
+            "author": { "@type": "Organization", "name": "RenewalReply" }
           }
         ]}
       />
@@ -245,13 +235,10 @@ const Index = () => {
         )}
       </AnimatePresence>
 
-      {/* Footer */}
-      <footer className="mt-auto border-t border-border px-6 py-6 text-center">
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          Sources: HUD SAFMR FY2025, Census ACS 2023, Zillow ZORI, FRED, DHCR · Analysis powered by RenewalReply · For informational purposes only · Not legal or financial advice ·{' '}
-          <button onClick={() => setContactOpen(true)} className="underline hover:text-foreground transition-colors">Contact us</button>
-        </p>
-      </footer>
+      {/* FAQ — only on landing */}
+      {!results && !isLoading && <HomeFAQ />}
+
+      <SEOFooter onContactClick={() => setContactOpen(true)} />
 
       <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
     </div>

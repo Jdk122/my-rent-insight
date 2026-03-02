@@ -9,8 +9,8 @@ interface SEOProps {
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
-const SITE_URL = 'https://renewalreply.com';
-const DEFAULT_OG_IMAGE = 'https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/63d37e0d-9623-4178-b761-2e515c3e1b5a/id-preview-c3fbbd3c--0221e31a-4fe7-41b1-93b2-bac89ac9d373.lovable.app-1772400915913.png';
+const SITE_URL = 'https://www.renewalreply.com';
+const DEFAULT_OG_IMAGE = 'https://www.renewalreply.com/og-image.png';
 
 const SEO = ({
   title = 'RenewalReply — Is your rent increase fair?',
