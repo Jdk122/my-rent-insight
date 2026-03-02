@@ -597,9 +597,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               city={rentData.city}
               state={rentData.state}
               bedrooms={bedroomNum}
-              hudFMR={rentData.fmr}
-              proposedRent={newRent}
-              increasePercent={increasePct}
+              increasePct={increasePct}
+              marketYoy={marketYoy}
             />
           </section>
         )}

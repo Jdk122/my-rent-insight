@@ -7,13 +7,9 @@ interface BuildingShareCardProps {
   city: string;
   state: string;
   bedrooms: number;
-  hudFMR: number;
-  proposedRent: number;
-  increasePercent: number;
+  increasePct: number;
+  marketYoy: number;
 }
-
-const fmtCurrency = (n: number) =>
-  new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
 
 const getBedroomLabel = (bedrooms: number) => {
   if (bedrooms === 0) return 'Studio';
@@ -25,9 +21,8 @@ const BuildingShareCard = ({
   city,
   state,
   bedrooms,
-  hudFMR,
-  proposedRent,
-  increasePercent,
+  increasePct,
+  marketYoy,
 }: BuildingShareCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -41,26 +36,24 @@ const BuildingShareCard = ({
   }, []);
 
   const brLabel = getBedroomLabel(bedrooms);
-  const isAboveFMR = proposedRent > hudFMR;
-  const diff = proposedRent - hudFMR;
-  const diffFormatted = fmtCurrency(Math.abs(diff));
-  const hudFormatted = fmtCurrency(hudFMR);
-  const proposedFormatted = fmtCurrency(proposedRent);
+  const isAboveMarket = increasePct > marketYoy;
+  const diff = Math.round((increasePct - marketYoy) * 10) / 10;
+  const marketSign = marketYoy > 0 ? '+' : '';
 
   const shareUrl = `https://renewalreply.com/?utm_source=share&utm_medium=building&utm_campaign=viral_loop&utm_content=${zipCode}`;
 
   // SMS message
-  const smsBody = `Hey — I just checked our building's rent increase against federal data. HUD says a ${brLabel} in ${zipCode} should be around ${hudFormatted}. Mine came in at ${proposedFormatted}.${isAboveFMR ? ` That's ${diffFormatted} over.` : ''} Took 30 seconds, no signup: ${shareUrl}`;
+  const smsBody = `Hey — I just checked our building's rent increase against market data. ${brLabel} rents in ${zipCode} moved ${marketSign}${marketYoy}% this year. My landlord wants ${increasePct}%.${isAboveMarket ? ` That's ${diff} percentage points above market.` : ''} Took 30 seconds, no signup: ${shareUrl}`;
 
   // WhatsApp message
-  const whatsappBody = `Did you get your renewal letter yet? 👀\n\nI just ran our zip code (${zipCode}) through a rent fairness tool. HUD says a ${brLabel} here should be around ${hudFormatted}.\n\nMy landlord is asking ${proposedFormatted}${isAboveFMR ? ` — that's ${diffFormatted} above fair market.` : '.'}\n\nFree tool, no signup, 30 seconds: ${shareUrl}`;
+  const whatsappBody = `Did you get your renewal letter yet? 👀\n\nI just ran our zip code (${zipCode}) through a rent fairness tool. ${brLabel} rents here moved ${marketSign}${marketYoy}% this year.\n\nMy landlord is asking for ${increasePct}%${isAboveMarket ? ` — that's ${diff} points above the market trend.` : '.'}\n\nFree tool, no signup, 30 seconds: ${shareUrl}`;
 
   // Email
-  const emailSubject = `Worth checking — are we overpaying rent in ${city}?`;
-  const emailBody = `Hey,\n\nI just ran my address through a rent fairness tool and thought you'd want to know what I found.\n\nHUD says a ${brLabel} in ${zipCode} (${city}, ${state}) should be around ${hudFormatted}. My landlord is asking ${proposedFormatted} on my renewal${isAboveFMR ? ` — that's ${diffFormatted} above the federal benchmark` : ''}.\n\nThe tool cross-references HUD data, local market trends, and comparable rents nearby. It's free, takes 30 seconds, and doesn't require a signup.\n\nCheck yours here: ${shareUrl}\n\nThought you'd want to know, especially if you got a similar increase.`;
+  const emailSubject = `Worth checking — is our rent increase fair in ${city}?`;
+  const emailBody = `Hey,\n\nI just ran my address through a rent fairness tool and thought you'd want to know what I found.\n\n${brLabel} rents in ${zipCode} (${city}, ${state}) moved ${marketSign}${marketYoy}% this year. My landlord is asking for ${increasePct}%${isAboveMarket ? ` — that's ${diff} percentage points above the local market trend` : ', which is in line with the market'}.\n\nThe tool cross-references HUD data, local market trends, and comparable rents nearby. It's free, takes 30 seconds, and doesn't require a signup.\n\nCheck yours here: ${shareUrl}\n\nThought you'd want to know, especially if you got a similar increase.`;
 
   // Clipboard
-  const clipboardText = `Just checked — HUD says a ${brLabel} in ${zipCode} (${city}) should be around ${hudFormatted}. My renewal came in at ${proposedFormatted}. Free tool to check yours: ${shareUrl}`;
+  const clipboardText = `Just checked — ${brLabel} rents in ${zipCode} (${city}) moved ${marketSign}${marketYoy}% this year. My landlord wants ${increasePct}%. Free tool to check yours: ${shareUrl}`;
 
   const handleSMS = () => {
     trackEvent('building_share_clicked', { method: 'sms', zip: zipCode });
@@ -82,7 +75,6 @@ const BuildingShareCard = ({
     try {
       await navigator.clipboard.writeText(clipboardText);
     } catch {
-      // Fallback for older browsers
       const ta = document.createElement('textarea');
       ta.value = clipboardText;
       ta.style.position = 'fixed';
@@ -155,13 +147,14 @@ const BuildingShareCard = ({
               style={{ backgroundColor: 'hsl(40, 33%, 96%)' }}
             >
               <p className="text-[13.5px] text-foreground leading-relaxed">
-                HUD says a <strong>{brLabel}</strong> in{' '}
+                <strong>{brLabel}</strong> rents in{' '}
                 <strong>{zipCode}</strong>{' '}
                 <span className="text-muted-foreground">({city}, {state})</span>{' '}
-                should be around <strong>{hudFormatted}</strong>.
-                {isAboveFMR && (
-                  <> Your proposed rent of <strong>{proposedFormatted}</strong> is{' '}
-                    <strong className="text-destructive">{diffFormatted} above</strong> fair market.</>
+                moved <strong>{marketSign}{marketYoy}%</strong> this year.
+                Your landlord is asking for <strong>{increasePct}%</strong>.
+                {isAboveMarket && (
+                  <> That's{' '}
+                    <strong className="text-destructive">{diff} points above</strong> the market trend.</>
                 )}
               </p>
             </div>
