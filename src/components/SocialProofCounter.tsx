@@ -6,7 +6,7 @@ const SocialProofCounter = () => {
 
   useEffect(() => {
     supabase.rpc('get_analyses_count').then(({ data }) => {
-      if (typeof data === 'number' && data > 0) setCount(data);
+      if (typeof data === 'number' && data >= 1000) setCount(data);
     });
   }, []);
 
