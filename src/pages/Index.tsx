@@ -217,7 +217,7 @@ const Index = () => {
             Is your rent increase <span className="text-primary">fair?</span>
           </h1>
           <p className="mt-6 text-xl md:text-2xl text-foreground/60 max-w-[620px] leading-relaxed font-medium">
-            See real nearby listings, calculate your savings if you move, and get a negotiation letter if you stay — instantly.
+            See real nearby listings, get your savings if you move, and a negotiation letter if you stay — instantly.
           </p>
           <section className="mt-10" aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} />
