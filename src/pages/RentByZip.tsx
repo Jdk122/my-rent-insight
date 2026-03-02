@@ -1,0 +1,374 @@
+import { useParams, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { getRentData, type RentZipRaw } from '@/data/dataLoader';
+import { getRentControlForZip, getApplicableCap } from '@/data/rentControlData';
+import SEO from '@/components/SEO';
+import SEOFooter from '@/components/SEOFooter';
+import ContactModal from '@/components/ContactModal';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+
+const BEDROOM_LABELS = ['Studio', '1-Bedroom', '2-Bedroom', '3-Bedroom', '4-Bedroom'];
+const NATIONAL_AVG_YOY = 3.2; // approximate national average
+
+function fmt(n: number) {
+  return n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+}
+
+function fmtIncome(n: number) {
+  return n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+}
+
+interface ZipPageData {
+  raw: RentZipRaw;
+  nearby: { zip: string; raw: RentZipRaw }[];
+}
+
+const RentByZip = () => {
+  const { zip } = useParams<{ zip: string }>();
+  const [data, setData] = useState<ZipPageData | null>(null);
+  const [notFound, setNotFound] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [contactOpen, setContactOpen] = useState(false);
+
+  useEffect(() => {
+    if (!zip || zip.length !== 5) {
+      setNotFound(true);
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      setNotFound(false);
+      const allData = await getRentData();
+      if (cancelled) return;
+
+      const raw = allData[zip];
+      if (!raw) {
+        setNotFound(true);
+        setLoading(false);
+        return;
+      }
+
+      // Find nearby zips (numerically adjacent that exist)
+      const zipNum = parseInt(zip, 10);
+      const nearby: { zip: string; raw: RentZipRaw }[] = [];
+      for (let offset = 1; nearby.length < 5 && offset < 50; offset++) {
+        for (const delta of [offset, -offset]) {
+          const candidate = String(zipNum + delta).padStart(5, '0');
+          if (allData[candidate] && candidate !== zip) {
+            nearby.push({ zip: candidate, raw: allData[candidate] });
+            if (nearby.length >= 5) break;
+          }
+        }
+      }
+
+      setData({ raw, nearby });
+      setLoading(false);
+    })();
+
+    return () => { cancelled = true; };
+  }, [zip]);
+
+  if (loading) return <LoadingSkeleton />;
+  if (notFound || !data || !zip) return <NotFoundPage zip={zip} />;
+
+  const { raw, nearby } = data;
+  const city = raw.c || 'Unknown';
+  const state = raw.s || '';
+  const fmr1br = raw.f[1];
+  const hasZillow = raw.zy !== undefined && raw.zy !== null;
+  const hasCensus = !!(raw.i && raw.i >= 10000);
+  const rentControl = getRentControlForZip(zip);
+  const cap = getApplicableCap(rentControl);
+
+  // Census-derived renter % estimate (rough: if median rent exists, area is renter-heavy)
+  const rentBurdenPct = raw.i && raw.r ? Math.round(((raw.r * 12) / raw.i) * 100) : null;
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      <SEO
+        title={`Fair Market Rent in ${zip} (${city}, ${state}) — 2025 HUD Data | RenewalReply`}
+        description={`HUD fair market rent for ${zip} is ${fmt(fmr1br)}/mo for a 1-bedroom. Compare rents, see trends, and check if your rent increase is fair. Free analysis for ${city}, ${state}.`}
+        canonical={`/rent/${zip}`}
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          name: `Fair Market Rent in ${zip} — ${city}, ${state}`,
+          description: `HUD fair market rent data for zip code ${zip} in ${city}, ${state}.`,
+          url: `https://www.renewalreply.com/rent/${zip}`,
+        }}
+      />
+
+      {/* Nav */}
+      <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+        <Link to="/" className="font-display text-xl font-bold text-primary tracking-tight" style={{ letterSpacing: '-0.02em' }}>
+          Renewal<span className="font-normal text-accent">Reply</span>
+        </Link>
+        <Link
+          to={`/?zip=${zip}`}
+          className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
+        >
+          Check your rent →
+        </Link>
+      </nav>
+
+      <main className="max-w-3xl mx-auto px-6 py-12 md:py-16 flex-1 w-full">
+        {/* SECTION 1 — Hero */}
+        <section className="mb-12">
+          <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight tracking-tight" style={{ letterSpacing: '-0.02em' }}>
+            Fair Market Rent in {zip} — {city}, {state}
+          </h1>
+          <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
+            See how rents in {zip} compare to HUD fair market rent benchmarks. Data updated for FY2025.
+          </p>
+          <Link
+            to={`/?zip=${zip}`}
+            className="mt-6 inline-block bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
+          >
+            Check if your rent increase is fair in {zip} →
+          </Link>
+        </section>
+
+        {/* SECTION 2 — HUD FMR Table */}
+        <section className="mb-12">
+          <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">HUD Fair Market Rent for {zip}</h2>
+          <div className="rounded-lg border border-border overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Bedroom Size</TableHead>
+                  <TableHead className="text-right">FMR Monthly Rent</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {BEDROOM_LABELS.map((label, i) => (
+                  <TableRow key={label}>
+                    <TableCell className="font-medium">{label}</TableCell>
+                    <TableCell className="text-right tabular-nums">{fmt(raw.f[i])}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Source: HUD Small Area Fair Market Rents (SAFMR) FY2025
+          </p>
+        </section>
+
+        {/* SECTION 3 — Market Context (Zillow) */}
+        {hasZillow && (
+          <section className="mb-12">
+            <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Rent Trends in {city}, {state}</h2>
+            <div className="rounded-lg border border-border p-6 bg-card">
+              <div className="flex flex-wrap gap-6">
+                {raw.zm !== undefined && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Month-over-Month</p>
+                    <p className="text-2xl font-bold tabular-nums">{raw.zm! > 0 ? '+' : ''}{raw.zm!.toFixed(1)}%</p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm text-muted-foreground">Year-over-Year</p>
+                  <p className="text-2xl font-bold tabular-nums">
+                    {raw.zy! > 0 ? '↑' : raw.zy! < 0 ? '↓' : '→'} {raw.zy! > 0 ? '+' : ''}{raw.zy!.toFixed(1)}%
+                  </p>
+                </div>
+              </div>
+              <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
+                Rents in {zip} have {raw.zy! > 0 ? 'increased' : raw.zy! < 0 ? 'decreased' : 'remained flat'} by {Math.abs(raw.zy!).toFixed(1)}% over the past year, compared to the national average of {NATIONAL_AVG_YOY}%.
+              </p>
+            </div>
+            <p className="mt-3 text-xs text-muted-foreground">Source: Zillow Observed Rent Index (ZORI)</p>
+          </section>
+        )}
+
+        {/* SECTION 4 — Demographics */}
+        {hasCensus && (
+          <section className="mb-12">
+            <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Renter Demographics in {zip}</h2>
+            <div className="rounded-lg border border-border p-6 bg-card">
+              <div className="flex flex-wrap gap-6">
+                <div>
+                  <p className="text-sm text-muted-foreground">Median Household Income</p>
+                  <p className="text-2xl font-bold tabular-nums">{fmtIncome(raw.i!)}</p>
+                </div>
+                {raw.r && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Median Gross Rent</p>
+                    <p className="text-2xl font-bold tabular-nums">{fmt(raw.r)}/mo</p>
+                  </div>
+                )}
+                {rentBurdenPct !== null && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Rent-to-Income Ratio</p>
+                    <p className={`text-2xl font-bold tabular-nums ${rentBurdenPct > 30 ? 'text-destructive' : 'text-foreground'}`}>{rentBurdenPct}%</p>
+                  </div>
+                )}
+              </div>
+              {rentBurdenPct !== null && (
+                <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
+                  The median household in {zip} spends approximately {rentBurdenPct}% of income on rent.
+                  {rentBurdenPct > 30 ? ' This exceeds the 30% threshold that HUD considers cost-burdened.' : ''}
+                </p>
+              )}
+            </div>
+            <p className="mt-3 text-xs text-muted-foreground">Source: Census ACS 2023</p>
+          </section>
+        )}
+
+        {/* SECTION 5 — FAQ */}
+        <section className="mb-12">
+          <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Frequently Asked Questions About Rent in {zip}</h2>
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="fmr">
+              <AccordionTrigger>What is fair market rent in {zip}?</AccordionTrigger>
+              <AccordionContent>
+                <p className="text-muted-foreground leading-relaxed">
+                  The HUD fair market rent for a 1-bedroom in {zip} ({city}, {state}) is {fmt(fmr1br)}/month for FY2025.
+                  This represents what HUD considers a moderately-priced rental in this area.
+                  Other bedroom sizes: Studio {fmt(raw.f[0])}, 2-BR {fmt(raw.f[2])}, 3-BR {fmt(raw.f[3])}, 4-BR {fmt(raw.f[4])}.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="laws">
+              <AccordionTrigger>How much can my landlord raise my rent in {city}?</AccordionTrigger>
+              <AccordionContent>
+                <p className="text-muted-foreground leading-relaxed">
+                  {cap
+                    ? `${cap.jurisdiction} has rent increase protections. ${cap.maxIncreaseFormula ? `The cap is generally ${cap.maxIncreaseFormula}.` : ''} ${cap.applicability ? `This applies to: ${cap.applicability}.` : ''} ${cap.ordinanceUrl ? '' : ''}`
+                    : `There are no specific rent control laws covering ${city}, ${state} at this time. Landlords can raise rent by any amount with proper notice. Check our homepage for state-specific details.`
+                  }
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="check">
+              <AccordionTrigger>Is my rent increase fair in {zip}?</AccordionTrigger>
+              <AccordionContent>
+                <p className="text-muted-foreground leading-relaxed">
+                  Use our <Link to={`/?zip=${zip}`} className="underline text-primary hover:text-primary/80">free rent increase calculator</Link> to
+                  compare your proposed increase to HUD fair market rent and local Zillow trends for {zip}.
+                  Enter your current rent and proposed increase to get an instant analysis.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </section>
+
+        {/* SECTION 6 — Nearby Zip Codes */}
+        {nearby.length > 0 && (
+          <section className="mb-12">
+            <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Nearby Zip Codes</h2>
+            <div className="rounded-lg border border-border overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Zip Code</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead className="text-right">1-BR FMR</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {nearby.map(({ zip: nZip, raw: nRaw }) => (
+                    <TableRow key={nZip}>
+                      <TableCell>
+                        <Link to={`/rent/${nZip}`} className="text-primary underline hover:text-primary/80 font-medium">
+                          {nZip}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">{nRaw.c || 'Unknown'}, {nRaw.s}</TableCell>
+                      <TableCell className="text-right tabular-nums">{fmt(nRaw.f[1])}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </section>
+        )}
+
+        {/* SECTION 7 — Bottom CTA */}
+        <section className="text-center py-10">
+          <h2 className="font-display text-2xl text-foreground mb-3 tracking-tight">
+            Is your rent increase fair in {zip}?
+          </h2>
+          <p className="text-muted-foreground mb-6">Check now — it's free.</p>
+          <Link
+            to={`/?zip=${zip}`}
+            className="inline-block bg-primary text-primary-foreground px-8 py-3 rounded-lg font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
+          >
+            Check my rent →
+          </Link>
+        </section>
+      </main>
+
+      <SEOFooter onContactClick={() => setContactOpen(true)} />
+      <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
+    </div>
+  );
+};
+
+function LoadingSkeleton() {
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+        <Skeleton className="h-7 w-36" />
+        <Skeleton className="h-9 w-32 rounded-lg" />
+      </nav>
+      <main className="max-w-3xl mx-auto px-6 py-12 flex-1 w-full">
+        <Skeleton className="h-10 w-3/4 mb-4" />
+        <Skeleton className="h-5 w-full mb-2" />
+        <Skeleton className="h-5 w-2/3 mb-8" />
+        <Skeleton className="h-12 w-64 rounded-lg mb-12" />
+        <Skeleton className="h-8 w-1/2 mb-4" />
+        <div className="space-y-3">
+          {[...Array(5)].map((_, i) => (
+            <Skeleton key={i} className="h-12 w-full" />
+          ))}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function NotFoundPage({ zip }: { zip?: string }) {
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      <SEO title="Zip Code Not Found | RenewalReply" noindex />
+      <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+        <Link to="/" className="font-display text-xl font-bold text-primary tracking-tight" style={{ letterSpacing: '-0.02em' }}>
+          Renewal<span className="font-normal text-accent">Reply</span>
+        </Link>
+      </nav>
+      <main className="max-w-xl mx-auto px-6 py-24 flex-1 text-center">
+        <h1 className="font-display text-3xl text-foreground mb-4">Zip code not found</h1>
+        <p className="text-muted-foreground mb-8 leading-relaxed">
+          We don't have data for {zip ? `zip code ${zip}` : 'this zip code'} yet. Try checking your rent increase on our homepage.
+        </p>
+        <Link
+          to="/"
+          className="inline-block bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:brightness-90 transition-all duration-150"
+        >
+          Go to homepage →
+        </Link>
+      </main>
+      <SEOFooter />
+    </div>
+  );
+}
+
+export default RentByZip;

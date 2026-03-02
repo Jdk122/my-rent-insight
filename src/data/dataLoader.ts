@@ -62,7 +62,7 @@ let fredMetroMapCache: Record<string, string> | null = null;
 
 // ─── Lazy loaders ───
 
-async function getRentData(): Promise<Record<string, RentZipRaw>> {
+export async function getRentData(): Promise<Record<string, RentZipRaw>> {
   if (!rentDataCache) {
     const response = await fetch('/data/rentData.json');
     rentDataCache = await response.json();

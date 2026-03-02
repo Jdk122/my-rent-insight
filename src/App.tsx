@@ -4,10 +4,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
+import { lazy, Suspense } from "react";
 import Index from "./pages/Index";
 import Privacy from "./pages/Privacy";
 import Outcome from "./pages/Outcome";
 import NotFound from "./pages/NotFound";
+const RentByZip = lazy(() => import("./pages/RentByZip"));
 
 const queryClient = new QueryClient();
 
@@ -22,6 +24,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/outcome" element={<Outcome />} />
+            <Route path="/rent/:zip" element={<Suspense fallback={null}><RentByZip /></Suspense>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
