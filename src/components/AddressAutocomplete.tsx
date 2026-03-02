@@ -104,6 +104,11 @@ const AddressAutocomplete = ({ onSelect, placeholder = '123 Main St, Austin, TX'
         value={query}
         onChange={(e) => handleChange(e.target.value)}
         onFocus={() => predictions.length > 0 && setOpen(true)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault(); // Prevent native form submission from autocomplete input
+          }
+        }}
         className={className}
         autoComplete="off"
       />

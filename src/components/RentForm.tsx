@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 
 export interface RentFormData {
@@ -42,6 +41,7 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     const trimmedZip = zip.trim();
     if (!trimmedZip || trimmedZip.length !== 5 || !currentRent) return;
 
@@ -136,19 +136,20 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
 
         <div className="border-t border-border" />
 
-        {/* Bedrooms */}
+        {/* Bedrooms — native select for reliability */}
         <div className="space-y-1.5">
-          <Label className="text-sm font-medium text-foreground">Bedrooms</Label>
-          <Select value={bedrooms} onValueChange={(v) => setBedrooms(v as BedroomType)}>
-            <SelectTrigger className="h-11 text-sm bg-background">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(bedroomLabels).map(([key, label]) => (
-                <SelectItem key={key} value={key}>{label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Label htmlFor="bedrooms-select" className="text-sm font-medium text-foreground">Bedrooms</Label>
+          <select
+            id="bedrooms-select"
+            value={bedrooms}
+            onChange={(e) => setBedrooms(e.target.value as BedroomType)}
+            className="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 appearance-none"
+            style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
+          >
+            {Object.entries(bedroomLabels).map(([key, label]) => (
+              <option key={key} value={key}>{label}</option>
+            ))}
+          </select>
         </div>
 
         {/* Current rent */}
