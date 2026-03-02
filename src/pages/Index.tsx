@@ -59,14 +59,10 @@ const Index = () => {
 
     try {
       if (data.fullAddress) {
-        const propResult = await propertyLookup.lookup(data.fullAddress);
-        if (!propResult?.zipCode) {
-          toast.error("We couldn't find that address. Try entering your 5-digit zip code instead.");
-          setIsLoading(false);
-          return;
-        }
-
-        const zip = propResult.zipCode;
+        // Try property lookup for extra data, but don't block on failure
+        // The zip code from Google Places (data.zip) is our reliable fallback
+        const propResult = await propertyLookup.lookup(data.fullAddress).catch(() => null);
+        const zip = propResult?.zipCode || data.zip;
         const rentData = await lookupRentData(zip, data.bedrooms);
         if (!rentData) {
           toast.error(`We don't have rent data for that area yet. Try entering your 5-digit zip code instead.`);
