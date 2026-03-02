@@ -98,6 +98,65 @@ const RentByCity = () => {
         ]}
       />
 
+      {/* Noscript fallback for crawlers */}
+      <noscript>
+        <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
+          <h1>{`Average Rent in ${city}, ${state} (2025)`}</h1>
+          <p>{`The average fair market rent for a 1-bedroom apartment in ${city}, ${state} is ${fmt(avgFmr[1])}/month based on HUD data across ${zips.length} zip code${zips.length !== 1 ? 's' : ''}.`}</p>
+          <p><a href="https://www.renewalreply.com/">{`Check if your rent increase is fair →`}</a></p>
+
+          <h2>{`Rent by Bedroom Size in ${city}`}</h2>
+          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+            <thead>
+              <tr>
+                <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: 8 }}>Bedroom Size</th>
+                <th style={{ textAlign: 'right', borderBottom: '1px solid #ccc', padding: 8 }}>FMR Monthly Rent</th>
+              </tr>
+            </thead>
+            <tbody>
+              {['Studio', '1-Bedroom', '2-Bedroom', '3-Bedroom', '4-Bedroom'].map((label, i) => (
+                <tr key={label}>
+                  <td style={{ padding: 8, borderBottom: '1px solid #eee' }}>{label}</td>
+                  <td style={{ padding: 8, borderBottom: '1px solid #eee', textAlign: 'right' }}>{fmt(avgFmr[i])}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <h2>{`Rent by Zip Code in ${city}`}</h2>
+          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+            <thead>
+              <tr>
+                <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: 8 }}>Zip Code</th>
+                <th style={{ textAlign: 'right', borderBottom: '1px solid #ccc', padding: 8 }}>1-BR FMR</th>
+                <th style={{ textAlign: 'right', borderBottom: '1px solid #ccc', padding: 8 }}>2-BR FMR</th>
+              </tr>
+            </thead>
+            <tbody>
+              {zips.map(({ zip, raw }) => (
+                <tr key={zip}>
+                  <td style={{ padding: 8, borderBottom: '1px solid #eee' }}>
+                    <a href={`https://www.renewalreply.com/rent/${zip}`}>{zip}</a>
+                  </td>
+                  <td style={{ padding: 8, borderBottom: '1px solid #eee', textAlign: 'right' }}>{fmt(raw.f[1])}</td>
+                  <td style={{ padding: 8, borderBottom: '1px solid #eee', textAlign: 'right' }}>{fmt(raw.f[2])}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {faqItems.map((f, i) => (
+            <div key={i}>
+              <h3>{f.q}</h3>
+              <p>{f.a}</p>
+            </div>
+          ))}
+
+          <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY2025</small></p>
+          <p><a href={`https://www.renewalreply.com/rent-data/${stateSlugVal}`}>{`← Back to ${stateName}`}</a></p>
+        </div>
+      </noscript>
+
       {/* Nav */}
       <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
         <Link to="/" className="font-display text-xl font-bold text-primary tracking-tight" style={{ letterSpacing: '-0.02em' }}>
