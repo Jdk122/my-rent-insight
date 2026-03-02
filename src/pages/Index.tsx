@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import RentForm, { RentFormData } from '@/components/RentForm';
 import RentResults from '@/components/RentResults';
 import { lookupRentData, loadFredTrend, RentLookupResult, calculateResults } from '@/data/rentData';
@@ -210,66 +209,41 @@ const Index = () => {
       {/* Spacer for fixed nav */}
       <div className="h-[56px]" />
 
-      <AnimatePresence mode="wait">
-        {isLoading ? (
-          <motion.div
-            key="loading"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <LoadingAnalysis />
-          </motion.div>
-        ) : !results ? (
-          <motion.div
-            key="landing"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <main className="max-w-[620px] mx-auto px-6 pt-16 md:pt-24 pb-16">
-              <h1 className="font-display text-[clamp(3rem,8vw,5rem)] text-foreground leading-[1.05] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-                Is your rent increase <span className="text-primary">fair?</span>
-              </h1>
-              <p className="mt-6 text-xl md:text-2xl text-foreground/60 max-w-[620px] leading-relaxed font-medium">
-                Find out instantly. Get a data-backed negotiation letter if it's not.
-              </p>
-              <section className="mt-10" aria-label="Rent increase checker">
-                <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} />
-                <SocialProofCounter />
-              </section>
-            </main>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="results"
-            ref={resultsRef}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <RentResults
-              formData={results.formData}
-              rentData={results.rentData}
-              propertyData={propertyLookup.data}
-              propertyLoading={propertyLookup.loading}
-              propertyError={propertyLookup.error}
-              onReset={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              onScrollToTop={() => {
-                setResults(null);
-                setFormKey(k => k + 1);
-                setCapturedEmail('');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              capturedEmail={capturedEmail}
-              onEmailCaptured={setCapturedEmail}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {isLoading ? (
+        <LoadingAnalysis />
+      ) : !results ? (
+        <main className="max-w-[620px] mx-auto px-6 pt-16 md:pt-24 pb-16">
+          <h1 className="font-display text-[clamp(3rem,8vw,5rem)] text-foreground leading-[1.05] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
+            Is your rent increase <span className="text-primary">fair?</span>
+          </h1>
+          <p className="mt-6 text-xl md:text-2xl text-foreground/60 max-w-[620px] leading-relaxed font-medium">
+            Find out instantly. Get a data-backed negotiation letter if it's not.
+          </p>
+          <section className="mt-10" aria-label="Rent increase checker">
+            <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} />
+            <SocialProofCounter />
+          </section>
+        </main>
+      ) : (
+        <div ref={resultsRef}>
+          <RentResults
+            formData={results.formData}
+            rentData={results.rentData}
+            propertyData={propertyLookup.data}
+            propertyLoading={propertyLookup.loading}
+            propertyError={propertyLookup.error}
+            onReset={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            onScrollToTop={() => {
+              setResults(null);
+              setFormKey(k => k + 1);
+              setCapturedEmail('');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            capturedEmail={capturedEmail}
+            onEmailCaptured={setCapturedEmail}
+          />
+        </div>
+      )}
 
       {/* FAQ — only on landing */}
       {!results && !isLoading && <HomeFAQ />}
