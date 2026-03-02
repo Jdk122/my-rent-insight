@@ -250,41 +250,44 @@ const RentByZip = () => {
           <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
             See how rents in {zip} compare to HUD fair market rent benchmarks. Data updated for FY2025.
           </p>
-          <Link
-            to={`/?zip=${zip}`}
-            className="mt-6 inline-block bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
-          >
-            Check if your rent increase is fair in {zip} →
-          </Link>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const trimmed = searchZip.trim();
-              if (trimmed.length === 5 && /^\d{5}$/.test(trimmed)) {
-                navigate(`/rent/${trimmed}`);
-                setSearchZip('');
-              }
-            }}
-            className="mt-6 flex items-center gap-2 max-w-xs"
-          >
-            <Input
-              type="text"
-              inputMode="numeric"
-              pattern="\d{5}"
-              maxLength={5}
-              placeholder="Search another zip…"
-              value={searchZip}
-              onChange={(e) => setSearchZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
-              className="h-10"
-            />
-            <button
-              type="submit"
-              disabled={!/^\d{5}$/.test(searchZip)}
-              className="bg-primary text-primary-foreground px-4 h-10 rounded-lg text-sm font-semibold hover:brightness-90 transition-all duration-150 disabled:opacity-40"
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <Link
+              to={`/?zip=${zip}`}
+              className="inline-flex items-center bg-primary text-primary-foreground px-6 h-11 rounded-lg font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
             >
-              Go
-            </button>
-          </form>
+              Check your rent in {zip} →
+            </Link>
+            <span className="text-muted-foreground text-sm hidden sm:inline">or</span>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const trimmed = searchZip.trim();
+                if (trimmed.length === 5 && /^\d{5}$/.test(trimmed)) {
+                  navigate(`/rent/${trimmed}`);
+                  setSearchZip('');
+                }
+              }}
+              className="flex items-center gap-2"
+            >
+              <Input
+                type="text"
+                inputMode="numeric"
+                pattern="\d{5}"
+                maxLength={5}
+                placeholder="Other zip…"
+                value={searchZip}
+                onChange={(e) => setSearchZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
+                className="h-11 w-28"
+              />
+              <button
+                type="submit"
+                disabled={!/^\d{5}$/.test(searchZip)}
+                className="bg-muted text-foreground px-4 h-11 rounded-lg text-sm font-semibold hover:bg-muted/80 transition-all duration-150 disabled:opacity-40"
+              >
+                Go
+              </button>
+            </form>
+          </div>
         </section>
 
         {/* SECTION 2 — HUD FMR Table */}
