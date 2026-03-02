@@ -164,7 +164,7 @@ const TurnoverCostSection = ({
         {version === 'C' && (
           <>
             <p className="text-sm text-foreground leading-relaxed">
-              Your proposed rent is competitive with nearby units, and turnover on a {bedroomLabel.toLowerCase()} in {city} typically costs a property owner an estimated <strong>{fmt(costs.total)}</strong>. You're in a solid position — your property owner has every reason to keep you.
+              Your proposed rent is competitive with nearby units. Turnover on a {bedroomLabel.toLowerCase()} in {city} typically costs a property owner an estimated <strong>{fmt(costs.total)}</strong> before accounting for any rent adjustment on the new lease. With your rent already in line with the market, there's a strong case for both sides to continue the tenancy.
             </p>
             <p className="text-[13px] text-muted-foreground mt-3">
               If you'd still like to negotiate, even a modest reduction adds up over a full lease term.
@@ -174,7 +174,7 @@ const TurnoverCostSection = ({
         {version === 'A' && (
           <>
             <p className="text-sm text-foreground leading-relaxed">
-              Replacing a tenant in a {bedroomLabel.toLowerCase()} in {city} typically costs a property owner an estimated <strong>{fmt(costs.total)}</strong>. Your estimated savings from moving would be <strong>{fmt(annualSavings)}/yr</strong> — less than the cost of replacing you. A reasonable rent compromise likely saves both sides money.
+              Turnover on a {bedroomLabel.toLowerCase()} in {city} typically costs a property owner an estimated <strong>{fmt(costs.total)}</strong> before accounting for any rent adjustment on the new lease. Your estimated savings from moving would be <strong>{fmt(annualSavings)}/yr</strong>. In most cases, a reasonable compromise on renewal terms costs both sides less than turnover — especially when factoring in your moving costs too.
             </p>
             <p className="text-[13px] text-muted-foreground mt-3">
               This is one reason experienced property managers prefer to retain good tenants at a fair rate.
@@ -184,10 +184,10 @@ const TurnoverCostSection = ({
         {version === 'B' && (
           <>
             <p className="text-sm text-foreground leading-relaxed">
-              Replacing a tenant in a {bedroomLabel.toLowerCase()} in {city} typically costs a property owner an estimated <strong>{fmt(costs.total)}</strong>. But your estimated savings from moving — <strong>{fmt(annualSavings)}/yr</strong> — exceed that amount. If your property owner isn't willing to negotiate meaningfully, moving may be the stronger financial decision.
+              Turnover on a {bedroomLabel.toLowerCase()} in {city} typically costs a property owner an estimated <strong>{fmt(costs.total)}</strong> before accounting for any rent adjustment on the new lease. Your estimated savings from moving — <strong>{fmt(annualSavings)}/yr</strong> — are significant. Whether moving makes financial sense depends on your specific moving costs and how your unit compares to what's available, but the numbers suggest it's worth serious consideration.
             </p>
             <p className="text-[13px] text-muted-foreground mt-3">
-              You can still try negotiating first — it costs nothing and takes five minutes.
+              Either way, negotiating first costs nothing and takes five minutes.
             </p>
           </>
         )}
