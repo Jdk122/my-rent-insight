@@ -5,6 +5,7 @@ import RentResults from '@/components/RentResults';
 import { lookupRentData, loadFredTrend, RentLookupResult, calculateResults } from '@/data/rentData';
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
 import { toast } from 'sonner';
+import { trackEvent } from '@/lib/analytics';
 import SaveResultsDropdown from '@/components/SaveResultsDropdown';
 import SocialProofCounter from '@/components/SocialProofCounter';
 import ContactModal from '@/components/ContactModal';
@@ -69,6 +70,7 @@ const Index = () => {
         }
 
         setResults({ formData: { ...data, zip }, rentData });
+        trackEvent('form_submitted', { zip, bedrooms: data.bedrooms, has_address: true });
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
         loadFredTrend(rentData.metro).then((fredTrend) => {
@@ -87,6 +89,7 @@ const Index = () => {
         }
 
         setResults({ formData: data, rentData });
+        trackEvent('form_submitted', { zip: data.zip, bedrooms: data.bedrooms, has_address: false });
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
         loadFredTrend(rentData.metro).then((fredTrend) => {

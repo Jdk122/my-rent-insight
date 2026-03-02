@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
+import { trackEvent } from '@/lib/analytics';
 
 import { Link } from 'react-router-dom';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
@@ -136,6 +137,8 @@ const NegotiationLetter = ({
     }
 
     onEmailCaptured?.(gateEmail);
+    trackEvent('letter_generated');
+    trackEvent('email_captured', { capture_source: 'letter_gate' });
     setUnlocked(true);
     toast.success('Letter unlocked!');
   };

@@ -15,6 +15,7 @@ import LandlordCostSection from './LandlordCostSection';
 import { useRentcast } from '@/hooks/useRentcast';
 import { supabase } from '@/integrations/supabase/client';
 import SectionNav from './SectionNav';
+import { trackEvent } from '@/lib/analytics';
 
 interface RentResultsProps {
   formData: RentFormData;
@@ -148,6 +149,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   // ━━━ Anonymous analysis logging ━━━
   useEffect(() => {
+    trackEvent('results_viewed', { zip: rentData.zip, verdict: verdictLabel });
     if (analysisLogged.current) return;
     analysisLogged.current = true;
 
