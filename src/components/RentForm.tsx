@@ -32,6 +32,7 @@ interface RentFormProps {
 const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
   const [zip, setZip] = useState('');
   const [fullAddress, setFullAddress] = useState<string | null>(null);
+  const [unit, setUnit] = useState('');
   const [bedrooms, setBedrooms] = useState<BedroomType>('oneBr');
   const [currentRent, setCurrentRent] = useState('');
   const [rentIncrease, setRentIncrease] = useState('');
@@ -44,9 +45,13 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
     const trimmedZip = zip.trim();
     if (!trimmedZip || trimmedZip.length !== 5 || !currentRent) return;
 
+    const addressWithUnit = fullAddress
+      ? (unit.trim() ? `${fullAddress.replace(/, USA$/, '')} ${unit.trim()}, USA` : fullAddress)
+      : null;
+
     onSubmit({
       zip: trimmedZip,
-      fullAddress,
+      fullAddress: addressWithUnit,
       bedrooms,
       currentRent: parseFloat(parseFormatted(currentRent)),
       rentIncrease: rentIncrease ? (increaseIsPercent ? parseFloat(rentIncrease) : parseFloat(parseFormatted(rentIncrease))) : null,
@@ -71,7 +76,19 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
               }}
             />
             {fullAddress && (
-              <p className="text-[11px] text-muted-foreground truncate">✓ {fullAddress}</p>
+              <div className="space-y-2 animate-fade-in">
+                <p className="text-[11px] text-muted-foreground truncate">✓ {fullAddress}</p>
+                <div className="space-y-1">
+                  <Label className="text-xs font-medium text-muted-foreground">Apt / Unit <span className="text-muted-foreground/60">(optional)</span></Label>
+                  <Input
+                    type="text"
+                    placeholder="e.g. #4B"
+                    value={unit}
+                    onChange={(e) => setUnit(e.target.value)}
+                    className="h-10 text-sm bg-background w-32"
+                  />
+                </div>
+              </div>
             )}
             <button
               type="button"
