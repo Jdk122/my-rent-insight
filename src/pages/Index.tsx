@@ -147,7 +147,7 @@ const Index = () => {
                 "name": "What data does RenewalReply use?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "RenewalReply uses HUD Small Area Fair Market Rents (SAFMR) for FY2025, Zillow Observed Rent Index (ZORI), Census American Community Survey (ACS) 2023 data, and FRED mortgage rate data to give you a complete picture of your local rental market."
+                  "text": "RenewalReply uses HUD Small Area Fair Market Rents (SAFMR) for FY2026, Zillow Observed Rent Index (ZORI), Census American Community Survey (ACS) 2023 data, and FRED mortgage rate data to give you a complete picture of your local rental market."
                 }
               },
               {

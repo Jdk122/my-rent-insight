@@ -72,7 +72,7 @@ const RentByCity = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEO
-        title={`Average Rent in ${city}, ${state} (2025) — Fair Market Rent Data`}
+        title={`Average Rent in ${city}, ${state} (2026) — Fair Market Rent Data`}
         description={`See average rent prices in ${city}, ${state} by bedroom count. Compare HUD fair market rent, median rents, and year-over-year trends for all ${city} zip codes.`}
         canonical={`/rent-data/${stateSlugVal}/${slugify(city)}`}
         jsonLd={[
@@ -101,7 +101,7 @@ const RentByCity = () => {
       {/* Noscript fallback for crawlers */}
       <noscript>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
-          <h1>{`Average Rent in ${city}, ${state} (2025)`}</h1>
+          <h1>{`Average Rent in ${city}, ${state} (2026)`}</h1>
           <p>{`The average fair market rent for a 1-bedroom apartment in ${city}, ${state} is ${fmt(avgFmr[1])}/month based on HUD data across ${zips.length} zip code${zips.length !== 1 ? 's' : ''}.`}</p>
           <p><a href="https://www.renewalreply.com/">{`Check if your rent increase is fair →`}</a></p>
 
@@ -152,7 +152,7 @@ const RentByCity = () => {
             </div>
           ))}
 
-          <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY2025</small></p>
+          <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY2026</small></p>
           <p><a href={`https://www.renewalreply.com/rent-data/${stateSlugVal}`}>{`← Back to ${stateName}`}</a></p>
         </div>
       </noscript>
@@ -181,7 +181,7 @@ const RentByCity = () => {
         {/* 1. Hero + Answer Summary */}
         <section className="mb-12">
           <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-            Average Rent in {city}, {state} (2025)
+            Average Rent in {city}, {state} (2026)
           </h1>
           <p className="mt-3 text-muted-foreground leading-relaxed" style={{ fontSize: '1.05rem' }}>
             The average fair market rent for a 1-bedroom apartment in {city}, {state} is {fmt(avgFmr[1])}/month based on HUD data across {zips.length} zip code{zips.length !== 1 ? 's' : ''}.
@@ -253,7 +253,7 @@ const RentByCity = () => {
               </TableBody>
             </Table>
           </div>
-          <p className="mt-2 text-xs text-muted-foreground">Sorted by 1-BR FMR (cheapest first). Source: HUD SAFMR FY2025.</p>
+          <p className="mt-2 text-xs text-muted-foreground">Sorted by 1-BR FMR (cheapest first). Source: HUD SAFMR FY2026.</p>
         </section>
 
         {/* 4. Nearby City Comparison */}
@@ -323,7 +323,7 @@ const RentByCity = () => {
 
         {/* Disclaimer */}
         <p className="text-xs text-muted-foreground/60 italic">
-          Data reflects HUD FY2025 fair market rent benchmarks and U.S. Census estimates. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
+          Data reflects HUD FY2026 fair market rent benchmarks and U.S. Census estimates. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
         </p>
       </main>
 

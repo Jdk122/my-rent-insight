@@ -12,7 +12,7 @@ const faqs = [
   },
   {
     q: 'What is Fair Market Rent (FMR)?',
-    a: 'Fair Market Rent is a standard set by the U.S. Department of Housing and Urban Development (HUD) that represents the cost to rent a moderately-priced dwelling in a local housing market. HUD publishes FMR data annually for every zip code in the U.S. We use the FY2025 Small Area Fair Market Rents (SAFMR) which are the most granular available.',
+    a: 'Fair Market Rent is a standard set by the U.S. Department of Housing and Urban Development (HUD) that represents the cost to rent a moderately-priced dwelling in a local housing market. HUD publishes FMR data annually for every zip code in the U.S. We use the FY2026 Small Area Fair Market Rents (SAFMR) which are the most granular available.',
   },
   {
     q: 'Can my landlord raise my rent by any amount?',
@@ -20,7 +20,7 @@ const faqs = [
   },
   {
     q: 'What data sources does RenewalReply use?',
-    a: 'We use HUD Small Area Fair Market Rents (SAFMR) FY2025 for federal rent benchmarks, real-time nearby rental listings to show you what apartments are actually renting for in your area, Zillow Observed Rent Index (ZORI) for local trends, and U.S. Census ACS data for income and demographics. This gives you both the government benchmark and real market data to evaluate your rent increase.',
+    a: 'We use HUD Small Area Fair Market Rents (SAFMR) FY2026 for federal rent benchmarks, real-time nearby rental listings to show you what apartments are actually renting for in your area, Zillow Observed Rent Index (ZORI) for local trends, and U.S. Census ACS data for income and demographics. This gives you both the government benchmark and real market data to evaluate your rent increase.',
   },
   {
     q: 'Is RenewalReply really free?',

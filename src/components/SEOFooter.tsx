@@ -31,7 +31,7 @@ const SEOFooter = ({ onContactClick }: SEOFooterProps) => (
     {/* Disclaimer */}
     <div className="border-t border-border/50 px-6 py-4">
       <p className="max-w-3xl mx-auto text-[11px] text-muted-foreground/40 leading-relaxed text-center">
-        Data: HUD SAFMR FY2025 · Census ACS 2023 · Zillow ZORI · FRED · DHCR. For informational purposes only — not legal or financial advice.
+        Data: HUD SAFMR FY2026 · Census ACS 2023 · Zillow ZORI · FRED · DHCR. For informational purposes only — not legal or financial advice.
       </p>
     </div>
   </footer>

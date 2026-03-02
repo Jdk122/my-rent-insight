@@ -48,7 +48,7 @@ const RentByState = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEO
-        title={`Rent Data for ${stateName} — Average Rent by City (2025)`}
+        title={`Rent Data for ${stateName} — Average Rent by City (2026)`}
         description={`Average fair market rent for a 1-bedroom in ${stateName} is ${fmt(avgFmr1br)}/month. Browse rent data for ${cities.length} cities across ${totalZips} zip codes.`}
         canonical={`/rent-data/${stateSlug}`}
         jsonLd={[
@@ -67,7 +67,7 @@ const RentByState = () => {
       {/* Noscript fallback for crawlers */}
       <noscript>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
-          <h1>{`Rent Data for ${stateName} — Average Rent by City (2025)`}</h1>
+          <h1>{`Rent Data for ${stateName} — Average Rent by City (2026)`}</h1>
           <p>{`The average fair market rent for a 1-bedroom in ${stateName} is ${fmt(avgFmr1br)}/month. Browse rent data for ${cities.length} cities across ${totalZips.toLocaleString()} zip codes.`}</p>
           <p><a href="https://www.renewalreply.com/">{`Check if your rent increase is fair →`}</a></p>
 
@@ -92,7 +92,7 @@ const RentByState = () => {
               ))}
             </tbody>
           </table>
-          <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY2025</small></p>
+          <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY2026</small></p>
           <p><a href="https://www.renewalreply.com/rent-data">← Browse all rent data</a></p>
         </div>
       </noscript>
@@ -176,7 +176,7 @@ const RentByState = () => {
           {filteredCities.length === 0 && (
             <p className="text-sm text-muted-foreground mt-4 text-center">No cities match "{search}"</p>
           )}
-          <p className="mt-2 text-xs text-muted-foreground">Sorted by 1-BR FMR (cheapest first). Source: HUD SAFMR FY2025.</p>
+          <p className="mt-2 text-xs text-muted-foreground">Sorted by 1-BR FMR (cheapest first). Source: HUD SAFMR FY2026.</p>
         </section>
 
         {/* CTA */}
@@ -195,7 +195,7 @@ const RentByState = () => {
 
         {/* Disclaimer */}
         <p className="text-xs text-muted-foreground/60 italic">
-          Data reflects HUD FY2025 fair market rent benchmarks and U.S. Census estimates. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
+          Data reflects HUD FY2026 fair market rent benchmarks and U.S. Census estimates. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
         </p>
       </main>
 
