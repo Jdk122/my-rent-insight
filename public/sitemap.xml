@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://www.renewalreply.com/</loc>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>https://www.renewalreply.com/sitemap-pages.xml</loc>
     <lastmod>2026-03-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>
+  </sitemap>
+  <sitemap>
+    <loc>https://piwahxgtsxpcrgoyuedy.supabase.co/functions/v1/sitemap-zips</loc>
+    <lastmod>2026-03-01</lastmod>
+  </sitemap>
+</sitemapindex>
