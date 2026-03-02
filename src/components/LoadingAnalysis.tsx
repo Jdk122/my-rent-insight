@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const messages = [
-  'Checking HUD fair market rent data…',
-  'Analyzing local rent trends…',
-  'Comparing to Zillow market data…',
-  'Calculating your rent fairness score…',
+  'Checking data sources…',
+  'Analyzing local market trends…',
+  'Comparing nearby listings…',
+  'Pulling it all together…',
   'Preparing your results…',
 ];
 
