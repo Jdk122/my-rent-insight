@@ -67,47 +67,7 @@
     }
     </script>
 
-    <!-- JSON-LD: FAQPage -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "How do I know if my rent increase is fair?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Compare your proposed rent to the HUD Fair Market Rent for your zip code. RenewalReply checks your rent increase against HUD SAFMR data, Zillow rent indices, and Census data to determine if your increase is in line with local market conditions."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What data does RenewalReply use?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "RenewalReply uses HUD Small Area Fair Market Rents (SAFMR) for FY2025, Zillow Observed Rent Index (ZORI), Census American Community Survey (ACS) 2023 data, and FRED mortgage rate data to give you a complete picture of your local rental market."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Is RenewalReply free?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes. RenewalReply is completely free. You can check if your rent increase is fair and get a data-backed negotiation letter at no cost."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "How many zip codes does RenewalReply cover?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "RenewalReply covers over 38,000 US zip codes using HUD Fair Market Rent data, making it one of the most comprehensive rent fairness tools available."
-          }
-        }
-      ]
-    }
-    </script>
+    <!-- Homepage FAQPage JSON-LD is rendered by the Index page component via react-helmet-async -->
   </head>
 
   <body>
