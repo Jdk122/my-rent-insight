@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           address: string | null
           bedrooms: number | null
+          cache_hit: boolean | null
           city: string | null
           comps_count: number | null
           comps_position: string | null
@@ -37,6 +38,7 @@ export type Database = {
         Insert: {
           address?: string | null
           bedrooms?: number | null
+          cache_hit?: boolean | null
           city?: string | null
           comps_count?: number | null
           comps_position?: string | null
@@ -56,6 +58,7 @@ export type Database = {
         Update: {
           address?: string | null
           bedrooms?: number | null
+          cache_hit?: boolean | null
           city?: string | null
           comps_count?: number | null
           comps_position?: string | null
@@ -283,6 +286,30 @@ export type Database = {
           created_at?: string | null
           data?: Json
           id?: string
+        }
+        Relationships: []
+      }
+      rentcast_cache: {
+        Row: {
+          endpoint: string
+          fetched_at: string
+          id: string
+          lookup_key: string
+          response_data: Json
+        }
+        Insert: {
+          endpoint: string
+          fetched_at?: string
+          id?: string
+          lookup_key: string
+          response_data: Json
+        }
+        Update: {
+          endpoint?: string
+          fetched_at?: string
+          id?: string
+          lookup_key?: string
+          response_data?: Json
         }
         Relationships: []
       }

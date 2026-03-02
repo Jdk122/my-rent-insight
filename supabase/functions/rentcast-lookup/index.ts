@@ -1,10 +1,13 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+const CACHE_DAYS_RENT = 30;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -22,16 +25,48 @@ serve(async (req) => {
       );
     }
 
-    // Build query params — Rentcast AVM requires address or lat/lng, not just zip
+    // Zip-only: skip Rentcast AVM (it doesn't support zip-only queries)
+    if (!address && zip) {
+      return new Response(
+        JSON.stringify({ rentEstimate: null, rentRangeLow: null, rentRangeHigh: null, comparables: [], cacheHit: false }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const sb = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+
+    // Build cache key
+    const lookupKey = address
+      ? `${address.toLowerCase().trim()}|br${bedrooms ?? "any"}`
+      : `${zip}|br${bedrooms ?? "any"}`;
+    const endpoint = "rent-estimate";
+
+    // Check cache
+    const { data: cached } = await sb
+      .from("rentcast_cache")
+      .select("response_data, fetched_at")
+      .eq("lookup_key", lookupKey)
+      .eq("endpoint", endpoint)
+      .single();
+
+    if (cached) {
+      const ageMs = Date.now() - new Date(cached.fetched_at).getTime();
+      if (ageMs < CACHE_DAYS_RENT * 24 * 60 * 60 * 1000) {
+        console.log(`Cache hit for ${endpoint}: ${lookupKey}`);
+        return new Response(
+          JSON.stringify({ ...cached.response_data, cacheHit: true }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
+    // Build query params
     const params = new URLSearchParams();
     if (address) {
       params.set("address", address);
-    } else if (zip) {
-      // Zip-only: skip Rentcast AVM (it doesn't support zip-only queries)
-      return new Response(
-        JSON.stringify({ rentEstimate: null, rentRangeLow: null, rentRangeHigh: null, comparables: [] }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
     }
     if (bedrooms !== undefined) {
       params.set("bedrooms", String(bedrooms));
@@ -59,7 +94,6 @@ serve(async (req) => {
 
     const data = await response.json();
 
-    // Extract what we need
     const result = {
       rentEstimate: data.rent ?? data.rentRangeLow ?? null,
       rentRangeLow: data.rentRangeLow ?? null,
@@ -77,7 +111,18 @@ serve(async (req) => {
       })),
     };
 
-    return new Response(JSON.stringify(result), {
+    // Upsert to cache
+    await sb.from("rentcast_cache").upsert(
+      {
+        lookup_key: lookupKey,
+        endpoint,
+        response_data: result,
+        fetched_at: new Date().toISOString(),
+      },
+      { onConflict: "lookup_key,endpoint" }
+    );
+
+    return new Response(JSON.stringify({ ...result, cacheHit: false }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {

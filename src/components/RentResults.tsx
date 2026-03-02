@@ -175,6 +175,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       sale_data_found: !!propertyData?.lastSalePrice,
       markup_multiplier: landlordInsights?.costIncreaseMarkup ?? null,
       letter_generated: false,
+      cache_hit: !!(rentcast.data as any)?.cacheHit || !!(propertyData as any)?.cacheHit,
     } as any).select('id').single().then(({ data }) => {
       if (data?.id) setAnalysisId(data.id);
     });

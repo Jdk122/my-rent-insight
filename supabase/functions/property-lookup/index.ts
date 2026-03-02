@@ -3,14 +3,14 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const RENTCAST_API_KEY = Deno.env.get("RENTCAST_API_KEY");
 const RENTCAST_BASE = "https://api.rentcast.io/v1";
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-const SUPABASE_SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+const CACHE_DAYS_PROPERTY = 90;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -34,22 +34,28 @@ serve(async (req) => {
       );
     }
 
-    const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_KEY!);
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
 
-    // Check cache first
-    const normalizedAddress = address.toLowerCase().trim();
+    const lookupKey = address.toLowerCase().trim();
+    const endpoint = "property-records";
+
+    // Check unified cache (90-day window for property records)
     const { data: cached } = await supabase
-      .from("property_cache")
-      .select("data, created_at")
-      .eq("address_normalized", normalizedAddress)
+      .from("rentcast_cache")
+      .select("response_data, fetched_at")
+      .eq("lookup_key", lookupKey)
+      .eq("endpoint", endpoint)
       .single();
 
     if (cached) {
-      const age = Date.now() - new Date(cached.created_at).getTime();
-      const thirtyDays = 30 * 24 * 60 * 60 * 1000;
-      if (age < thirtyDays) {
+      const ageMs = Date.now() - new Date(cached.fetched_at).getTime();
+      if (ageMs < CACHE_DAYS_PROPERTY * 24 * 60 * 60 * 1000) {
+        console.log(`Cache hit for ${endpoint}: ${lookupKey}`);
         return new Response(
-          JSON.stringify(cached.data),
+          JSON.stringify({ ...cached.response_data, cacheHit: true }),
           { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -116,37 +122,32 @@ serve(async (req) => {
     const owner = property.owner || {};
     const ownerMailingAddress = owner.mailingAddress || {};
 
-    // Determine if investor (owner mailing address != property address)
+    // Determine if investor
     const propZip = property.zipCode || "";
     const ownerZip = ownerMailingAddress.zipCode || "";
     const ownerLine1 = (ownerMailingAddress.addressLine1 || "").toLowerCase();
     const propLine1 = (property.addressLine1 || "").toLowerCase();
     const isInvestor = ownerZip !== propZip || ownerLine1 !== propLine1;
 
-    // Build result
     const result = {
       address: property.formattedAddress || address,
       city: property.city || null,
       state: property.state || null,
       zipCode: property.zipCode || null,
-
       propertyType: property.propertyType || "Unknown",
       yearBuilt: property.yearBuilt || null,
       bedrooms: property.bedrooms || null,
       bathrooms: property.bathrooms || null,
       squareFootage: property.squareFootage || null,
       lotSize: property.lotSize || null,
-
       lastSalePrice: property.lastSalePrice || null,
       lastSaleDate: property.lastSaleDate || null,
-
       saleHistory: Array.isArray(property.history)
         ? property.history.map((h: any) => ({
             date: h.date,
             price: h.price,
           }))
         : [],
-
       assessedValue: latestTax?.value || null,
       landValue: latestTax?.land || null,
       improvementValue: latestTax?.improvements || null,
@@ -154,28 +155,26 @@ serve(async (req) => {
       taxYear: latestTaxYear ? parseInt(latestTaxYear) : null,
       priorYearTax: priorTax?.tax || null,
       priorTaxYear: priorTaxYear ? parseInt(priorTaxYear) : null,
-
       ownerType: owner.type || null,
       isInvestor,
       ownerCity: ownerMailingAddress.city || null,
       ownerState: ownerMailingAddress.state || null,
-
       hoaFee: property.hoa?.fee || null,
-
       units: inferUnits(property.propertyType, property.bedrooms),
     };
 
-    // Cache the result
-    await supabase.from("property_cache").upsert(
+    // Upsert to unified cache
+    await supabase.from("rentcast_cache").upsert(
       {
-        address_normalized: normalizedAddress,
-        data: result,
-        created_at: new Date().toISOString(),
+        lookup_key: lookupKey,
+        endpoint,
+        response_data: result,
+        fetched_at: new Date().toISOString(),
       },
-      { onConflict: "address_normalized" }
+      { onConflict: "lookup_key,endpoint" }
     );
 
-    return new Response(JSON.stringify(result), {
+    return new Response(JSON.stringify({ ...result, cacheHit: false }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
