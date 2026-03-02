@@ -181,10 +181,18 @@ const NegotiationLetter = ({
               Continue
             </button>
           </form>
-          <p className="text-[12px] text-muted-foreground/70 mt-2 max-w-[440px]">
-            We'll only email you about your lease. See our{' '}
-            <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
-          </p>
+          <div className="mt-2 max-w-[440px] space-y-1.5">
+            <p className="text-[12px] text-muted-foreground/70">
+              We'll email you about your lease and relevant housing info. See our{' '}
+              <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
+            </p>
+            <label className="flex items-start gap-2 cursor-pointer select-none">
+              <input type="checkbox" className="mt-[3px] accent-primary" />
+              <span className="text-[13px] text-muted-foreground/70 leading-snug">
+                I'm open to hearing from trusted partners about housing-related services.
+              </span>
+            </label>
+          </div>
         </div>
       ) : (
         <div className="flex gap-3 mt-5">
