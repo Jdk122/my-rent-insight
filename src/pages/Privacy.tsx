@@ -1,7 +1,13 @@
 import { Link } from 'react-router-dom';
+import SEO from '@/components/SEO';
 
 const Privacy = () => (
   <div className="min-h-screen bg-background text-foreground">
+    <SEO
+      title="Privacy Policy — RenewalReply"
+      description="How RenewalReply collects, uses, and protects your data. Read our privacy policy."
+      canonical="/privacy"
+    />
     <nav className="flex items-center justify-between px-6 py-5 border-b border-border">
       <Link to="/" className="font-display text-xl font-bold text-primary tracking-tight hover:scale-105 transition-transform duration-200" style={{ letterSpacing: '-0.02em' }}>
         Renewal<span className="font-normal text-accent">Reply</span>
