@@ -220,6 +220,50 @@ export async function loadFredTrend(metro: string): Promise<FredTrendData | null
   return fetchFredTrend(metro);
 }
 
+// ─── FRED State Vacancy Rate ───
+
+export interface VacancyRateResult {
+  rate: number;
+  year: string;
+  stateName: string;
+  isFallback: boolean;
+}
+
+const NATIONAL_AVG_VACANCY = 7.0;
+let vacancyCache: Record<string, VacancyRateResult> = {};
+
+export async function fetchStateVacancyRate(stateAbbr: string, stateName: string): Promise<VacancyRateResult> {
+  if (vacancyCache[stateAbbr]) return vacancyCache[stateAbbr];
+
+  const fallback: VacancyRateResult = { rate: NATIONAL_AVG_VACANCY, year: '2024', stateName, isFallback: true };
+
+  try {
+    const apiKey = import.meta.env.VITE_FRED_API_KEY;
+    if (!apiKey) return fallback;
+
+    const seriesId = `${stateAbbr}RVAC`;
+    const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=1`;
+
+    const response = await fetch(url);
+    if (!response.ok) return fallback;
+
+    const data = await response.json();
+    const obs = data.observations?.filter((o: { value: string }) => o.value !== '.');
+    if (!obs || obs.length === 0) return fallback;
+
+    const result: VacancyRateResult = {
+      rate: parseFloat(obs[0].value),
+      year: obs[0].date?.split('-')[0] || '2024',
+      stateName,
+      isFallback: false,
+    };
+    vacancyCache[stateAbbr] = result;
+    return result;
+  } catch {
+    return fallback;
+  }
+}
+
 // ─── Calculation helpers ───
 
 export function getTypicalRange(fmr: number, censusRent: number | null, city: string) {

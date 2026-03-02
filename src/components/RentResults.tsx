@@ -537,6 +537,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               bedrooms={bedroomNum}
               bedroomLabel={bedroomLabels[formData.bedrooms]}
               city={city}
+              state={rentData.state}
               annualSavings={annualSavingsForTurnover}
               proposedRentAboveMedian={proposedRentAboveMedian}
               onScrollToLetter={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
