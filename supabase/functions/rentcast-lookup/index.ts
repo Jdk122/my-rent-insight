@@ -7,7 +7,67 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const CACHE_DAYS = 7; // Active listings change fast — shorter TTL
+const CACHE_DAYS = 7;
+const MIN_COMPS = 5;
+
+interface SearchStep {
+  radius: number;
+  bedroomsDelta: number; // 0 = exact, 1 = ±1
+  label: string;
+}
+
+const SEARCH_STEPS: SearchStep[] = [
+  { radius: 1, bedroomsDelta: 0, label: "1 mile" },
+  { radius: 3, bedroomsDelta: 0, label: "3 miles" },
+  { radius: 10, bedroomsDelta: 0, label: "10 miles" },
+  { radius: 3, bedroomsDelta: 1, label: "3 miles, ±1 bedroom" },
+];
+
+async function fetchListings(
+  apiKey: string,
+  address: string | null,
+  zip: string | null,
+  bedrooms: number | undefined,
+  radius: number,
+  bedroomsDelta: number
+): Promise<any[]> {
+  const params = new URLSearchParams();
+  if (address) {
+    params.set("address", address);
+    params.set("radius", String(radius));
+  } else {
+    params.set("zipCode", zip!);
+  }
+
+  if (bedrooms !== undefined && bedroomsDelta === 0) {
+    params.set("bedrooms", String(bedrooms));
+  } else if (bedrooms !== undefined && bedroomsDelta === 1) {
+    // Rentcast doesn't support range, so we omit bedrooms filter
+    // and filter client-side for ±1
+    params.set("bedroomsMin", String(Math.max(0, bedrooms - 1)));
+    params.set("bedroomsMax", String(bedrooms + 1));
+  }
+
+  params.set("status", "Active");
+  params.set("limit", "20");
+  params.set("propertyType", "Apartment");
+
+  const url = `https://api.rentcast.io/v1/listings/rental/long-term?${params.toString()}`;
+  console.log("Fetching listings:", url);
+
+  const response = await fetch(url, {
+    headers: { Accept: "application/json", "X-Api-Key": apiKey },
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("Rentcast API error:", response.status, errorText);
+    return [];
+  }
+
+  const data = await response.json();
+  return Array.isArray(data) ? data : [];
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -25,12 +85,11 @@ serve(async (req) => {
       );
     }
 
-    // Strip unit/apt from address for better geocoding (Rentcast needs street-level)
+    // Strip unit/apt from address for better geocoding
     const cleanAddress = address
       ? address.replace(/\s*(apt|unit|suite|ste|#)\s*\S+/gi, '').replace(/\s+/g, ' ').trim()
       : null;
 
-    // Need either address or zip for listings search
     if (!cleanAddress && !zip) {
       return new Response(
         JSON.stringify({ rentEstimate: null, rentRangeLow: null, rentRangeHigh: null, comparables: [], cacheHit: false }),
@@ -45,8 +104,8 @@ serve(async (req) => {
 
     // Build cache key
     const lookupKey = cleanAddress
-      ? `listings|${cleanAddress.toLowerCase().trim()}|br${bedrooms ?? "any"}`
-      : `listings|${zip}|br${bedrooms ?? "any"}`;
+      ? `listings-v2|${cleanAddress.toLowerCase().trim()}|br${bedrooms ?? "any"}`
+      : `listings-v2|${zip}|br${bedrooms ?? "any"}`;
     const endpoint = "rental-listings";
 
     // Check cache
@@ -68,57 +127,53 @@ serve(async (req) => {
       }
     }
 
-    // Build query params for /v1/listings/rental/long-term
-    const params = new URLSearchParams();
-    if (cleanAddress) {
-      params.set("address", cleanAddress);
-      params.set("radius", "1"); // 1 mile radius to keep comps local
-    } else {
-      params.set("zipCode", zip);
-    }
-    if (bedrooms !== undefined) {
-      params.set("bedrooms", String(bedrooms));
-    }
-    params.set("status", "Active");
-    params.set("limit", "10");
-    params.set("propertyType", "Apartment");
+    // Tiered search: expand radius and bedrooms until we have MIN_COMPS
+    let allListings: any[] = [];
+    let usedStep: SearchStep = SEARCH_STEPS[0];
 
-    const url = `https://api.rentcast.io/v1/listings/rental/long-term?${params.toString()}`;
-    console.log("Fetching listings:", url);
-
-    const response = await fetch(url, {
-      headers: {
-        Accept: "application/json",
-        "X-Api-Key": apiKey,
-      },
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Rentcast listings API error:", response.status, errorText);
-
-      // Fall back to empty result (don't break the page)
-      return new Response(
-        JSON.stringify({ rentEstimate: null, rentRangeLow: null, rentRangeHigh: null, comparables: [], cacheHit: false }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    for (const step of SEARCH_STEPS) {
+      const listings = await fetchListings(
+        apiKey,
+        cleanAddress,
+        zip,
+        bedrooms,
+        step.radius,
+        step.bedroomsDelta
       );
+
+      // Filter to only listings with valid rent
+      const valid = listings.filter((l: any) => typeof l.price === "number" && l.price > 0);
+
+      if (valid.length >= MIN_COMPS) {
+        allListings = valid;
+        usedStep = step;
+        console.log(`Found ${valid.length} comps at step: ${step.label}`);
+        break;
+      }
+
+      // If this is the last step, take whatever we have
+      if (step === SEARCH_STEPS[SEARCH_STEPS.length - 1]) {
+        // Use the best result we've seen across all steps
+        if (valid.length > allListings.length) {
+          allListings = valid;
+          usedStep = step;
+        }
+        console.log(`Final step reached with ${allListings.length} comps at: ${usedStep.label}`);
+      } else if (valid.length > allListings.length) {
+        // Keep track of best result so far in case we need fallback
+        allListings = valid;
+        usedStep = step;
+      }
     }
 
-    const listings = await response.json();
-    const listingsArr = Array.isArray(listings) ? listings : [];
-
-    // Compute median and range from active listings
-    const rents = listingsArr.map((l: any) => l.price).filter((p: any) => typeof p === "number" && p > 0).sort((a: number, b: number) => a - b);
+    // Compute median and range
+    const rents = allListings.map((l: any) => l.price).sort((a: number, b: number) => a - b);
     const median = rents.length > 0 ? rents[Math.floor(rents.length / 2)] : null;
     const rangeLow = rents.length > 0 ? rents[0] : null;
     const rangeHigh = rents.length > 0 ? rents[rents.length - 1] : null;
 
-    // Map listings to comparable format
-    const comparables = listingsArr.slice(0, 10).map((listing: any) => {
-      // Calculate distance if coordinates available (haversine approximation)
-      let distance: number | null = null;
-
-      // Calculate days on market
+    // Map to comparable format (cap at 10)
+    const comparables = allListings.slice(0, 10).map((listing: any) => {
       const listedDate = listing.listedDate || listing.createdDate;
       let daysOnMarket: number | null = listing.daysOnMarket ?? null;
       if (daysOnMarket === null && listedDate) {
@@ -131,10 +186,9 @@ serve(async (req) => {
         bedrooms: listing.bedrooms ?? null,
         bathrooms: listing.bathrooms ?? null,
         squareFootage: listing.squareFootage ?? null,
-        distance: distance,
+        distance: null,
         daysOld: daysOnMarket,
         correlation: null,
-        // New rich fields
         status: listing.status || "Active",
         listingType: listing.listingType || null,
         listedDate: listedDate || null,
@@ -144,13 +198,25 @@ serve(async (req) => {
       };
     });
 
+    // Build expansion note for the UI
+    let searchNote: string | null = null;
+    if (usedStep.radius > 1 || usedStep.bedroomsDelta > 0) {
+      if (usedStep.bedroomsDelta > 0) {
+        searchNote = `Showing comparable units within ${usedStep.radius} miles (±1 bedroom) — not enough exact-match listings nearby.`;
+      } else {
+        searchNote = `Showing comparable units within ${usedStep.radius} miles — closer matches weren't available.`;
+      }
+    }
+
     const result = {
       rentEstimate: median,
       rentRangeLow: rangeLow,
       rentRangeHigh: rangeHigh,
       comparables,
-      totalListings: listingsArr.length,
+      totalListings: allListings.length,
       source: "active-listings",
+      searchRadius: usedStep.radius,
+      searchNote,
     };
 
     // Upsert to cache

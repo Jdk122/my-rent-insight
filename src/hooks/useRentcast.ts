@@ -31,6 +31,8 @@ export interface RentcastResult {
   comparables: RentcastComparable[];
   totalListings?: number;
   source?: string;
+  searchRadius?: number;
+  searchNote?: string | null;
 }
 
 export function useRentcast(zip: string, bedrooms: BedroomType, fullAddress?: string | null) {

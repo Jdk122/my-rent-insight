@@ -94,12 +94,17 @@ const RentcastCard = ({ data, loading, error, city, zip, state, bedrooms, propos
 
         return (
           <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 text-center">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1 text-center">
               {isActiveListing ? 'Active Listings Nearby' : 'Nearby Comparable Listings'}
               {data.totalListings && data.totalListings > data.comparables.length && (
                 <span className="font-normal ml-1">({data.totalListings} found)</span>
               )}
             </p>
+            {data.searchNote && (
+              <p className="text-[11px] text-muted-foreground/70 text-center italic mb-2">
+                {data.searchNote}
+              </p>
+            )}
             {sortedComps.map((comp, i) => (
               <div key={i}>
                 {proposedRent && i === refIndex && (
