@@ -45,8 +45,12 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
     const trimmedZip = zip.trim();
     if (!trimmedZip || trimmedZip.length !== 5 || !currentRent) return;
 
+    // Insert unit after the street number+name, before city
+    // e.g. "1500 Hudson St, Hoboken, NJ 07030, USA" → "1500 Hudson St Unit 9G, Hoboken, NJ 07030, USA"
     const addressWithUnit = fullAddress
-      ? (unit.trim() ? `${fullAddress.replace(/, USA$/, '')} ${unit.trim()}, USA` : fullAddress)
+      ? (unit.trim()
+          ? fullAddress.replace(/,/, ` ${unit.trim()},`)
+          : fullAddress)
       : null;
 
     onSubmit({
