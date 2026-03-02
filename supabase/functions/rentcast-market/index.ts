@@ -84,21 +84,22 @@ serve(async (req) => {
     }
 
     const raw = await response.json();
-    console.log("Rentcast market raw response:", JSON.stringify(raw).slice(0, 2000));
+    console.log("Rentcast market response keys:", JSON.stringify(Object.keys(raw)));
+    console.log("Rentcast market rentalData:", JSON.stringify(raw?.rentalData).slice(0, 2000));
 
     // Extract useful data from the response
-    // Rentcast returns an array; we want the first (most relevant) entry
-    const market = Array.isArray(raw) ? raw[0] : raw;
+    // Rentcast /v1/markets returns { rentalData: { ... }, saleData: { ... } }
+    const rental = raw?.rentalData;
 
     const result = {
-      averageRent: market?.averageRent ?? market?.rentSummary?.averageRent ?? null,
-      medianRent: market?.medianRent ?? market?.rentSummary?.medianRent ?? null,
-      minRent: market?.minRent ?? market?.rentSummary?.minRent ?? null,
-      maxRent: market?.maxRent ?? market?.rentSummary?.maxRent ?? null,
-      totalListings: market?.totalListings ?? market?.rentSummary?.totalListings ?? null,
-      averageRentBySqft: market?.averageRentBySqft ?? null,
-      detailedStats: market?.detailedStats ?? market?.rentSummary?.detailedStats ?? null,
-      rentTrend: market?.rentTrend ?? null,
+      averageRent: rental?.averageRent ?? null,
+      medianRent: rental?.medianRent ?? null,
+      minRent: rental?.minRent ?? null,
+      maxRent: rental?.maxRent ?? null,
+      totalListings: rental?.totalListings ?? null,
+      averageRentBySqft: rental?.averageRentBySqft ?? null,
+      detailedStats: rental?.detailedStats ?? null,
+      rentTrend: rental?.historyRent ?? null,
     };
 
     // Upsert to cache
