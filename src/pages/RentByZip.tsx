@@ -85,6 +85,128 @@ const RentByZip = () => {
     return () => { cancelled = true; };
   }, [zip]);
 
+  useEffect(() => {
+    if (loading || notFound || !data || !zip) return;
+
+    const raw = data.raw;
+    const city = raw.c || 'Unknown';
+    const state = raw.s || '';
+    const fmr1br = raw.f[1];
+    const canonicalUrl = `https://www.renewalreply.com/rent/${zip}`;
+    const title = `Fair Market Rent in ${zip} (${city}, ${state}) — 2025 HUD Data | RenewalReply`;
+    const description = `HUD fair market rent for ${zip} is ${fmt(fmr1br)}/mo for a 1-bedroom. Compare rents, see trends, and check if your rent increase is fair. Free analysis for ${city}, ${state}.`;
+
+    document.title = title;
+
+    const upsertMeta = (selector: string, attrs: Record<string, string>, content: string) => {
+      let el = document.head.querySelector(selector) as HTMLMetaElement | null;
+      if (!el) {
+        el = document.createElement('meta');
+        Object.entries(attrs).forEach(([k, v]) => el!.setAttribute(k, v));
+        document.head.appendChild(el);
+      }
+      el.setAttribute('content', content);
+      el.setAttribute('data-rh', 'true');
+    };
+
+    const upsertLink = (selector: string, attrs: Record<string, string>, href: string) => {
+      let el = document.head.querySelector(selector) as HTMLLinkElement | null;
+      if (!el) {
+        el = document.createElement('link');
+        Object.entries(attrs).forEach(([k, v]) => el!.setAttribute(k, v));
+        document.head.appendChild(el);
+      }
+      el.setAttribute('href', href);
+      el.setAttribute('data-rh', 'true');
+    };
+
+    upsertMeta('meta[name="description"]', { name: 'description' }, description);
+    upsertLink('link[rel="canonical"]', { rel: 'canonical' }, canonicalUrl);
+    upsertMeta('meta[property="og:type"]', { property: 'og:type' }, 'website');
+    upsertMeta('meta[property="og:title"]', { property: 'og:title' }, title);
+    upsertMeta('meta[property="og:description"]', { property: 'og:description' }, description);
+    upsertMeta('meta[property="og:url"]', { property: 'og:url' }, canonicalUrl);
+    upsertMeta('meta[property="og:image"]', { property: 'og:image' }, 'https://www.renewalreply.com/og-image.png');
+    upsertMeta('meta[name="twitter:card"]', { name: 'twitter:card' }, 'summary_large_image');
+    upsertMeta('meta[name="twitter:title"]', { name: 'twitter:title' }, title);
+    upsertMeta('meta[name="twitter:description"]', { name: 'twitter:description' }, description);
+    upsertMeta('meta[name="twitter:image"]', { name: 'twitter:image' }, 'https://www.renewalreply.com/og-image.png');
+
+    const rentControl = getRentControlForZip(zip);
+    const cap = getApplicableCap(rentControl);
+    const datasetSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'Dataset',
+      name: `Fair Market Rent Data for ${zip}`,
+      description: `HUD Fair Market Rent (SAFMR FY2025) and local rent market data for zip code ${zip} in ${city}, ${state}`,
+      url: canonicalUrl,
+      creator: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
+      temporalCoverage: '2025',
+      spatialCoverage: {
+        '@type': 'Place',
+        address: {
+          '@type': 'PostalAddress',
+          postalCode: zip,
+          addressLocality: city,
+          addressRegion: state,
+          addressCountry: 'US',
+        },
+      },
+      distribution: {
+        '@type': 'DataDownload',
+        encodingFormat: 'text/html',
+        contentUrl: canonicalUrl,
+      },
+    };
+
+    const faqSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: `What is fair market rent in ${zip}?`,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: `The HUD fair market rent for a 1-bedroom in ${zip} (${city}, ${state}) is ${fmt(fmr1br)}/month for FY2025. Studio: ${fmt(raw.f[0])}, 2-BR: ${fmt(raw.f[2])}, 3-BR: ${fmt(raw.f[3])}, 4-BR: ${fmt(raw.f[4])}.`,
+          },
+        },
+        {
+          '@type': 'Question',
+          name: `How much can my landlord raise my rent in ${city}?`,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: cap
+              ? `${cap.jurisdiction} has rent increase protections. ${cap.maxIncreaseFormula ? `The cap is generally ${cap.maxIncreaseFormula}.` : ''}`
+              : `There are no specific rent control laws covering ${city}, ${state} at this time. Landlords can raise rent by any amount with proper notice.`,
+          },
+        },
+        {
+          '@type': 'Question',
+          name: `Is my rent increase fair in ${zip}?`,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: `Use the free RenewalReply rent increase calculator to compare your proposed increase to HUD fair market rent and local market trends for ${zip}.`,
+          },
+        },
+      ],
+    };
+
+    const upsertJsonLd = (id: string, schema: Record<string, unknown>) => {
+      let el = document.getElementById(id) as HTMLScriptElement | null;
+      if (!el) {
+        el = document.createElement('script');
+        el.type = 'application/ld+json';
+        el.id = id;
+        document.head.appendChild(el);
+      }
+      el.text = JSON.stringify(schema);
+    };
+
+    upsertJsonLd('rr-zip-dataset-jsonld', datasetSchema);
+    upsertJsonLd('rr-zip-faq-jsonld', faqSchema);
+  }, [data, loading, notFound, zip]);
+
   if (loading) return <LoadingSkeleton />;
   if (notFound || !data || !zip) return <NotFoundPage zip={zip} />;
 
@@ -102,69 +224,7 @@ const RentByZip = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <SEO
-        title={`Fair Market Rent in ${zip} (${city}, ${state}) — 2025 HUD Data | RenewalReply`}
-        description={`HUD fair market rent for ${zip} is ${fmt(fmr1br)}/mo for a 1-bedroom. Compare rents, see trends, and check if your rent increase is fair. Free analysis for ${city}, ${state}.`}
-        canonical={`/rent/${zip}`}
-        jsonLd={[
-          {
-            '@context': 'https://schema.org',
-            '@type': 'Dataset',
-            name: `Fair Market Rent Data for ${zip}`,
-            description: `HUD Fair Market Rent (SAFMR FY2025) and local rent market data for zip code ${zip} in ${city}, ${state}`,
-            url: `https://www.renewalreply.com/rent/${zip}`,
-            creator: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
-            temporalCoverage: '2025',
-            spatialCoverage: {
-              '@type': 'Place',
-              address: {
-                '@type': 'PostalAddress',
-                postalCode: zip,
-                addressLocality: city,
-                addressRegion: state,
-                addressCountry: 'US',
-              },
-            },
-            distribution: {
-              '@type': 'DataDownload',
-              encodingFormat: 'text/html',
-              contentUrl: `https://www.renewalreply.com/rent/${zip}`,
-            },
-          },
-          {
-            '@context': 'https://schema.org',
-            '@type': 'FAQPage',
-            mainEntity: [
-              {
-                '@type': 'Question',
-                name: `What is fair market rent in ${zip}?`,
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: `The HUD fair market rent for a 1-bedroom in ${zip} (${city}, ${state}) is ${fmt(fmr1br)}/month for FY2025. Studio: ${fmt(raw.f[0])}, 2-BR: ${fmt(raw.f[2])}, 3-BR: ${fmt(raw.f[3])}, 4-BR: ${fmt(raw.f[4])}.`,
-                },
-              },
-              {
-                '@type': 'Question',
-                name: `How much can my landlord raise my rent in ${city}?`,
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: cap
-                    ? `${cap.jurisdiction} has rent increase protections. ${cap.maxIncreaseFormula ? `The cap is generally ${cap.maxIncreaseFormula}.` : ''}`
-                    : `There are no specific rent control laws covering ${city}, ${state} at this time. Landlords can raise rent by any amount with proper notice.`,
-                },
-              },
-              {
-                '@type': 'Question',
-                name: `Is my rent increase fair in ${zip}?`,
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: `Use the free RenewalReply rent increase calculator to compare your proposed increase to HUD fair market rent and local market trends for ${zip}.`,
-                },
-              },
-            ],
-          },
-        ]}
-      />
+      {/* Route-specific head tags are managed imperatively above to guarantee runtime overrides */}
 
       {/* Noscript fallback for crawlers */}
       <noscript>
