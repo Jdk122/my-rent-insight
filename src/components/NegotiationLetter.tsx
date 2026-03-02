@@ -48,22 +48,27 @@ const NegotiationLetter = ({
 
   const letterHtml = useMemo(() => {
     if (tone === 'friendly') {
+      const severityLabel = increaseRatio >= 4 ? 'several times that' : increaseRatio >= 2.5 ? 'more than double that' : increaseRatio >= 1.8 ? 'nearly double that' : increaseRatio >= 1.4 ? 'well above that' : 'noticeably higher';
+      const counterRange = counterLow === counterHigh
+        ? `around ${counterLowPercent}%, which would put the rent around $${fmt(counterLow)}`
+        : `closer to ${counterLowPercent}–${counterHighPercent}%, which would put the rent around $${fmt(counterLow)}–$${fmt(counterHigh)}`;
       return [
         `Hi [Landlord name],`,
         `Thanks for letting me know about the lease renewal. I'd like to stay and I appreciate the notice.`,
-        `Before I sign, I looked into what rents have done in ${city} this year. The market-wide increase for a ${brLabel.toLowerCase()} was about ${marketYoy}%, and my proposed increase of ${increasePct}% is ${increaseRatio >= 1.8 ? 'nearly double that' : increaseRatio >= 1.4 ? 'well above that' : 'noticeably higher'}.`,
+        `Before I sign, I looked into what rents have done in ${city} this year. The market-wide increase for a ${brLabel.toLowerCase()} was about ${marketYoy}%, and my proposed increase of ${increasePct}% is ${severityLabel}.`,
         `For context:\n• Area-wide rent increase this year: ${marketYoy}%\n• My proposed increase: ${increasePct}%`,
-        `I'd love to find a number that works for both of us — something closer to ${counterLowPercent}–${counterHighPercent}%, which would put the rent around $${fmt(counterLow)}–$${fmt(counterHigh)}. Happy to discuss.`,
+        `I'd love to find a number that works for both of us — something ${counterRange}. Happy to discuss.`,
         `Best,\n[Your name]`,
       ].filter(Boolean);
     }
 
+    const firmSeverity = increaseRatio >= 4 ? 'several times' : increaseRatio >= 2.5 ? 'more than double' : increaseRatio >= 1.8 ? 'nearly double' : increaseRatio >= 1.4 ? 'well above' : 'noticeably above';
     return [
       `Dear [Landlord name],`,
       `I am writing regarding the proposed lease renewal at $${fmt(newRent)}/month — a ${increasePct}% increase from my current rent of $${fmt(currentRent)}/month.`,
       `I have reviewed current market data for ${city}, ${state} (${zip}):`,
       `• Rents in ${city} rose ${marketYoy}% this year\n• Proposed increase: ${increasePct}%`,
-      `The proposed increase of ${increasePct}% is ${increaseRatio >= 1.8 ? 'nearly double' : increaseRatio >= 1.4 ? 'well above' : 'noticeably above'} the rate at which rents are rising in ${city}.`,
+      `The proposed increase of ${increasePct}% is ${firmSeverity} the rate at which rents are rising in ${city}.`,
       `I am prepared to renew at ${counterLowPercent}% ($${fmt(counterLow)}/month), in line with ${city}'s market trend.`,
       `Sincerely,\n[Your name]`,
     ].filter(Boolean);

@@ -6,10 +6,10 @@ export type BedroomType = 'studio' | 'oneBr' | 'twoBr' | 'threeBr' | 'fourBr';
 
 export const bedroomLabels: Record<BedroomType, string> = {
   studio: 'Studio',
-  oneBr: '1 Bedroom',
-  twoBr: '2 Bedrooms',
-  threeBr: '3 Bedrooms',
-  fourBr: '4+ Bedrooms',
+  oneBr: '1-Bedroom',
+  twoBr: '2-Bedroom',
+  threeBr: '3-Bedroom',
+  fourBr: '4+-Bedroom',
 };
 
 // Re-export the new data loader as the primary API

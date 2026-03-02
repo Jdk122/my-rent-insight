@@ -156,7 +156,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       : hasEnoughComps === false ? 'insufficient' : null;
 
     const counterStr = calc
-      ? `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}`
+      ? (calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}`)
       : null;
 
     supabase.from('analyses').insert({
@@ -191,7 +191,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     proposedRent: newRent,
     increasePct,
     marketTrendPct: marketYoy,
-    fairCounterOffer: calc ? `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}` : undefined,
+    fairCounterOffer: calc ? (calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}`) : undefined,
     compsPosition: medianCompRent ? (newRent > medianCompRent ? 'above' : 'below') : undefined,
     letterGenerated: !!(hasIncrease && isAboveMarket && calc),
   }), [analysisId, formData, rentData, newRent, increasePct, marketYoy, calc, medianCompRent, hasIncrease, isAboveMarket]);
@@ -199,7 +199,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   // Build section nav items based on available data
   const navSections = useMemo(() => {
     const sections = [{ id: 'section-verdict', label: 'Verdict' }];
-    if (hasIncrease) sections.push({ id: 'section-evidence', label: 'Evidence' });
+    sections.push({ id: 'section-evidence', label: 'Evidence' });
     if (hasIncrease && medianCompRent && hasEnoughComps) {
       sections.push({ id: 'section-comps', label: 'Comps' });
     }
@@ -304,8 +304,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       ? isPath1
                         ? `My landlord is asking for $${fmt(newRent - calc.counterHigh)}/mo more than the market supports.`
                         : `My landlord is asking for ${marketMultiple}× the market rate increase.`
-                      : isFair
+               : isFair
                       ? `My rent increase is right at market.`
+                      : increasePct > 0 && increasePct <= marketYoy
+                      ? `My rent increase is in line with the market.`
                       : `My rent increase is below market.`
                   }
                   stats={[
@@ -323,8 +325,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             </>
           ) : (
             <>
-              <h1 className="font-display text-[32px] font-semibold text-foreground">No increase entered</h1>
-              <p className="text-muted-foreground mt-2">Enter your proposed increase to compare.</p>
+              <h1 className="font-display text-[32px] font-semibold text-foreground">Here's what rents are doing in {city}</h1>
+              <p className="text-muted-foreground mt-2 max-w-[460px] leading-relaxed">
+                You didn't enter a proposed increase, but here's the market data and your rights.
+              </p>
+              <button onClick={onReset} className="mt-6 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                ← Check a different address
+              </button>
             </>
           )}
         </motion.section>
@@ -338,10 +345,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       <div className="w-full bg-card">
         <div className="max-w-[620px] mx-auto px-6">
 
-        {hasIncrease && (
+        {(
           <section id="section-evidence" className="pt-16 pb-8">
             <motion.h2 {...fade(0.05)} className="results-section-header mb-10">
-              The Evidence
+              {hasIncrease ? 'The Evidence' : 'What the Market Says'}
             </motion.h2>
 
             <div className="space-y-6">
@@ -378,7 +385,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 {isAboveMarket && calc && (
                   <div className="context-row-highlight mt-2">
                     <span className="context-label">Fair counter-offer</span>
-                    <span className="context-value text-verdict-good font-bold">${fmt(calc.counterLow)}–${fmt(calc.counterHigh)}/mo</span>
+                    <span className="context-value text-verdict-good font-bold">
+                      {calc.counterLow === calc.counterHigh
+                        ? `$${fmt(calc.counterLow)}/mo`
+                        : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}/mo`}
+                    </span>
                   </div>
                 )}
 

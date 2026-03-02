@@ -44,7 +44,7 @@ const Index = () => {
     return calc?.verdict === 'above';
   }, [results]);
 
-  const hasIncrease = results && results.formData.rentIncrease && results.formData.rentIncrease > 0;
+  const hasIncrease = !!(results && results.formData.rentIncrease && results.formData.rentIncrease > 0);
 
   const handleSubmit = async (data: RentFormData) => {
     setIsLoading(true);
