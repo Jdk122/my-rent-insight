@@ -49,14 +49,15 @@ export default function RentcastMarketSection({ zip, city, state }: { zip: strin
         </h2>
         <div className="rounded-lg border border-border p-6 bg-card">
           <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-            See what landlords are actually asking for rentals in {city}, {state} right now — powered by live listing data.
+            What are apartments actually renting for near {zip}? Click below to see live asking rents from current listings.
           </p>
           <button
             onClick={loadMarketData}
             className="bg-primary text-primary-foreground px-5 h-10 rounded-lg text-sm font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
           >
-            Load market rents
+            See live listings near {zip} →
           </button>
+          <p className="mt-2 text-xs text-muted-foreground">Powered by Rentcast · Updated daily</p>
         </div>
       </section>
     );
