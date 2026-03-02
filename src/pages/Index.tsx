@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import RentForm, { RentFormData } from '@/components/RentForm';
 import RentResults from '@/components/RentResults';
@@ -7,9 +7,11 @@ import { usePropertyLookup } from '@/hooks/usePropertyLookup';
 import { toast } from 'sonner';
 import SaveResultsDropdown from '@/components/SaveResultsDropdown';
 import SocialProofCounter from '@/components/SocialProofCounter';
+import ContactModal from '@/components/ContactModal';
 
 const Index = () => {
   const [results, setResults] = useState<{ formData: RentFormData; rentData: RentLookupResult } | null>(null);
+  const [contactOpen, setContactOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [navScrolled, setNavScrolled] = useState(false);
   const [capturedEmail, setCapturedEmail] = useState('');
@@ -194,8 +196,12 @@ const Index = () => {
       <footer className="mt-auto border-t border-border px-6 py-6 text-center">
         <p className="text-xs text-muted-foreground leading-relaxed">
           RenewalReply · Sources: HUD SAFMR FY2025, Census ACS 2023, Zillow ZORI & proprietary APIs · For informational purposes only.
+          {' · '}
+          <button onClick={() => setContactOpen(true)} className="underline hover:text-foreground transition-colors">Contact us</button>
         </p>
       </footer>
+
+      <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
     </div>
   );
 };
