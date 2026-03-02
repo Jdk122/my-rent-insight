@@ -158,10 +158,18 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
           </button>
         </div>
       </form>
-      <p className="text-[12px] text-muted-foreground/70 text-center mt-2 max-w-[440px] mx-auto">
-        We'll only email you about your lease. See our{' '}
-        <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
-      </p>
+      <div className="max-w-[440px] mx-auto mt-2 space-y-1.5">
+        <p className="text-[12px] text-muted-foreground/70 text-center">
+          We'll email you about your lease and relevant housing info. See our{' '}
+          <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
+        </p>
+        <label className="flex items-start gap-2 justify-center cursor-pointer select-none">
+          <input type="checkbox" className="mt-[3px] accent-primary" />
+          <span className="text-[13px] text-muted-foreground/70 leading-snug">
+            I'm open to hearing from trusted partners about housing-related services.
+          </span>
+        </label>
+      </div>
     </div>
   );
 };
