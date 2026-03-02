@@ -15,6 +15,13 @@ export interface RentcastComparable {
   distance: number | null;
   daysOld: number | null;
   correlation: number | null;
+  // Rich listing fields
+  status?: string;
+  listingType?: string | null;
+  listedDate?: string | null;
+  daysOnMarket?: number | null;
+  propertyType?: string | null;
+  lastSeenDate?: string | null;
 }
 
 export interface RentcastResult {
@@ -22,6 +29,8 @@ export interface RentcastResult {
   rentRangeLow: number | null;
   rentRangeHigh: number | null;
   comparables: RentcastComparable[];
+  totalListings?: number;
+  source?: string;
 }
 
 export function useRentcast(zip: string, bedrooms: BedroomType, fullAddress?: string | null) {
@@ -50,13 +59,13 @@ export function useRentcast(zip: string, bedrooms: BedroomType, fullAddress?: st
         if (cancelled) return;
 
         if (fnError) {
-          setError('Could not load Rentcast data');
+          setError('Could not load market data');
           return;
         }
 
         setData(result as RentcastResult);
       } catch {
-        if (!cancelled) setError('Could not load Rentcast data');
+        if (!cancelled) setError('Could not load market data');
       } finally {
         if (!cancelled) setLoading(false);
       }

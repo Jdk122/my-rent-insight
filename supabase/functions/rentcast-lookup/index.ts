@@ -7,7 +7,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const CACHE_DAYS_RENT = 30;
+const CACHE_DAYS = 7; // Active listings change fast — shorter TTL
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -25,8 +25,8 @@ serve(async (req) => {
       );
     }
 
-    // Zip-only: skip Rentcast AVM (it doesn't support zip-only queries)
-    if (!address && zip) {
+    // Need either address or zip for listings search
+    if (!address && !zip) {
       return new Response(
         JSON.stringify({ rentEstimate: null, rentRangeLow: null, rentRangeHigh: null, comparables: [], cacheHit: false }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -40,9 +40,9 @@ serve(async (req) => {
 
     // Build cache key
     const lookupKey = address
-      ? `${address.toLowerCase().trim()}|br${bedrooms ?? "any"}`
-      : `${zip}|br${bedrooms ?? "any"}`;
-    const endpoint = "rent-estimate";
+      ? `listings|${address.toLowerCase().trim()}|br${bedrooms ?? "any"}`
+      : `listings|${zip}|br${bedrooms ?? "any"}`;
+    const endpoint = "rental-listings";
 
     // Check cache
     const { data: cached } = await sb
@@ -54,7 +54,7 @@ serve(async (req) => {
 
     if (cached) {
       const ageMs = Date.now() - new Date(cached.fetched_at).getTime();
-      if (ageMs < CACHE_DAYS_RENT * 24 * 60 * 60 * 1000) {
+      if (ageMs < CACHE_DAYS * 24 * 60 * 60 * 1000) {
         console.log(`Cache hit for ${endpoint}: ${lookupKey}`);
         return new Response(
           JSON.stringify({ ...cached.response_data, cacheHit: true }),
@@ -63,18 +63,23 @@ serve(async (req) => {
       }
     }
 
-    // Build query params
+    // Build query params for /v1/listings/rental/long-term
     const params = new URLSearchParams();
     if (address) {
       params.set("address", address);
+      params.set("radius", "3"); // 3 mile radius for address-based search
+    } else {
+      params.set("zipCode", zip);
     }
     if (bedrooms !== undefined) {
       params.set("bedrooms", String(bedrooms));
     }
-    params.set("compCount", "5");
+    params.set("status", "Active");
+    params.set("limit", "10");
     params.set("propertyType", "Apartment");
 
-    const url = `https://api.rentcast.io/v1/avm/rent/long-term?${params.toString()}`;
+    const url = `https://api.rentcast.io/v1/listings/rental/long-term?${params.toString()}`;
+    console.log("Fetching listings:", url);
 
     const response = await fetch(url, {
       headers: {
@@ -85,30 +90,62 @@ serve(async (req) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Rentcast API error:", response.status, errorText);
+      console.error("Rentcast listings API error:", response.status, errorText);
+
+      // Fall back to empty result (don't break the page)
       return new Response(
-        JSON.stringify({ error: "Rentcast API error", status: response.status }),
-        { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ rentEstimate: null, rentRangeLow: null, rentRangeHigh: null, comparables: [], cacheHit: false }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const data = await response.json();
+    const listings = await response.json();
+    const listingsArr = Array.isArray(listings) ? listings : [];
+
+    // Compute median and range from active listings
+    const rents = listingsArr.map((l: any) => l.price).filter((p: any) => typeof p === "number" && p > 0).sort((a: number, b: number) => a - b);
+    const median = rents.length > 0 ? rents[Math.floor(rents.length / 2)] : null;
+    const rangeLow = rents.length > 0 ? rents[0] : null;
+    const rangeHigh = rents.length > 0 ? rents[rents.length - 1] : null;
+
+    // Map listings to comparable format
+    const comparables = listingsArr.slice(0, 10).map((listing: any) => {
+      // Calculate distance if coordinates available (haversine approximation)
+      let distance: number | null = null;
+
+      // Calculate days on market
+      const listedDate = listing.listedDate || listing.createdDate;
+      let daysOnMarket: number | null = listing.daysOnMarket ?? null;
+      if (daysOnMarket === null && listedDate) {
+        daysOnMarket = Math.round((Date.now() - new Date(listedDate).getTime()) / (1000 * 60 * 60 * 24));
+      }
+
+      return {
+        formattedAddress: listing.formattedAddress || listing.addressLine1 || "Unknown",
+        rent: listing.price ?? null,
+        bedrooms: listing.bedrooms ?? null,
+        bathrooms: listing.bathrooms ?? null,
+        squareFootage: listing.squareFootage ?? null,
+        distance: distance,
+        daysOld: daysOnMarket,
+        correlation: null,
+        // New rich fields
+        status: listing.status || "Active",
+        listingType: listing.listingType || null,
+        listedDate: listedDate || null,
+        daysOnMarket: daysOnMarket,
+        propertyType: listing.propertyType || null,
+        lastSeenDate: listing.lastSeenDate || null,
+      };
+    });
 
     const result = {
-      rentEstimate: data.rent ?? data.rentRangeLow ?? null,
-      rentRangeLow: data.rentRangeLow ?? null,
-      rentRangeHigh: data.rentRangeHigh ?? null,
-      comparables: (data.comparables || []).slice(0, 5).map((comp: any) => ({
-        formattedAddress: comp.formattedAddress || comp.address || "Unknown",
-        rent: comp.price ?? comp.lastSeenPrice ?? null,
-        bedrooms: comp.bedrooms ?? null,
-        bathrooms: comp.bathrooms ?? null,
-        squareFootage: comp.squareFootage ?? null,
-        distance: comp.distance ?? null,
-        daysOld: comp.daysOld ?? null,
-        correlation: comp.correlation ?? null,
-        listingType: comp.listingType ?? null,
-      })),
+      rentEstimate: median,
+      rentRangeLow: rangeLow,
+      rentRangeHigh: rangeHigh,
+      comparables,
+      totalListings: listingsArr.length,
+      source: "active-listings",
     };
 
     // Upsert to cache
