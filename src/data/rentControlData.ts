@@ -157,18 +157,52 @@ const stateLaws: Record<string, RentControlLaw> = {
   },
 };
 
+// Normalize borough/variant names to city law keys
+const cityNameAliases: Record<string, string> = {
+  'New York': 'New York City',
+  'New York City': 'New York City',
+  'Manhattan': 'New York City',
+  'Brooklyn': 'New York City',
+  'Queens': 'New York City',
+  'Bronx': 'New York City',
+  'The Bronx': 'New York City',
+  'Staten Island': 'New York City',
+  'Long Island City': 'New York City',
+  'Astoria': 'New York City',
+  'Flushing': 'New York City',
+  'Harlem': 'New York City',
+  'Williamsburg': 'New York City',
+  'Bushwick': 'New York City',
+  'San Francisco': 'San Francisco',
+  'Los Angeles': 'Los Angeles',
+  'Hoboken': 'Hoboken',
+  'Jersey City': 'Jersey City',
+  'Washington': 'Washington',
+};
+
+function normalizeCityName(city: string): string | undefined {
+  // Direct match first
+  if (cityNameAliases[city]) return cityNameAliases[city];
+  // Case-insensitive match
+  const lower = city.toLowerCase();
+  for (const [alias, canonical] of Object.entries(cityNameAliases)) {
+    if (alias.toLowerCase() === lower) return canonical;
+  }
+  return undefined;
+}
+
 const cityLaws: Record<string, RentControlLaw> = {
   'New York City': {
     jurisdiction: 'New York City',
     level: 'city',
     hasRentControl: true,
     maxIncreasePct: null,
-    maxIncreaseFormula: 'Set annually by Rent Guidelines Board (typically 1.5–3.5% per year)',
+    maxIncreaseFormula: 'Set annually by Rent Guidelines Board (RGB)',
     noticePeriodDays: 90, // for increases >5%
-    applicability: 'Rent-stabilized units (buildings with 6+ units built before 1974)',
-    exemptions: 'Units with rent above deregulation threshold (removed by 2019 law), new construction, owner-occupied small buildings',
+    applicability: 'Rent-stabilized units (buildings with 6+ units built before 1974, ~1 million units citywide)',
+    exemptions: 'New construction, buildings with fewer than 6 units, owner-occupied small buildings',
     ordinanceUrl: 'https://hcr.ny.gov/rent-stabilization',
-    notes: 'Approx. 1 million rent-stabilized units in NYC. Check your lease for stabilization status. 2024 guideline: 2.75% for 1-year leases.',
+    notes: 'RGB 2024–25 guidelines: 2.75% for 1-year renewals, 5.25% for 2-year renewals. If your unit is rent-stabilized, these caps apply — not the market trend. Check your lease or ask your landlord. You can verify stabilization status at hcr.ny.gov.',
   },
   'San Francisco': {
     jurisdiction: 'San Francisco',
@@ -233,21 +267,44 @@ const cityLaws: Record<string, RentControlLaw> = {
 };
 
 // Map zip codes to city law jurisdictions
+// NYC zips are handled dynamically via isNycZip() below
 const zipToCityLaw: Record<string, string> = {
-  '10001': 'New York City',
-  '10003': 'New York City',
-  '11201': 'New York City',
   '94102': 'San Francisco',
   '90001': 'Los Angeles',
   '90024': 'Los Angeles',
   '07030': 'Hoboken',
 };
 
-// Map zip codes to state abbreviations
+// NYC zip code ranges cover all 5 boroughs
+function isNycZip(zip: string): boolean {
+  const n = parseInt(zip, 10);
+  if (isNaN(n)) return false;
+  // Manhattan: 10001–10282
+  if (n >= 10001 && n <= 10282) return true;
+  // Bronx: 10451–10475
+  if (n >= 10451 && n <= 10475) return true;
+  // Staten Island: 10301–10314
+  if (n >= 10301 && n <= 10314) return true;
+  // Brooklyn: 11201–11256
+  if (n >= 11201 && n <= 11256) return true;
+  // Queens: 11001–11109, 11351–11697
+  if (n >= 11001 && n <= 11109) return true;
+  if (n >= 11351 && n <= 11697) return true;
+  return false;
+}
+
+function isJerseyCityZip(zip: string): boolean {
+  const jcZips = ['07302', '07304', '07305', '07306', '07307', '07310', '07311'];
+  return jcZips.includes(zip);
+}
+
+function isDcZip(zip: string): boolean {
+  const n = parseInt(zip, 10);
+  return !isNaN(n) && n >= 20001 && n <= 20599;
+}
+
+// Map zip codes to state abbreviations (expanded)
 const zipToState: Record<string, string> = {
-  '10001': 'NY',
-  '10003': 'NY',
-  '11201': 'NY',
   '07030': 'NJ',
   '90001': 'CA',
   '90024': 'CA',
@@ -261,9 +318,38 @@ const zipToState: Record<string, string> = {
   '85004': 'AZ',
 };
 
+function getStateFromZip(zip: string): string | undefined {
+  if (zipToState[zip]) return zipToState[zip];
+  if (isNycZip(zip)) return 'NY';
+  if (isJerseyCityZip(zip)) return 'NJ';
+  if (isDcZip(zip)) return 'DC';
+  // CA zip ranges
+  const n = parseInt(zip, 10);
+  if (!isNaN(n) && n >= 90001 && n <= 96162) return 'CA';
+  if (!isNaN(n) && n >= 97001 && n <= 97920) return 'OR';
+  if (!isNaN(n) && n >= 98001 && n <= 99403) return 'WA';
+  if (!isNaN(n) && n >= 60001 && n <= 62999) return 'IL';
+  if (!isNaN(n) && n >= 32003 && n <= 34997) return 'FL';
+  if (!isNaN(n) && n >= 1001 && n <= 2791) return 'MA';
+  if (!isNaN(n) && n >= 73301 && n <= 79999) return 'TX';
+  if (!isNaN(n) && n >= 80001 && n <= 81658) return 'CO';
+  if (!isNaN(n) && n >= 85001 && n <= 86556) return 'AZ';
+  if (!isNaN(n) && n >= 7001 && n <= 8989) return 'NJ';
+  if (!isNaN(n) && n >= 10001 && n <= 14975) return 'NY';
+  return undefined;
+}
+
+function getCityFromZip(zip: string): string | undefined {
+  if (zipToCityLaw[zip]) return zipToCityLaw[zip];
+  if (isNycZip(zip)) return 'New York City';
+  if (isJerseyCityZip(zip)) return 'Jersey City';
+  if (isDcZip(zip)) return 'Washington';
+  return undefined;
+}
+
 export function getRentControlForZip(zip: string): RentControlResult {
-  const stateAbbr = zipToState[zip];
-  const cityName = zipToCityLaw[zip];
+  const stateAbbr = getStateFromZip(zip);
+  const cityName = getCityFromZip(zip);
 
   return {
     stateLaw: stateAbbr ? stateLaws[stateAbbr] || null : null,
@@ -273,9 +359,10 @@ export function getRentControlForZip(zip: string): RentControlResult {
 
 /** Look up rent control by state abbreviation and city name (more reliable than zip-only lookup) */
 export function getRentControlByStateCity(stateAbbr: string, cityName: string): RentControlResult {
+  const normalizedCity = normalizeCityName(cityName);
   return {
     stateLaw: stateLaws[stateAbbr] || null,
-    cityLaw: cityLaws[cityName] || null,
+    cityLaw: normalizedCity ? cityLaws[normalizedCity] || null : null,
   };
 }
 

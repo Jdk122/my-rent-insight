@@ -22,6 +22,21 @@ const RentControlCard = ({ state, city, zip, increasePct }: RentControlCardProps
 
       {hasCap && cap ? (
         <div className="mt-3">
+          {/* NYC stabilization check prompt */}
+          {cap.jurisdiction === 'New York City' && (
+            <div className="px-4 py-3 rounded-lg border border-primary/30 bg-primary/5 mb-4">
+              <p className="text-sm font-medium text-foreground">
+                ⚡ Is your apartment rent-stabilized?
+              </p>
+              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                About 1 million NYC units are rent-stabilized. If yours is, your landlord can only raise rent by the RGB-approved amount — not the market rate. Check your lease for "rent stabilized" language, or{' '}
+                <a href="https://apps.hcr.ny.gov/BuildingSearch/" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:no-underline">
+                  look up your building here
+                </a>.
+              </p>
+            </div>
+          )}
+
           {/* Exceedance warning */}
           {exceedsCap && (
             <div className="px-4 py-3 rounded-lg border border-destructive/30 bg-destructive/5 mb-4">
@@ -55,6 +70,11 @@ const RentControlCard = ({ state, city, zip, increasePct }: RentControlCardProps
                 <div className="px-4 py-3 flex gap-3">
                   <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground w-28 flex-shrink-0 pt-0.5">Required notice</span>
                   <span className="text-sm text-foreground">{notice.days} days ({notice.source})</span>
+                </div>
+              )}
+              {cap.notes && (
+                <div className="px-4 py-3">
+                  <p className="text-sm text-muted-foreground leading-relaxed">{cap.notes}</p>
                 </div>
               )}
             </div>
