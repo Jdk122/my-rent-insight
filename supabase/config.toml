@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.send-letter-followup]
 verify_jwt = false
+
+[functions.contact-form]
+verify_jwt = false
