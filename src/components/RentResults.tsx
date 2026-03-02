@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { RentFormData } from './RentForm';
 import { RentLookupResult, bedroomLabels, calculateResults } from '@/data/rentData';
-import ShareSection from './ShareSection';
 import BuildingShareCard from './BuildingShareCard';
 import ShareableCard from './ShareableCard';
 import EmailCapture from './EmailCapture';
@@ -572,24 +571,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         )}
 
         {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            SECTION 6: SHARE
+            SECTION 6: BUILDING SHARE — Viral Loop
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <section className="py-12 text-center">
-          <ShareSection
-            increasePct={increasePct}
-            marketPct={marketYoy}
-            excessAnnual={excessAnnual}
-            multiplier={multiplier}
-            landlordCosts={landlordCosts}
-            increaseAmount={increaseAmount}
-            isPath1={isPath1}
-            marketMultiple={marketMultiple}
-          />
-        </section>
 
-        {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            SECTION 7: BUILDING SHARE — Viral Loop
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         {hasIncrease && (
           <section className="pb-12">
             <BuildingShareCard
