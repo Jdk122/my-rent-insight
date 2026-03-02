@@ -97,14 +97,7 @@ const NegotiationLetter = ({
     <div>
       <h2 className="section-title">Your Negotiation Letter</h2>
 
-      {/* Legal disclaimer */}
-      <div className="rounded-lg border border-border bg-muted/40 p-4 mt-2 mb-4 flex gap-3 items-start">
-        <span className="text-base leading-none mt-0.5">⚠️</span>
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          This is a template based on public housing data — not legal advice. Review and customize before sending. Rent regulations vary by building type, location, and lease terms. If your apartment is rent-stabilized or subject to local rent control, consult your local tenant rights organization or a licensed attorney.
-        </p>
-      </div>
-      <div className="tone-toggle">
+      <div className="tone-toggle mt-4">
         <button onClick={() => { setTone('friendly'); trackEvent('letter_tone_toggled', { tone: 'friendly' }); }} className={`tone-option ${tone === 'friendly' ? 'active' : ''}`}>Friendly</button>
         <button onClick={() => { setTone('firm'); trackEvent('letter_tone_toggled', { tone: 'firm' }); }} className={`tone-option ${tone === 'firm' ? 'active' : ''}`}>Firm</button>
       </div>
@@ -141,6 +134,12 @@ const NegotiationLetter = ({
           <Download size={16} /> Download
         </button>
       </div>
+
+      {/* Legal disclaimer — below actions */}
+      <p className="text-[11px] text-muted-foreground/70 mt-4 leading-relaxed max-w-[540px]">
+        This is a template based on public housing data — not legal advice. Review and customize before sending. Rent regulations vary by location and lease terms.{' '}
+        <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>
+      </p>
     </div>
   );
 };
