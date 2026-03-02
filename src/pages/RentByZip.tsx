@@ -1,5 +1,6 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { Input } from '@/components/ui/input';
 import { getRentData, type RentZipRaw } from '@/data/dataLoader';
 import { getRentControlForZip, getApplicableCap } from '@/data/rentControlData';
 import SEO from '@/components/SEO';
@@ -39,10 +40,12 @@ interface ZipPageData {
 
 const RentByZip = () => {
   const { zip } = useParams<{ zip: string }>();
+  const navigate = useNavigate();
   const [data, setData] = useState<ZipPageData | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [loading, setLoading] = useState(true);
   const [contactOpen, setContactOpen] = useState(false);
+  const [searchZip, setSearchZip] = useState('');
 
   useEffect(() => {
     if (!zip || zip.length !== 5) {
@@ -253,6 +256,35 @@ const RentByZip = () => {
           >
             Check if your rent increase is fair in {zip} →
           </Link>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const trimmed = searchZip.trim();
+              if (trimmed.length === 5 && /^\d{5}$/.test(trimmed)) {
+                navigate(`/rent/${trimmed}`);
+                setSearchZip('');
+              }
+            }}
+            className="mt-6 flex items-center gap-2 max-w-xs"
+          >
+            <Input
+              type="text"
+              inputMode="numeric"
+              pattern="\d{5}"
+              maxLength={5}
+              placeholder="Search another zip…"
+              value={searchZip}
+              onChange={(e) => setSearchZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
+              className="h-10"
+            />
+            <button
+              type="submit"
+              disabled={!/^\d{5}$/.test(searchZip)}
+              className="bg-primary text-primary-foreground px-4 h-10 rounded-lg text-sm font-semibold hover:brightness-90 transition-all duration-150 disabled:opacity-40"
+            >
+              Go
+            </button>
+          </form>
         </section>
 
         {/* SECTION 2 — HUD FMR Table */}
