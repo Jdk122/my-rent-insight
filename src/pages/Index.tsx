@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import RentForm, { RentFormData } from '@/components/RentForm';
 import RentResults from '@/components/RentResults';
@@ -20,7 +20,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [navScrolled, setNavScrolled] = useState(false);
   const [capturedEmail, setCapturedEmail] = useState('');
-  const [formKey, setFormKey] = useState(0); // key to force form remount/reset
+  const [formKey, setFormKey] = useState(0);
   const propertyLookup = usePropertyLookup();
   const topRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -32,7 +32,6 @@ const Index = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, [results]);
 
-  // Compute verdict for navbar CTA
   const isAboveMarket = useMemo(() => {
     if (!results) return false;
     const { formData, rentData } = results;
@@ -59,8 +58,6 @@ const Index = () => {
 
     try {
       if (data.fullAddress) {
-        // Try property lookup for extra data, but don't block on failure
-        // The zip code from Google Places (data.zip) is our reliable fallback
         const propResult = await propertyLookup.lookup(data.fullAddress).catch(() => null);
         const zip = propResult?.zipCode || data.zip;
         const rentData = await lookupRentData(zip, data.bedrooms);
