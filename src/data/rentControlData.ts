@@ -276,7 +276,7 @@ const zipToCityLaw: Record<string, string> = {
 };
 
 // NYC zip code ranges cover all 5 boroughs
-function isNycZip(zip: string): boolean {
+export function isNycZip(zip: string): boolean {
   const n = parseInt(zip, 10);
   if (isNaN(n)) return false;
   // Manhattan: 10001–10282

@@ -2,7 +2,9 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { getRentData, type RentZipRaw } from '@/data/dataLoader';
-import { getRentControlForZip, getApplicableCap } from '@/data/rentControlData';
+import { getRentControlForZip, getApplicableCap, isNycZip } from '@/data/rentControlData';
+import RentcastMarketSection from '@/components/RentcastMarketSection';
+import DhcrAlertSection from '@/components/DhcrAlertSection';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import ContactModal from '@/components/ContactModal';
@@ -316,6 +318,9 @@ const RentByZip = () => {
           </p>
         </section>
 
+        {/* SECTION 2.5 — DHCR Rent Stabilization Alert (NYC only) */}
+        <DhcrAlertSection zip={zip} city={city} />
+
         {/* SECTION 3 — Market Context (Zillow) */}
         {hasZillow && (
           <section className="mb-12">
@@ -342,6 +347,9 @@ const RentByZip = () => {
             <p className="mt-3 text-xs text-muted-foreground">Source: Zillow Observed Rent Index (ZORI)</p>
           </section>
         )}
+
+        {/* SECTION 3.5 — Rentcast Market Rents */}
+        <RentcastMarketSection zip={zip} city={city} state={state} />
 
         {/* SECTION 4 — Demographics */}
         {hasCensus && (
