@@ -474,24 +474,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 )}
               </motion.div>
 
-              {/* Card B: Know Your Rights */}
-              <motion.div {...fade(0.12)} className="evidence-card">
-                <RentControlCard
-                  state={rentData.state}
-                  city={rentData.city}
-                  zip={rentData.zip}
-                  increasePct={increasePct}
-                  address={formData.fullAddress}
-                />
-              </motion.div>
 
             </div>
           </section>
         )}
 
-        {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            SECTION 3: COMPARABLE LISTINGS
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        {/* ━━━ COMPARABLE LISTINGS ━━━ */}
         {hasIncrease && medianCompRent && hasEnoughComps && (
           <motion.section id="section-comps" {...fade(0.15)} className="py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>
             <h2 className="results-section-header mb-8">
@@ -535,9 +523,19 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             />
           </motion.section>
         )}
-        {!hasEnoughComps && !rentcast.loading && (
-          <motion.section {...fade(0.15)} className="py-12">
-            <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} />
+
+        {/* ━━━ Know Your Rights ━━━ */}
+        {(
+          <motion.section {...fade(0.19)} className="py-12">
+            <div className="evidence-card">
+              <RentControlCard
+                state={rentData.state}
+                city={rentData.city}
+                zip={rentData.zip}
+                increasePct={increasePct}
+                address={formData.fullAddress}
+              />
+            </div>
           </motion.section>
         )}
 
