@@ -1,0 +1,19 @@
+
+
+
+
+"NYC Rent-Stabilized Buildings Data Normalization Project
+
+The New York City Rent Guidelines Board publishes public datasets rent-stabilized apartment listings across all five boroughs. All the data lives in PDFs that is hard to work with. This project:
+
+- Cleans up and standardizes NYC.gov's raw listings
+- Makes the data more searchable
+- Introduces latitude/longitude coordinates- allowing future creators to map the listings
+- Matches records to StreetEasy for my app FirstMover (shameless 🔌), which lets users get StreetEasy notifications before anyone else
+
+Note: The NYC Rent Guidelines Boards states its data ""...do not indicate which apartments in these buildings are rent stabilized, but rather, only those buildings that contain at least one rent stabilized unit."" Further, the work shown is a hobby project and not affiliated with NYC.gov. It may be subject to error.
+
+More resources on additional data formats and methodology for collecting this data can be found in this Github.
+
+Hope this helps!
+- Ben"
