@@ -21,6 +21,14 @@ const US_STATES = [
   'VA','WA','WV','WI','WY','DC',
 ];
 
+const fmtInput = (val: string) => {
+  const digits = val.replace(/[^\d]/g, '');
+  if (!digits) return '';
+  return Number(digits).toLocaleString('en-US');
+};
+
+const parseFormatted = (val: string) => val.replace(/,/g, '');
+
 interface RentFormProps {
   onSubmit: (data: RentFormData) => void;
   isLoading?: boolean;
@@ -59,8 +67,8 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
       zip: trimmedZip,
       fullAddress,
       bedrooms,
-      currentRent: parseFloat(currentRent),
-      rentIncrease: rentIncrease ? parseFloat(rentIncrease) : null,
+      currentRent: parseFloat(parseFormatted(currentRent)),
+      rentIncrease: rentIncrease ? (increaseIsPercent ? parseFloat(rentIncrease) : parseFloat(parseFormatted(rentIncrease))) : null,
       increaseIsPercent,
       movingCosts: parseFloat(movingCosts) || 2500,
     });
@@ -177,12 +185,12 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
           <div className="relative">
             <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
             <Input
-              type="number"
+              type="text"
+              inputMode="numeric"
               placeholder="2,500"
               value={currentRent}
-              onChange={(e) => setCurrentRent(e.target.value)}
+              onChange={(e) => setCurrentRent(fmtInput(e.target.value))}
               className="h-12 pl-8 font-mono text-lg bg-background"
-              min={0}
               required
             />
           </div>
@@ -197,13 +205,20 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
               )}
               <Input
-                type="number"
+                type={increaseIsPercent ? 'number' : 'text'}
+                inputMode="numeric"
                 placeholder={increaseIsPercent ? "8.5" : "200"}
                 value={rentIncrease}
-                onChange={(e) => setRentIncrease(e.target.value)}
+                onChange={(e) => {
+                  if (increaseIsPercent) {
+                    setRentIncrease(e.target.value);
+                  } else {
+                    setRentIncrease(fmtInput(e.target.value));
+                  }
+                }}
                 className={`h-12 font-mono text-lg bg-background ${!increaseIsPercent ? 'pl-8' : 'pl-3.5'}`}
                 min={0}
-                step={increaseIsPercent ? 0.1 : 1}
+                step={increaseIsPercent ? 0.1 : undefined}
               />
             </div>
             <div className="flex rounded-lg border border-border overflow-hidden">
