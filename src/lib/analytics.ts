@@ -33,3 +33,16 @@ export function trackEvent(name: string, params?: Record<string, string | number
     // silent
   }
 }
+
+/** Fire Google Ads lead-form conversion */
+export function trackAdsConversion() {
+  try {
+    window.gtag?.('event', 'conversion', {
+      send_to: 'AW-17990530610/H5tjCKStoIIcELLsxoJD',
+      value: 1.0,
+      currency: 'USD',
+    });
+  } catch {
+    // silent
+  }
+}
