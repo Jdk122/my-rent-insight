@@ -141,7 +141,7 @@ const ShareHub = ({
   const handleTwitter = () => {
     trackEvent('building_share_clicked', { method: 'twitter', zip: zipCode });
     trackEvent('share_clicked', { share_method: 'twitter' });
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+    window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
   };
   const handleFacebook = () => {
     trackEvent('building_share_clicked', { method: 'facebook', zip: zipCode });
@@ -318,7 +318,7 @@ const ShareHub = ({
                 onClick={handleTwitter}
                 className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all shadow-xs"
               >
-                <Twitter size={16} /> Twitter
+                <Twitter size={16} /> X
               </button>
               <button
                 onClick={handleFacebook}
