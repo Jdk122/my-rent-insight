@@ -370,14 +370,14 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       )}
                     </h1>
                     <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                      {isAboveMarket ? (
-                        <>The market moved {marketYoy > 0 ? '+' : ''}{marketYoy}% this year. Your landlord is asking for {increasePct}%.</>
+                      {isAboveMarket && calc ? (
+                        <>That's ${fmt(increaseAmount * 12)} more per year than a market-rate increase would be. A fair counter-offer is {calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}/mo` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}/mo`}.</>
                       ) : isNuancedAtMarket && medianCompRent ? (
-                        <>Your increase rate of {increasePct}% is above the area trend of {marketYoy}%, but your proposed rent of ${fmt(newRent)} is still below the local median of ${fmt(medianCompRent)}.</>
+                        <>Your proposed rent of ${fmt(newRent)} is still below the local median of ${fmt(medianCompRent)} for similar units nearby.</>
                       ) : isFair ? (
-                        <>Your increase is consistent with local market trends. The market moved {marketYoy > 0 ? '+' : ''}{marketYoy}% this year.</>
+                        <>At ${fmt(newRent)}/mo, you'll be within the typical range for {brLabel} rentals in {city}.</>
                       ) : (
-                        <>Your landlord's ask is below the local trend. This is a competitive increase.</>
+                        <>At ${fmt(newRent)}/mo, you're getting a competitive deal compared to similar units in {city}.</>
                       )}
                     </p>
                   </div>
