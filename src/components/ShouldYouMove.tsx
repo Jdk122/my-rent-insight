@@ -227,7 +227,7 @@ const ShouldYouMove = ({
 
   const hasBrokerFee = brokerFeeStates.includes(state);
   const estimatedMovingCost = Math.round(
-    medianCompRent + (medianCompRent * 1.5) + (hasBrokerFee ? medianCompRent : 0) + 1500
+    medianCompRent + (hasBrokerFee ? medianCompRent : 0) + 1500
   );
 
   const negotiationSavings = counterOffer ? proposedRent - counterOffer : null;
@@ -295,7 +295,7 @@ const ShouldYouMove = ({
           ~${fmt(estimatedMovingCost)}
         </p>
         <p className="text-[12px] text-muted-foreground mt-1">
-          First month + security deposit (1.5 mo) + moving expenses{hasBrokerFee ? ` + broker fee (common in ${state})` : ''}
+          First month's rent + moving expenses{hasBrokerFee ? ` + broker fee (common in ${state})` : ''}
         </p>
       </div>
     </div>
