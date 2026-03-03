@@ -662,12 +662,23 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           </>
         )}
 
-        {/* ━━━ BELOW / FAIR MARKET PATH: Move costs + Turnover → Email ━━━ */}
+        {/* ━━━ BELOW / FAIR MARKET PATH: Reassurance + Move costs → Email ━━━ */}
         {!isAboveMarket && hasIncrease && (
           <>
-            {/* Should You Move + Turnover Cost (consolidated) */}
+            {/* Reassurance message */}
+            <motion.section {...fade(0.19)} className="py-12">
+              <div className="px-5 py-5 rounded-xl border border-verdict-good/20 bg-verdict-good/5 text-center">
+                <p className="text-base font-medium text-foreground leading-relaxed">
+                  {isBelowMarket
+                    ? "Your landlord's ask is below market. Renewing at this rate is a solid decision."
+                    : "Your landlord's ask is at market. Renewing at this rate is a solid decision."}
+                </p>
+              </div>
+            </motion.section>
+
+            {/* Estimated cost to move (for context, no negotiation framing) */}
             {medianCompRent && hasEnoughComps && (
-              <motion.section id="section-move" {...fade(0.19)} className="py-12">
+              <motion.section id="section-move" {...fade(0.21)} className="py-12">
                 <h2 className="results-section-header mb-8">Estimated Cost to Move</h2>
                 <ShouldYouMove
                   proposedRent={newRent}
@@ -679,24 +690,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   state={rentData.state}
                   zip={rentData.zip}
                   bedrooms={formData.bedrooms}
-                  counterOffer={calc?.counterHigh ?? null}
+                  counterOffer={null}
                   isAboveMarket={false}
                   onScrollToLetter={() => {}}
                 />
-
-                {/* Turnover cost insight (merged) */}
-                <div className="mt-8">
-                  <TurnoverCostSection
-                    currentRent={formData.currentRent}
-                    bedrooms={bedroomNum}
-                    bedroomLabel={bedroomLabels[formData.bedrooms]}
-                    city={city}
-                    state={rentData.state}
-                    annualSavings={annualSavingsForTurnover}
-                    proposedRentAboveMedian={proposedRentAboveMedian}
-                    onScrollToLetter={() => {}}
-                  />
-                </div>
               </motion.section>
             )}
 
