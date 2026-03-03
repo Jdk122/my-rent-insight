@@ -251,9 +251,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       }
       sections.push({ id: 'section-share', label: 'Send' });
     } else {
-      // Below/fair: Should You Move (with turnover costs merged)
+      // Below/fair: Should You Move → Share
       if (hasIncrease && medianCompRent && hasEnoughComps) {
         sections.push({ id: 'section-move', label: 'Move' });
+      }
+      if (hasIncrease) {
+        sections.push({ id: 'section-share', label: 'Share' });
       }
     }
     return sections;
@@ -696,6 +699,35 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 />
               </motion.section>
             )}
+
+            {/* Share — neighbors only, no landlord tab */}
+            <motion.section id="section-share" {...fade(0.23)} className="pt-6 pb-4">
+              <h2 className="results-section-header mb-6">Share This Tool</h2>
+              <div className="flex justify-center">
+                <ShareHub
+                  reportPayload={shareReportPayload}
+                  onLinkGenerated={setReportUrl}
+                  zipCode={rentData.zip}
+                  city={rentData.city}
+                  state={rentData.state}
+                  bedroomNum={bedroomNum}
+                  increasePct={increasePct}
+                  marketYoy={marketYoy}
+                  verdict={isFair ? 'fair' : 'below'}
+                  headline={
+                    isFair
+                      ? `My rent increase is right at market.`
+                      : `My rent increase is below the area trend.`
+                  }
+                  stats={[
+                    { label: 'You pay now', value: `$${fmt(formData.currentRent)}` },
+                    { label: 'They want', value: `$${fmt(newRent)}`, color: isBelowMarket ? 'hsl(151, 50%, 38%)' : undefined },
+                    { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
+                    { label: 'Your increase', value: `${increasePct}%`, color: isFair ? 'hsl(45, 80%, 45%)' : 'hsl(151, 50%, 38%)' },
+                  ]}
+                />
+              </div>
+            </motion.section>
 
             {/* Inline email capture */}
             <section className="pb-10 pt-4">
