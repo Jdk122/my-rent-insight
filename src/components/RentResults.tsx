@@ -242,11 +242,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     if (hasIncrease && medianCompRent && hasEnoughComps) {
       sections.push({ id: 'section-comps', label: 'Comps' });
     }
-    if (hasIncrease && calc) {
+    // Only show Letter nav when above market
+    if (hasIncrease && calc && isAboveMarket) {
       sections.push({ id: 'section-letter', label: 'Letter' });
     }
     return sections;
-  }, [hasIncrease, medianCompRent, hasEnoughComps, calc]);
+  }, [hasIncrease, medianCompRent, hasEnoughComps, calc, isAboveMarket]);
 
   // Compute annual savings for turnover section
   const annualSavingsForTurnover = useMemo(() => {
@@ -299,7 +300,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   <>Your rent increase is <span className="text-verdict-fair">right at market.</span></>
                 ) : increasePct > 0 && increasePct <= marketYoy ? (
                   <>Your increase of {increasePct}% is{' '}
-                    <span className="text-verdict-good">in line with the {marketYoy}% trend</span> in your area.</>
+                    <span className="text-verdict-good">below the {marketYoy}% area trend.</span></>
                 ) : increasePct <= 0 ? (
                   <>Your rent is staying the same or going down — that's{' '}
                     <span className="text-verdict-good">below the {marketYoy}% area trend.</span></>
@@ -308,10 +309,15 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 )}
               </h1>
 
-              {/* Subline */}
+              {/* Subline — verdict-aware */}
               <p className="text-lg md:text-xl text-muted-foreground mt-5 max-w-[460px] leading-relaxed">
-                The market moved {marketYoy > 0 ? '+' : ''}{marketYoy}% this year.
-                Your landlord is asking for {increasePct}%.
+                {isAboveMarket ? (
+                  <>The market moved {marketYoy > 0 ? '+' : ''}{marketYoy}% this year. Your landlord is asking for {increasePct}%.</>
+                ) : isFair ? (
+                  <>Your increase is consistent with local market trends. The market moved {marketYoy > 0 ? '+' : ''}{marketYoy}% this year.</>
+                ) : (
+                  <>Your landlord's ask is below the local trend. This is a competitive increase.</>
+                )}
               </p>
 
 
@@ -325,7 +331,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               >
                 {[
                   { label: 'You pay now', value: `$${fmt(formData.currentRent)}`, color: 'text-foreground' },
-                  { label: 'They want', value: `$${fmt(newRent)}`, color: 'text-destructive' },
+                  { label: 'They want', value: `$${fmt(newRent)}`, color: isAboveMarket ? 'text-destructive' : isBelowMarket ? 'text-verdict-good' : 'text-foreground' },
                   { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%`, color: 'text-foreground' },
                   { label: 'Your increase', value: `${increasePct}%`, color: verdictColor },
                 ].map((stat) => (
@@ -352,8 +358,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 <DataConfidenceBadge level={confidence.level} note={confidence.note} />
               </motion.div>
 
-              {/* Unified Share Hub */}
-              {hasIncrease && (
+              {/* Unified Share Hub — only show for above-market verdicts */}
+              {hasIncrease && isAboveMarket && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -400,21 +406,74 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     increasePct={increasePct}
                     marketYoy={marketYoy}
                     headline={
-                      isAboveMarket && calc
-                        ? isPath1
-                          ? `My landlord is asking for $${fmt(newRent - calc.counterHigh)}/mo more than the market supports.`
-                          : `Rents near me moved ${marketYoy}% but my landlord wants ${increasePct}%.`
-                        : isFair
-                        ? `My rent increase is right at market.`
-                        : increasePct > 0 && increasePct <= marketYoy
-                        ? `My rent increase is in line with the market.`
-                        : `My rent increase is below market.`
+                      isPath1
+                        ? `My landlord is asking for $${fmt(newRent - (calc?.counterHigh ?? 0))}/mo more than the market supports.`
+                        : `Rents near me moved ${marketYoy}% but my landlord wants ${increasePct}%.`
                     }
                     stats={[
                       { label: 'You pay now', value: `$${fmt(formData.currentRent)}` },
                       { label: 'They want', value: `$${fmt(newRent)}`, color: 'hsl(0, 72%, 51%)' },
                       { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
-                      { label: 'Your increase', value: `${increasePct}%`, color: isAboveMarket ? 'hsl(0, 72%, 51%)' : isFair ? 'hsl(45, 80%, 45%)' : 'hsl(151, 50%, 38%)' },
+                      { label: 'Your increase', value: `${increasePct}%`, color: 'hsl(0, 72%, 51%)' },
+                    ]}
+                  />
+                </motion.div>
+              )}
+
+              {/* For fair/below verdicts — simple "View full analysis" link instead of negotiation-focused share */}
+              {hasIncrease && isFair && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.35, duration: 0.4 }}
+                  className="mt-5 flex justify-center"
+                >
+                  <ShareHub
+                    reportPayload={{
+                      zip: rentData.zip,
+                      address: formData.fullAddress || null,
+                      bedrooms: formData.bedrooms === 'studio' ? 0 : formData.bedrooms === 'oneBr' ? 1 : formData.bedrooms === 'twoBr' ? 2 : formData.bedrooms === 'threeBr' ? 3 : 4,
+                      currentRent: formData.currentRent,
+                      proposedIncrease: increasePct,
+                      increaseType: 'percent',
+                      reportData: {
+                        city: rentData.city,
+                        state: rentData.state,
+                        newRent,
+                        increasePct,
+                        marketYoy,
+                        fmr: rentData.fmr,
+                        verdict: calc?.verdict || '',
+                        counterLow: calc?.counterLow ?? null,
+                        counterHigh: calc?.counterHigh ?? null,
+                        censusMedianRent: rentData.censusMedianRent,
+                        medianIncome: rentData.medianIncome,
+                        bedroomLabel: bedroomLabels[formData.bedrooms],
+                        zillowMonthly: rentData.zillowMonthly,
+                        zillowDirection: rentData.zillowDirection,
+                        yoySourceLabel: rentData.yoySourceLabel,
+                        typicalRangeLow: calc?.typicalRangeLow ?? null,
+                        typicalRangeHigh: calc?.typicalRangeHigh ?? null,
+                        rentStabilized: null,
+                        rentControlNote: null,
+                        comparables: rentcast.data?.comparables ?? null,
+                        medianCompRent,
+                      },
+                    }}
+                    onLinkGenerated={setReportUrl}
+                    zipCode={rentData.zip}
+                    city={rentData.city}
+                    state={rentData.state}
+                    bedroomNum={bedroomNum}
+                    increasePct={increasePct}
+                    marketYoy={marketYoy}
+                    verdict="fair"
+                    headline={`My rent increase is right at market.`}
+                    stats={[
+                      { label: 'You pay now', value: `$${fmt(formData.currentRent)}` },
+                      { label: 'They want', value: `$${fmt(newRent)}` },
+                      { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
+                      { label: 'Your increase', value: `${increasePct}%`, color: 'hsl(45, 80%, 45%)' },
                     ]}
                   />
                 </motion.div>
@@ -663,8 +722,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           </motion.section>
         )}
 
-        {/* ━━━ NEGOTIATION LETTER ━━━ */}
-        {hasIncrease && calc && (
+        {/* ━━━ NEGOTIATION LETTER — only for above-market verdicts ━━━ */}
+        {hasIncrease && calc && isAboveMarket && (
           <motion.section id="section-letter" {...fade(0.21)} className="pt-8 pb-8">
             <NegotiationLetter
               currentRent={formData.currentRent}
