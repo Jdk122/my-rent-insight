@@ -9,8 +9,8 @@ const SEOFooter = ({ onContactClick }: SEOFooterProps) => (
     <div className="max-w-4xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
       {/* Brand */}
       <div className="flex items-center gap-6">
-        <Link to="/" className="font-display text-lg font-bold text-primary tracking-tight shrink-0" style={{ letterSpacing: '-0.02em' }}>
-          Renewal<span className="font-normal text-accent">Reply</span>
+        <Link to="/" className="shrink-0">
+          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6" />
         </Link>
         <nav className="flex items-center gap-4 text-[13px] text-muted-foreground flex-wrap">
           <Link to="/" className="hover:text-foreground transition-colors">Check Rent</Link>
