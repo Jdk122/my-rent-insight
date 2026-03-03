@@ -12,9 +12,7 @@ const Outcome = () => {
   useEffect(() => {
     if (!leadId || !outcome) { setError(true); return; }
     supabase
-      .from('leads')
-      .update({ outcome } as any)
-      .eq('id', leadId)
+      .rpc('update_lead_outcome', { p_lead_id: leadId, p_outcome: outcome } as any)
       .then(({ error: err }) => {
         if (err) setError(true);
         else setSaved(true);
@@ -30,9 +28,9 @@ const Outcome = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6 text-center">
       <SEO title="Your Outcome — RenewalReply" noindex />
-      <span className="font-display text-xl font-bold text-primary tracking-tight mb-8" style={{ letterSpacing: '-0.02em' }}>
-        Renewal<span className="font-normal text-accent">Reply</span>
-      </span>
+      <Link to="/" className="mb-8">
+        <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-7" />
+      </Link>
 
       {error ? (
         <p className="text-muted-foreground">Something went wrong. Please try again.</p>
