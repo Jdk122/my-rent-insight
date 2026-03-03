@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, ExternalLink } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { RentcastComparable } from '@/hooks/useRentcast';
 import { BedroomType } from '@/data/rentData';
 
@@ -206,7 +206,7 @@ export const CompsList = ({
   );
 };
 
-/* ━━━ Section B: Should You Move? (savings + negotiate CTA) ━━━ */
+/* ━━━ Section B: Should You Move? (moving cost estimate only) ━━━ */
 const ShouldYouMove = ({
   proposedRent,
   currentRent,
@@ -221,102 +221,53 @@ const ShouldYouMove = ({
   isAboveMarket,
   onScrollToLetter,
 }: ShouldYouMoveProps) => {
-  const isAboveMedian = proposedRent > medianCompRent;
-  const isAtMedian = proposedRent === medianCompRent;
-  const difference = Math.abs(proposedRent - medianCompRent);
-
   const hasBrokerFee = brokerFeeStates.includes(state);
-  const defaultMovingCost = Math.round(
-    medianCompRent + (hasBrokerFee ? medianCompRent : 0) + 2000
-  );
-  const [movingCostOverride, setMovingCostOverride] = useState<number | null>(null);
-  const estimatedMovingCost = movingCostOverride ?? defaultMovingCost;
-
-  const negotiationSavings = counterOffer ? proposedRent - counterOffer : null;
-
-  if (isAboveMedian) {
-    return (
-      <div>
-        {/* Savings */}
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-              Estimated savings vs. area median
-            </p>
-            <p className="font-display text-[24px] tracking-tight text-foreground font-semibold" style={{ letterSpacing: '-0.02em' }}>
-              ${fmt(difference)}/mo
-            </p>
-          </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-              Estimated annual savings vs. area median
-            </p>
-            <p className="font-display text-[24px] tracking-tight text-foreground font-semibold" style={{ letterSpacing: '-0.02em' }}>
-              ${fmt(difference * 12)}/yr
-            </p>
-          </div>
-        </div>
-
-        {/* Secondary CTA: negotiate */}
-        {isAboveMarket && negotiationSavings && negotiationSavings > 0 && counterOffer && (
-          <div className="mt-6 p-5 rounded-lg bg-verdict-good/10 border border-verdict-good/20">
-            <p className="text-xs font-semibold uppercase tracking-wider text-verdict-good mb-2">
-              Or negotiate your current rent first
-            </p>
-            <p className="text-base font-medium text-foreground leading-relaxed">
-              If you negotiate to the fair counter-offer (
-              <span className="font-bold text-verdict-good text-lg">${fmt(counterOffer)}/mo</span>
-              ), you save{' '}
-              <span className="font-bold text-verdict-good text-lg">${fmt(negotiationSavings)}/mo</span>
-              {' '}starting immediately — with zero upfront costs.
-            </p>
-            <button
-              onClick={onScrollToLetter}
-              className="text-sm font-semibold text-primary hover:underline mt-3"
-            >
-              Generate negotiation letter →
-            </button>
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  // At or below median — show cost of moving
-  const monthlySavingsIfMove = isAboveMedian ? difference : 0;
-  const breakEvenMonths = monthlySavingsIfMove > 0 ? Math.ceil(estimatedMovingCost / monthlySavingsIfMove) : null;
+  const movingExpenses = 2000;
+  const firstMonthRent = medianCompRent;
+  const brokerFee = hasBrokerFee ? medianCompRent : 0;
+  const securityDeposit = medianCompRent;
+  const totalMovingCost = firstMonthRent + brokerFee + securityDeposit + movingExpenses;
 
   return (
     <div>
-      <div className="px-4 py-3 rounded-md border text-sm font-medium text-foreground bg-verdict-good/10 border-verdict-good/20">
-        Your rent is competitive — moving would likely cost more.
+      <div className="rounded-xl border border-border bg-card p-5 space-y-0">
+        <div className="context-row context-row-even">
+          <span className="context-label">First month's rent</span>
+          <span className="context-value">${fmt(firstMonthRent)}</span>
+        </div>
+        <div className="context-row context-row-odd">
+          <span className="context-label">Security deposit</span>
+          <span className="context-value">${fmt(securityDeposit)}</span>
+        </div>
+        {hasBrokerFee && (
+          <div className="context-row context-row-even">
+            <div>
+              <span className="context-label">Broker fee</span>
+              <p className="text-[11px] text-muted-foreground mt-0.5">Common in {state}</p>
+            </div>
+            <span className="context-value">${fmt(brokerFee)}</span>
+          </div>
+        )}
+        <div className={`context-row ${hasBrokerFee ? 'context-row-odd' : 'context-row-even'}`}>
+          <div>
+            <span className="context-label">Moving expenses</span>
+            <p className="text-[11px] text-muted-foreground mt-0.5">Movers, supplies, utility setup</p>
+          </div>
+          <span className="context-value">${fmt(movingExpenses)}</span>
+        </div>
+        <div className="context-row border-t-2 border-border pt-3">
+          <span className="context-label font-medium text-foreground">
+            Estimated total cost to move
+          </span>
+          <span className="context-value font-bold text-lg">
+            ${fmt(totalMovingCost)}
+          </span>
+        </div>
       </div>
 
-      <div className="mt-6">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-          Estimated cost to move
-        </p>
-        <div className="flex items-baseline gap-2">
-          <span className="text-muted-foreground text-lg">$</span>
-          <input
-            type="text"
-            value={fmt(estimatedMovingCost)}
-            onChange={(e) => {
-              const raw = e.target.value.replace(/[^0-9]/g, '');
-              if (raw === '') { setMovingCostOverride(null); return; }
-              setMovingCostOverride(Number(raw));
-            }}
-            className="font-display text-[24px] tracking-tight text-foreground font-semibold bg-transparent border-b border-dashed border-muted-foreground/30 focus:border-primary focus:outline-none w-[120px]"
-            style={{ letterSpacing: '-0.02em' }}
-          />
-        </div>
-        <p className="text-[12px] text-muted-foreground mt-1">
-          First month's rent + moving expenses (~$2,000){hasBrokerFee ? ` + broker fee (common in ${state})` : ''}
-        </p>
-        <p className="text-[11px] text-muted-foreground/60 mt-0.5">
-          Adjust this based on your situation.
-        </p>
-      </div>
+      <p className="text-[11px] text-muted-foreground/60 mt-3">
+        Based on the area median rent of ${fmt(medianCompRent)}/mo for similar units. Your actual costs may vary.
+      </p>
     </div>
   );
 };
