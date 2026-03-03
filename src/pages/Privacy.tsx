@@ -12,9 +12,12 @@ const Privacy = () => {
       description="How RenewalReply collects, uses, and protects your data. Read our privacy policy."
       canonical="/privacy"
     />
-    <nav className="flex items-center justify-between px-6 py-5 border-b border-border">
-      <Link to="/" className="font-display text-xl font-bold text-primary tracking-tight hover:scale-105 transition-transform duration-200" style={{ letterSpacing: '-0.02em' }}>
-        Renewal<span className="font-normal text-accent">Reply</span>
+    <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+      <Link to="/">
+        <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-7" />
+      </Link>
+      <Link to="/" className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
+        Check your rent →
       </Link>
     </nav>
 

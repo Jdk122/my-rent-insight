@@ -370,6 +370,10 @@ export type Database = {
     }
     Functions: {
       get_analyses_count: { Args: never; Returns: number }
+      update_lead_outcome: {
+        Args: { p_lead_id: string; p_outcome: string }
+        Returns: undefined
+      }
       upsert_lead: {
         Args: {
           p_address?: string

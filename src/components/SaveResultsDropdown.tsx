@@ -76,8 +76,9 @@ const SaveResultsDropdown = ({ prefilledEmail, onEmailCaptured, leadContext }: S
         p_utm_medium: utm.utm_medium || null,
         p_utm_campaign: utm.utm_campaign || null,
       } as any);
-    } catch {
-      // Don't block UX
+    } catch (err) {
+      console.error('Lead save failed:', err);
+      toast.error('Something went wrong. Please try again.');
     }
 
     onEmailCaptured?.(email);

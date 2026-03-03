@@ -94,8 +94,9 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
         p_utm_medium: utm.utm_medium || null,
         p_utm_campaign: utm.utm_campaign || null,
       } as any);
-    } catch {
-      // Don't block UX on storage failure
+    } catch (err) {
+      console.error('Lead save failed:', err);
+      toast.error('Something went wrong saving your info. Your reminder may not be set.');
     }
 
     onEmailCaptured?.(email);
