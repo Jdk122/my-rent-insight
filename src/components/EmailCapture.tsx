@@ -100,7 +100,6 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
     }
 
     onEmailCaptured?.(email);
-    trackEvent('email_captured', { verdict: verdict || 'unknown', source: captureSource });
     trackEvent('email_submitted', { verdict: verdict || 'unknown', zip_code: leadContext?.zip || '', source: captureSource });
     trackAdsConversion();
     if (captureSource === 'lease_reminder') {
