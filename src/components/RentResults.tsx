@@ -669,7 +669,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         {!isAboveMarket && hasIncrease && (
           <>
             {/* Reassurance message */}
-            <motion.section {...fade(0.19)} className="pt-8 pb-4">
+            <motion.section {...fade(0.19)} className="pt-4 pb-4">
               <div className="px-5 py-5 rounded-xl border border-verdict-good/20 bg-verdict-good/5 text-center">
                 <p className="text-base font-medium text-foreground leading-relaxed">
                   {isBelowMarket
