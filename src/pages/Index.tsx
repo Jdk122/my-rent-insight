@@ -108,7 +108,7 @@ const Index = () => {
     <div className="min-h-screen bg-background flex flex-col overflow-x-hidden" ref={topRef}>
       <SEO
         title="Is Your Rent Increase Fair? Free Rent Increase Calculator | RenewalReply"
-        description="Check if your rent increase is fair in 10 seconds. Compare your landlord's proposed increase to HUD fair market rent data for 38,000+ zip codes. Free negotiation letter included."
+        description="Check if your rent increase is fair in 10 seconds. Compare your landlord's proposed increase to HUD fair market rent data for 51,000+ zip codes. Free negotiation letter included."
         canonical="/"
         jsonLd={[
           {
@@ -116,7 +116,7 @@ const Index = () => {
             "@type": "WebApplication",
             "name": "RenewalReply Rent Increase Calculator",
             "url": "https://www.renewalreply.com",
-            "description": "Free tool to check if your rent increase is fair using HUD, Census, and Zillow data for 38,000+ US zip codes.",
+            "description": "Free tool to check if your rent increase is fair using HUD, Census, and Zillow data for 51,000+ US zip codes.",
             "applicationCategory": "FinanceApplication",
             "operatingSystem": "Web",
             "browserRequirements": "Requires JavaScript",
@@ -124,7 +124,7 @@ const Index = () => {
             "featureList": [
               "Compare rent increases to HUD Fair Market Rent",
               "Generate free negotiation letter",
-              "Coverage for 38,000+ US zip codes",
+              "Coverage for 51,000+ US zip codes",
               "Uses HUD SAFMR, Zillow ZORI, and Census data"
             ],
             "author": { "@type": "Organization", "name": "RenewalReply" }
@@ -162,7 +162,7 @@ const Index = () => {
                 "name": "How many zip codes does RenewalReply cover?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "RenewalReply covers over 38,000 US zip codes using HUD Fair Market Rent data, making it one of the most comprehensive rent fairness tools available."
+                  "text": "RenewalReply covers over 51,000 US zip codes using HUD Fair Market Rent data, making it one of the most comprehensive rent fairness tools available."
                 }
               }
             ]
@@ -215,7 +215,7 @@ const Index = () => {
             Is your rent increase <span className="text-primary">fair?</span>
           </h1>
           <p className="mt-6 text-lg md:text-xl text-foreground/50 max-w-[540px] leading-relaxed font-normal tracking-tight">
-            See real nearby listings, calculate your savings if you move, and get a negotiation letter if you stay<span className="text-primary font-medium"> — instantly</span>.
+            See what apartments near you are actually renting for, calculate your savings if you move, and get a negotiation letter if you stay<span className="text-primary font-medium"> — instantly</span>.
           </p>
           <section className="mt-10" aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} />

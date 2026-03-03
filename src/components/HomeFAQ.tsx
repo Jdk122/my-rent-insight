@@ -8,7 +8,7 @@ import {
 const faqs = [
   {
     q: 'How do I know if my rent increase is fair?',
-    a: 'Enter your address, current rent, and proposed increase into our calculator. We compare your increase against HUD Fair Market Rent data, Zillow rent trends, and Census income data for your specific zip code. If your increase significantly exceeds local benchmarks, we\u2019ll flag it and provide a negotiation letter.',
+    a: 'Enter your address, current rent, and proposed increase. We compare your increase against real nearby rental listings with actual prices, HUD Fair Market Rent data, Zillow rent trends, and Census income data for your specific zip code. You\u2019ll see exactly what comparable units near you are renting for right now, so you can judge whether your increase is in line with the market. If it\u2019s not, we generate a free negotiation letter you can send to your landlord.',
   },
   {
     q: 'What is Fair Market Rent (FMR)?',
