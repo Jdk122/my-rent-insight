@@ -16,6 +16,8 @@ import { useRentcast } from '@/hooks/useRentcast';
 import { supabase } from '@/integrations/supabase/client';
 import SectionNav from './SectionNav';
 import { trackEvent } from '@/lib/analytics';
+import DataConfidenceBadge from './DataConfidenceBadge';
+import { assessConfidence, detectOutliers, checkCrossSourceConsistency, getCompRadius } from '@/lib/dataQuality';
 
 interface RentResultsProps {
   formData: RentFormData;
@@ -107,23 +109,41 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const rentcast = useRentcast(rentData.zip, formData.bedrooms, formData.fullAddress);
   const hasRentcastComps = rentcast.data && rentcast.data.comparables.length > 0;
 
+  // ━━━ Outlier detection ━━━
+  const outlierResult = useMemo(() => {
+    if (!rentcast.data?.comparables) return null;
+    return detectOutliers(rentcast.data.comparables);
+  }, [rentcast.data]);
+
   const medianCompRent = useMemo<number | null>(() => {
-    if (rentcast.data?.comparables && rentcast.data.comparables.length >= 3) {
-      const rents = rentcast.data.comparables
-        .map(c => c.rent)
-        .filter((r): r is number => r !== null && r > 0)
-        .sort((a, b) => a - b);
-      if (rents.length >= 2) {
-        const mid = Math.floor(rents.length / 2);
-        return rents.length % 2 === 0 ? Math.round((rents[mid - 1] + rents[mid]) / 2) : rents[mid];
-      }
+    if (outlierResult && outlierResult.filtered.length >= 2) {
+      return outlierResult.median;
     }
     if (rentcast.data?.rentEstimate) return rentcast.data.rentEstimate;
     return null;
+  }, [outlierResult, rentcast.data]);
+
+  const hasEnoughComps = outlierResult ? outlierResult.filtered.length >= 3 : false;
+  const isHighRent = formData.currentRent > rentData.fmr * 1.5;
+
+  // ━━━ Data confidence ━━━
+  const compRadius = useMemo(() => {
+    if (!rentcast.data?.comparables) return { maxDistance: null, label: '' };
+    return getCompRadius(rentcast.data.comparables);
   }, [rentcast.data]);
 
-  const hasEnoughComps = rentcast.data?.comparables && rentcast.data.comparables.length >= 3;
-  const isHighRent = formData.currentRent > rentData.fmr * 1.5;
+  const confidence = useMemo(() => assessConfidence({
+    hasHud: true, // always true if we got results
+    compCount: outlierResult?.filtered.length ?? 0,
+    maxCompDistance: compRadius.maxDistance,
+    hasZillow: rentData.zillowMonthly !== null,
+    hasCensus: rentData.censusMedianRent !== null,
+  }), [outlierResult, compRadius, rentData]);
+
+  // ━━━ Cross-source consistency ━━━
+  const consistencyNote = useMemo(() => {
+    return checkCrossSourceConsistency(rentData.fmr, medianCompRent);
+  }, [rentData.fmr, medianCompRent]);
 
   const verdictColor = isFair ? 'text-verdict-fair' : isAboveMarket ? 'text-verdict-overpaying' : 'text-verdict-good';
   const verdictLabel = !hasIncrease
@@ -324,6 +344,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 ))}
               </motion.div>
 
+              {/* Data Confidence Badge */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.25, duration: 0.4 }}
+                className="mt-4"
+              >
+                <DataConfidenceBadge level={confidence.level} note={confidence.note} />
+              </motion.div>
+
               {/* Share — prominent, right after stats */}
               <motion.div
                 initial={{ opacity: 0 }}
@@ -511,6 +541,22 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 )}
               </motion.div>
 
+              {/* Data Source Timestamps */}
+              <motion.div {...fade(0.12)} className="mt-6 px-4 py-3 rounded-md bg-muted/30 border border-border/50">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">Data Sources</p>
+                <div className="space-y-1 text-[11px] text-muted-foreground/70">
+                  <p>HUD SAFMR FY2026 (Oct 2025)</p>
+                  {rentData.zillowMonthly !== null && (
+                    <p>Zillow ZORI (latest available, updated monthly)</p>
+                  )}
+                  {rentData.censusMedianRent !== null && (
+                    <p>Census ACS 2023 (released Sep 2024)</p>
+                  )}
+                  {hasEnoughComps && (
+                    <p>Rentcast listings (real-time, cached up to 7 days)</p>
+                  )}
+                </div>
+              </motion.div>
 
             </div>
           </section>
@@ -519,12 +565,25 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         {/* ━━━ COMPARABLE LISTINGS ━━━ */}
         {hasIncrease && medianCompRent && hasEnoughComps && (
           <motion.section id="section-comps" {...fade(0.15)} className="py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>
-            <h2 className="results-section-header mb-8">
+            <h2 className="results-section-header mb-2">
               How Your Rent Compares to Nearby Units
             </h2>
+            {compRadius.label && (
+              <p className="text-[12px] text-muted-foreground text-center mb-6">
+                Showing comparable {brLabel} rentals {compRadius.label}
+              </p>
+            )}
+
+            {/* Cross-source consistency note */}
+            {consistencyNote && (
+              <div className="px-4 py-3 rounded-md border border-border bg-muted/50 text-[12px] text-muted-foreground leading-relaxed mb-6">
+                {consistencyNote}
+              </div>
+            )}
+
             <CompsList
               proposedRent={newRent}
-              comparables={rentcast.data!.comparables}
+              comparables={outlierResult?.filtered ?? rentcast.data!.comparables}
               medianCompRent={medianCompRent}
               brLabel={brLabel}
               city={city}
@@ -532,6 +591,25 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               zip={rentData.zip}
               bedrooms={formData.bedrooms}
             />
+
+            {/* Outlier notice */}
+            {outlierResult && outlierResult.outliers.length > 0 && (
+              <div className="mt-4 space-y-1">
+                {outlierResult.outliers.map((comp, i) => (
+                  <div key={`outlier-${i}`} className="flex items-start justify-between gap-4 px-4 py-2 rounded-md opacity-50">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-muted-foreground truncate">{comp.formattedAddress}</p>
+                      <p className="text-[10px] text-muted-foreground/60">
+                        Excluded from analysis — {comp.rent !== null && medianCompRent && comp.rent > medianCompRent ? 'significantly above' : 'significantly below'} local median
+                      </p>
+                    </div>
+                    {comp.rent !== null && (
+                      <span className="text-xs text-muted-foreground line-through">${fmt(comp.rent)}/mo</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </motion.section>
         )}
         {!hasEnoughComps && !rentcast.loading && (
@@ -547,7 +625,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             <ShouldYouMove
               proposedRent={newRent}
               currentRent={formData.currentRent}
-              comparables={rentcast.data!.comparables}
+              comparables={outlierResult?.filtered ?? rentcast.data!.comparables}
               medianCompRent={medianCompRent}
               brLabel={brLabel}
               city={city}
