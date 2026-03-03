@@ -291,37 +291,37 @@ const ShareHub = ({
             <div className="grid grid-cols-3 gap-2.5 mb-3">
               <button
                 onClick={handleSMS}
-                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 transition-colors"
+                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all shadow-xs"
               >
                 <MessageCircle size={16} /> Text
               </button>
               <button
                 onClick={handleWhatsApp}
-                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 transition-colors"
+                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all shadow-xs"
               >
                 <MessageCircle size={16} /> WhatsApp
               </button>
               <button
                 onClick={handleEmail}
-                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 transition-colors"
+                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all shadow-xs"
               >
                 <Mail size={16} /> Email
               </button>
               <button
                 onClick={handleTwitter}
-                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 transition-colors"
+                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all shadow-xs"
               >
                 <Twitter size={16} /> Twitter
               </button>
               <button
                 onClick={handleFacebook}
-                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 transition-colors"
+                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all shadow-xs"
               >
                 <Facebook size={16} /> Facebook
               </button>
               <button
                 onClick={handleNeighborCopy}
-                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 transition-colors"
+                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all shadow-xs"
               >
                 {neighborCopied ? <><Check size={16} /> Copied!</> : <><Copy size={16} /> Copy</>}
               </button>
