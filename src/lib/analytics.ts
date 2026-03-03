@@ -28,6 +28,9 @@ export type EventName =
 
 export function trackEvent(name: string, params?: Record<string, string | number | boolean | null | undefined>) {
   try {
+    if (import.meta.env.DEV) {
+      console.log(`[analytics] ${name}`, params ?? '');
+    }
     window.gtag?.('event', name, params);
   } catch {
     // silent

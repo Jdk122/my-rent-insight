@@ -99,8 +99,6 @@ const NegotiationLetter = ({
 
   return (
     <div>
-      <h2 className="section-title">Your Negotiation Letter</h2>
-
       <div className="tone-toggle mt-4">
         <button onClick={() => { setTone('friendly'); trackEvent('letter_tone_toggled', { tone: 'friendly' }); }} className={`tone-option ${tone === 'friendly' ? 'active' : ''}`}>Friendly</button>
         <button onClick={() => { setTone('firm'); trackEvent('letter_tone_toggled', { tone: 'firm' }); }} className={`tone-option ${tone === 'firm' ? 'active' : ''}`}>Firm</button>
