@@ -700,8 +700,21 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </motion.section>
             )}
 
+            {/* Inline email capture */}
+            <section className="pb-6 pt-4">
+              <div className="rounded-xl px-8 py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
+                <EmailCapture
+                  city={city}
+                  captureSource="lease_reminder"
+                  prefilledEmail={capturedEmail}
+                  onEmailCaptured={setCapturedEmail}
+                  leadContext={leadContext}
+                />
+              </div>
+            </section>
+
             {/* Share — neighbors only, no landlord tab */}
-            <motion.section id="section-share" {...fade(0.23)} className="pt-6 pb-4">
+            <motion.section id="section-share" {...fade(0.23)} className="pt-4 pb-10">
               <h2 className="results-section-header mb-6">Share This Tool</h2>
               <div className="flex justify-center">
                 <ShareHub
@@ -728,19 +741,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 />
               </div>
             </motion.section>
-
-            {/* Inline email capture */}
-            <section className="pb-10 pt-4">
-              <div className="rounded-xl px-8 py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
-                <EmailCapture
-                  city={city}
-                  captureSource="lease_reminder"
-                  prefilledEmail={capturedEmail}
-                  onEmailCaptured={setCapturedEmail}
-                  leadContext={leadContext}
-                />
-              </div>
-            </section>
           </>
         )}
 
