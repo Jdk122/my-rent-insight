@@ -10,6 +10,7 @@ import NegotiationLetter from './NegotiationLetter';
 import RentControlCard from './RentControlCard';
 import { PropertyLookupResult, PropertyLookupError } from '@/hooks/usePropertyLookup';
 import TurnoverCostSection from './TurnoverCostSection';
+import { getRentControlByStateCity, getApplicableCap } from '@/data/rentControlData';
 import { useRentcast } from '@/hooks/useRentcast';
 import { supabase } from '@/integrations/supabase/client';
 import SectionNav from './SectionNav';
@@ -227,21 +228,36 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     letterGenerated: !!(hasIncrease && isAboveMarket && calc),
   }), [analysisId, formData, rentData, newRent, increasePct, marketYoy, calc, medianCompRent, hasIncrease, isAboveMarket]);
 
-  // Build section nav items based on available data
+  // Determine if Know Your Rights section is relevant (rent control jurisdiction)
+  const hasRentControl = useMemo(() => {
+    const result = getRentControlByStateCity(rentData.state, rentData.city);
+    return !!getApplicableCap(result);
+  }, [rentData.state, rentData.city]);
+
+  // Build section nav items based on verdict and available data
   const navSections = useMemo(() => {
     const sections = [{ id: 'section-verdict', label: 'Verdict' }];
     sections.push({ id: 'section-evidence', label: 'Evidence' });
     if (hasIncrease && medianCompRent && hasEnoughComps) {
       sections.push({ id: 'section-comps', label: 'Comps' });
     }
-    if (hasIncrease && calc && isAboveMarket) {
-      sections.push({ id: 'section-letter', label: 'Letter' });
+    if (hasRentControl) {
+      sections.push({ id: 'section-rights', label: 'Rights' });
     }
-    if (hasIncrease) {
-      sections.push({ id: 'section-share', label: isAboveMarket ? 'Send' : 'Share' });
+    if (isAboveMarket) {
+      // Above trend: Letter → Share
+      if (hasIncrease && calc) {
+        sections.push({ id: 'section-letter', label: 'Letter' });
+      }
+      sections.push({ id: 'section-share', label: 'Send' });
+    } else {
+      // Below/fair: Should You Move (with turnover costs merged)
+      if (hasIncrease && medianCompRent && hasEnoughComps) {
+        sections.push({ id: 'section-move', label: 'Move' });
+      }
     }
     return sections;
-  }, [hasIncrease, medianCompRent, hasEnoughComps, calc, isAboveMarket]);
+  }, [hasIncrease, medianCompRent, hasEnoughComps, calc, isAboveMarket, hasRentControl]);
 
   // Compute annual savings for turnover section
   const annualSavingsForTurnover = useMemo(() => {
@@ -547,30 +563,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           </motion.section>
         )}
 
-        {/* ━━━ Should You Move? ━━━ */}
-        {hasIncrease && medianCompRent && hasEnoughComps && (
-          <motion.section {...fade(0.17)} className="py-12">
-            <h2 className="results-section-header mb-8">Should You Move?</h2>
-            <ShouldYouMove
-              proposedRent={newRent}
-              currentRent={formData.currentRent}
-              comparables={outlierResult?.filtered ?? rentcast.data!.comparables}
-              medianCompRent={medianCompRent}
-              brLabel={brLabel}
-              city={city}
-              state={rentData.state}
-              zip={rentData.zip}
-              bedrooms={formData.bedrooms}
-              counterOffer={calc?.counterHigh ?? null}
-              isAboveMarket={isAboveMarket}
-              onScrollToLetter={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
-            />
-          </motion.section>
-        )}
-
-        {/* ━━━ Know Your Rights ━━━ */}
-        {(
-          <motion.section {...fade(0.19)} className="py-12">
+        {/* ━━━ Know Your Rights — only if rent control applies ━━━ */}
+        {hasRentControl && (
+          <motion.section id="section-rights" {...fade(0.17)} className="py-12">
             <div className="evidence-card">
               <RentControlCard
                 state={rentData.state}
@@ -583,106 +578,157 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           </motion.section>
         )}
 
-        {/* ━━━ The Cost of Turnover ━━━ */}
-        {hasIncrease && (
-          <motion.section {...fade(0.21)} className="pt-12 pb-8">
-            <TurnoverCostSection
-              currentRent={formData.currentRent}
-              bedrooms={bedroomNum}
-              bedroomLabel={bedroomLabels[formData.bedrooms]}
-              city={city}
-              state={rentData.state}
-              annualSavings={annualSavingsForTurnover}
-              proposedRentAboveMedian={proposedRentAboveMedian}
-              onScrollToLetter={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
-            />
-          </motion.section>
+        {/* ━━━ ABOVE MARKET PATH: Letter → Share → Email ━━━ */}
+        {isAboveMarket && (
+          <>
+            {/* Negotiation Letter */}
+            {hasIncrease && calc && (
+              <motion.section id="section-letter" {...fade(0.19)} className="pt-8 pb-8">
+                <NegotiationLetter
+                  currentRent={formData.currentRent}
+                  newRent={newRent}
+                  increasePct={increasePct}
+                  marketYoy={marketYoy}
+                  fmr={rentData.fmr}
+                  censusMedian={rentData.censusMedianRent}
+                  medianIncome={rentData.medianIncome}
+                  zip={rentData.zip}
+                  city={rentData.city}
+                  state={rentData.state}
+                  bedrooms={formData.bedrooms}
+                  increaseAmount={increaseAmount}
+                  counterLow={calc.counterLow}
+                  counterHigh={calc.counterHigh}
+                  counterLowPercent={calc.counterLowPercent}
+                  counterHighPercent={calc.counterHighPercent}
+                  analysisId={analysisId}
+                  prefilledEmail={capturedEmail}
+                  onEmailCaptured={setCapturedEmail}
+                  leadContext={leadContext}
+                  reportUrl={reportUrl}
+                  onGenerateReport={() => {
+                    const btn = document.querySelector('[data-share-report-btn]') as HTMLButtonElement;
+                    btn?.click();
+                  }}
+                />
+              </motion.section>
+            )}
+
+            {/* Share Hub */}
+            {hasIncrease && (
+              <motion.section id="section-share" {...fade(0.21)} className="pt-8 pb-4">
+                <h2 className="results-section-header mb-6">Share Your Analysis</h2>
+                <div className="flex justify-center">
+                  <ShareHub
+                    reportPayload={shareReportPayload}
+                    onLinkGenerated={setReportUrl}
+                    zipCode={rentData.zip}
+                    city={rentData.city}
+                    state={rentData.state}
+                    bedroomNum={bedroomNum}
+                    increasePct={increasePct}
+                    marketYoy={marketYoy}
+                    verdict="above"
+                    headline={
+                      isPath1
+                        ? `My landlord is asking for $${fmt(newRent - (calc?.counterHigh ?? 0))}/mo more than the market supports.`
+                        : `Rents near me moved ${marketYoy}% but my landlord wants ${increasePct}%.`
+                    }
+                    stats={[
+                      { label: 'You pay now', value: `$${fmt(formData.currentRent)}` },
+                      { label: 'They want', value: `$${fmt(newRent)}`, color: 'hsl(0, 72%, 51%)' },
+                      { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
+                      { label: 'Your increase', value: `${increasePct}%`, color: 'hsl(0, 72%, 51%)' },
+                    ]}
+                  />
+                </div>
+              </motion.section>
+            )}
+
+            {/* Inline email capture */}
+            <section className="pb-12 pt-4">
+              <div className="rounded-xl px-8 py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
+                <EmailCapture
+                  city={city}
+                  captureSource="letter_plus_reminder"
+                  prefilledEmail={capturedEmail}
+                  onEmailCaptured={setCapturedEmail}
+                  leadContext={leadContext}
+                  heading="Get this letter + a renewal reminder"
+                  subtext="We'll email you this letter and remind you 60 days before your lease is up."
+                />
+              </div>
+            </section>
+          </>
         )}
 
-        {/* ━━━ NEGOTIATION LETTER — only for above-market verdicts ━━━ */}
-        {hasIncrease && calc && isAboveMarket && (
-          <motion.section id="section-letter" {...fade(0.21)} className="pt-8 pb-8">
-            <NegotiationLetter
-              currentRent={formData.currentRent}
-              newRent={newRent}
-              increasePct={increasePct}
-              marketYoy={marketYoy}
-              fmr={rentData.fmr}
-              censusMedian={rentData.censusMedianRent}
-              medianIncome={rentData.medianIncome}
-              zip={rentData.zip}
-              city={rentData.city}
-              state={rentData.state}
-              bedrooms={formData.bedrooms}
-              increaseAmount={increaseAmount}
-              counterLow={calc.counterLow}
-              counterHigh={calc.counterHigh}
-              counterLowPercent={calc.counterLowPercent}
-              counterHighPercent={calc.counterHighPercent}
-              analysisId={analysisId}
-              prefilledEmail={capturedEmail}
-              onEmailCaptured={setCapturedEmail}
-              leadContext={leadContext}
-              reportUrl={reportUrl}
-              onGenerateReport={() => {
-                const btn = document.querySelector('[data-share-report-btn]') as HTMLButtonElement;
-                btn?.click();
-              }}
-            />
-          </motion.section>
+        {/* ━━━ BELOW / FAIR MARKET PATH: Move costs + Turnover → Email ━━━ */}
+        {!isAboveMarket && hasIncrease && (
+          <>
+            {/* Should You Move + Turnover Cost (consolidated) */}
+            {medianCompRent && hasEnoughComps && (
+              <motion.section id="section-move" {...fade(0.19)} className="py-12">
+                <h2 className="results-section-header mb-8">Estimated Cost to Move</h2>
+                <ShouldYouMove
+                  proposedRent={newRent}
+                  currentRent={formData.currentRent}
+                  comparables={outlierResult?.filtered ?? rentcast.data!.comparables}
+                  medianCompRent={medianCompRent}
+                  brLabel={brLabel}
+                  city={city}
+                  state={rentData.state}
+                  zip={rentData.zip}
+                  bedrooms={formData.bedrooms}
+                  counterOffer={calc?.counterHigh ?? null}
+                  isAboveMarket={false}
+                  onScrollToLetter={() => {}}
+                />
+
+                {/* Turnover cost insight (merged) */}
+                <div className="mt-8">
+                  <TurnoverCostSection
+                    currentRent={formData.currentRent}
+                    bedrooms={bedroomNum}
+                    bedroomLabel={bedroomLabels[formData.bedrooms]}
+                    city={city}
+                    state={rentData.state}
+                    annualSavings={annualSavingsForTurnover}
+                    proposedRentAboveMedian={proposedRentAboveMedian}
+                    onScrollToLetter={() => {}}
+                  />
+                </div>
+              </motion.section>
+            )}
+
+            {/* Inline email capture */}
+            <section className="pb-12 pt-4">
+              <div className="rounded-xl px-8 py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
+                <EmailCapture
+                  city={city}
+                  captureSource="lease_reminder"
+                  prefilledEmail={capturedEmail}
+                  onEmailCaptured={setCapturedEmail}
+                  leadContext={leadContext}
+                />
+              </div>
+            </section>
+          </>
         )}
 
-        {/* ━━━ SHARE & REPORT LINK — after letter, before email capture ━━━ */}
-        {hasIncrease && (
-          <motion.section id="section-share" {...fade(0.23)} className="pt-8 pb-8">
-            <h2 className="results-section-header mb-6">
-              {isAboveMarket ? 'Share Your Analysis' : 'Share Your Results'}
-            </h2>
-            <div className="flex justify-center">
-              <ShareHub
-                reportPayload={shareReportPayload}
-                onLinkGenerated={setReportUrl}
-                zipCode={rentData.zip}
-                city={rentData.city}
-                state={rentData.state}
-                bedroomNum={bedroomNum}
-                increasePct={increasePct}
-                marketYoy={marketYoy}
-                verdict={isAboveMarket ? 'above' : isFair ? 'fair' : 'below'}
-                headline={
-                  isAboveMarket
-                    ? isPath1
-                      ? `My landlord is asking for $${fmt(newRent - (calc?.counterHigh ?? 0))}/mo more than the market supports.`
-                      : `Rents near me moved ${marketYoy}% but my landlord wants ${increasePct}%.`
-                    : isFair
-                    ? `My rent increase is right at market.`
-                    : `My rent increase is below the area trend.`
-                }
-                stats={[
-                  { label: 'You pay now', value: `$${fmt(formData.currentRent)}` },
-                  { label: 'They want', value: `$${fmt(newRent)}`, color: isAboveMarket ? 'hsl(0, 72%, 51%)' : isBelowMarket ? 'hsl(151, 50%, 38%)' : undefined },
-                  { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
-                  { label: 'Your increase', value: `${increasePct}%`, color: isAboveMarket ? 'hsl(0, 72%, 51%)' : isFair ? 'hsl(45, 80%, 45%)' : 'hsl(151, 50%, 38%)' },
-                ]}
+        {/* ━━━ No increase path — just email capture ━━━ */}
+        {!hasIncrease && (
+          <section className="pb-12 pt-4">
+            <div className="rounded-xl px-8 py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
+              <EmailCapture
+                city={city}
+                captureSource="lease_reminder"
+                prefilledEmail={capturedEmail}
+                onEmailCaptured={setCapturedEmail}
+                leadContext={leadContext}
               />
             </div>
-          </motion.section>
+          </section>
         )}
-
-        {/* ━━━ Consolidated email capture ━━━ */}
-        <section id="section-email-capture" className="pt-8 pb-12">
-          <div className="rounded-xl px-8 py-10 text-center" style={{ background: 'hsl(var(--secondary))' }}>
-            <EmailCapture
-              city={city}
-              captureSource={hasIncrease && isAboveMarket ? 'letter_plus_reminder' : 'lease_reminder'}
-              prefilledEmail={capturedEmail}
-              onEmailCaptured={setCapturedEmail}
-              leadContext={leadContext}
-              heading={hasIncrease && isAboveMarket ? 'Get this letter + a renewal reminder' : undefined}
-              subtext={hasIncrease && isAboveMarket ? `We'll email you this letter and remind you 60 days before your lease is up.` : undefined}
-            />
-          </div>
-        </section>
 
         </div>
       </div>

@@ -206,7 +206,7 @@ export const CompsList = ({
   );
 };
 
-/* ━━━ Section B: Should You Move? (moving cost estimate only) ━━━ */
+/* ━━━ Section B: Estimated Cost to Move (broker fee + moving expenses only) ━━━ */
 const ShouldYouMove = ({
   proposedRent,
   currentRent,
@@ -223,27 +223,19 @@ const ShouldYouMove = ({
 }: ShouldYouMoveProps) => {
   const hasBrokerFee = brokerFeeStates.includes(state);
   const movingExpenses = 2000;
-  const firstMonthRent = medianCompRent;
   const brokerFee = hasBrokerFee ? medianCompRent : 0;
-  const securityDeposit = medianCompRent;
-  const totalMovingCost = firstMonthRent + brokerFee + securityDeposit + movingExpenses;
+  const defaultTotal = brokerFee + movingExpenses;
+  const [costOverride, setCostOverride] = useState<number | null>(null);
+  const estimatedCost = costOverride ?? defaultTotal;
 
   return (
     <div>
       <div className="rounded-xl border border-border bg-card p-5 space-y-0">
-        <div className="context-row context-row-even">
-          <span className="context-label">First month's rent</span>
-          <span className="context-value">${fmt(firstMonthRent)}</span>
-        </div>
-        <div className="context-row context-row-odd">
-          <span className="context-label">Security deposit</span>
-          <span className="context-value">${fmt(securityDeposit)}</span>
-        </div>
         {hasBrokerFee && (
           <div className="context-row context-row-even">
             <div>
               <span className="context-label">Broker fee</span>
-              <p className="text-[11px] text-muted-foreground mt-0.5">Common in {state}</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">Common in {state} — typically 1 month's rent</p>
             </div>
             <span className="context-value">${fmt(brokerFee)}</span>
           </div>
@@ -257,16 +249,29 @@ const ShouldYouMove = ({
         </div>
         <div className="context-row border-t-2 border-border pt-3">
           <span className="context-label font-medium text-foreground">
-            Estimated total cost to move
+            Estimated cost to move
           </span>
-          <span className="context-value font-bold text-lg">
-            ${fmt(totalMovingCost)}
-          </span>
+          <div className="flex items-baseline gap-1">
+            <span className="text-muted-foreground">$</span>
+            <input
+              type="text"
+              value={fmt(estimatedCost)}
+              onChange={(e) => {
+                const raw = e.target.value.replace(/[^0-9]/g, '');
+                if (raw === '') { setCostOverride(null); return; }
+                setCostOverride(Number(raw));
+              }}
+              className="font-display text-lg tracking-tight text-foreground font-bold bg-transparent border-b border-dashed border-muted-foreground/30 focus:border-primary focus:outline-none w-[90px] text-right"
+              style={{ letterSpacing: '-0.02em' }}
+            />
+          </div>
         </div>
       </div>
 
       <p className="text-[11px] text-muted-foreground/60 mt-3">
-        Based on the area median rent of ${fmt(medianCompRent)}/mo for similar units. Your actual costs may vary.
+        {hasBrokerFee
+          ? `Broker fee (common in ${state}) + moving expenses (~$2,000). Adjust based on your situation.`
+          : `Moving expenses (~$2,000). Adjust based on your situation.`}
       </p>
     </div>
   );
