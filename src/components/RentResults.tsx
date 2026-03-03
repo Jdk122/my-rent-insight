@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { RentFormData } from './RentForm';
-import { RentLookupResult, bedroomLabels, calculateResults, getVerdict } from '@/data/rentData';
+import { RentLookupResult, bedroomLabels, calculateResults } from '@/data/rentData';
 import ShareHub from './ShareHub';
 import EmailCapture from './EmailCapture';
 import CompLinks from './CompLinks';
@@ -18,6 +18,8 @@ import SectionNav from './SectionNav';
 import { trackEvent } from '@/lib/analytics';
 import DataConfidenceBadge from './DataConfidenceBadge';
 import { assessConfidence, detectOutliers, checkCrossSourceConsistency, getCompRadius } from '@/lib/dataQuality';
+import { calculateFairnessScore, scoreToVerdict, FairnessScoreResult } from '@/lib/fairnessScore';
+import FairnessScoreGauge from './FairnessScoreGauge';
 
 interface RentResultsProps {
   formData: RentFormData;
@@ -136,30 +138,37 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     return checkCrossSourceConsistency(rentData.fmr, medianCompRent);
   }, [rentData.fmr, medianCompRent]);
 
-  // ━━━ 3-factor verdict (re-computed with comp data) ━━━
-  const refinedVerdict = useMemo(() => {
+  // ━━━ Fairness Score (replaces 3-factor verdict) ━━━
+  const fairnessScore = useMemo<FairnessScoreResult | null>(() => {
     if (!hasIncrease) return null;
-    return getVerdict(increasePct, marketYoy, {
+    return calculateFairnessScore({
+      increasePct,
+      marketYoY: marketYoy,
       proposedRent: newRent,
       compMedian: medianCompRent,
-      fmrUpperBound,
+      fmr: rentData.fmr,
+      medianIncome: rentData.medianIncome,
+      zillowMonthly: rentData.zillowMonthly,
     });
-  }, [hasIncrease, increasePct, marketYoy, newRent, medianCompRent, fmrUpperBound]);
+  }, [hasIncrease, increasePct, marketYoy, newRent, medianCompRent, rentData.fmr, rentData.medianIncome, rentData.zillowMonthly]);
 
-  const isAboveMarket = refinedVerdict === 'above';
-  const isFair = refinedVerdict === 'at-market';
-  const isBelowMarket = refinedVerdict === 'below';
+  const refinedVerdict = useMemo(() => {
+    if (!fairnessScore) return null;
+    return scoreToVerdict(fairnessScore.total);
+  }, [fairnessScore]);
+
+  const isAboveMarket = refinedVerdict === 'above'; // score 0-59
+  const isFair = refinedVerdict === 'at-market';    // score 60-79
+  const isBelowMarket = refinedVerdict === 'below';  // score 80-100
 
   // Nuanced message: increase exceeds trend but rent is still competitive
   const isNuancedAtMarket = isFair && increasePct - marketYoy > 2 && medianCompRent != null && newRent <= medianCompRent;
   const proposedFarBelowMedian = medianCompRent != null && newRent < medianCompRent * 0.8;
 
-  const verdictColor = isFair ? 'text-verdict-fair' : isAboveMarket ? 'text-verdict-overpaying' : 'text-verdict-good';
+  const verdictColor = isAboveMarket ? 'text-destructive' : isFair ? 'text-verdict-fair' : 'text-verdict-good';
   const verdictLabel = !hasIncrease
     ? 'No Increase'
-    : isFair ? 'At Market'
-    : isAboveMarket ? 'Above Market'
-    : 'Below Market';
+    : fairnessScore ? fairnessScore.tierLabel : 'At Market';
 
   const city = rentData.city;
   const brLabel = bedroomLabels[formData.bedrooms].toLowerCase();
@@ -325,53 +334,54 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             {...fade(0)}
             className="min-h-[50vh] flex flex-col items-center justify-center text-center py-12"
           >
-          {hasIncrease ? (
+          {hasIncrease && fairnessScore ? (
             <>
-              {/* Dollar-first headline */}
-              <h1
-                className="font-display text-[clamp(1.75rem,5vw,2.5rem)] text-foreground leading-[1.15] tracking-tight max-w-[520px]"
-                style={{ letterSpacing: '-0.02em' }}
-              >
-                {isAboveMarket && calc ? (
-                  isPath1 ? (
-                    <>Your landlord is asking for{' '}
-                      <span className="text-destructive">${fmt(newRent - calc.counterHigh)}/mo more</span>{' '}
-                      than the market supports.</>
-                  ) : marketYoy < -0.5 ? (
-                    <>Rents near you dropped {Math.abs(marketYoy)}% — but your landlord wants{' '}
-                      <span className="text-destructive">{increasePct}% more.</span></>
-                  ) : marketYoy >= -0.5 && marketYoy <= 0.5 ? (
-                    <>Rents near you have been flat — but your landlord wants{' '}
-                      <span className="text-destructive">{increasePct}% more.</span></>
-                  ) : (
-                    <>Rents near you went up {marketYoy}% — but your landlord wants{' '}
-                      <span className="text-destructive">{increasePct}% more.</span></>
-                  )
-                ) : isFair ? (
-                  <>Your rent increase is <span className="text-verdict-fair">right at market.</span></>
-                ) : increasePct > 0 && increasePct <= marketYoy ? (
-                  <>Your increase of {increasePct}% is{' '}
-                    <span className="text-verdict-good">below the {marketYoy}% area trend.</span></>
-                ) : increasePct <= 0 ? (
-                  <>Your rent is staying the same or going down — that's{' '}
-                    <span className="text-verdict-good">below the {marketYoy}% area trend.</span></>
-                ) : (
-                  <>Your rent increase is <span className="text-verdict-good">below market.</span></>
-                )}
-              </h1>
-
-              {/* Subline — verdict-aware */}
-              <p className="text-lg md:text-xl text-muted-foreground mt-5 max-w-[460px] leading-relaxed">
-                {isAboveMarket ? (
-                  <>The market moved {marketYoy > 0 ? '+' : ''}{marketYoy}% this year. Your landlord is asking for {increasePct}%.</>
-                ) : isNuancedAtMarket && medianCompRent ? (
-                  <>Your increase rate of {increasePct}% is above the area trend of {marketYoy}%, but your proposed rent of ${fmt(newRent)} is still below the local median of ${fmt(medianCompRent)}. Your landlord's ask is within a reasonable range.</>
-                ) : isFair ? (
-                  <>Your increase is consistent with local market trends. The market moved {marketYoy > 0 ? '+' : ''}{marketYoy}% this year.</>
-                ) : (
-                  <>Your landlord's ask is below the local trend. This is a competitive increase.</>
-                )}
-              </p>
+              {/* Fairness Score Gauge + Dynamic Verdict */}
+              <FairnessScoreGauge
+                score={fairnessScore}
+                dynamicMessage={
+                  <div className="space-y-2">
+                    <h1
+                      className="font-display text-[clamp(1.5rem,4.5vw,2.2rem)] text-foreground leading-[1.15] tracking-tight"
+                      style={{ letterSpacing: '-0.02em' }}
+                    >
+                      {isAboveMarket && calc ? (
+                        marketYoy < -0.5 ? (
+                          <>Rents near you dropped {Math.abs(marketYoy)}% — but your landlord wants{' '}
+                            <span className="text-destructive">{increasePct}% more.</span></>
+                        ) : marketYoy >= -0.5 && marketYoy <= 0.5 ? (
+                          <>Rents near you have been flat — but your landlord wants{' '}
+                            <span className="text-destructive">{increasePct}% more.</span></>
+                        ) : (
+                          <>Rents near you went up {marketYoy}% — but your landlord wants{' '}
+                            <span className="text-destructive">{increasePct}% more.</span></>
+                        )
+                      ) : isFair ? (
+                        <>Your rent increase is <span className="text-verdict-fair">right at market.</span></>
+                      ) : increasePct > 0 && increasePct <= marketYoy ? (
+                        <>Your increase of {increasePct}% is{' '}
+                          <span className="text-verdict-good">below the {marketYoy}% area trend.</span></>
+                      ) : increasePct <= 0 ? (
+                        <>Your rent is staying the same or going down — that's{' '}
+                          <span className="text-verdict-good">below the {marketYoy}% area trend.</span></>
+                      ) : (
+                        <>Your rent increase is <span className="text-verdict-good">below market.</span></>
+                      )}
+                    </h1>
+                    <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                      {isAboveMarket ? (
+                        <>The market moved {marketYoy > 0 ? '+' : ''}{marketYoy}% this year. Your landlord is asking for {increasePct}%.</>
+                      ) : isNuancedAtMarket && medianCompRent ? (
+                        <>Your increase rate of {increasePct}% is above the area trend of {marketYoy}%, but your proposed rent of ${fmt(newRent)} is still below the local median of ${fmt(medianCompRent)}.</>
+                      ) : isFair ? (
+                        <>Your increase is consistent with local market trends. The market moved {marketYoy > 0 ? '+' : ''}{marketYoy}% this year.</>
+                      ) : (
+                        <>Your landlord's ask is below the local trend. This is a competitive increase.</>
+                      )}
+                    </p>
+                  </div>
+                }
+              />
 
               {/* ── Stat dashboard strip ── */}
               <motion.div

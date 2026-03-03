@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import RentForm, { RentFormData } from '@/components/RentForm';
 import RentResults from '@/components/RentResults';
-import { lookupRentData, loadFredTrend, RentLookupResult, calculateResults } from '@/data/rentData';
+import { lookupRentData, loadFredTrend, RentLookupResult } from '@/data/rentData';
+import { calculateFairnessScore } from '@/lib/fairnessScore';
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
 import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
@@ -44,8 +45,17 @@ const Index = () => {
         ? formData.rentIncrease
         : Math.round((formData.rentIncrease / formData.currentRent) * 1000) / 10
       : 0;
-    const calc = calculateResults(formData.currentRent, increasePct, formData.movingCosts, rentData);
-    return calc?.verdict === 'above';
+    const newRent = formData.currentRent + increaseAmount;
+    const score = calculateFairnessScore({
+      increasePct,
+      marketYoY: rentData.yoyChange,
+      proposedRent: newRent,
+      compMedian: null, // not available yet at nav level
+      fmr: rentData.fmr,
+      medianIncome: rentData.medianIncome,
+      zillowMonthly: rentData.zillowMonthly,
+    });
+    return score.total < 60;
   }, [results]);
 
   const hasIncrease = !!(results && results.formData.rentIncrease && results.formData.rentIncrease > 0);
