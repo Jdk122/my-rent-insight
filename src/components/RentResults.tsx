@@ -31,6 +31,7 @@ interface RentResultsProps {
   onScrollToTop: () => void;
   capturedEmail?: string;
   onEmailCaptured?: (email: string) => void;
+  onVerdictReady?: (isAboveMarket: boolean) => void;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -41,7 +42,7 @@ const fade = (delay: number) => ({
   transition: { duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] as const },
 });
 
-const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop, capturedEmail: externalEmail, onEmailCaptured: externalOnEmail }: RentResultsProps) => {
+const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop, capturedEmail: externalEmail, onEmailCaptured: externalOnEmail, onVerdictReady }: RentResultsProps) => {
   const [internalEmail, setInternalEmail] = useState('');
   const capturedEmail = externalEmail ?? internalEmail;
   const setCapturedEmail = (email: string) => {
@@ -161,6 +162,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const isAboveMarket = refinedVerdict === 'above'; // score 0-59
   const isFair = refinedVerdict === 'at-market';    // score 60-79
   const isBelowMarket = refinedVerdict === 'below';  // score 80-100
+
+  useEffect(() => {
+    if (refinedVerdict) onVerdictReady?.(isAboveMarket);
+  }, [refinedVerdict]);
 
   // Nuanced message: increase exceeds trend but rent is still competitive
   const isNuancedAtMarket = isFair && increasePct - marketYoy > 2 && medianCompRent != null && newRent <= medianCompRent;
