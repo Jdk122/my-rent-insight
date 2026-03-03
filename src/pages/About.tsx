@@ -26,16 +26,16 @@ const About = () => {
 
         <div className="space-y-6 text-[15px] leading-relaxed text-muted-foreground">
           <p>
-            RenewalReply was built by a team of real estate professionals who believe renters deserve access to the same market data that landlords and brokers use to set prices.
+            RenewalReply was built by a team of real estate professionals who saw the same problem over and over: renters had no easy way to check whether their rent increase was reasonable.
           </p>
           <p>
-            Every year, millions of renters receive lease renewal notices with no way to know whether the increase is fair, excessive, or actually below market. Most people either accept the number or move — both potentially costly mistakes.
+            Landlords and brokers have access to market data, comparable listings, and pricing tools. Renters get a letter in the mail and a deadline.
           </p>
           <p>
-            RenewalReply changes that. Our free tool combines federal housing data, real nearby rental listings, and local market trends to give you an objective, data-backed assessment of your rent increase in under 10 seconds.
+            We built RenewalReply to close that gap. Our tool pulls federal housing data (HUD Small Area Fair Market Rents), real nearby listings, and local rent trends to give you an objective, data-backed assessment of your rent increase — typically in under 10 seconds.
           </p>
           <p>
-            We don't charge for the analysis. We don't require an account. We built this because we think transparent rental data should be free and accessible to everyone.
+            It's completely free and no account is required. We believe every renter deserves access to the same market information that landlords use to set prices.
           </p>
         </div>
 
