@@ -666,7 +666,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         {!isAboveMarket && hasIncrease && (
           <>
             {/* Reassurance message */}
-            <motion.section {...fade(0.19)} className="py-12">
+            <motion.section {...fade(0.19)} className="pt-8 pb-4">
               <div className="px-5 py-5 rounded-xl border border-verdict-good/20 bg-verdict-good/5 text-center">
                 <p className="text-base font-medium text-foreground leading-relaxed">
                   {isBelowMarket
@@ -678,8 +678,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
             {/* Estimated cost to move (for context, no negotiation framing) */}
             {medianCompRent && hasEnoughComps && (
-              <motion.section id="section-move" {...fade(0.21)} className="py-12">
-                <h2 className="results-section-header mb-8">Estimated Cost to Move</h2>
+              <motion.section id="section-move" {...fade(0.21)} className="pt-6 pb-4">
+                <h2 className="results-section-header mb-6">Estimated Cost to Move</h2>
                 <ShouldYouMove
                   proposedRent={newRent}
                   currentRent={formData.currentRent}
@@ -698,7 +698,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             )}
 
             {/* Inline email capture */}
-            <section className="pb-12 pt-4">
+            <section className="pb-10 pt-4">
               <div className="rounded-xl px-8 py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
                 <EmailCapture
                   city={city}
