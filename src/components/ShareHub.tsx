@@ -53,7 +53,7 @@ const ShareHub = ({
   stats,
 }: ShareHubProps) => {
   const [activeTab, setActiveTab] = useState<Tab>(verdict === 'above' ? 'landlord' : 'neighbors');
-  const showLandlordTab = verdict === 'above' || verdict === 'fair';
+  const showLandlordTab = verdict === 'above';
 
   // ── Landlord: report link state ──
   const [reportUrl, setReportUrl] = useState<string | null>(null);
@@ -210,9 +210,9 @@ const ShareHub = ({
         </div>
       </div>
 
-      {/* Tab switcher */}
-      <div className="flex rounded-lg border border-border overflow-hidden">
-        {showLandlordTab && (
+      {/* Tab switcher — only show tabs when landlord tab is available */}
+      {showLandlordTab ? (
+        <div className="flex rounded-lg border border-border overflow-hidden">
           <button
             onClick={() => setActiveTab('landlord')}
             className={`flex-1 px-4 py-2.5 text-[13px] font-semibold transition-colors ${
@@ -222,30 +222,28 @@ const ShareHub = ({
             }`}
           >
             <Link2 size={14} className="inline mr-1.5 -mt-0.5" />
-            {verdict === 'fair' ? 'View full analysis' : 'Send to landlord'}
+            Send to landlord
           </button>
-        )}
-        <button
-          onClick={() => setActiveTab('neighbors')}
-          className={`flex-1 px-4 py-2.5 text-[13px] font-semibold transition-colors ${
-            activeTab === 'neighbors'
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-card text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          <Share2 size={14} className="inline mr-1.5 -mt-0.5" />
-          Share with neighbors
-        </button>
-      </div>
+          <button
+            onClick={() => setActiveTab('neighbors')}
+            className={`flex-1 px-4 py-2.5 text-[13px] font-semibold transition-colors ${
+              activeTab === 'neighbors'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-card text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Share2 size={14} className="inline mr-1.5 -mt-0.5" />
+            Share with neighbors
+          </button>
+        </div>
+      ) : null}
 
       {/* Tab content */}
       <div className="mt-3">
         {activeTab === 'landlord' && showLandlordTab ? (
           <div className="text-center">
             <p className="text-[13px] text-muted-foreground mb-3">
-              {verdict === 'fair'
-                ? 'Generate a link to your full market analysis — comps, trends, and benchmarks.'
-                : 'Generate a shareable link to your full analysis — comps, market data, and fair offer.'}
+              Generate a shareable link to your full analysis — comps, market data, and fair offer.
             </p>
             {reportUrl ? (
               <div className="flex items-center gap-2 justify-center">
@@ -268,14 +266,16 @@ const ShareHub = ({
                 className="inline-flex items-center gap-2 border border-border px-5 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:border-foreground hover:text-foreground transition-colors disabled:opacity-50"
               >
                 <Link2 size={16} />
-                {generating ? 'Generating…' : verdict === 'fair' ? 'Generate analysis link' : 'Generate report link'}
+                {generating ? 'Generating…' : 'Generate report link'}
               </button>
             )}
           </div>
         ) : (
           <div>
             <p className="text-[13px] text-muted-foreground mb-3 text-center">
-              Neighbors facing the same increase? Share so they can check theirs.
+              {verdict === 'above'
+                ? 'Neighbors facing the same increase? Share so they can check theirs.'
+                : 'Share this tool with your neighbors — they might not be as lucky.'}
             </p>
 
             {/* 2×2 channel grid */}
