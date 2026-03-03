@@ -92,6 +92,7 @@ const ShareHub = ({
       setReportUrl(url);
       onLinkGenerated?.(url);
       trackEvent('report_shared', { zip: reportPayload.zip });
+      trackEvent('report_link_generated', { zip_code: reportPayload.zip, verdict });
       await copyToClipboard(url);
     } catch (err) {
       console.error('Failed to create shared report:', err);
@@ -124,26 +125,32 @@ const ShareHub = ({
 
   const handleSMS = () => {
     trackEvent('building_share_clicked', { method: 'sms', zip: zipCode });
+    trackEvent('share_clicked', { share_method: 'sms' });
     window.open(`sms:?&body=${encodeURIComponent(smsBody)}`);
   };
   const handleWhatsApp = () => {
     trackEvent('building_share_clicked', { method: 'whatsapp', zip: zipCode });
+    trackEvent('share_clicked', { share_method: 'whatsapp' });
     window.open(`https://wa.me/?text=${encodeURIComponent(whatsappBody)}`);
   };
   const handleEmail = () => {
     trackEvent('building_share_clicked', { method: 'email', zip: zipCode });
+    trackEvent('share_clicked', { share_method: 'email' });
     window.open(`mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`);
   };
   const handleTwitter = () => {
     trackEvent('building_share_clicked', { method: 'twitter', zip: zipCode });
+    trackEvent('share_clicked', { share_method: 'twitter' });
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
   };
   const handleFacebook = () => {
     trackEvent('building_share_clicked', { method: 'facebook', zip: zipCode });
+    trackEvent('share_clicked', { share_method: 'facebook' });
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
   };
   const handleNeighborCopy = async () => {
     trackEvent('building_share_clicked', { method: 'copy', zip: zipCode });
+    trackEvent('share_clicked', { share_method: 'copy_link' });
     try {
       await navigator.clipboard.writeText(clipboardText);
       setNeighborCopied(true);

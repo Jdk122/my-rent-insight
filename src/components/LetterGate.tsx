@@ -83,6 +83,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail }: 
 
     onEmailCaptured?.(email.trim());
     trackEvent('email_captured', { verdict, source: 'letter_gate' });
+    trackEvent('email_submitted', { verdict, zip_code: leadContext?.zip || '', source: 'letter_gate' });
     sessionStorage.setItem(SESSION_KEY, 'true');
     setUnlocked(true);
     setLoading(false);

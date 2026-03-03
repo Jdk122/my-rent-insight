@@ -49,6 +49,7 @@ const ShareReportButton = ({ reportPayload, onLinkGenerated }: ShareReportButton
       setReportUrl(url);
       onLinkGenerated?.(url);
       trackEvent('report_shared', { zip: reportPayload.zip });
+      trackEvent('report_link_generated', { zip_code: reportPayload.zip, verdict: 'above' });
 
       // Auto-copy
       await navigator.clipboard.writeText(url);

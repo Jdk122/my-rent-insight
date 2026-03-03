@@ -12,6 +12,7 @@ export type EventName =
   | 'results_viewed'
   | 'letter_generated'
   | 'email_captured'
+  | 'email_submitted'
   | 'share_clicked'
   | 'comp_link_clicked'
   | 'dhcr_match_found'
@@ -21,7 +22,9 @@ export type EventName =
   | 'results_scrolled_to_section'
   | 'time_on_results'
   | 'report_shared'
-  | 'report_viewed';
+  | 'report_viewed'
+  | 'score_details_expanded'
+  | 'report_link_generated';
 
 export function trackEvent(name: string, params?: Record<string, string | number | boolean | null | undefined>) {
   try {
