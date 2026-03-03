@@ -43,8 +43,8 @@ const About = () => {
           <h2 className="text-lg font-semibold text-foreground mb-2">Questions or feedback?</h2>
           <p className="text-[15px] text-muted-foreground">
             Reach us at{' '}
-            <a href="mailto:hello@renewalreply.com" className="text-primary hover:underline">
-              hello@renewalreply.com
+            <a href="mailto:social@renewalreply.com" className="text-primary hover:underline">
+              social@renewalreply.com
             </a>
           </p>
         </div>
