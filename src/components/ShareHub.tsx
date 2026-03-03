@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Link2, Check, Copy, Share2, MessageCircle, Mail, ChevronDown } from 'lucide-react';
+import { Link2, Check, Copy, Share2, MessageCircle, Mail, Twitter, Facebook } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { generateShortId } from '@/lib/shortId';
 import { trackEvent } from '@/lib/analytics';
@@ -114,6 +114,7 @@ const ShareHub = ({
   const diff = Math.abs(Math.round((increasePct - marketYoy) * 10) / 10);
   const marketSign = marketYoy > 0 ? '+' : '';
   const shareUrl = `https://renewalreply.com/?utm_source=share&utm_medium=building&utm_campaign=viral_loop&utm_content=${zipCode}`;
+  const tweetText = `Just checked — ${brLabel} rents in ${zipCode} (${city}) moved ${marketSign}${marketYoy}% this year. My landlord wants ${increasePct}%. Free tool to check yours:`;
 
   const smsBody = `Hey — I just checked our building's rent increase against market data. ${brLabel} rents in ${zipCode} moved ${marketSign}${marketYoy}% this year. My landlord wants ${increasePct}%.${isAboveMarket ? ` That's ${diff} percentage points above market.` : ''} Took 30 seconds, no signup: ${shareUrl}`;
   const whatsappBody = `Did you get your renewal letter yet? 👀\n\nI just ran our zip code (${zipCode}) through a rent fairness tool. ${brLabel} rents here moved ${marketSign}${marketYoy}% this year.\n\nMy landlord is asking for ${increasePct}%${isAboveMarket ? ` — that's ${diff} points above the market trend.` : '.'}\n\nFree tool, no signup, 30 seconds: ${shareUrl}`;
@@ -132,6 +133,14 @@ const ShareHub = ({
   const handleEmail = () => {
     trackEvent('building_share_clicked', { method: 'email', zip: zipCode });
     window.open(`mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`);
+  };
+  const handleTwitter = () => {
+    trackEvent('building_share_clicked', { method: 'twitter', zip: zipCode });
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+  };
+  const handleFacebook = () => {
+    trackEvent('building_share_clicked', { method: 'facebook', zip: zipCode });
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
   };
   const handleNeighborCopy = async () => {
     trackEvent('building_share_clicked', { method: 'copy', zip: zipCode });
@@ -279,7 +288,7 @@ const ShareHub = ({
             </p>
 
             {/* 2×2 channel grid */}
-            <div className="grid grid-cols-2 gap-2.5 mb-3">
+            <div className="grid grid-cols-3 gap-2.5 mb-3">
               <button
                 onClick={handleSMS}
                 className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 transition-colors"
@@ -297,6 +306,18 @@ const ShareHub = ({
                 className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 transition-colors"
               >
                 <Mail size={16} /> Email
+              </button>
+              <button
+                onClick={handleTwitter}
+                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 transition-colors"
+              >
+                <Twitter size={16} /> Twitter
+              </button>
+              <button
+                onClick={handleFacebook}
+                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 transition-colors"
+              >
+                <Facebook size={16} /> Facebook
               </button>
               <button
                 onClick={handleNeighborCopy}
