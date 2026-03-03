@@ -7,6 +7,7 @@ import EmailCapture from './EmailCapture';
 import CompLinks from './CompLinks';
 import ShouldYouMove, { CompsList } from './ShouldYouMove';
 import NegotiationLetter from './NegotiationLetter';
+import LetterGate from './LetterGate';
 import RentControlCard from './RentControlCard';
 import { PropertyLookupResult, PropertyLookupError } from '@/hooks/usePropertyLookup';
 import TurnoverCostSection from './TurnoverCostSection';
@@ -593,33 +594,39 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             {/* Negotiation Letter */}
             {hasIncrease && calc && (
               <motion.section id="section-letter" {...fade(0.19)} className="pt-8 pb-8">
-                <NegotiationLetter
-                  currentRent={formData.currentRent}
-                  newRent={newRent}
-                  increasePct={increasePct}
-                  marketYoy={marketYoy}
-                  fmr={rentData.fmr}
-                  censusMedian={rentData.censusMedianRent}
-                  medianIncome={rentData.medianIncome}
-                  zip={rentData.zip}
-                  city={rentData.city}
-                  state={rentData.state}
-                  bedrooms={formData.bedrooms}
-                  increaseAmount={increaseAmount}
-                  counterLow={calc.counterLow}
-                  counterHigh={calc.counterHigh}
-                  counterLowPercent={calc.counterLowPercent}
-                  counterHighPercent={calc.counterHighPercent}
-                  analysisId={analysisId}
+                <LetterGate
+                  leadContext={leadContext}
                   prefilledEmail={capturedEmail}
                   onEmailCaptured={setCapturedEmail}
-                  leadContext={leadContext}
-                  reportUrl={reportUrl}
-                  onGenerateReport={() => {
-                    const btn = document.querySelector('[data-share-report-btn]') as HTMLButtonElement;
-                    btn?.click();
-                  }}
-                />
+                >
+                  <NegotiationLetter
+                    currentRent={formData.currentRent}
+                    newRent={newRent}
+                    increasePct={increasePct}
+                    marketYoy={marketYoy}
+                    fmr={rentData.fmr}
+                    censusMedian={rentData.censusMedianRent}
+                    medianIncome={rentData.medianIncome}
+                    zip={rentData.zip}
+                    city={rentData.city}
+                    state={rentData.state}
+                    bedrooms={formData.bedrooms}
+                    increaseAmount={increaseAmount}
+                    counterLow={calc.counterLow}
+                    counterHigh={calc.counterHigh}
+                    counterLowPercent={calc.counterLowPercent}
+                    counterHighPercent={calc.counterHighPercent}
+                    analysisId={analysisId}
+                    prefilledEmail={capturedEmail}
+                    onEmailCaptured={setCapturedEmail}
+                    leadContext={leadContext}
+                    reportUrl={reportUrl}
+                    onGenerateReport={() => {
+                      const btn = document.querySelector('[data-share-report-btn]') as HTMLButtonElement;
+                      btn?.click();
+                    }}
+                  />
+                </LetterGate>
               </motion.section>
             )}
 
@@ -654,20 +661,23 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </motion.section>
             )}
 
-            {/* Inline email capture */}
-            <section className="pb-12 pt-4">
-              <div className="rounded-xl px-8 py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
-                <EmailCapture
-                  city={city}
-                  captureSource="letter_plus_reminder"
-                  prefilledEmail={capturedEmail}
-                  onEmailCaptured={setCapturedEmail}
-                  leadContext={leadContext}
-                  heading="Get this letter + a renewal reminder"
-                  subtext="We'll email you this letter and remind you 60 days before your lease is up."
-                />
-              </div>
-            </section>
+            {/* Inline email capture — only if not yet captured via letter gate */}
+            {!capturedEmail && (
+              <section className="pb-12 pt-4">
+                <div className="rounded-xl px-8 py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
+                  <EmailCapture
+                    city={city}
+                    captureSource="letter_plus_reminder"
+                    prefilledEmail={capturedEmail}
+                    onEmailCaptured={setCapturedEmail}
+                    leadContext={leadContext}
+                    verdict="above"
+                    heading="Get this letter + a renewal reminder"
+                    subtext="We'll email you this letter and remind you 60 days before your lease is up."
+                  />
+                </div>
+              </section>
+            )}
           </>
         )}
 
@@ -715,6 +725,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   prefilledEmail={capturedEmail}
                   onEmailCaptured={setCapturedEmail}
                   leadContext={leadContext}
+                  verdict={isBelowMarket ? 'below' : 'at_market'}
+                  heading="Want a heads up before next year's renewal?"
+                  subtext={`We'll send you updated market data for ${city} before your next renewal.`}
                 />
               </div>
             </section>

@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { LeadContext } from './EmailCapture';
+import { getUtmParams } from '@/lib/utm';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -49,6 +50,8 @@ const SaveResultsDropdown = ({ prefilledEmail, onEmailCaptured, leadContext }: S
     const leaseMonthNum = leaseMonth ? months.indexOf(leaseMonth) + 1 : null;
     const leaseYearNum = leaseYear ? parseInt(leaseYear, 10) : null;
 
+    const utm = getUtmParams();
+
     try {
       await supabase.from('leads').upsert({
         email,
@@ -68,6 +71,9 @@ const SaveResultsDropdown = ({ prefilledEmail, onEmailCaptured, leadContext }: S
         letter_generated: leadContext?.letterGenerated ?? false,
         lease_expiration_month: leaseMonthNum,
         lease_expiration_year: leaseYearNum,
+        utm_source: utm.utm_source || null,
+        utm_medium: utm.utm_medium || null,
+        utm_campaign: utm.utm_campaign || null,
       } as any, { onConflict: 'email' });
     } catch {
       // Don't block UX

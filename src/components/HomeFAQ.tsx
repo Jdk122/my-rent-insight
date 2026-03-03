@@ -24,7 +24,7 @@ const faqs = [
   },
   {
     q: 'Is RenewalReply really free?',
-    a: 'Yes, completely. There is no cost, no account required, and no upsell. You get your rent fairness analysis and a negotiation letter template at no charge.',
+    a: 'Yes. RenewalReply is free to use and no account is required. You get your rent fairness analysis and a data-backed negotiation letter at no charge.',
   },
   {
     q: 'What should I do if my rent increase is unfair?',

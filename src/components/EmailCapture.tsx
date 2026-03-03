@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { getUtmParams } from '@/lib/utm';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -38,9 +39,10 @@ interface EmailCaptureProps {
   leadContext?: LeadContext;
   heading?: string;
   subtext?: string;
+  verdict?: string;
 }
 
-const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, onEmailCaptured, leadContext, heading, subtext }: EmailCaptureProps) => {
+const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, onEmailCaptured, leadContext, heading, subtext, verdict }: EmailCaptureProps) => {
   const [email, setEmail] = useState(prefilledEmail || '');
   const [leaseMonth, setLeaseMonth] = useState('');
   const [leaseYear, setLeaseYear] = useState('');
@@ -65,6 +67,8 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
     const leaseMonthNum = months.indexOf(leaseMonth) + 1;
     const leaseYearNum = parseInt(leaseYear, 10);
 
+    const utm = getUtmParams();
+
     try {
       await supabase.from('leads').upsert({
         email,
@@ -85,13 +89,17 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
         lease_expiration_month: leaseMonthNum,
         lease_expiration_year: leaseYearNum,
         partner_opt_in: partnerOptIn,
+        verdict: verdict || null,
+        utm_source: utm.utm_source || null,
+        utm_medium: utm.utm_medium || null,
+        utm_campaign: utm.utm_campaign || null,
       } as any, { onConflict: 'email' });
     } catch {
       // Don't block UX on storage failure
     }
 
     onEmailCaptured?.(email);
-    trackEvent('email_captured', { capture_source: captureSource });
+    trackEvent('email_captured', { verdict: verdict || 'unknown', source: captureSource });
     if (captureSource === 'lease_reminder') {
       trackEvent('lease_reminder_signup');
     }
@@ -123,7 +131,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
         {heading || 'Get Reminded Before Your Lease Is Up'}
       </h2>
       <p className="text-sm text-foreground/70 mb-5">
-        {subtext || `We'll send updated market data for ${city || 'your area'} 60 days before your renewal.`}
+        {subtext || `We'll send you updated market data for ${city || 'your area'} before your next renewal.`}
       </p>
       <form onSubmit={handleSubmit} className="max-w-[440px] mx-auto space-y-2">
         {/* Lease date row */}
@@ -163,7 +171,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
             className="flex-1 min-w-0 px-4 py-3 text-sm border border-border rounded-lg bg-card text-foreground outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
           />
           <button type="submit" className="bg-primary text-primary-foreground px-4 sm:px-5 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap shrink-0">
-            Remind me
+            Alert me next year →
           </button>
         </div>
       </form>

@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
+import { captureUtmParams } from "@/lib/utm";
 import Index from "./pages/Index";
 import Privacy from "./pages/Privacy";
 import Outcome from "./pages/Outcome";
@@ -17,6 +18,9 @@ const RentByCity = lazy(() => import("./pages/RentByCity"));
 const SharedReport = lazy(() => import("./pages/SharedReport"));
 
 const queryClient = new QueryClient();
+
+// Capture UTM params on first load
+captureUtmParams();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
