@@ -123,9 +123,10 @@ const RentByState = () => {
           <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight tracking-tight" style={{ letterSpacing: '-0.02em' }}>
             Rent Data for {stateName}
           </h1>
-          <p className="mt-3 text-muted-foreground leading-relaxed" style={{ fontSize: '1.05rem' }}>
-            The average fair market rent for a 1-bedroom in {stateName} is {fmt(avgFmr1br)}/month.
-            {' '}{stateName} has {cities.length} cities with rent data covering {totalZips.toLocaleString()} zip codes.
+
+          {/* AI-extractable answer block */}
+          <p className="mt-4 text-[1.08rem] text-foreground/90 leading-relaxed font-medium" data-nosnippet="false">
+            In {stateName}, the average fair market rent for a 1-bedroom apartment is {fmt(avgFmr1br)}/month according to HUD FY2026 data. {stateName} has {cities.length} cities with rent data covering {totalZips.toLocaleString()} zip codes. Use the table below to find average rent by city.
           </p>
         </section>
 
