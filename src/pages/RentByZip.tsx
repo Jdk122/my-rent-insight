@@ -179,20 +179,38 @@ const RentByZip = () => {
             mainEntity: [
               {
                 '@type': 'Question',
-                name: `What is fair market rent in ${zip}?`,
+                name: `What is the fair market rent for a 1-bedroom in ${zip}?`,
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: `The HUD fair market rent for a 1-bedroom in ${zip} (${city}, ${state}) is ${fmt(fmr1br)}/month for FY2026. Studio: ${fmt(raw.f[0])}, 2-BR: ${fmt(raw.f[2])}, 3-BR: ${fmt(raw.f[3])}, 4-BR: ${fmt(raw.f[4])}.`,
+                  text: `The HUD Small Area Fair Market Rent for a 1-bedroom in zip code ${zip} is ${fmt(fmr1br)} for FY2026. Studio: ${fmt(raw.f[0])}, 2-BR: ${fmt(raw.f[2])}, 3-BR: ${fmt(raw.f[3])}, 4-BR: ${fmt(raw.f[4])}.`,
                 },
               },
               {
                 '@type': 'Question',
-                name: `How much can my landlord raise my rent in ${city}?`,
+                name: `How much has rent increased in ${city} (${zip})?`,
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: hasZillow
+                    ? `Rents in ${city} increased approximately ${Math.abs(raw.zy!).toFixed(1)}% year-over-year according to Zillow ZORI data.`
+                    : `Year-over-year rent trend data is not currently available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}%.`,
+                },
+              },
+              {
+                '@type': 'Question',
+                name: `What is the average rent in ${zip}?`,
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: `The average rent for a 1-bedroom in ${zip} is ${fmt(fmr1br)} based on HUD Fair Market Rent benchmarks for FY2026.${raw.r ? ` The Census median gross rent for this area is ${fmt(raw.r)}/month.` : ''}`,
+                },
+              },
+              {
+                '@type': 'Question',
+                name: `Is ${city} rent controlled?`,
                 acceptedAnswer: {
                   '@type': 'Answer',
                   text: cap
-                    ? `${cap.jurisdiction} has rent increase protections. ${cap.maxIncreaseFormula ? `The cap is generally ${cap.maxIncreaseFormula}.` : ''}`
-                    : `There are no specific rent control laws covering ${city}, ${state} at this time. Landlords can raise rent by any amount with proper notice.`,
+                    ? `Yes. ${cap.jurisdiction} has rent increase protections. ${cap.maxIncreaseFormula ? `The cap is generally ${cap.maxIncreaseFormula}.` : ''} ${cap.applicability ? `This applies to: ${cap.applicability}.` : ''}`
+                    : `No. There are no specific rent control laws covering ${city}, ${state} at this time. Landlords can raise rent by any amount with proper notice.`,
                 },
               },
               {
@@ -243,10 +261,14 @@ const RentByZip = () => {
           )}
 
           <h2>{`Frequently Asked Questions About Rent in ${zip}`}</h2>
-          <h3>{`What is fair market rent in ${zip}?`}</h3>
-          <p>{`The HUD fair market rent for a 1-bedroom in ${zip} (${city}, ${state}) is ${fmt(fmr1br)}/month for FY2026. Studio: ${fmt(raw.f[0])}, 2-BR: ${fmt(raw.f[2])}, 3-BR: ${fmt(raw.f[3])}, 4-BR: ${fmt(raw.f[4])}.`}</p>
-          <h3>{`How much can my landlord raise my rent in ${city}?`}</h3>
-          <p>{cap ? `${cap.jurisdiction} has rent increase protections. ${cap.maxIncreaseFormula ? `The cap is generally ${cap.maxIncreaseFormula}.` : ''}` : `There are no specific rent control laws covering ${city}, ${state} at this time.`}</p>
+          <h3>{`What is the fair market rent for a 1-bedroom in ${zip}?`}</h3>
+          <p>{`The HUD Small Area Fair Market Rent for a 1-bedroom in zip code ${zip} is ${fmt(fmr1br)} for FY2026. Studio: ${fmt(raw.f[0])}, 2-BR: ${fmt(raw.f[2])}, 3-BR: ${fmt(raw.f[3])}, 4-BR: ${fmt(raw.f[4])}.`}</p>
+          <h3>{`How much has rent increased in ${city} (${zip})?`}</h3>
+          <p>{hasZillow ? `Rents in ${city} increased approximately ${Math.abs(raw.zy!).toFixed(1)}% year-over-year according to Zillow ZORI data.` : `Year-over-year rent trend data is not currently available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}%.`}</p>
+          <h3>{`What is the average rent in ${zip}?`}</h3>
+          <p>{`The average rent for a 1-bedroom in ${zip} is ${fmt(fmr1br)} based on HUD Fair Market Rent benchmarks for FY2026.${raw.r ? ` The Census median gross rent is ${fmt(raw.r)}/month.` : ''}`}</p>
+          <h3>{`Is ${city} rent controlled?`}</h3>
+          <p>{cap ? `Yes. ${cap.jurisdiction} has rent increase protections. ${cap.maxIncreaseFormula ? `The cap is generally ${cap.maxIncreaseFormula}.` : ''}` : `No. There are no specific rent control laws covering ${city}, ${state} at this time.`}</p>
           <h3>{`Is my rent increase fair in ${zip}?`}</h3>
           <p>{`Use our free rent increase calculator to compare your proposed increase to HUD fair market rent for ${zip}.`} <a href={`https://www.renewalreply.com/?zip=${zip}`}>Check now</a></p>
 
@@ -454,22 +476,43 @@ const RentByZip = () => {
           <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Frequently Asked Questions About Rent in {zip}</h2>
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="fmr">
-              <AccordionTrigger>What is fair market rent in {zip}?</AccordionTrigger>
+              <AccordionTrigger>What is the fair market rent for a 1-bedroom in {zip}?</AccordionTrigger>
               <AccordionContent>
                 <p className="text-muted-foreground leading-relaxed">
-                  The HUD fair market rent for a 1-bedroom in {zip} ({city}, {state}) is {fmt(fmr1br)}/month for FY2026.
+                  The HUD Small Area Fair Market Rent for a 1-bedroom in zip code {zip} is {fmt(fmr1br)} for FY2026.
                   This represents what HUD considers a moderately-priced rental in this area.
                   Other bedroom sizes: Studio {fmt(raw.f[0])}, 2-BR {fmt(raw.f[2])}, 3-BR {fmt(raw.f[3])}, 4-BR {fmt(raw.f[4])}.
                 </p>
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="laws">
-              <AccordionTrigger>How much can my landlord raise my rent in {city}?</AccordionTrigger>
+            <AccordionItem value="trend">
+              <AccordionTrigger>How much has rent increased in {city} ({zip})?</AccordionTrigger>
+              <AccordionContent>
+                <p className="text-muted-foreground leading-relaxed">
+                  {hasZillow
+                    ? `Rents in ${city} increased approximately ${Math.abs(raw.zy!).toFixed(1)}% year-over-year according to Zillow ZORI data. ${raw.zy! > 0 ? 'This means rents are rising.' : raw.zy! < 0 ? 'This means rents are declining.' : 'Rents have remained flat.'} The national average is approximately ${NATIONAL_AVG_YOY}%.`
+                    : `Year-over-year rent trend data is not currently available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}%.`
+                  }
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="avg">
+              <AccordionTrigger>What is the average rent in {zip}?</AccordionTrigger>
+              <AccordionContent>
+                <p className="text-muted-foreground leading-relaxed">
+                  The average rent for a 1-bedroom in {zip} is {fmt(fmr1br)} based on HUD Fair Market Rent benchmarks for FY2026.
+                  {raw.r ? ` The Census median gross rent for this area is ${fmt(raw.r)}/month.` : ''}
+                  {' '}For current asking rents from nearby listings, see the market data section above.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="control">
+              <AccordionTrigger>Is {city} rent controlled?</AccordionTrigger>
               <AccordionContent>
                 <p className="text-muted-foreground leading-relaxed">
                   {cap
-                    ? `${cap.jurisdiction} has rent increase protections. ${cap.maxIncreaseFormula ? `The cap is generally ${cap.maxIncreaseFormula}.` : ''} ${cap.applicability ? `This applies to: ${cap.applicability}.` : ''} ${cap.ordinanceUrl ? '' : ''}`
-                    : `There are no specific rent control laws covering ${city}, ${state} at this time. Landlords can raise rent by any amount with proper notice. Check our homepage for state-specific details.`
+                    ? `Yes. ${cap.jurisdiction} has rent increase protections. ${cap.maxIncreaseFormula ? `The cap is generally ${cap.maxIncreaseFormula}.` : ''} ${cap.applicability ? ` This applies to: ${cap.applicability}.` : ''}`
+                    : `No. There are no specific rent control laws covering ${city}, ${state} at this time. Landlords can raise rent by any amount with proper notice.`
                   }
                 </p>
               </AccordionContent>
