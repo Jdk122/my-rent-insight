@@ -32,10 +32,10 @@ const Contact = () => {
           Have a question, found a bug, or want to partner with us? We'd love to hear from you.
         </p>
         <a
-          href="mailto:hello@renewalreply.com"
+          href="mailto:social@renewalreply.com"
           className="inline-block mt-6 text-primary hover:underline font-semibold text-lg"
         >
-          hello@renewalreply.com
+          social@renewalreply.com
         </a>
 
         <div className="mt-10 border-t border-border pt-8">
