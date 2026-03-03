@@ -26,7 +26,7 @@ const ShareSection = ({ increasePct, marketPct, excessAnnual, multiplier, landlo
 
   const handleCopy = () => {
     navigator.clipboard.writeText(fullText);
-    trackEvent('share_clicked');
+    trackEvent('share_clicked', { share_method: 'copy_link' });
     toast.success('Copied to clipboard');
   };
 

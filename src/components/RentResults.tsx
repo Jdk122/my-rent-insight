@@ -566,15 +566,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </p>
             )}
 
-            {/* Prominent note when proposed rent is far below comp median */}
-            {proposedFarBelowMedian && medianCompRent && (
-              <div className="px-4 py-3 rounded-md border border-verdict-good/30 bg-verdict-good/5 text-[13px] text-foreground leading-relaxed mb-6">
-                <strong>Your proposed rent of ${fmt(newRent)}/mo is ${fmt(medianCompRent - newRent)} below the area median of ${fmt(medianCompRent)}</strong> for similar units. While your increase rate exceeds the local trend, your overall rent remains competitive for the area.
-              </div>
-            )}
-
-            {/* Cross-source consistency note */}
-            {consistencyNote && !proposedFarBelowMedian && (
+            {/* Cross-source consistency note — only when comp median diverges significantly from HUD benchmark */}
+            {consistencyNote && (
               <div className="px-4 py-3 rounded-md border border-border bg-muted/50 text-[12px] text-muted-foreground leading-relaxed mb-6">
                 {consistencyNote}
               </div>

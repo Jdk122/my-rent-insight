@@ -3,6 +3,7 @@ import { FairnessScoreResult } from '@/lib/fairnessScore';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
+import { trackEvent } from '@/lib/analytics';
 
 interface FairnessScoreGaugeProps {
   score: FairnessScoreResult;
@@ -95,7 +96,10 @@ const FairnessScoreGauge = ({ score, dynamicMessage }: FairnessScoreGaugeProps) 
         animate={{ opacity: 1 }}
         transition={{ delay: 0.9, duration: 0.4 }}
       >
-        <Collapsible open={breakdownOpen} onOpenChange={setBreakdownOpen}>
+        <Collapsible open={breakdownOpen} onOpenChange={(open) => {
+          setBreakdownOpen(open);
+          if (open) trackEvent('score_details_expanded');
+        }}>
           <CollapsibleTrigger className="flex items-center justify-center gap-1.5 w-full py-2 text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors group">
             See score details
             <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${breakdownOpen ? 'rotate-180' : ''}`} />
