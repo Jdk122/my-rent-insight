@@ -212,8 +212,8 @@ const RentByZip = () => {
       <noscript>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
           <h1>{`Fair Market Rent in ${zip} — ${city}, ${state}`}</h1>
-          <p>{`See how rents in ${zip} compare to HUD fair market rent benchmarks. Data updated for FY2026.`}</p>
-          <p><a href={`https://www.renewalreply.com/?zip=${zip}`}>{`Check if your rent increase is fair in ${zip} →`}</a></p>
+          <p><strong>{`In zip code ${zip}, the HUD fair market rent for a 1-bedroom is ${fmt(fmr1br)}/month (FY2026).`}{hasZillow ? ` Rents in this area ${raw.zy! > 0 ? 'increased' : raw.zy! < 0 ? 'decreased' : 'remained flat'} ${Math.abs(raw.zy!).toFixed(1)}% year-over-year. A rent increase above ${Math.abs(raw.zy!).toFixed(1)}% is above the local market trend.` : ''}{` Studio: ${fmt(raw.f[0])}, 2-BR: ${fmt(raw.f[2])}, 3-BR: ${fmt(raw.f[3])}, 4-BR: ${fmt(raw.f[4])}.`}</strong></p>
+          <p>{`Data sourced from HUD Small Area Fair Market Rents, U.S. Census Bureau, and Zillow.`}</p>
 
           <h2>{`HUD Fair Market Rent for ${zip}`}</h2>
           <table style={{ borderCollapse: 'collapse', width: '100%' }}>
@@ -295,11 +295,18 @@ const RentByZip = () => {
           <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight tracking-tight" style={{ letterSpacing: '-0.02em' }}>
             Fair Market Rent in {zip} — {city}, {state}
           </h1>
-          <p className="mt-3 text-muted-foreground leading-relaxed" style={{ fontSize: '1.05rem' }}>
-            The HUD fair market rent for a 1-bedroom in {zip} ({city}, {state}) is {fmt(raw.f[1])}/month. Studio: {fmt(raw.f[0])}, 2-BR: {fmt(raw.f[2])}, 3-BR: {fmt(raw.f[3])}, 4-BR: {fmt(raw.f[4])}.{hasZillow ? ` Rents changed ${raw.zy! > 0 ? '+' : ''}${raw.zy!.toFixed(1)}% year-over-year.` : ''}
+
+          {/* AI-extractable answer block */}
+          <p className="mt-4 text-[1.08rem] text-foreground/90 leading-relaxed font-medium" data-nosnippet="false">
+            In zip code {zip}, the HUD fair market rent for a 1-bedroom is {fmt(raw.f[1])}/month (FY2026).
+            {hasZillow
+              ? ` Rents in this area ${raw.zy! > 0 ? 'increased' : raw.zy! < 0 ? 'decreased' : 'remained flat'} ${Math.abs(raw.zy!).toFixed(1)}% year-over-year. A rent increase above ${Math.abs(raw.zy!).toFixed(1)}% is above the local market trend.`
+              : ` The national average rent increase is approximately ${NATIONAL_AVG_YOY}% year-over-year.`}
+            {' '}Studio: {fmt(raw.f[0])}, 2-BR: {fmt(raw.f[2])}, 3-BR: {fmt(raw.f[3])}, 4-BR: {fmt(raw.f[4])}.
           </p>
-          <p className="mt-2 text-lg text-muted-foreground leading-relaxed">
-            See how rents in {zip} compare to HUD fair market rent benchmarks. Data updated for FY2026.
+
+          <p className="mt-2 text-muted-foreground leading-relaxed" style={{ fontSize: '1.05rem' }}>
+            See how rents in {zip} compare to HUD fair market rent benchmarks. Data sourced from HUD Small Area Fair Market Rents, U.S. Census Bureau, and Zillow.
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link

@@ -185,10 +185,15 @@ const RentByCity = () => {
           <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight tracking-tight" style={{ letterSpacing: '-0.02em' }}>
             Average Rent in {city}, {state} (2026)
           </h1>
-          <p className="mt-3 text-muted-foreground leading-relaxed" style={{ fontSize: '1.05rem' }}>
-            The average fair market rent for a 1-bedroom apartment in {city}, {state} is {fmt(avgFmr[1])}/month based on HUD data across {zips.length} zip code{zips.length !== 1 ? 's' : ''}.
+
+          {/* AI-extractable answer block */}
+          <p className="mt-4 text-[1.08rem] text-foreground/90 leading-relaxed font-medium" data-nosnippet="false">
+            In {city}, {state}, the average rent for a 1-bedroom apartment is {fmt(avgFmr[1])}/month according to HUD FY2026 fair market rent data.
+            {yoyChange !== null
+              ? ` Rents ${yoyChange > 0 ? 'increased' : yoyChange < 0 ? 'decreased' : 'remained flat'} ${Math.abs(yoyChange).toFixed(1)}% year-over-year. A rent increase above ${Math.abs(yoyChange).toFixed(1)}% is above the local market trend.`
+              : ''}
             {' '}Studio: {fmt(avgFmr[0])}, 2-BR: {fmt(avgFmr[2])}, 3-BR: {fmt(avgFmr[3])}, 4-BR: {fmt(avgFmr[4])}.
-            {yoyChange !== null && ` Rents in ${city} changed ${yoyChange > 0 ? '+' : ''}${yoyChange.toFixed(1)}% year-over-year.`}
+            {' '}Based on {zips.length} zip code{zips.length !== 1 ? 's' : ''} in {city}.
           </p>
         </section>
 
