@@ -16,6 +16,8 @@ const RentData = lazy(() => import("./pages/RentData"));
 const RentByState = lazy(() => import("./pages/RentByState"));
 const RentByCity = lazy(() => import("./pages/RentByCity"));
 const SharedReport = lazy(() => import("./pages/SharedReport"));
+const About = lazy(() => import("./pages/About"));
+const Methodology = lazy(() => import("./pages/Methodology"));
 
 const queryClient = new QueryClient();
 
@@ -32,6 +34,8 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<Suspense fallback={<PageSkeleton />}><About /></Suspense>} />
+          <Route path="/methodology" element={<Suspense fallback={<PageSkeleton />}><Methodology /></Suspense>} />
           <Route path="/outcome" element={<Outcome />} />
           <Route path="/rent-data" element={<Suspense fallback={<PageSkeleton />}><RentData /></Suspense>} />
           <Route path="/rent/:zip" element={<Suspense fallback={<PageSkeleton />}><RentByZip /></Suspense>} />

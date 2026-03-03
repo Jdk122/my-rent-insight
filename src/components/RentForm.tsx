@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,7 +14,6 @@ export interface RentFormData {
   movingCosts: number;
 }
 
-
 const fmtInput = (val: string) => {
   const digits = val.replace(/[^\d]/g, '');
   if (!digits) return '';
@@ -28,6 +27,12 @@ interface RentFormProps {
   isLoading?: boolean;
 }
 
+interface FormErrors {
+  address?: string;
+  currentRent?: string;
+  rentIncrease?: string;
+}
+
 const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
   const [zip, setZip] = useState('');
   const [fullAddress, setFullAddress] = useState<string | null>(null);
@@ -38,15 +43,76 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
   const [increaseIsPercent, setIncreaseIsPercent] = useState(false);
   const [movingCosts] = useState('2500');
   const [showZipOnly, setShowZipOnly] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [attempted, setAttempted] = useState(false);
+
+  const addressRef = useRef<HTMLDivElement>(null);
+  const rentRef = useRef<HTMLDivElement>(null);
+  const increaseRef = useRef<HTMLDivElement>(null);
+
+  const validate = (): FormErrors => {
+    const errs: FormErrors = {};
+    const trimmedZip = zip.trim();
+
+    if (!showZipOnly && !fullAddress && !trimmedZip) {
+      errs.address = 'Please enter your address or zip code';
+    } else if (showZipOnly && (!trimmedZip || trimmedZip.length !== 5)) {
+      errs.address = 'Please enter a valid 5-digit zip code';
+    } else if (!showZipOnly && !fullAddress && trimmedZip && trimmedZip.length !== 5) {
+      errs.address = 'Please enter your address or zip code';
+    }
+
+    const rentVal = parseFloat(parseFormatted(currentRent));
+    if (!currentRent || isNaN(rentVal) || rentVal <= 0) {
+      errs.currentRent = 'Please enter your current monthly rent';
+    }
+
+    const incVal = rentIncrease
+      ? (increaseIsPercent ? parseFloat(rentIncrease) : parseFloat(parseFormatted(rentIncrease)))
+      : NaN;
+    if (!rentIncrease || isNaN(incVal) || incVal <= 0) {
+      errs.rentIncrease = 'Please enter the increase amount';
+    }
+
+    return errs;
+  };
+
+  const scrollToFirstError = (errs: FormErrors) => {
+    if (errs.address && addressRef.current) {
+      addressRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const input = addressRef.current.querySelector('input');
+      input?.focus();
+    } else if (errs.currentRent && rentRef.current) {
+      rentRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const input = rentRef.current.querySelector('input');
+      input?.focus();
+    } else if (errs.rentIncrease && increaseRef.current) {
+      increaseRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const input = increaseRef.current.querySelector('input');
+      input?.focus();
+    }
+  };
+
+  const clearError = (field: keyof FormErrors) => {
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const trimmedZip = zip.trim();
-    if (!trimmedZip || trimmedZip.length !== 5 || !currentRent) return;
+    setAttempted(true);
 
-    // Insert unit after the street number+name, before city
-    // e.g. "1500 Hudson St, Hoboken, NJ 07030, USA" → "1500 Hudson St Unit 9G, Hoboken, NJ 07030, USA"
+    const errs = validate();
+    setErrors(errs);
+
+    if (Object.keys(errs).length > 0) {
+      scrollToFirstError(errs);
+      return;
+    }
+
+    const trimmedZip = zip.trim();
     const addressWithUnit = fullAddress
       ? (unit.trim()
           ? fullAddress.replace(/,/, ` ${unit.trim()},`)
@@ -64,19 +130,23 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
     });
   };
 
+  const errorClass = (field: keyof FormErrors) =>
+    errors[field] ? 'border-destructive focus:border-destructive focus-visible:ring-destructive' : '';
+
   return (
     <div>
       <form onSubmit={handleSubmit} className="border border-border rounded-2xl p-6 md:p-8 bg-card space-y-5">
         {/* Address — primary input */}
         {!showZipOnly && (
-          <div className="space-y-1.5">
+          <div className="space-y-1.5" ref={addressRef}>
             <Label className="text-sm font-medium text-foreground">Your Address</Label>
             <AddressAutocomplete
-              className="h-12 text-sm bg-background"
+              className={`h-12 text-sm bg-background ${errorClass('address')}`}
               placeholder="Start typing your address..."
               onSelect={(addr) => {
                 if (addr.zip) setZip(addr.zip);
                 setFullAddress(addr.fullAddress);
+                clearError('address');
               }}
             />
             {fullAddress && (
@@ -101,12 +171,13 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
             >
               Don't want to enter your address? Just use your zip code →
             </button>
+            {errors.address && <p className="text-[13px] text-destructive mt-1">{errors.address}</p>}
           </div>
         )}
 
-        {/* Zip Code — shown standalone when toggled, or as auto-filled hidden field */}
+        {/* Zip Code — shown standalone when toggled */}
         {showZipOnly && (
-          <div className="space-y-1.5 animate-fade-in">
+          <div className="space-y-1.5 animate-fade-in" ref={addressRef}>
             <Label className="text-sm font-medium text-foreground">Zip Code <span className="text-destructive">*</span></Label>
             <Input
               type="text"
@@ -116,8 +187,9 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
               onChange={(e) => {
                 const v = e.target.value.replace(/\D/g, '').slice(0, 5);
                 setZip(v);
+                clearError('address');
               }}
-              className="h-12 text-sm bg-background"
+              className={`h-12 text-sm bg-background ${errorClass('address')}`}
               required
               maxLength={5}
             />
@@ -128,6 +200,7 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
             >
               ← Enter your full address instead
             </button>
+            {errors.address && <p className="text-[13px] text-destructive mt-1">{errors.address}</p>}
           </div>
         )}
 
@@ -157,7 +230,7 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
         </div>
 
         {/* Current rent */}
-        <div className="space-y-1.5">
+        <div className="space-y-1.5" ref={rentRef}>
           <Label className="text-sm font-medium text-foreground">Current Monthly Rent</Label>
           <div className="relative">
             <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
@@ -166,15 +239,16 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
               inputMode="numeric"
               placeholder="2,500"
               value={currentRent}
-              onChange={(e) => setCurrentRent(fmtInput(e.target.value))}
-              className="h-12 pl-8 font-mono text-lg bg-background"
+              onChange={(e) => { setCurrentRent(fmtInput(e.target.value)); clearError('currentRent'); }}
+              className={`h-12 pl-8 font-mono text-lg bg-background ${errorClass('currentRent')}`}
               required
             />
           </div>
+          {errors.currentRent && <p className="text-[13px] text-destructive mt-1">{errors.currentRent}</p>}
         </div>
 
         {/* Proposed increase */}
-        <div className="space-y-1.5">
+        <div className="space-y-1.5" ref={increaseRef}>
           <Label className="text-sm font-medium text-foreground">Proposed Increase</Label>
           <div className="flex gap-2">
             <div className="relative flex-1">
@@ -192,8 +266,9 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
                   } else {
                     setRentIncrease(fmtInput(e.target.value));
                   }
+                  clearError('rentIncrease');
                 }}
-                className={`h-12 font-mono text-lg bg-background ${!increaseIsPercent ? 'pl-8' : 'pl-3.5'}`}
+                className={`h-12 font-mono text-lg bg-background ${!increaseIsPercent ? 'pl-8' : 'pl-3.5'} ${errorClass('rentIncrease')}`}
                 min={0}
                 step={increaseIsPercent ? 0.1 : undefined}
               />
@@ -226,6 +301,7 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
           <p className="text-xs text-muted-foreground">
             The amount your landlord wants to raise your rent by.
           </p>
+          {errors.rentIncrease && <p className="text-[13px] text-destructive mt-1">{errors.rentIncrease}</p>}
         </div>
 
         <button

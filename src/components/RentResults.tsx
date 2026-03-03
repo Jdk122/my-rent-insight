@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { RentFormData } from './RentForm';
-import { RentLookupResult, bedroomLabels, calculateResults } from '@/data/rentData';
+import { RentLookupResult, bedroomLabels, calculateResults, getVerdict } from '@/data/rentData';
 import ShareHub from './ShareHub';
 import EmailCapture from './EmailCapture';
 import CompLinks from './CompLinks';
@@ -76,10 +76,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const excessAnnual = hasIncrease
     ? Math.round(formData.currentRent * ((increasePct - marketYoy) / 100) * 12)
     : 0;
-
-  const isAboveMarket = calc?.verdict === 'above';
-  const isFair = calc?.verdict === 'at-market';
-  const isBelowMarket = calc?.verdict === 'below';
+  const fmrUpperBound = rentData.fmr * 1.15;
 
   // ━━━ Path 1 vs Path 2 detection ━━━
   const hasSaleData = !!(propertyData?.lastSalePrice && propertyData?.lastSaleDate);
@@ -138,6 +135,24 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const consistencyNote = useMemo(() => {
     return checkCrossSourceConsistency(rentData.fmr, medianCompRent);
   }, [rentData.fmr, medianCompRent]);
+
+  // ━━━ 3-factor verdict (re-computed with comp data) ━━━
+  const refinedVerdict = useMemo(() => {
+    if (!hasIncrease) return null;
+    return getVerdict(increasePct, marketYoy, {
+      proposedRent: newRent,
+      compMedian: medianCompRent,
+      fmrUpperBound,
+    });
+  }, [hasIncrease, increasePct, marketYoy, newRent, medianCompRent, fmrUpperBound]);
+
+  const isAboveMarket = refinedVerdict === 'above';
+  const isFair = refinedVerdict === 'at-market';
+  const isBelowMarket = refinedVerdict === 'below';
+
+  // Nuanced message: increase exceeds trend but rent is still competitive
+  const isNuancedAtMarket = isFair && increasePct - marketYoy > 2 && medianCompRent != null && newRent <= medianCompRent;
+  const proposedFarBelowMedian = medianCompRent != null && newRent < medianCompRent * 0.8;
 
   const verdictColor = isFair ? 'text-verdict-fair' : isAboveMarket ? 'text-verdict-overpaying' : 'text-verdict-good';
   const verdictLabel = !hasIncrease
@@ -349,6 +364,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               <p className="text-lg md:text-xl text-muted-foreground mt-5 max-w-[460px] leading-relaxed">
                 {isAboveMarket ? (
                   <>The market moved {marketYoy > 0 ? '+' : ''}{marketYoy}% this year. Your landlord is asking for {increasePct}%.</>
+                ) : isNuancedAtMarket && medianCompRent ? (
+                  <>Your increase rate of {increasePct}% is above the area trend of {marketYoy}%, but your proposed rent of ${fmt(newRent)} is still below the local median of ${fmt(medianCompRent)}. Your landlord's ask is within a reasonable range.</>
                 ) : isFair ? (
                   <>Your increase is consistent with local market trends. The market moved {marketYoy > 0 ? '+' : ''}{marketYoy}% this year.</>
                 ) : (
@@ -523,8 +540,15 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </p>
             )}
 
+            {/* Prominent note when proposed rent is far below comp median */}
+            {proposedFarBelowMedian && medianCompRent && (
+              <div className="px-4 py-3 rounded-md border border-verdict-good/30 bg-verdict-good/5 text-[13px] text-foreground leading-relaxed mb-6">
+                <strong>Your proposed rent of ${fmt(newRent)}/mo is ${fmt(medianCompRent - newRent)} below the area median of ${fmt(medianCompRent)}</strong> for similar units. While your increase rate exceeds the local trend, your overall rent remains competitive for the area.
+              </div>
+            )}
+
             {/* Cross-source consistency note */}
-            {consistencyNote && (
+            {consistencyNote && !proposedFarBelowMedian && (
               <div className="px-4 py-3 rounded-md border border-border bg-muted/50 text-[12px] text-muted-foreground leading-relaxed mb-6">
                 {consistencyNote}
               </div>

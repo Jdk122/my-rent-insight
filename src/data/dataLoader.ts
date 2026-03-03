@@ -291,14 +291,49 @@ export function getTypicalRange(fmr: number, censusRent: number | null, city: st
   };
 }
 
-export function getVerdict(increasePct: number, marketYoY: number): 'below' | 'at-market' | 'above' {
-  if (marketYoY <= 0) {
-    return increasePct > 0 ? 'above' : 'at-market';
+export interface VerdictContext {
+  proposedRent?: number;
+  compMedian?: number | null;
+  fmrUpperBound?: number | null;
+}
+
+export function getVerdict(
+  increasePct: number,
+  marketYoY: number,
+  ctx?: VerdictContext
+): 'below' | 'at-market' | 'above' {
+  const rateExceedsTrend = increasePct - marketYoY > 2;
+  const proposedRent = ctx?.proposedRent;
+  const compMedian = ctx?.compMedian;
+  const fmrUpper = ctx?.fmrUpperBound;
+
+  // Check if proposed rent is at/below comp median
+  const belowCompMedian = compMedian != null && proposedRent != null && proposedRent <= compMedian;
+  // Check if proposed rent is within HUD FMR upper bound (FMR * 1.15)
+  const withinFmr = fmrUpper != null && proposedRent != null && proposedRent <= fmrUpper;
+
+  // Below market: increase below trend AND at/below comp median (or no comps)
+  if (increasePct < marketYoY && (belowCompMedian || compMedian == null)) {
+    return 'below';
   }
-  const ratio = increasePct / marketYoY;
-  if (ratio <= 0.8) return 'below';
-  if (ratio <= 1.3) return 'at-market';
-  return 'above';
+
+  // Above market: rate exceeds trend by >2pp AND (above comp median OR above FMR upper)
+  if (rateExceedsTrend) {
+    // Both conditions must hold for "above": rate is high AND rent is high
+    const rentIsHigh = (compMedian != null && proposedRent != null && proposedRent > compMedian)
+      || (fmrUpper != null && proposedRent != null && proposedRent > fmrUpper);
+    // If we have no comp/FMR data to check, fall back to rate-only with looser threshold
+    const noRentContext = compMedian == null && fmrUpper == null;
+
+    if (rentIsHigh || noRentContext) {
+      return 'above';
+    }
+    // Rate exceeds trend but rent is reasonable → at-market
+    return 'at-market';
+  }
+
+  // Within 2pp of trend → at-market
+  return Math.abs(increasePct - marketYoY) <= 2 ? 'at-market' : 'below';
 }
 
 export function getCounterOffer(currentRent: number, marketYoY: number) {
@@ -342,6 +377,7 @@ export function calculateResults(
   const marketYoY = data.yoyChange;
 
   const range = getTypicalRange(data.fmr, data.censusMedianRent, data.city);
+  // Note: verdict is computed without comp data here; callers can re-compute with comps
   const verdict = getVerdict(increasePercent, marketYoY);
   const rentBurden = getRentBurden(proposedRent, data.medianIncome);
   const counter = getCounterOffer(currentRent, marketYoY);

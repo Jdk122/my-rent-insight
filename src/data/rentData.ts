@@ -13,5 +13,5 @@ export const bedroomLabels: Record<BedroomType, string> = {
 };
 
 // Re-export the new data loader as the primary API
-export { lookupRentData, loadFredTrend, calculateResults } from './dataLoader';
+export { lookupRentData, loadFredTrend, calculateResults, getVerdict } from './dataLoader';
 export type { RentLookupResult, FredTrendData } from './dataLoader';

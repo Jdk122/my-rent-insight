@@ -12,9 +12,11 @@ const SEOFooter = ({ onContactClick }: SEOFooterProps) => (
         <Link to="/" className="font-display text-lg font-bold text-primary tracking-tight shrink-0" style={{ letterSpacing: '-0.02em' }}>
           Renewal<span className="font-normal text-accent">Reply</span>
         </Link>
-        <nav className="flex items-center gap-4 text-[13px] text-muted-foreground">
+        <nav className="flex items-center gap-4 text-[13px] text-muted-foreground flex-wrap">
           <Link to="/" className="hover:text-foreground transition-colors">Check Rent</Link>
           <Link to="/rent-data" className="hover:text-foreground transition-colors">Rent Data</Link>
+          <Link to="/about" className="hover:text-foreground transition-colors">About</Link>
+          <Link to="/methodology" className="hover:text-foreground transition-colors">Methodology</Link>
           <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
           {onContactClick ? (
             <button onClick={onContactClick} className="hover:text-foreground transition-colors">Contact</button>
