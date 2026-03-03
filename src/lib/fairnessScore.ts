@@ -5,6 +5,7 @@ export interface FairnessScoreInput {
   increasePct: number;         // User's increase %
   marketYoY: number;           // Area YoY trend %
   proposedRent: number;        // New rent after increase
+  currentRent: number;         // Current rent before increase
   compMedian: number | null;   // Rentcast comp median
   fmr: number;                 // HUD FMR for bedroom count
   medianIncome: number | null; // Census ACS median renter income
@@ -55,8 +56,18 @@ function scoreVsComps(proposedRent: number, compMedian: number | null): ScoreCom
 }
 
 // Component 3: Proposed Rent vs HUD FMR (20 pts)
-function scoreVsFmr(proposedRent: number, fmr: number): ScoreComponent {
+// Compares the INCREASE portion vs FMR, not the absolute rent
+// This avoids penalizing tenants in areas where market rents naturally exceed HUD benchmarks
+function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, increasePct: number): ScoreComponent {
   const upper = fmr * 1.15;
+  // If current rent already exceeds FMR upper, compare increase rate to FMR growth instead
+  if (currentRent >= upper) {
+    // Already above FMR — score based on increase rate reasonableness
+    if (increasePct <= 3) return { id: 'fmr', label: 'Rent vs. HUD Benchmark', score: 18, max: 20, estimated: false };
+    if (increasePct <= 6) return { id: 'fmr', label: 'Rent vs. HUD Benchmark', score: 12, max: 20, estimated: false };
+    if (increasePct <= 10) return { id: 'fmr', label: 'Rent vs. HUD Benchmark', score: 5, max: 20, estimated: false };
+    return { id: 'fmr', label: 'Rent vs. HUD Benchmark', score: 0, max: 20, estimated: false };
+  }
   let score: number;
   if (proposedRent <= upper) score = 20;
   else {
@@ -125,7 +136,7 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
   const components = [
     scoreRateVsTrend(input.increasePct, input.marketYoY),
     scoreVsComps(input.proposedRent, input.compMedian),
-    scoreVsFmr(input.proposedRent, input.fmr),
+    scoreVsFmr(input.proposedRent, input.fmr, input.currentRent, input.increasePct),
     scoreRentToIncome(input.proposedRent, input.medianIncome),
     scoreMarketMomentum(input.zillowMonthly),
   ];
