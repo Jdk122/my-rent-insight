@@ -370,6 +370,33 @@ export type Database = {
     }
     Functions: {
       get_analyses_count: { Args: never; Returns: number }
+      upsert_lead: {
+        Args: {
+          p_address?: string
+          p_analysis_id?: string
+          p_bedrooms?: number
+          p_capture_source?: string
+          p_city?: string
+          p_comps_position?: string
+          p_current_rent?: number
+          p_email: string
+          p_fair_counter_offer?: string
+          p_increase_pct?: number
+          p_lease_expiration_month?: number
+          p_lease_expiration_year?: number
+          p_letter_generated?: boolean
+          p_market_trend_pct?: number
+          p_partner_opt_in?: boolean
+          p_proposed_rent?: number
+          p_state?: string
+          p_utm_campaign?: string
+          p_utm_medium?: string
+          p_utm_source?: string
+          p_verdict?: string
+          p_zip?: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
