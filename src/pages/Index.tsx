@@ -50,7 +50,8 @@ const Index = () => {
       increasePct,
       marketYoY: rentData.yoyChange,
       proposedRent: newRent,
-      compMedian: null, // not available yet at nav level
+      currentRent: formData.currentRent,
+      compMedian: null,
       fmr: rentData.fmr,
       medianIncome: rentData.medianIncome,
       zillowMonthly: rentData.zillowMonthly,

@@ -145,6 +145,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       increasePct,
       marketYoY: marketYoy,
       proposedRent: newRent,
+      currentRent: formData.currentRent,
       compMedian: medianCompRent,
       fmr: rentData.fmr,
       medianIncome: rentData.medianIncome,
