@@ -486,22 +486,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 )}
               </motion.div>
 
-              {/* Data Source Timestamps */}
-              <motion.div {...fade(0.12)} className="mt-6 px-4 py-3 rounded-md bg-muted/30 border border-border/50">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">Data Sources</p>
-                <div className="space-y-1 text-[11px] text-muted-foreground/70">
-                  <p>HUD SAFMR FY2026 (Oct 2025)</p>
-                  {rentData.zillowMonthly !== null && (
-                    <p>Zillow ZORI (latest available, updated monthly)</p>
-                  )}
-                  {rentData.censusMedianRent !== null && (
-                    <p>Census ACS 2023 (released Sep 2024)</p>
-                  )}
-                  {hasEnoughComps && (
-                    <p>Rentcast listings (real-time, cached up to 7 days)</p>
-                  )}
-                </div>
-              </motion.div>
 
             </div>
           </section>
