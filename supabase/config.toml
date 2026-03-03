@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.sitemap-cities]
 verify_jwt = false
+
+[functions.send-lease-reminder]
+verify_jwt = false
