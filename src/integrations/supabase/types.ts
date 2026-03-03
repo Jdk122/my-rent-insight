@@ -184,6 +184,10 @@ export type Database = {
           reminder_sent_at: string | null
           state: string | null
           unsubscribed: boolean | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          verdict: string | null
           zip: string | null
         }
         Insert: {
@@ -211,6 +215,10 @@ export type Database = {
           reminder_sent_at?: string | null
           state?: string | null
           unsubscribed?: boolean | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          verdict?: string | null
           zip?: string | null
         }
         Update: {
@@ -238,6 +246,10 @@ export type Database = {
           reminder_sent_at?: string | null
           state?: string | null
           unsubscribed?: boolean | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          verdict?: string | null
           zip?: string | null
         }
         Relationships: [
