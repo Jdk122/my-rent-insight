@@ -4,6 +4,13 @@ import { MapPin } from 'lucide-react';
 import { RentcastComparable } from '@/hooks/useRentcast';
 import { BedroomType } from '@/data/rentData';
 
+interface UserUnit {
+  address?: string | null;
+  bedrooms?: number | null;
+  bathrooms?: number | null;
+  squareFootage?: number | null;
+}
+
 interface CompsListProps {
   proposedRent: number;
   comparables: RentcastComparable[];
@@ -13,6 +20,7 @@ interface CompsListProps {
   state: string;
   zip: string;
   bedrooms: BedroomType;
+  userUnit?: UserUnit | null;
 }
 
 interface ShouldYouMoveProps {
@@ -57,13 +65,15 @@ function buildBrowseLinks(zip: string, city: string, state: string, bedrooms: Be
   return links;
 }
 
-/** Comparable listings sorted by rent with the orange proposed-rent divider */
+/** Comparable listings sorted by rent with the user's unit + proposed rent divider */
 function CompsWithRentLine({
   comparables,
   proposedRent,
+  userUnit,
 }: {
   comparables: RentcastComparable[];
   proposedRent: number;
+  userUnit?: UserUnit | null;
 }) {
   const sorted = useMemo(() => {
     return [...comparables]
@@ -86,8 +96,31 @@ function CompsWithRentLine({
     </div>
   );
 
+  // User's unit row (highlighted)
+  const userUnitRow = userUnit && (userUnit.bedrooms != null || userUnit.squareFootage != null) ? (
+    <div className="px-4 py-3 rounded-md border border-primary/20 bg-primary/5">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-foreground truncate flex items-center gap-1.5">
+            <MapPin className="w-3 h-3 text-primary flex-shrink-0" />
+            Your unit{userUnit.address ? ` — ${userUnit.address.split(',')[0]}` : ''}
+          </p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {userUnit.bedrooms !== null && userUnit.bedrooms !== undefined && `${userUnit.bedrooms === 0 ? 'Studio' : `${userUnit.bedrooms}BR`}`}
+            {userUnit.bathrooms !== null && userUnit.bathrooms !== undefined && ` · ${userUnit.bathrooms}BA`}
+            {userUnit.squareFootage !== null && userUnit.squareFootage !== undefined && ` · ${fmt(userUnit.squareFootage)} sqft`}
+          </p>
+        </div>
+        <span className="text-sm font-semibold text-foreground whitespace-nowrap">
+          ${fmt(proposedRent)}/mo
+        </span>
+      </div>
+    </div>
+  ) : null;
+
   return (
     <div className="space-y-1">
+      {userUnitRow && <div className="mb-2">{userUnitRow}</div>}
       {sorted.map((comp, i) => (
         <div key={i}>
           {i === refIndex && rentLine}
@@ -132,6 +165,7 @@ export const CompsList = ({
   state,
   zip,
   bedrooms,
+  userUnit,
 }: CompsListProps) => {
   const isAboveMedian = proposedRent > medianCompRent;
   const isAtMedian = proposedRent === medianCompRent;
@@ -183,7 +217,7 @@ export const CompsList = ({
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 text-center">
           Nearby Comparable Listings
         </p>
-        <CompsWithRentLine comparables={comparables} proposedRent={proposedRent} />
+        <CompsWithRentLine comparables={comparables} proposedRent={proposedRent} userUnit={userUnit} />
       </div>
 
       {/* Browse more links */}
