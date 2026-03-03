@@ -171,19 +171,19 @@ const Index = () => {
       />
       {/* Sticky Nav */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-[60] flex items-center justify-between px-6 py-4 transition-all duration-200 ${
+        className={`fixed top-0 left-0 right-0 z-[60] flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 transition-all duration-200 ${
           results && !navScrolled ? 'bg-transparent' : 'bg-card'
         }`}
         style={{
           boxShadow: !results || !navScrolled ? 'none' : '0 1px 3px rgba(0,0,0,0.08)',
         }}
       >
-        <span className="font-display text-xl font-bold text-primary tracking-tight cursor-pointer hover:scale-105 transition-transform duration-200" style={{ letterSpacing: '-0.02em' }} onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0 }); }}>
+        <span className="font-display text-lg sm:text-xl font-bold text-primary tracking-tight cursor-pointer hover:scale-105 transition-transform duration-200 shrink-0" style={{ letterSpacing: '-0.02em' }} onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0 }); }}>
           Renewal<span className="font-normal text-accent">Reply</span>
         </span>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {results && (
-            <button onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
+            <button onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-[12px] sm:text-[13px] text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap">
               ← New check
             </button>
           )}
@@ -195,7 +195,7 @@ const Index = () => {
                   : document.getElementById('section-email-capture');
                 target?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
+              className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap"
             >
               <span className="hidden sm:inline">{hasIncrease && isAboveMarket ? 'Get your letter →' : 'Save your results →'}</span>
               <span className="sm:hidden">{hasIncrease && isAboveMarket ? 'Get letter →' : 'Save →'}</span>

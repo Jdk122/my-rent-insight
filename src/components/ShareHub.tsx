@@ -287,8 +287,8 @@ const ShareHub = ({
                 : 'Share this tool with your neighbors — they might not be as lucky.'}
             </p>
 
-            {/* 2×2 channel grid */}
-            <div className="grid grid-cols-3 gap-2.5 mb-3">
+            {/* Channel grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-2.5 mb-3">
               <button
                 onClick={handleSMS}
                 className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all shadow-xs"
