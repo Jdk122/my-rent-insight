@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, ExternalLink } from 'lucide-react';
 import { RentcastComparable } from '@/hooks/useRentcast';
@@ -32,7 +32,7 @@ interface ShouldYouMoveProps {
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
-const brokerFeeStates = ['NJ', 'NY', 'MA'];
+const brokerFeeStates = ['NJ', 'NY'];
 
 const bedroomNum: Record<BedroomType, string> = {
   studio: '0', oneBr: '1', twoBr: '2', threeBr: '3', fourBr: '4',
@@ -226,9 +226,11 @@ const ShouldYouMove = ({
   const difference = Math.abs(proposedRent - medianCompRent);
 
   const hasBrokerFee = brokerFeeStates.includes(state);
-  const estimatedMovingCost = Math.round(
-    medianCompRent + (hasBrokerFee ? medianCompRent : 0) + 1500
+  const defaultMovingCost = Math.round(
+    medianCompRent + (hasBrokerFee ? medianCompRent : 0) + 2000
   );
+  const [movingCostOverride, setMovingCostOverride] = useState<number | null>(null);
+  const estimatedMovingCost = movingCostOverride ?? defaultMovingCost;
 
   const negotiationSavings = counterOffer ? proposedRent - counterOffer : null;
 
@@ -281,6 +283,9 @@ const ShouldYouMove = ({
   }
 
   // At or below median — show cost of moving
+  const monthlySavingsIfMove = isAboveMedian ? difference : 0;
+  const breakEvenMonths = monthlySavingsIfMove > 0 ? Math.ceil(estimatedMovingCost / monthlySavingsIfMove) : null;
+
   return (
     <div>
       <div className="px-4 py-3 rounded-md border text-sm font-medium text-foreground bg-verdict-good/10 border-verdict-good/20">
@@ -289,13 +294,27 @@ const ShouldYouMove = ({
 
       <div className="mt-6">
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-          What it would cost to move
+          Estimated cost to move
         </p>
-        <p className="font-display text-[24px] tracking-tight text-foreground font-semibold" style={{ letterSpacing: '-0.02em' }}>
-          ~${fmt(estimatedMovingCost)}
-        </p>
+        <div className="flex items-baseline gap-2">
+          <span className="text-muted-foreground text-lg">$</span>
+          <input
+            type="text"
+            value={fmt(estimatedMovingCost)}
+            onChange={(e) => {
+              const raw = e.target.value.replace(/[^0-9]/g, '');
+              if (raw === '') { setMovingCostOverride(null); return; }
+              setMovingCostOverride(Number(raw));
+            }}
+            className="font-display text-[24px] tracking-tight text-foreground font-semibold bg-transparent border-b border-dashed border-muted-foreground/30 focus:border-primary focus:outline-none w-[120px]"
+            style={{ letterSpacing: '-0.02em' }}
+          />
+        </div>
         <p className="text-[12px] text-muted-foreground mt-1">
-          First month's rent + moving expenses{hasBrokerFee ? ` + broker fee (common in ${state})` : ''}
+          First month's rent + moving expenses (~$2,000){hasBrokerFee ? ` + broker fee (common in ${state})` : ''}
+        </p>
+        <p className="text-[11px] text-muted-foreground/60 mt-0.5">
+          Adjust this based on your situation.
         </p>
       </div>
     </div>

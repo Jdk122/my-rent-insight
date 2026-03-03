@@ -9,12 +9,10 @@ describe('Should you move? logic', () => {
       : sorted[mid];
   }
 
-  function getUpfrontCosts(medianRent: number, state: string) {
-    const brokerFeeStates = ['NJ', 'NY', 'MA'];
+  function getMovingCost(medianRent: number, state: string) {
+    const brokerFeeStates = ['NJ', 'NY'];
     const hasBrokerFee = brokerFeeStates.includes(state);
-    const low = medianRent + medianRent + 1500;
-    const high = medianRent + medianRent + 5000 + (hasBrokerFee ? medianRent : 0);
-    return { low, high };
+    return medianRent + (hasBrokerFee ? medianRent : 0) + 2000;
   }
 
   function getVerdict(breakEvenAvg: number) {
@@ -32,15 +30,17 @@ describe('Should you move? logic', () => {
   });
 
   it('NJ gets broker fee', () => {
-    const { low, high } = getUpfrontCosts(3000, 'NJ');
-    expect(low).toBe(7500);
-    expect(high).toBe(14000);
+    // first month (3000) + broker (3000) + moving (2000) = 8000
+    expect(getMovingCost(3000, 'NJ')).toBe(8000);
   });
 
   it('TX has no broker fee', () => {
-    const { low, high } = getUpfrontCosts(2500, 'TX');
-    expect(low).toBe(6500);
-    expect(high).toBe(10000);
+    // first month (2500) + moving (2000) = 4500
+    expect(getMovingCost(2500, 'TX')).toBe(4500);
+  });
+
+  it('MA has no broker fee (law changed 2025)', () => {
+    expect(getMovingCost(3000, 'MA')).toBe(5000);
   });
 
   it('daily reframe rounds to nearest $0.50', () => {
