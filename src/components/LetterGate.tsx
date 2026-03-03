@@ -52,27 +52,27 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail }: 
     const verdict = 'above';
 
     try {
-      const { error: dbError } = await supabase.from('leads').upsert({
-        email: email.trim(),
-        analysis_id: leadContext?.analysisId || null,
-        capture_source: 'letter_gate',
-        address: leadContext?.address || null,
-        city: leadContext?.city || null,
-        state: leadContext?.state || null,
-        zip: leadContext?.zip || null,
-        bedrooms: leadContext?.bedrooms ?? null,
-        current_rent: leadContext?.currentRent ?? null,
-        proposed_rent: leadContext?.proposedRent ?? null,
-        increase_pct: leadContext?.increasePct ?? null,
-        market_trend_pct: leadContext?.marketTrendPct ?? null,
-        fair_counter_offer: leadContext?.fairCounterOffer || null,
-        comps_position: leadContext?.compsPosition || null,
-        letter_generated: true,
-        verdict,
-        utm_source: utm.utm_source || null,
-        utm_medium: utm.utm_medium || null,
-        utm_campaign: utm.utm_campaign || null,
-      } as any, { onConflict: 'email' });
+      const { error: dbError } = await supabase.rpc('upsert_lead', {
+        p_email: email.trim(),
+        p_analysis_id: leadContext?.analysisId || null,
+        p_capture_source: 'letter_gate',
+        p_address: leadContext?.address || null,
+        p_city: leadContext?.city || null,
+        p_state: leadContext?.state || null,
+        p_zip: leadContext?.zip || null,
+        p_bedrooms: leadContext?.bedrooms ?? null,
+        p_current_rent: leadContext?.currentRent ?? null,
+        p_proposed_rent: leadContext?.proposedRent ?? null,
+        p_increase_pct: leadContext?.increasePct ?? null,
+        p_market_trend_pct: leadContext?.marketTrendPct ?? null,
+        p_fair_counter_offer: leadContext?.fairCounterOffer || null,
+        p_comps_position: leadContext?.compsPosition || null,
+        p_letter_generated: true,
+        p_verdict: verdict,
+        p_utm_source: utm.utm_source || null,
+        p_utm_medium: utm.utm_medium || null,
+        p_utm_campaign: utm.utm_campaign || null,
+      } as any);
 
       if (dbError) throw dbError;
     } catch {

@@ -54,28 +54,28 @@ const SaveResultsDropdown = ({ prefilledEmail, onEmailCaptured, leadContext }: S
     const utm = getUtmParams();
 
     try {
-      await supabase.from('leads').upsert({
-        email,
-        analysis_id: leadContext?.analysisId || null,
-        capture_source: 'save_results',
-        address: leadContext?.address || null,
-        city: leadContext?.city || null,
-        state: leadContext?.state || null,
-        zip: leadContext?.zip || null,
-        bedrooms: leadContext?.bedrooms ?? null,
-        current_rent: leadContext?.currentRent ?? null,
-        proposed_rent: leadContext?.proposedRent ?? null,
-        increase_pct: leadContext?.increasePct ?? null,
-        market_trend_pct: leadContext?.marketTrendPct ?? null,
-        fair_counter_offer: leadContext?.fairCounterOffer || null,
-        comps_position: leadContext?.compsPosition || null,
-        letter_generated: leadContext?.letterGenerated ?? false,
-        lease_expiration_month: leaseMonthNum,
-        lease_expiration_year: leaseYearNum,
-        utm_source: utm.utm_source || null,
-        utm_medium: utm.utm_medium || null,
-        utm_campaign: utm.utm_campaign || null,
-      } as any, { onConflict: 'email' });
+      await supabase.rpc('upsert_lead', {
+        p_email: email,
+        p_analysis_id: leadContext?.analysisId || null,
+        p_capture_source: 'save_results',
+        p_address: leadContext?.address || null,
+        p_city: leadContext?.city || null,
+        p_state: leadContext?.state || null,
+        p_zip: leadContext?.zip || null,
+        p_bedrooms: leadContext?.bedrooms ?? null,
+        p_current_rent: leadContext?.currentRent ?? null,
+        p_proposed_rent: leadContext?.proposedRent ?? null,
+        p_increase_pct: leadContext?.increasePct ?? null,
+        p_market_trend_pct: leadContext?.marketTrendPct ?? null,
+        p_fair_counter_offer: leadContext?.fairCounterOffer || null,
+        p_comps_position: leadContext?.compsPosition || null,
+        p_letter_generated: leadContext?.letterGenerated ?? false,
+        p_lease_expiration_month: leaseMonthNum,
+        p_lease_expiration_year: leaseYearNum,
+        p_utm_source: utm.utm_source || null,
+        p_utm_medium: utm.utm_medium || null,
+        p_utm_campaign: utm.utm_campaign || null,
+      } as any);
     } catch {
       // Don't block UX
     }
