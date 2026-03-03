@@ -313,6 +313,45 @@ export type Database = {
         }
         Relationships: []
       }
+      shared_reports: {
+        Row: {
+          address: string | null
+          bedrooms: number
+          created_at: string
+          current_rent: number
+          id: string
+          increase_type: string
+          proposed_increase: number
+          report_data: Json
+          short_id: string
+          zip_code: string
+        }
+        Insert: {
+          address?: string | null
+          bedrooms: number
+          created_at?: string
+          current_rent: number
+          id?: string
+          increase_type?: string
+          proposed_increase: number
+          report_data: Json
+          short_id: string
+          zip_code: string
+        }
+        Update: {
+          address?: string | null
+          bedrooms?: number
+          created_at?: string
+          current_rent?: number
+          id?: string
+          increase_type?: string
+          proposed_increase?: number
+          report_data?: Json
+          short_id?: string
+          zip_code?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

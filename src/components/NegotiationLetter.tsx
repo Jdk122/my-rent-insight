@@ -26,6 +26,8 @@ interface NegotiationLetterProps {
   prefilledEmail?: string;
   onEmailCaptured?: (email: string) => void;
   leadContext?: any;
+  reportUrl?: string | null;
+  onGenerateReport?: () => void;
 }
 
 type Tone = 'friendly' | 'firm';
@@ -36,7 +38,7 @@ const NegotiationLetter = ({
   currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, medianIncome,
   zip, city, state, bedrooms, increaseAmount,
   counterLow, counterHigh, counterLowPercent, counterHighPercent,
-  analysisId, prefilledEmail, onEmailCaptured, leadContext,
+  analysisId, prefilledEmail, onEmailCaptured, leadContext, reportUrl, onGenerateReport,
 }: NegotiationLetterProps) => {
   const [tone, setTone] = useState<Tone>('friendly');
   const [copied, setCopied] = useState(false);
@@ -56,8 +58,9 @@ const NegotiationLetter = ({
         `Before I sign, I looked into what rents have done in ${city} this year. The market-wide increase for a ${brLabel.toLowerCase()} was about ${marketYoy}%, and my proposed increase of ${increasePct}% is ${severityLabel}.`,
         `For context:\n• Area-wide rent increase this year: ${marketYoy}%\n• My proposed increase: ${increasePct}%`,
         `I'd love to find a number that works for both of us — something ${counterRange}. Happy to discuss.`,
+        reportUrl ? `Full market analysis available at: ${reportUrl}` : null,
         `Best,\n[Your name]`,
-      ].filter(Boolean);
+      ].filter(Boolean) as string[];
     }
 
     const firmSeverity = increaseRatio >= 4 ? 'several times' : increaseRatio >= 2.5 ? 'more than double' : increaseRatio >= 1.8 ? 'nearly double' : increaseRatio >= 1.4 ? 'well above' : 'noticeably above';
@@ -68,9 +71,10 @@ const NegotiationLetter = ({
       `• Rents in ${city} rose ${marketYoy}% this year\n• Proposed increase: ${increasePct}%`,
       `The proposed increase of ${increasePct}% is ${firmSeverity} the rate at which rents are rising in ${city}.`,
       `I am prepared to renew at ${counterLowPercent}% ($${fmt(counterLow)}/month), in line with ${city}'s market trend.`,
+      reportUrl ? `Full market analysis available at: ${reportUrl}` : null,
       `Sincerely,\n[Your name]`,
-    ].filter(Boolean);
-  }, [tone, currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, zip, city, state, brLabel, counterLow, counterHigh, counterLowPercent, counterHighPercent, increaseRatio]);
+    ].filter(Boolean) as string[];
+  }, [tone, currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, zip, city, state, brLabel, counterLow, counterHigh, counterLowPercent, counterHighPercent, increaseRatio, reportUrl]);
 
   const letterText = letterHtml.join('\n\n');
 
@@ -134,6 +138,16 @@ const NegotiationLetter = ({
           <Download size={16} /> Download
         </button>
       </div>
+
+      {/* Prompt to generate report link if not yet created */}
+      {!reportUrl && onGenerateReport && (
+        <button
+          onClick={onGenerateReport}
+          className="mt-4 text-xs text-primary hover:underline transition-colors"
+        >
+          Want to include a link to your full analysis? Generate a shareable report link →
+        </button>
+      )}
 
       {/* Legal disclaimer — below actions */}
       <p className="text-[11px] text-muted-foreground/70 mt-4 leading-relaxed max-w-[540px]">
