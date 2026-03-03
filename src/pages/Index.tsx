@@ -1,8 +1,7 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import RentForm, { RentFormData } from '@/components/RentForm';
 import RentResults from '@/components/RentResults';
 import { lookupRentData, loadFredTrend, RentLookupResult } from '@/data/rentData';
-import { calculateFairnessScore } from '@/lib/fairnessScore';
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
 import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
@@ -31,33 +30,7 @@ const Index = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, [results]);
 
-  const isAboveMarket = useMemo(() => {
-    if (!results) return false;
-    const { formData, rentData } = results;
-    const increaseAmount = formData.rentIncrease
-      ? formData.increaseIsPercent
-        ? Math.round(formData.currentRent * (formData.rentIncrease / 100))
-        : formData.rentIncrease
-      : 0;
-    if (increaseAmount <= 0) return false;
-    const increasePct = formData.rentIncrease
-      ? formData.increaseIsPercent
-        ? formData.rentIncrease
-        : Math.round((formData.rentIncrease / formData.currentRent) * 1000) / 10
-      : 0;
-    const newRent = formData.currentRent + increaseAmount;
-    const score = calculateFairnessScore({
-      increasePct,
-      marketYoY: rentData.yoyChange,
-      proposedRent: newRent,
-      currentRent: formData.currentRent,
-      compMedian: null,
-      fmr: rentData.fmr,
-      medianIncome: rentData.medianIncome,
-      zillowMonthly: rentData.zillowMonthly,
-    });
-    return score.total < 60;
-  }, [results]);
+  const [isAboveMarket, setIsAboveMarket] = useState(false);
 
   const hasIncrease = !!(results && results.formData.rentIncrease && results.formData.rentIncrease > 0);
 
@@ -259,6 +232,7 @@ const Index = () => {
             }}
             capturedEmail={capturedEmail}
             onEmailCaptured={setCapturedEmail}
+            onVerdictReady={setIsAboveMarket}
           />
         </div>
       )}
