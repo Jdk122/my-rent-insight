@@ -752,7 +752,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             )}
 
             {/* Inline email capture */}
-            <section className="pb-6 pt-4">
+            <section id="section-email-capture" className="pb-6 pt-4">
               <div className="rounded-xl px-8 py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
                 <EmailCapture
                   city={city}

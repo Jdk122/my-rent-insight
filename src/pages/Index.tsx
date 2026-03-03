@@ -198,18 +198,29 @@ const Index = () => {
               ← New check
             </button>
           )}
-          {results && (
+          {results && hasIncrease && isAboveMarket && (
             <button
               onClick={() => {
-                const target = hasIncrease && isAboveMarket
-                  ? document.getElementById('section-letter')
-                  : document.getElementById('section-email-capture');
+                document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap"
+            >
+              <span className="hidden sm:inline">Get your letter →</span>
+              <span className="sm:hidden">Get letter →</span>
+            </button>
+          )}
+          {results && !(hasIncrease && isAboveMarket) && (
+            <button
+              onClick={() => {
+                const target = document.getElementById('section-email-capture')
+                  || document.querySelector('[id^="section-share"]')
+                  || document.getElementById('section-evidence');
                 target?.scrollIntoView({ behavior: 'smooth' });
               }}
               className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap"
             >
-              <span className="hidden sm:inline">{hasIncrease && isAboveMarket ? 'Get your letter →' : 'Save your results →'}</span>
-              <span className="sm:hidden">{hasIncrease && isAboveMarket ? 'Get letter →' : 'Save →'}</span>
+              <span className="hidden sm:inline">Set a reminder →</span>
+              <span className="sm:hidden">Reminder →</span>
             </button>
           )}
         </div>
