@@ -2,9 +2,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { RentFormData } from './RentForm';
 import { RentLookupResult, bedroomLabels, calculateResults } from '@/data/rentData';
-import BuildingShareCard from './BuildingShareCard';
-import ShareableCard from './ShareableCard';
-import ShareReportButton from './ShareReportButton';
+import ShareHub from './ShareHub';
 import EmailCapture from './EmailCapture';
 import CompLinks from './CompLinks';
 import ShouldYouMove, { CompsList } from './ShouldYouMove';
@@ -354,43 +352,15 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 <DataConfidenceBadge level={confidence.level} note={confidence.note} />
               </motion.div>
 
-              {/* Share — prominent, right after stats */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.35, duration: 0.4 }}
-                className="mt-5"
-              >
-                <ShareableCard
-                  headline={
-                    isAboveMarket && calc
-                      ? isPath1
-                        ? `My landlord is asking for $${fmt(newRent - calc.counterHigh)}/mo more than the market supports.`
-                        : `Rents near me moved ${marketYoy}% but my landlord wants ${increasePct}%.`
-                      : isFair
-                      ? `My rent increase is right at market.`
-                      : increasePct > 0 && increasePct <= marketYoy
-                      ? `My rent increase is in line with the market.`
-                      : `My rent increase is below market.`
-                  }
-                  stats={[
-                    { label: 'You pay now', value: `$${fmt(formData.currentRent)}` },
-                    { label: 'They want', value: `$${fmt(newRent)}`, color: 'hsl(0, 72%, 51%)' },
-                    { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
-                    { label: 'Your increase', value: `${increasePct}%`, color: isAboveMarket ? 'hsl(0, 72%, 51%)' : isFair ? 'hsl(45, 80%, 45%)' : 'hsl(151, 50%, 38%)' },
-                  ]}
-                />
-              </motion.div>
-
-              {/* Share Report Link for landlord */}
+              {/* Unified Share Hub */}
               {hasIncrease && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.4, duration: 0.4 }}
-                  className="mt-4"
+                  transition={{ delay: 0.35, duration: 0.4 }}
+                  className="mt-5 flex justify-center"
                 >
-                  <ShareReportButton
+                  <ShareHub
                     reportPayload={{
                       zip: rentData.zip,
                       address: formData.fullAddress || null,
@@ -423,6 +393,29 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       },
                     }}
                     onLinkGenerated={setReportUrl}
+                    zipCode={rentData.zip}
+                    city={rentData.city}
+                    state={rentData.state}
+                    bedroomNum={bedroomNum}
+                    increasePct={increasePct}
+                    marketYoy={marketYoy}
+                    headline={
+                      isAboveMarket && calc
+                        ? isPath1
+                          ? `My landlord is asking for $${fmt(newRent - calc.counterHigh)}/mo more than the market supports.`
+                          : `Rents near me moved ${marketYoy}% but my landlord wants ${increasePct}%.`
+                        : isFair
+                        ? `My rent increase is right at market.`
+                        : increasePct > 0 && increasePct <= marketYoy
+                        ? `My rent increase is in line with the market.`
+                        : `My rent increase is below market.`
+                    }
+                    stats={[
+                      { label: 'You pay now', value: `$${fmt(formData.currentRent)}` },
+                      { label: 'They want', value: `$${fmt(newRent)}`, color: 'hsl(0, 72%, 51%)' },
+                      { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
+                      { label: 'Your increase', value: `${increasePct}%`, color: isAboveMarket ? 'hsl(0, 72%, 51%)' : isFair ? 'hsl(45, 80%, 45%)' : 'hsl(151, 50%, 38%)' },
+                    ]}
                   />
                 </motion.div>
               )}
@@ -718,19 +711,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           </div>
         </section>
 
-        {/* ━━━ BUILDING SHARE — Viral Loop ━━━ */}
-        {hasIncrease && (
-          <section className="pb-12">
-            <BuildingShareCard
-              zipCode={rentData.zip}
-              city={rentData.city}
-              state={rentData.state}
-              bedrooms={bedroomNum}
-              increasePct={increasePct}
-              marketYoy={marketYoy}
-            />
-          </section>
-        )}
         </div>
       </div>
     </>
