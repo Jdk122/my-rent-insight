@@ -347,15 +347,30 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       style={{ letterSpacing: '-0.02em' }}
                     >
                       {isAboveMarket && calc ? (
-                        marketYoy < -0.5 ? (
-                          <>Rents near you dropped {Math.abs(marketYoy)}% — but your landlord wants{' '}
-                            <span className="text-destructive">{increasePct}% more.</span></>
-                        ) : marketYoy >= -0.5 && marketYoy <= 0.5 ? (
-                          <>Rents near you have been flat — but your landlord wants{' '}
-                            <span className="text-destructive">{increasePct}% more.</span></>
+                        fairnessScore && fairnessScore.total >= 40 ? (
+                          // Moderate (40-59): advisory tone
+                          marketYoy < -0.5 ? (
+                            <>Rents near you dropped {Math.abs(marketYoy)}% — your landlord is asking for{' '}
+                              <span className="text-accent-amber">{increasePct}%, slightly above trend.</span></>
+                          ) : marketYoy >= -0.5 && marketYoy <= 0.5 ? (
+                            <>Rents near you have been flat — your landlord is asking for{' '}
+                              <span className="text-accent-amber">{increasePct}%, above the current trend.</span></>
+                          ) : (
+                            <>Rents near you went up {marketYoy}% — your landlord is asking for{' '}
+                              <span className="text-accent-amber">{increasePct}%, slightly above trend.</span></>
+                          )
                         ) : (
-                          <>Rents near you went up {marketYoy}% — but your landlord wants{' '}
-                            <span className="text-destructive">{increasePct}% more.</span></>
+                          // Unfair/Excessive (<40): confrontational tone
+                          marketYoy < -0.5 ? (
+                            <>Rents near you dropped {Math.abs(marketYoy)}% — but your landlord wants{' '}
+                              <span className="text-destructive">{increasePct}% more.</span></>
+                          ) : marketYoy >= -0.5 && marketYoy <= 0.5 ? (
+                            <>Rents near you have been flat — but your landlord wants{' '}
+                              <span className="text-destructive">{increasePct}% more.</span></>
+                          ) : (
+                            <>Rents near you went up {marketYoy}% — but your landlord wants{' '}
+                              <span className="text-destructive">{increasePct}% more.</span></>
+                          )
                         )
                       ) : isFair ? (
                         <>Your rent increase is <span className="text-verdict-fair">right at market.</span></>
