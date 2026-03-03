@@ -538,6 +538,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               state={rentData.state}
               zip={rentData.zip}
               bedrooms={formData.bedrooms}
+              userUnit={propertyData ? {
+                address: formData.fullAddress,
+                bedrooms: propertyData.bedrooms,
+                bathrooms: propertyData.bathrooms,
+                squareFootage: propertyData.squareFootage,
+              } : null}
             />
 
             {/* Outlier notice */}
