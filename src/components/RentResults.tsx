@@ -4,6 +4,7 @@ import { RentFormData } from './RentForm';
 import { RentLookupResult, bedroomLabels, calculateResults } from '@/data/rentData';
 import BuildingShareCard from './BuildingShareCard';
 import ShareableCard from './ShareableCard';
+import ShareReportButton from './ShareReportButton';
 import EmailCapture from './EmailCapture';
 import CompLinks from './CompLinks';
 import ShouldYouMove, { CompsList } from './ShouldYouMove';
@@ -44,6 +45,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     externalOnEmail?.(email);
   };
   const [analysisId, setAnalysisId] = useState<string | null>(null);
+  const [reportUrl, setReportUrl] = useState<string | null>(null);
   const analysisLogged = useRef(false);
 
   const increaseAmount = formData.rentIncrease
@@ -350,6 +352,51 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 />
               </motion.div>
 
+              {/* Share Report Link for landlord */}
+              {hasIncrease && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4, duration: 0.4 }}
+                  className="mt-4"
+                >
+                  <ShareReportButton
+                    reportPayload={{
+                      zip: rentData.zip,
+                      address: formData.fullAddress || null,
+                      bedrooms: formData.bedrooms === 'studio' ? 0 : formData.bedrooms === 'oneBr' ? 1 : formData.bedrooms === 'twoBr' ? 2 : formData.bedrooms === 'threeBr' ? 3 : 4,
+                      currentRent: formData.currentRent,
+                      proposedIncrease: increasePct,
+                      increaseType: 'percent',
+                      reportData: {
+                        city: rentData.city,
+                        state: rentData.state,
+                        newRent,
+                        increasePct,
+                        marketYoy,
+                        fmr: rentData.fmr,
+                        verdict: calc?.verdict || '',
+                        counterLow: calc?.counterLow ?? null,
+                        counterHigh: calc?.counterHigh ?? null,
+                        censusMedianRent: rentData.censusMedianRent,
+                        medianIncome: rentData.medianIncome,
+                        bedroomLabel: bedroomLabels[formData.bedrooms],
+                        zillowMonthly: rentData.zillowMonthly,
+                        zillowDirection: rentData.zillowDirection,
+                        yoySourceLabel: rentData.yoySourceLabel,
+                        typicalRangeLow: calc?.typicalRangeLow ?? null,
+                        typicalRangeHigh: calc?.typicalRangeHigh ?? null,
+                        rentStabilized: null,
+                        rentControlNote: null,
+                        comparables: rentcast.data?.comparables ?? null,
+                        medianCompRent,
+                      },
+                    }}
+                    onLinkGenerated={setReportUrl}
+                  />
+                </motion.div>
+              )}
+
               {/* See evidence + reset */}
               <div className="mt-4 flex flex-col items-center gap-2">
                 <button
@@ -569,6 +616,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               prefilledEmail={capturedEmail}
               onEmailCaptured={setCapturedEmail}
               leadContext={leadContext}
+              reportUrl={reportUrl}
+              onGenerateReport={() => {
+                const btn = document.querySelector('[data-share-report-btn]') as HTMLButtonElement;
+                btn?.click();
+              }}
             />
           </motion.section>
         )}

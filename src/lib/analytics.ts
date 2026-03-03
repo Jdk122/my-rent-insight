@@ -19,7 +19,9 @@ export type EventName =
   | 'letter_tone_toggled'
   | 'lease_reminder_signup'
   | 'results_scrolled_to_section'
-  | 'time_on_results';
+  | 'time_on_results'
+  | 'report_shared'
+  | 'report_viewed';
 
 export function trackEvent(name: string, params?: Record<string, string | number | boolean | null | undefined>) {
   try {
