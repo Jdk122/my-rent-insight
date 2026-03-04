@@ -11,6 +11,7 @@ import ContactModal from '@/components/ContactModal';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
 import SEO from '@/components/SEO';
 import HomeFAQ from '@/components/HomeFAQ';
+import HowItWorks from '@/components/HowItWorks';
 import SEOFooter from '@/components/SEOFooter';
 
 const Index = () => {
@@ -256,8 +257,13 @@ const Index = () => {
         </div>
       )}
 
-      {/* FAQ — only on landing */}
-      {!results && !isLoading && <HomeFAQ />}
+      {/* How It Works + FAQ — only on landing */}
+      {!results && !isLoading && (
+        <>
+          <HowItWorks />
+          <HomeFAQ />
+        </>
+      )}
 
       <SEOFooter onContactClick={() => setContactOpen(true)} />
 

@@ -520,13 +520,47 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             </>
           ) : (
             <>
-              <h1 className="font-display text-[32px] font-semibold text-foreground">Here's what rents are doing in {city}</h1>
-              <p className="text-muted-foreground mt-2 max-w-[460px] leading-relaxed">
-                You didn't enter a proposed increase, but here's the market data and your rights.
+              <h1 className="font-display text-[28px] sm:text-[32px] font-semibold text-foreground leading-tight" style={{ letterSpacing: '-0.02em' }}>
+                Good news — your rent isn't going up.
+              </h1>
+              <p className="text-[15px] sm:text-base text-muted-foreground mt-3 max-w-[480px] leading-relaxed">
+                Here's how your current rent of <strong className="text-foreground">${fmt(formData.currentRent)}/mo</strong> compares to what similar {brLabel} apartments are going for in {city}.
               </p>
-              <button onClick={onReset} className="mt-6 text-xs text-muted-foreground hover:text-foreground transition-colors">
-                ← Check a different address
-              </button>
+
+              {/* Mini market context stats */}
+              <div className="mt-6 w-full grid grid-cols-2 gap-3 max-w-[400px]">
+                <div className="text-center rounded-lg border border-border/80 bg-card px-3 py-3" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your Rent</p>
+                  <p className="font-display text-[22px] sm:text-[26px] tracking-tight text-foreground" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>${fmt(formData.currentRent)}</p>
+                </div>
+                <div className="text-center rounded-lg border border-border/80 bg-card px-3 py-3" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Area Trend</p>
+                  <p className={`font-display text-[22px] sm:text-[26px] tracking-tight ${marketYoy > 0 ? 'text-destructive' : marketYoy < 0 ? 'text-verdict-good' : 'text-foreground'}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
+                    {marketYoy > 0 ? '+' : ''}{marketYoy}%
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-[13px] text-muted-foreground/70 mt-4 max-w-[440px] leading-relaxed">
+                {marketYoy > 3
+                  ? `Rents in ${city} went up ${marketYoy}% this year — staying flat is a win. Scroll down to see the full market data.`
+                  : marketYoy > 0
+                  ? `Rents in ${city} are up ${marketYoy}% this year. Your landlord keeping your rent flat means you're getting a better deal over time.`
+                  : `Rents in ${city} are ${marketYoy < 0 ? `down ${Math.abs(marketYoy)}%` : 'flat'} this year. Your rent is holding steady with the market.`
+                }
+              </p>
+
+              <div className="mt-5 flex flex-col items-center gap-2">
+                <button
+                  onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="text-base font-semibold text-primary hover:text-primary/80 transition-colors duration-150"
+                >
+                  See the market data ↓
+                </button>
+                <button onClick={onReset} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+                  ← Check a different address
+                </button>
+              </div>
             </>
           )}
         </motion.section>
