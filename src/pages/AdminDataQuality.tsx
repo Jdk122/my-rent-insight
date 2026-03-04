@@ -130,8 +130,12 @@ export default function AdminDataQuality() {
     const loadCountyData = async () => {
       const urls = ['/data/county_fmr.json'];
       const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       if (projectId) {
         urls.push(`https://${projectId}.supabase.co/storage/v1/object/public/temp-data/county_fmr.json`);
+      }
+      if (supabaseUrl) {
+        urls.push(`${supabaseUrl}/storage/v1/object/public/temp-data/county_fmr.json`);
       }
 
       for (const url of urls) {
