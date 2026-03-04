@@ -91,14 +91,14 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col overflow-x-hidden" ref={topRef}>
       <SEO
-        title="Is Your Rent Increase Fair? Free Rent Increase Calculator | RenewalReply"
+        title="Is Your Rent Increase Fair? Free Rent Check Tool | RenewalReply"
         description="Check if your rent increase is fair in 10 seconds. Compare your landlord's proposed increase to HUD fair market rent data for 58,000+ zip codes. Free negotiation letter included."
         canonical="/"
         jsonLd={[
           {
             "@context": "https://schema.org",
             "@type": "WebApplication",
-            "name": "RenewalReply Rent Increase Calculator",
+            "name": "RenewalReply Rent Increase Tool",
             "url": "https://www.renewalreply.com",
             "description": "Free tool to check if your rent increase is fair using HUD, Census, and Zillow data for 58,000+ US zip codes.",
             "applicationCategory": "FinanceApplication",

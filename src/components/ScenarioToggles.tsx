@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { Calculator } from 'lucide-react';
+import { BarChart3 } from 'lucide-react';
 
 interface ScenarioTogglesProps {
   currentRent: number;
@@ -105,7 +105,7 @@ const ScenarioToggles = ({
 
       {/* Result */}
       <div className="callout mt-5">
-        <Calculator className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+        <BarChart3 className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
         <div>
           <p className="font-mono text-sm font-semibold text-foreground">
             {breakEven.months === Infinity

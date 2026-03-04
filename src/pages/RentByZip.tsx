@@ -218,7 +218,7 @@ const RentByZip = () => {
                 name: `Is my rent increase fair in ${zip}?`,
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: `Use the free RenewalReply rent increase calculator to compare your proposed increase to HUD fair market rent and local market trends for ${zip}.`,
+                  text: `Use the free RenewalReply rent check tool to compare your proposed increase to HUD fair market rent and local market trends for ${zip}.`,
                 },
               },
             ],
@@ -270,7 +270,7 @@ const RentByZip = () => {
           <h3>{`Is ${city} rent controlled?`}</h3>
           <p>{cap ? `Yes. ${cap.jurisdiction} has rent increase protections. ${cap.maxIncreaseFormula ? `The cap is generally ${cap.maxIncreaseFormula}.` : ''}` : `No. There are no specific rent control laws covering ${city}, ${state} at this time.`}</p>
           <h3>{`Is my rent increase fair in ${zip}?`}</h3>
-          <p>{`Use our free rent increase calculator to compare your proposed increase to HUD fair market rent for ${zip}.`} <a href={`https://www.renewalreply.com/?zip=${zip}`}>Check now</a></p>
+          <p>{`Use our free rent check tool to compare your proposed increase to HUD fair market rent for ${zip}.`} <a href={`https://www.renewalreply.com/?zip=${zip}`}>Check now</a></p>
 
           {nearby.length > 0 && (
             <>
@@ -521,7 +521,7 @@ const RentByZip = () => {
               <AccordionTrigger>Is my rent increase fair in {zip}?</AccordionTrigger>
               <AccordionContent>
                 <p className="text-muted-foreground leading-relaxed">
-                  Use our <Link to={`/?zip=${zip}`} className="underline text-primary hover:text-primary/80">free rent increase calculator</Link> to
+                  Use our <Link to={`/?zip=${zip}`} className="underline text-primary hover:text-primary/80">free rent check tool</Link> to
                   compare your proposed increase to HUD fair market rent and local Zillow trends for {zip}.
                   Enter your current rent and proposed increase to get an instant analysis.
                 </p>
