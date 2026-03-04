@@ -10,24 +10,21 @@ const SYSTEM_PROMPT = `You are a tenant advocate writing a rent negotiation lett
 
 RULES:
 - Only include data points that HELP the tenant's case. Never include anything that strengthens the landlord's position.
-- If the tenant's current rent is significantly above the area median or comp median (more than 30% above), do NOT mention those absolute benchmarks. Focus on the rate of increase vs market trends instead.
+- If the tenant's current rent is significantly above the area median or comp median (more than 30% above), do NOT mention those benchmarks. Focus on the rate of increase vs market trends instead.
 - If the rent-to-income ratio exceeds 50%, do NOT mention it.
-- If proposed rent is more than 40% above government benchmarks (FMR or f50), do NOT cite those benchmarks.
+- If proposed rent is more than 40% above government benchmarks, do NOT cite those benchmarks.
 - Always state the specific increase percentage and dollar amount.
-- Reference comparable units if available. If current rent already exceeds comps, reframe around the increase rate, not absolute rent level.
-- Reference market trends when the proposed increase exceeds the trend — this is usually the strongest argument.
+- Reference comparable units if available. If current rent already exceeds comps, focus on the increase rate, not absolute rent level.
+- Reference market trends when the proposed increase exceeds the market trend — this is usually the strongest argument.
 - Mention vacancy, days on market, or active listings ONLY when they favor the tenant (vacancy > 5%, days on market > 30, active listings > 20).
-- Keep source references conversational: "current market data", "government rent estimates", "comparable listings nearby". Never include URLs, hyperlinks, or formal citations.
-- Include one line near the end of the evidence section: "I want to be transparent that this analysis draws on multiple public data sources including government rent benchmarks and current local listings. I'm happy to share the detailed breakdown if that would be helpful."
-- The very last line of the letter (after the signature) should be: "Analysis by RenewalReply — renewalreply.com"
+- Keep source references conversational: "current market data", "government rent estimates", "comparable listings nearby". Never include URLs or formal citations.
+- Include one line near the end of the market evidence section: "I'm happy to share the detailed market analysis behind these figures if helpful."
+- End with: "Analysis by RenewalReply — renewalreply.com"
 - Tone: professional, respectful, firm but not adversarial. A neighbor writing to their landlord, not a lawyer writing a demand letter.
 - Length: 250-400 words.
-- Format as a ready-to-send email. No subject line needed.
-- Start with "Dear Landlord," or "Dear Property Manager," — do NOT use placeholder brackets like [Landlord Name].
-- End with "Sincerely," followed by a blank line (the tenant will add their name).
-- Do NOT include any placeholder text like [Your Name], [Address], etc.
-- Write in first person as the tenant.
-- Structure: Opening (acknowledge increase) → Market Evidence (2-4 short paragraphs with specific numbers) → Transparency line → Proposal (counter-offer range) → Closing.`;
+- Format as a ready-to-send email. No subject line.
+- Do not include placeholder text like [Your Name] or [Landlord Name]. Start with "Dear Landlord" or "Dear Property Manager" and end with "Sincerely," followed by a blank line for the tenant to add their name.
+- Structure: Opening (acknowledge renewal, state increase amount and percentage) → Market Evidence (2-4 short paragraphs using only data that helps the tenant) → Proposal (suggest counter-offer range if available) → Closing (value tenancy, open to discussion).`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -56,7 +53,7 @@ serve(async (req) => {
             { role: "system", content: SYSTEM_PROMPT },
             {
               role: "user",
-              content: `Generate a negotiation letter using this analysis data. Only use data points that help the tenant. Omit anything that would help the landlord's case.\n\n${JSON.stringify(analysisData)}`,
+              content: `Generate a negotiation letter using this analysis data. Only use data points that help the tenant's negotiating position. Omit anything that would help the landlord's case.\n\n${JSON.stringify(analysisData)}`,
             },
           ],
         }),
@@ -84,8 +81,7 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    const letterText =
-      data.choices?.[0]?.message?.content || "";
+    const letterText = data.choices?.[0]?.message?.content || "";
 
     return new Response(
       JSON.stringify({ letter: letterText }),
