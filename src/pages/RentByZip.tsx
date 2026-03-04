@@ -10,6 +10,7 @@ import DhcrAlertSection from '@/components/DhcrAlertSection';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import ContactModal from '@/components/ContactModal';
+import PageNav from '@/components/PageNav';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Accordion,
@@ -303,18 +304,7 @@ const RentByZip = () => {
         </div>
       </noscript>
 
-      {/* Nav */}
-      <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-        <Link to="/">
-          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
-        </Link>
-        <Link
-          to={`/?zip=${zip}`}
-          className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
-        >
-          Check your rent →
-        </Link>
-      </nav>
+      <PageNav ctaLink={`/?zip=${zip}`} />
 
       <main className="max-w-3xl mx-auto px-6 py-12 md:py-16 flex-1 w-full">
         {/* Visible breadcrumbs */}
@@ -345,7 +335,7 @@ const RentByZip = () => {
             {trendYoY !== null && (
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Year-over-Year Trend</p>
-                <p className={`text-2xl font-bold tabular-nums ${trendYoY > 0 ? 'text-destructive' : trendYoY < 0 ? 'text-green-600' : 'text-foreground'}`}>
+                <p className={`text-2xl font-bold tabular-nums ${trendYoY > 0 ? 'text-destructive' : trendYoY < 0 ? 'text-accent-green' : 'text-foreground'}`}>
                   {trendYoY > 0 ? '↑' : trendYoY < 0 ? '↓' : '→'} {trendYoY > 0 ? '+' : ''}{trendYoY.toFixed(1)}%
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">Source: {trendSource}</p>
@@ -355,7 +345,7 @@ const RentByZip = () => {
 
           {/* Last updated badge */}
           <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500" />
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent-green" />
             Last updated <time dateTime={freshest.date}>{freshestFormatted}</time>
           </p>
 
@@ -720,11 +710,7 @@ function NotFoundPage({ zip }: { zip?: string }) {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEO title="Zip Code Not Found | RenewalReply" noindex />
-      <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-        <Link to="/">
-          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
-        </Link>
-      </nav>
+      <PageNav hideCta />
       <main className="max-w-xl mx-auto px-6 py-24 flex-1 text-center">
         <h1 className="font-display text-3xl text-foreground mb-4">Zip code not found</h1>
         <p className="text-muted-foreground mb-8 leading-relaxed">

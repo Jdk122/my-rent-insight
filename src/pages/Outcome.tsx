@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import SEO from '@/components/SEO';
+import SEOFooter from '@/components/SEOFooter';
+
 const Outcome = () => {
   const [params] = useSearchParams();
   const leadId = params.get('id');
@@ -27,28 +29,33 @@ const Outcome = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6 text-center">
+    <div className="min-h-screen bg-background flex flex-col">
       <SEO title="Your Outcome — RenewalReply" noindex />
-      <Link to="/" className="mb-8">
-        <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-7" />
-      </Link>
 
-      {error ? (
-        <p className="text-muted-foreground">Something went wrong. Please try again.</p>
-      ) : saved ? (
-        <>
-          <h1 className="font-display text-2xl text-foreground mb-4">Thanks for letting us know!</h1>
-          <p className="text-muted-foreground max-w-md leading-relaxed">
-            {messages[outcome || ''] || "We've recorded your response."}
-          </p>
-        </>
-      ) : (
-        <p className="text-muted-foreground">Saving your response…</p>
-      )}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+        <Link to="/" className="mb-8">
+          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-7" />
+        </Link>
 
-      <Link to="/" className="mt-8 text-sm text-primary hover:underline">
-        ← Back to RenewalReply
-      </Link>
+        {error ? (
+          <p className="text-muted-foreground">Something went wrong. Please try again.</p>
+        ) : saved ? (
+          <>
+            <h1 className="font-display text-2xl text-foreground mb-4">Thanks for letting us know!</h1>
+            <p className="text-muted-foreground max-w-md leading-relaxed">
+              {messages[outcome || ''] || "We've recorded your response."}
+            </p>
+          </>
+        ) : (
+          <p className="text-muted-foreground">Saving your response…</p>
+        )}
+
+        <Link to="/" className="mt-8 text-sm text-primary hover:underline">
+          ← Back to RenewalReply
+        </Link>
+      </div>
+
+      <SEOFooter />
     </div>
   );
 };

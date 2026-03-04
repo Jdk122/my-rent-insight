@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import ContactModal from '@/components/ContactModal';
+import PageNav from '@/components/PageNav';
 
 const Contact = () => {
   const [contactOpen, setContactOpen] = useState(false);
@@ -24,14 +25,7 @@ const Contact = () => {
         </div>
       </noscript>
 
-      <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-        <Link to="/">
-          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
-        </Link>
-        <Link to="/" className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
-          Check your rent →
-        </Link>
-      </nav>
+      <PageNav />
 
       <main className="max-w-xl mx-auto px-6 py-16 md:py-24 flex-1 w-full">
         <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight tracking-tight" style={{ letterSpacing: '-0.02em' }}>
