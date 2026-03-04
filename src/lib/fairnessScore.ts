@@ -13,6 +13,8 @@ export interface FairnessScoreInput {
   hvd?: 'rising' | 'falling' | 'flat' | null; // ZHVI home value direction (fallback for Component 5)
   alYoY?: number | null;       // Apartment List YoY rent growth % (fallback for Component 1)
   alMoM?: number | null;       // Apartment List MoM rent growth % (fallback for Component 5)
+  bedroomCount?: number;       // 0-4 (studio=0, 1br=1, etc.)
+  f50?: number[] | null;       // HUD 50th percentile rents [studio, 1br, 2br, 3br, 4br]
 }
 
 // Tooltip explainer for the FMR/Increase Reasonableness component
@@ -67,10 +69,18 @@ function scoreVsComps(proposedRent: number, compMedian: number | null): ScoreCom
 // Component 3: Proposed Rent vs HUD FMR (20 pts)
 // Compares the INCREASE portion vs FMR, not the absolute rent
 // This avoids penalizing tenants in areas where market rents naturally exceed HUD benchmarks
-function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, increasePct: number, marketYoY?: number): ScoreComponent {
+function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, increasePct: number, marketYoY?: number, f50?: number[] | null, bedroomCount?: number): ScoreComponent {
   const label = 'Increase Reasonableness';
-  const upper = fmr * 1.15;
-  // If current rent already exceeds FMR upper, compare increase rate to FMR growth instead
+  // Priority: HUD 50th percentile (median) if available, else FMR * 1.15
+  let upper: number;
+  let usingF50 = false;
+  if (f50 && bedroomCount !== undefined && bedroomCount >= 0 && bedroomCount <= 4 && f50[bedroomCount] > 0) {
+    upper = f50[bedroomCount];
+    usingF50 = true;
+  } else {
+    upper = fmr * 1.15;
+  }
+  // If current rent already exceeds upper, compare increase rate instead
   if (currentRent >= upper) {
     // FIX 4: Tighten breakpoints in declining markets
     const isFalling = (marketYoY ?? 0) < -0.5;
@@ -173,7 +183,7 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
   const components = [
     scoreRateVsTrend(input.increasePct, input.marketYoY, input.alYoY),
     scoreVsComps(input.proposedRent, input.compMedian),
-    scoreVsFmr(input.proposedRent, input.fmr, input.currentRent, input.increasePct, input.marketYoY),
+    scoreVsFmr(input.proposedRent, input.fmr, input.currentRent, input.increasePct, input.marketYoY, input.f50, input.bedroomCount),
     scoreRentToIncome(input.proposedRent, input.medianIncome),
     scoreMarketMomentum(input.zillowMonthly, input.alMoM, input.hvd),
   ];

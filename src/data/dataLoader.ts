@@ -35,6 +35,11 @@ export interface ApartmentListZipRaw {
   alr?: string;        // Source county name (for attribution)
 }
 
+// ─── HUD 50th percentile (median) rents ───
+export interface Hud50ZipRaw {
+  f50: number[];       // [studio, 1br, 2br, 3br, 4br] median rent
+}
+
 export interface FredTrendData {
   monthlyChange: number;
   yearlyChange: number | null;
@@ -70,6 +75,8 @@ export interface RentLookupResult {
   alVacancy: number | null;       // Vacancy rate %
   alTimeOnMarket: number | null;  // Time on market in days
   alRegion: string | null;        // Source county name
+  // HUD 50th percentile (median) rents
+  f50: number[] | null;           // [studio, 1br, 2br, 3br, 4br]
 }
 
 // ─── Bedroom mapping ───
@@ -86,6 +93,7 @@ let rentDataCache: Record<string, RentZipRaw> | null = null;
 let fredMetroMapCache: Record<string, string> | null = null;
 let zhviCache: Record<string, ZhviZipRaw> | null = null;
 let apartmentListCache: Record<string, ApartmentListZipRaw> | null = null;
+let hud50Cache: Record<string, Hud50ZipRaw> | null = null;
 
 // ─── Lazy loaders ───
 
@@ -119,6 +127,18 @@ async function getApartmentListData(): Promise<Record<string, ApartmentListZipRa
     }
   }
   return apartmentListCache!;
+}
+
+async function getHud50Data(): Promise<Record<string, Hud50ZipRaw>> {
+  if (!hud50Cache) {
+    try {
+      const response = await fetch('/data/hud50_processed.json');
+      hud50Cache = await response.json();
+    } catch {
+      hud50Cache = {};
+    }
+  }
+  return hud50Cache!;
 }
 
 async function getFredMetroMap(): Promise<Record<string, string>> {
@@ -194,11 +214,12 @@ export async function lookupRentData(
   zip: string,
   bedrooms: BedroomType
 ): Promise<RentLookupResult | null> {
-  const [allData, zhviData, alData] = await Promise.all([getRentData(), getZhviData(), getApartmentListData()]);
+  const [allData, zhviData, alData, hud50Data] = await Promise.all([getRentData(), getZhviData(), getApartmentListData(), getHud50Data()]);
   const raw = allData[zip];
   if (!raw) return null;
   const zhvi = zhviData[zip] ?? null;
   const al = alData[zip] ?? null;
+  const hud50 = hud50Data[zip] ?? null;
 
   const brIdx = bedroomToIndex[bedrooms];
   const fmr = raw.f[brIdx];
@@ -271,6 +292,7 @@ export async function lookupRentData(
     alVacancy: al?.alv ?? null,
     alTimeOnMarket: al?.alt ?? null,
     alRegion: al?.alr ?? null,
+    f50: hud50?.f50 ?? null,
   };
 }
 
