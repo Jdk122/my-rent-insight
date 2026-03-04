@@ -87,11 +87,12 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
       errs.currentRent = 'Please enter your current monthly rent';
     }
 
-    const incVal = rentIncrease
-      ? (increaseIsPercent ? parseFloat(rentIncrease) : parseFloat(parseFormatted(rentIncrease)))
-      : NaN;
-    if (!rentIncrease || isNaN(incVal) || incVal <= 0) {
-      errs.rentIncrease = 'Please enter the increase amount';
+    // Allow empty or 0 increase — user gets market data without a verdict
+    if (rentIncrease && rentIncrease.trim() !== '') {
+      const incVal = increaseIsPercent ? parseFloat(rentIncrease) : parseFloat(parseFormatted(rentIncrease));
+      if (isNaN(incVal) || incVal < 0) {
+        errs.rentIncrease = 'Please enter a valid increase amount';
+      }
     }
 
     return errs;
@@ -334,7 +335,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
           disabled={isLoading}
           className="w-full h-12 sm:h-14 bg-primary text-primary-foreground text-[15px] sm:text-base font-bold rounded-lg hover:opacity-90 active:scale-[0.99] transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
         >
-          {isLoading ? 'Loading data…' : 'Get my rent report →'}
+          {isLoading ? 'Loading data…' : 'See if your increase is fair →'}
         </button>
       </form>
 
