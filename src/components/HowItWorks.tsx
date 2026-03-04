@@ -27,7 +27,7 @@ const HowItWorks = () => (
       >
         How It Works
       </h2>
-      <p className="text-[15px] sm:text-base text-muted-foreground text-center max-w-[440px] mx-auto mb-10 sm:mb-12 leading-relaxed">
+      <p className="text-[15px] sm:text-base text-muted-foreground text-center max-w-[440px] mx-auto mb-6 sm:mb-8 leading-relaxed">
         Three steps. No account required. Free forever.
       </p>
 
