@@ -27,13 +27,61 @@ const Methodology = () => {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <SEO
         title="How RenewalReply Works — Methodology & Data Sources"
-        description="Learn how RenewalReply's Fairness Score analyzes rent increases using HUD rents, Apartment List trends, Zillow ZORI, Rentcast comps, and Census data. Transparent methodology explained."
+        description="Learn how RenewalReply's Fairness Score analyzes rent increases using HUD rents, Apartment List trends, Zillow ZORI, Rentcast comps, and Census data."
         canonical="/methodology"
       />
 
+      <noscript>
+        <div style={{ maxWidth: 640, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
+          <h1>How RenewalReply Works</h1>
+          <p>We believe renters deserve the same data landlords use. Here's exactly how we analyze your rent increase.</p>
+
+          <h2>How the Fairness Score Works</h2>
+          <p>The RenewalReply Fairness Score is a 0–100 composite score from four weighted components:</p>
+          <ul>
+            <li>Rent Increase vs. Market Trend (35 pts) — Compares your increase to YoY rent trends using Apartment List, Zillow ZORI, or HUD FMR.</li>
+            <li>Comparable Rents (30 pts) — Measures your proposed rent against nearby listings from Rentcast.</li>
+            <li>Increase Reasonableness (25 pts) — Evaluates against HUD 50th percentile median or market benchmarks.</li>
+            <li>Market Momentum (10 pts) — Captures month-over-month direction from Zillow or Apartment List.</li>
+          </ul>
+
+          <h2>Score Tiers</h2>
+          <ul>
+            <li>80–100: Excellent</li>
+            <li>60–79: Fair</li>
+            <li>40–59: Moderate</li>
+            <li>20–39: Unfair</li>
+            <li>0–19: Excessive</li>
+          </ul>
+
+          <h2>Data Sources</h2>
+          <ul>
+            <li>HUD Small Area Fair Market Rents (SAFMR) — Annual, FY2026</li>
+            <li>HUD 50th Percentile Rents — Annual, FY2026</li>
+            <li>Apartment List — Monthly lease transaction trends</li>
+            <li>Zillow ZORI — Monthly observed rent index</li>
+            <li>Zillow ZHVI — Monthly home value trends</li>
+            <li>Rentcast — Real-time MLS listings, cached 24 hours</li>
+          </ul>
+
+          <h2>Data Priority</h2>
+          <ul>
+            <li>Market trends: Apartment List → Zillow ZORI → HUD FMR</li>
+            <li>Reference rent: Rentcast median → HUD 50th percentile → HUD FMR</li>
+            <li>Momentum: Zillow ZORI → Apartment List → ZHVI → neutral</li>
+            <li>Comps: Rentcast (weighted by similarity)</li>
+          </ul>
+
+          <h2>Limitations</h2>
+          <p>Score accuracy depends on data availability. Urban areas have richer coverage. Components marked "estimated" use proxy data. Counter-offer ranges are suggestions, not guarantees. Not legal or financial advice.</p>
+
+          <p><a href="https://www.renewalreply.com/">Check if your rent increase is fair →</a></p>
+        </div>
+      </noscript>
+
       <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
         <Link to="/">
-          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-7" />
+          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
         </Link>
         <Link to="/" className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
           Check your rent →
@@ -232,16 +280,18 @@ const Methodology = () => {
               <div className="text-[13px] leading-relaxed text-muted-foreground">
                 <div className="space-y-2">
                   {[
-                    { source: 'HUD FMR & 50th Percentile', updated: 'FY2026 (effective October 2025)' },
-                    { source: 'Apartment List', updated: 'February 2026' },
-                    { source: 'Zillow ZORI', updated: 'January 2026' },
-                    { source: 'Zillow ZHVI', updated: 'January 2026' },
-                    { source: 'Rentcast', updated: 'Live (real-time, cached 24 hours)' },
-                    { source: 'Census ACS', updated: '2022 (5-year estimates)' },
-                  ].map(({ source, updated }) => (
+                    { source: 'HUD FMR & 50th Percentile', updated: 'FY2026 (effective October 2025)', dateTime: '2025-10' },
+                    { source: 'Apartment List', updated: 'February 2026', dateTime: '2026-02' },
+                    { source: 'Zillow ZORI', updated: 'January 2026', dateTime: '2026-01' },
+                    { source: 'Zillow ZHVI', updated: 'January 2026', dateTime: '2026-01' },
+                    { source: 'Rentcast', updated: 'Live (real-time, cached 24 hours)', dateTime: undefined },
+                    { source: 'Census ACS', updated: '2022 (5-year estimates)', dateTime: '2022' },
+                  ].map(({ source, updated, dateTime }) => (
                     <div key={source} className="flex justify-between items-center py-1.5 border-b border-border/30 last:border-0">
                       <span className="text-foreground font-medium">{source}</span>
-                      <span className="text-muted-foreground text-[12px]">{updated}</span>
+                      <span className="text-muted-foreground text-[12px]">
+                        {dateTime ? <time dateTime={dateTime}>{updated}</time> : updated}
+                      </span>
                     </div>
                   ))}
                 </div>

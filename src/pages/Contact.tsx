@@ -15,9 +15,18 @@ const Contact = () => {
         canonical="/contact"
       />
 
+      <noscript>
+        <div style={{ maxWidth: 620, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
+          <h1>Contact RenewalReply</h1>
+          <p>Have a question, found a bug, or want to partner with us? We'd love to hear from you.</p>
+          <p>Email: social@renewalreply.com</p>
+          <p><a href="https://www.renewalreply.com/">← Back to RenewalReply</a></p>
+        </div>
+      </noscript>
+
       <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
         <Link to="/">
-          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-7" />
+          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
         </Link>
         <Link to="/" className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
           Check your rent →

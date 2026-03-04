@@ -12,8 +12,6 @@ function fmt(n: number) {
   return n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 }
 
-// STATE_NAMES moved to cityStateUtils
-
 // Top 25 cities by renter population (representative zip for each)
 const TOP_CITIES: { city: string; state: string; zip: string }[] = [
   { city: 'New York', state: 'NY', zip: '10001' },
@@ -43,9 +41,6 @@ const TOP_CITIES: { city: string; state: string; zip: string }[] = [
   { city: 'Minneapolis', state: 'MN', zip: '55401' },
 ];
 
-// slugify moved to cityStateUtils
-
-// Force rebuild for chunk cache invalidation
 const RentData = () => {
   const navigate = useNavigate();
   const [allData, setAllData] = useState<Record<string, RentZipRaw> | null>(null);
@@ -88,18 +83,22 @@ const RentData = () => {
       .sort((a, b) => (STATE_NAMES[a] || a).localeCompare(STATE_NAMES[b] || b));
   }, [stateGroups]);
 
+  const totalZips = useMemo(() => {
+    return Object.values(stateGroups).reduce((a, b) => a + b, 0);
+  }, [stateGroups]);
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEO
-        title="Free U.S. Rent Data — Fair Market Rent for 40,000+ Zip Codes | RenewalReply"
-        description="Look up HUD fair market rent benchmarks, median rents, and year-over-year rent trends for any U.S. zip code. Free rent data from HUD, Census, and FRED."
+        title="U.S. Rent Data — Fair Market Rent by Zip Code | RenewalReply"
+        description={`Look up HUD fair market rent for ${totalZips > 0 ? totalZips.toLocaleString() : '40,000'}+ U.S. zip codes. Free rent data from HUD, Apartment List, and Zillow.`}
         canonical="/rent-data"
         jsonLd={[
           {
             '@context': 'https://schema.org',
             '@type': 'WebPage',
             name: 'U.S. Rent Data by Location',
-            description: 'Free fair market rent data for over 40,000 U.S. zip codes from HUD, Census, and FRED.',
+            description: `Free fair market rent data for over ${totalZips > 0 ? totalZips.toLocaleString() : '40,000'} U.S. zip codes from HUD, Apartment List, and Zillow.`,
             url: 'https://www.renewalreply.com/rent-data',
             publisher: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
           },
@@ -111,6 +110,22 @@ const RentData = () => {
               { '@type': 'ListItem', position: 2, name: 'Rent Data', item: 'https://www.renewalreply.com/rent-data' },
             ],
           },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Dataset',
+            name: 'U.S. Fair Market Rent Data',
+            description: `HUD Fair Market Rent benchmarks and market rent trends for ${totalZips > 0 ? totalZips.toLocaleString() : '40,000'}+ U.S. zip codes, updated for FY2026.`,
+            url: 'https://www.renewalreply.com/rent-data',
+            creator: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
+            license: 'https://creativecommons.org/licenses/by/4.0/',
+            temporalCoverage: '2026',
+            spatialCoverage: { '@type': 'Place', name: 'United States' },
+            distribution: {
+              '@type': 'DataDownload',
+              encodingFormat: 'text/html',
+              contentUrl: 'https://www.renewalreply.com/rent-data',
+            },
+          },
         ]}
       />
 
@@ -121,16 +136,17 @@ const RentData = () => {
           <h2>Browse by State</h2>
           <ul>
             {Object.keys(STATE_NAMES).sort((a, b) => STATE_NAMES[a].localeCompare(STATE_NAMES[b])).map(s => (
-              <li key={s}><a href={`#${slugify(STATE_NAMES[s])}`}>{STATE_NAMES[s]}</a></li>
+              <li key={s}><a href={`https://www.renewalreply.com/rent-data/${slugify(STATE_NAMES[s])}`}>{STATE_NAMES[s]}</a></li>
             ))}
           </ul>
+          <p><a href="https://www.renewalreply.com/">Check if your rent increase is fair →</a></p>
         </div>
       </noscript>
 
       {/* Nav */}
       <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-        <Link to="/" className="font-display text-xl font-bold text-primary tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-          Renewal<span className="font-normal text-accent">Reply</span>
+        <Link to="/">
+          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
         </Link>
         <Link
           to="/"
@@ -154,7 +170,7 @@ const RentData = () => {
             U.S. Rent Data by Location
           </h1>
           <p className="mt-3 text-muted-foreground leading-relaxed" style={{ fontSize: '1.05rem' }}>
-            RenewalReply provides free fair market rent data for over 40,000 U.S. zip codes, sourced from HUD, the U.S. Census Bureau, and FRED. Look up HUD fair market rent benchmarks, median rents, and year-over-year rent trends for any zip code in the United States.
+            RenewalReply provides free fair market rent data for over {totalZips > 0 ? totalZips.toLocaleString() : '40,000'} U.S. zip codes, sourced from HUD, Apartment List, and Zillow. Look up HUD fair market rent benchmarks, median rents, and year-over-year rent trends for any zip code in the United States.
           </p>
 
           {/* Search */}
