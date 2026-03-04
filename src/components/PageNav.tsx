@@ -9,7 +9,7 @@ interface PageNavProps {
 const PageNav = ({ ctaLink = '/', ctaText = 'Check your rent →', hideCta = false }: PageNavProps) => (
   <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
     <Link to="/">
-      <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
+      <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" width="150" height="28" />
     </Link>
     {!hideCta && (
       <Link

@@ -10,7 +10,7 @@ const SEOFooter = ({ onContactClick }: SEOFooterProps) => (
       {/* Brand */}
       <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6">
         <Link to="/" className="shrink-0">
-          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-5 sm:h-6" />
+          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-5 sm:h-6" width="128" height="24" />
         </Link>
         <nav className="flex items-center justify-center gap-3 sm:gap-4 text-[12px] sm:text-[13px] text-muted-foreground flex-wrap">
           <Link to="/" className="hover:text-foreground transition-colors">Check Rent</Link>

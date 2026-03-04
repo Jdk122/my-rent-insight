@@ -7,11 +7,11 @@ import { lazy, Suspense } from "react";
 import { captureUtmParams } from "@/lib/utm";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Index from "./pages/Index";
-import Privacy from "./pages/Privacy";
-import Outcome from "./pages/Outcome";
-import Contact from "./pages/Contact";
-import NotFound from "./pages/NotFound";
 import PageSkeleton from "./components/PageSkeleton";
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Outcome = lazy(() => import("./pages/Outcome"));
+const Contact = lazy(() => import("./pages/Contact"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 const RentByZip = lazy(() => import("./pages/RentByZip"));
 const RentData = lazy(() => import("./pages/RentData"));
 const RentByState = lazy(() => import("./pages/RentByState"));
@@ -35,11 +35,11 @@ const App = () => (
         <ErrorBoundary>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/privacy" element={<Suspense fallback={<PageSkeleton />}><Privacy /></Suspense>} />
+          <Route path="/contact" element={<Suspense fallback={<PageSkeleton />}><Contact /></Suspense>} />
           <Route path="/about" element={<Suspense fallback={<PageSkeleton />}><About /></Suspense>} />
           <Route path="/methodology" element={<Suspense fallback={<PageSkeleton />}><Methodology /></Suspense>} />
-          <Route path="/outcome" element={<Outcome />} />
+          <Route path="/outcome" element={<Suspense fallback={<PageSkeleton />}><Outcome /></Suspense>} />
           <Route path="/rent-data" element={<Suspense fallback={<PageSkeleton />}><RentData /></Suspense>} />
           <Route path="/rent/:zip" element={<Suspense fallback={<PageSkeleton />}><RentByZip /></Suspense>} />
           <Route path="/rent-data/:stateSlug/:citySlug" element={<Suspense fallback={<PageSkeleton />}><RentByCity /></Suspense>} />
@@ -47,7 +47,7 @@ const App = () => (
           <Route path="/report/:shortId" element={<Suspense fallback={<PageSkeleton />}><SharedReport /></Suspense>} />
           <Route path="/admin/data-quality" element={<Suspense fallback={<PageSkeleton />}><AdminDataQuality /></Suspense>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<Suspense fallback={<PageSkeleton />}><NotFound /></Suspense>} />
         </Routes>
         </ErrorBoundary>
       </BrowserRouter>
