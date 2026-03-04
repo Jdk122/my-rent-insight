@@ -27,11 +27,9 @@ Deno.serve(async (req) => {
   const now = new Date();
   const targetDate = new Date(now);
   targetDate.setDate(targetDate.getDate() + 60);
-  const targetMonth = targetDate.getMonth() + 1; // 1-indexed
+  const targetMonth = targetDate.getMonth() + 1;
   const targetYear = targetDate.getFullYear();
 
-  // Find leads whose lease expires in the target month/year,
-  // who haven't been sent a reminder yet, and haven't unsubscribed
   const { data: leads, error } = await supabase
     .from("leads")
     .select("id, email, address, city, state, zip, bedrooms, current_rent, lease_expiration_month, lease_expiration_year")
@@ -54,16 +52,44 @@ Deno.serve(async (req) => {
     });
   }
 
-  const siteUrl = "https://my-rent-insight.lovable.app";
-  const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December",
-  ];
+  const siteUrl = "https://renewalreply.com";
+  const bedroomLabelMap: Record<number, string> = {
+    0: "studio",
+    1: "1-bedroom",
+    2: "2-bedroom",
+    3: "3-bedroom",
+    4: "4-bedroom",
+  };
+
   let sent = 0;
 
   for (const lead of leads) {
-    const monthName = monthNames[(lead.lease_expiration_month ?? 1) - 1];
+    const bedrooms = lead.bedrooms ?? null;
+    const brLabel = bedrooms !== null ? (bedroomLabelMap[bedrooms] || `${bedrooms}-bedroom`) : null;
+    const rent = lead.current_rent ? Math.round(lead.current_rent) : null;
+    const zipCode = lead.zip || null;
+    const address = lead.address || null;
+
+    // Build pre-filled CTA URL with UTM params
+    const params = new URLSearchParams();
+    params.set("utm_source", "email");
+    params.set("utm_medium", "reminder");
+    params.set("utm_campaign", "renewal_reminder");
+    if (zipCode) params.set("zip", zipCode);
+    if (bedrooms !== null) params.set("bedrooms", String(bedrooms));
+    if (rent) params.set("rent", String(rent));
+    if (address) params.set("address", address);
+
+    const ctaUrl = `${siteUrl}/?${params.toString()}`;
+
+    // Build personal copy
     const location = [lead.city, lead.state].filter(Boolean).join(", ") || "your area";
+    let personalLine: string;
+    if (brLabel && zipCode && rent) {
+      personalLine = `Last year you checked a ${brLabel} in ${zipCode} at $${rent.toLocaleString("en-US")}/month. Your renewal is coming up — enter your new proposed rent to see if it's fair.`;
+    } else {
+      personalLine = `Your lease in <strong>${location}</strong> is coming up for renewal. Enter your new proposed rent to see if it's fair.`;
+    }
 
     const htmlBody = `
       <div style="font-family: 'DM Sans', Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px 24px;">
@@ -71,24 +97,12 @@ Deno.serve(async (req) => {
           Renewal<span style="font-weight: 400; color: #c77d3c;">Reply</span>
         </p>
         <h1 style="font-size: 22px; color: #1a1a1a; margin: 24px 0 8px;">Your lease renews in ~60 days</h1>
-        <p style="font-size: 15px; color: #555; line-height: 1.6; margin-bottom: 8px;">
-          Your lease in <strong>${location}</strong> is set to renew in <strong>${monthName} ${lead.lease_expiration_year}</strong>.
-          Now is the best time to check if your rent is competitive.
-        </p>
         <p style="font-size: 15px; color: #555; line-height: 1.6; margin-bottom: 28px;">
-          We've updated our market data — run a fresh analysis to see where you stand before your landlord sends renewal terms.
+          ${personalLine}
         </p>
-        <a href="${siteUrl}" style="display: block; text-align: center; background: #2d6a4f; color: white; padding: 14px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px; margin-bottom: 24px;">
-          Check my rent now →
+        <a href="${ctaUrl}" style="display: block; text-align: center; background: #2d6a4f; color: white; padding: 14px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px; margin-bottom: 24px;">
+          Check my new increase →
         </a>
-        <div style="background: #f8f6f3; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
-          <p style="font-size: 13px; color: #666; margin: 0 0 8px; font-weight: 600;">Tips before you renew:</p>
-          <ul style="font-size: 13px; color: #666; line-height: 1.8; margin: 0; padding-left: 18px;">
-            <li>Run a fresh analysis with your current rent</li>
-            <li>Compare to similar units in your ZIP code</li>
-            <li>Use the negotiation letter if your rent is above market</li>
-          </ul>
-        </div>
         <p style="font-size: 12px; color: #999; text-align: center;">
           RenewalReply · You signed up for lease renewal reminders.
         </p>
@@ -116,7 +130,6 @@ Deno.serve(async (req) => {
         continue;
       }
 
-      // Mark reminder as sent
       await supabase
         .from("leads")
         .update({ reminder_sent_at: new Date().toISOString() })

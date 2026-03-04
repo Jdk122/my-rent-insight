@@ -22,9 +22,25 @@ const fmtInput = (val: string) => {
 
 const parseFormatted = (val: string) => val.replace(/,/g, '');
 
+const bedroomNumToKey: Record<number, BedroomType> = {
+  0: 'studio',
+  1: 'oneBr',
+  2: 'twoBr',
+  3: 'threeBr',
+  4: 'fourBr',
+};
+
+export interface RentFormPrefill {
+  zip?: string;
+  bedrooms?: number;
+  rent?: number;
+  address?: string;
+}
+
 interface RentFormProps {
   onSubmit: (data: RentFormData) => void;
   isLoading?: boolean;
+  prefill?: RentFormPrefill;
 }
 
 interface FormErrors {
@@ -33,16 +49,20 @@ interface FormErrors {
   rentIncrease?: string;
 }
 
-const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
-  const [zip, setZip] = useState('');
+const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
+  const [zip, setZip] = useState(prefill?.zip || '');
   const [fullAddress, setFullAddress] = useState<string | null>(null);
   const [unit, setUnit] = useState('');
-  const [bedrooms, setBedrooms] = useState<BedroomType>('oneBr');
-  const [currentRent, setCurrentRent] = useState('2,500');
+  const [bedrooms, setBedrooms] = useState<BedroomType>(
+    prefill?.bedrooms !== undefined ? (bedroomNumToKey[prefill.bedrooms] || 'oneBr') : 'oneBr'
+  );
+  const [currentRent, setCurrentRent] = useState(
+    prefill?.rent ? fmtInput(String(prefill.rent)) : '2,500'
+  );
   const [rentIncrease, setRentIncrease] = useState('200');
   const [increaseIsPercent, setIncreaseIsPercent] = useState(false);
   const [movingCosts] = useState('2500');
-  const [showZipOnly, setShowZipOnly] = useState(false);
+  const [showZipOnly, setShowZipOnly] = useState(!!prefill?.zip && !prefill?.address);
   const [errors, setErrors] = useState<FormErrors>({});
   const [attempted, setAttempted] = useState(false);
 
