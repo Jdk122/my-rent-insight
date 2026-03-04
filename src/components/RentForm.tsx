@@ -135,7 +135,7 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="border border-border rounded-2xl p-6 md:p-8 bg-card space-y-5">
+      <form onSubmit={handleSubmit} className="border border-border rounded-2xl p-5 sm:p-6 md:p-8 bg-card space-y-4 sm:space-y-5">
         {/* Address — primary input */}
         {!showZipOnly && (
           <div className="space-y-1.5" ref={addressRef}>
@@ -307,14 +307,14 @@ const RentForm = ({ onSubmit, isLoading }: RentFormProps) => {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full h-14 bg-primary text-primary-foreground text-base font-bold rounded-lg hover:opacity-90 active:scale-[0.99] transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
+          className="w-full h-12 sm:h-14 bg-primary text-primary-foreground text-[15px] sm:text-base font-bold rounded-lg hover:opacity-90 active:scale-[0.99] transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
         >
           {isLoading ? 'Loading data…' : 'Get my rent report →'}
         </button>
       </form>
 
       {/* Credibility badges */}
-      <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-6 text-xs text-muted-foreground">
+      <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-x-6 gap-y-1.5 sm:gap-y-2 mt-5 sm:mt-6 text-[11px] sm:text-xs text-muted-foreground">
         <span className="flex items-center gap-1.5">
           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8M8 12h8M8 17h4"/></svg>
           58,000+ zip codes covered
