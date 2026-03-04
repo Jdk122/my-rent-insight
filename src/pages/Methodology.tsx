@@ -64,7 +64,7 @@ const Methodology = () => {
                   <div className="p-3 rounded-md bg-secondary/40">
                     <div className="flex justify-between items-baseline mb-1">
                       <span className="text-[13px] font-semibold text-foreground">Rent Increase vs. Market Trend</span>
-                      <span className="text-[12px] font-mono text-muted-foreground">30 pts</span>
+                      <span className="text-[12px] font-mono text-muted-foreground">35 pts</span>
                     </div>
                     <p>Compares your increase percentage to the year-over-year rent trend in your area. Uses Apartment List transacted rent data when available, otherwise Zillow ZORI or HUD FMR trends.</p>
                   </div>
@@ -72,7 +72,7 @@ const Methodology = () => {
                   <div className="p-3 rounded-md bg-secondary/40">
                     <div className="flex justify-between items-baseline mb-1">
                       <span className="text-[13px] font-semibold text-foreground">Comparable Rents</span>
-                      <span className="text-[12px] font-mono text-muted-foreground">25 pts</span>
+                      <span className="text-[12px] font-mono text-muted-foreground">30 pts</span>
                     </div>
                     <p>Measures whether your proposed rent is above or below the median asking rent for similar units nearby, using real-time listings from Rentcast. Comps are filtered by distance (≤3 miles) and weighted by similarity to your unit.</p>
                   </div>
@@ -80,17 +80,9 @@ const Methodology = () => {
                   <div className="p-3 rounded-md bg-secondary/40">
                     <div className="flex justify-between items-baseline mb-1">
                       <span className="text-[13px] font-semibold text-foreground">Increase Reasonableness</span>
-                      <span className="text-[12px] font-mono text-muted-foreground">20 pts</span>
+                      <span className="text-[12px] font-mono text-muted-foreground">25 pts</span>
                     </div>
                     <p>Evaluates whether your proposed rent is reasonable relative to area benchmarks. Prioritizes Rentcast live market median when sufficient listings exist, then HUD 50th percentile (median), then HUD SAFMR. In areas where rents naturally exceed benchmarks, scores the rate of increase instead.</p>
-                  </div>
-
-                  <div className="p-3 rounded-md bg-secondary/40">
-                    <div className="flex justify-between items-baseline mb-1">
-                      <span className="text-[13px] font-semibold text-foreground">Rent-to-Income Ratio</span>
-                      <span className="text-[12px] font-mono text-muted-foreground">15 pts</span>
-                    </div>
-                    <p>Checks whether your proposed rent would exceed 30% of the area's median renter income — the standard affordability threshold used by HUD.</p>
                   </div>
 
                   <div className="p-3 rounded-md bg-secondary/40">
@@ -158,11 +150,6 @@ const Methodology = () => {
                   description="Real-time comparable rental listings and aggregate market statistics (median rent by bedroom count, active listings, days on market). Sourced from MLS data, public records, and proprietary databases."
                   frequency="Live (real-time, cached 24 hours per ZIP)"
                 />
-                <DataSource
-                  name="U.S. Census American Community Survey (ACS)"
-                  description="Demographic and housing data including median renter household income and median gross rent at the ZIP code level."
-                  frequency="Annual — Currently 2022 5-year estimates"
-                />
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -184,7 +171,6 @@ const Methodology = () => {
                     { label: 'Reference rent', cascade: 'Rentcast market median → HUD 50th percentile → HUD FMR' },
                     { label: 'Momentum', cascade: 'Zillow ZORI → Apartment List → ZHVI → neutral default' },
                     { label: 'Comps', cascade: 'Rentcast (weighted by similarity to your unit)' },
-                    { label: 'Income', cascade: 'Census ACS' },
                   ].map(({ label, cascade }) => (
                     <div key={label} className="flex gap-3 items-baseline">
                       <span className="text-foreground font-medium shrink-0 w-[110px]">{label}:</span>

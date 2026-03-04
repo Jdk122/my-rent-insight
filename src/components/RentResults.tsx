@@ -154,7 +154,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       compMedian: medianCompRent,
       compCount: outlierResult?.filtered.length ?? 0,
       fmr: rentData.fmr,
-      medianIncome: rentData.medianIncome,
       zillowMonthly: rentData.zillowMonthly,
       hvd: rentData.hvd,
       alYoY: rentData.alYoY,
@@ -164,7 +163,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       rcMedianRent: rcMarket.rcMedianRent,
       rcTotalListings: rcMarket.rcTotalListings,
     });
-  }, [hasIncrease, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.medianIncome, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings]);
+  }, [hasIncrease, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings]);
 
   const refinedVerdict = useMemo(() => {
     if (!fairnessScore) return null;
@@ -392,10 +391,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   sources.fmr = 'Source: HUD FMR';
                 }
 
-                // Component 4: Income
-                sources.income = rentData.medianIncome ? 'Source: Census ACS 2022' : 'Neutral default (no Census data)';
-
-                // Component 5: Momentum
+                // Component 4: Momentum
                 if (rentData.zillowMonthly !== null) {
                   sources.momentum = 'Source: Zillow ZORI';
                 } else if (rentData.alMoM !== null && rentData.alMoM !== undefined) {
@@ -738,8 +734,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     increasePct={increasePct}
                     marketYoy={marketYoy}
                     fmr={rentData.fmr}
-                    censusMedian={rentData.censusMedianRent}
-                    medianIncome={rentData.medianIncome}
                     zip={rentData.zip}
                     city={rentData.city}
                     state={rentData.state}

@@ -9,7 +9,7 @@ import {
 const faqs: { q: string; a: React.ReactNode }[] = [
   {
     q: 'How do I know if my rent increase is fair?',
-    a: 'Enter your address, current rent, and proposed increase. RenewalReply cross-references seven independent data sources — including real-time comparable listings near you, government rent benchmarks, actual lease transaction trends, and local income data — to generate a Fairness Score from 0 to 100. You\u2019ll see how your increase compares across five market dimensions. If your increase scores poorly, we generate a free negotiation letter backed by specific market evidence.',
+    a: 'Enter your address, current rent, and proposed increase. RenewalReply cross-references multiple independent data sources — including real-time comparable listings near you, government rent benchmarks, and actual lease transaction trends — to generate a Fairness Score from 0 to 100. You\u2019ll see how your increase compares across four market dimensions. If your increase scores poorly, we generate a free negotiation letter backed by specific market evidence.',
   },
   {
     q: 'What is Fair Market Rent (FMR)?',
@@ -21,7 +21,7 @@ const faqs: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: 'What data sources does RenewalReply use?',
-    a: (<>Seven data sources: HUD Fair Market Rents and 50th Percentile Rents for government benchmarks, Apartment List for rent trends from actual lease transactions, Zillow ZORI and ZHVI for market momentum, Rentcast for real-time comparable listings and market statistics, and U.S. Census data for income context. For each scoring component, we use the best available source for your ZIP code. See our <Link to="/methodology" className="text-primary hover:underline">methodology page</Link> for full details.</>),
+    a: (<>Six data sources: HUD Fair Market Rents and 50th Percentile Rents for government benchmarks, Apartment List for rent trends from actual lease transactions, Zillow ZORI and ZHVI for market momentum, and Rentcast for real-time comparable listings and market statistics. For each scoring component, we use the best available source for your ZIP code. See our <Link to="/methodology" className="text-primary hover:underline">methodology page</Link> for full details.</>),
   },
   {
     q: 'Is RenewalReply really free?',
@@ -33,7 +33,7 @@ const faqs: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: 'How is the Fairness Score calculated?',
-    a: (<>Your score is a weighted composite of five components: how your increase compares to local rent trends (30 points), how your proposed rent compares to nearby units (25 points), whether your rent is reasonable relative to area benchmarks (20 points), rent versus local incomes (15 points), and market momentum (10 points). When comparable data is limited, the system automatically shifts weight toward trend data to keep the score reliable. See our <Link to="/methodology" className="text-primary hover:underline">methodology page</Link> for the full breakdown.</>),
+    a: (<>Your score is a weighted composite of four components: how your increase compares to local rent trends (35 points), how your proposed rent compares to nearby units (30 points), whether your rent is reasonable relative to area benchmarks (25 points), and market momentum (10 points). When comparable data is limited, the system automatically shifts weight toward trend data to keep the score reliable. See our <Link to="/methodology" className="text-primary hover:underline">methodology page</Link> for the full breakdown.</>),
   },
 ];
 

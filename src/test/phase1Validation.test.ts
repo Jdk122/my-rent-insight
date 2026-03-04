@@ -21,23 +21,23 @@ const cases: TestCase[] = [
     name: 'Case 1 - Typical renter, no Zillow data',
     input: {
       increasePct: 5, marketYoY: 3, proposedRent: 2100, currentRent: 2000,
-      fmr: 1800, compMedian: 2050, medianIncome: 55000, zillowMonthly: null,
+      fmr: 1800, compMedian: 2050, zillowMonthly: null,
     },
-    expectations: { comp5Score: 5, totalMin: 55, totalMax: 75 },
+    expectations: { comp5Score: 5, totalMin: 50, totalMax: 80 },
   },
   {
     name: 'Case 2 - High-cost NYC, falling market, no Zillow',
     input: {
       increasePct: 7, marketYoY: -1.5, proposedRent: 4280, currentRent: 4000,
-      fmr: 1900, compMedian: 3800, medianIncome: 72000, zillowMonthly: null,
+      fmr: 1900, compMedian: 3800, zillowMonthly: null,
     },
-    expectations: { comp3Score: 5, comp5Score: 5 },
+    expectations: { comp3Score: 6, comp5Score: 5 },
   },
   {
     name: 'Case 3 - Fair increase, has Zillow data',
     input: {
       increasePct: 3, marketYoY: 4, proposedRent: 1545, currentRent: 1500,
-      fmr: 1400, compMedian: 1550, medianIncome: 48000, zillowMonthly: -0.1,
+      fmr: 1400, compMedian: 1550, zillowMonthly: -0.1,
     },
     expectations: { comp5Score: 10, comp5Estimated: false, totalMin: 75, totalMax: 100 },
   },
@@ -45,7 +45,7 @@ const cases: TestCase[] = [
     name: 'Case 4 - Zero increase, verify Component 3 label',
     input: {
       increasePct: 0, marketYoY: 2, proposedRent: 1800, currentRent: 1800,
-      fmr: 1600, compMedian: 1750, medianIncome: 50000, zillowMonthly: 0.2,
+      fmr: 1600, compMedian: 1750, zillowMonthly: 0.2,
     },
     expectations: { comp3Label: 'Increase Reasonableness' },
   },
@@ -53,9 +53,9 @@ const cases: TestCase[] = [
     name: 'Case 5 - Renter far above market, counter-offer check',
     input: {
       increasePct: 8, marketYoY: 3, proposedRent: 3240, currentRent: 3000,
-      fmr: 1500, compMedian: 2200, medianIncome: 60000, zillowMonthly: 0.4,
+      fmr: 1500, compMedian: 2200, zillowMonthly: 0.4,
     },
-    expectations: { totalMin: 15, totalMax: 25, counterAboveCompMedian: true },
+    expectations: { totalMin: 5, totalMax: 25, counterAboveCompMedian: true },
   },
 ];
 
