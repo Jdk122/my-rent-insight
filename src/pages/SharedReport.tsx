@@ -4,6 +4,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { bedroomLabels, BedroomType } from '@/data/rentData';
 import { trackEvent } from '@/lib/analytics';
 import SEO from '@/components/SEO';
+import SEOFooter from '@/components/SEOFooter';
+import PageNav from '@/components/PageNav';
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
@@ -97,10 +99,14 @@ const SharedReport = () => {
 
   if (error || !report) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4 px-6">
-        <h1 className="font-display text-2xl text-foreground">Report not found</h1>
-        <p className="text-muted-foreground">This report link may be invalid or expired.</p>
-        <Link to="/" className="text-primary hover:underline">← Go to RenewalReply</Link>
+      <div className="min-h-screen bg-background flex flex-col">
+        <PageNav hideCta />
+        <main className="flex-1 flex flex-col items-center justify-center gap-4 px-6">
+          <h1 className="font-display text-2xl text-foreground">Report not found</h1>
+          <p className="text-muted-foreground">This report link may be invalid or expired.</p>
+          <Link to="/" className="text-primary hover:underline">← Go to RenewalReply</Link>
+        </main>
+        <SEOFooter />
       </div>
     );
   }
@@ -110,21 +116,16 @@ const SharedReport = () => {
   const verdictText = report.verdict === 'above' ? 'Above Market' : report.verdict === 'at-market' ? 'At Market' : 'Below Market';
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <SEO
         title={`Rent Increase Analysis — ${locationLabel} | RenewalReply`}
         description={`Data-backed rent increase analysis for ${locationLabel}. Proposed increase: ${report.increasePct}%. Market trend: ${report.marketYoy}%.`}
         noindex
       />
 
-      {/* Header */}
-      <nav className="border-b border-border bg-card px-6 py-4">
-        <Link to="/">
-          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
-        </Link>
-      </nav>
+      <PageNav />
 
-      <main className="max-w-[620px] mx-auto px-6 py-10">
+      <main className="max-w-[620px] mx-auto px-6 py-10 flex-1 w-full">
         {/* Title */}
         <h1 className="font-display text-[clamp(1.5rem,4vw,2rem)] text-foreground leading-tight tracking-tight mb-1">
           Rent Increase Analysis
@@ -253,6 +254,8 @@ const SharedReport = () => {
           </Link>
         </div>
       </main>
+
+      <SEOFooter />
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { getDataFreshness, getFreshestDate, formatFreshnessDate, type DataFreshn
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import ContactModal from '@/components/ContactModal';
+import PageNav from '@/components/PageNav';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import {
@@ -224,15 +225,7 @@ const RentByCity = () => {
         </div>
       </noscript>
 
-      {/* Nav */}
-      <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-        <Link to="/">
-          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
-        </Link>
-        <Link to="/" className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
-          Check your rent →
-        </Link>
-      </nav>
+      <PageNav />
 
       <main className="max-w-3xl mx-auto px-6 py-12 md:py-16 flex-1 w-full">
         {/* Breadcrumbs */}
@@ -262,7 +255,7 @@ const RentByCity = () => {
             {trendYoY !== null && (
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Year-over-Year Trend</p>
-                <p className={`text-2xl font-bold tabular-nums ${trendYoY > 0 ? 'text-destructive' : trendYoY < 0 ? 'text-green-600' : 'text-foreground'}`}>
+                <p className={`text-2xl font-bold tabular-nums ${trendYoY > 0 ? 'text-destructive' : trendYoY < 0 ? 'text-accent-green' : 'text-foreground'}`}>
                   {trendYoY > 0 ? '↑' : trendYoY < 0 ? '↓' : '→'} {trendYoY > 0 ? '+' : ''}{trendYoY.toFixed(1)}%
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">Source: {trendSource}</p>
@@ -273,7 +266,7 @@ const RentByCity = () => {
           {/* Last updated badge */}
           {freshestFormatted && (
             <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500" />
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent-green" />
               Last updated <time dateTime={freshest?.date || ''}>{freshestFormatted}</time>
             </p>
           )}
@@ -383,7 +376,7 @@ const RentByCity = () => {
                       <TableCell className="text-right tabular-nums hidden sm:table-cell">{fmt(raw.f[2])}</TableCell>
                       <TableCell className="text-right tabular-nums">
                         {zipYoy !== null ? (
-                          <span className={zipYoy > 0 ? 'text-destructive' : zipYoy < 0 ? 'text-green-600' : ''}>
+                          <span className={zipYoy > 0 ? 'text-destructive' : zipYoy < 0 ? 'text-accent-green' : ''}>
                             {zipYoy > 0 ? '+' : ''}{zipYoy.toFixed(1)}%
                           </span>
                         ) : '—'}
@@ -414,7 +407,7 @@ const RentByCity = () => {
                     <span className="font-medium text-foreground">{nc.city}, {nc.state}</span>
                     <div className="text-right">
                       <span className="tabular-nums text-sm text-muted-foreground">{fmt(nc.avgFmr[1])}/mo</span>
-                      <span className={`ml-2 text-xs font-medium ${diff > 0 ? 'text-destructive' : diff < 0 ? 'text-green-600' : 'text-muted-foreground'}`}>
+                      <span className={`ml-2 text-xs font-medium ${diff > 0 ? 'text-destructive' : diff < 0 ? 'text-accent-green' : 'text-muted-foreground'}`}>
                         {diff > 0 ? '+' : ''}{pctDiff}%
                       </span>
                     </div>
@@ -500,11 +493,7 @@ function NotFoundPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEO title="City Not Found | RenewalReply" noindex />
-      <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-        <Link to="/">
-          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
-        </Link>
-      </nav>
+      <PageNav hideCta />
       <main className="max-w-xl mx-auto px-6 py-24 flex-1 text-center">
         <h1 className="font-display text-3xl text-foreground mb-4">City not found</h1>
         <p className="text-muted-foreground mb-8 leading-relaxed">

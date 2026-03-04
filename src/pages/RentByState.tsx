@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import ContactModal from '@/components/ContactModal';
+import PageNav from '@/components/PageNav';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -148,15 +149,7 @@ const RentByState = () => {
         </div>
       </noscript>
 
-      {/* Nav */}
-      <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-        <Link to="/">
-          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
-        </Link>
-        <Link to="/" className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
-          Check your rent →
-        </Link>
-      </nav>
+      <PageNav />
 
       <main className="max-w-3xl mx-auto px-6 py-12 md:py-16 flex-1 w-full">
         {/* Breadcrumbs */}
@@ -215,7 +208,7 @@ const RentByState = () => {
                     <TableCell className="text-right tabular-nums hidden sm:table-cell">{c.zips.length}</TableCell>
                     <TableCell className="text-right tabular-nums hidden md:table-cell">
                       {c.yoyChange !== null ? (
-                        <span className={c.yoyChange > 0 ? 'text-destructive' : c.yoyChange < 0 ? 'text-green-600' : ''}>
+                        <span className={c.yoyChange > 0 ? 'text-destructive' : c.yoyChange < 0 ? 'text-accent-green' : ''}>
                           {c.yoyChange > 0 ? '+' : ''}{c.yoyChange.toFixed(1)}%
                         </span>
                       ) : '—'}
@@ -292,11 +285,7 @@ function NotFoundPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEO title="State Not Found — RenewalReply" noindex />
-      <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-        <Link to="/">
-          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
-        </Link>
-      </nav>
+      <PageNav hideCta />
       <main className="flex-1 flex flex-col items-center justify-center">
         <h1 className="font-display text-3xl text-foreground mb-4">State Not Found</h1>
         <p className="text-muted-foreground mb-6">We don't have rent data for this state.</p>

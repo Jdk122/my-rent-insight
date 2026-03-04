@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import ContactModal from '@/components/ContactModal';
+import PageNav from '@/components/PageNav';
 import { Skeleton } from '@/components/ui/skeleton';
 
 function fmt(n: number) {
@@ -143,18 +144,7 @@ const RentData = () => {
         </div>
       </noscript>
 
-      {/* Nav */}
-      <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-        <Link to="/">
-          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
-        </Link>
-        <Link
-          to="/"
-          className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
-        >
-          Check your rent →
-        </Link>
-      </nav>
+      <PageNav />
 
       <main className="max-w-3xl mx-auto px-6 py-12 md:py-16 flex-1 w-full">
         {/* Breadcrumb */}

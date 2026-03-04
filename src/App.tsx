@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import { captureUtmParams } from "@/lib/utm";
+import ErrorBoundary from "./components/ErrorBoundary";
 import Index from "./pages/Index";
 import Privacy from "./pages/Privacy";
 import Outcome from "./pages/Outcome";
@@ -31,6 +32,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ErrorBoundary>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/privacy" element={<Privacy />} />
@@ -47,6 +49,7 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </ErrorBoundary>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
