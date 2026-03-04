@@ -45,6 +45,7 @@ const TOP_CITIES: { city: string; state: string; zip: string }[] = [
 
 // slugify moved to cityStateUtils
 
+// Force rebuild for chunk cache invalidation
 const RentData = () => {
   const navigate = useNavigate();
   const [allData, setAllData] = useState<Record<string, RentZipRaw> | null>(null);
