@@ -1,13 +1,11 @@
 import { useState, useRef } from 'react';
-import { Link2, Check, Copy, Share2, MessageCircle, Mail, Facebook } from 'lucide-react';
+import { Link2, Check, Copy, Share2, MessageCircle, Mail, Facebook, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { generateShortId } from '@/lib/shortId';
 import { trackEvent } from '@/lib/analytics';
 import { toast } from 'sonner';
-import html2canvas from 'html2canvas';
 
 interface ShareHubProps {
-  /* For the report link (landlord path) */
   reportPayload: {
     zip: string;
     address: string | null;
@@ -20,26 +18,18 @@ interface ShareHubProps {
   onLinkGenerated?: (url: string) => void;
   analysisId?: string | null;
   leadEmail?: string;
-
-  /* For the neighbor/viral path */
   zipCode: string;
   city: string;
   state: string;
   bedroomNum: number;
   increasePct: number;
   marketYoy: number;
-
-  /* Verdict context — controls which tabs/CTAs are shown */
   verdict?: 'above' | 'fair' | 'below';
-
-  /* For image share card */
   headline: string;
   stats: { label: string; value: string; color?: string }[];
 }
 
-const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
-
-type Tab = 'landlord' | 'neighbors';
+type ActivePanel = null | 'landlord' | 'neighbors';
 
 const ShareHub = ({
   reportPayload,
@@ -53,13 +43,10 @@ const ShareHub = ({
   increasePct,
   marketYoy,
   verdict = 'above',
-  headline,
-  stats,
 }: ShareHubProps) => {
-  const [activeTab, setActiveTab] = useState<Tab>(verdict === 'above' ? 'landlord' : 'neighbors');
-  const showLandlordTab = verdict === 'above';
+  const [activePanel, setActivePanel] = useState<ActivePanel>(null);
 
-  // ── Landlord: report link state ──
+  // ── Report link state (shared by both paths) ──
   const [reportUrl, setReportUrl] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -67,16 +54,8 @@ const ShareHub = ({
   // ── Neighbors: copy state ──
   const [neighborCopied, setNeighborCopied] = useState(false);
 
-  // ── Image share ──
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [generatingImage, setGeneratingImage] = useState(false);
-
-  // ── Landlord handlers ──
-  const handleGenerateReport = async () => {
-    if (reportUrl) {
-      await copyToClipboard(reportUrl);
-      return;
-    }
+  const generateReportLink = async (): Promise<string | null> => {
+    if (reportUrl) return reportUrl;
     setGenerating(true);
     try {
       const shortId = generateShortId();
@@ -93,72 +72,64 @@ const ShareHub = ({
         lead_email: leadEmail || null,
       } as any);
       if (error) throw error;
-
       const url = `${window.location.origin}/report/${shortId}`;
       setReportUrl(url);
       onLinkGenerated?.(url);
-      trackEvent('report_shared', { zip: reportPayload.zip });
-      trackEvent('report_link_generated', { zip_code: reportPayload.zip, verdict });
-      await copyToClipboard(url);
+      return url;
     } catch (err) {
       console.error('Failed to create shared report:', err);
       toast.error('Failed to generate report link. Please try again.');
+      return null;
     } finally {
       setGenerating(false);
     }
   };
 
-  const copyToClipboard = async (text: string) => {
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
-    toast.success('Link copied!');
+  const handleShareLandlord = async () => {
+    trackEvent('share_landlord', { zip: zipCode });
+    trackEvent('report_link_generated', { zip_code: zipCode, verdict });
+    const url = reportUrl || await generateReportLink();
+    if (url) {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+      toast.success('Link copied — send it to your landlord!');
+      setActivePanel('landlord');
+    }
+  };
+
+  const handleShareNeighbors = async () => {
+    trackEvent('share_neighbors', { zip: zipCode });
+    trackEvent('report_link_generated', { zip_code: zipCode, verdict });
+    const url = reportUrl || await generateReportLink();
+    if (url) {
+      setActivePanel('neighbors');
+    }
   };
 
   // ── Neighbor message content ──
   const brLabel = bedroomNum === 0 ? 'Studio' : bedroomNum === 1 ? '1-bedroom' : bedroomNum === 2 ? '2-bedroom' : bedroomNum === 3 ? '3-bedroom' : '4-bedroom';
-  const isAboveMarket = increasePct > marketYoy;
-  const diff = Math.abs(Math.round((increasePct - marketYoy) * 10) / 10);
   const marketSign = marketYoy > 0 ? '+' : '';
-  const shareUrl = `https://renewalreply.com/?utm_source=share&utm_medium=building&utm_campaign=viral_loop&utm_content=${zipCode}`;
-  const tweetText = `Just checked — ${brLabel} rents in ${zipCode} (${city}) moved ${marketSign}${marketYoy}% this year. My landlord wants ${increasePct}%. Free tool to check yours:`;
+  const shareUrl = reportUrl || `https://renewalreply.com/?utm_source=share&utm_medium=building&utm_campaign=viral_loop&utm_content=${zipCode}`;
 
-  const smsBody = `Hey — I just checked our building's rent increase against market data. ${brLabel} rents in ${zipCode} moved ${marketSign}${marketYoy}% this year. My landlord wants ${increasePct}%.${isAboveMarket ? ` That's ${diff} percentage points above market.` : ''} Took 30 seconds, no signup: ${shareUrl}`;
-  const whatsappBody = `Did you get your renewal letter yet? 👀\n\nI just ran our zip code (${zipCode}) through a rent fairness tool. ${brLabel} rents here moved ${marketSign}${marketYoy}% this year.\n\nMy landlord is asking for ${increasePct}%${isAboveMarket ? ` — that's ${diff} points above the market trend.` : '.'}\n\nFree tool, no signup, 30 seconds: ${shareUrl}`;
+  const smsBody = `Hey — I just checked our building's rent increase against market data. ${brLabel} rents in ${zipCode} moved ${marketSign}${marketYoy}% this year. My landlord wants ${increasePct}%. Check yours: ${shareUrl}`;
+  const whatsappBody = `Did you get your renewal letter yet? 👀\n\n${brLabel} rents in ${zipCode} moved ${marketSign}${marketYoy}% this year. My landlord is asking for ${increasePct}%.\n\nCheck yours: ${shareUrl}`;
   const emailSubject = `Worth checking — is our rent increase fair in ${city}?`;
-  const emailBody = `Hey,\n\nI just ran my address through a rent fairness tool and thought you'd want to know what I found.\n\n${brLabel} rents in ${zipCode} (${city}, ${state}) moved ${marketSign}${marketYoy}% this year. My landlord is asking for ${increasePct}%${isAboveMarket ? ` — that's ${diff} percentage points above the local market trend` : ', which is in line with the market'}.\n\nThe tool cross-references HUD data, local market trends, and comparable rents nearby. It's free, takes 30 seconds, and doesn't require a signup.\n\nCheck yours here: ${shareUrl}\n\nThought you'd want to know, especially if you got a similar increase.`;
-  const clipboardText = `Just checked — ${brLabel} rents in ${zipCode} (${city}) moved ${marketSign}${marketYoy}% this year. My landlord wants ${increasePct}%. Free tool to check yours: ${shareUrl}`;
+  const emailBody = `Hey,\n\nI ran my address through a rent fairness tool and thought you'd want to know.\n\n${brLabel} rents in ${zipCode} (${city}, ${state}) moved ${marketSign}${marketYoy}% this year. My landlord is asking for ${increasePct}%.\n\nCheck yours here: ${shareUrl}`;
 
-  const handleSMS = () => {
-    trackEvent('building_share_clicked', { method: 'sms', zip: zipCode });
-    trackEvent('share_clicked', { share_method: 'sms' });
-    window.open(`sms:?&body=${encodeURIComponent(smsBody)}`);
-  };
-  const handleWhatsApp = () => {
-    trackEvent('building_share_clicked', { method: 'whatsapp', zip: zipCode });
-    trackEvent('share_clicked', { share_method: 'whatsapp' });
-    window.open(`https://wa.me/?text=${encodeURIComponent(whatsappBody)}`);
-  };
-  const handleEmail = () => {
-    trackEvent('building_share_clicked', { method: 'email', zip: zipCode });
-    trackEvent('share_clicked', { share_method: 'email' });
-    window.open(`mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`);
-  };
+  const handleSMS = () => { trackEvent('share_clicked', { share_method: 'sms' }); window.open(`sms:?&body=${encodeURIComponent(smsBody)}`); };
+  const handleWhatsApp = () => { trackEvent('share_clicked', { share_method: 'whatsapp' }); window.open(`https://wa.me/?text=${encodeURIComponent(whatsappBody)}`); };
+  const handleNeighborEmail = () => { trackEvent('share_clicked', { share_method: 'email' }); window.open(`mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`); };
   const handleTwitter = () => {
-    trackEvent('building_share_clicked', { method: 'twitter', zip: zipCode });
     trackEvent('share_clicked', { share_method: 'twitter' });
+    const tweetText = `Just checked — ${brLabel} rents in ${zipCode} (${city}) moved ${marketSign}${marketYoy}% this year. My landlord wants ${increasePct}%. Free tool:`;
     window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
   };
-  const handleFacebook = () => {
-    trackEvent('building_share_clicked', { method: 'facebook', zip: zipCode });
-    trackEvent('share_clicked', { share_method: 'facebook' });
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
-  };
+  const handleFacebook = () => { trackEvent('share_clicked', { share_method: 'facebook' }); window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank'); };
   const handleNeighborCopy = async () => {
-    trackEvent('building_share_clicked', { method: 'copy', zip: zipCode });
     trackEvent('share_clicked', { share_method: 'copy_link' });
     try {
-      await navigator.clipboard.writeText(clipboardText);
+      await navigator.clipboard.writeText(shareUrl);
       setNeighborCopied(true);
       setTimeout(() => setNeighborCopied(false), 2500);
       toast.success('Copied to clipboard!');
@@ -167,190 +138,79 @@ const ShareHub = ({
     }
   };
 
-  // ── Image share handler ──
-  const handleImageShare = async () => {
-    if (!cardRef.current) return;
-    setGeneratingImage(true);
-    try {
-      const canvas = await html2canvas(cardRef.current, { scale: 2, backgroundColor: null, useCORS: true });
-      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob((b) => resolve(b), 'image/png'));
-      if (!blob) return;
-      const file = new File([blob], 'rent-result.png', { type: 'image/png' });
-
-      if (navigator.share && navigator.canShare?.({ files: [file] })) {
-        try {
-          await navigator.share({ title: 'My Rent Analysis', text: 'Check yours free at renewalreply.com', files: [file] });
-          return;
-        } catch (e) {
-          if ((e as Error).name === 'AbortError') return;
-        }
-      }
-      // Fallback: download
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'rent-result.png';
-      a.click();
-      URL.revokeObjectURL(url);
-      toast.success('Image saved!');
-    } finally {
-      setGeneratingImage(false);
-    }
-  };
-
   return (
     <div className="w-full max-w-[540px]">
-      {/* Hidden card for image generation */}
-      <div className="absolute -left-[9999px] top-0" aria-hidden>
-        <div
-          ref={cardRef}
-          style={{
-            width: 540,
-            padding: 40,
-            background: 'linear-gradient(135deg, hsl(45, 30%, 97%), hsl(45, 20%, 93%))',
-            borderRadius: 20,
-            fontFamily: "Georgia, 'Times New Roman', serif",
-          }}
+      {/* Two side-by-side buttons */}
+      <div className="flex gap-3">
+        <button
+          onClick={handleShareLandlord}
+          disabled={generating}
+          className="flex-1 inline-flex items-center justify-center gap-2 border border-border px-5 py-3 rounded-lg text-sm font-medium text-foreground hover:border-foreground transition-colors disabled:opacity-50"
         >
-          <div style={{ marginBottom: 24 }}>
-            <span style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 22, fontWeight: 700, color: '#2d6a4f' }}>
-              Renewal<span style={{ fontWeight: 400, color: '#c77d3c' }}>Reply</span>
-            </span>
-          </div>
-          <p style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 22, lineHeight: 1.3, color: '#1a1a1a', marginBottom: 28, letterSpacing: '-0.01em' }}>
-            {headline}
-          </p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            {stats.map((stat) => (
-              <div key={stat.label} style={{ background: 'white', borderRadius: 12, padding: '14px 16px', border: '1px solid hsl(30, 10%, 88%)' }}>
-                <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'hsl(30, 5%, 55%)', marginBottom: 4 }}>{stat.label}</p>
-                <p style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 26, color: stat.color || '#1a1a1a', letterSpacing: '-0.02em', lineHeight: 1 }}>{stat.value}</p>
-              </div>
-            ))}
-          </div>
-          <p style={{ marginTop: 28, fontSize: 13, color: 'hsl(30, 5%, 50%)', textAlign: 'center' }}>Check yours free → renewalreply.com</p>
-        </div>
+          <Link2 size={16} />
+          {generating && activePanel !== 'neighbors' ? 'Generating…' : copied ? 'Link copied!' : 'Share with landlord'}
+        </button>
+        <button
+          onClick={handleShareNeighbors}
+          disabled={generating}
+          className="flex-1 inline-flex items-center justify-center gap-2 border border-border px-5 py-3 rounded-lg text-sm font-medium text-foreground hover:border-foreground transition-colors disabled:opacity-50"
+        >
+          <Users size={16} />
+          {generating && activePanel === 'neighbors' ? 'Generating…' : 'Share with neighbors'}
+        </button>
       </div>
 
-      {/* Tab switcher — only show tabs when landlord tab is available */}
-      {showLandlordTab ? (
-        <div className="flex rounded-lg border border-border overflow-hidden">
+      {/* Context line */}
+      <p className="text-[12px] text-muted-foreground/70 text-center mt-2.5">
+        Generate a shareable link to your full analysis — comps, market data, and fair offer.
+      </p>
+
+      {/* Landlord: show copied URL */}
+      {activePanel === 'landlord' && reportUrl && (
+        <div className="mt-4 flex items-center gap-2 justify-center">
+          <div className="flex items-center gap-2 bg-secondary rounded-lg px-4 py-2.5 text-sm text-foreground/80 max-w-[280px] overflow-hidden">
+            <Link2 size={14} className="shrink-0 text-muted-foreground" />
+            <span className="truncate">{reportUrl}</span>
+          </div>
           <button
-            onClick={() => setActiveTab('landlord')}
-            className={`flex-1 px-4 py-2.5 text-[13px] font-semibold transition-colors ${
-              activeTab === 'landlord'
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-card text-muted-foreground hover:text-foreground'
-            }`}
+            onClick={async () => {
+              await navigator.clipboard.writeText(reportUrl);
+              setCopied(true);
+              setTimeout(() => setCopied(false), 2500);
+              toast.success('Link copied!');
+            }}
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:brightness-90 transition-all shadow-sm shadow-primary/20"
           >
-            <Link2 size={14} className="inline mr-1.5 -mt-0.5" />
-            Send to landlord
-          </button>
-          <button
-            onClick={() => setActiveTab('neighbors')}
-            className={`flex-1 px-4 py-2.5 text-[13px] font-semibold transition-colors ${
-              activeTab === 'neighbors'
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-card text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <Share2 size={14} className="inline mr-1.5 -mt-0.5" />
-            Share with neighbors
+            {copied ? <><Check size={14} /> Copied!</> : <><Copy size={14} /> Copy</>}
           </button>
         </div>
-      ) : null}
+      )}
 
-      {/* Tab content */}
-      <div className="mt-3">
-        {activeTab === 'landlord' && showLandlordTab ? (
-          <div className="text-center">
-            <p className="text-[13px] text-muted-foreground mb-3">
-              Generate a shareable link to your full analysis — comps, market data, and fair offer.
-            </p>
-            {reportUrl ? (
-              <div className="flex items-center gap-2 justify-center">
-                <div className="flex items-center gap-2 bg-secondary rounded-lg px-4 py-2.5 text-sm text-foreground/80 max-w-[280px] overflow-hidden">
-                  <Link2 size={14} className="shrink-0 text-muted-foreground" />
-                  <span className="truncate">{reportUrl}</span>
-                </div>
-                <button
-                  onClick={() => copyToClipboard(reportUrl)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:brightness-90 transition-all shadow-sm shadow-primary/20"
-                >
-                  {copied ? <><Check size={14} /> Copied!</> : <><Copy size={14} /> Copy</>}
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={handleGenerateReport}
-                disabled={generating}
-                data-share-report-btn
-                className="inline-flex items-center gap-2 border border-border px-5 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:border-foreground hover:text-foreground transition-colors disabled:opacity-50"
-              >
-                <Link2 size={16} />
-                {generating ? 'Generating…' : 'Generate report link'}
-              </button>
-            )}
-          </div>
-        ) : (
-          <div>
-            <p className="text-[13px] text-muted-foreground mb-3 text-center">
-              {verdict === 'above'
-                ? 'Neighbors facing the same increase? Share so they can check theirs.'
-                : 'Share this tool with your neighbors — they might not be as lucky.'}
-            </p>
-
-            {/* Channel grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-2.5 mb-3">
-              <button
-                onClick={handleSMS}
-                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all shadow-xs"
-              >
-                <MessageCircle size={16} /> Text
-              </button>
-              <button
-                onClick={handleWhatsApp}
-                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all shadow-xs"
-              >
-                <MessageCircle size={16} /> WhatsApp
-              </button>
-              <button
-                onClick={handleEmail}
-                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all shadow-xs"
-              >
-                <Mail size={16} /> Email
-              </button>
-              <button
-                onClick={handleTwitter}
-                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all shadow-xs"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> X
-              </button>
-              <button
-                onClick={handleFacebook}
-                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all shadow-xs"
-              >
-                <Facebook size={16} /> Facebook
-              </button>
-              <button
-                onClick={handleNeighborCopy}
-                className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all shadow-xs"
-              >
-                {neighborCopied ? <><Check size={16} /> Copied!</> : <><Copy size={16} /> Copy</>}
-              </button>
-            </div>
-
-            {/* Image share option */}
-            <button
-              onClick={handleImageShare}
-              disabled={generatingImage}
-              className="w-full text-center text-[12.5px] text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2 disabled:opacity-50"
-            >
-              {generatingImage ? 'Generating image…' : '🔗 Download shareable image'}
+      {/* Neighbors: sharing channels */}
+      {activePanel === 'neighbors' && (
+        <div className="mt-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-2.5">
+            <button onClick={handleSMS} className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all">
+              <MessageCircle size={16} /> Text
+            </button>
+            <button onClick={handleWhatsApp} className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all">
+              <MessageCircle size={16} /> WhatsApp
+            </button>
+            <button onClick={handleNeighborEmail} className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all">
+              <Mail size={16} /> Email
+            </button>
+            <button onClick={handleTwitter} className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> X
+            </button>
+            <button onClick={handleFacebook} className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all">
+              <Facebook size={16} /> Facebook
+            </button>
+            <button onClick={handleNeighborCopy} className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all">
+              {neighborCopied ? <><Check size={16} /> Copied!</> : <><Copy size={16} /> Copy</>}
             </button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

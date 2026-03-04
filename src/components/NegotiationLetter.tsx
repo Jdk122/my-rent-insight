@@ -4,7 +4,6 @@ import { trackEvent } from '@/lib/analytics';
 import { Link } from 'react-router-dom';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
 import { Check, Copy, Download, RefreshCw, Mail } from 'lucide-react';
-import ShareReportButton from '@/components/ShareReportButton';
 import { supabase } from '@/integrations/supabase/client';
 
 interface NegotiationLetterProps {
@@ -40,16 +39,6 @@ interface NegotiationLetterProps {
   rcAvgDaysOnMarket?: number | null;
   alVacancy?: number | null;
   f50Value?: number | null;
-  shareReportPayload?: {
-    zip: string;
-    address: string | null;
-    bedrooms: number;
-    currentRent: number;
-    proposedIncrease: number;
-    increaseType: 'dollar' | 'percent';
-    reportData: Record<string, any>;
-  };
-  onReportLinkGenerated?: (url: string) => void;
   fairnessScore?: number | null;
   tierLabel?: string;
   maxCompDistance?: number | null;
@@ -152,7 +141,7 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
     analysisId, prefilledEmail, onEmailCaptured, leadContext, reportUrl, onGenerateReport,
     compMedian, compCount, compRadius, trendSource, trendArea,
     rcMedianRent, rcTotalListings, rcAvgDaysOnMarket, alVacancy, f50Value,
-    shareReportPayload, onReportLinkGenerated, fairnessScore, tierLabel,
+    fairnessScore, tierLabel,
     maxCompDistance, momentumDirection,
   } = props;
 
@@ -352,18 +341,6 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
         </button>
       </div>
 
-      {/* Share Analysis */}
-      {shareReportPayload && (
-        <div className="mt-5">
-          <p className="text-xs text-muted-foreground mb-2">If your landlord asks for sources, share your full analysis:</p>
-          <ShareReportButton
-            reportPayload={shareReportPayload}
-            onLinkGenerated={onReportLinkGenerated}
-            analysisId={analysisId}
-            leadEmail={prefilledEmail}
-          />
-        </div>
-      )}
 
       {/* Legal disclaimer */}
       <p className="text-[11px] text-muted-foreground/70 mt-4 leading-relaxed max-w-[540px]">
