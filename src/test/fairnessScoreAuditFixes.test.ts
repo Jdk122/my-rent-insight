@@ -15,7 +15,6 @@ const baseInput: FairnessScoreInput = {
   currentRent: 2000,
   compMedian: 2000,
   fmr: 1800,
-  medianIncome: 50000,
   zillowMonthly: null,
 };
 
@@ -94,42 +93,42 @@ describe('Component 3: Declining Market Tightening', () => {
   };
 
   describe('falling market (marketYoY = -2)', () => {
-    it('increasePct=3 → 12/20 (falls in 2-4% band)', () => {
+    it('increasePct=3 → 15/25 (falls in 2-4% band)', () => {
       const comp = getComponent({ ...highRentInput, marketYoY: -2, increasePct: 3 }, 'fmr');
-      expect(comp.score).toBe(12);
+      expect(comp.score).toBe(15);
     });
 
-    it('increasePct=5 → 5/20 (falls in 4-7% band)', () => {
+    it('increasePct=5 → 6/25 (falls in 4-7% band)', () => {
       const comp = getComponent({ ...highRentInput, marketYoY: -2, increasePct: 5 }, 'fmr');
-      expect(comp.score).toBe(5);
+      expect(comp.score).toBe(6);
     });
 
-    it('increasePct=8 → 0/20 (exceeds 7%)', () => {
+    it('increasePct=8 → 0/25 (exceeds 7%)', () => {
       const comp = getComponent({ ...highRentInput, marketYoY: -2, increasePct: 8 }, 'fmr');
       expect(comp.score).toBe(0);
     });
   });
 
   describe('rising market (marketYoY = +2)', () => {
-    it('increasePct=3 → 18/20 (falls in <=3% band)', () => {
+    it('increasePct=3 → 23/25 (falls in <=3% band)', () => {
       const comp = getComponent({ ...highRentInput, marketYoY: 2, increasePct: 3 }, 'fmr');
-      expect(comp.score).toBe(18);
+      expect(comp.score).toBe(23);
     });
 
-    it('increasePct=5 → 12/20 (falls in 3-6% band)', () => {
+    it('increasePct=5 → 15/25 (falls in 3-6% band)', () => {
       const comp = getComponent({ ...highRentInput, marketYoY: 2, increasePct: 5 }, 'fmr');
-      expect(comp.score).toBe(12);
+      expect(comp.score).toBe(15);
     });
 
-    it('increasePct=8 → 5/20 (falls in 6-10% band)', () => {
+    it('increasePct=8 → 6/25 (falls in 6-10% band)', () => {
       const comp = getComponent({ ...highRentInput, marketYoY: 2, increasePct: 8 }, 'fmr');
-      expect(comp.score).toBe(5);
+      expect(comp.score).toBe(6);
     });
   });
 
-  it('marketYoY=0 (flat) uses rising breakpoints: increasePct=5 → 12/20', () => {
+  it('marketYoY=0 (flat) uses rising breakpoints: increasePct=5 → 15/25', () => {
     const comp = getComponent({ ...highRentInput, marketYoY: 0, increasePct: 5 }, 'fmr');
-    expect(comp.score).toBe(12);
+    expect(comp.score).toBe(15);
   });
 });
 

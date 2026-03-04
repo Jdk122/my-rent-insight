@@ -12,8 +12,6 @@ interface NegotiationLetterProps {
   increasePct: number;
   marketYoy: number;
   fmr: number;
-  censusMedian: number | null;
-  medianIncome: number | null;
   zip: string;
   city: string;
   state: string;
@@ -135,7 +133,7 @@ function buildFallbackLetter(props: {
 
 const NegotiationLetter = (props: NegotiationLetterProps) => {
   const {
-    currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, medianIncome,
+    currentRent, newRent, increasePct, marketYoy, fmr,
     zip, city, state, bedrooms, increaseAmount,
     counterLow, counterHigh, counterLowPercent, counterHighPercent,
     analysisId, prefilledEmail, onEmailCaptured, leadContext, reportUrl, onGenerateReport,
@@ -153,9 +151,6 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
   const brLabel = bedroomLabels[bedrooms];
   const increaseAmt = increaseAmount ?? Math.round(newRent - currentRent);
   const bedroomNum = ['studio', '1br', '2br', '3br', '4br'].indexOf(bedrooms);
-
-  const rentToIncomeRatio = medianIncome && medianIncome > 0
-    ? Math.round(((newRent * 12) / medianIncome) * 100) : null;
 
   const analysisPayload = useMemo(() => ({
     currentRent,
@@ -176,15 +171,13 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
     rcTotalListings: rcTotalListings ?? null,
     rcAvgDaysOnMarket: rcAvgDaysOnMarket ?? null,
     alVacancy: alVacancy ?? null,
-    medianIncome: medianIncome ?? null,
-    rentToIncomeRatio,
     counterLow,
     counterHigh,
     f50Value: f50Value ?? null,
     momentumDirection: momentumDirection ?? null,
   }), [currentRent, newRent, increasePct, increaseAmt, bedroomNum, zip,
     fairnessScore, tierLabel, compMedian, compCount, maxCompDistance, marketYoy, trendSource, trendArea,
-    rcMedianRent, rcTotalListings, rcAvgDaysOnMarket, alVacancy, medianIncome, rentToIncomeRatio,
+    rcMedianRent, rcTotalListings, rcAvgDaysOnMarket, alVacancy,
     counterLow, counterHigh, f50Value, momentumDirection, city]);
 
   const generateLetter = useCallback(async () => {
