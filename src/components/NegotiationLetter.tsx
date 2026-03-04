@@ -138,18 +138,6 @@ const NegotiationLetter = ({
       paragraphs.push(conditionSentence);
     }
 
-    // Paragraph 5: Income context
-    if (medianIncome && medianIncome > 0) {
-      const rentToIncome = Math.round(((newRent * 12) / medianIncome) * 100);
-      if (rentToIncome > 25) {
-        const thresholdLabel = rentToIncome > 30 ? 'above' : 'near';
-        paragraphs.push(
-          `The median household income in this ZIP code is $${fmt(medianIncome)}, ` +
-          `and my proposed rent would represent ${rentToIncome}% of this figure — ` +
-          `${thresholdLabel} the standard 30% affordability threshold.`
-        );
-      }
-    }
 
     // ── PROPOSAL ──
     const counterRange = counterLow === counterHigh
