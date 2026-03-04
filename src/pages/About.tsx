@@ -9,7 +9,7 @@ const About = () => {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <SEO
-        title="About RenewalReply — Free Rent Increase Calculator"
+        title="About RenewalReply — Free Rent Check Tool"
         description="RenewalReply helps renters check if their rent increase is fair using federal housing data, real listings, and local trends. Free, no account required."
         canonical="/about"
       />
