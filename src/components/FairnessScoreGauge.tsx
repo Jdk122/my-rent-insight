@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
-import { FairnessScoreResult } from '@/lib/fairnessScore';
+import { FairnessScoreResult, FMR_COMPONENT_TOOLTIP } from '@/lib/fairnessScore';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { ChevronDown, Info } from 'lucide-react';
 import { useState } from 'react';
 import { trackEvent } from '@/lib/analytics';
 
@@ -109,10 +110,24 @@ const FairnessScoreGauge = ({ score, dynamicMessage }: FairnessScoreGaugeProps) 
               {score.components.map((comp) => (
                 <div key={comp.id}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[13px] text-foreground">
+                    <span className="text-[13px] text-foreground flex items-center gap-1">
                       {comp.label}
+                      {comp.id === 'fmr' && (
+                        <TooltipProvider delayDuration={200}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Info className="h-3 w-3 text-muted-foreground cursor-help inline-block" />
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="max-w-[260px] text-[11px] leading-relaxed">
+                              {FMR_COMPONENT_TOOLTIP}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
                       {comp.estimated && (
-                        <span className="text-[10px] text-muted-foreground ml-1.5">(est.)</span>
+                        <span className="text-[10px] text-muted-foreground ml-0.5">
+                          ({comp.id === 'momentum' ? 'neutral' : 'est.'})
+                        </span>
                       )}
                     </span>
                     <span className="text-[13px] font-semibold tabular-nums text-foreground">

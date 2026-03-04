@@ -539,14 +539,23 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   </div>
                 )}
                 {isAboveMarket && calc && (
-                  <div className="context-row-highlight mt-2">
-                    <span className="context-label">Fair counter-offer</span>
-                    <span className="context-value text-verdict-good font-bold">
-                      {calc.counterLow === calc.counterHigh
-                        ? `$${fmt(calc.counterLow)}/mo`
-                        : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}/mo`}
-                    </span>
-                  </div>
+                  <>
+                    <div className="context-row-highlight mt-2">
+                      <span className="context-label">Fair counter-offer</span>
+                      <span className="context-value text-verdict-good font-bold">
+                        {calc.counterLow === calc.counterHigh
+                          ? `$${fmt(calc.counterLow)}/mo`
+                          : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}/mo`}
+                      </span>
+                    </div>
+                    {medianCompRent && calc.counterLow > medianCompRent && (
+                      <div className="mt-2 px-3 py-2 rounded-md bg-accent/50 border border-border/50">
+                        <p className="text-[11px] text-muted-foreground leading-relaxed">
+                          Note: Your counter range (${fmt(calc.counterLow)}–${fmt(calc.counterHigh)}) is above the area median of ${fmt(medianCompRent)} for similar units. You may have additional negotiating room.
+                        </p>
+                      </div>
+                    )}
+                  </>
                 )}
 
                 <p className="text-[11px] text-muted-foreground mt-3">
