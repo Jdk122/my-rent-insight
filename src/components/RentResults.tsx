@@ -753,6 +753,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       const btn = document.querySelector('[data-share-report-btn]') as HTMLButtonElement;
                       btn?.click();
                     }}
+                    compMedian={medianCompRent}
+                    compCount={outlierResult?.filtered.length ?? 0}
+                    compRadius={compRadius.label ? compRadius.label.replace('within ', '') : undefined}
+                    trendSource={rentData.alYoY !== null && rentData.alYoY !== undefined ? 'Apartment List' : rentData.zillowMonthly !== null ? 'Zillow' : 'HUD'}
+                    trendArea={rentData.alRegion || rentData.city}
+                    rcMedianRent={rcMarket.rcMedianRent}
+                    rcTotalListings={rcMarket.rcTotalListings}
+                    rcAvgDaysOnMarket={rcMarket.rcAvgDaysOnMarket}
+                    alVacancy={rentData.alVacancy}
+                    f50Value={rentData.f50 && bedroomNum >= 0 && bedroomNum <= 4 ? rentData.f50[bedroomNum] : null}
                   />
                 </LetterGate>
               </motion.section>

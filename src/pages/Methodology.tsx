@@ -74,7 +74,7 @@ const Methodology = () => {
                       <span className="text-[13px] font-semibold text-foreground">Comparable Rents</span>
                       <span className="text-[12px] font-mono text-muted-foreground">25 pts</span>
                     </div>
-                    <p>Measures whether your proposed rent is above or below the median asking rent for similar units nearby, using real-time listings from Rentcast.</p>
+                    <p>Measures whether your proposed rent is above or below the median asking rent for similar units nearby, using real-time listings from Rentcast. Comps are filtered by distance (≤3 miles) and weighted by similarity to your unit.</p>
                   </div>
 
                   <div className="p-3 rounded-md bg-secondary/40">
@@ -82,7 +82,7 @@ const Methodology = () => {
                       <span className="text-[13px] font-semibold text-foreground">Increase Reasonableness</span>
                       <span className="text-[12px] font-mono text-muted-foreground">20 pts</span>
                     </div>
-                    <p>Evaluates whether your proposed rent is reasonable relative to HUD reference rents for your area. Uses the 50th percentile (median) when available, otherwise the 40th percentile SAFMR. In areas where rents naturally exceed HUD levels, scores the rate of increase instead.</p>
+                    <p>Evaluates whether your proposed rent is reasonable relative to area benchmarks. Prioritizes Rentcast live market median when sufficient listings exist, then HUD 50th percentile (median), then HUD SAFMR. In areas where rents naturally exceed benchmarks, scores the rate of increase instead.</p>
                   </div>
 
                   <div className="p-3 rounded-md bg-secondary/40">
@@ -100,6 +100,12 @@ const Methodology = () => {
                     </div>
                     <p>Captures the direction rents are heading month-over-month. Uses Zillow ZORI when available, then Apartment List MoM trends, then Zillow Home Value Index as a directional proxy.</p>
                   </div>
+                </div>
+
+                <div className="p-3 rounded-md bg-muted/30 border border-border/40">
+                  <p className="text-[12px] text-muted-foreground leading-relaxed">
+                    <strong className="text-foreground">Dynamic weights:</strong> Component weights adjust automatically when comparable data is limited. When fewer than 5 comps are found, points redistribute from the Comparable Rents component to the Market Trend component to maintain a reliable 100-point total.
+                  </p>
                 </div>
 
                 <div className="pt-3 border-t border-border/40">
@@ -134,7 +140,7 @@ const Methodology = () => {
                 />
                 <DataSource
                   name="Apartment List"
-                  description="Rent growth trends derived from actual lease transactions (not just listings). Provides year-over-year and month-over-month rent growth at the county level, mapped to ZIP codes via Census crosswalk."
+                  description="Rent growth trends derived from actual lease transactions (not just listings). Provides year-over-year and month-over-month rent growth, vacancy index, and time on market at the county level."
                   frequency="Monthly"
                 />
                 <DataSource
@@ -149,33 +155,46 @@ const Methodology = () => {
                 />
                 <DataSource
                   name="Rentcast"
-                  description="Real-time comparable rental listings near your address, sourced from MLS data, public records, and proprietary rental databases. Shows what similar units are actually listed for right now."
-                  frequency="Live (real-time)"
+                  description="Real-time comparable rental listings and aggregate market statistics (median rent by bedroom count, active listings, days on market). Sourced from MLS data, public records, and proprietary databases."
+                  frequency="Live (real-time, cached 24 hours per ZIP)"
                 />
                 <DataSource
                   name="U.S. Census American Community Survey (ACS)"
                   description="Demographic and housing data including median renter household income and median gross rent at the ZIP code level."
-                  frequency="Annual — Currently 2023 5-year estimates"
+                  frequency="Annual — Currently 2022 5-year estimates"
                 />
               </div>
             </AccordionContent>
           </AccordionItem>
 
-          {/* Section 3: Priority Cascade */}
+          {/* Section 3: Data Priority System */}
           <AccordionItem value="cascade" className="border border-border/60 rounded-lg px-5 data-[state=open]:bg-card/50">
             <AccordionTrigger className="text-[16px] font-semibold text-foreground py-4 hover:no-underline">
-              How We Pick the Best Data
+              Data Priority System
             </AccordionTrigger>
             <AccordionContent className="pb-5">
               <div className="space-y-4 text-[13px] leading-relaxed text-muted-foreground">
                 <p>
-                  Not every data source is available for every ZIP code. Rather than showing incomplete results, we use a <strong className="text-foreground">priority cascade</strong> — for each scoring component, we select the most accurate available source and automatically fall back to alternatives when primary data is missing.
+                  For each scoring component, RenewalReply uses the most accurate source available for your ZIP code and automatically falls back to alternatives when primary data is missing.
                 </p>
+
+                <div className="space-y-3">
+                  {[
+                    { label: 'Market trends', cascade: 'Apartment List → Zillow ZORI → HUD FMR' },
+                    { label: 'Reference rent', cascade: 'Rentcast market median → HUD 50th percentile → HUD FMR' },
+                    { label: 'Momentum', cascade: 'Zillow ZORI → Apartment List → ZHVI → neutral default' },
+                    { label: 'Comps', cascade: 'Rentcast (weighted by similarity to your unit)' },
+                    { label: 'Income', cascade: 'Census ACS' },
+                  ].map(({ label, cascade }) => (
+                    <div key={label} className="flex gap-3 items-baseline">
+                      <span className="text-foreground font-medium shrink-0 w-[110px]">{label}:</span>
+                      <span className="font-mono text-[12px]">{cascade}</span>
+                    </div>
+                  ))}
+                </div>
+
                 <p>
-                  For example, when scoring market trends, we first look for Apartment List transacted rent data (actual leases signed), then Zillow ZORI (listing-based trends), and finally HUD year-over-year changes. Each fallback is still meaningful — just slightly less precise.
-                </p>
-                <p>
-                  Components in your score breakdown marked <span className="font-mono text-[12px] bg-secondary px-1.5 py-0.5 rounded">(est.)</span> indicate that a proxy or default was used instead of direct measurement. Components without this marker are based on primary data specific to your ZIP code.
+                  The score details show which source was used for each component. Components marked <span className="font-mono text-[12px] bg-secondary px-1.5 py-0.5 rounded">(est.)</span> indicate a proxy or default was used instead of direct measurement.
                 </p>
               </div>
             </AccordionContent>
@@ -203,11 +222,15 @@ const Methodology = () => {
                   </li>
                   <li className="flex gap-2">
                     <span className="text-muted-foreground/40 shrink-0">•</span>
-                    <span>Counter-offer ranges are data-backed suggestions — not guaranteed outcomes. Your specific situation (unit condition, amenities, lease terms) may justify different numbers.</span>
+                    <span>Comp availability varies by geography. Component weights adjust automatically when comp data is limited.</span>
                   </li>
                   <li className="flex gap-2">
                     <span className="text-muted-foreground/40 shrink-0">•</span>
-                    <span>RenewalReply provides market analysis for informational purposes. It is not legal or financial advice.</span>
+                    <span>Counter-offer ranges are data-driven suggestions — not guaranteed outcomes. Your specific situation (unit condition, amenities, lease terms) may justify different numbers.</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-muted-foreground/40 shrink-0">•</span>
+                    <span>RenewalReply provides market analysis for informational purposes only. It is not legal or financial advice.</span>
                   </li>
                 </ul>
               </div>
@@ -223,13 +246,12 @@ const Methodology = () => {
               <div className="text-[13px] leading-relaxed text-muted-foreground">
                 <div className="space-y-2">
                   {[
-                    { source: 'HUD SAFMR (40th pct)', updated: 'October 2025 (FY2026)' },
-                    { source: 'HUD 50th Percentile', updated: 'October 2025 (FY2026)' },
+                    { source: 'HUD FMR & 50th Percentile', updated: 'FY2026 (effective October 2025)' },
                     { source: 'Apartment List', updated: 'February 2026' },
                     { source: 'Zillow ZORI', updated: 'January 2026' },
                     { source: 'Zillow ZHVI', updated: 'January 2026' },
-                    { source: 'Rentcast Listings', updated: 'Live (real-time)' },
-                    { source: 'Census ACS', updated: '2023 (5-year estimates)' },
+                    { source: 'Rentcast', updated: 'Live (real-time, cached 24 hours)' },
+                    { source: 'Census ACS', updated: '2022 (5-year estimates)' },
                   ].map(({ source, updated }) => (
                     <div key={source} className="flex justify-between items-center py-1.5 border-b border-border/30 last:border-0">
                       <span className="text-foreground font-medium">{source}</span>
