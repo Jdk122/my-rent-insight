@@ -461,6 +461,21 @@ export type Database = {
     }
     Functions: {
       get_analyses_count: { Args: never; Returns: number }
+      get_shared_report: {
+        Args: { p_short_id: string }
+        Returns: {
+          address: string
+          bedrooms: number
+          created_at: string
+          current_rent: number
+          id: string
+          increase_type: string
+          proposed_increase: number
+          report_data: Json
+          short_id: string
+          zip_code: string
+        }[]
+      }
       update_lead_outcome: {
         Args: { p_lead_id: string; p_outcome: string }
         Returns: undefined
