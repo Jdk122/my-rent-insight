@@ -734,13 +734,14 @@ function RefreshGuideSection() {
 }
 
 // ═══════════════════════════════════════
-// Section 6: Migration
+// Section 6: Migration (client-side XLSX processing)
 // ═══════════════════════════════════════
 
 function MigrationSection() {
   const [status, setStatus] = useState<'idle' | 'running' | 'done' | 'error'>('idle');
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string>('');
+  const [progress, setProgress] = useState('');
 
   const runMigration = async () => {
     setStatus('running');
@@ -748,14 +749,124 @@ function MigrationSection() {
     setResult(null);
 
     try {
-      const { data, error: fnError } = await supabase.functions.invoke('process-erap', {
-        body: {},
+      // Step 1: Fetch ERAP XLSX from HUD
+      setProgress('Downloading ERAP file from HUD...');
+      const erapUrl = 'https://www.huduser.gov/portal/datasets/fmr/fmr2026/fy2026_erap_fmrs.xlsx';
+      const erapResp = await fetch(erapUrl);
+      if (!erapResp.ok) throw new Error(`Failed to fetch ERAP file: ${erapResp.status}`);
+      const erapBuffer = await erapResp.arrayBuffer();
+      setProgress(`Downloaded ${(erapBuffer.byteLength / 1024 / 1024).toFixed(1)} MB. Parsing...`);
+
+      // Step 2: Parse XLSX client-side
+      const XLSX = await import('xlsx');
+      const wb = XLSX.read(new Uint8Array(erapBuffer), { type: 'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows: any[] = XLSX.utils.sheet_to_json(ws, { defval: '' });
+      setProgress(`Parsed ${rows.length} rows. Comparing with rentData...`);
+
+      // Find column names
+      const sampleRow = rows[0] || {};
+      const keys = Object.keys(sampleRow);
+      const findKey = (...candidates: string[]) => {
+        for (const c of candidates) {
+          const cl = c.toLowerCase();
+          const found = keys.find((k) => k.toLowerCase().includes(cl));
+          if (found) return found;
+        }
+        return null;
+      };
+
+      const kZip = findKey('zip', 'zcta');
+      const kMetro = findKey('area name', 'metro', 'hud');
+      const kBr0 = findKey('erap_fmr_br0', 'br0', '0br');
+      const kBr1 = findKey('erap_fmr_br1', 'br1', '1br');
+      const kBr2 = findKey('erap_fmr_br2', 'br2', '2br');
+      const kBr3 = findKey('erap_fmr_br3', 'br3', '3br');
+      const kBr4 = findKey('erap_fmr_br4', 'br4', '4br');
+
+      if (!kZip || !kBr0) throw new Error(`Could not find required columns. Keys: ${keys.join(', ')}`);
+
+      // Build ERAP lookup
+      const erapData: Record<string, { m: string; f: number[] }> = {};
+      for (const row of rows) {
+        const z = String(row[kZip!] || '').trim().padStart(5, '0');
+        if (z.length !== 5 || !/^\d{5}$/.test(z)) continue;
+        const fmr = [
+          parseInt(row[kBr0!]) || 0,
+          parseInt(row[kBr1!]) || 0,
+          parseInt(row[kBr2!]) || 0,
+          parseInt(row[kBr3!]) || 0,
+          parseInt(row[kBr4!]) || 0,
+        ];
+        if (fmr.every((v) => v === 0)) continue;
+        const metro = String(row[kMetro!] || '').trim();
+        erapData[z] = { m: metro, f: fmr };
+      }
+
+      // Step 3: Load current rentData.json
+      setProgress('Loading current rentData.json...');
+      const rdResp = await fetch('/data/rentData.json');
+      const rentData: Record<string, any> = await rdResp.json();
+      const existingZips = new Set(Object.keys(rentData));
+
+      // Step 4: Build county_fmr.json
+      setProgress('Building county-level supplement...');
+      const countyFmr: Record<string, any> = {};
+      let newCount = 0;
+
+      for (const [z, data] of Object.entries(erapData)) {
+        if (existingZips.has(z)) continue;
+
+        let state = '';
+        if (data.m.includes(', ')) {
+          const parts = data.m.split(', ');
+          const lastPart = parts[parts.length - 1];
+          const stateCandidate = lastPart.split(/\s/)[0];
+          if (stateCandidate.length === 2 && /^[A-Z]+$/.test(stateCandidate)) {
+            state = stateCandidate;
+          }
+        }
+
+        countyFmr[z] = {
+          c: '',
+          s: state,
+          m: data.m,
+          f: data.f,
+          p: [0, 0, 0, 0, 0],
+          y: 0,
+          ps: 'f',
+          fs: 'county',
+        };
+        newCount++;
+      }
+
+      // Step 5: Upload to Supabase storage
+      setProgress('Uploading county_fmr.json to storage...');
+      const jsonStr = JSON.stringify(countyFmr);
+      const { error: uploadError } = await supabase.storage
+        .from('temp-data')
+        .upload('county_fmr.json', new Blob([jsonStr], { type: 'application/json' }), {
+          upsert: true,
+          contentType: 'application/json',
+        });
+
+      if (uploadError) throw new Error(`Storage upload failed: ${uploadError.message}`);
+
+      const { data: urlData } = supabase.storage
+        .from('temp-data')
+        .getPublicUrl('county_fmr.json');
+
+      setResult({
+        success: true,
+        stats: {
+          erap_total: Object.keys(erapData).length,
+          existing_safmr: existingZips.size,
+          new_county: newCount,
+          total_coverage: existingZips.size + newCount,
+        },
+        download_url: urlData.publicUrl,
+        message: `Created county_fmr.json with ${newCount} new ZIPs. Download and save to public/data/county_fmr.json.`,
       });
-
-      if (fnError) throw new Error(fnError.message);
-      if (!data?.success) throw new Error(data?.error || 'Unknown error');
-
-      setResult(data);
       setStatus('done');
     } catch (err: any) {
       setError(err.message);
@@ -768,16 +879,16 @@ function MigrationSection() {
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2"><Download className="h-5 w-5" />ERAP Migration — Expand to Full National Coverage</CardTitle>
         <CardDescription>
-          Fetches the FY2026 ERAP FMR file from HUD (~52K ZIPs), identifies ZIPs not in your current SAFMR dataset,
-          and creates a supplementary county_fmr.json file. This runs as a backend function — no Python required.
+          Processes the FY2026 ERAP FMR file from HUD (~52K ZIPs) directly in your browser,
+          identifies ZIPs not in your current SAFMR dataset, and creates a supplementary county_fmr.json file.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="bg-muted/50 rounded-lg p-4 text-sm space-y-2">
-          <p><strong>What this does:</strong></p>
+          <p><strong>What this does (all in-browser):</strong></p>
           <ol className="list-decimal list-inside space-y-1">
-            <li>Downloads FY2026 ERAP FMR xlsx from HUD (~1.9 MB)</li>
-            <li>Parses all ~52K ZCTAs with their FMR values</li>
+            <li>Downloads FY2026 ERAP FMR xlsx from HUD (~6 MB)</li>
+            <li>Parses all ~52K ZCTAs with their FMR values using SheetJS</li>
             <li>Compares against your current rentData.json (~38,601 SAFMR ZIPs)</li>
             <li>Creates county_fmr.json with only the ~13,300 new ZIPs (tagged as county-level)</li>
             <li>Uploads to storage for download</li>
@@ -795,7 +906,7 @@ function MigrationSection() {
             className="gap-2"
           >
             {status === 'running' ? (
-              <><Loader2 className="h-4 w-4 animate-spin" />Processing (~30s)...</>
+              <><Loader2 className="h-4 w-4 animate-spin" />Processing...</>
             ) : (
               <><Download className="h-4 w-4" />Run ERAP Migration</>
             )}
@@ -812,6 +923,12 @@ function MigrationSection() {
             </a>
           )}
         </div>
+
+        {status === 'running' && progress && (
+          <div className="text-sm text-muted-foreground bg-muted/30 rounded-md p-3">
+            {progress}
+          </div>
+        )}
 
         {status === 'error' && (
           <div className="text-destructive text-sm bg-destructive/10 rounded-md p-3">
