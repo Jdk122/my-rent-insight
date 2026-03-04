@@ -92,6 +92,7 @@ const bedroomToIndex: Record<BedroomType, number> = {
 
 // ─── Cache ───
 let rentDataCache: Record<string, RentZipRaw> | null = null;
+let countyFmrCache: Record<string, RentZipRaw> | null = null;
 let fredMetroMapCache: Record<string, string> | null = null;
 let zhviCache: Record<string, ZhviZipRaw> | null = null;
 let apartmentListCache: Record<string, ApartmentListZipRaw> | null = null;
@@ -105,6 +106,22 @@ export async function getRentData(): Promise<Record<string, RentZipRaw>> {
     rentDataCache = await response.json();
   }
   return rentDataCache!;
+}
+
+async function getCountyFmrData(): Promise<Record<string, RentZipRaw>> {
+  if (!countyFmrCache) {
+    try {
+      const response = await fetch('/data/county_fmr.json');
+      if (response.ok) {
+        countyFmrCache = await response.json();
+      } else {
+        countyFmrCache = {};
+      }
+    } catch {
+      countyFmrCache = {};
+    }
+  }
+  return countyFmrCache!;
 }
 
 async function getZhviData(): Promise<Record<string, ZhviZipRaw>> {
@@ -216,8 +233,18 @@ export async function lookupRentData(
   zip: string,
   bedrooms: BedroomType
 ): Promise<RentLookupResult | null> {
-  const [allData, zhviData, alData, hud50Data] = await Promise.all([getRentData(), getZhviData(), getApartmentListData(), getHud50Data()]);
-  const raw = allData[zip];
+  const [allData, countyData, zhviData, alData, hud50Data] = await Promise.all([
+    getRentData(), getCountyFmrData(), getZhviData(), getApartmentListData(), getHud50Data()
+  ]);
+  // Primary: SAFMR data. Fallback: county-level FMR.
+  let raw = allData[zip];
+  let fmrSource: 'safmr' | 'county' | 'unknown' = 'safmr';
+  if (!raw && countyData[zip]) {
+    raw = countyData[zip];
+    fmrSource = 'county';
+  } else if (raw) {
+    fmrSource = (raw.fs as 'safmr' | 'county') || 'safmr';
+  }
   if (!raw) return null;
   const zhvi = zhviData[zip] ?? null;
   const al = alData[zip] ?? null;
@@ -282,7 +309,7 @@ export async function lookupRentData(
     yoySourceLabel,
     yoyCapped: yoyCapped || undefined,
     priorSource: raw.ps,
-    fmrSource: raw.fs ?? 'unknown',
+    fmrSource,
     censusMedianRent: censusRent,
     medianIncome: validIncome,
     fredTrend: null,
