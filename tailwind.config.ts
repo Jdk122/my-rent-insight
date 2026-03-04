@@ -14,9 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['DM Serif Display', 'serif'],
-        body: ['DM Sans', 'sans-serif'],
-        mono: ['DM Sans', 'sans-serif'],
+        display: ['DM Serif Display', 'Georgia', "'Times New Roman'", 'serif'],
+        body: ['DM Sans', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['DM Sans', 'system-ui', '-apple-system', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -94,15 +94,17 @@ export default {
           to: { opacity: "1", transform: "translateY(0)" },
         },
         "fade-in": {
-          from: { opacity: "0" },
-          to: { opacity: "1" },
+          from: { opacity: "0", transform: "translateY(8px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "slide-up": "slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
-        "fade-in": "fade-in 0.5s ease-out",
+        "fade-in": "fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both",
+        "fade-in-delay-1": "fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both",
+        "fade-in-delay-2": "fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both",
       },
     },
   },
