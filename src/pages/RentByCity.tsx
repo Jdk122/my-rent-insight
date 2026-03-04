@@ -76,6 +76,18 @@ const RentByCity = () => {
     });
   }, [data, hud50Data]);
 
+  // ─── Zip table intelligence: detect whether FMR/YoY actually vary ───
+  const fmrVaries = useMemo(() => {
+    if (!data || data.zips.length <= 1) return false;
+    const first = data.zips[0].raw.f[1];
+    return data.zips.some(z => z.raw.f[1] !== first);
+  }, [data]);
+
+  const hasZipLevelYoY = useMemo(() => {
+    if (!data) return false;
+    return data.zips.some(z => (alData[z.zip]?.aly !== undefined) || (z.raw.zy !== undefined));
+  }, [data, alData]);
+
   if (loading) return <LoadingSkeleton />;
   if (notFound || !data) return <NotFoundPage />;
 
@@ -372,50 +384,77 @@ const RentByCity = () => {
 
         {/* ═══ Section F: Rent Data by Zip Code ═══ */}
         <section className="mb-12">
-          <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Rent Data by Zip Code in {city}</h2>
+          <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Zip Codes in {city}</h2>
           <p className="text-sm text-muted-foreground mb-3">
-            Click any zip code for detailed rent data, nearby comparables, and a free rent increase check.
+            Click any zip code for detailed rent data including zip-specific SAFMR rates, nearby comparables, and a free rent increase check.
           </p>
           {zips.length > 10 && (
             <div className="mb-3">
               <Input type="text" inputMode="numeric" placeholder="Filter by zip code..." value={zipSearch} onChange={(e) => setZipSearch(e.target.value.replace(/\D/g, ''))} className="h-10 w-48" />
             </div>
           )}
-          <div className="rounded-lg border border-border overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Zip Code</TableHead>
-                  <TableHead className="text-right">1-BR Fair Market Rent</TableHead>
-                  <TableHead className="text-right hidden sm:table-cell">2-BR Fair Market Rent</TableHead>
-                  <TableHead className="text-right">YoY</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {displayedZips.map(({ zip, raw }) => {
-                  const zipAl = alData[zip]?.aly;
-                  const zipYoy = zipAl ?? raw.zy ?? (raw.p[1] > 0 ? Math.round(((raw.f[1] - raw.p[1]) / raw.p[1]) * 1000) / 10 : null);
-                  const isOutlier = zipYoy !== null && Math.abs(zipYoy) > 20;
-                  return (
-                    <TableRow key={zip}>
-                      <TableCell>
-                        <Link to={`/rent/${zip}`} className="text-primary hover:underline font-medium">{zip}</Link>
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">{raw.f[1] > 0 ? fmt(raw.f[1]) : '—'}</TableCell>
-                      <TableCell className="text-right tabular-nums hidden sm:table-cell">{raw.f[2] > 0 ? fmt(raw.f[2]) : '—'}</TableCell>
-                      <TableCell className="text-right tabular-nums">
-                        {zipYoy !== null ? (
-                          <span className={`${zipYoy > 3 ? 'text-destructive' : zipYoy < 0 ? 'text-accent' : ''} ${isOutlier ? 'opacity-60' : ''}`}>
-                            {zipYoy > 0 ? '+' : ''}{zipYoy.toFixed(1)}%{isOutlier ? ' ⚠' : ''}
-                          </span>
-                        ) : '—'}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
+
+          {fmrVaries || hasZipLevelYoY ? (
+            /* ── Table mode: show columns only for data that actually varies ── */
+            <div className="rounded-lg border border-border overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Zip Code</TableHead>
+                    {fmrVaries && <TableHead className="text-right">1-BR SAFMR</TableHead>}
+                    {fmrVaries && <TableHead className="text-right hidden sm:table-cell">2-BR SAFMR</TableHead>}
+                    {hasZipLevelYoY && <TableHead className="text-right">YoY</TableHead>}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {displayedZips.map(({ zip, raw }) => {
+                    const zipAl = alData[zip]?.aly;
+                    const zipZori = raw.zy;
+                    // Only show zip-level trend data (AL or Zillow), NOT HUD fallback
+                    const zipYoy = zipAl ?? zipZori ?? null;
+                    const isOutlier = zipYoy !== null && Math.abs(zipYoy) > 20;
+                    return (
+                      <TableRow key={zip}>
+                        <TableCell>
+                          <Link to={`/rent/${zip}`} className="text-primary hover:underline font-medium">{zip}</Link>
+                        </TableCell>
+                        {fmrVaries && <TableCell className="text-right tabular-nums">{raw.f[1] > 0 ? fmt(raw.f[1]) : '—'}</TableCell>}
+                        {fmrVaries && <TableCell className="text-right tabular-nums hidden sm:table-cell">{raw.f[2] > 0 ? fmt(raw.f[2]) : '—'}</TableCell>}
+                        {hasZipLevelYoY && (
+                          <TableCell className="text-right tabular-nums">
+                            {zipYoy !== null ? (
+                              <span className={`${zipYoy > 3 ? 'text-destructive' : zipYoy < 0 ? 'text-accent' : ''} ${isOutlier ? 'opacity-60' : ''}`}>
+                                {zipYoy > 0 ? '+' : ''}{zipYoy.toFixed(1)}%{isOutlier ? ' ⚠' : ''}
+                              </span>
+                            ) : '—'}
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          ) : (
+            /* ── Simple list mode: all zips share same FMR, no zip-level trends ── */
+            <div className="rounded-lg border border-border p-4 bg-card">
+              <div className="flex flex-wrap gap-2">
+                {displayedZips.map(({ zip }) => (
+                  <Link
+                    key={zip}
+                    to={`/rent/${zip}`}
+                    className="inline-flex items-center gap-1 text-sm text-primary hover:underline font-medium bg-muted/50 px-3 py-1.5 rounded-md hover:bg-muted transition-colors"
+                  >
+                    {zip}
+                  </Link>
+                ))}
+              </div>
+              <p className="mt-3 text-xs text-muted-foreground/70">
+                All zip codes in {city} share the same county-level HUD Fair Market Rent ({fmt(avgFmr[1])} for 1-BR). Click any zip for SAFMR-specific rates.
+              </p>
+            </div>
+          )}
+
           {hasMoreZips && (
             <p className="mt-3 text-sm text-muted-foreground">
               Showing top 20 of {zips.length} zip codes.{' '}
@@ -424,7 +463,9 @@ const RentByCity = () => {
               </button>
             </p>
           )}
-          <p className="mt-2 text-xs text-muted-foreground/70">Sorted by data richness. YoY source priority: Apartment List → Zillow ZORI → HUD FMR.</p>
+          <p className="mt-2 text-xs text-muted-foreground/70">
+            {fmrVaries ? 'SAFMR rates are zip-specific.' : 'County-level FMR shown in city summary above.'} {hasZipLevelYoY ? 'YoY from Apartment List or Zillow ZORI where available.' : ''}
+          </p>
         </section>
 
         {/* ═══ Nearby City Comparison ═══ */}
