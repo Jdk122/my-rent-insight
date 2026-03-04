@@ -39,9 +39,12 @@ const faqs: { q: string; a: React.ReactNode }[] = [
 
 const HomeFAQ = () => (
   <section className="max-w-[620px] mx-auto px-5 sm:px-6 pt-14 sm:pt-20 pb-14 sm:pb-20 border-t border-border/60" aria-label="Frequently asked questions">
-    <h2 className="font-display text-[22px] sm:text-[26px] text-foreground tracking-tight text-center mb-6 sm:mb-8" style={{ letterSpacing: '-0.02em' }}>
+    <h2 className="font-display text-[22px] sm:text-[26px] text-foreground tracking-tight text-center mb-2" style={{ letterSpacing: '-0.02em' }}>
       Frequently Asked Questions
     </h2>
+    <p className="text-[15px] sm:text-base text-muted-foreground text-center max-w-[440px] mx-auto mb-8 sm:mb-10 leading-relaxed">
+      Common questions about rent increases and how RenewalReply works.
+    </p>
     <Accordion type="single" collapsible className="space-y-2">
       {faqs.map((faq, i) => (
         <AccordionItem key={i} value={`faq-${i}`} className="border border-border rounded-lg px-4 sm:px-5">
