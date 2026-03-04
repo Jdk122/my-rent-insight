@@ -197,7 +197,7 @@ const RentByState = () => {
 
         {/* Disclaimer */}
         <p className="text-xs text-muted-foreground/60 italic">
-          Data reflects HUD FY2026 fair market rent benchmarks and U.S. Census estimates. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
+          Data reflects HUD FY2026 fair market rent benchmarks. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
         </p>
       </main>
 

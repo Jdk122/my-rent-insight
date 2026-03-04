@@ -32,9 +32,6 @@ function fmt(n: number) {
   return n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 }
 
-function fmtIncome(n: number) {
-  return n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
-}
 
 interface ZipPageData {
   raw: RentZipRaw;
@@ -122,12 +119,9 @@ const RentByZip = () => {
   const state = raw.s || '';
   const fmr1br = raw.f[1];
   const hasZillow = raw.zy !== undefined && raw.zy !== null;
-  const hasCensus = !!(raw.i && raw.i >= 10000);
   const rentControl = getRentControlForZip(zip);
   const cap = getApplicableCap(rentControl);
 
-  // Census-derived renter % estimate (rough: if median rent exists, area is renter-heavy)
-  const rentBurdenPct = raw.i && raw.r ? Math.round(((raw.r * 12) / raw.i) * 100) : null;
   const stateSlug = slugify(stateNameFromAbbr(state));
   const citySlug = slugify(city);
 
@@ -135,7 +129,7 @@ const RentByZip = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <SEO
         title={`Fair Market Rent in ${zip} (${city}, ${state}) — FY2026 HUD Data | RenewalReply`}
-        description={`HUD fair market rent for ${zip} is ${fmt(fmr1br)}/mo for a 1-bedroom. Compare rents, see trends, and check if your rent increase is fair. Free analysis for ${city}, ${state}.`}
+        description={`${city} rent data for ${zip}: See how your rent increase compares to local trends, nearby listings, and HUD benchmarks across 6 data sources. | RenewalReply`}
         canonical={`/rent/${zip}`}
         jsonLd={[
           {
@@ -201,7 +195,7 @@ const RentByZip = () => {
                 name: `What is the average rent in ${zip}?`,
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: `The average rent for a 1-bedroom in ${zip} is ${fmt(fmr1br)} based on HUD Fair Market Rent benchmarks for FY2026.${raw.r ? ` The Census median gross rent for this area is ${fmt(raw.r)}/month.` : ''}`,
+                  text: `The average rent for a 1-bedroom in ${zip} is ${fmt(fmr1br)} based on HUD Fair Market Rent benchmarks for FY2026.`,
                 },
               },
               {
@@ -232,7 +226,7 @@ const RentByZip = () => {
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
           <h1>{`Fair Market Rent in ${zip} — ${city}, ${state}`}</h1>
           <p><strong>{`In zip code ${zip}, the HUD fair market rent for a 1-bedroom is ${fmt(fmr1br)}/month (FY2026).`}{hasZillow ? ` Rents in this area ${raw.zy! > 0 ? 'increased' : raw.zy! < 0 ? 'decreased' : 'remained flat'} ${Math.abs(raw.zy!).toFixed(1)}% year-over-year. A rent increase above ${Math.abs(raw.zy!).toFixed(1)}% is above the local market trend.` : ''}{` Studio: ${fmt(raw.f[0])}, 2-BR: ${fmt(raw.f[2])}, 3-BR: ${fmt(raw.f[3])}, 4-BR: ${fmt(raw.f[4])}.`}</strong></p>
-          <p>{`Data sourced from HUD Small Area Fair Market Rents, U.S. Census Bureau, and Zillow.`}</p>
+          <p>{`Data sourced from HUD Fair Market Rents and 50th Percentile Rents, Apartment List, Zillow ZORI and ZHVI, and Rentcast.`}</p>
 
           <h2>{`HUD Fair Market Rent for ${zip}`}</h2>
           <table style={{ borderCollapse: 'collapse', width: '100%' }}>
@@ -254,12 +248,6 @@ const RentByZip = () => {
             </>
           )}
 
-          {hasCensus && (
-            <>
-              <h2>{`Renter Demographics in ${zip}`}</h2>
-              <p>{`Median Household Income: ${fmtIncome(raw.i!)}.`}{raw.r ? ` Median Gross Rent: ${fmt(raw.r)}/mo.` : ''}{rentBurdenPct !== null ? ` Rent-to-Income Ratio: ${rentBurdenPct}%.` : ''}</p>
-            </>
-          )}
 
           <h2>{`Frequently Asked Questions About Rent in ${zip}`}</h2>
           <h3>{`What is the fair market rent for a 1-bedroom in ${zip}?`}</h3>
@@ -267,7 +255,7 @@ const RentByZip = () => {
           <h3>{`How much has rent increased in ${city} (${zip})?`}</h3>
           <p>{hasZillow ? `Rents in ${city} increased approximately ${Math.abs(raw.zy!).toFixed(1)}% year-over-year according to Zillow ZORI data.` : `Year-over-year rent trend data is not currently available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}%.`}</p>
           <h3>{`What is the average rent in ${zip}?`}</h3>
-          <p>{`The average rent for a 1-bedroom in ${zip} is ${fmt(fmr1br)} based on HUD Fair Market Rent benchmarks for FY2026.${raw.r ? ` The Census median gross rent is ${fmt(raw.r)}/month.` : ''}`}</p>
+          <p>{`The average rent for a 1-bedroom in ${zip} is ${fmt(fmr1br)} based on HUD Fair Market Rent benchmarks for FY2026.`}</p>
           <h3>{`Is ${city} rent controlled?`}</h3>
           <p>{cap ? `Yes. ${cap.jurisdiction} has rent increase protections. ${cap.maxIncreaseFormula ? `The cap is generally ${cap.maxIncreaseFormula}.` : ''}` : `No. There are no specific rent control laws covering ${city}, ${state} at this time.`}</p>
           <h3>{`Is my rent increase fair in ${zip}?`}</h3>
@@ -329,7 +317,7 @@ const RentByZip = () => {
           </p>
 
           <p className="mt-2 text-muted-foreground leading-relaxed" style={{ fontSize: '1.05rem' }}>
-            See how rents in {zip} compare to HUD fair market rent benchmarks. Data sourced from HUD Small Area Fair Market Rents, U.S. Census Bureau, and Zillow.
+            See how rents in {zip} compare to HUD fair market rent benchmarks across six data sources: HUD Fair Market Rents and 50th Percentile Rents, Apartment List transacted rent trends, Zillow ZORI and ZHVI for market momentum, and Rentcast real-time comparable listings.
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link
@@ -433,43 +421,17 @@ const RentByZip = () => {
         {/* SECTION 3.5 — Rentcast Market Rents */}
         <RentcastMarketSection zip={zip} city={city} state={state} />
 
-        {/* SECTION 4 — Demographics */}
-        {hasCensus && (
-          <section className="mb-12">
-            <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Renter Demographics in {zip}</h2>
-            <div className="rounded-lg border border-border p-6 bg-card">
-              <div className="flex flex-wrap gap-6">
-                <div>
-                  <p className="text-sm text-muted-foreground">Median Household Income</p>
-                  <p className="text-2xl font-bold tabular-nums">{fmtIncome(raw.i!)}</p>
-                </div>
-                {raw.r && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">Median Gross Rent</p>
-                    <p className="text-2xl font-bold tabular-nums">{fmt(raw.r)}/mo</p>
-                  </div>
-                )}
-                {rentBurdenPct !== null && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">Rent-to-Income Ratio</p>
-                    <p className={`text-2xl font-bold tabular-nums ${rentBurdenPct > 30 ? 'text-destructive' : 'text-foreground'}`}>{rentBurdenPct}%</p>
-                  </div>
-                )}
-              </div>
-              {rentBurdenPct !== null && (
-                <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
-                  The median household in {zip} spends approximately {rentBurdenPct}% of income on rent.
-                  {rentBurdenPct > 30 ? ' This exceeds the 30% threshold that HUD considers cost-burdened.' : ''}
-                </p>
-              )}
-            </div>
-            <p className="mt-3 text-xs text-muted-foreground">Source: Census ACS 2023</p>
-          </section>
-        )}
+        {/* SECTION 4 — How RenewalReply Works */}
+        <section className="mb-12">
+          <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">How RenewalReply Works</h2>
+          <p className="text-muted-foreground leading-relaxed text-sm">
+            RenewalReply cross-references six independent data sources — HUD Fair Market Rents and 50th Percentile Rents, Apartment List transacted rent trends, Zillow ZORI and ZHVI market data, and Rentcast real-time listings — to score your rent increase across four components: trend comparison, comparable rents, increase reasonableness, and market momentum.
+          </p>
+        </section>
 
         {/* Data summary for AI extraction */}
         <p className="mb-12 text-sm text-muted-foreground">
-          Zip code: {zip} | City: {city}, {state} | 1-BR FMR: {fmt(raw.f[1])}/mo{hasCensus ? ` | Median household income: ${fmtIncome(raw.i!)}` : ''}{rentBurdenPct !== null ? ` | Rent burden: ${rentBurdenPct}%` : ''}
+          Zip code: {zip} | City: {city}, {state} | 1-BR FMR: {fmt(raw.f[1])}/mo | Sources: HUD SAFMR FY2026, Apartment List, Zillow, Rentcast
         </p>
 
         {/* SECTION 5 — FAQ */}
@@ -502,7 +464,6 @@ const RentByZip = () => {
               <AccordionContent>
                 <p className="text-muted-foreground leading-relaxed">
                   The average rent for a 1-bedroom in {zip} is {fmt(fmr1br)} based on HUD Fair Market Rent benchmarks for FY2026.
-                  {raw.r ? ` The Census median gross rent for this area is ${fmt(raw.r)}/month.` : ''}
                   {' '}For current asking rents from nearby listings, see the market data section above.
                 </p>
               </AccordionContent>
@@ -522,9 +483,7 @@ const RentByZip = () => {
               <AccordionTrigger>Is my rent increase fair in {zip}?</AccordionTrigger>
               <AccordionContent>
                 <p className="text-muted-foreground leading-relaxed">
-                  Use our <Link to={`/?zip=${zip}`} className="underline text-primary hover:text-primary/80">free rent check tool</Link> to
-                  compare your proposed increase to HUD fair market rent and local Zillow trends for {zip}.
-                  Enter your current rent and proposed increase to get an instant analysis.
+                  Enter your address, current rent, and proposed increase. We compare your increase against local rent trends from Apartment List lease transaction data, real nearby rental listings with actual prices from Rentcast, HUD reference rent benchmarks including the 50th percentile median, and market momentum signals from Zillow. Your Fairness Score is a weighted composite of four components: how your increase compares to local rent trends (35 points), how your proposed rent compares to nearby units (30 points), whether your rent is reasonable relative to area benchmarks (25 points), and market momentum (10 points). <Link to={`/?zip=${zip}`} className="underline text-primary hover:text-primary/80">Try it free</Link>.
                 </p>
               </AccordionContent>
             </AccordionItem>
@@ -626,7 +585,7 @@ const RentByZip = () => {
 
         {/* Inline disclaimer */}
         <p className="mb-12 text-xs text-muted-foreground/70 italic leading-relaxed">
-          Data reflects HUD FY2026 fair market rent benchmarks and U.S. Census estimates. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
+          Data reflects HUD FY2026 fair market rent benchmarks. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
         </p>
 
         {/* SECTION 7 — Bottom CTA */}
@@ -652,8 +611,6 @@ const RentByZip = () => {
             `City: ${city}, ${state}`,
             `1-BR FMR: ${fmt(raw.f[1])}/mo`,
             `2-BR FMR: ${fmt(raw.f[2])}/mo`,
-            ...(raw.i && raw.i >= 10000 ? [`Median household income: ${fmtIncome(raw.i)}`] : []),
-            ...(rentBurdenPct ? [`Rent burden: ${rentBurdenPct}%`] : []),
           ].join(' | ')}
         </p>
       </div>
