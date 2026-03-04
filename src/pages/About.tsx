@@ -18,18 +18,18 @@ const About = () => {
       <noscript>
         <div style={{ maxWidth: 620, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
           <h1>About RenewalReply</h1>
-          <p>RenewalReply was built by a real estate professional who saw the same problem over and over: renters had no easy way to check whether their rent increase was reasonable.</p>
+          <p>RenewalReply was built to solve a simple problem: renters had no easy way to check whether their rent increase was reasonable.</p>
           <p>RenewalReply closes that gap. The tool pulls federal housing data (HUD Small Area Fair Market Rents), real nearby listings, and local rent trends to give you an objective, data-backed assessment of your rent increase — typically in under 10 seconds.</p>
           <p>It's completely free and no account is required.</p>
           <h2>What Makes RenewalReply Different</h2>
           <ul>
-            <li>Six independent data sources cross-referenced for accuracy</li>
+            <li>Multiple independent data sources cross-referenced for accuracy</li>
             <li>Coverage for 38,000+ zip codes across all 50 states</li>
             <li>Real-time comparable listings from MLS and public records</li>
             <li>Free negotiation letter backed by specific market evidence</li>
           </ul>
           <h2>Data Sources</h2>
-          <p>HUD Fair Market Rents (FY2026) · HUD 50th Percentile Rents · Apartment List Rent Estimates · Zillow ZORI · Zillow ZHVI · Rentcast</p>
+          <p>HUD Fair Market Rents (FY2026) · HUD 50th Percentile Rents · Apartment List Rent Estimates · Zillow ZORI · Zillow ZHVI · Real-time comparable listings</p>
           <p>Contact: social@renewalreply.com</p>
           <p><a href="https://www.renewalreply.com/">Check if your rent increase is fair →</a></p>
         </div>
@@ -44,7 +44,7 @@ const About = () => {
 
         <div className="space-y-6 text-[15px] leading-relaxed text-muted-foreground">
           <p>
-            RenewalReply was built by a real estate professional who saw the same problem over and over: renters had no easy way to check whether their rent increase was reasonable.
+            RenewalReply was built to solve a simple problem: renters had no easy way to check whether their rent increase was reasonable.
           </p>
           <p>
             RenewalReply closes that gap. The tool pulls federal housing data (HUD Small Area Fair Market Rents), real nearby listings, and local rent trends to give you an objective, data-backed assessment of your rent increase — typically in under 10 seconds.
@@ -59,7 +59,7 @@ const About = () => {
           <h2 className="text-lg font-semibold text-foreground mb-4">What Makes RenewalReply Different</h2>
           <div className="space-y-4 text-[15px] leading-relaxed text-muted-foreground">
             <p>
-              Most rent tools show you a single number from a single source. RenewalReply cross-references <strong className="text-foreground">six independent data sources</strong> — HUD Fair Market Rents, HUD 50th Percentile Rents, Apartment List transacted rent trends, Zillow ZORI and ZHVI market indices, and Rentcast real-time MLS listings — to generate a composite Fairness Score across four dimensions.
+              Most rent tools show you a single number from a single source. RenewalReply cross-references <strong className="text-foreground">multiple independent data sources</strong> — including HUD Fair Market Rents, HUD 50th Percentile Rents, Apartment List transacted rent trends, Zillow ZORI and ZHVI market indices, and real-time comparable listings — to generate a composite Fairness Score across four dimensions.
             </p>
             <p>
               The result is a <strong className="text-foreground">multi-dimensional analysis</strong> that accounts for local trends, comparable units, government benchmarks, and market momentum — not just one data point.
@@ -74,7 +74,7 @@ const About = () => {
             <li className="flex gap-2"><span className="text-primary">•</span> 38,000+ zip codes across all 50 states and DC</li>
             <li className="flex gap-2"><span className="text-primary">•</span> HUD SAFMR and 50th Percentile data updated annually (currently FY2026)</li>
             <li className="flex gap-2"><span className="text-primary">•</span> Apartment List and Zillow trends updated monthly</li>
-            <li className="flex gap-2"><span className="text-primary">•</span> Rentcast comparable listings updated in real-time</li>
+            <li className="flex gap-2"><span className="text-primary">•</span> Real-time comparable listings updated daily</li>
           </ul>
           <p className="mt-4 text-[14px] text-muted-foreground">
             For full details on how the Fairness Score is calculated, see our{' '}

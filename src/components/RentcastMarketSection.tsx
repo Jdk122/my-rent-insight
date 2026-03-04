@@ -57,7 +57,7 @@ export default function RentcastMarketSection({ zip, city, state }: { zip: strin
           >
             See live listings near {zip} →
           </button>
-          <p className="mt-2 text-xs text-muted-foreground">Powered by Rentcast · Updated daily</p>
+          <p className="mt-2 text-xs text-muted-foreground">Live market data · Updated daily</p>
         </div>
       </section>
     );
@@ -131,7 +131,7 @@ export default function RentcastMarketSection({ zip, city, state }: { zip: strin
           These are current asking rents from active listings in {zip}. Compare to the HUD fair market rent above to see how the market compares to federal benchmarks.
         </p>
       </div>
-      <p className="mt-3 text-xs text-muted-foreground">Source: Rentcast market data{data.cacheHit ? ' (cached)' : ''}</p>
+      <p className="mt-3 text-xs text-muted-foreground">Source: Live market data{data.cacheHit ? ' (cached)' : ''}</p>
     </section>
   );
 }

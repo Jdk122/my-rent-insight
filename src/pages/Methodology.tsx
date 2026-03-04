@@ -28,7 +28,7 @@ const Methodology = () => {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <SEO
         title="How RenewalReply Works — Methodology & Data Sources"
-        description="Learn how RenewalReply's Fairness Score analyzes rent increases using HUD rents, Apartment List trends, Zillow ZORI, Rentcast comps, and Census data."
+        description="Learn how RenewalReply's Fairness Score analyzes rent increases using HUD rents, Apartment List trends, Zillow ZORI, live market comps, and Census data."
         canonical="/methodology"
       />
 
@@ -38,12 +38,12 @@ const Methodology = () => {
           <p>We believe renters deserve the same data landlords use. Here's exactly how we analyze your rent increase.</p>
 
           <h2>How the Fairness Score Works</h2>
-          <p>The RenewalReply Fairness Score is a 0–100 composite score from four weighted components:</p>
+          <p>The RenewalReply Fairness Score is a 0–100 composite score from multiple independently weighted components:</p>
           <ul>
-            <li>Rent Increase vs. Market Trend (35 pts) — Compares your increase to YoY rent trends using Apartment List, Zillow ZORI, or HUD FMR.</li>
-            <li>Comparable Rents (30 pts) — Measures your proposed rent against nearby listings from Rentcast.</li>
-            <li>Increase Reasonableness (25 pts) — Evaluates against HUD 50th percentile median or market benchmarks.</li>
-            <li>Market Momentum (10 pts) — Captures month-over-month direction from Zillow or Apartment List.</li>
+            <li>Rent Increase vs. Market Trend — Compares your increase to year-over-year rent trends using multiple independent market data sources.</li>
+            <li>Comparable Rents — Measures your proposed rent against the median asking rent for similar units nearby using real-time listing data.</li>
+            <li>Increase Reasonableness — Evaluates against multiple federal and market data benchmarks.</li>
+            <li>Market Momentum — Captures month-over-month direction from market data sources.</li>
           </ul>
 
           <h2>Score Tiers</h2>
@@ -60,17 +60,9 @@ const Methodology = () => {
             <li>HUD Small Area Fair Market Rents (SAFMR) — Annual, FY2026</li>
             <li>HUD 50th Percentile Rents — Annual, FY2026</li>
             <li>Apartment List — Monthly lease transaction trends</li>
-            <li>Zillow ZORI — Monthly observed rent index</li>
-            <li>Zillow ZHVI — Monthly home value trends</li>
-            <li>Rentcast — Real-time MLS listings, cached 24 hours</li>
-          </ul>
-
-          <h2>Data Priority</h2>
-          <ul>
-            <li>Market trends: Apartment List → Zillow ZORI → HUD FMR</li>
-            <li>Reference rent: Rentcast median → HUD 50th percentile → HUD FMR</li>
-            <li>Momentum: Zillow ZORI → Apartment List → ZHVI → neutral</li>
-            <li>Comps: Rentcast (weighted by similarity)</li>
+            <li>Zillow Observed Rent Index (ZORI) — Monthly</li>
+            <li>Zillow Home Value Index (ZHVI) — Monthly</li>
+            <li>Real-time comparable listings — Live market data</li>
           </ul>
 
           <h2>Limitations</h2>
@@ -99,46 +91,34 @@ const Methodology = () => {
             <AccordionContent className="pb-5">
               <div className="space-y-5 text-[13px] leading-relaxed text-muted-foreground">
                 <p>
-                  The RenewalReply Fairness Score™ is a 0–100 composite score calculated from five independently weighted components. Each measures a different dimension of whether your rent increase is reasonable.
+                  The RenewalReply Fairness Score™ is a 0–100 composite score calculated from multiple independently weighted components. Each measures a different dimension of whether your rent increase is reasonable.
                 </p>
 
                 <div className="space-y-3">
                   <div className="p-3 rounded-md bg-secondary/40">
-                    <div className="flex justify-between items-baseline mb-1">
-                      <span className="text-[13px] font-semibold text-foreground">Rent Increase vs. Market Trend</span>
-                      <span className="text-[12px] font-mono text-muted-foreground">35 pts</span>
-                    </div>
-                    <p>Compares your increase percentage to the year-over-year rent trend in your area. Uses Apartment List transacted rent data when available, otherwise Zillow ZORI or HUD FMR trends.</p>
+                    <span className="text-[13px] font-semibold text-foreground block mb-1">Rent Increase vs. Market Trend</span>
+                    <p>Compares your rent increase percentage to the year-over-year rent trend in your area using multiple independent market data sources.</p>
                   </div>
 
                   <div className="p-3 rounded-md bg-secondary/40">
-                    <div className="flex justify-between items-baseline mb-1">
-                      <span className="text-[13px] font-semibold text-foreground">Comparable Rents</span>
-                      <span className="text-[12px] font-mono text-muted-foreground">30 pts</span>
-                    </div>
-                    <p>Measures whether your proposed rent is above or below the median asking rent for similar units nearby, using real-time listings from Rentcast. Comps are filtered by distance (≤3 miles) and weighted by similarity to your unit.</p>
+                    <span className="text-[13px] font-semibold text-foreground block mb-1">Comparable Rents</span>
+                    <p>Measures whether your proposed rent is above or below the median asking rent for similar units nearby, using real-time listing data filtered by distance and similarity to your unit.</p>
                   </div>
 
                   <div className="p-3 rounded-md bg-secondary/40">
-                    <div className="flex justify-between items-baseline mb-1">
-                      <span className="text-[13px] font-semibold text-foreground">Increase Reasonableness</span>
-                      <span className="text-[12px] font-mono text-muted-foreground">25 pts</span>
-                    </div>
-                    <p>Evaluates whether your proposed rent is reasonable relative to area benchmarks. Prioritizes Rentcast live market median when sufficient listings exist, then HUD 50th percentile (median), then HUD SAFMR. In areas where rents naturally exceed benchmarks, scores the rate of increase instead.</p>
+                    <span className="text-[13px] font-semibold text-foreground block mb-1">Increase Reasonableness</span>
+                    <p>Evaluates whether your proposed rent is reasonable relative to area benchmarks from multiple federal and market data sources.</p>
                   </div>
 
                   <div className="p-3 rounded-md bg-secondary/40">
-                    <div className="flex justify-between items-baseline mb-1">
-                      <span className="text-[13px] font-semibold text-foreground">Market Momentum</span>
-                      <span className="text-[12px] font-mono text-muted-foreground">10 pts</span>
-                    </div>
-                    <p>Captures the direction rents are heading month-over-month. Uses Zillow ZORI when available, then Apartment List MoM trends, then Zillow Home Value Index as a directional proxy.</p>
+                    <span className="text-[13px] font-semibold text-foreground block mb-1">Market Momentum</span>
+                    <p>Captures the direction rents are heading month-over-month in your area to account for whether the market is rising, steady, or cooling.</p>
                   </div>
                 </div>
 
                 <div className="p-3 rounded-md bg-muted/30 border border-border/40">
                   <p className="text-[12px] text-muted-foreground leading-relaxed">
-                    <strong className="text-foreground">Dynamic weights:</strong> Component weights adjust automatically when comparable data is limited. When fewer than 5 comps are found, points redistribute from the Comparable Rents component to the Market Trend component to maintain a reliable 100-point total.
+                    <strong className="text-foreground">Dynamic weights:</strong> Component weights are dynamically adjusted based on data availability and reliability for your specific location to ensure the most accurate result possible.
                   </p>
                 </div>
 
@@ -161,7 +141,7 @@ const Methodology = () => {
             </AccordionTrigger>
             <AccordionContent className="pb-5">
               <div className="text-[13px] text-muted-foreground leading-relaxed">
-                <p className="mb-4">RenewalReply combines seven independent data sources to build a complete picture of your local rental market.</p>
+                <p className="mb-4">RenewalReply combines multiple independent data sources to build a complete picture of your local rental market.</p>
                 <DataSource
                   name="HUD Small Area Fair Market Rents (SAFMR)"
                   description="ZIP-level rent benchmarks representing the 40th percentile of standard quality rental housing, specific to bedroom count. Published by the U.S. Department of Housing and Urban Development."
@@ -188,41 +168,26 @@ const Methodology = () => {
                   frequency="Monthly"
                 />
                 <DataSource
-                  name="Rentcast"
-                  description="Real-time comparable rental listings and aggregate market statistics (median rent by bedroom count, active listings, days on market). Sourced from MLS data, public records, and proprietary databases."
+                  name="Real-Time Comparable Listings"
+                  description="Live comparable rental listings and aggregate market statistics (median rent by bedroom count, active listings, days on market). Sourced from MLS data, public records, and proprietary databases."
                   frequency="Live (real-time, cached 24 hours per ZIP)"
                 />
               </div>
             </AccordionContent>
           </AccordionItem>
 
-          {/* Section 3: Data Priority System */}
+          {/* Section 3: How We Use the Data */}
           <AccordionItem value="cascade" className="border border-border/60 rounded-lg px-5 data-[state=open]:bg-card/50">
             <AccordionTrigger className="text-[16px] font-semibold text-foreground py-4 hover:no-underline">
-              Data Priority System
+              How We Use the Data
             </AccordionTrigger>
             <AccordionContent className="pb-5">
               <div className="space-y-4 text-[13px] leading-relaxed text-muted-foreground">
                 <p>
                   For each scoring component, RenewalReply uses the most accurate source available for your ZIP code and automatically falls back to alternatives when primary data is missing.
                 </p>
-
-                <div className="space-y-3">
-                  {[
-                    { label: 'Market trends', cascade: 'Apartment List → Zillow ZORI → HUD FMR' },
-                    { label: 'Reference rent', cascade: 'Rentcast market median → HUD 50th percentile → HUD FMR' },
-                    { label: 'Momentum', cascade: 'Zillow ZORI → Apartment List → ZHVI → neutral default' },
-                    { label: 'Comps', cascade: 'Rentcast (weighted by similarity to your unit)' },
-                  ].map(({ label, cascade }) => (
-                    <div key={label} className="flex gap-3 items-baseline">
-                      <span className="text-foreground font-medium shrink-0 w-[110px]">{label}:</span>
-                      <span className="font-mono text-[12px]">{cascade}</span>
-                    </div>
-                  ))}
-                </div>
-
                 <p>
-                  The score details show which source was used for each component. Components marked <span className="font-mono text-[12px] bg-secondary px-1.5 py-0.5 rounded">(est.)</span> indicate a proxy or default was used instead of direct measurement.
+                  The score details on your results page show which source was used for each component. Components marked <span className="font-mono text-[12px] bg-secondary px-1.5 py-0.5 rounded">(est.)</span> indicate a proxy or default was used instead of direct measurement.
                 </p>
               </div>
             </AccordionContent>
@@ -278,7 +243,7 @@ const Methodology = () => {
                     { source: 'Apartment List', updated: 'February 2026', dateTime: '2026-02' },
                     { source: 'Zillow ZORI', updated: 'January 2026', dateTime: '2026-01' },
                     { source: 'Zillow ZHVI', updated: 'January 2026', dateTime: '2026-01' },
-                    { source: 'Rentcast', updated: 'Live (real-time, cached 24 hours)', dateTime: undefined },
+                    { source: 'Live market comps', updated: 'Real-time (cached 24 hours)', dateTime: undefined },
                     { source: 'Census ACS', updated: '2022 (5-year estimates)', dateTime: '2022' },
                   ].map(({ source, updated, dateTime }) => (
                     <div key={source} className="flex justify-between items-center py-1.5 border-b border-border/30 last:border-0">
