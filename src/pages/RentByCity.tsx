@@ -76,17 +76,56 @@ const RentByCity = () => {
     });
   }, [data, hud50Data]);
 
-  // ─── Zip table intelligence: detect whether FMR/YoY actually vary ───
-  const fmrVaries = useMemo(() => {
-    if (!data || data.zips.length <= 1) return false;
-    const first = data.zips[0].raw.f[1];
-    return data.zips.some(z => z.raw.f[1] !== first);
-  }, [data]);
+  // ─── Zip table intelligence: detect whether FMR/YoY actually vary among DISPLAYED zips ───
+  // We check the displayed zips (top 20 or filtered), not all zips, to avoid showing
+  // a table full of identical rows when only a handful of outlier zips differ.
+  const { fmrVaries, hasZipLevelYoY, displayedZips, hasMoreZips } = useMemo(() => {
+    if (!data) return { fmrVaries: false, hasZipLevelYoY: false, displayedZips: [], hasMoreZips: false };
 
-  const hasZipLevelYoY = useMemo(() => {
-    if (!data) return false;
-    return data.zips.some(z => (alData[z.zip]?.aly !== undefined) || (z.raw.zy !== undefined));
-  }, [data, alData]);
+    const sorted = [...data.zips].sort((a, b) => {
+      const aHasMarket = (alData[a.zip]?.aly !== undefined) || (a.raw.zy !== undefined);
+      const bHasMarket = (alData[b.zip]?.aly !== undefined) || (b.raw.zy !== undefined);
+      if (aHasMarket !== bHasMarket) return aHasMarket ? -1 : 1;
+      return b.raw.f[1] - a.raw.f[1];
+    });
+
+    const displayed = zipSearch
+      ? sorted.filter(({ zip }) => zip.includes(zipSearch))
+      : sorted.slice(0, 20);
+
+    const more = !zipSearch && data.zips.length > 20;
+
+    // Check variation among displayed zips only
+    const fmr1brCounts: Record<number, number> = {};
+    const fmr2brCounts: Record<number, number> = {};
+    let fmrVar = false;
+    if (displayed.length > 1) {
+      for (const z of displayed) {
+        const v1 = Math.round(z.raw.f[1]);
+        const v2 = Math.round(z.raw.f[2]);
+        if (v1 > 0) fmr1brCounts[v1] = (fmr1brCounts[v1] || 0) + 1;
+        if (v2 > 0) fmr2brCounts[v2] = (fmr2brCounts[v2] || 0) + 1;
+      }
+      fmrVar = Object.keys(fmr1brCounts).length > 1 || Object.keys(fmr2brCounts).length > 1;
+    }
+
+    // Check if displayed zips have actual zip-level YoY (not identical county-level)
+    let hasYoY = false;
+    const yoyVals = new Set<number>();
+    for (const z of displayed) {
+      const zipAl = alData[z.zip]?.aly;
+      const zipZori = z.raw.zy;
+      const val = zipAl ?? zipZori ?? null;
+      if (val !== null) {
+        yoyVals.add(Math.round(val * 10));
+        hasYoY = true;
+      }
+    }
+    if (hasYoY && yoyVals.size <= 1) hasYoY = false;
+
+
+    return { fmrVaries: fmrVar, hasZipLevelYoY: hasYoY, displayedZips: displayed, hasMoreZips: more };
+  }, [data, alData, zipSearch]);
 
   if (loading) return <LoadingSkeleton />;
   if (notFound || !data) return <NotFoundPage />;
@@ -155,17 +194,6 @@ const RentByCity = () => {
     },
   ];
 
-  // Top 20 zips for Section F
-  const sortedZips = [...zips].sort((a, b) => {
-    const aHasMarket = (alData[a.zip]?.aly !== undefined) || (a.raw.zy !== undefined);
-    const bHasMarket = (alData[b.zip]?.aly !== undefined) || (b.raw.zy !== undefined);
-    if (aHasMarket !== bHasMarket) return aHasMarket ? -1 : 1;
-    return b.raw.f[1] - a.raw.f[1];
-  });
-  const displayedZips = zipSearch
-    ? sortedZips.filter(({ zip }) => zip.includes(zipSearch))
-    : sortedZips.slice(0, 20);
-  const hasMoreZips = !zipSearch && zips.length > 20;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
