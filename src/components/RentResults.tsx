@@ -765,6 +765,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     rcAvgDaysOnMarket={rcMarket.rcAvgDaysOnMarket}
                     alVacancy={rentData.alVacancy}
                     f50Value={rentData.f50 && bedroomNum >= 0 && bedroomNum <= 4 ? rentData.f50[bedroomNum] : null}
+                    fairnessScore={fairnessScore?.total ?? null}
+                    tierLabel={fairnessScore?.tierLabel ?? null}
                   />
                 </LetterGate>
               </motion.section>
