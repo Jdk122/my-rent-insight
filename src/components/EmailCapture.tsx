@@ -29,6 +29,9 @@ export interface LeadContext {
   fairCounterOffer?: string;
   compsPosition?: string;
   letterGenerated?: boolean;
+  fairnessScore?: number | null;
+  compMedianRent?: number | null;
+  hudFmrValue?: number | null;
 }
 
 interface EmailCaptureProps {
@@ -93,6 +96,25 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
         p_utm_source: utm.utm_source || null,
         p_utm_medium: utm.utm_medium || null,
         p_utm_campaign: utm.utm_campaign || null,
+        p_fairness_score: leadContext?.fairnessScore ?? null,
+        p_comp_median_rent: leadContext?.compMedianRent ?? null,
+        p_hud_fmr_value: leadContext?.hudFmrValue ?? null,
+      } as any);
+
+      // Insert into lead_events for history
+      await supabase.from('lead_events' as any).insert({
+        email,
+        analysis_id: leadContext?.analysisId || null,
+        event_type: captureSource,
+        fairness_score: leadContext?.fairnessScore ?? null,
+        address: leadContext?.address || null,
+        zip: leadContext?.zip || null,
+        current_rent: leadContext?.currentRent ?? null,
+        proposed_rent: leadContext?.proposedRent ?? null,
+        increase_pct: leadContext?.increasePct ?? null,
+        verdict: verdict || null,
+        comp_median_rent: leadContext?.compMedianRent ?? null,
+        hud_fmr_value: leadContext?.hudFmrValue ?? null,
       } as any);
     } catch (err) {
       console.error('Lead save failed:', err);

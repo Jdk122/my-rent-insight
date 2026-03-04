@@ -18,6 +18,8 @@ interface ShareHubProps {
     reportData: Record<string, any>;
   };
   onLinkGenerated?: (url: string) => void;
+  analysisId?: string | null;
+  leadEmail?: string;
 
   /* For the neighbor/viral path */
   zipCode: string;
@@ -42,6 +44,8 @@ type Tab = 'landlord' | 'neighbors';
 const ShareHub = ({
   reportPayload,
   onLinkGenerated,
+  analysisId,
+  leadEmail,
   zipCode,
   city,
   state,
@@ -85,6 +89,8 @@ const ShareHub = ({
         proposed_increase: reportPayload.proposedIncrease,
         increase_type: reportPayload.increaseType,
         report_data: reportPayload.reportData,
+        analysis_id: analysisId || null,
+        lead_email: leadEmail || null,
       } as any);
       if (error) throw error;
 

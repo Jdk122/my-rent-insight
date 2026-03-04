@@ -236,6 +236,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       markup_multiplier: null,
       letter_generated: false,
       cache_hit: !!(rentcast.data as any)?.cacheHit || !!(propertyData as any)?.cacheHit,
+      fairness_score: fairnessScore?.total ?? null,
+      comp_median_rent: medianCompRent ?? null,
+      hud_fmr_value: rentData.fmr ?? null,
     } as any).select('id').single().then(({ data }) => {
       if (data?.id) setAnalysisId(data.id);
     });
@@ -257,7 +260,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     fairCounterOffer: calc ? (calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}`) : undefined,
     compsPosition: medianCompRent ? (newRent > medianCompRent ? 'above' : 'below') : undefined,
     letterGenerated: !!(hasIncrease && isAboveMarket && calc),
-  }), [analysisId, formData, rentData, newRent, increasePct, marketYoy, calc, medianCompRent, hasIncrease, isAboveMarket]);
+    fairnessScore: fairnessScore?.total ?? null,
+    compMedianRent: medianCompRent ?? null,
+    hudFmrValue: rentData.fmr ?? null,
+  }), [analysisId, formData, rentData, newRent, increasePct, marketYoy, calc, medianCompRent, hasIncrease, isAboveMarket, fairnessScore]);
 
   // Determine if Know Your Rights section is relevant (rent control jurisdiction)
   const hasRentControl = useMemo(() => {
@@ -686,6 +692,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   <ShareHub
                     reportPayload={shareReportPayload}
                     onLinkGenerated={setReportUrl}
+                    analysisId={analysisId}
+                    leadEmail={capturedEmail || undefined}
                     zipCode={rentData.zip}
                     city={rentData.city}
                     state={rentData.state}
@@ -787,6 +795,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 <ShareHub
                   reportPayload={shareReportPayload}
                   onLinkGenerated={setReportUrl}
+                  analysisId={analysisId}
+                  leadEmail={capturedEmail || undefined}
                   zipCode={rentData.zip}
                   city={rentData.city}
                   state={rentData.state}
