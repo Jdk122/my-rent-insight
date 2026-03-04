@@ -758,8 +758,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       const btn = document.querySelector('[data-share-report-btn]') as HTMLButtonElement;
                       btn?.click();
                     }}
-                    shareReportPayload={shareReportPayload}
-                    onReportLinkGenerated={setReportUrl}
                     compMedian={medianCompRent}
                     compCount={outlierResult?.filtered.length ?? 0}
                     compRadius={compRadius.label ? compRadius.label.replace('within ', '') : undefined}
