@@ -12,6 +12,9 @@ export interface FairnessScoreInput {
   zillowMonthly: number | null; // Monthly rent trend %
 }
 
+// Tooltip explainer for the FMR/Increase Reasonableness component
+export const FMR_COMPONENT_TOOLTIP = 'Evaluates whether your rent increase is reasonable relative to HUD reference rents for your area. When your rent already exceeds the reference level, we score based on the rate of increase instead.';
+
 export interface ScoreComponent {
   id: string;
   label: string;
@@ -58,15 +61,24 @@ function scoreVsComps(proposedRent: number, compMedian: number | null): ScoreCom
 // Component 3: Proposed Rent vs HUD FMR (20 pts)
 // Compares the INCREASE portion vs FMR, not the absolute rent
 // This avoids penalizing tenants in areas where market rents naturally exceed HUD benchmarks
-function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, increasePct: number): ScoreComponent {
+function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, increasePct: number, marketYoY?: number): ScoreComponent {
+  const label = 'Increase Reasonableness';
   const upper = fmr * 1.15;
   // If current rent already exceeds FMR upper, compare increase rate to FMR growth instead
   if (currentRent >= upper) {
-    // Already above FMR — score based on increase rate reasonableness
-    if (increasePct <= 3) return { id: 'fmr', label: 'Rent vs. HUD Benchmark', score: 18, max: 20, estimated: false };
-    if (increasePct <= 6) return { id: 'fmr', label: 'Rent vs. HUD Benchmark', score: 12, max: 20, estimated: false };
-    if (increasePct <= 10) return { id: 'fmr', label: 'Rent vs. HUD Benchmark', score: 5, max: 20, estimated: false };
-    return { id: 'fmr', label: 'Rent vs. HUD Benchmark', score: 0, max: 20, estimated: false };
+    // FIX 4: Tighten breakpoints in declining markets
+    const isFalling = (marketYoY ?? 0) < -0.5;
+    if (isFalling) {
+      if (increasePct <= 2) return { id: 'fmr', label, score: 18, max: 20, estimated: false };
+      if (increasePct <= 4) return { id: 'fmr', label, score: 12, max: 20, estimated: false };
+      if (increasePct <= 7) return { id: 'fmr', label, score: 5, max: 20, estimated: false };
+      return { id: 'fmr', label, score: 0, max: 20, estimated: false };
+    }
+    // Flat/rising market — existing breakpoints
+    if (increasePct <= 3) return { id: 'fmr', label, score: 18, max: 20, estimated: false };
+    if (increasePct <= 6) return { id: 'fmr', label, score: 12, max: 20, estimated: false };
+    if (increasePct <= 10) return { id: 'fmr', label, score: 5, max: 20, estimated: false };
+    return { id: 'fmr', label, score: 0, max: 20, estimated: false };
   }
   let score: number;
   if (proposedRent <= upper) score = 20;
@@ -76,7 +88,7 @@ function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, incr
     else if (above <= 0.25) score = 5;
     else score = 0;
   }
-  return { id: 'fmr', label: 'Rent vs. HUD Benchmark', score, max: 20, estimated: false };
+  return { id: 'fmr', label, score, max: 20, estimated: false };
 }
 
 // Component 4: Rent-to-Income Ratio (15 pts)
@@ -95,12 +107,15 @@ function scoreRentToIncome(proposedRent: number, medianIncome: number | null): S
 
 // Component 5: Market Momentum (10 pts)
 function scoreMarketMomentum(zillowMonthly: number | null): ScoreComponent {
-  const monthly = zillowMonthly ?? 0;
+  // FIX 1: Missing Zillow defaults to 5/10 (neutral) instead of 0/10
+  if (zillowMonthly === null) {
+    return { id: 'momentum', label: 'Market Momentum', score: 5, max: 10, estimated: true };
+  }
   let score: number;
-  if (monthly <= 0) score = 10;
-  else if (monthly <= 0.30) score = 7;
+  if (zillowMonthly <= 0) score = 10;
+  else if (zillowMonthly <= 0.30) score = 7;
   else score = 3;
-  return { id: 'momentum', label: 'Market Momentum', score, max: 10, estimated: zillowMonthly === null };
+  return { id: 'momentum', label: 'Market Momentum', score, max: 10, estimated: false };
 }
 
 // Tier thresholds
@@ -136,7 +151,7 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
   const components = [
     scoreRateVsTrend(input.increasePct, input.marketYoY),
     scoreVsComps(input.proposedRent, input.compMedian),
-    scoreVsFmr(input.proposedRent, input.fmr, input.currentRent, input.increasePct),
+    scoreVsFmr(input.proposedRent, input.fmr, input.currentRent, input.increasePct, input.marketYoY),
     scoreRentToIncome(input.proposedRent, input.medianIncome),
     scoreMarketMomentum(input.zillowMonthly),
   ];
