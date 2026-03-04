@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
-import RentForm, { RentFormData } from '@/components/RentForm';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import RentForm, { RentFormData, RentFormPrefill } from '@/components/RentForm';
 import RentResults from '@/components/RentResults';
 import { lookupRentData, loadFredTrend, RentLookupResult } from '@/data/rentData';
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
@@ -13,6 +14,7 @@ import HomeFAQ from '@/components/HomeFAQ';
 import SEOFooter from '@/components/SEOFooter';
 
 const Index = () => {
+  const [searchParams] = useSearchParams();
   const [results, setResults] = useState<{ formData: RentFormData; rentData: RentLookupResult } | null>(null);
   const [contactOpen, setContactOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +24,23 @@ const Index = () => {
   const propertyLookup = usePropertyLookup();
   const topRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+
+  // Read URL params for pre-fill (from reminder emails)
+  const prefill = useMemo<RentFormPrefill | undefined>(() => {
+    const zip = searchParams.get('zip');
+    const bedrooms = searchParams.get('bedrooms');
+    const rent = searchParams.get('rent');
+    const address = searchParams.get('address');
+    if (!zip && !bedrooms && !rent && !address) return undefined;
+    return {
+      zip: zip || undefined,
+      bedrooms: bedrooms !== null ? parseInt(bedrooms, 10) : undefined,
+      rent: rent !== null ? parseInt(rent, 10) : undefined,
+      address: address || undefined,
+    };
+  }, [searchParams]);
+
+  const hasPrefill = !!prefill;
 
   useEffect(() => {
     if (!results) { setNavScrolled(false); return; }
@@ -210,8 +229,13 @@ const Index = () => {
           <p className="mt-4 sm:mt-6 text-[15px] sm:text-lg md:text-xl text-foreground/50 max-w-[540px] leading-relaxed font-normal tracking-tight">
             See what apartments near you are actually renting for, calculate your savings if you move, and get a negotiation letter if you stay<span className="text-primary font-medium"> — instantly</span>.
           </p>
+          {hasPrefill && (
+            <div className="mb-6 px-4 py-3 rounded-lg border border-primary/20 bg-primary/5 text-sm text-foreground/80">
+              Welcome back! We've pre-filled your info from last year. Just enter your new proposed rent.
+            </div>
+          )}
           <section className="mt-8 sm:mt-10" aria-label="Rent increase checker">
-            <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} />
+            <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
             <SocialProofCounter />
           </section>
         </main>
