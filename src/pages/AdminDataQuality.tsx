@@ -34,18 +34,20 @@ interface CoverageStats {
 }
 
 type AnomalyType =
-  | 'HUD trend vs Apartment List divergence'
-  | 'ZORI vs Apartment List divergence'
-  | 'HUD 40th > HUD 50th'
+  | 'Source Divergence (HUD vs AL)'
+  | 'Source Divergence (ZORI vs AL)'
   | 'Negative FMR'
   | 'Extreme YoY'
   | 'ZHVI/ZORI direction conflict';
+
+type AnomalySeverity = 'critical' | 'info';
 
 interface Anomaly {
   zip: string;
   city: string;
   state: string;
   type: AnomalyType;
+  severity: AnomalySeverity;
   detail: string;
 }
 
@@ -538,60 +540,49 @@ function AnomalySection({ rentData, zhviData, alData, hud50Data, anomalyFilter, 
       const h50 = hud50Data?.[zip];
       const base = { zip, city: rd.c, state: rd.s };
 
-      // HUD trend vs Apartment List divergence
+      // Source Divergence: HUD vs AL (info — expected methodological difference)
       if (al?.aly !== undefined && al.aly !== null && rd.y !== undefined) {
         if (Math.abs(rd.y - al.aly) > 5) {
-          results.push({ ...base, type: 'HUD trend vs Apartment List divergence', detail: `HUD y=${rd.y}%, AL aly=${al.aly}%` });
+          results.push({ ...base, type: 'Source Divergence (HUD vs AL)', severity: 'info', detail: `HUD y=${rd.y}%, AL aly=${al.aly}%` });
         }
       }
 
-      // ZORI vs Apartment List divergence
+      // Source Divergence: ZORI vs AL (info — expected methodological difference)
       if (al?.aly !== undefined && al.aly !== null && rd.zy !== undefined && rd.zy !== null) {
         if (Math.abs(rd.zy - al.aly) > 5) {
-          results.push({ ...base, type: 'ZORI vs Apartment List divergence', detail: `ZORI zy=${rd.zy}%, AL aly=${al.aly}%` });
+          results.push({ ...base, type: 'Source Divergence (ZORI vs AL)', severity: 'info', detail: `ZORI zy=${rd.zy}%, AL aly=${al.aly}%` });
         }
       }
 
-      // HUD 40th > HUD 50th
-      if (h50?.f50 && rd.f) {
-        for (let br = 0; br < 5; br++) {
-          if (rd.f[br] > 0 && h50.f50[br] > 0 && rd.f[br] > h50.f50[br]) {
-            results.push({ ...base, type: 'HUD 40th > HUD 50th', detail: `BR${br}: SAFMR=$${rd.f[br]}, 50th=$${h50.f50[br]}` });
-            break; // one per zip
-          }
-        }
-      }
-
-      // Negative FMR
+      // Negative FMR (critical — data error)
       if (rd.f) {
         for (let br = 0; br < rd.f.length; br++) {
-          if (rd.f[br] <= 0) { results.push({ ...base, type: 'Negative FMR', detail: `f[${br}]=${rd.f[br]}` }); break; }
+          if (rd.f[br] <= 0) { results.push({ ...base, type: 'Negative FMR', severity: 'critical', detail: `f[${br}]=${rd.f[br]}` }); break; }
         }
       }
       if (h50?.f50) {
         for (let br = 0; br < h50.f50.length; br++) {
-          if (h50.f50[br] <= 0) { results.push({ ...base, type: 'Negative FMR', detail: `f50[${br}]=${h50.f50[br]}` }); break; }
+          if (h50.f50[br] <= 0) { results.push({ ...base, type: 'Negative FMR', severity: 'critical', detail: `f50[${br}]=${h50.f50[br]}` }); break; }
         }
       }
 
-      // Extreme YoY
+      // Extreme YoY — only flag AL and ZORI, not HUD (HUD recalculations can be legitimately large)
       const yoyVals = [
-        { src: 'HUD', val: rd.y },
         { src: 'ZORI', val: rd.zy },
         { src: 'AL', val: al?.aly },
       ];
       for (const { src, val } of yoyVals) {
         if (val !== undefined && val !== null && (val > 20 || val < -15)) {
-          results.push({ ...base, type: 'Extreme YoY', detail: `${src}=${val}%` });
+          results.push({ ...base, type: 'Extreme YoY', severity: 'critical', detail: `${src}=${val}%` });
         }
       }
 
-      // ZHVI/ZORI direction conflict
+      // ZHVI/ZORI direction conflict (critical — signals stale or conflicting data)
       if (zhvi?.hvd && rd.zd) {
         const rising = (d: string) => d === 'rising';
         const falling = (d: string) => d === 'falling';
         if ((rising(rd.zd) && falling(zhvi.hvd)) || (falling(rd.zd) && rising(zhvi.hvd))) {
-          results.push({ ...base, type: 'ZHVI/ZORI direction conflict', detail: `ZORI=${rd.zd}, ZHVI=${zhvi.hvd}` });
+          results.push({ ...base, type: 'ZHVI/ZORI direction conflict', severity: 'critical', detail: `ZORI=${rd.zd}, ZHVI=${zhvi.hvd}` });
         }
       }
     }
@@ -599,14 +590,25 @@ function AnomalySection({ rentData, zhviData, alData, hud50Data, anomalyFilter, 
   }, [rentData, zhviData, alData, hud50Data]);
 
   const anomalyTypes = useMemo(() => [...new Set(anomalies.map(a => a.type))].sort(), [anomalies]);
-  const filtered = anomalyFilter === 'all' ? anomalies : anomalies.filter(a => a.type === anomalyFilter);
+  const filtered = anomalyFilter === 'all' ? anomalies : anomalyFilter === 'critical' ? anomalies.filter(a => a.severity === 'critical') : anomalyFilter === 'info' ? anomalies.filter(a => a.severity === 'info') : anomalies.filter(a => a.type === anomalyFilter);
+
+  const criticalCount = anomalies.filter(a => a.severity === 'critical').length;
+  const infoCount = anomalies.filter(a => a.severity === 'info').length;
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2"><AlertTriangle className="h-5 w-5" />Cross-Source Anomaly Scanner</CardTitle>
-        <CardDescription>
-          {anomalies.length} total anomalies detected across {Object.keys(rentData).length.toLocaleString()} ZIP codes.
+        <CardDescription className="flex items-center gap-3 flex-wrap">
+          <span className="inline-flex items-center gap-1.5">
+            <Badge variant={criticalCount > 0 ? "destructive" : "outline"} className="text-xs">{criticalCount}</Badge>
+            critical anomalies (data errors)
+          </span>
+          <span className="text-muted-foreground">|</span>
+          <span className="inline-flex items-center gap-1.5">
+            <Badge variant="secondary" className="text-xs">{infoCount}</Badge>
+            info-level divergences (expected)
+          </span>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -615,7 +617,9 @@ function AnomalySection({ rentData, zhviData, alData, hud50Data, anomalyFilter, 
           <Select value={anomalyFilter} onValueChange={setAnomalyFilter}>
             <SelectTrigger className="w-[300px]"><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All types ({anomalies.length})</SelectItem>
+              <SelectItem value="all">All ({anomalies.length})</SelectItem>
+              <SelectItem value="critical">Critical only ({criticalCount})</SelectItem>
+              <SelectItem value="info">Info only ({infoCount})</SelectItem>
               {anomalyTypes.map(t => (
                 <SelectItem key={t} value={t}>{t} ({anomalies.filter(a => a.type === t).length})</SelectItem>
               ))}
@@ -630,6 +634,7 @@ function AnomalySection({ rentData, zhviData, alData, hud50Data, anomalyFilter, 
                 <TableHead className="w-20">ZIP</TableHead>
                 <TableHead>City</TableHead>
                 <TableHead>St</TableHead>
+                <TableHead>Severity</TableHead>
                 <TableHead>Anomaly</TableHead>
                 <TableHead>Detail</TableHead>
               </TableRow>
@@ -640,6 +645,11 @@ function AnomalySection({ rentData, zhviData, alData, hud50Data, anomalyFilter, 
                   <TableCell className="font-mono">{a.zip}</TableCell>
                   <TableCell>{a.city}</TableCell>
                   <TableCell>{a.state}</TableCell>
+                  <TableCell>
+                    <Badge variant={a.severity === 'critical' ? 'destructive' : 'secondary'} className="text-xs">
+                      {a.severity}
+                    </Badge>
+                  </TableCell>
                   <TableCell><Badge variant="outline" className="text-xs whitespace-nowrap">{a.type}</Badge></TableCell>
                   <TableCell className="text-xs text-muted-foreground font-mono">{a.detail}</TableCell>
                 </TableRow>
