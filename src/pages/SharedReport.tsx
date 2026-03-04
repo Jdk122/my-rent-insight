@@ -46,24 +46,22 @@ const SharedReport = () => {
     trackEvent('report_viewed', { short_id: shortId });
 
     (async () => {
-      const { data, error: err } = await (supabase.from('shared_reports' as any) as any)
-        .select('*')
-        .eq('short_id', shortId)
-        .single();
+      const { data, error: err } = await supabase.rpc('get_shared_report' as any, { p_short_id: shortId }) as any;
+      const row = Array.isArray(data) ? data[0] : data;
 
-      if (err || !data) {
+      if (err || !row) {
         setError(true);
         setLoading(false);
         return;
       }
 
-      const rd = data.report_data as Record<string, any>;
-      setCreatedAt(new Date(data.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
+      const rd = row.report_data as Record<string, any>;
+      setCreatedAt(new Date(row.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
       setReport({
-        zip: data.zip_code,
+        zip: row.zip_code,
         city: rd.city || '',
         state: rd.state || '',
-        currentRent: Number(data.current_rent),
+        currentRent: Number(row.current_rent),
         newRent: rd.newRent || 0,
         increasePct: rd.increasePct || 0,
         marketYoy: rd.marketYoy || 0,
@@ -83,7 +81,7 @@ const SharedReport = () => {
         rentControlNote: rd.rentControlNote ?? null,
         comparables: rd.comparables ?? null,
         medianCompRent: rd.medianCompRent ?? null,
-        address: data.address,
+        address: row.address,
       });
       setLoading(false);
     })();
