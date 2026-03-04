@@ -772,9 +772,10 @@ function MigrationSection() {
     setResult(null);
 
     try {
-      // Step 1: Fetch ERAP XLSX from HUD
-      setProgress('Downloading ERAP file from HUD...');
-      const erapUrl = 'https://www.huduser.gov/portal/datasets/fmr/fmr2026/fy2026_erap_fmrs.xlsx';
+      // Step 1: Fetch ERAP XLSX via edge function proxy (bypasses CORS)
+      setProgress('Downloading ERAP file via proxy...');
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+      const erapUrl = `https://${projectId}.supabase.co/functions/v1/proxy-hud-xlsx`;
       const erapResp = await fetch(erapUrl);
       if (!erapResp.ok) throw new Error(`Failed to fetch ERAP file: ${erapResp.status}`);
       const erapBuffer = await erapResp.arrayBuffer();
