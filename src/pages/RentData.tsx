@@ -1,8 +1,11 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getRentData, type RentZipRaw } from '@/data/dataLoader';
+import { getRentData, getApartmentListData, type RentZipRaw, type ApartmentListZipRaw } from '@/data/dataLoader';
 import { slugify, STATE_NAMES } from '@/data/cityStateUtils';
+import { getDataFreshness, formatFreshnessDate, type DataFreshness } from '@/data/dataFreshness';
 import { Input } from '@/components/ui/input';
+import ShareDataButton from '@/components/ShareDataButton';
+import DataPageFreshness from '@/components/DataPageFreshness';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import ContactModal from '@/components/ContactModal';
@@ -48,25 +51,29 @@ const RentData = () => {
   const [loading, setLoading] = useState(true);
   const [searchZip, setSearchZip] = useState('');
   const [contactOpen, setContactOpen] = useState(false);
+  const [freshness, setFreshness] = useState<DataFreshness | null>(null);
 
   useEffect(() => {
     (async () => {
-      const data = await getRentData();
+      const [data, fresh] = await Promise.all([getRentData(), getDataFreshness()]);
       setAllData(data);
+      setFreshness(fresh);
       setLoading(false);
     })();
   }, []);
 
-  // Group zips by state
-  const stateGroups = useMemo(() => {
+  // Group zips by state with avg rent and city count
+  const stateStats = useMemo(() => {
     if (!allData) return {};
-    const groups: Record<string, number> = {};
+    const stats: Record<string, { zips: number; fmrSum: number; cities: Set<string> }> = {};
     for (const r of Object.values(allData)) {
-      if (r.s) {
-        groups[r.s] = (groups[r.s] || 0) + 1;
-      }
+      if (!r.s) continue;
+      if (!stats[r.s]) stats[r.s] = { zips: 0, fmrSum: 0, cities: new Set() };
+      stats[r.s].zips += 1;
+      stats[r.s].fmrSum += r.f[1];
+      if (r.c) stats[r.s].cities.add(r.c);
     }
-    return groups;
+    return stats;
   }, [allData]);
 
   // Get FMR for top cities
@@ -79,14 +86,14 @@ const RentData = () => {
   }, [allData]);
 
   const sortedStates = useMemo(() => {
-    return Object.keys(stateGroups)
+    return Object.keys(stateStats)
       .filter(s => STATE_NAMES[s])
       .sort((a, b) => (STATE_NAMES[a] || a).localeCompare(STATE_NAMES[b] || b));
-  }, [stateGroups]);
+  }, [stateStats]);
 
   const totalZips = useMemo(() => {
-    return Object.values(stateGroups).reduce((a, b) => a + b, 0);
-  }, [stateGroups]);
+    return Object.values(stateStats).reduce((a, b) => a + b.zips, 0);
+  }, [stateStats]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -94,6 +101,7 @@ const RentData = () => {
         title="U.S. Rent Data — Fair Market Rent by Zip Code | RenewalReply"
         description={`Look up HUD fair market rent for ${totalZips > 0 ? totalZips.toLocaleString() : '40,000'}+ U.S. zip codes. Free rent data from HUD, Apartment List, and Zillow.`}
         canonical="/rent-data"
+        ogImage="/og-image.png"
         jsonLd={[
           {
             '@context': 'https://schema.org',
@@ -121,11 +129,6 @@ const RentData = () => {
             license: 'https://creativecommons.org/licenses/by/4.0/',
             temporalCoverage: '2026',
             spatialCoverage: { '@type': 'Place', name: 'United States' },
-            distribution: {
-              '@type': 'DataDownload',
-              encodingFormat: 'text/html',
-              contentUrl: 'https://www.renewalreply.com/rent-data',
-            },
           },
         ]}
       />
@@ -156,11 +159,14 @@ const RentData = () => {
         </nav>
 
         <section className="mb-12">
-          <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-            U.S. Rent Data by Location
-          </h1>
+          <div className="flex items-start justify-between gap-4">
+            <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight tracking-tight" style={{ letterSpacing: '-0.02em' }}>
+              U.S. Rent Data by Location
+            </h1>
+            <ShareDataButton />
+          </div>
           <p className="mt-3 text-muted-foreground leading-relaxed" style={{ fontSize: '1.05rem' }}>
-            RenewalReply provides free fair market rent data for over {totalZips > 0 ? totalZips.toLocaleString() : '40,000'} U.S. zip codes, sourced from HUD, Apartment List, and Zillow. Look up HUD fair market rent benchmarks, median rents, and year-over-year rent trends for any zip code in the United States.
+            Free fair market rent data for over {totalZips > 0 ? totalZips.toLocaleString() : '40,000'} U.S. zip codes, sourced from HUD, Apartment List, and Zillow. Look up rent benchmarks, median rents, and year-over-year trends for any location.
           </p>
 
           {/* Search */}
@@ -212,7 +218,6 @@ const RentData = () => {
                   >
                     <div>
                       <span className="font-semibold text-foreground">{tc.city}, {tc.state}</span>
-                      <span className="ml-2 text-sm text-muted-foreground">{tc.zip}</span>
                     </div>
                     <span className="tabular-nums text-sm text-muted-foreground">1-BR: {fmt(tc.fmr1br!)}</span>
                   </Link>
@@ -223,16 +228,24 @@ const RentData = () => {
             {/* Browse by State */}
             <section className="mb-12">
               <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Browse by State</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                {sortedStates.map(s => (
-                  <Link
-                    key={s}
-                    to={`/rent-data/${slugify(STATE_NAMES[s])}`}
-                    className="text-sm text-primary hover:text-primary/80 underline"
-                  >
-                    {STATE_NAMES[s]} <span className="text-muted-foreground no-underline">({stateGroups[s]})</span>
-                  </Link>
-                ))}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {sortedStates.map(s => {
+                  const stat = stateStats[s];
+                  const avgRent = stat ? Math.round(stat.fmrSum / stat.zips) : 0;
+                  return (
+                    <Link
+                      key={s}
+                      to={`/rent-data/${slugify(STATE_NAMES[s])}`}
+                      className="flex items-center justify-between rounded-lg border border-border p-3 bg-card hover:bg-muted/50 transition-colors"
+                    >
+                      <span className="font-medium text-foreground text-sm">{STATE_NAMES[s]}</span>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        <span className="tabular-nums">{fmt(avgRent)}</span>
+                        <span>{stat?.cities.size || 0} cities</span>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </section>
 
@@ -245,18 +258,23 @@ const RentData = () => {
             </section>
 
             {/* Bottom CTA */}
-            <section className="text-center py-10">
-              <h2 className="font-display text-2xl text-foreground mb-3 tracking-tight">
+            <section className="mb-12 rounded-2xl bg-gradient-to-br from-primary/[0.07] via-primary/[0.04] to-accent/[0.06] py-10 sm:py-12 px-6 sm:px-10 text-center shadow-[0_4px_24px_-6px_hsl(var(--primary)/0.12)]">
+              <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-3" style={{ letterSpacing: '-0.02em' }}>
                 Got a rent increase?
               </h2>
-              <p className="text-muted-foreground mb-6">Check if it's fair — it's free.</p>
+              <p className="text-muted-foreground text-sm sm:text-base mb-7 leading-relaxed max-w-md mx-auto">
+                Check if it's fair — free, instant, no signup required.
+              </p>
               <Link
                 to="/"
-                className="inline-block bg-primary text-primary-foreground px-8 py-3 rounded-lg font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
+                className="inline-block w-full sm:w-1/2 bg-primary text-primary-foreground px-8 py-3.5 rounded-xl font-semibold text-base hover:brightness-90 transition-all duration-150 shadow-md shadow-primary/20"
               >
-                Check my rent →
+                Check Your Rent Increase →
               </Link>
             </section>
+
+            {/* Freshness */}
+            <DataPageFreshness freshness={freshness} />
           </>
         )}
       </main>

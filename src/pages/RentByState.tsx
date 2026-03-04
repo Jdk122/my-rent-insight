@@ -1,12 +1,16 @@
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
 import { getStateData, fmt, slugify, type StateData } from '@/data/cityStateUtils';
+import { getApartmentListData, type ApartmentListZipRaw } from '@/data/dataLoader';
+import { getDataFreshness, getFreshestDate, formatFreshnessDate, type DataFreshness } from '@/data/dataFreshness';
 import { Input } from '@/components/ui/input';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import ContactModal from '@/components/ContactModal';
 import PageNav from '@/components/PageNav';
-import DataPageCTA from '@/components/DataPageCTA';
+import RenterToolsCTA from '@/components/RenterToolsCTA';
+import ShareDataButton from '@/components/ShareDataButton';
+import DataPageFreshness from '@/components/DataPageFreshness';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -17,8 +21,9 @@ import {
 
 const RentByState = () => {
   const { stateSlug } = useParams<{ stateSlug: string }>();
-  const navigate = useNavigate();
   const [data, setData] = useState<StateData | null>(null);
+  const [alData, setAlData] = useState<Record<string, ApartmentListZipRaw>>({});
+  const [freshness, setFreshness] = useState<DataFreshness | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
@@ -29,36 +34,64 @@ const RentByState = () => {
     let cancelled = false;
     (async () => {
       setLoading(true);
-      const stateData = await getStateData(stateSlug);
+      const [stateData, al, fresh] = await Promise.all([
+        getStateData(stateSlug),
+        getApartmentListData(),
+        getDataFreshness(),
+      ]);
       if (cancelled) return;
       if (!stateData) { setNotFound(true); setLoading(false); return; }
       setData(stateData);
+      setAlData(al);
+      setFreshness(fresh);
       setLoading(false);
     })();
     return () => { cancelled = true; };
   }, [stateSlug]);
 
+  // Compute state-level YoY from AL data
+  const stateYoY = useMemo(() => {
+    if (!data) return null;
+    const yoys: number[] = [];
+    for (const city of data.cities) {
+      for (const z of city.zips) {
+        const aly = alData[z.zip]?.aly;
+        if (aly !== undefined && aly !== null) yoys.push(aly);
+      }
+    }
+    if (yoys.length === 0) return null;
+    return Math.round((yoys.reduce((a, b) => a + b, 0) / yoys.length) * 10) / 10;
+  }, [data, alData]);
+
   const filteredCities = useMemo(() => {
     if (!data) return [];
+    // Sort by zip count (proxy for population)
     const sorted = [...data.cities].sort((a, b) => b.zips.length - a.zips.length);
     if (!search.trim()) return sorted;
     const q = search.toLowerCase();
     return sorted.filter(c => c.city.toLowerCase().includes(q));
   }, [data, search]);
 
+  // Freshness
+  const freshest = useMemo(() => {
+    if (!freshness) return null;
+    return getFreshestDate(freshness, false, Object.keys(alData).length > 0);
+  }, [freshness, alData]);
+
   if (loading) return <LoadingSkeleton />;
   if (notFound || !data) return <NotFoundPage />;
 
   const { stateName, stateAbbr, cities, avgFmr1br, totalZips } = data;
 
-  // ─── Meta tags with dollar amount ───
+  // ─── OG-optimized meta ───
+  const ogTitle = `Average Rent in ${stateName} — ${fmt(avgFmr1br)}/mo (2026)`;
   const metaTitle = `Average Rent in ${stateName} (2026) | Rent Data by City`;
-  const metaDesc = `The average 1-BR rent in ${stateName} is ${fmt(avgFmr1br)}/mo. See fair market rents, trends, and data for ${cities.length} cities across ${totalZips.toLocaleString()} zip codes in ${stateName}.`;
+  const metaDesc = `1-BR rents in ${stateName} are ${fmt(avgFmr1br)}/mo${stateYoY !== null ? `, ${stateYoY > 0 ? 'up' : 'down'} ${Math.abs(stateYoY).toFixed(1)}% YoY` : ''}. See rent data for ${cities.length} cities across ${totalZips.toLocaleString()} zip codes.`;
 
   const faqItems = [
     {
       q: `What is the average rent in ${stateName}?`,
-      a: `The average HUD Fair Market Rent for a 1-bedroom in ${stateName} is ${fmt(avgFmr1br)}/month according to HUD FY2026 data, based on ${totalZips.toLocaleString()} zip codes across ${cities.length} cities.`,
+      a: `The average HUD Fair Market Rent for a 1-bedroom in ${stateName} is ${fmt(avgFmr1br)}/month according to HUD FY2026 data, based on ${totalZips.toLocaleString()} zip codes across ${cities.length} cities.${stateYoY !== null ? ` Rents have changed ${stateYoY > 0 ? '+' : ''}${stateYoY.toFixed(1)}% year-over-year.` : ''}`,
     },
     {
       q: `Which city in ${stateName} has the cheapest rent?`,
@@ -84,12 +117,17 @@ const RentByState = () => {
     },
   ];
 
+  // Show top 20 by default
+  const displayedCities = search.trim() ? filteredCities : filteredCities.slice(0, 20);
+  const hasMoreCities = !search.trim() && filteredCities.length > 20;
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEO
         title={metaTitle}
         description={metaDesc}
         canonical={`/rent-data/${stateSlug}`}
+        ogImage="/og-image.png"
         jsonLd={[
           {
             '@context': 'https://schema.org',
@@ -99,6 +137,15 @@ const RentByState = () => {
               { '@type': 'ListItem', position: 2, name: 'Rent Data', item: 'https://www.renewalreply.com/rent-data' },
               { '@type': 'ListItem', position: 3, name: stateName, item: `https://www.renewalreply.com/rent-data/${stateSlug}` },
             ],
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: ogTitle,
+            description: metaDesc,
+            dateModified: freshest?.date || '2026-01-01',
+            url: `https://www.renewalreply.com/rent-data/${stateSlug}`,
+            publisher: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
           },
           {
             '@context': 'https://schema.org',
@@ -147,24 +194,48 @@ const RentByState = () => {
 
         {/* Hero */}
         <section className="mb-12">
-          <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-            Average Rent in {stateName} (2026)
-          </h1>
-
-          <div className="mt-6">
-            <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">Average 1-Bedroom Fair Market Rent</p>
-            <p className="text-5xl md:text-6xl font-bold tabular-nums text-foreground leading-none">{fmt(avgFmr1br)}<span className="text-xl font-normal text-muted-foreground">/mo</span></p>
-            <p className="text-xs text-muted-foreground/70 mt-2">Source: HUD Fair Market Rent FY2026 · {totalZips.toLocaleString()} zip codes</p>
+          <div className="flex items-start justify-between gap-4">
+            <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight tracking-tight" style={{ letterSpacing: '-0.02em' }}>
+              Average Rent in {stateName} (2026)
+            </h1>
+            <ShareDataButton />
           </div>
 
-          {/* Tightened summary */}
+          <div className="mt-6 flex flex-wrap items-end gap-6">
+            <div>
+              <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">Average 1-Bedroom Fair Market Rent</p>
+              <p className="text-5xl md:text-6xl font-bold tabular-nums text-foreground leading-none">{fmt(avgFmr1br)}<span className="text-xl font-normal text-muted-foreground">/mo</span></p>
+              <p className="text-xs text-muted-foreground/70 mt-2">Source: HUD Fair Market Rent FY2026 · {totalZips.toLocaleString()} zip codes</p>
+            </div>
+
+            {stateYoY !== null && (
+              <div>
+                <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">Year-over-Year</p>
+                <p className={`text-3xl md:text-4xl font-bold tabular-nums leading-none ${stateYoY > 3 ? 'text-destructive' : stateYoY < 0 ? 'text-accent' : 'text-foreground'}`}>
+                  {stateYoY > 0 ? '↑' : stateYoY < 0 ? '↓' : '→'} {stateYoY > 0 ? '+' : ''}{stateYoY.toFixed(1)}%
+                </p>
+                <p className="text-xs text-muted-foreground/70 mt-2">Source: Apartment List</p>
+              </div>
+            )}
+          </div>
+
+          {/* Last updated */}
+          {freshest && (
+            <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent" />
+              Last updated <time dateTime={freshest.date}>{formatFreshnessDate(freshest.date)}</time>
+            </p>
+          )}
+
           <p className="mt-4 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
-            The average 1-bedroom rent in {stateName} is {fmt(avgFmr1br)}/month according to HUD FY2026 Fair Market Rent data. {stateName} has {cities.length} cities with rent data covering {totalZips.toLocaleString()} zip codes.
+            The average 1-bedroom rent in {stateName} is {fmt(avgFmr1br)}/month according to HUD FY2026 Fair Market Rent data.
+            {stateYoY !== null ? ` Rents have changed ${stateYoY > 0 ? '+' : ''}${stateYoY.toFixed(1)}% year-over-year.` : ''}
+            {' '}{stateName} has {cities.length} cities with rent data covering {totalZips.toLocaleString()} zip codes.
           </p>
         </section>
 
-        {/* Mid-page CTA */}
-        <DataPageCTA location={stateName} />
+        {/* Renter Tools CTA */}
+        <RenterToolsCTA />
 
         {/* Search */}
         <div className="mb-6">
@@ -185,7 +256,7 @@ const RentByState = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredCities.map(c => (
+                {displayedCities.map(c => (
                   <TableRow key={c.citySlug}>
                     <TableCell>
                       <Link to={`/rent-data/${stateSlug}/${c.citySlug}`} className="text-primary hover:underline font-medium">
@@ -209,6 +280,14 @@ const RentByState = () => {
           {filteredCities.length === 0 && (
             <p className="text-sm text-muted-foreground mt-4 text-center">No cities match "{search}"</p>
           )}
+          {hasMoreCities && (
+            <p className="mt-3 text-sm text-muted-foreground">
+              Showing top 20 of {filteredCities.length} cities.{' '}
+              <button onClick={() => setSearch(' ')} className="text-primary underline hover:text-primary/80">
+                View all {filteredCities.length} cities in {stateName} →
+              </button>
+            </p>
+          )}
           <p className="mt-2 text-xs text-muted-foreground/70">Sorted by number of zip codes. Source: HUD SAFMR FY2026.</p>
         </section>
 
@@ -230,11 +309,9 @@ const RentByState = () => {
           <Link to="/rent-data" className="text-primary underline hover:text-primary/80">← Browse all rent data</Link>
         </div>
 
-        {/* Bottom CTA */}
-        <DataPageCTA location={stateName} variant="bottom" />
-
-        {/* Disclaimer */}
-        <p className="text-xs text-muted-foreground/60 italic">
+        {/* Disclaimer + freshness */}
+        <DataPageFreshness freshness={freshness} />
+        <p className="text-xs text-muted-foreground/60 italic mt-2">
           Data reflects HUD FY2026 Fair Market Rent benchmarks. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
         </p>
       </main>
