@@ -182,7 +182,7 @@ const Index = () => {
           boxShadow: !results || !navScrolled ? 'none' : '0 1px 3px rgba(0,0,0,0.08)',
         }}
       >
-        <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-5 sm:h-6 cursor-pointer hover:scale-105 transition-transform duration-200 shrink-0" width="128" height="24" onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0 }); }} />
+        <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-5 sm:h-6 w-auto object-contain cursor-pointer hover:scale-105 transition-transform duration-200 shrink-0" onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0 }); }} />
         <div className="flex items-center gap-2 sm:gap-3">
           {results && (
             <button onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-[12px] sm:text-[13px] text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap">
