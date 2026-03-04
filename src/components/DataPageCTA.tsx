@@ -6,25 +6,21 @@ interface DataPageCTAProps {
   variant?: 'mid' | 'bottom';
 }
 
-/**
- * Renter-focused CTA for data pages.
- * "mid" variant goes after trends; "bottom" variant goes before footer.
- */
 const DataPageCTA = ({ location, zip, variant = 'mid' }: DataPageCTAProps) => {
   const linkTo = zip ? `/?zip=${zip}` : '/';
 
   if (variant === 'mid') {
     return (
-      <section className="mb-12 rounded-xl border-2 border-primary/20 bg-primary/[0.03] p-6 sm:p-8">
-        <h2 className="font-display text-xl sm:text-2xl text-foreground tracking-tight mb-2">
+      <section className="mb-12 rounded-2xl bg-gradient-to-br from-primary/[0.07] via-primary/[0.04] to-accent/[0.06] py-10 sm:py-12 px-6 sm:px-10 text-center shadow-[0_4px_24px_-6px_hsl(var(--primary)/0.12)]">
+        <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-3" style={{ letterSpacing: '-0.02em' }}>
           Renting in {location}?
         </h2>
-        <p className="text-muted-foreground text-sm sm:text-base mb-5 leading-relaxed max-w-lg">
+        <p className="text-muted-foreground text-sm sm:text-base mb-7 leading-relaxed max-w-md mx-auto">
           Check if your specific rent increase is fair — free, instant, no signup required.
         </p>
         <Link
           to={linkTo}
-          className="inline-block bg-primary text-primary-foreground px-6 sm:px-8 py-3 rounded-lg font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
+          className="inline-block w-full sm:w-1/2 bg-primary text-primary-foreground px-8 py-3.5 rounded-xl font-semibold text-base hover:brightness-90 transition-all duration-150 shadow-md shadow-primary/20"
         >
           Check Your Rent →
         </Link>
@@ -33,14 +29,16 @@ const DataPageCTA = ({ location, zip, variant = 'mid' }: DataPageCTAProps) => {
   }
 
   return (
-    <section className="mb-12 text-center py-10">
-      <h2 className="font-display text-2xl text-foreground mb-3 tracking-tight">
+    <section className="mb-12 rounded-2xl bg-gradient-to-br from-primary/[0.07] via-primary/[0.04] to-accent/[0.06] py-10 sm:py-12 px-6 sm:px-10 text-center shadow-[0_4px_24px_-6px_hsl(var(--primary)/0.12)]">
+      <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-3" style={{ letterSpacing: '-0.02em' }}>
         Got a rent increase in {location}?
       </h2>
-      <p className="text-muted-foreground mb-6">See how it compares to the market.</p>
+      <p className="text-muted-foreground text-sm sm:text-base mb-7 leading-relaxed max-w-md mx-auto">
+        See how it compares to the market.
+      </p>
       <Link
         to={linkTo}
-        className="inline-block bg-primary text-primary-foreground px-8 py-3 rounded-lg font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
+        className="inline-block w-full sm:w-1/2 bg-primary text-primary-foreground px-8 py-3.5 rounded-xl font-semibold text-base hover:brightness-90 transition-all duration-150 shadow-md shadow-primary/20"
       >
         Check Your Rent Free →
       </Link>
