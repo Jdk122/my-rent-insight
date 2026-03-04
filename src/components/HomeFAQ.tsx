@@ -39,7 +39,7 @@ const faqs: { q: string; a: React.ReactNode }[] = [
 
 const HomeFAQ = () => (
   <section className="max-w-[620px] mx-auto px-5 sm:px-6 pt-10 sm:pt-12 pb-12 sm:pb-16 border-t border-border" aria-label="Frequently asked questions">
-    <h2 className="font-display text-[22px] sm:text-[24px] md:text-[28px] font-semibold text-foreground tracking-tight mb-6 sm:mb-8" style={{ letterSpacing: '-0.02em' }}>
+    <h2 className="font-display text-[22px] sm:text-[26px] text-foreground tracking-tight text-center mb-6 sm:mb-8" style={{ letterSpacing: '-0.02em' }}>
       Frequently Asked Questions
     </h2>
     <Accordion type="single" collapsible className="space-y-2">
