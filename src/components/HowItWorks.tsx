@@ -67,17 +67,9 @@ const HowItWorks = () => (
         ))}
       </div>
 
-      <div className="mt-10 sm:mt-12 flex flex-col items-center gap-3">
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="bg-primary text-primary-foreground px-6 sm:px-8 py-3 sm:py-3.5 rounded-lg text-[15px] font-bold hover:brightness-90 active:scale-[0.99] transition-all duration-200 shadow-sm shadow-primary/20"
-        >
-          See if your increase is fair →
-        </button>
-        <p className="text-[12px] text-muted-foreground/60">
-          Used by renters in all 50 states · <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
-        </p>
-      </div>
+      <p className="mt-10 sm:mt-12 text-[12px] text-muted-foreground/60 text-center">
+        Used by renters in all 50 states · <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
+      </p>
     </div>
   </section>
 );
