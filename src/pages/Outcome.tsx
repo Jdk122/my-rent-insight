@@ -34,7 +34,7 @@ const Outcome = () => {
 
       <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
         <Link to="/" className="mb-8">
-          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-7" width="150" height="28" />
+          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-7 w-auto object-contain" />
         </Link>
 
         {error ? (
