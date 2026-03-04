@@ -75,7 +75,7 @@ const RentByCity = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <SEO
         title={`Average Rent in ${city}, ${state} (2026) — Fair Market Rent Data`}
-        description={`See average rent prices in ${city}, ${state} by bedroom count. Compare HUD fair market rent, median rents, and year-over-year trends for all ${city} zip codes.`}
+        description={`${city} rent data for ${state}: See how your rent increase compares to local trends, nearby listings, and HUD benchmarks across 6 data sources. | RenewalReply`}
         canonical={`/rent-data/${stateSlugVal}/${slugify(city)}`}
         jsonLd={[
           {
@@ -209,12 +209,9 @@ const RentByCity = () => {
               </div>
             ))}
           </div>
-          {censusMedianRent && (
+          {yoyChange !== null && (
             <p className="mt-3 text-sm text-muted-foreground">
-              Census median gross rent: <span className="font-semibold text-foreground">{fmt(censusMedianRent)}/mo</span>
-              {yoyChange !== null && (
-                <> · Year-over-year: <span className={`font-semibold ${yoyChange > 0 ? 'text-destructive' : yoyChange < 0 ? 'text-green-600' : 'text-foreground'}`}>{yoyChange > 0 ? '+' : ''}{yoyChange.toFixed(1)}%</span></>
-              )}
+              Year-over-year: <span className={`font-semibold ${yoyChange > 0 ? 'text-destructive' : yoyChange < 0 ? 'text-green-600' : 'text-foreground'}`}>{yoyChange > 0 ? '+' : ''}{yoyChange.toFixed(1)}%</span>
             </p>
           )}
         </section>
@@ -244,7 +241,7 @@ const RentByCity = () => {
                   <TableHead>Zip Code</TableHead>
                   <TableHead className="text-right">1-BR FMR</TableHead>
                   <TableHead className="text-right hidden sm:table-cell">2-BR FMR</TableHead>
-                  <TableHead className="text-right hidden md:table-cell">Census Median</TableHead>
+                  <TableHead className="text-right hidden md:table-cell">2-BR FMR</TableHead>
                   <TableHead className="text-right">YoY</TableHead>
                 </TableRow>
               </TableHeader>
@@ -260,7 +257,7 @@ const RentByCity = () => {
                       </TableCell>
                       <TableCell className="text-right tabular-nums">{fmt(raw.f[1])}</TableCell>
                       <TableCell className="text-right tabular-nums hidden sm:table-cell">{fmt(raw.f[2])}</TableCell>
-                      <TableCell className="text-right tabular-nums hidden md:table-cell">{raw.r ? fmt(raw.r) : '—'}</TableCell>
+                      <TableCell className="text-right tabular-nums hidden md:table-cell">{fmt(raw.f[2])}</TableCell>
                       <TableCell className="text-right tabular-nums">
                         {zipYoy !== null ? (
                           <span className={zipYoy > 0 ? 'text-destructive' : zipYoy < 0 ? 'text-green-600' : ''}>
@@ -338,13 +335,12 @@ const RentByCity = () => {
         <p className="text-xs text-muted-foreground/70 italic mb-8">
           City: {city}, {state} | Zip codes: {zips.length} | Avg 1-BR FMR: {fmt(avgFmr[1])}/mo | Avg 2-BR FMR: {fmt(avgFmr[2])}/mo
           {yoyChange !== null && ` | YoY change: ${yoyChange > 0 ? '+' : ''}${yoyChange.toFixed(1)}%`}
-          {censusMedianRent && ` | Census median rent: ${fmt(censusMedianRent)}`}
-          {' '}| Sources: HUD, U.S. Census Bureau, FRED
+          {' '}| Sources: HUD SAFMR FY2026, HUD 50th Percentile FY2026, Apartment List, Zillow ZORI, Zillow ZHVI, Rentcast
         </p>
 
         {/* Disclaimer */}
         <p className="text-xs text-muted-foreground/60 italic">
-          Data reflects HUD FY2026 fair market rent benchmarks and U.S. Census estimates. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
+          Data reflects HUD FY2026 fair market rent benchmarks. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
         </p>
       </main>
 

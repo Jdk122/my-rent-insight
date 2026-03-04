@@ -233,7 +233,7 @@ const RentData = () => {
             <section className="mb-12">
               <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Data Sources</h2>
               <p className="text-muted-foreground leading-relaxed text-sm">
-                All rent data is sourced from official federal datasets: HUD Small Area Fair Market Rents (updated annually), U.S. Census Bureau American Community Survey median gross rent estimates, and Federal Reserve Economic Data (FRED) for metro-level rent trends. Data reflects FY2026 federal housing benchmarks.
+                Six data sources: HUD Fair Market Rents and 50th Percentile Rents for government benchmarks, Apartment List for rent trends from actual lease transactions, Zillow ZORI and ZHVI for market momentum, and Rentcast for real-time comparable listings and market statistics. Data reflects FY2026 federal housing benchmarks.
               </p>
             </section>
 
