@@ -27,7 +27,7 @@ const HowItWorks = () => (
       >
         How It Works
       </h2>
-      <p className="text-[14px] sm:text-[15px] text-muted-foreground text-center max-w-[440px] mx-auto mb-10 sm:mb-12 leading-relaxed">
+      <p className="text-[15px] sm:text-base text-muted-foreground text-center max-w-[440px] mx-auto mb-10 sm:mb-12 leading-relaxed">
         Three steps. No account required. Free forever.
       </p>
 
@@ -43,8 +43,8 @@ const HowItWorks = () => (
               {step.number}
             </span>
             <div>
-              <h3 className="text-[15px] font-semibold text-foreground mb-1">{step.title}</h3>
-              <p className="text-[13px] text-muted-foreground leading-relaxed">
+              <h3 className="text-base font-semibold text-foreground mb-1">{step.title}</h3>
+              <p className="text-[15px] text-muted-foreground leading-relaxed">
                 {step.description}
               </p>
             </div>
