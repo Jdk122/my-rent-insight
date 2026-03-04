@@ -18,6 +18,14 @@ export interface RentZipRaw {
   zd?: string;         // Direction: "rising" | "falling" | "flat"
 }
 
+// ─── ZHVI (Zillow Home Value Index) data ───
+export interface ZhviZipRaw {
+  hvy: number;         // YoY % change in home values
+  hvm: number;         // MoM % change
+  hvt: number;         // 3-month trailing average MoM
+  hvd: 'rising' | 'falling' | 'flat';  // Direction
+}
+
 export interface FredTrendData {
   monthlyChange: number;
   yearlyChange: number | null;
@@ -45,6 +53,8 @@ export interface RentLookupResult {
   zillowMonthly: number | null;
   zillowDirection: string | null;
   zillow3moTrend: number | null;
+  // ZHVI home value proxy (when ZORI unavailable)
+  hvd: 'rising' | 'falling' | 'flat' | null;
 }
 
 // ─── Bedroom mapping ───
@@ -59,6 +69,7 @@ const bedroomToIndex: Record<BedroomType, number> = {
 // ─── Cache ───
 let rentDataCache: Record<string, RentZipRaw> | null = null;
 let fredMetroMapCache: Record<string, string> | null = null;
+let zhviCache: Record<string, ZhviZipRaw> | null = null;
 
 // ─── Lazy loaders ───
 
@@ -68,6 +79,18 @@ export async function getRentData(): Promise<Record<string, RentZipRaw>> {
     rentDataCache = await response.json();
   }
   return rentDataCache!;
+}
+
+async function getZhviData(): Promise<Record<string, ZhviZipRaw>> {
+  if (!zhviCache) {
+    try {
+      const response = await fetch('/data/zhvi_processed.json');
+      zhviCache = await response.json();
+    } catch {
+      zhviCache = {};
+    }
+  }
+  return zhviCache!;
 }
 
 async function getFredMetroMap(): Promise<Record<string, string>> {
@@ -143,9 +166,10 @@ export async function lookupRentData(
   zip: string,
   bedrooms: BedroomType
 ): Promise<RentLookupResult | null> {
-  const allData = await getRentData();
+  const [allData, zhviData] = await Promise.all([getRentData(), getZhviData()]);
   const raw = allData[zip];
   if (!raw) return null;
+  const zhvi = zhviData[zip] ?? null;
 
   const brIdx = bedroomToIndex[bedrooms];
   const fmr = raw.f[brIdx];
@@ -212,6 +236,7 @@ export async function lookupRentData(
     zillowMonthly: raw.zm ?? null,
     zillowDirection: raw.zd ?? null,
     zillow3moTrend: raw.zt ?? null,
+    hvd: zhvi?.hvd ?? null,
   };
 }
 
