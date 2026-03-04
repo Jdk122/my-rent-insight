@@ -9,8 +9,9 @@ export interface RentZipRaw {
   p: number[];         // Prior year FMR
   y: number;           // Pre-computed YoY % change for 1BR
   ps: 'f' | 'a' | 'm' | 'n'; // Prior source
-  r?: number;          // Census median gross rent
-  i?: number;          // Census median household income
+  fs?: 'safmr' | 'county'; // FMR source: ZIP-level SAFMR or county-level FMR
+  r?: number;          // Census median gross rent (dormant — not used in scoring)
+  i?: number;          // Census median household income (dormant — not used in scoring)
   // Zillow ZORI trend data (~15% of zips, covers ~80% of renters)
   zy?: number;         // Zillow 12-month YoY % (capped ±35%) — PRIMARY when present
   zm?: number;         // Month-over-month % change
@@ -60,6 +61,7 @@ export interface RentLookupResult {
   yoySourceLabel: string;
   yoyCapped?: boolean;
   priorSource: 'f' | 'a' | 'm' | 'n';
+  fmrSource: 'safmr' | 'county' | 'unknown'; // ZIP-level SAFMR vs county-level FMR
   censusMedianRent: number | null;
   medianIncome: number | null;
   fredTrend: FredTrendData | null;
@@ -280,6 +282,7 @@ export async function lookupRentData(
     yoySourceLabel,
     yoyCapped: yoyCapped || undefined,
     priorSource: raw.ps,
+    fmrSource: raw.fs ?? 'unknown',
     censusMedianRent: censusRent,
     medianIncome: validIncome,
     fredTrend: null,
