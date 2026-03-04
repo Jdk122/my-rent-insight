@@ -151,8 +151,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       fmr: rentData.fmr,
       medianIncome: rentData.medianIncome,
       zillowMonthly: rentData.zillowMonthly,
+      hvd: rentData.hvd,
     });
-  }, [hasIncrease, increasePct, marketYoy, newRent, medianCompRent, rentData.fmr, rentData.medianIncome, rentData.zillowMonthly]);
+  }, [hasIncrease, increasePct, marketYoy, newRent, medianCompRent, rentData.fmr, rentData.medianIncome, rentData.zillowMonthly, rentData.hvd]);
 
   const refinedVerdict = useMemo(() => {
     if (!fairnessScore) return null;

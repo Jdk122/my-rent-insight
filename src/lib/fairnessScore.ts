@@ -10,6 +10,7 @@ export interface FairnessScoreInput {
   fmr: number;                 // HUD FMR for bedroom count
   medianIncome: number | null; // Census ACS median renter income
   zillowMonthly: number | null; // Monthly rent trend %
+  hvd?: 'rising' | 'falling' | 'flat' | null; // ZHVI home value direction (fallback for Component 5)
 }
 
 // Tooltip explainer for the FMR/Increase Reasonableness component
@@ -106,16 +107,22 @@ function scoreRentToIncome(proposedRent: number, medianIncome: number | null): S
 }
 
 // Component 5: Market Momentum (10 pts)
-function scoreMarketMomentum(zillowMonthly: number | null): ScoreComponent {
-  // FIX 1: Missing Zillow defaults to 5/10 (neutral) instead of 0/10
-  if (zillowMonthly === null) {
-    return { id: 'momentum', label: 'Market Momentum', score: 5, max: 10, estimated: true };
+function scoreMarketMomentum(zillowMonthly: number | null, hvd?: 'rising' | 'falling' | 'flat' | null): ScoreComponent {
+  // Priority 1: ZORI rent trend data (most direct signal)
+  if (zillowMonthly !== null && zillowMonthly !== undefined) {
+    let score: number;
+    if (zillowMonthly <= 0) score = 10;
+    else if (zillowMonthly <= 0.30) score = 7;
+    else score = 3;
+    return { id: 'momentum', label: 'Market Momentum', score, max: 10, estimated: false };
   }
-  let score: number;
-  if (zillowMonthly <= 0) score = 10;
-  else if (zillowMonthly <= 0.30) score = 7;
-  else score = 3;
-  return { id: 'momentum', label: 'Market Momentum', score, max: 10, estimated: false };
+  // Priority 2: ZHVI home value direction (proxy for rent momentum)
+  if (hvd) {
+    const hvdScore = hvd === 'falling' ? 8 : hvd === 'flat' ? 5 : 3;
+    return { id: 'momentum', label: 'Market Momentum (home value proxy)', score: hvdScore, max: 10, estimated: true };
+  }
+  // Priority 3: No data — neutral default
+  return { id: 'momentum', label: 'Market Momentum', score: 5, max: 10, estimated: true };
 }
 
 // Tier thresholds
@@ -153,7 +160,7 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
     scoreVsComps(input.proposedRent, input.compMedian),
     scoreVsFmr(input.proposedRent, input.fmr, input.currentRent, input.increasePct, input.marketYoY),
     scoreRentToIncome(input.proposedRent, input.medianIncome),
-    scoreMarketMomentum(input.zillowMonthly),
+    scoreMarketMomentum(input.zillowMonthly, input.hvd),
   ];
   const total = components.reduce((sum, c) => sum + c.score, 0);
   return { total, ...getTier(total), components };
