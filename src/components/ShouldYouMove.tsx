@@ -118,6 +118,19 @@ function CompsWithRentLine({
     </div>
   ) : null;
 
+  const matchLabel = (corr: number | null) => {
+    if (corr === null) return null;
+    if (corr > 0.8) return 'Strong match';
+    if (corr >= 0.5) return 'Good match';
+    return 'Weak match';
+  };
+  const matchColor = (corr: number | null) => {
+    if (corr === null) return '';
+    if (corr > 0.8) return 'text-verdict-good';
+    if (corr >= 0.5) return 'text-accent-amber';
+    return 'text-muted-foreground/60';
+  };
+
   return (
     <div className="space-y-1">
       {userUnitRow && <div className="mb-2">{userUnitRow}</div>}
@@ -140,6 +153,9 @@ function CompsWithRentLine({
                 {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
                 {comp.squareFootage !== null && ` · ${fmt(comp.squareFootage)} sqft`}
                 {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
+                {matchLabel(comp.correlation) && (
+                  <span className={`ml-1 ${matchColor(comp.correlation)}`}> · {matchLabel(comp.correlation)}</span>
+                )}
               </p>
             </div>
             {comp.rent !== null && (
