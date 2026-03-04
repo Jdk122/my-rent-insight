@@ -26,6 +26,15 @@ export interface ZhviZipRaw {
   hvd: 'rising' | 'falling' | 'flat';  // Direction
 }
 
+// ─── Apartment List rental market data ───
+export interface ApartmentListZipRaw {
+  aly?: number;        // YoY rent growth % (transacted rents, bedroom-blended)
+  alm?: number;        // MoM rent growth %
+  alv?: number;        // Vacancy rate %
+  alt?: number;        // Time on market in days
+  alr?: string;        // Source county name (for attribution)
+}
+
 export interface FredTrendData {
   monthlyChange: number;
   yearlyChange: number | null;
@@ -55,6 +64,12 @@ export interface RentLookupResult {
   zillow3moTrend: number | null;
   // ZHVI home value proxy (when ZORI unavailable)
   hvd: 'rising' | 'falling' | 'flat' | null;
+  // Apartment List data (when available)
+  alYoY: number | null;           // YoY rent growth %
+  alMoM: number | null;           // MoM rent growth %
+  alVacancy: number | null;       // Vacancy rate %
+  alTimeOnMarket: number | null;  // Time on market in days
+  alRegion: string | null;        // Source county name
 }
 
 // ─── Bedroom mapping ───
@@ -70,6 +85,7 @@ const bedroomToIndex: Record<BedroomType, number> = {
 let rentDataCache: Record<string, RentZipRaw> | null = null;
 let fredMetroMapCache: Record<string, string> | null = null;
 let zhviCache: Record<string, ZhviZipRaw> | null = null;
+let apartmentListCache: Record<string, ApartmentListZipRaw> | null = null;
 
 // ─── Lazy loaders ───
 
@@ -91,6 +107,18 @@ async function getZhviData(): Promise<Record<string, ZhviZipRaw>> {
     }
   }
   return zhviCache!;
+}
+
+async function getApartmentListData(): Promise<Record<string, ApartmentListZipRaw>> {
+  if (!apartmentListCache) {
+    try {
+      const response = await fetch('/data/apartmentlist_processed.json');
+      apartmentListCache = await response.json();
+    } catch {
+      apartmentListCache = {};
+    }
+  }
+  return apartmentListCache!;
 }
 
 async function getFredMetroMap(): Promise<Record<string, string>> {
@@ -166,10 +194,11 @@ export async function lookupRentData(
   zip: string,
   bedrooms: BedroomType
 ): Promise<RentLookupResult | null> {
-  const [allData, zhviData] = await Promise.all([getRentData(), getZhviData()]);
+  const [allData, zhviData, alData] = await Promise.all([getRentData(), getZhviData(), getApartmentListData()]);
   const raw = allData[zip];
   if (!raw) return null;
   const zhvi = zhviData[zip] ?? null;
+  const al = alData[zip] ?? null;
 
   const brIdx = bedroomToIndex[bedrooms];
   const fmr = raw.f[brIdx];
@@ -237,6 +266,11 @@ export async function lookupRentData(
     zillowDirection: raw.zd ?? null,
     zillow3moTrend: raw.zt ?? null,
     hvd: zhvi?.hvd ?? null,
+    alYoY: al?.aly ?? null,
+    alMoM: al?.alm ?? null,
+    alVacancy: al?.alv ?? null,
+    alTimeOnMarket: al?.alt ?? null,
+    alRegion: al?.alr ?? null,
   };
 }
 
