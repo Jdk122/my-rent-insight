@@ -7,25 +7,20 @@
     <link rel="icon" href="/favicon.png" type="image/png" />
     <meta name="robots" content="index, follow" />
 
-    <!-- Preconnect to Google Fonts for faster font loading -->
+    <!-- Preconnect to external origins -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Preload font CSS then load it — ensures fonts are ready before first paint -->
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://www.google-analytics.com" />
+    <link rel="dns-prefetch" href="https://piwahxgtsxpcrgoyuedy.supabase.co" />
+
+    <!-- Non-blocking font loading via media swap -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" as="style" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" /></noscript>
 
     <!-- Preload hero wordmark (LCP candidate) -->
-    <link rel="preload" href="/renewalreply-wordmark.png" as="image" />
-
-    <!-- Google tag (gtag.js) — GA4 + Google Ads (deferred) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8RN57799GY"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-8RN57799GY');
-      gtag('config', 'AW-17990530610');
-    </script>
+    <link rel="preload" href="/renewalreply-wordmark.png" as="image" fetchpriority="high" />
 
     <!-- Primary meta — SEO component overrides these per route -->
     <title>Is Your Rent Increase Fair? Free Rent Check Tool | RenewalReply</title>
@@ -90,6 +85,12 @@
       "sameAs": []
     }
     </script>
+
+    <!-- Inline critical above-the-fold CSS -->
+    <style>
+      body{margin:0;background:hsl(200 15% 97%);color:hsl(220 18% 13%);-webkit-font-smoothing:antialiased}
+      #root{min-height:100vh;display:flex;flex-direction:column}
+    </style>
   </head>
 
   <body>
@@ -135,5 +136,32 @@
     </noscript>
 
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Deferred GA4 + Google Ads — loads after main content renders -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      // Defer loading the GA4 script until after first paint
+      if (typeof requestIdleCallback === 'function') {
+        requestIdleCallback(function() {
+          var s = document.createElement('script');
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-8RN57799GY';
+          s.async = true;
+          document.head.appendChild(s);
+          gtag('config', 'G-8RN57799GY');
+          gtag('config', 'AW-17990530610');
+        });
+      } else {
+        setTimeout(function() {
+          var s = document.createElement('script');
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-8RN57799GY';
+          s.async = true;
+          document.head.appendChild(s);
+          gtag('config', 'G-8RN57799GY');
+          gtag('config', 'AW-17990530610');
+        }, 3000);
+      }
+    </script>
   </body>
 </html>
