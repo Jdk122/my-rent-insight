@@ -615,30 +615,33 @@ function AnomalySection({ rentData, zhviData, alData, hud50Data, anomalyFilter, 
 // ═══════════════════════════════════════
 
 function RefreshGuideSection() {
-  const sources = [
+  const sources: { name: string; frequency: string; url: string; filename: string; destination: string; script: string; notes?: string }[] = [
     {
-      name: 'HUD SAFMR',
+      name: 'HUD SAFMR + ERAP (two-pass)',
       frequency: 'Annual (October)',
-      url: 'https://www.huduser.gov/portal/datasets/fmr/smallarea/index.html',
-      filename: 'fy20XX_safmrs.xlsx',
+      url: 'https://www.huduser.gov/portal/datasets/fmr.html',
+      filename: 'fy2026_safmrs.xlsx + fy2026_erap_fmrs.xlsx',
       destination: 'scripts/',
-      script: 'python scripts/refresh_safmr_fyXXXX.py',
+      script: 'python scripts/refresh_safmr_fy2026.py',
+      notes: 'SAFMR provides ZIP-level FMR (~38K metro ZIPs). ERAP fills remaining ZIPs with county-level FMR.',
     },
     {
       name: 'HUD 50th Percentile',
       frequency: 'Annual (October)',
       url: 'https://www.huduser.gov/portal/datasets/50per.html',
-      filename: '50th_percentile_rents.xlsx',
+      filename: 'hud_50pct_fy2026.xlsx',
       destination: 'scripts/',
       script: 'python scripts/refresh_hud50.py',
+      notes: 'Requires Census ZCTA-to-county crosswalk at public/data/tab20_zcta520_county20_natl.txt',
     },
     {
       name: 'Apartment List (rent summary + vacancy + time on market)',
       frequency: 'Monthly',
       url: 'https://www.apartmentlist.com/research/category/data-rent-estimates',
-      filename: 'Various CSVs',
-      destination: 'scripts/',
+      filename: 'rent_estimates_summary.csv, vacancy_index.csv, time_on_market.csv',
+      destination: 'public/data/apartmentlist/',
       script: 'python scripts/refresh_apartmentlist.py',
+      notes: 'Requires Census ZCTA-to-county crosswalk at public/data/tab20_zcta520_county20_natl.txt',
     },
     {
       name: 'Zillow ZORI',
@@ -684,6 +687,11 @@ function RefreshGuideSection() {
               <div><span className="text-muted-foreground">Destination: </span><code className="text-xs bg-muted px-1 rounded">{s.destination}</code></div>
               <div><span className="text-muted-foreground">Script: </span><code className="text-xs bg-muted px-1 rounded">{s.script}</code></div>
             </div>
+            {(s as any).notes && (
+              <div className="text-xs text-muted-foreground bg-muted/50 rounded px-2 py-1">
+                ℹ️ {(s as any).notes}
+              </div>
+            )}
             <div className="text-sm">
               <span className="text-muted-foreground">Last refresh performed: </span>
               <span className="italic text-muted-foreground">Update in data_freshness.json</span>
