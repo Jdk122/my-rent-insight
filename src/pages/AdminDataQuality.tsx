@@ -1,0 +1,697 @@
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Lock, ExternalLink, ChevronDown, AlertTriangle, CheckCircle2, Clock, Search, Database, Activity, Upload, ShieldCheck } from 'lucide-react';
+import { calculateFairnessScore, type FairnessScoreInput } from '@/lib/fairnessScore';
+import type { RentZipRaw, ZhviZipRaw, ApartmentListZipRaw, Hud50ZipRaw } from '@/data/dataLoader';
+
+const ADMIN_PASSWORD = 'renewalreply2026';
+
+// ─── Types ───
+
+interface FreshnessEntry {
+  source: string;
+  key: string;
+  date: string | null;
+  isRealtime: boolean;
+  thresholdDays: [number, number]; // [yellow, red]
+}
+
+interface CoverageStats {
+  total: number;
+  apartmentList: number;
+  zori: number;
+  zhvi: number;
+  hud50: number;
+  fullCoverage: number;
+}
+
+type AnomalyType =
+  | 'HUD trend vs Apartment List divergence'
+  | 'ZORI vs Apartment List divergence'
+  | 'HUD 40th > HUD 50th'
+  | 'Negative FMR'
+  | 'Extreme YoY'
+  | 'ZHVI/ZORI direction conflict';
+
+interface Anomaly {
+  zip: string;
+  city: string;
+  state: string;
+  type: AnomalyType;
+  detail: string;
+}
+
+// ─── Helpers ───
+
+function getStatusBadge(dateStr: string | null, isRealtime: boolean, thresholds: [number, number]) {
+  if (isRealtime) return <Badge className="bg-primary text-primary-foreground">Live</Badge>;
+  if (!dateStr) return <Badge variant="destructive">Unknown</Badge>;
+  const days = Math.floor((Date.now() - new Date(dateStr).getTime()) / 86400000);
+  if (days <= thresholds[0]) return <Badge className="bg-primary text-primary-foreground">Fresh ({days}d)</Badge>;
+  if (days <= thresholds[1]) return <Badge className="bg-accent text-accent-foreground">Aging ({days}d)</Badge>;
+  return <Badge variant="destructive">Stale ({days}d)</Badge>;
+}
+
+function pct(n: number, total: number) {
+  return total > 0 ? `${((n / total) * 100).toFixed(1)}%` : '0%';
+}
+
+// ─── Password Gate ───
+
+function PasswordGate({ onAuth }: { onAuth: () => void }) {
+  const [pw, setPw] = useState('');
+  const [error, setError] = useState(false);
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <Card className="w-full max-w-sm">
+        <CardHeader className="text-center">
+          <Lock className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
+          <CardTitle className="text-lg">Admin Access</CardTitle>
+          <CardDescription>Enter password to continue</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <Input
+            type="password"
+            placeholder="Password"
+            value={pw}
+            onChange={e => { setPw(e.target.value); setError(false); }}
+            onKeyDown={e => { if (e.key === 'Enter') { if (pw === ADMIN_PASSWORD) onAuth(); else setError(true); } }}
+          />
+          {error && <p className="text-destructive text-sm">Incorrect password</p>}
+          <Button className="w-full" onClick={() => { if (pw === ADMIN_PASSWORD) onAuth(); else setError(true); }}>
+            Enter
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ─── Main Dashboard ───
+
+export default function AdminDataQuality() {
+  const [authed, setAuthed] = useState(false);
+  const [freshness, setFreshness] = useState<Record<string, string> | null>(null);
+  const [rentData, setRentData] = useState<Record<string, RentZipRaw> | null>(null);
+  const [zhviData, setZhviData] = useState<Record<string, ZhviZipRaw> | null>(null);
+  const [alData, setAlData] = useState<Record<string, ApartmentListZipRaw> | null>(null);
+  const [hud50Data, setHud50Data] = useState<Record<string, Hud50ZipRaw> | null>(null);
+  const [spotZip, setSpotZip] = useState('');
+  const [anomalyFilter, setAnomalyFilter] = useState<string>('all');
+
+  useEffect(() => {
+    if (!authed) return;
+    Promise.all([
+      fetch('/data/data_freshness.json').then(r => r.json()),
+      fetch('/data/rentData.json').then(r => r.json()),
+      fetch('/data/zhvi_processed.json').then(r => r.json()),
+      fetch('/data/apartmentlist_processed.json').then(r => r.json()),
+      fetch('/data/hud50_processed.json').then(r => r.json()),
+    ]).then(([f, rd, zhvi, al, h50]) => {
+      setFreshness(f);
+      setRentData(rd);
+      setZhviData(zhvi);
+      setAlData(al);
+      setHud50Data(h50);
+    });
+  }, [authed]);
+
+  if (!authed) return <PasswordGate onAuth={() => setAuthed(true)} />;
+  if (!rentData || !freshness) {
+    return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading data...</div>;
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-8">
+        <div className="flex items-center gap-3">
+          <ShieldCheck className="h-6 w-6 text-primary" />
+          <h1 className="text-2xl font-bold text-foreground">Data Quality Dashboard</h1>
+          <Badge variant="outline" className="ml-auto">Internal Only</Badge>
+        </div>
+
+        <Tabs defaultValue="freshness">
+          <TabsList className="flex-wrap h-auto gap-1">
+            <TabsTrigger value="freshness" className="gap-1.5"><Clock className="h-3.5 w-3.5" />Freshness</TabsTrigger>
+            <TabsTrigger value="coverage" className="gap-1.5"><Database className="h-3.5 w-3.5" />Coverage</TabsTrigger>
+            <TabsTrigger value="spotcheck" className="gap-1.5"><Search className="h-3.5 w-3.5" />Spot-Check</TabsTrigger>
+            <TabsTrigger value="anomalies" className="gap-1.5"><AlertTriangle className="h-3.5 w-3.5" />Anomalies</TabsTrigger>
+            <TabsTrigger value="refresh" className="gap-1.5"><Upload className="h-3.5 w-3.5" />Refresh Guide</TabsTrigger>
+          </TabsList>
+
+          {/* ── 1. Freshness ── */}
+          <TabsContent value="freshness">
+            <FreshnessSection freshness={freshness} />
+          </TabsContent>
+
+          {/* ── 2. Coverage ── */}
+          <TabsContent value="coverage">
+            <CoverageSection rentData={rentData} zhviData={zhviData} alData={alData} hud50Data={hud50Data} />
+          </TabsContent>
+
+          {/* ── 3. Spot-Check ── */}
+          <TabsContent value="spotcheck">
+            <SpotCheckSection rentData={rentData} zhviData={zhviData} alData={alData} hud50Data={hud50Data} spotZip={spotZip} setSpotZip={setSpotZip} />
+          </TabsContent>
+
+          {/* ── 4. Anomalies ── */}
+          <TabsContent value="anomalies">
+            <AnomalySection rentData={rentData} zhviData={zhviData} alData={alData} hud50Data={hud50Data} anomalyFilter={anomalyFilter} setAnomalyFilter={setAnomalyFilter} />
+          </TabsContent>
+
+          {/* ── 5. Refresh Guide ── */}
+          <TabsContent value="refresh">
+            <RefreshGuideSection />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════
+// Section 1: Freshness
+// ═══════════════════════════════════════
+
+function FreshnessSection({ freshness }: { freshness: Record<string, string> }) {
+  const sources: FreshnessEntry[] = [
+    { source: 'HUD SAFMR FY2026', key: 'hud_safmr', date: freshness.hud_safmr || null, isRealtime: false, thresholdDays: [365, 450] },
+    { source: 'HUD 50th Percentile', key: 'hud_50pct', date: freshness.hud_50pct || null, isRealtime: false, thresholdDays: [365, 450] },
+    { source: 'Apartment List', key: 'apartment_list', date: freshness.apartment_list || null, isRealtime: false, thresholdDays: [45, 90] },
+    { source: 'Zillow ZORI', key: 'zillow_zori', date: freshness.zillow_zori || null, isRealtime: false, thresholdDays: [45, 90] },
+    { source: 'Zillow ZHVI', key: 'zillow_zhvi', date: freshness.zillow_zhvi || null, isRealtime: false, thresholdDays: [45, 90] },
+    { source: 'Rentcast', key: 'rentcast', date: null, isRealtime: freshness.rentcast === 'realtime', thresholdDays: [30, 60] },
+  ];
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg flex items-center gap-2"><Clock className="h-5 w-5" />Data Freshness Monitor</CardTitle>
+        <CardDescription>Status of each active data source based on last refresh date.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Source</TableHead>
+              <TableHead>Last Updated</TableHead>
+              <TableHead>Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sources.map(s => (
+              <TableRow key={s.key}>
+                <TableCell className="font-medium">{s.source}</TableCell>
+                <TableCell>{s.isRealtime ? 'Real-time (30d cache)' : s.date || 'Unknown'}</TableCell>
+                <TableCell>{getStatusBadge(s.date, s.isRealtime, s.thresholdDays)}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ═══════════════════════════════════════
+// Section 2: Coverage
+// ═══════════════════════════════════════
+
+function CoverageSection({ rentData, zhviData, alData, hud50Data }: {
+  rentData: Record<string, RentZipRaw>;
+  zhviData: Record<string, ZhviZipRaw> | null;
+  alData: Record<string, ApartmentListZipRaw> | null;
+  hud50Data: Record<string, Hud50ZipRaw> | null;
+}) {
+  const stats = useMemo<CoverageStats>(() => {
+    const zips = Object.keys(rentData);
+    const total = zips.length;
+    let apartmentList = 0, zori = 0, zhvi = 0, hud50 = 0, full = 0;
+    for (const z of zips) {
+      const rd = rentData[z];
+      const hasAL = !!(alData?.[z]?.aly !== undefined && alData[z].aly !== null);
+      const hasZORI = rd.zy !== undefined && rd.zy !== null;
+      const hasZHVI = !!(zhviData?.[z]);
+      const hasH50 = !!(hud50Data?.[z]?.f50);
+      if (hasAL) apartmentList++;
+      if (hasZORI) zori++;
+      if (hasZHVI) zhvi++;
+      if (hasH50) hud50++;
+      if (hasAL && hasZORI && hasZHVI && hasH50) full++;
+    }
+    return { total, apartmentList, zori, zhvi, hud50, fullCoverage: full };
+  }, [rentData, zhviData, alData, hud50Data]);
+
+  const rows = [
+    { label: 'Total ZIP codes in dataset', count: stats.total, pctStr: '' },
+    { label: 'ZIPs with Apartment List data', count: stats.apartmentList, pctStr: pct(stats.apartmentList, stats.total) },
+    { label: 'ZIPs with Zillow ZORI data', count: stats.zori, pctStr: pct(stats.zori, stats.total) },
+    { label: 'ZIPs with Zillow ZHVI data', count: stats.zhvi, pctStr: pct(stats.zhvi, stats.total) },
+    { label: 'ZIPs with HUD 50th percentile', count: stats.hud50, pctStr: pct(stats.hud50, stats.total) },
+    { label: 'ZIPs with full coverage (all 5 static sources)', count: stats.fullCoverage, pctStr: pct(stats.fullCoverage, stats.total) },
+  ];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg flex items-center gap-2"><Database className="h-5 w-5" />Coverage Report</CardTitle>
+        <CardDescription>Coverage of 6 active data sources across all ZIP codes. Census fields are dormant and excluded.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Metric</TableHead>
+              <TableHead className="text-right">Count</TableHead>
+              <TableHead className="text-right">%</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map(r => (
+              <TableRow key={r.label}>
+                <TableCell>{r.label}</TableCell>
+                <TableCell className="text-right font-mono">{r.count.toLocaleString()}</TableCell>
+                <TableCell className="text-right font-mono">{r.pctStr}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ═══════════════════════════════════════
+// Section 3: Spot-Check
+// ═══════════════════════════════════════
+
+const VERIFY_LINKS: Record<string, string> = {
+  'HUD SAFMR': 'https://www.huduser.gov/portal/datasets/fmr/smallarea/index.html',
+  'HUD 50th Pct': 'https://www.huduser.gov/portal/datasets/50per.html',
+  'Apartment List': 'https://www.apartmentlist.com/research/category/data-rent-estimates',
+  'Zillow': 'https://www.zillow.com/research/data/',
+};
+
+function SpotCheckSection({ rentData, zhviData, alData, hud50Data, spotZip, setSpotZip }: {
+  rentData: Record<string, RentZipRaw>;
+  zhviData: Record<string, ZhviZipRaw> | null;
+  alData: Record<string, ApartmentListZipRaw> | null;
+  hud50Data: Record<string, Hud50ZipRaw> | null;
+  spotZip: string;
+  setSpotZip: (z: string) => void;
+}) {
+  const zip = spotZip.padStart(5, '0');
+  const rd = rentData[zip];
+  const zhvi = zhviData?.[zip];
+  const al = alData?.[zip];
+  const h50 = hud50Data?.[zip];
+
+  // Compute sample fairness score
+  const sampleScore = useMemo(() => {
+    if (!rd) return null;
+    const fmr1br = rd.f?.[1] ?? 0;
+    if (fmr1br <= 0) return null;
+    const currentRent = fmr1br;
+    const proposedRent = fmr1br * 1.05;
+    const input: FairnessScoreInput = {
+      increasePct: 5,
+      marketYoY: rd.y ?? 0,
+      proposedRent,
+      currentRent,
+      compMedian: null,
+      compCount: 0,
+      fmr: fmr1br,
+      zillowMonthly: rd.zm ?? null,
+      hvd: zhvi?.hvd ?? null,
+      alYoY: al?.aly ?? null,
+      alMoM: al?.alm ?? null,
+      bedroomCount: 1,
+      f50: h50?.f50 ?? null,
+    };
+    return calculateFairnessScore(input);
+  }, [rd, zhvi, al, h50]);
+
+  function VerifyLink({ source }: { source: string }) {
+    const url = VERIFY_LINKS[source];
+    if (!url) return null;
+    return (
+      <a href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline ml-2">
+        Verify <ExternalLink className="h-3 w-3" />
+      </a>
+    );
+  }
+
+  function Val({ v, suffix }: { v: unknown; suffix?: string }) {
+    if (v === null || v === undefined) return <span className="text-muted-foreground italic">—</span>;
+    return <span className="font-mono">{String(v)}{suffix || ''}</span>;
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg flex items-center gap-2"><Search className="h-5 w-5" />ZIP Code Spot-Check</CardTitle>
+        <CardDescription>Enter a ZIP to inspect all data fields and run a sample scoring test.</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="flex gap-2 max-w-xs">
+          <Input placeholder="Enter ZIP" value={spotZip} onChange={e => setSpotZip(e.target.value)} maxLength={5} />
+          <Button variant="secondary" onClick={() => setSpotZip(spotZip)}>Look up</Button>
+        </div>
+
+        {spotZip.length === 5 && !rd && (
+          <p className="text-destructive text-sm">ZIP code {zip} not found in rentData.json.</p>
+        )}
+
+        {rd && (
+          <>
+            <div className="text-sm text-muted-foreground">{rd.c}, {rd.s} · Metro: {rd.m || '—'}</div>
+
+            {/* HUD SAFMR */}
+            <div className="space-y-1">
+              <h3 className="text-sm font-semibold">HUD SAFMR <VerifyLink source="HUD SAFMR" /></h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-1 text-sm">
+                <div>FMR (current): <Val v={rd.f?.join(', ')} /></div>
+                <div>FMR (prior): <Val v={rd.p?.join(', ')} /></div>
+                <div>YoY %: <Val v={rd.y} suffix="%" /></div>
+                <div>Prior source: <Val v={rd.ps} /></div>
+              </div>
+            </div>
+
+            {/* HUD 50th */}
+            <div className="space-y-1">
+              <h3 className="text-sm font-semibold">HUD 50th Percentile <VerifyLink source="HUD 50th Pct" /></h3>
+              <div className="text-sm">
+                f50: <Val v={h50?.f50?.join(', ')} />
+              </div>
+            </div>
+
+            {/* Apartment List */}
+            <div className="space-y-1">
+              <h3 className="text-sm font-semibold">Apartment List <VerifyLink source="Apartment List" /></h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-1 text-sm">
+                <div>YoY: <Val v={al?.aly} suffix="%" /></div>
+                <div>MoM: <Val v={al?.alm} suffix="%" /></div>
+                <div>Vacancy: <Val v={al?.alv} suffix="%" /></div>
+                <div>Time on Market: <Val v={al?.alt} suffix=" days" /></div>
+                <div>Region: <Val v={al?.alr} /></div>
+              </div>
+            </div>
+
+            {/* Zillow ZORI */}
+            <div className="space-y-1">
+              <h3 className="text-sm font-semibold">Zillow ZORI <VerifyLink source="Zillow" /></h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-1 text-sm">
+                <div>YoY: <Val v={rd.zy} suffix="%" /></div>
+                <div>MoM: <Val v={rd.zm} suffix="%" /></div>
+                <div>3mo trend: <Val v={rd.zt} suffix="%" /></div>
+                <div>Direction: <Val v={rd.zd} /></div>
+              </div>
+            </div>
+
+            {/* Zillow ZHVI */}
+            <div className="space-y-1">
+              <h3 className="text-sm font-semibold">Zillow ZHVI <VerifyLink source="Zillow" /></h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-1 text-sm">
+                <div>YoY: <Val v={zhvi?.hvy} suffix="%" /></div>
+                <div>MoM: <Val v={zhvi?.hvm} suffix="%" /></div>
+                <div>3mo trailing: <Val v={zhvi?.hvt} suffix="%" /></div>
+                <div>Direction: <Val v={zhvi?.hvd} /></div>
+              </div>
+            </div>
+
+            {/* Dormant Census */}
+            <Collapsible>
+              <CollapsibleTrigger className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+                <ChevronDown className="h-4 w-4" />
+                Census ACS (not used in scoring)
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-2 pl-6 text-sm space-y-1 text-muted-foreground">
+                <div>Median Rent (r): <Val v={rd.r} /></div>
+                <div>Median Income (i): <Val v={rd.i} /></div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* Sample Score */}
+            {sampleScore && (
+              <div className="border-t pt-4 mt-4 space-y-2">
+                <h3 className="text-sm font-semibold">Sample Scoring: 1BR, current = ${rd.f?.[1]?.toLocaleString()}, +5% increase</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {sampleScore.components.map(c => (
+                    <div key={c.id} className="border rounded-md p-3 text-center">
+                      <div className="text-xs text-muted-foreground truncate">{c.label}</div>
+                      <div className="text-lg font-bold">{c.score}<span className="text-sm text-muted-foreground">/{c.max}</span></div>
+                      {c.estimated && <Badge variant="outline" className="text-xs mt-1">Estimated</Badge>}
+                    </div>
+                  ))}
+                </div>
+                <div className="flex items-center gap-3 mt-2">
+                  <span className="text-sm font-medium">Total:</span>
+                  <span className="text-2xl font-bold">{sampleScore.total}/100</span>
+                  <Badge className={sampleScore.tierColor.replace('text-', 'bg-').replace('text-', '') + ' text-white'}>
+                    {sampleScore.tierLabel}
+                  </Badge>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ═══════════════════════════════════════
+// Section 4: Anomaly Scanner
+// ═══════════════════════════════════════
+
+function AnomalySection({ rentData, zhviData, alData, hud50Data, anomalyFilter, setAnomalyFilter }: {
+  rentData: Record<string, RentZipRaw>;
+  zhviData: Record<string, ZhviZipRaw> | null;
+  alData: Record<string, ApartmentListZipRaw> | null;
+  hud50Data: Record<string, Hud50ZipRaw> | null;
+  anomalyFilter: string;
+  setAnomalyFilter: (f: string) => void;
+}) {
+  const anomalies = useMemo<Anomaly[]>(() => {
+    const results: Anomaly[] = [];
+    for (const [zip, rd] of Object.entries(rentData)) {
+      const al = alData?.[zip];
+      const zhvi = zhviData?.[zip];
+      const h50 = hud50Data?.[zip];
+      const base = { zip, city: rd.c, state: rd.s };
+
+      // HUD trend vs Apartment List divergence
+      if (al?.aly !== undefined && al.aly !== null && rd.y !== undefined) {
+        if (Math.abs(rd.y - al.aly) > 5) {
+          results.push({ ...base, type: 'HUD trend vs Apartment List divergence', detail: `HUD y=${rd.y}%, AL aly=${al.aly}%` });
+        }
+      }
+
+      // ZORI vs Apartment List divergence
+      if (al?.aly !== undefined && al.aly !== null && rd.zy !== undefined && rd.zy !== null) {
+        if (Math.abs(rd.zy - al.aly) > 5) {
+          results.push({ ...base, type: 'ZORI vs Apartment List divergence', detail: `ZORI zy=${rd.zy}%, AL aly=${al.aly}%` });
+        }
+      }
+
+      // HUD 40th > HUD 50th
+      if (h50?.f50 && rd.f) {
+        for (let br = 0; br < 5; br++) {
+          if (rd.f[br] > 0 && h50.f50[br] > 0 && rd.f[br] > h50.f50[br]) {
+            results.push({ ...base, type: 'HUD 40th > HUD 50th', detail: `BR${br}: SAFMR=$${rd.f[br]}, 50th=$${h50.f50[br]}` });
+            break; // one per zip
+          }
+        }
+      }
+
+      // Negative FMR
+      if (rd.f) {
+        for (let br = 0; br < rd.f.length; br++) {
+          if (rd.f[br] <= 0) { results.push({ ...base, type: 'Negative FMR', detail: `f[${br}]=${rd.f[br]}` }); break; }
+        }
+      }
+      if (h50?.f50) {
+        for (let br = 0; br < h50.f50.length; br++) {
+          if (h50.f50[br] <= 0) { results.push({ ...base, type: 'Negative FMR', detail: `f50[${br}]=${h50.f50[br]}` }); break; }
+        }
+      }
+
+      // Extreme YoY
+      const yoyVals = [
+        { src: 'HUD', val: rd.y },
+        { src: 'ZORI', val: rd.zy },
+        { src: 'AL', val: al?.aly },
+      ];
+      for (const { src, val } of yoyVals) {
+        if (val !== undefined && val !== null && (val > 20 || val < -15)) {
+          results.push({ ...base, type: 'Extreme YoY', detail: `${src}=${val}%` });
+        }
+      }
+
+      // ZHVI/ZORI direction conflict
+      if (zhvi?.hvd && rd.zd) {
+        const rising = (d: string) => d === 'rising';
+        const falling = (d: string) => d === 'falling';
+        if ((rising(rd.zd) && falling(zhvi.hvd)) || (falling(rd.zd) && rising(zhvi.hvd))) {
+          results.push({ ...base, type: 'ZHVI/ZORI direction conflict', detail: `ZORI=${rd.zd}, ZHVI=${zhvi.hvd}` });
+        }
+      }
+    }
+    return results;
+  }, [rentData, zhviData, alData, hud50Data]);
+
+  const anomalyTypes = useMemo(() => [...new Set(anomalies.map(a => a.type))].sort(), [anomalies]);
+  const filtered = anomalyFilter === 'all' ? anomalies : anomalies.filter(a => a.type === anomalyFilter);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg flex items-center gap-2"><AlertTriangle className="h-5 w-5" />Cross-Source Anomaly Scanner</CardTitle>
+        <CardDescription>
+          {anomalies.length} total anomalies detected across {Object.keys(rentData).length.toLocaleString()} ZIP codes.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-muted-foreground">Filter:</span>
+          <Select value={anomalyFilter} onValueChange={setAnomalyFilter}>
+            <SelectTrigger className="w-[300px]"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All types ({anomalies.length})</SelectItem>
+              {anomalyTypes.map(t => (
+                <SelectItem key={t} value={t}>{t} ({anomalies.filter(a => a.type === t).length})</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="max-h-[500px] overflow-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-20">ZIP</TableHead>
+                <TableHead>City</TableHead>
+                <TableHead>St</TableHead>
+                <TableHead>Anomaly</TableHead>
+                <TableHead>Detail</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filtered.slice(0, 500).map((a, i) => (
+                <TableRow key={`${a.zip}-${a.type}-${i}`}>
+                  <TableCell className="font-mono">{a.zip}</TableCell>
+                  <TableCell>{a.city}</TableCell>
+                  <TableCell>{a.state}</TableCell>
+                  <TableCell><Badge variant="outline" className="text-xs whitespace-nowrap">{a.type}</Badge></TableCell>
+                  <TableCell className="text-xs text-muted-foreground font-mono">{a.detail}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          {filtered.length > 500 && <p className="text-sm text-muted-foreground mt-2">Showing first 500 of {filtered.length} results.</p>}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ═══════════════════════════════════════
+// Section 5: Refresh Guide
+// ═══════════════════════════════════════
+
+function RefreshGuideSection() {
+  const sources = [
+    {
+      name: 'HUD SAFMR',
+      frequency: 'Annual (October)',
+      url: 'https://www.huduser.gov/portal/datasets/fmr/smallarea/index.html',
+      filename: 'fy20XX_safmrs.xlsx',
+      destination: 'scripts/',
+      script: 'python scripts/refresh_safmr_fyXXXX.py',
+    },
+    {
+      name: 'HUD 50th Percentile',
+      frequency: 'Annual (October)',
+      url: 'https://www.huduser.gov/portal/datasets/50per.html',
+      filename: '50th_percentile_rents.xlsx',
+      destination: 'scripts/',
+      script: 'python scripts/refresh_hud50.py',
+    },
+    {
+      name: 'Apartment List (rent summary + vacancy + time on market)',
+      frequency: 'Monthly',
+      url: 'https://www.apartmentlist.com/research/category/data-rent-estimates',
+      filename: 'Various CSVs',
+      destination: 'scripts/',
+      script: 'python scripts/refresh_apartmentlist.py',
+    },
+    {
+      name: 'Zillow ZORI',
+      frequency: 'Monthly',
+      url: 'https://www.zillow.com/research/data/',
+      filename: 'Zip_zori_uc_sfrcondomfr_sm_month.csv',
+      destination: 'Auto-downloaded by script',
+      script: 'python scripts/refresh_zori.py',
+    },
+    {
+      name: 'Zillow ZHVI',
+      frequency: 'Monthly',
+      url: 'https://www.zillow.com/research/data/',
+      filename: 'Zip_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv',
+      destination: 'Auto-downloaded by script',
+      script: 'python scripts/refresh_zhvi.py',
+    },
+  ];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg flex items-center gap-2"><Upload className="h-5 w-5" />Data Refresh Guide</CardTitle>
+        <CardDescription>
+          Reference checklist for periodic data updates. Rentcast is real-time via API and needs no manual refresh.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {sources.map(s => (
+          <div key={s.name} className="border rounded-lg p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-sm">{s.name}</h3>
+              <Badge variant="outline">{s.frequency}</Badge>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 text-sm">
+              <div>
+                <span className="text-muted-foreground">Download URL: </span>
+                <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center gap-1">
+                  Source <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+              <div><span className="text-muted-foreground">Expected file: </span><code className="text-xs bg-muted px-1 rounded">{s.filename}</code></div>
+              <div><span className="text-muted-foreground">Destination: </span><code className="text-xs bg-muted px-1 rounded">{s.destination}</code></div>
+              <div><span className="text-muted-foreground">Script: </span><code className="text-xs bg-muted px-1 rounded">{s.script}</code></div>
+            </div>
+            <div className="text-sm">
+              <span className="text-muted-foreground">Last refresh performed: </span>
+              <span className="italic text-muted-foreground">Update in data_freshness.json</span>
+            </div>
+          </div>
+        ))}
+
+        <div className="text-sm text-muted-foreground mt-4 border-t pt-4">
+          <p><strong>After each refresh:</strong></p>
+          <ol className="list-decimal list-inside space-y-1 mt-2">
+            <li>Run the appropriate Python script</li>
+            <li>Update <code className="bg-muted px-1 rounded">public/data/data_freshness.json</code> with the new date</li>
+            <li>Check the Anomaly Scanner tab for any new data issues</li>
+            <li>Spot-check 2-3 ZIP codes to verify data looks correct</li>
+          </ol>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
