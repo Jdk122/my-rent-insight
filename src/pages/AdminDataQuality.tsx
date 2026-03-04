@@ -126,13 +126,32 @@ export default function AdminDataQuality() {
 
   useEffect(() => {
     if (!authed) return;
+
+    const loadCountyData = async () => {
+      const urls = ['/data/county_fmr.json'];
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+      if (projectId) {
+        urls.push(`https://${projectId}.supabase.co/storage/v1/object/public/temp-data/county_fmr.json`);
+      }
+
+      for (const url of urls) {
+        try {
+          const response = await fetch(url);
+          if (response.ok) return await response.json();
+        } catch {
+          // try next source
+        }
+      }
+      return {};
+    };
+
     Promise.all([
       fetch('/data/data_freshness.json').then(r => r.json()),
       fetch('/data/rentData.json').then(r => r.json()),
       fetch('/data/zhvi_processed.json').then(r => r.json()).catch(() => ({})),
       fetch('/data/apartmentlist_processed.json').then(r => r.json()).catch(() => ({})),
       fetch('/data/hud50_processed.json').then(r => r.json()).catch(() => ({})),
-      fetch('/data/county_fmr.json').then(r => r.ok ? r.json() : {}).catch(() => ({})),
+      loadCountyData(),
     ]).then(([f, rd, zhvi, al, h50, county]) => {
       setFreshness(f);
       setRentData(rd);

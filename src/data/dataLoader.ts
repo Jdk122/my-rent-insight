@@ -110,15 +110,23 @@ export async function getRentData(): Promise<Record<string, RentZipRaw>> {
 
 async function getCountyFmrData(): Promise<Record<string, RentZipRaw>> {
   if (!countyFmrCache) {
-    try {
-      const response = await fetch('/data/county_fmr.json');
-      if (response.ok) {
-        countyFmrCache = await response.json();
-      } else {
-        countyFmrCache = {};
+    const urls = ['/data/county_fmr.json'];
+    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+    if (projectId) {
+      urls.push(`https://${projectId}.supabase.co/storage/v1/object/public/temp-data/county_fmr.json`);
+    }
+
+    countyFmrCache = {};
+    for (const url of urls) {
+      try {
+        const response = await fetch(url);
+        if (response.ok) {
+          countyFmrCache = await response.json();
+          break;
+        }
+      } catch {
+        // try next source
       }
-    } catch {
-      countyFmrCache = {};
     }
   }
   return countyFmrCache!;
