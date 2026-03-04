@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { RentFormData } from './RentForm';
 import { RentLookupResult, bedroomLabels, calculateResults } from '@/data/rentData';
 import ShareHub from './ShareHub';
@@ -502,6 +503,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 className="mt-4"
               >
                 <DataConfidenceBadge level={confidence.level} note={confidence.note} />
+                <p className="text-[11px] text-muted-foreground/60 mt-2 text-center leading-relaxed">
+                  This analysis is for informational purposes only and does not constitute legal, financial, or real estate advice.{' '}
+                  <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
+                </p>
               </motion.div>
 
               {/* See evidence + reset */}
@@ -767,6 +772,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     f50Value={rentData.f50 && bedroomNum >= 0 && bedroomNum <= 4 ? rentData.f50[bedroomNum] : null}
                     fairnessScore={fairnessScore?.total ?? null}
                     tierLabel={fairnessScore?.tierLabel ?? null}
+                    maxCompDistance={compRadius.maxDistance}
+                    momentumDirection={rentData.zillowDirection || (rentData.hvd ? rentData.hvd : null)}
                   />
                 </LetterGate>
               </motion.section>

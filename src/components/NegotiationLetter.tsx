@@ -52,6 +52,8 @@ interface NegotiationLetterProps {
   onReportLinkGenerated?: (url: string) => void;
   fairnessScore?: number | null;
   tierLabel?: string;
+  maxCompDistance?: number | null;
+  momentumDirection?: string | null;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -126,7 +128,7 @@ function buildFallbackLetter(props: {
     paragraphs.push(s);
   }
 
-  paragraphs.push(`I want to be transparent that this analysis draws on multiple public data sources including government rent benchmarks and current local listings. I'm happy to share the detailed breakdown if that would be helpful.`);
+  paragraphs.push(`I'm happy to share the detailed market analysis behind these figures if helpful.`);
 
   const counterRange = counterLow === counterHigh ? `$${fmt(counterLow)}/month` : `$${fmt(counterLow)}–$${fmt(counterHigh)}/month`;
   const counterPctRange = counterLow === counterHigh ? `${counterLowPercent}%` : `${counterLowPercent}–${counterHighPercent}%`;
@@ -151,6 +153,7 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
     compMedian, compCount, compRadius, trendSource, trendArea,
     rcMedianRent, rcTotalListings, rcAvgDaysOnMarket, alVacancy, f50Value,
     shareReportPayload, onReportLinkGenerated, fairnessScore, tierLabel,
+    maxCompDistance, momentumDirection,
   } = props;
 
   const [aiLetter, setAiLetter] = useState<string | null>(null);
@@ -171,14 +174,12 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
     increasePct,
     increaseAmount: increaseAmt,
     bedroomCount: bedroomNum,
-    bedroomLabel: brLabel,
     zipCode: zip,
-    city,
-    state,
     fairnessScore: fairnessScore ?? null,
     tierLabel: tierLabel ?? null,
     compMedian: compMedian ?? null,
     compCount: compCount ?? 0,
+    maxCompDistance: maxCompDistance ?? null,
     marketYoY: marketYoy,
     marketYoYSource: trendSource ?? 'HUD',
     areaName: trendArea || city,
@@ -190,14 +191,12 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
     rentToIncomeRatio,
     counterLow,
     counterHigh,
-    counterLowPercent,
-    counterHighPercent,
     f50Value: f50Value ?? null,
-    fmr,
-  }), [currentRent, newRent, increasePct, increaseAmt, bedroomNum, brLabel, zip, city, state,
-    fairnessScore, tierLabel, compMedian, compCount, marketYoy, trendSource, trendArea,
+    momentumDirection: momentumDirection ?? null,
+  }), [currentRent, newRent, increasePct, increaseAmt, bedroomNum, zip,
+    fairnessScore, tierLabel, compMedian, compCount, maxCompDistance, marketYoy, trendSource, trendArea,
     rcMedianRent, rcTotalListings, rcAvgDaysOnMarket, alVacancy, medianIncome, rentToIncomeRatio,
-    counterLow, counterHigh, counterLowPercent, counterHighPercent, f50Value, fmr]);
+    counterLow, counterHigh, f50Value, momentumDirection, city]);
 
   const generateLetter = useCallback(async () => {
     setLoading(true);
@@ -228,7 +227,6 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
     if (!aiLetter && !loading && !error) {
       generateLetter();
     }
-    // Only run on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -297,9 +295,14 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
 
   return (
     <div>
+      {/* Disclaimer above letter */}
+      <p className="text-[12px] text-muted-foreground/70 mt-4 mb-3 leading-relaxed">
+        This letter is a suggested starting point for negotiation based on market data. Review and personalize before sending.
+      </p>
+
       {/* Letter container */}
       <div
-        className="rounded-lg border border-border border-l-[3px] border-l-muted p-6 md:p-8 mt-4"
+        className="rounded-lg border border-border border-l-[3px] border-l-muted p-6 md:p-8"
         style={{ background: 'hsl(var(--letter-bg))', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
       >
         <div className="text-xs text-muted-foreground mb-4 pb-4 border-b border-border flex items-center justify-between">
