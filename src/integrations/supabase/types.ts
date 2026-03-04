@@ -20,11 +20,14 @@ export type Database = {
           bedrooms: number | null
           cache_hit: boolean | null
           city: string | null
+          comp_median_rent: number | null
           comps_count: number | null
           comps_position: string | null
           created_at: string
           current_rent: number | null
           fair_counter_offer: string | null
+          fairness_score: number | null
+          hud_fmr_value: number | null
           id: string
           increase_pct: number | null
           letter_generated: boolean | null
@@ -40,11 +43,14 @@ export type Database = {
           bedrooms?: number | null
           cache_hit?: boolean | null
           city?: string | null
+          comp_median_rent?: number | null
           comps_count?: number | null
           comps_position?: string | null
           created_at?: string
           current_rent?: number | null
           fair_counter_offer?: string | null
+          fairness_score?: number | null
+          hud_fmr_value?: number | null
           id?: string
           increase_pct?: number | null
           letter_generated?: boolean | null
@@ -60,11 +66,14 @@ export type Database = {
           bedrooms?: number | null
           cache_hit?: boolean | null
           city?: string | null
+          comp_median_rent?: number | null
           comps_count?: number | null
           comps_position?: string | null
           created_at?: string
           current_rent?: number | null
           fair_counter_offer?: string | null
+          fairness_score?: number | null
+          hud_fmr_value?: number | null
           id?: string
           increase_pct?: number | null
           letter_generated?: boolean | null
@@ -158,6 +167,65 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_events: {
+        Row: {
+          address: string | null
+          analysis_id: string | null
+          comp_median_rent: number | null
+          created_at: string
+          current_rent: number | null
+          email: string
+          event_type: string
+          fairness_score: number | null
+          hud_fmr_value: number | null
+          id: string
+          increase_pct: number | null
+          proposed_rent: number | null
+          verdict: string | null
+          zip: string | null
+        }
+        Insert: {
+          address?: string | null
+          analysis_id?: string | null
+          comp_median_rent?: number | null
+          created_at?: string
+          current_rent?: number | null
+          email: string
+          event_type: string
+          fairness_score?: number | null
+          hud_fmr_value?: number | null
+          id?: string
+          increase_pct?: number | null
+          proposed_rent?: number | null
+          verdict?: string | null
+          zip?: string | null
+        }
+        Update: {
+          address?: string | null
+          analysis_id?: string | null
+          comp_median_rent?: number | null
+          created_at?: string
+          current_rent?: number | null
+          email?: string
+          event_type?: string
+          fairness_score?: number | null
+          hud_fmr_value?: number | null
+          id?: string
+          increase_pct?: number | null
+          proposed_rent?: number | null
+          verdict?: string | null
+          zip?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_events_analysis_id_fkey"
+            columns: ["analysis_id"]
+            isOneToOne: false
+            referencedRelation: "analyses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           address: string | null
@@ -165,12 +233,15 @@ export type Database = {
           bedrooms: number | null
           capture_source: string | null
           city: string | null
+          comp_median_rent: number | null
           comps_position: string | null
           created_at: string
           current_rent: number | null
           email: string
           fair_counter_offer: string | null
+          fairness_score: number | null
           followup_sent_at: string | null
+          hud_fmr_value: number | null
           id: string
           increase_pct: number | null
           lease_expiration_month: number | null
@@ -196,12 +267,15 @@ export type Database = {
           bedrooms?: number | null
           capture_source?: string | null
           city?: string | null
+          comp_median_rent?: number | null
           comps_position?: string | null
           created_at?: string
           current_rent?: number | null
           email: string
           fair_counter_offer?: string | null
+          fairness_score?: number | null
           followup_sent_at?: string | null
+          hud_fmr_value?: number | null
           id?: string
           increase_pct?: number | null
           lease_expiration_month?: number | null
@@ -227,12 +301,15 @@ export type Database = {
           bedrooms?: number | null
           capture_source?: string | null
           city?: string | null
+          comp_median_rent?: number | null
           comps_position?: string | null
           created_at?: string
           current_rent?: number | null
           email?: string
           fair_counter_offer?: string | null
+          fairness_score?: number | null
           followup_sent_at?: string | null
+          hud_fmr_value?: number | null
           id?: string
           increase_pct?: number | null
           lease_expiration_month?: number | null
@@ -328,11 +405,13 @@ export type Database = {
       shared_reports: {
         Row: {
           address: string | null
+          analysis_id: string | null
           bedrooms: number
           created_at: string
           current_rent: number
           id: string
           increase_type: string
+          lead_email: string | null
           proposed_increase: number
           report_data: Json
           short_id: string
@@ -340,11 +419,13 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          analysis_id?: string | null
           bedrooms: number
           created_at?: string
           current_rent: number
           id?: string
           increase_type?: string
+          lead_email?: string | null
           proposed_increase: number
           report_data: Json
           short_id: string
@@ -352,17 +433,27 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          analysis_id?: string | null
           bedrooms?: number
           created_at?: string
           current_rent?: number
           id?: string
           increase_type?: string
+          lead_email?: string | null
           proposed_increase?: number
           report_data?: Json
           short_id?: string
           zip_code?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "shared_reports_analysis_id_fkey"
+            columns: ["analysis_id"]
+            isOneToOne: false
+            referencedRelation: "analyses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -374,33 +465,64 @@ export type Database = {
         Args: { p_lead_id: string; p_outcome: string }
         Returns: undefined
       }
-      upsert_lead: {
-        Args: {
-          p_address?: string
-          p_analysis_id?: string
-          p_bedrooms?: number
-          p_capture_source?: string
-          p_city?: string
-          p_comps_position?: string
-          p_current_rent?: number
-          p_email: string
-          p_fair_counter_offer?: string
-          p_increase_pct?: number
-          p_lease_expiration_month?: number
-          p_lease_expiration_year?: number
-          p_letter_generated?: boolean
-          p_market_trend_pct?: number
-          p_partner_opt_in?: boolean
-          p_proposed_rent?: number
-          p_state?: string
-          p_utm_campaign?: string
-          p_utm_medium?: string
-          p_utm_source?: string
-          p_verdict?: string
-          p_zip?: string
-        }
-        Returns: undefined
-      }
+      upsert_lead:
+        | {
+            Args: {
+              p_address?: string
+              p_analysis_id?: string
+              p_bedrooms?: number
+              p_capture_source?: string
+              p_city?: string
+              p_comps_position?: string
+              p_current_rent?: number
+              p_email: string
+              p_fair_counter_offer?: string
+              p_increase_pct?: number
+              p_lease_expiration_month?: number
+              p_lease_expiration_year?: number
+              p_letter_generated?: boolean
+              p_market_trend_pct?: number
+              p_partner_opt_in?: boolean
+              p_proposed_rent?: number
+              p_state?: string
+              p_utm_campaign?: string
+              p_utm_medium?: string
+              p_utm_source?: string
+              p_verdict?: string
+              p_zip?: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              p_address?: string
+              p_analysis_id?: string
+              p_bedrooms?: number
+              p_capture_source?: string
+              p_city?: string
+              p_comp_median_rent?: number
+              p_comps_position?: string
+              p_current_rent?: number
+              p_email: string
+              p_fair_counter_offer?: string
+              p_fairness_score?: number
+              p_hud_fmr_value?: number
+              p_increase_pct?: number
+              p_lease_expiration_month?: number
+              p_lease_expiration_year?: number
+              p_letter_generated?: boolean
+              p_market_trend_pct?: number
+              p_partner_opt_in?: boolean
+              p_proposed_rent?: number
+              p_state?: string
+              p_utm_campaign?: string
+              p_utm_medium?: string
+              p_utm_source?: string
+              p_verdict?: string
+              p_zip?: string
+            }
+            Returns: undefined
+          }
     }
     Enums: {
       [_ in never]: never

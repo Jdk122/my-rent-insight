@@ -72,9 +72,35 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail }: 
         p_utm_source: utm.utm_source || null,
         p_utm_medium: utm.utm_medium || null,
         p_utm_campaign: utm.utm_campaign || null,
+        p_fairness_score: leadContext?.fairnessScore ?? null,
+        p_comp_median_rent: leadContext?.compMedianRent ?? null,
+        p_hud_fmr_value: leadContext?.hudFmrValue ?? null,
       } as any);
 
       if (dbError) throw dbError;
+
+      // Set letter_generated_at for the 7-day follow-up system
+      if (leadContext?.analysisId) {
+        await supabase.from('leads' as any).update({
+          letter_generated_at: new Date().toISOString(),
+        } as any).eq('analysis_id', leadContext.analysisId);
+      }
+
+      // Insert into lead_events for history
+      await supabase.from('lead_events' as any).insert({
+        email: email.trim(),
+        analysis_id: leadContext?.analysisId || null,
+        event_type: 'letter_gate',
+        fairness_score: leadContext?.fairnessScore ?? null,
+        address: leadContext?.address || null,
+        zip: leadContext?.zip || null,
+        current_rent: leadContext?.currentRent ?? null,
+        proposed_rent: leadContext?.proposedRent ?? null,
+        increase_pct: leadContext?.increasePct ?? null,
+        verdict,
+        comp_median_rent: leadContext?.compMedianRent ?? null,
+        hud_fmr_value: leadContext?.hudFmrValue ?? null,
+      } as any);
     } catch {
       setLoading(false);
       setError('Something went wrong. Please try again.');

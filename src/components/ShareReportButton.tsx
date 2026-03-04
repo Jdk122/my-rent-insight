@@ -16,9 +16,11 @@ interface ShareReportButtonProps {
     reportData: Record<string, any>;
   };
   onLinkGenerated?: (url: string) => void;
+  analysisId?: string | null;
+  leadEmail?: string;
 }
 
-const ShareReportButton = ({ reportPayload, onLinkGenerated }: ShareReportButtonProps) => {
+const ShareReportButton = ({ reportPayload, onLinkGenerated, analysisId, leadEmail }: ShareReportButtonProps) => {
   const [reportUrl, setReportUrl] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -41,6 +43,8 @@ const ShareReportButton = ({ reportPayload, onLinkGenerated }: ShareReportButton
         proposed_increase: reportPayload.proposedIncrease,
         increase_type: reportPayload.increaseType,
         report_data: reportPayload.reportData,
+        analysis_id: analysisId || null,
+        lead_email: leadEmail || null,
       } as any);
 
       if (error) throw error;
