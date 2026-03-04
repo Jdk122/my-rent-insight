@@ -156,6 +156,11 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
   return (
     <div>
       <form onSubmit={handleSubmit} className="border border-border rounded-2xl p-5 sm:p-6 md:p-8 bg-card space-y-4 sm:space-y-5">
+        {prefill && (
+          <p className="text-[13px] text-muted-foreground pl-3 border-l-2 border-primary/40 leading-relaxed">
+            Welcome back! We've pre-filled your info from last year. Just enter your new proposed rent.
+          </p>
+        )}
         {/* Address — primary input */}
         {!showZipOnly && (
           <div className="space-y-1.5" ref={addressRef}>

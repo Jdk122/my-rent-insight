@@ -229,11 +229,6 @@ const Index = () => {
           <p className="mt-4 sm:mt-6 text-[15px] sm:text-lg md:text-xl text-foreground/50 max-w-[540px] leading-relaxed font-normal tracking-tight">
             See what apartments near you are actually renting for, calculate your savings if you move, and get a negotiation letter if you stay<span className="text-primary font-medium"> — instantly</span>.
           </p>
-          {hasPrefill && (
-            <div className="mb-6 px-4 py-3 rounded-lg border border-primary/20 bg-primary/5 text-sm text-foreground/80">
-              Welcome back! We've pre-filled your info from last year. Just enter your new proposed rent.
-            </div>
-          )}
           <section className="mt-8 sm:mt-10" aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
             <SocialProofCounter />
