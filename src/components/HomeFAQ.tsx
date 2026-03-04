@@ -45,10 +45,10 @@ const HomeFAQ = () => (
     <Accordion type="single" collapsible className="space-y-2">
       {faqs.map((faq, i) => (
         <AccordionItem key={i} value={`faq-${i}`} className="border border-border rounded-lg px-4 sm:px-5">
-          <AccordionTrigger className="text-[14px] sm:text-[15px] font-medium text-foreground text-left py-3.5 sm:py-4 hover:no-underline">
+          <AccordionTrigger className="text-[15px] sm:text-base font-medium text-foreground text-left py-3.5 sm:py-4 hover:no-underline">
             <h3 className="font-medium">{faq.q}</h3>
           </AccordionTrigger>
-          <AccordionContent className="text-[13px] sm:text-[14px] text-muted-foreground leading-relaxed pb-3.5 sm:pb-4">
+          <AccordionContent className="text-[14px] sm:text-[15px] text-muted-foreground leading-relaxed pb-3.5 sm:pb-4">
             {faq.a}
           </AccordionContent>
         </AccordionItem>
