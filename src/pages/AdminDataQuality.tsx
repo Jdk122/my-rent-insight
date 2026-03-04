@@ -229,10 +229,10 @@ function CoverageSection({ rentData, zhviData, alData, hud50Data }: {
   alData: Record<string, ApartmentListZipRaw> | null;
   hud50Data: Record<string, Hud50ZipRaw> | null;
 }) {
-  const stats = useMemo<CoverageStats>(() => {
+  const stats = useMemo(() => {
     const zips = Object.keys(rentData);
     const total = zips.length;
-    let apartmentList = 0, zori = 0, zhvi = 0, hud50 = 0, full = 0;
+    let apartmentList = 0, zori = 0, zhvi = 0, hud50 = 0, full = 0, safmr = 0, county = 0;
     for (const z of zips) {
       const rd = rentData[z];
       const hasAL = !!(alData?.[z]?.aly !== undefined && alData[z].aly !== null);
@@ -244,12 +244,17 @@ function CoverageSection({ rentData, zhviData, alData, hud50Data }: {
       if (hasZHVI) zhvi++;
       if (hasH50) hud50++;
       if (hasAL && hasZORI && hasZHVI && hasH50) full++;
+      if ((rd as any).fs === 'safmr') safmr++;
+      else if ((rd as any).fs === 'county') county++;
     }
-    return { total, apartmentList, zori, zhvi, hud50, fullCoverage: full };
+    return { total, apartmentList, zori, zhvi, hud50, fullCoverage: full, safmr, county };
   }, [rentData, zhviData, alData, hud50Data]);
 
   const rows = [
     { label: 'Total ZIP codes in dataset', count: stats.total, pctStr: '' },
+    { label: '  └─ SAFMR (ZIP-level granularity)', count: stats.safmr, pctStr: pct(stats.safmr, stats.total) },
+    { label: '  └─ County-level FMR', count: stats.county, pctStr: pct(stats.county, stats.total) },
+    { label: '  └─ Legacy (no source flag)', count: stats.total - stats.safmr - stats.county, pctStr: pct(stats.total - stats.safmr - stats.county, stats.total) },
     { label: 'ZIPs with Apartment List data', count: stats.apartmentList, pctStr: pct(stats.apartmentList, stats.total) },
     { label: 'ZIPs with Zillow ZORI data', count: stats.zori, pctStr: pct(stats.zori, stats.total) },
     { label: 'ZIPs with Zillow ZHVI data', count: stats.zhvi, pctStr: pct(stats.zhvi, stats.total) },
@@ -370,16 +375,20 @@ function SpotCheckSection({ rentData, zhviData, alData, hud50Data, spotZip, setS
 
         {rd && (
           <>
-            <div className="text-sm text-muted-foreground">{rd.c}, {rd.s} · Metro: {rd.m || '—'}</div>
+            <div className="text-sm text-muted-foreground">
+              {rd.c}, {rd.s} · Metro: {rd.m || '—'} ·{' '}
+              FMR Source: <Badge variant="outline" className="text-xs ml-1">{(rd as any).fs === 'safmr' ? 'ZIP-level SAFMR' : (rd as any).fs === 'county' ? 'County-level FMR' : 'Legacy (no flag)'}</Badge>
+            </div>
 
             {/* HUD SAFMR */}
             <div className="space-y-1">
-              <h3 className="text-sm font-semibold">HUD SAFMR <VerifyLink source="HUD SAFMR" /></h3>
+              <h3 className="text-sm font-semibold">HUD FMR <VerifyLink source="HUD SAFMR" /></h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-1 text-sm">
                 <div>FMR (current): <Val v={rd.f?.join(', ')} /></div>
                 <div>FMR (prior): <Val v={rd.p?.join(', ')} /></div>
                 <div>YoY %: <Val v={rd.y} suffix="%" /></div>
                 <div>Prior source: <Val v={rd.ps} /></div>
+                <div>Source type (fs): <Val v={(rd as any).fs} /></div>
               </div>
             </div>
 
