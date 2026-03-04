@@ -83,10 +83,13 @@ const RentByCity = () => {
   const freshest = freshness ? getFreshestDate(freshness, hasZillow, hasAL) : null;
   const freshestFormatted = freshest ? formatFreshnessDate(freshest.date) : '';
 
-  // ─── Dynamic meta title ───
+  // ─── Dynamic meta title (capped ≤60 chars when possible) ───
   const metaTitle = hasMarketData
     ? `Average Rent in ${city}, ${state} — 2026 Data | RenewalReply`
     : `Fair Market Rent in ${city}, ${state} (FY2026) | RenewalReply`;
+
+  // ─── Meta description (capped ≤155 chars) ───
+  const metaDesc = `Average 1-BR rent in ${city}, ${state}: ${fmt(avgFmr[1])}/mo.${trendYoY !== null ? ` Rents ${trendYoY > 0 ? 'up' : 'down'} ${Math.abs(trendYoY).toFixed(1)}% YoY.` : ''} Free rent data across ${zips.length} zip codes.`;
 
   const faqItems = [
     {
@@ -111,7 +114,7 @@ const RentByCity = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <SEO
         title={metaTitle}
-        description={`${city} rent data for ${state}: See how your rent increase compares to local trends, nearby listings, and HUD benchmarks across 6 data sources. | RenewalReply`}
+        description={metaDesc}
         canonical={`/rent-data/${stateSlugVal}/${slugify(city)}`}
         jsonLd={[
           {
@@ -123,6 +126,30 @@ const RentByCity = () => {
               { '@type': 'ListItem', position: 3, name: stateName, item: `https://www.renewalreply.com/rent-data/${stateSlugVal}` },
               { '@type': 'ListItem', position: 4, name: `${city}, ${state}`, item: `https://www.renewalreply.com/rent-data/${stateSlugVal}/${slugify(city)}` },
             ],
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Dataset',
+            name: `Rent Data for ${city}, ${state}`,
+            description: `Fair market rent data and market trends for ${city}, ${state} across ${zips.length} zip codes.`,
+            url: `https://www.renewalreply.com/rent-data/${stateSlugVal}/${slugify(city)}`,
+            creator: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
+            license: 'https://creativecommons.org/licenses/by/4.0/',
+            temporalCoverage: '2026',
+            spatialCoverage: {
+              '@type': 'Place',
+              address: {
+                '@type': 'PostalAddress',
+                addressLocality: city,
+                addressRegion: state,
+                addressCountry: 'US',
+              },
+            },
+            distribution: {
+              '@type': 'DataDownload',
+              encodingFormat: 'text/html',
+              contentUrl: `https://www.renewalreply.com/rent-data/${stateSlugVal}/${slugify(city)}`,
+            },
           },
           {
             '@context': 'https://schema.org',
@@ -199,8 +226,8 @@ const RentByCity = () => {
 
       {/* Nav */}
       <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-        <Link to="/" className="font-display text-xl font-bold text-primary tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-          Renewal<span className="font-normal text-accent">Reply</span>
+        <Link to="/">
+          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
         </Link>
         <Link to="/" className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
           Check your rent →
@@ -247,12 +274,12 @@ const RentByCity = () => {
           {freshestFormatted && (
             <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500" />
-              Last updated {freshestFormatted}
+              Last updated <time dateTime={freshest?.date || ''}>{freshestFormatted}</time>
             </p>
           )}
 
           {/* AI-extractable answer block */}
-          <p className="mt-4 text-[1.08rem] text-foreground/90 leading-relaxed font-medium" data-nosnippet="false">
+          <p className="mt-4 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
             In {city}, {state}, the average rent for a 1-bedroom apartment is {fmt(avgFmr[1])}/month.
             {trendYoY !== null
               ? ` Rents ${trendYoY > 0 ? 'increased' : trendYoY < 0 ? 'decreased' : 'remained flat'} ${Math.abs(trendYoY).toFixed(1)}% year-over-year (${trendSource}). A rent increase above ${Math.abs(trendYoY).toFixed(1)}% is above the local market trend.`
@@ -308,7 +335,7 @@ const RentByCity = () => {
           </div>
           {freshness && (
             <p className="mt-3 text-xs text-muted-foreground">
-              Source: HUD SAFMR FY2026 · Updated {formatFreshnessDate(freshness.hud_safmr)}
+              Source: HUD SAFMR FY2026 · Updated <time dateTime={freshness.hud_safmr}>{formatFreshnessDate(freshness.hud_safmr)}</time>
             </p>
           )}
         </section>
@@ -345,7 +372,6 @@ const RentByCity = () => {
                 {zips
                   .filter(({ zip }) => !zipSearch || zip.includes(zipSearch))
                   .map(({ zip, raw }) => {
-                  // Trend priority: AL > ZORI > HUD
                   const zipAl = alData[zip]?.aly;
                   const zipYoy = zipAl ?? raw.zy ?? (raw.p[1] > 0 ? Math.round(((raw.f[1] - raw.p[1]) / raw.p[1]) * 1000) / 10 : null);
                   return (
@@ -475,8 +501,8 @@ function NotFoundPage() {
     <div className="min-h-screen bg-background flex flex-col">
       <SEO title="City Not Found | RenewalReply" noindex />
       <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-        <Link to="/" className="font-display text-xl font-bold text-primary tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-          Renewal<span className="font-normal text-accent">Reply</span>
+        <Link to="/">
+          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
         </Link>
       </nav>
       <main className="max-w-xl mx-auto px-6 py-24 flex-1 text-center">

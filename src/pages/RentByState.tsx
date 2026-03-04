@@ -9,6 +9,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
+import {
+  Accordion, AccordionContent, AccordionItem, AccordionTrigger,
+} from '@/components/ui/accordion';
 
 const RentByState = () => {
   const { stateSlug } = useParams<{ stateSlug: string }>();
@@ -46,11 +49,41 @@ const RentByState = () => {
 
   const { stateName, stateAbbr, cities, avgFmr1br, totalZips } = data;
 
+  // ─── FAQ items for state page ───
+  const faqItems = [
+    {
+      q: `What is the average rent in ${stateName}?`,
+      a: `The average fair market rent for a 1-bedroom in ${stateName} is ${fmt(avgFmr1br)}/month according to HUD FY2026 data, based on ${totalZips.toLocaleString()} zip codes across ${cities.length} cities.`,
+    },
+    {
+      q: `Which city in ${stateName} has the cheapest rent?`,
+      a: (() => {
+        const cheapest = [...cities].sort((a, b) => a.avgFmr[1] - b.avgFmr[1])[0];
+        return cheapest
+          ? `${cheapest.city} has the lowest average 1-bedroom FMR in ${stateName} at ${fmt(cheapest.avgFmr[1])}/month.`
+          : `City-level rent comparison data is not currently available for ${stateName}.`;
+      })(),
+    },
+    {
+      q: `Which city in ${stateName} has the most expensive rent?`,
+      a: (() => {
+        const expensive = [...cities].sort((a, b) => b.avgFmr[1] - a.avgFmr[1])[0];
+        return expensive
+          ? `${expensive.city} has the highest average 1-bedroom FMR in ${stateName} at ${fmt(expensive.avgFmr[1])}/month.`
+          : `City-level rent comparison data is not currently available for ${stateName}.`;
+      })(),
+    },
+    {
+      q: `How many zip codes have rent data in ${stateName}?`,
+      a: `RenewalReply covers ${totalZips.toLocaleString()} zip codes across ${cities.length} cities in ${stateName}, using HUD Fair Market Rent benchmarks updated for FY2026.`,
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEO
         title={`Rent Data for ${stateName} — Average Rent by City (2026)`}
-        description={`Average fair market rent for a 1-bedroom in ${stateName} is ${fmt(avgFmr1br)}/month. Browse rent data for ${cities.length} cities across ${totalZips} zip codes.`}
+        description={`Average 1-BR rent in ${stateName}: ${fmt(avgFmr1br)}/mo. Browse rent data for ${cities.length} cities across ${totalZips.toLocaleString()} zip codes.`}
         canonical={`/rent-data/${stateSlug}`}
         jsonLd={[
           {
@@ -61,6 +94,15 @@ const RentByState = () => {
               { '@type': 'ListItem', position: 2, name: 'Rent Data', item: 'https://www.renewalreply.com/rent-data' },
               { '@type': 'ListItem', position: 3, name: stateName, item: `https://www.renewalreply.com/rent-data/${stateSlug}` },
             ],
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: faqItems.map(f => ({
+              '@type': 'Question',
+              name: f.q,
+              acceptedAnswer: { '@type': 'Answer', text: f.a },
+            })),
           },
         ]}
       />
@@ -93,6 +135,14 @@ const RentByState = () => {
               ))}
             </tbody>
           </table>
+
+          {faqItems.map((f, i) => (
+            <div key={i}>
+              <h3>{f.q}</h3>
+              <p>{f.a}</p>
+            </div>
+          ))}
+
           <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY2026</small></p>
           <p><a href="https://www.renewalreply.com/rent-data">← Browse all rent data</a></p>
         </div>
@@ -100,8 +150,8 @@ const RentByState = () => {
 
       {/* Nav */}
       <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-        <Link to="/" className="font-display text-xl font-bold text-primary tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-          Renewal<span className="font-normal text-accent">Reply</span>
+        <Link to="/">
+          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
         </Link>
         <Link to="/" className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
           Check your rent →
@@ -125,7 +175,7 @@ const RentByState = () => {
           </h1>
 
           {/* AI-extractable answer block */}
-          <p className="mt-4 text-[1.08rem] text-foreground/90 leading-relaxed font-medium" data-nosnippet="false">
+          <p className="mt-4 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
             In {stateName}, the average fair market rent for a 1-bedroom apartment is {fmt(avgFmr1br)}/month according to HUD FY2026 data. {stateName} has {cities.length} cities with rent data covering {totalZips.toLocaleString()} zip codes. Use the table below to find average rent by city.
           </p>
         </section>
@@ -181,6 +231,19 @@ const RentByState = () => {
           <p className="mt-2 text-xs text-muted-foreground">Sorted by number of zip codes (most first). Source: HUD SAFMR FY2026.</p>
         </section>
 
+        {/* ═══ FAQ ═══ */}
+        <section className="mb-12">
+          <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Frequently Asked Questions</h2>
+          <Accordion type="multiple" className="space-y-2">
+            {faqItems.map((f, i) => (
+              <AccordionItem key={i} value={`faq-${i}`} className="border border-border rounded-lg px-4">
+                <AccordionTrigger className="text-left text-sm font-medium">{f.q}</AccordionTrigger>
+                <AccordionContent className="text-sm text-muted-foreground">{f.a}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </section>
+
         {/* CTA */}
         <section className="mb-12 text-center py-10">
           <h2 className="font-display text-2xl text-foreground mb-3 tracking-tight">
@@ -211,8 +274,8 @@ function LoadingSkeleton() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-        <Link to="/" className="font-display text-xl font-bold text-primary tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-          Renewal<span className="font-normal text-accent">Reply</span>
+        <Link to="/" className="h-7 w-36">
+          <Skeleton className="h-7 w-36" />
         </Link>
       </nav>
       <main className="max-w-3xl mx-auto px-6 py-12 flex-1 w-full">
@@ -230,8 +293,8 @@ function NotFoundPage() {
     <div className="min-h-screen bg-background flex flex-col">
       <SEO title="State Not Found — RenewalReply" noindex />
       <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-        <Link to="/" className="font-display text-xl font-bold text-primary tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-          Renewal<span className="font-normal text-accent">Reply</span>
+        <Link to="/">
+          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
         </Link>
       </nav>
       <main className="flex-1 flex flex-col items-center justify-center">

@@ -12,9 +12,25 @@ const Privacy = () => {
       description="How RenewalReply collects, uses, and protects your data. Read our privacy policy."
       canonical="/privacy"
     />
+
+    <noscript>
+      <div style={{ maxWidth: 620, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
+        <h1>Privacy Policy — RenewalReply</h1>
+        <h2>What we collect</h2>
+        <p>When you use RenewalReply, we store your email address, lease expiration date, and the property details you entered (address, city, state, zip, bedrooms, and rent amounts).</p>
+        <h2>How we use it</h2>
+        <p>We use your information to send you lease renewal reminders and your negotiation letter. We may occasionally send relevant housing-related information. No spam, no marketing blasts.</p>
+        <h2>Your data stays with us</h2>
+        <p>We never sell, rent, or share your personal information without your permission.</p>
+        <h2>Unsubscribe anytime</h2>
+        <p>Every email includes an unsubscribe link. To delete your data entirely, email privacy@renewalreply.com.</p>
+        <p><a href="https://www.renewalreply.com/">← Back to RenewalReply</a></p>
+      </div>
+    </noscript>
+
     <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
       <Link to="/">
-        <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-7" />
+        <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
       </Link>
       <Link to="/" className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
         Check your rent →

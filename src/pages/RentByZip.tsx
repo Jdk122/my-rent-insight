@@ -149,13 +149,16 @@ const RentByZip = () => {
   // ─── Dynamic meta title ───
   const metaTitle = hasMarketData
     ? `Average Rent in ${zip} (${city}, ${state}) — 2026 Data | RenewalReply`
-    : `Fair Market Rent in ${zip} (${city}, ${state}) — FY2026 HUD Data | RenewalReply`;
+    : `Fair Market Rent in ${zip} (${city}, ${state}) — FY2026 | RenewalReply`;
+
+  // ─── Meta description (capped ≤155 chars) ───
+  const metaDesc = `${heroRentLabel} for 1-BR in ${zip}: ${fmt(heroRent)}/mo.${trendYoY !== null ? ` Rents ${trendYoY > 0 ? 'up' : 'down'} ${Math.abs(trendYoY).toFixed(1)}% YoY.` : ''} Free rent data for ${city}, ${state}.`;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEO
         title={metaTitle}
-        description={`${city} rent data for ${zip}: See how your rent increase compares to local trends, nearby listings, and HUD benchmarks across 6 data sources. | RenewalReply`}
+        description={metaDesc}
         canonical={`/rent/${zip}`}
         jsonLd={[
           {
@@ -302,8 +305,8 @@ const RentByZip = () => {
 
       {/* Nav */}
       <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-        <Link to="/" className="font-display text-xl font-bold text-primary tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-          Renewal<span className="font-normal text-accent">Reply</span>
+        <Link to="/">
+          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
         </Link>
         <Link
           to={`/?zip=${zip}`}
@@ -353,11 +356,11 @@ const RentByZip = () => {
           {/* Last updated badge */}
           <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full">
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500" />
-            Last updated {freshestFormatted}
+            Last updated <time dateTime={freshest.date}>{freshestFormatted}</time>
           </p>
 
           {/* AI-extractable answer block */}
-          <p className="mt-4 text-[1.08rem] text-foreground/90 leading-relaxed font-medium" data-nosnippet="false">
+          <p className="mt-4 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
             In zip code {zip}, the {heroRentLabel.toLowerCase()} for a 1-bedroom is {fmt(heroRent)}/month.
             {trendYoY !== null
               ? ` Rents in this area ${trendYoY > 0 ? 'increased' : trendYoY < 0 ? 'decreased' : 'remained flat'} ${Math.abs(trendYoY).toFixed(1)}% year-over-year (${trendSource}). A rent increase above ${Math.abs(trendYoY).toFixed(1)}% is above the local market trend.`
@@ -485,7 +488,7 @@ const RentByZip = () => {
             </Table>
           </div>
           <p className="mt-3 text-xs text-muted-foreground">
-            Source: HUD Small Area Fair Market Rents (SAFMR) FY2026 · Updated {formatFreshnessDate(freshness.hud_safmr)}
+            Source: HUD Small Area Fair Market Rents (SAFMR) FY2026 · Updated <time dateTime={freshness.hud_safmr}>{formatFreshnessDate(freshness.hud_safmr)}</time>
           </p>
         </section>
 
@@ -718,8 +721,8 @@ function NotFoundPage({ zip }: { zip?: string }) {
     <div className="min-h-screen bg-background flex flex-col">
       <SEO title="Zip Code Not Found | RenewalReply" noindex />
       <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-        <Link to="/" className="font-display text-xl font-bold text-primary tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-          Renewal<span className="font-normal text-accent">Reply</span>
+        <Link to="/">
+          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
         </Link>
       </nav>
       <main className="max-w-xl mx-auto px-6 py-24 flex-1 text-center">

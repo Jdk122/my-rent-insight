@@ -119,8 +119,8 @@ const SharedReport = () => {
 
       {/* Header */}
       <nav className="border-b border-border bg-card px-6 py-4">
-        <Link to="/" className="font-display text-xl font-bold text-primary tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-          Renewal<span className="font-normal text-accent">Reply</span>
+        <Link to="/">
+          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-6 sm:h-7" />
         </Link>
       </nav>
 
