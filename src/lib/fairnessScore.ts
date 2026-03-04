@@ -7,6 +7,7 @@ export interface FairnessScoreInput {
   proposedRent: number;        // New rent after increase
   currentRent: number;         // Current rent before increase
   compMedian: number | null;   // Rentcast comp median
+  compCount?: number;          // Number of filtered comps (controls Component 2 weight)
   fmr: number;                 // HUD FMR for bedroom count
   medianIncome: number | null; // Census ACS median renter income
   zillowMonthly: number | null; // Monthly rent trend %
@@ -39,31 +40,38 @@ export interface FairnessScoreResult {
 }
 
 // Component 1: Increase Rate vs Area Trend (30 pts)
-function scoreRateVsTrend(increasePct: number, marketYoY: number, alYoY?: number | null): ScoreComponent {
+function scoreRateVsTrend(increasePct: number, marketYoY: number, alYoY?: number | null, maxPts: number = 30): ScoreComponent {
   // Priority: Apartment List transacted rents > existing marketYoY (ZORI/HUD)
   const effectiveYoY = (alYoY !== null && alYoY !== undefined) ? alYoY : marketYoY;
   const diff = increasePct - effectiveYoY;
-  let score: number;
-  if (diff <= 0) score = 30;
-  else if (diff <= 3) score = 20;
-  else if (diff <= 6) score = 10;
-  else score = 0;
+  let rawScore: number;
+  if (diff <= 0) rawScore = 30;
+  else if (diff <= 3) rawScore = 20;
+  else if (diff <= 6) rawScore = 10;
+  else rawScore = 0;
+  // Scale to adjusted max
+  const score = Math.round((rawScore / 30) * maxPts);
   const sourceNote = (alYoY !== null && alYoY !== undefined) ? ' (Apartment List)' : '';
-  return { id: 'rate', label: `Increase vs. Area Trend${sourceNote}`, score, max: 30, estimated: false };
+  return { id: 'rate', label: `Increase vs. Area Trend${sourceNote}`, score, max: maxPts, estimated: false };
 }
 
 // Component 2: Proposed Rent vs Comp Median (25 pts)
-function scoreVsComps(proposedRent: number, compMedian: number | null): ScoreComponent {
+function scoreVsComps(proposedRent: number, compMedian: number | null, maxPts: number = 25): ScoreComponent {
+  if (maxPts === 0) {
+    return { id: 'comps', label: 'Rent vs. Nearby Listings', score: 0, max: 0, estimated: true };
+  }
   if (compMedian === null) {
-    return { id: 'comps', label: 'Rent vs. Nearby Listings', score: 15, max: 25, estimated: true };
+    // Neutral default scaled to adjusted max
+    return { id: 'comps', label: 'Rent vs. Nearby Listings', score: Math.round((15 / 25) * maxPts), max: maxPts, estimated: true };
   }
   const ratio = (proposedRent - compMedian) / compMedian;
-  let score: number;
-  if (ratio <= 0) score = 25;
-  else if (ratio <= 0.10) score = 18;
-  else if (ratio <= 0.20) score = 10;
-  else score = 0;
-  return { id: 'comps', label: 'Rent vs. Nearby Listings', score, max: 25, estimated: false };
+  let rawScore: number;
+  if (ratio <= 0) rawScore = 25;
+  else if (ratio <= 0.10) rawScore = 18;
+  else if (ratio <= 0.20) rawScore = 10;
+  else rawScore = 0;
+  const score = Math.round((rawScore / 25) * maxPts);
+  return { id: 'comps', label: 'Rent vs. Nearby Listings', score, max: maxPts, estimated: false };
 }
 
 // Component 3: Proposed Rent vs HUD FMR (20 pts)
@@ -180,15 +188,26 @@ function getTier(total: number): Pick<FairnessScoreResult, 'tier' | 'tierLabel' 
 }
 
 export function calculateFairnessScore(input: FairnessScoreInput): FairnessScoreResult {
+  // Dynamic weight redistribution based on comp count
+  const cc = input.compCount ?? (input.compMedian !== null ? 5 : 0); // default: assume good comps if median exists
+  let compMax: number;
+  let rateMax: number;
+  if (cc >= 5) { compMax = 25; rateMax = 30; }
+  else if (cc >= 3) { compMax = 15; rateMax = 40; }
+  else if (cc >= 1) { compMax = 8; rateMax = 47; }
+  else { compMax = 0; rateMax = 55; }
+
   const components = [
-    scoreRateVsTrend(input.increasePct, input.marketYoY, input.alYoY),
-    scoreVsComps(input.proposedRent, input.compMedian),
+    scoreRateVsTrend(input.increasePct, input.marketYoY, input.alYoY, rateMax),
+    scoreVsComps(input.proposedRent, input.compMedian, compMax),
     scoreVsFmr(input.proposedRent, input.fmr, input.currentRent, input.increasePct, input.marketYoY, input.f50, input.bedroomCount),
     scoreRentToIncome(input.proposedRent, input.medianIncome),
     scoreMarketMomentum(input.zillowMonthly, input.alMoM, input.hvd),
   ];
+  // Filter out 0-max components from display
+  const visibleComponents = components.filter(c => c.max > 0);
   const total = components.reduce((sum, c) => sum + c.score, 0);
-  return { total, ...getTier(total), components };
+  return { total, ...getTier(total), components: visibleComponents };
 }
 
 // Map score to the old verdict system for backward compatibility

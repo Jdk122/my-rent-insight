@@ -148,6 +148,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       proposedRent: newRent,
       currentRent: formData.currentRent,
       compMedian: medianCompRent,
+      compCount: outlierResult?.filtered.length ?? 0,
       fmr: rentData.fmr,
       medianIncome: rentData.medianIncome,
       zillowMonthly: rentData.zillowMonthly,
@@ -157,7 +158,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       bedroomCount: formData.bedrooms === 'studio' ? 0 : formData.bedrooms === 'oneBr' ? 1 : formData.bedrooms === 'twoBr' ? 2 : formData.bedrooms === 'threeBr' ? 3 : 4,
       f50: rentData.f50,
     });
-  }, [hasIncrease, increasePct, marketYoy, newRent, medianCompRent, rentData.fmr, rentData.medianIncome, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50]);
+  }, [hasIncrease, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.medianIncome, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50]);
 
   const refinedVerdict = useMemo(() => {
     if (!fairnessScore) return null;
