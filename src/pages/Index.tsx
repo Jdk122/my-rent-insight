@@ -198,19 +198,19 @@ const Index = () => {
       </nav>
 
       {/* Spacer for fixed nav */}
-      <div className="h-[56px]" />
+      <div className="h-[52px] sm:h-[56px]" />
 
       {isLoading ? (
         <LoadingAnalysis />
       ) : !results ? (
-        <main className="max-w-[620px] mx-auto px-6 pt-16 md:pt-24 pb-16">
-          <h1 className="font-display text-[clamp(3rem,8vw,5rem)] text-foreground leading-[1.05] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
+        <main className="max-w-[620px] mx-auto px-5 sm:px-6 pt-8 sm:pt-16 md:pt-24 pb-12 sm:pb-16">
+          <h1 className="font-display text-[2.25rem] sm:text-[clamp(3rem,8vw,5rem)] text-foreground leading-[1.08] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
             Is your rent increase <span className="text-primary">fair?</span>
           </h1>
-          <p className="mt-6 text-lg md:text-xl text-foreground/50 max-w-[540px] leading-relaxed font-normal tracking-tight">
+          <p className="mt-4 sm:mt-6 text-[15px] sm:text-lg md:text-xl text-foreground/50 max-w-[540px] leading-relaxed font-normal tracking-tight">
             See what apartments near you are actually renting for, calculate your savings if you move, and get a negotiation letter if you stay<span className="text-primary font-medium"> — instantly</span>.
           </p>
-          <section className="mt-10" aria-label="Rent increase checker">
+          <section className="mt-8 sm:mt-10" aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} />
             <SocialProofCounter />
           </section>

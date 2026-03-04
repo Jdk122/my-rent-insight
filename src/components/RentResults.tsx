@@ -340,11 +340,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         className="w-full"
         style={{ background: 'hsl(var(--verdict-bg))' }}
       >
-        <div className="max-w-[620px] mx-auto px-6">
+        <div className="max-w-[620px] mx-auto px-5 sm:px-6">
           <motion.section
             id="section-verdict"
             {...fade(0)}
-            className="min-h-[50vh] flex flex-col items-center justify-center text-center py-12"
+            className="min-h-[45vh] sm:min-h-[50vh] flex flex-col items-center justify-center text-center py-8 sm:py-12"
           >
           {hasIncrease && fairnessScore ? (
             <>
@@ -354,7 +354,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 dynamicMessage={
                   <div className="space-y-2">
                     <h1
-                      className="font-display text-[clamp(1.5rem,4.5vw,2.2rem)] text-foreground leading-[1.15] tracking-tight"
+                      className="font-display text-[1.35rem] sm:text-[clamp(1.5rem,4.5vw,2.2rem)] text-foreground leading-[1.15] tracking-tight"
                       style={{ letterSpacing: '-0.02em' }}
                     >
                       {isAboveMarket && calc ? (
@@ -395,7 +395,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         <>Your rent increase is <span className="text-verdict-good">below market.</span></>
                       )}
                     </h1>
-                    <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                    <p className="text-[14px] sm:text-base md:text-lg text-muted-foreground leading-relaxed">
                       {isAboveMarket && calc ? (
                         <>That's ${fmt(increaseAmount * 12)} more per year than a market-rate increase would be. A fair counter-offer is {calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}/mo` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}/mo`}.</>
                       ) : isNuancedAtMarket && medianCompRent ? (
@@ -415,7 +415,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
-                className="mt-6 w-full grid grid-cols-2 md:grid-cols-4 gap-4 max-w-[540px]"
+                className="mt-5 sm:mt-6 w-full grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-[540px]"
               >
                 {[
                   { label: 'You pay now', value: `$${fmt(formData.currentRent)}`, color: 'text-foreground' },
@@ -423,16 +423,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%`, color: 'text-foreground' },
                   { label: 'Your increase', value: `${increasePct}%`, color: verdictColor },
                 ].map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="text-center rounded-lg border border-border/80 bg-card px-3 py-4 flex flex-col justify-between"
-                    style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
-                  >
-                    <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">{stat.label}</p>
-                    <p className={`font-display text-[24px] md:text-[28px] tracking-tight tabular-nums ${stat.color}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
-                      {stat.value}
-                    </p>
-                  </div>
+                    <div
+                      key={stat.label}
+                      className="text-center rounded-lg border border-border/80 bg-card px-2 sm:px-3 py-3 sm:py-4 flex flex-col justify-between"
+                      style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
+                    >
+                      <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">{stat.label}</p>
+                      <p className={`font-display text-[20px] sm:text-[24px] md:text-[28px] tracking-tight tabular-nums ${stat.color}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
+                        {stat.value}
+                      </p>
+                    </div>
                 ))}
               </motion.div>
 
@@ -479,7 +479,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
       {/* ━━━ ACT 2: THE EVIDENCE — white background ━━━ */}
       <div className="w-full bg-card">
-        <div className="max-w-[620px] mx-auto px-6">
+        <div className="max-w-[620px] mx-auto px-5 sm:px-6">
 
         {(
           <section id="section-evidence" className="pt-10 pb-8">
@@ -720,7 +720,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             {/* Inline email capture — only if not yet captured via letter gate */}
             {!capturedEmail && (
               <section className="pb-12 pt-4">
-                <div className="rounded-xl px-8 py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
+                <div className="rounded-xl px-5 sm:px-8 py-5 sm:py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
                   <EmailCapture
                     city={city}
                     captureSource="letter_plus_reminder"
@@ -774,7 +774,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
             {/* Inline email capture */}
             <section id="section-email-capture" className="pb-6 pt-4">
-              <div className="rounded-xl px-8 py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
+              <div className="rounded-xl px-5 sm:px-8 py-5 sm:py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
                 <EmailCapture
                   city={city}
                   captureSource="lease_reminder"
@@ -824,7 +824,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         {/* ━━━ No increase path — just email capture ━━━ */}
         {!hasIncrease && (
           <section className="pb-12 pt-4">
-            <div className="rounded-xl px-8 py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
+            <div className="rounded-xl px-5 sm:px-8 py-5 sm:py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
               <EmailCapture
                 city={city}
                 captureSource="lease_reminder"

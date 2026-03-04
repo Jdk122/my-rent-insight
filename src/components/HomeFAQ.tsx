@@ -33,17 +33,17 @@ const faqs = [
 ];
 
 const HomeFAQ = () => (
-  <section className="max-w-[620px] mx-auto px-6 pt-12 pb-16 border-t border-border" aria-label="Frequently asked questions">
-    <h2 className="font-display text-[24px] md:text-[28px] font-semibold text-foreground tracking-tight mb-8" style={{ letterSpacing: '-0.02em' }}>
+  <section className="max-w-[620px] mx-auto px-5 sm:px-6 pt-10 sm:pt-12 pb-12 sm:pb-16 border-t border-border" aria-label="Frequently asked questions">
+    <h2 className="font-display text-[22px] sm:text-[24px] md:text-[28px] font-semibold text-foreground tracking-tight mb-6 sm:mb-8" style={{ letterSpacing: '-0.02em' }}>
       Frequently Asked Questions
     </h2>
     <Accordion type="single" collapsible className="space-y-2">
       {faqs.map((faq, i) => (
-        <AccordionItem key={i} value={`faq-${i}`} className="border border-border rounded-lg px-5">
-          <AccordionTrigger className="text-[15px] font-medium text-foreground text-left py-4 hover:no-underline">
+        <AccordionItem key={i} value={`faq-${i}`} className="border border-border rounded-lg px-4 sm:px-5">
+          <AccordionTrigger className="text-[14px] sm:text-[15px] font-medium text-foreground text-left py-3.5 sm:py-4 hover:no-underline">
             <h3 className="font-medium">{faq.q}</h3>
           </AccordionTrigger>
-          <AccordionContent className="text-[14px] text-muted-foreground leading-relaxed pb-4">
+          <AccordionContent className="text-[13px] sm:text-[14px] text-muted-foreground leading-relaxed pb-3.5 sm:pb-4">
             {faq.a}
           </AccordionContent>
         </AccordionItem>
