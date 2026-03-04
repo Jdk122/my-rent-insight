@@ -13,7 +13,7 @@ const faqs: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: 'What is Fair Market Rent (FMR)?',
-    a: 'Fair Market Rent is published annually by the U.S. Department of Housing and Urban Development (HUD). It represents the 40th percentile of rents in your area. RenewalReply also uses HUD\u2019s 50th percentile data (the actual median) and live Rentcast market data when available, giving you the most precise benchmark for your bedroom count and ZIP code.',
+    a: 'Fair Market Rent is published annually by the U.S. Department of Housing and Urban Development (HUD). It represents the 40th percentile of rents in your area. RenewalReply also uses HUD\u2019s 50th percentile data (the actual median) and live market data when available, giving you the most precise benchmark for your bedroom count and ZIP code.',
   },
   {
     q: 'Can my landlord raise my rent by any amount?',
@@ -21,7 +21,7 @@ const faqs: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: 'What data sources does RenewalReply use?',
-    a: (<>Six data sources: HUD Fair Market Rents and 50th Percentile Rents for government benchmarks, Apartment List for rent trends from actual lease transactions, Zillow ZORI and ZHVI for market momentum, and Rentcast for real-time comparable listings and market statistics. For each scoring component, we use the best available source for your ZIP code. See our <Link to="/methodology" className="text-primary hover:underline">methodology page</Link> for full details.</>),
+    a: (<>Six data sources: HUD Fair Market Rents and 50th Percentile Rents for government benchmarks, Apartment List for rent trends from actual lease transactions, Zillow ZORI and ZHVI for market momentum, and real-time comparable listings and market statistics. For each scoring component, we use the best available source for your ZIP code. See our <Link to="/methodology" className="text-primary hover:underline">methodology page</Link> for full details.</>),
   },
   {
     q: 'Is RenewalReply really free?',
@@ -33,7 +33,7 @@ const faqs: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: 'How is the Fairness Score calculated?',
-    a: (<>Your score is a weighted composite of four components: how your increase compares to local rent trends (35 points), how your proposed rent compares to nearby units (30 points), whether your rent is reasonable relative to area benchmarks (25 points), and market momentum (10 points). When comparable data is limited, the system automatically shifts weight toward trend data to keep the score reliable. See our <Link to="/methodology" className="text-primary hover:underline">methodology page</Link> for the full breakdown.</>),
+    a: (<>Your score is a weighted composite of four components: how your increase compares to local rent trends, how your proposed rent compares to nearby units, whether your rent is reasonable relative to area benchmarks, and market momentum. When comparable data is limited, the system automatically adjusts component weights to keep the score reliable. See our <Link to="/methodology" className="text-primary hover:underline">methodology page</Link> for the full breakdown.</>),
   },
 ];
 

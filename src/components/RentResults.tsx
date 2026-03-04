@@ -384,7 +384,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
                 // Component 3: FMR / Reasonableness
                 if (rcMarket.rcMedianRent != null && rcMarket.rcTotalListings != null && rcMarket.rcTotalListings >= 10) {
-                  sources.fmr = 'Source: Rentcast market median';
+                  sources.fmr = 'Source: Live market median';
                 } else if (rentData.f50 && bedroomNum >= 0 && bedroomNum <= 4 && rentData.f50[bedroomNum] > 0) {
                   sources.fmr = 'Source: HUD 50th percentile';
                 } else {
