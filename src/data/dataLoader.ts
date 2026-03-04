@@ -149,7 +149,7 @@ async function getZhviData(): Promise<Record<string, ZhviZipRaw>> {
   return zhviCache!;
 }
 
-async function getApartmentListData(): Promise<Record<string, ApartmentListZipRaw>> {
+export async function getApartmentListData(): Promise<Record<string, ApartmentListZipRaw>> {
   if (!apartmentListCache) {
     try {
       const response = await fetch('/data/apartmentlist_processed.json');
@@ -161,7 +161,7 @@ async function getApartmentListData(): Promise<Record<string, ApartmentListZipRa
   return apartmentListCache!;
 }
 
-async function getHud50Data(): Promise<Record<string, Hud50ZipRaw>> {
+export async function getHud50Data(): Promise<Record<string, Hud50ZipRaw>> {
   if (!hud50Cache) {
     try {
       const response = await fetch('/data/hud50_processed.json');
