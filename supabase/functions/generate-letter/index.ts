@@ -16,7 +16,7 @@ RULES:
 - Always state the specific increase percentage and dollar amount.
 - Reference comparable units if available. If current rent already exceeds comps, focus on the increase rate, not absolute rent level.
 - Reference market trends when the proposed increase exceeds the market trend — this is usually the strongest argument.
-- Mention vacancy, days on market, or active listings ONLY when they favor the tenant (vacancy > 5%, days on market > 30, active listings > 20).
+- Mention vacancy, days on market, or active listings ONLY when they favor the tenant (vacancy > 6%, days on market > 30, active listings > 20).
 - Keep source references conversational: "current market data", "government rent estimates", "comparable listings nearby". Never include URLs or formal citations.
 - Include one line near the end of the market evidence section: "I'm happy to share the detailed market analysis behind these figures if helpful."
 - End with: "Analysis by RenewalReply — renewalreply.com"
@@ -24,6 +24,9 @@ RULES:
 - Length: 250-400 words.
 - Format as a ready-to-send email. No subject line.
 - Do not include placeholder text like [Your Name] or [Landlord Name]. Start with "Dear Landlord" or "Dear Property Manager" and end with "Sincerely," followed by a blank line for the tenant to add their name.
+- Never use placeholder text like [Apartment Address] or [Address]. Either use the ZIP code/area name from the data, or simply say "my apartment" or "my unit". The letter should have zero brackets or placeholders of any kind.
+- Round all numbers naturally — say "about 32 days" not "31.65 days". No decimals in the letter unless they are percentages.
+- Do not open with "I hope this email finds you well" or similar generic AI-sounding openers. Start directly with acknowledging the renewal and the proposed increase.
 - Structure: Opening (acknowledge renewal, state increase amount and percentage) → Market Evidence (2-4 short paragraphs using only data that helps the tenant) → Proposal (suggest counter-offer range if available) → Closing (value tenancy, open to discussion).`;
 
 serve(async (req) => {
