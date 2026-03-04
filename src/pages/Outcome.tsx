@@ -23,6 +23,7 @@ const Outcome = () => {
     agreed: "That's great news! Glad the letter helped. 🎉",
     countered: "A counter is progress! You have leverage — keep negotiating.",
     no_response: "No worries. Sometimes it takes a follow-up. Consider sending the letter again or calling your landlord directly.",
+    unsubscribe: "You've been unsubscribed. You won't receive any more emails from us.",
   };
 
   return (

@@ -1,0 +1,1 @@
+ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS sent_email_day45 timestamp with time zone DEFAULT NULL;

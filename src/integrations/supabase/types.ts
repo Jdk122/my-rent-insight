@@ -253,6 +253,7 @@ export type Database = {
           partner_opt_in: boolean | null
           proposed_rent: number | null
           reminder_sent_at: string | null
+          sent_email_day45: string | null
           state: string | null
           unsubscribed: boolean | null
           utm_campaign: string | null
@@ -287,6 +288,7 @@ export type Database = {
           partner_opt_in?: boolean | null
           proposed_rent?: number | null
           reminder_sent_at?: string | null
+          sent_email_day45?: string | null
           state?: string | null
           unsubscribed?: boolean | null
           utm_campaign?: string | null
@@ -321,6 +323,7 @@ export type Database = {
           partner_opt_in?: boolean | null
           proposed_rent?: number | null
           reminder_sent_at?: string | null
+          sent_email_day45?: string | null
           state?: string | null
           unsubscribed?: boolean | null
           utm_campaign?: string | null
