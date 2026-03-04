@@ -4,6 +4,7 @@ import { trackEvent } from '@/lib/analytics';
 import { Link } from 'react-router-dom';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
 import { Check, Copy, Download } from 'lucide-react';
+import ShareReportButton from '@/components/ShareReportButton';
 
 interface NegotiationLetterProps {
   currentRent: number;
@@ -28,7 +29,6 @@ interface NegotiationLetterProps {
   leadContext?: any;
   reportUrl?: string | null;
   onGenerateReport?: () => void;
-  // New data props for enhanced letter
   compMedian?: number | null;
   compCount?: number;
   compRadius?: string;
@@ -39,6 +39,16 @@ interface NegotiationLetterProps {
   rcAvgDaysOnMarket?: number | null;
   alVacancy?: number | null;
   f50Value?: number | null;
+  shareReportPayload?: {
+    zip: string;
+    address: string | null;
+    bedrooms: number;
+    currentRent: number;
+    proposedIncrease: number;
+    increaseType: 'dollar' | 'percent';
+    reportData: Record<string, any>;
+  };
+  onReportLinkGenerated?: (url: string) => void;
 }
 
 type Tone = 'friendly' | 'firm';
@@ -52,12 +62,12 @@ const NegotiationLetter = ({
   analysisId, prefilledEmail, onEmailCaptured, leadContext, reportUrl, onGenerateReport,
   compMedian, compCount, compRadius, trendSource, trendArea,
   rcMedianRent, rcTotalListings, rcAvgDaysOnMarket, alVacancy, f50Value,
+  shareReportPayload, onReportLinkGenerated,
 }: NegotiationLetterProps) => {
   const [tone, setTone] = useState<Tone>('friendly');
   const [copied, setCopied] = useState(false);
 
   const brLabel = bedroomLabels[bedrooms];
-  const increaseRatio = marketYoy > 0 ? Math.round((increasePct / marketYoy) * 10) / 10 : 0;
   const increaseAmt = increaseAmount ?? Math.round(newRent - currentRent);
 
   const letterHtml = useMemo(() => {
@@ -91,16 +101,14 @@ const NegotiationLetter = ({
         : newRent < compMedian
         ? `$${fmt(compMedian - newRent)} below`
         : 'in line with';
-      const radiusNote = compRadius ? ` within ${compRadius}` : ' near this property';
       paragraphs.push(
-        `I reviewed ${compCount} comparable ${brLabel.toLowerCase()} rental${compCount !== 1 ? 's' : ''} currently listed${radiusNote}. ` +
+        `I reviewed ${compCount} comparable ${brLabel.toLowerCase()} rental${compCount !== 1 ? 's' : ''} currently listed near this address. ` +
         `The median asking rent for similar units is $${fmt(compMedian)}/month, ` +
         `which puts my proposed rent of $${fmt(newRent)} ${position} the local median.`
       );
     }
 
     // Paragraph 2: Market trends
-    const trendSrc = trendSource || 'HUD';
     const trendAreaName = trendArea || city;
     const trendDirection = marketYoy > 0.5 ? 'increased' : marketYoy < -0.5 ? 'decreased' : 'remained essentially flat';
     const trendComparison = increasePct > marketYoy + 1
@@ -109,19 +117,18 @@ const NegotiationLetter = ({
       ? `roughly in line with this trend`
       : `below the area trend`;
     paragraphs.push(
-      `According to ${trendSrc}, rents in ${trendAreaName} have ${trendDirection} by ${Math.abs(marketYoy)}% over the past year. ` +
+      `According to recent rental market data, rents in ${trendAreaName} have ${trendDirection} by ${Math.abs(marketYoy)}% over the past year. ` +
       `My proposed increase of ${increasePct}% is ${trendComparison}.`
     );
 
     // Paragraph 3: Government benchmarks
     const benchmarkRent = rcMedianRent ?? f50Value ?? null;
-    const benchmarkLabel = rcMedianRent ? 'current market data' : f50Value ? 'the U.S. Department of Housing and Urban Development' : null;
-    if (benchmarkRent && benchmarkLabel && benchmarkRent > 0) {
+    if (benchmarkRent && benchmarkRent > 0) {
       const pctDiff = Math.round(((newRent - benchmarkRent) / benchmarkRent) * 100);
       const aboveBelow = pctDiff > 0 ? `${pctDiff}% above` : pctDiff < 0 ? `${Math.abs(pctDiff)}% below` : 'at';
+      const sourceLabel = rcMedianRent ? 'Current market data estimates' : 'Federal housing data estimates';
       paragraphs.push(
-        `${benchmarkLabel === 'current market data' ? 'Current market data estimates' : 'The U.S. Department of Housing and Urban Development estimates'} ` +
-        `the median rent for a ${brLabel.toLowerCase()} in this area at $${fmt(benchmarkRent)}/month. ` +
+        `${sourceLabel} the median rent for a ${brLabel.toLowerCase()} in this area at $${fmt(benchmarkRent)}/month. ` +
         `My proposed rent of $${fmt(newRent)} is ${aboveBelow} this benchmark.`
       );
     }
@@ -129,15 +136,19 @@ const NegotiationLetter = ({
     // Paragraph 4: Market conditions
     if (rcTotalListings && rcAvgDaysOnMarket) {
       const conditionLabel = rcAvgDaysOnMarket > 35 ? 'favorable' : rcAvgDaysOnMarket < 20 ? 'competitive' : 'moderate';
-      let conditionSentence = `Current market conditions in ${zip} suggest ${conditionLabel} conditions for negotiation: ` +
-        `${rcTotalListings} rental units are currently active in this ZIP code, ` +
+      let conditionSentence = `Current rental market conditions suggest ${conditionLabel} conditions for negotiation: ` +
+        `${rcTotalListings} rental units are currently active in this area, ` +
         `with an average of ${Math.round(rcAvgDaysOnMarket)} days on market.`;
-      if (alVacancy !== null && alVacancy > 6) {
+      if (alVacancy !== null && alVacancy !== undefined && alVacancy > 6) {
         conditionSentence += ` The local vacancy rate of ${alVacancy.toFixed(1)}% indicates elevated availability.`;
       }
       paragraphs.push(conditionSentence);
     }
 
+    // Transparency line
+    paragraphs.push(
+      `I want to be transparent that this analysis draws on multiple public data sources including government rent benchmarks and current local listings. I'm happy to share the detailed breakdown if that would be helpful.`
+    );
 
     // ── PROPOSAL ──
     const counterRange = counterLow === counterHigh
@@ -181,17 +192,13 @@ const NegotiationLetter = ({
       );
     }
 
-    if (reportUrl) {
-      paragraphs.push(`Full market analysis: ${reportUrl}`);
-    }
-
     paragraphs.push(isFriendly ? `Best,\n[Your name]` : `Sincerely,\n[Your name]`);
 
     return paragraphs;
-  }, [tone, currentRent, newRent, increasePct, marketYoy, fmr, censusMedian, medianIncome,
-    zip, city, state, brLabel, counterLow, counterHigh, counterLowPercent, counterHighPercent,
-    increaseAmt, compMedian, compCount, compRadius, trendSource, trendArea,
-    rcMedianRent, rcTotalListings, rcAvgDaysOnMarket, alVacancy, f50Value, reportUrl]);
+  }, [tone, currentRent, newRent, increasePct, marketYoy, city, brLabel,
+    counterLow, counterHigh, counterLowPercent, counterHighPercent,
+    increaseAmt, compMedian, compCount, trendArea,
+    rcMedianRent, rcTotalListings, rcAvgDaysOnMarket, alVacancy, f50Value]);
 
   const letterText = letterHtml.join('\n\n');
 
@@ -237,12 +244,12 @@ const NegotiationLetter = ({
           ))}
         </div>
         <p className="text-[10px] text-muted-foreground/50 mt-6 pt-4 border-t border-border/40 leading-relaxed">
-          Market analysis provided by RenewalReply using data from HUD, Apartment List, Zillow, Rentcast, and the U.S. Census Bureau.
+          Analysis by RenewalReply — renewalreply.com
         </p>
       </div>
 
       {/* Action buttons */}
-      <div className="flex gap-3 mt-5">
+      <div className="flex flex-wrap gap-3 mt-5">
         <button
           onClick={handleCopy}
           className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-7 py-3 rounded-lg text-sm font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
@@ -257,14 +264,17 @@ const NegotiationLetter = ({
         </button>
       </div>
 
-      {/* Prompt to generate report link if not yet created */}
-      {!reportUrl && onGenerateReport && (
-        <button
-          onClick={onGenerateReport}
-          className="mt-4 text-xs text-primary hover:underline transition-colors"
-        >
-          Want to include a link to your full analysis? Generate a shareable report link →
-        </button>
+      {/* Share Analysis — generates a link to the full report for landlord follow-up */}
+      {shareReportPayload && (
+        <div className="mt-5">
+          <p className="text-xs text-muted-foreground mb-2">If your landlord asks for sources, share your full analysis:</p>
+          <ShareReportButton
+            reportPayload={shareReportPayload}
+            onLinkGenerated={onReportLinkGenerated}
+            analysisId={analysisId}
+            leadEmail={prefilledEmail}
+          />
+        </div>
       )}
 
       {/* Legal disclaimer */}
