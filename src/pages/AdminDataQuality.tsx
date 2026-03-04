@@ -7,8 +7,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Lock, ExternalLink, ChevronDown, AlertTriangle, CheckCircle2, Clock, Search, Database, Activity, Upload, ShieldCheck } from 'lucide-react';
+import { Lock, ExternalLink, ChevronDown, AlertTriangle, CheckCircle2, Clock, Search, Database, Activity, Upload, ShieldCheck, Loader2, Download } from 'lucide-react';
 import { calculateFairnessScore, type FairnessScoreInput } from '@/lib/fairnessScore';
+import { supabase } from '@/integrations/supabase/client';
 import type { RentZipRaw, ZhviZipRaw, ApartmentListZipRaw, Hud50ZipRaw } from '@/data/dataLoader';
 
 const ADMIN_PASSWORD = 'renewalreply2026';
@@ -100,31 +101,50 @@ export default function AdminDataQuality() {
   const [authed, setAuthed] = useState(false);
   const [freshness, setFreshness] = useState<Record<string, string> | null>(null);
   const [rentData, setRentData] = useState<Record<string, RentZipRaw> | null>(null);
+  const [countyData, setCountyData] = useState<Record<string, RentZipRaw>>({});
   const [zhviData, setZhviData] = useState<Record<string, ZhviZipRaw> | null>(null);
   const [alData, setAlData] = useState<Record<string, ApartmentListZipRaw> | null>(null);
   const [hud50Data, setHud50Data] = useState<Record<string, Hud50ZipRaw> | null>(null);
   const [spotZip, setSpotZip] = useState('');
   const [anomalyFilter, setAnomalyFilter] = useState<string>('all');
 
+  // Combined view: rentData (SAFMR) + countyData (county-level)
+  const allRentData = useMemo(() => {
+    if (!rentData) return null;
+    // Tag existing rentData entries as safmr if no fs field
+    const combined: Record<string, RentZipRaw> = {};
+    for (const [z, entry] of Object.entries(rentData)) {
+      combined[z] = { ...entry, fs: (entry as any).fs || 'safmr' } as RentZipRaw;
+    }
+    for (const [z, entry] of Object.entries(countyData)) {
+      if (!(z in combined)) {
+        combined[z] = entry;
+      }
+    }
+    return combined;
+  }, [rentData, countyData]);
+
   useEffect(() => {
     if (!authed) return;
     Promise.all([
       fetch('/data/data_freshness.json').then(r => r.json()),
       fetch('/data/rentData.json').then(r => r.json()),
-      fetch('/data/zhvi_processed.json').then(r => r.json()),
-      fetch('/data/apartmentlist_processed.json').then(r => r.json()),
-      fetch('/data/hud50_processed.json').then(r => r.json()),
-    ]).then(([f, rd, zhvi, al, h50]) => {
+      fetch('/data/zhvi_processed.json').then(r => r.json()).catch(() => ({})),
+      fetch('/data/apartmentlist_processed.json').then(r => r.json()).catch(() => ({})),
+      fetch('/data/hud50_processed.json').then(r => r.json()).catch(() => ({})),
+      fetch('/data/county_fmr.json').then(r => r.ok ? r.json() : {}).catch(() => ({})),
+    ]).then(([f, rd, zhvi, al, h50, county]) => {
       setFreshness(f);
       setRentData(rd);
       setZhviData(zhvi);
       setAlData(al);
       setHud50Data(h50);
+      setCountyData(county);
     });
   }, [authed]);
 
   if (!authed) return <PasswordGate onAuth={() => setAuthed(true)} />;
-  if (!rentData || !freshness) {
+  if (!allRentData || !freshness) {
     return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading data...</div>;
   }
 
@@ -144,31 +164,31 @@ export default function AdminDataQuality() {
             <TabsTrigger value="spotcheck" className="gap-1.5"><Search className="h-3.5 w-3.5" />Spot-Check</TabsTrigger>
             <TabsTrigger value="anomalies" className="gap-1.5"><AlertTriangle className="h-3.5 w-3.5" />Anomalies</TabsTrigger>
             <TabsTrigger value="refresh" className="gap-1.5"><Upload className="h-3.5 w-3.5" />Refresh Guide</TabsTrigger>
+            <TabsTrigger value="migrate" className="gap-1.5"><Download className="h-3.5 w-3.5" />Migration</TabsTrigger>
           </TabsList>
 
-          {/* ── 1. Freshness ── */}
           <TabsContent value="freshness">
             <FreshnessSection freshness={freshness} />
           </TabsContent>
 
-          {/* ── 2. Coverage ── */}
           <TabsContent value="coverage">
-            <CoverageSection rentData={rentData} zhviData={zhviData} alData={alData} hud50Data={hud50Data} />
+            <CoverageSection rentData={allRentData} zhviData={zhviData} alData={alData} hud50Data={hud50Data} />
           </TabsContent>
 
-          {/* ── 3. Spot-Check ── */}
           <TabsContent value="spotcheck">
-            <SpotCheckSection rentData={rentData} zhviData={zhviData} alData={alData} hud50Data={hud50Data} spotZip={spotZip} setSpotZip={setSpotZip} />
+            <SpotCheckSection rentData={allRentData} zhviData={zhviData} alData={alData} hud50Data={hud50Data} spotZip={spotZip} setSpotZip={setSpotZip} />
           </TabsContent>
 
-          {/* ── 4. Anomalies ── */}
           <TabsContent value="anomalies">
-            <AnomalySection rentData={rentData} zhviData={zhviData} alData={alData} hud50Data={hud50Data} anomalyFilter={anomalyFilter} setAnomalyFilter={setAnomalyFilter} />
+            <AnomalySection rentData={allRentData} zhviData={zhviData} alData={alData} hud50Data={hud50Data} anomalyFilter={anomalyFilter} setAnomalyFilter={setAnomalyFilter} />
           </TabsContent>
 
-          {/* ── 5. Refresh Guide ── */}
           <TabsContent value="refresh">
             <RefreshGuideSection />
+          </TabsContent>
+
+          <TabsContent value="migrate">
+            <MigrationSection />
           </TabsContent>
         </Tabs>
       </div>
@@ -708,6 +728,128 @@ function RefreshGuideSection() {
             <li>Spot-check 2-3 ZIP codes to verify data looks correct</li>
           </ol>
         </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ═══════════════════════════════════════
+// Section 6: Migration
+// ═══════════════════════════════════════
+
+function MigrationSection() {
+  const [status, setStatus] = useState<'idle' | 'running' | 'done' | 'error'>('idle');
+  const [result, setResult] = useState<any>(null);
+  const [error, setError] = useState<string>('');
+
+  const runMigration = async () => {
+    setStatus('running');
+    setError('');
+    setResult(null);
+
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke('process-erap', {
+        body: {},
+      });
+
+      if (fnError) throw new Error(fnError.message);
+      if (!data?.success) throw new Error(data?.error || 'Unknown error');
+
+      setResult(data);
+      setStatus('done');
+    } catch (err: any) {
+      setError(err.message);
+      setStatus('error');
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg flex items-center gap-2"><Download className="h-5 w-5" />ERAP Migration — Expand to Full National Coverage</CardTitle>
+        <CardDescription>
+          Fetches the FY2026 ERAP FMR file from HUD (~52K ZIPs), identifies ZIPs not in your current SAFMR dataset,
+          and creates a supplementary county_fmr.json file. This runs as a backend function — no Python required.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="bg-muted/50 rounded-lg p-4 text-sm space-y-2">
+          <p><strong>What this does:</strong></p>
+          <ol className="list-decimal list-inside space-y-1">
+            <li>Downloads FY2026 ERAP FMR xlsx from HUD (~1.9 MB)</li>
+            <li>Parses all ~52K ZCTAs with their FMR values</li>
+            <li>Compares against your current rentData.json (~38,601 SAFMR ZIPs)</li>
+            <li>Creates county_fmr.json with only the ~13,300 new ZIPs (tagged as county-level)</li>
+            <li>Uploads to storage for download</li>
+          </ol>
+          <p className="text-muted-foreground mt-2">
+            After running, download the file and save it to <code className="bg-muted px-1 rounded">public/data/county_fmr.json</code>.
+            The data loader will automatically merge it at runtime.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Button
+            onClick={runMigration}
+            disabled={status === 'running'}
+            className="gap-2"
+          >
+            {status === 'running' ? (
+              <><Loader2 className="h-4 w-4 animate-spin" />Processing (~30s)...</>
+            ) : (
+              <><Download className="h-4 w-4" />Run ERAP Migration</>
+            )}
+          </Button>
+
+          {status === 'done' && result?.download_url && (
+            <a
+              href={result.download_url}
+              download="county_fmr.json"
+              className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+            >
+              <Download className="h-4 w-4" />
+              Download county_fmr.json
+            </a>
+          )}
+        </div>
+
+        {status === 'error' && (
+          <div className="text-destructive text-sm bg-destructive/10 rounded-md p-3">
+            <strong>Error:</strong> {error}
+          </div>
+        )}
+
+        {status === 'done' && result && (
+          <div className="border rounded-lg p-4 space-y-2">
+            <div className="flex items-center gap-2 text-sm font-semibold">
+              <CheckCircle2 className="h-4 w-4 text-primary" />
+              Migration Complete
+            </div>
+            <Table>
+              <TableBody>
+                <TableRow>
+                  <TableCell>Total ZIPs in ERAP file</TableCell>
+                  <TableCell className="text-right font-mono">{result.stats?.erap_total?.toLocaleString()}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Existing SAFMR ZIPs (unchanged)</TableCell>
+                  <TableCell className="text-right font-mono">{result.stats?.existing_safmr?.toLocaleString()}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>New county-level ZIPs added</TableCell>
+                  <TableCell className="text-right font-mono font-bold">{result.stats?.new_county?.toLocaleString()}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-semibold">Total national coverage</TableCell>
+                  <TableCell className="text-right font-mono font-bold">{result.stats?.total_coverage?.toLocaleString()}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+            <p className="text-sm text-muted-foreground mt-2">
+              {result.message}
+            </p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
