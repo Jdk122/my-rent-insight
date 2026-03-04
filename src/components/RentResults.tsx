@@ -13,6 +13,7 @@ import { PropertyLookupResult, PropertyLookupError } from '@/hooks/usePropertyLo
 import TurnoverCostSection from './TurnoverCostSection';
 import { getRentControlByStateCity, getApplicableCap } from '@/data/rentControlData';
 import { useRentcast } from '@/hooks/useRentcast';
+import { useRentcastMarket } from '@/hooks/useRentcastMarket';
 import { supabase } from '@/integrations/supabase/client';
 import SectionNav from './SectionNav';
 import { trackEvent } from '@/lib/analytics';
@@ -101,6 +102,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const marketMultiple = marketYoy > 0 ? Math.round((increasePct / marketYoy) * 10) / 10 : 0;
 
   const rentcast = useRentcast(rentData.zip, formData.bedrooms, formData.fullAddress);
+  const rcMarket = useRentcastMarket(rentData.zip, formData.bedrooms);
   const hasRentcastComps = rentcast.data && rentcast.data.comparables.length > 0;
 
   // ━━━ Outlier detection ━━━
@@ -157,8 +159,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       alMoM: rentData.alMoM,
       bedroomCount: formData.bedrooms === 'studio' ? 0 : formData.bedrooms === 'oneBr' ? 1 : formData.bedrooms === 'twoBr' ? 2 : formData.bedrooms === 'threeBr' ? 3 : 4,
       f50: rentData.f50,
+      rcMedianRent: rcMarket.rcMedianRent,
+      rcTotalListings: rcMarket.rcTotalListings,
     });
-  }, [hasIncrease, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.medianIncome, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50]);
+  }, [hasIncrease, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.medianIncome, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings]);
 
   const refinedVerdict = useMemo(() => {
     if (!fairnessScore) return null;

@@ -7,7 +7,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const CACHE_DAYS = 30;
+const CACHE_DAYS = 1; // 24-hour TTL
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -97,9 +97,13 @@ serve(async (req) => {
       minRent: rental?.minRent ?? null,
       maxRent: rental?.maxRent ?? null,
       totalListings: rental?.totalListings ?? null,
+      newListings: rental?.newListings ?? null,
+      averageDaysOnMarket: rental?.averageDaysOnMarket ?? null,
       averageRentBySqft: rental?.averageRentBySqft ?? null,
       detailedStats: rental?.detailedStats ?? null,
+      detailedByBedroom: rental?.detailedByBedroom ?? null,
       rentTrend: rental?.historyRent ?? null,
+      history: rental?.history ?? null,
     };
 
     // Upsert to cache
