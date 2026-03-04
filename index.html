@@ -7,8 +7,17 @@
     <link rel="icon" href="/favicon.png" type="image/png" />
     <meta name="robots" content="index, follow" />
 
+    <!-- Preconnect to Google Fonts for faster font loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Load fonts non-render-blocking with display=swap -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" /></noscript>
 
-    <!-- Google tag (gtag.js) — GA4 + Google Ads -->
+    <!-- Preload hero wordmark (LCP candidate) -->
+    <link rel="preload" href="/renewalreply-wordmark.png" as="image" />
+
+    <!-- Google tag (gtag.js) — GA4 + Google Ads (deferred) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8RN57799GY"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
