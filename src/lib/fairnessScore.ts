@@ -16,6 +16,8 @@ export interface FairnessScoreInput {
   alMoM?: number | null;       // Apartment List MoM rent growth % (fallback for Component 5)
   bedroomCount?: number;       // 0-4 (studio=0, 1br=1, etc.)
   f50?: number[] | null;       // HUD 50th percentile rents [studio, 1br, 2br, 3br, 4br]
+  rcMedianRent?: number | null;   // Rentcast /markets median rent for bedroom count
+  rcTotalListings?: number | null; // Rentcast /markets total active listings
 }
 
 // Tooltip explainer for the FMR/Increase Reasonableness component
@@ -77,17 +79,23 @@ function scoreVsComps(proposedRent: number, compMedian: number | null, maxPts: n
 // Component 3: Proposed Rent vs HUD FMR (20 pts)
 // Compares the INCREASE portion vs FMR, not the absolute rent
 // This avoids penalizing tenants in areas where market rents naturally exceed HUD benchmarks
-function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, increasePct: number, marketYoY?: number, f50?: number[] | null, bedroomCount?: number): ScoreComponent {
-  const label = 'Increase Reasonableness';
-  // Priority: HUD 50th percentile (median) if available, else FMR * 1.15
+function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, increasePct: number, marketYoY?: number, f50?: number[] | null, bedroomCount?: number, rcMedianRent?: number | null, rcTotalListings?: number | null): ScoreComponent {
+  let label = 'Increase Reasonableness';
+  // Priority 1: Rentcast live market median (if sufficient listings)
+  // Priority 2: HUD 50th percentile (median) if available
+  // Priority 3: FMR * 1.15
   let upper: number;
-  let usingF50 = false;
-  if (f50 && bedroomCount !== undefined && bedroomCount >= 0 && bedroomCount <= 4 && f50[bedroomCount] > 0) {
+  let labelSuffix = '';
+  if (rcMedianRent != null && rcTotalListings != null && rcTotalListings >= 10) {
+    upper = rcMedianRent;
+    labelSuffix = ' (live market data)';
+  } else if (f50 && bedroomCount !== undefined && bedroomCount >= 0 && bedroomCount <= 4 && f50[bedroomCount] > 0) {
     upper = f50[bedroomCount];
-    usingF50 = true;
+    labelSuffix = ' (HUD median)';
   } else {
     upper = fmr * 1.15;
   }
+  label += labelSuffix;
   // If current rent already exceeds upper, compare increase rate instead
   if (currentRent >= upper) {
     // FIX 4: Tighten breakpoints in declining markets
@@ -200,7 +208,7 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
   const components = [
     scoreRateVsTrend(input.increasePct, input.marketYoY, input.alYoY, rateMax),
     scoreVsComps(input.proposedRent, input.compMedian, compMax),
-    scoreVsFmr(input.proposedRent, input.fmr, input.currentRent, input.increasePct, input.marketYoY, input.f50, input.bedroomCount),
+    scoreVsFmr(input.proposedRent, input.fmr, input.currentRent, input.increasePct, input.marketYoY, input.f50, input.bedroomCount, input.rcMedianRent, input.rcTotalListings),
     scoreRentToIncome(input.proposedRent, input.medianIncome),
     scoreMarketMomentum(input.zillowMonthly, input.alMoM, input.hvd),
   ];

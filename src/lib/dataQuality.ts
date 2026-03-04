@@ -59,6 +59,7 @@ export function assessConfidence({
 }
 
 // ─── Outlier Detection (IQR method, 5+ comps minimum) ───
+// Also filters by distance (<=3 mi) and uses correlation-weighted median
 
 export interface OutlierResult {
   filtered: RentcastComparable[];
@@ -66,15 +67,33 @@ export interface OutlierResult {
   median: number | null;
 }
 
+function correlationWeightedMedian(comps: RentcastComparable[]): number | null {
+  const valid = comps.filter(c => c.rent != null && c.rent > 0);
+  if (valid.length === 0) return null;
+  if (valid.length === 1) return valid[0].rent!;
+
+  const sorted = [...valid].sort((a, b) => a.rent! - b.rent!);
+  const totalWeight = sorted.reduce((sum, c) => sum + (c.correlation ?? 1), 0);
+  const halfWeight = totalWeight / 2;
+
+  let cumWeight = 0;
+  for (const comp of sorted) {
+    cumWeight += comp.correlation ?? 1;
+    if (cumWeight >= halfWeight) return comp.rent!;
+  }
+  return sorted[sorted.length - 1].rent!;
+}
+
 export function detectOutliers(comps: RentcastComparable[]): OutlierResult {
-  const withRent = comps.filter(c => c.rent !== null && c.rent > 0);
+  // Step 1: Distance filter (<=3 miles), fallback to all if none pass
+  const nearbyComps = comps.filter(c => c.distance === null || c.distance <= 3);
+  const workingComps = nearbyComps.length > 0 ? nearbyComps : comps;
+
+  const withRent = workingComps.filter(c => c.rent !== null && c.rent > 0);
 
   if (withRent.length < 5) {
-    // Not enough data for outlier detection — use all
-    const rents = withRent.map(c => c.rent!).sort((a, b) => a - b);
-    const mid = Math.floor(rents.length / 2);
-    const median = rents.length === 0 ? null
-      : rents.length % 2 === 0 ? Math.round((rents[mid - 1] + rents[mid]) / 2) : rents[mid];
+    // Not enough data for outlier detection — use all, but with correlation-weighted median
+    const median = correlationWeightedMedian(withRent);
     return { filtered: withRent, outliers: [], median };
   }
 
@@ -98,12 +117,8 @@ export function detectOutliers(comps: RentcastComparable[]): OutlierResult {
     }
   }
 
-  const filteredRents = filtered.map(c => c.rent!).sort((a, b) => a - b);
-  const mid = Math.floor(filteredRents.length / 2);
-  const median = filteredRents.length === 0 ? null
-    : filteredRents.length % 2 === 0
-      ? Math.round((filteredRents[mid - 1] + filteredRents[mid]) / 2)
-      : filteredRents[mid];
+  // Step 2: Correlation-weighted median instead of simple median
+  const median = correlationWeightedMedian(filtered);
 
   return { filtered, outliers, median };
 }
