@@ -1,18 +1,20 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import RentForm, { RentFormData, RentFormPrefill } from '@/components/RentForm';
-import RentResults from '@/components/RentResults';
 import { lookupRentData, loadFredTrend, RentLookupResult } from '@/data/rentData';
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
 import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
-import SocialProofCounter from '@/components/SocialProofCounter';
-import ContactModal from '@/components/ContactModal';
-import LoadingAnalysis from '@/components/LoadingAnalysis';
 import SEO from '@/components/SEO';
-import HomeFAQ from '@/components/HomeFAQ';
-import HowItWorks from '@/components/HowItWorks';
-import SEOFooter from '@/components/SEOFooter';
+
+// Lazy load below-the-fold and non-critical components
+const RentResults = lazy(() => import('@/components/RentResults'));
+const SocialProofCounter = lazy(() => import('@/components/SocialProofCounter'));
+const ContactModal = lazy(() => import('@/components/ContactModal'));
+const LoadingAnalysis = lazy(() => import('@/components/LoadingAnalysis'));
+const HomeFAQ = lazy(() => import('@/components/HomeFAQ'));
+const HowItWorks = lazy(() => import('@/components/HowItWorks'));
+const SEOFooter = lazy(() => import('@/components/SEOFooter'));
 
 const Index = () => {
   const [searchParams] = useSearchParams();
@@ -40,8 +42,6 @@ const Index = () => {
       address: address || undefined,
     };
   }, [searchParams]);
-
-  const hasPrefill = !!prefill;
 
   useEffect(() => {
     if (!results) { setNavScrolled(false); return; }
@@ -182,7 +182,15 @@ const Index = () => {
           boxShadow: !results || !navScrolled ? 'none' : '0 1px 3px rgba(0,0,0,0.08)',
         }}
       >
-        <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-5 sm:h-6 w-auto object-contain cursor-pointer hover:scale-105 transition-transform duration-200 shrink-0" onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0 }); }} />
+        <img
+          src="/renewalreply-wordmark.png"
+          alt="RenewalReply"
+          width="140"
+          height="24"
+          fetchPriority="high"
+          className="h-5 sm:h-6 w-auto object-contain cursor-pointer hover:scale-105 transition-transform duration-200 shrink-0"
+          onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0 }); }}
+        />
         <div className="flex items-center gap-2 sm:gap-3">
           {results && (
             <button onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-[12px] sm:text-[13px] text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap">
@@ -221,7 +229,9 @@ const Index = () => {
       <div className="h-[52px] sm:h-[56px]" />
 
       {isLoading ? (
-        <LoadingAnalysis />
+        <Suspense fallback={<div className="flex-1" />}>
+          <LoadingAnalysis />
+        </Suspense>
       ) : !results ? (
         <main className="max-w-[620px] mx-auto px-5 sm:px-6 pt-12 sm:pt-16 md:pt-24 pb-10 sm:pb-14 animate-fade-in">
           <h1 className="font-display text-[2.25rem] sm:text-[clamp(3rem,8vw,5rem)] text-foreground leading-[1.08] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
@@ -232,42 +242,52 @@ const Index = () => {
           </p>
           <section className="mt-8 sm:mt-10 animate-fade-in-delay-2" aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
-            <SocialProofCounter />
+            <Suspense fallback={null}>
+              <SocialProofCounter />
+            </Suspense>
           </section>
         </main>
       ) : (
         <div ref={resultsRef}>
-          <RentResults
-            formData={results.formData}
-            rentData={results.rentData}
-            propertyData={propertyLookup.data}
-            propertyLoading={propertyLookup.loading}
-            propertyError={propertyLookup.error}
-            onReset={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-            onScrollToTop={() => {
-              setResults(null);
-              setFormKey(k => k + 1);
-              setCapturedEmail('');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            capturedEmail={capturedEmail}
-            onEmailCaptured={setCapturedEmail}
-            onVerdictReady={setIsAboveMarket}
-          />
+          <Suspense fallback={<div className="flex-1 min-h-screen" />}>
+            <RentResults
+              formData={results.formData}
+              rentData={results.rentData}
+              propertyData={propertyLookup.data}
+              propertyLoading={propertyLookup.loading}
+              propertyError={propertyLookup.error}
+              onReset={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              onScrollToTop={() => {
+                setResults(null);
+                setFormKey(k => k + 1);
+                setCapturedEmail('');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              capturedEmail={capturedEmail}
+              onEmailCaptured={setCapturedEmail}
+              onVerdictReady={setIsAboveMarket}
+            />
+          </Suspense>
         </div>
       )}
 
       {/* How It Works + FAQ — only on landing */}
       {!results && !isLoading && (
-        <>
+        <Suspense fallback={null}>
           <HowItWorks />
           <HomeFAQ />
-        </>
+        </Suspense>
       )}
 
-      <SEOFooter onContactClick={() => setContactOpen(true)} />
+      <Suspense fallback={null}>
+        <SEOFooter onContactClick={() => setContactOpen(true)} />
+      </Suspense>
 
-      <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
+      {contactOpen && (
+        <Suspense fallback={null}>
+          <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
+        </Suspense>
+      )}
     </div>
   );
 };
