@@ -96,16 +96,26 @@ const NegotiationLetter = ({
 
     // Paragraph 1: Comparable rents
     if (compMedian && compCount && compCount > 0) {
-      const position = newRent > compMedian
-        ? `$${fmt(newRent - compMedian)} above`
-        : newRent < compMedian
-        ? `$${fmt(compMedian - newRent)} below`
-        : 'in line with';
-      paragraphs.push(
-        `I reviewed ${compCount} comparable ${brLabel.toLowerCase()} rental${compCount !== 1 ? 's' : ''} currently listed near this address. ` +
-        `The median asking rent for similar units is $${fmt(compMedian)}/month, ` +
-        `which puts my proposed rent of $${fmt(newRent)} ${position} the local median.`
-      );
+      const currentAboveCompPct = ((currentRent - compMedian) / compMedian) * 100;
+      if (currentAboveCompPct > 30) {
+        // Reframe: don't cite absolute median when renter is well above it — focus on the increase rate
+        paragraphs.push(
+          `I've reviewed ${compCount} comparable ${brLabel.toLowerCase()} rental${compCount !== 1 ? 's' : ''} near this address. ` +
+          `While my current rent reflects the premium nature of this unit, the proposed ${increasePct}% increase significantly ` +
+          `exceeds the ${Math.abs(marketYoy)}% rate at which rents in this area have been growing.`
+        );
+      } else {
+        const position = newRent > compMedian
+          ? `$${fmt(newRent - compMedian)} above`
+          : newRent < compMedian
+          ? `$${fmt(compMedian - newRent)} below`
+          : 'in line with';
+        paragraphs.push(
+          `I reviewed ${compCount} comparable ${brLabel.toLowerCase()} rental${compCount !== 1 ? 's' : ''} currently listed near this address. ` +
+          `The median asking rent for similar units is $${fmt(compMedian)}/month, ` +
+          `which puts my proposed rent of $${fmt(newRent)} ${position} the local median.`
+        );
+      }
     }
 
     // Paragraph 2: Market trends
@@ -121,16 +131,19 @@ const NegotiationLetter = ({
       `My proposed increase of ${increasePct}% is ${trendComparison}.`
     );
 
-    // Paragraph 3: Government benchmarks
+    // Paragraph 3: Government benchmarks — suppress if renter is >40% above benchmark (citing it hurts their position)
     const benchmarkRent = rcMedianRent ?? f50Value ?? null;
     if (benchmarkRent && benchmarkRent > 0) {
-      const pctDiff = Math.round(((newRent - benchmarkRent) / benchmarkRent) * 100);
-      const aboveBelow = pctDiff > 0 ? `${pctDiff}% above` : pctDiff < 0 ? `${Math.abs(pctDiff)}% below` : 'at';
-      const sourceLabel = rcMedianRent ? 'Current market data estimates' : 'Federal housing data estimates';
-      paragraphs.push(
-        `${sourceLabel} the median rent for a ${brLabel.toLowerCase()} in this area at $${fmt(benchmarkRent)}/month. ` +
-        `My proposed rent of $${fmt(newRent)} is ${aboveBelow} this benchmark.`
-      );
+      const benchmarkPctAbove = ((newRent - benchmarkRent) / benchmarkRent) * 100;
+      if (benchmarkPctAbove <= 40) {
+        const pctDiff = Math.round(benchmarkPctAbove);
+        const aboveBelow = pctDiff > 0 ? `${pctDiff}% above` : pctDiff < 0 ? `${Math.abs(pctDiff)}% below` : 'at';
+        const sourceLabel = rcMedianRent ? 'Current market data estimates' : 'Federal housing data estimates';
+        paragraphs.push(
+          `${sourceLabel} the median rent for a ${brLabel.toLowerCase()} in this area at $${fmt(benchmarkRent)}/month. ` +
+          `My proposed rent of $${fmt(newRent)} is ${aboveBelow} this benchmark.`
+        );
+      }
     }
 
     // Paragraph 4: Market conditions
