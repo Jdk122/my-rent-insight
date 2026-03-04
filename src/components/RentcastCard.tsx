@@ -83,10 +83,29 @@ const RentcastCard = ({ data, loading, error, city, zip, state, bedrooms, propos
           if (refIndex === -1) refIndex = sortedComps.length;
         }
 
+        const maxDist = sortedComps.reduce((max, c) => Math.max(max, c.distance ?? 0), 0);
+        const distLabel = maxDist > 0 ? `${Math.ceil(maxDist)} ${Math.ceil(maxDist) === 1 ? 'mile' : 'miles'}` : '';
+
+        const matchLabel = (corr: number | null) => {
+          if (corr === null) return null;
+          if (corr > 0.8) return 'Strong match';
+          if (corr >= 0.5) return 'Good match';
+          return 'Weak match';
+        };
+        const matchColor = (corr: number | null) => {
+          if (corr === null) return '';
+          if (corr > 0.8) return 'text-verdict-good';
+          if (corr >= 0.5) return 'text-accent-amber';
+          return 'text-muted-foreground/60';
+        };
+
         return (
           <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 text-center">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1 text-center">
               Nearby Comparable Listings
+            </p>
+            <p className="text-[11px] text-muted-foreground text-center mb-3">
+              Showing {sortedComps.length} comparable rental{sortedComps.length !== 1 ? 's' : ''}{distLabel ? ` within ${distLabel}` : ''}, sorted by relevance.
             </p>
             {sortedComps.map((comp, i) => (
               <div key={i}>
@@ -115,6 +134,9 @@ const RentcastCard = ({ data, loading, error, city, zip, state, bedrooms, propos
                       {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
                       {comp.squareFootage !== null && ` · ${fmt(comp.squareFootage)} sqft`}
                       {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
+                      {matchLabel(comp.correlation) && (
+                        <span className={`ml-1 ${matchColor(comp.correlation)}`}> · {matchLabel(comp.correlation)}</span>
+                      )}
                     </p>
                   </div>
                   {comp.rent !== null && (

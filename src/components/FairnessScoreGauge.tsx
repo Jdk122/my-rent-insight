@@ -7,9 +7,14 @@ import { ChevronDown, Info } from 'lucide-react';
 import { useState } from 'react';
 import { trackEvent } from '@/lib/analytics';
 
+export interface ComponentSourceInfo {
+  [componentId: string]: string;
+}
+
 interface FairnessScoreGaugeProps {
   score: FairnessScoreResult;
   dynamicMessage: React.ReactNode;
+  componentSources?: ComponentSourceInfo;
 }
 
 const GAUGE_SIZE = 140;
@@ -17,8 +22,9 @@ const STROKE_WIDTH = 10;
 const RADIUS = (GAUGE_SIZE - STROKE_WIDTH) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-const FairnessScoreGauge = ({ score, dynamicMessage }: FairnessScoreGaugeProps) => {
+const FairnessScoreGauge = ({ score, dynamicMessage, componentSources }: FairnessScoreGaugeProps) => {
   const [breakdownOpen, setBreakdownOpen] = useState(false);
+  const [expandedComponent, setExpandedComponent] = useState<string | null>(null);
   const progress = score.total / 100;
   const dashOffset = CIRCUMFERENCE * (1 - progress);
 
@@ -108,44 +114,55 @@ const FairnessScoreGauge = ({ score, dynamicMessage }: FairnessScoreGaugeProps) 
           </CollapsibleTrigger>
           <CollapsibleContent>
             <div className="mt-2 space-y-3 px-2">
-              {score.components.map((comp) => (
-                <div key={comp.id}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[13px] text-foreground flex items-center gap-1">
-                      {comp.label}
-                      {comp.id === 'fmr' && (
-                        <TooltipProvider delayDuration={200}>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Info className="h-3 w-3 text-muted-foreground cursor-help inline-block" />
-                            </TooltipTrigger>
-                            <TooltipContent side="top" className="max-w-[260px] text-[11px] leading-relaxed">
-                              {FMR_COMPONENT_TOOLTIP}
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      )}
-                      {comp.estimated && (
-                        <span className="text-[10px] text-muted-foreground ml-0.5">
-                          ({comp.id === 'momentum' ? 'neutral' : 'est.'})
-                        </span>
-                      )}
-                    </span>
-                    <span className="text-[13px] font-semibold tabular-nums text-foreground">
-                      {comp.score}/{comp.max}
-                    </span>
+              {score.components.map((comp) => {
+                const source = componentSources?.[comp.id];
+                const isExpanded = expandedComponent === comp.id;
+                return (
+                  <div
+                    key={comp.id}
+                    className={source ? 'cursor-pointer' : ''}
+                    onClick={() => source && setExpandedComponent(isExpanded ? null : comp.id)}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[13px] text-foreground flex items-center gap-1">
+                        {comp.label}
+                        {comp.id === 'fmr' && (
+                          <TooltipProvider delayDuration={200}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Info className="h-3 w-3 text-muted-foreground cursor-help inline-block" />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="max-w-[260px] text-[11px] leading-relaxed">
+                                {FMR_COMPONENT_TOOLTIP}
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
+                        {comp.estimated && (
+                          <span className="text-[10px] text-muted-foreground ml-0.5">
+                            ({comp.id === 'momentum' ? 'neutral' : 'est.'})
+                          </span>
+                        )}
+                      </span>
+                      <span className="text-[13px] font-semibold tabular-nums text-foreground">
+                        {comp.score}/{comp.max}
+                      </span>
+                    </div>
+                    <div className="w-full h-2 rounded-full bg-secondary overflow-hidden">
+                      <motion.div
+                        className="h-full rounded-full"
+                        style={{ backgroundColor: `hsl(${score.tierColorHsl})` }}
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(comp.score / comp.max) * 100}%` }}
+                        transition={{ duration: 0.8, delay: 1 + score.components.indexOf(comp) * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                      />
+                    </div>
+                    {isExpanded && source && (
+                      <p className="text-[11px] text-muted-foreground/70 mt-1 pl-0.5">{source}</p>
+                    )}
                   </div>
-                  <div className="w-full h-2 rounded-full bg-secondary overflow-hidden">
-                    <motion.div
-                      className="h-full rounded-full"
-                      style={{ backgroundColor: `hsl(${score.tierColorHsl})` }}
-                      initial={{ width: 0 }}
-                      animate={{ width: `${(comp.score / comp.max) * 100}%` }}
-                      transition={{ duration: 0.8, delay: 1 + score.components.indexOf(comp) * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                    />
-                  </div>
-                </div>
-              ))}
+                );
+              })}
               <p className="text-[11px] text-muted-foreground leading-relaxed pt-2">
                 The Fairness Score combines five independent data points to measure how your rent increase compares to local market conditions.{' '}
                 <Link to="/methodology" className="text-primary hover:underline">See methodology →</Link>
