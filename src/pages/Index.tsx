@@ -9,7 +9,7 @@ import SEO from '@/components/SEO';
 
 // Lazy load below-the-fold and non-critical components
 const RentResults = lazy(() => import('@/components/RentResults'));
-const SocialProofCounter = lazy(() => import('@/components/SocialProofCounter'));
+import SocialProofCounter from '@/components/SocialProofCounter';
 const ContactModal = lazy(() => import('@/components/ContactModal'));
 const LoadingAnalysis = lazy(() => import('@/components/LoadingAnalysis'));
 const HomeFAQ = lazy(() => import('@/components/HomeFAQ'));
@@ -242,9 +242,7 @@ const Index = () => {
           </p>
           <section className="mt-8 sm:mt-10 animate-fade-in-delay-2" aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
-            <Suspense fallback={null}>
-              <SocialProofCounter />
-            </Suspense>
+            <SocialProofCounter />
           </section>
         </main>
       ) : (
