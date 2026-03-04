@@ -22,7 +22,7 @@ const DataPageCTA = ({ location, zip, variant = 'mid' }: DataPageCTAProps) => {
           to={linkTo}
           className="inline-block w-full sm:w-1/2 bg-primary text-primary-foreground px-8 py-3.5 rounded-xl font-semibold text-base hover:brightness-90 transition-all duration-150 shadow-md shadow-primary/20"
         >
-          Check Your Rent →
+          Check Your Rent Increase →
         </Link>
       </section>
     );
@@ -40,7 +40,7 @@ const DataPageCTA = ({ location, zip, variant = 'mid' }: DataPageCTAProps) => {
         to={linkTo}
         className="inline-block w-full sm:w-1/2 bg-primary text-primary-foreground px-8 py-3.5 rounded-xl font-semibold text-base hover:brightness-90 transition-all duration-150 shadow-md shadow-primary/20"
       >
-        Check Your Rent Free →
+        Check Your Rent Increase →
       </Link>
     </section>
   );
