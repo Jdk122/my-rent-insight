@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['Lora', 'Georgia', "'Times New Roman'", 'serif'],
+        display: ['Fraunces', 'Georgia', "'Times New Roman'", 'serif'],
         body: ['DM Sans', 'system-ui', '-apple-system', 'sans-serif'],
         mono: ['DM Sans', 'system-ui', '-apple-system', 'sans-serif'],
       },
