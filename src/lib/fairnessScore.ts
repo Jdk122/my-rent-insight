@@ -11,6 +11,8 @@ export interface FairnessScoreInput {
   medianIncome: number | null; // Census ACS median renter income
   zillowMonthly: number | null; // Monthly rent trend %
   hvd?: 'rising' | 'falling' | 'flat' | null; // ZHVI home value direction (fallback for Component 5)
+  alYoY?: number | null;       // Apartment List YoY rent growth % (fallback for Component 1)
+  alMoM?: number | null;       // Apartment List MoM rent growth % (fallback for Component 5)
 }
 
 // Tooltip explainer for the FMR/Increase Reasonableness component
@@ -35,14 +37,17 @@ export interface FairnessScoreResult {
 }
 
 // Component 1: Increase Rate vs Area Trend (30 pts)
-function scoreRateVsTrend(increasePct: number, marketYoY: number): ScoreComponent {
-  const diff = increasePct - marketYoY;
+function scoreRateVsTrend(increasePct: number, marketYoY: number, alYoY?: number | null): ScoreComponent {
+  // Priority: Apartment List transacted rents > existing marketYoY (ZORI/HUD)
+  const effectiveYoY = (alYoY !== null && alYoY !== undefined) ? alYoY : marketYoY;
+  const diff = increasePct - effectiveYoY;
   let score: number;
   if (diff <= 0) score = 30;
   else if (diff <= 3) score = 20;
   else if (diff <= 6) score = 10;
   else score = 0;
-  return { id: 'rate', label: 'Increase vs. Area Trend', score, max: 30, estimated: false };
+  const sourceNote = (alYoY !== null && alYoY !== undefined) ? ' (Apartment List)' : '';
+  return { id: 'rate', label: `Increase vs. Area Trend${sourceNote}`, score, max: 30, estimated: false };
 }
 
 // Component 2: Proposed Rent vs Comp Median (25 pts)
@@ -107,7 +112,7 @@ function scoreRentToIncome(proposedRent: number, medianIncome: number | null): S
 }
 
 // Component 5: Market Momentum (10 pts)
-function scoreMarketMomentum(zillowMonthly: number | null, hvd?: 'rising' | 'falling' | 'flat' | null): ScoreComponent {
+function scoreMarketMomentum(zillowMonthly: number | null, alMoM?: number | null, hvd?: 'rising' | 'falling' | 'flat' | null): ScoreComponent {
   // Priority 1: ZORI rent trend data (most direct signal)
   if (zillowMonthly !== null && zillowMonthly !== undefined) {
     let score: number;
@@ -116,12 +121,22 @@ function scoreMarketMomentum(zillowMonthly: number | null, hvd?: 'rising' | 'fal
     else score = 3;
     return { id: 'momentum', label: 'Market Momentum', score, max: 10, estimated: false };
   }
-  // Priority 2: ZHVI home value direction (proxy for rent momentum)
+  // Priority 2: Apartment List MoM rent growth
+  if (alMoM !== null && alMoM !== undefined) {
+    let score: number;
+    if (alMoM <= -0.3) score = 10;
+    else if (alMoM <= 0) score = 8;
+    else if (alMoM <= 0.3) score = 5;
+    else if (alMoM <= 0.6) score = 3;
+    else score = 1;
+    return { id: 'momentum', label: 'Market Momentum (Apartment List)', score, max: 10, estimated: true };
+  }
+  // Priority 3: ZHVI home value direction (proxy for rent momentum)
   if (hvd) {
     const hvdScore = hvd === 'falling' ? 8 : hvd === 'flat' ? 5 : 3;
     return { id: 'momentum', label: 'Market Momentum (home value proxy)', score: hvdScore, max: 10, estimated: true };
   }
-  // Priority 3: No data — neutral default
+  // Priority 4: No data — neutral default
   return { id: 'momentum', label: 'Market Momentum', score: 5, max: 10, estimated: true };
 }
 
@@ -156,11 +171,11 @@ function getTier(total: number): Pick<FairnessScoreResult, 'tier' | 'tierLabel' 
 
 export function calculateFairnessScore(input: FairnessScoreInput): FairnessScoreResult {
   const components = [
-    scoreRateVsTrend(input.increasePct, input.marketYoY),
+    scoreRateVsTrend(input.increasePct, input.marketYoY, input.alYoY),
     scoreVsComps(input.proposedRent, input.compMedian),
     scoreVsFmr(input.proposedRent, input.fmr, input.currentRent, input.increasePct, input.marketYoY),
     scoreRentToIncome(input.proposedRent, input.medianIncome),
-    scoreMarketMomentum(input.zillowMonthly, input.hvd),
+    scoreMarketMomentum(input.zillowMonthly, input.alMoM, input.hvd),
   ];
   const total = components.reduce((sum, c) => sum + c.score, 0);
   return { total, ...getTier(total), components };
