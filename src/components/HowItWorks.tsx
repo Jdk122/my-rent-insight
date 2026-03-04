@@ -22,7 +22,7 @@ const HowItWorks = () => (
   <section className="w-full border-t border-border/60" aria-label="How it works">
     <div className="max-w-[620px] mx-auto px-5 sm:px-6 py-14 sm:py-20">
       <h2
-        className="font-display text-[22px] sm:text-[26px] text-foreground text-center tracking-tight mb-4"
+        className="font-display text-[22px] sm:text-[26px] text-foreground text-center tracking-tight mb-2"
         style={{ letterSpacing: '-0.02em' }}
       >
         How It Works
@@ -52,7 +52,7 @@ const HowItWorks = () => (
         ))}
       </div>
 
-      <p className="mt-10 sm:mt-12 text-[12px] text-muted-foreground/60 text-center">
+      <p className="mt-8 sm:mt-10 text-[12px] text-muted-foreground/60 text-center">
         Used by renters in all 50 states ·{' '}
         <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">
           See methodology

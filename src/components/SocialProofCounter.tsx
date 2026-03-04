@@ -13,7 +13,7 @@ const SocialProofCounter = () => {
   if (count === null) return null;
 
   return (
-    <div className="flex items-center justify-center gap-2 mt-5 py-2.5 px-4 rounded-full bg-primary/[0.06] border border-primary/10 w-fit mx-auto">
+    <div className="flex items-center justify-center gap-2 mt-6 py-2.5 px-4 rounded-full bg-primary/[0.06] border border-primary/10 w-fit mx-auto">
       <span className="text-primary text-sm">🔍</span>
       <p className="text-sm text-muted-foreground font-medium">
         <span className="font-bold text-foreground tabular-nums">{count.toLocaleString()}</span> renewals analyzed so far
