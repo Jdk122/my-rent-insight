@@ -6,6 +6,7 @@ import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import ContactModal from '@/components/ContactModal';
 import PageNav from '@/components/PageNav';
+import DataPageCTA from '@/components/DataPageCTA';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -50,18 +51,21 @@ const RentByState = () => {
 
   const { stateName, stateAbbr, cities, avgFmr1br, totalZips } = data;
 
-  // ─── FAQ items for state page ───
+  // ─── Meta tags with dollar amount ───
+  const metaTitle = `Average Rent in ${stateName} (2026) | Rent Data by City`;
+  const metaDesc = `The average 1-BR rent in ${stateName} is ${fmt(avgFmr1br)}/mo. See fair market rents, trends, and data for ${cities.length} cities across ${totalZips.toLocaleString()} zip codes in ${stateName}.`;
+
   const faqItems = [
     {
       q: `What is the average rent in ${stateName}?`,
-      a: `The average fair market rent for a 1-bedroom in ${stateName} is ${fmt(avgFmr1br)}/month according to HUD FY2026 data, based on ${totalZips.toLocaleString()} zip codes across ${cities.length} cities.`,
+      a: `The average HUD Fair Market Rent for a 1-bedroom in ${stateName} is ${fmt(avgFmr1br)}/month according to HUD FY2026 data, based on ${totalZips.toLocaleString()} zip codes across ${cities.length} cities.`,
     },
     {
       q: `Which city in ${stateName} has the cheapest rent?`,
       a: (() => {
         const cheapest = [...cities].sort((a, b) => a.avgFmr[1] - b.avgFmr[1])[0];
         return cheapest
-          ? `${cheapest.city} has the lowest average 1-bedroom FMR in ${stateName} at ${fmt(cheapest.avgFmr[1])}/month.`
+          ? `${cheapest.city} has the lowest average 1-bedroom HUD Fair Market Rent in ${stateName} at ${fmt(cheapest.avgFmr[1])}/month.`
           : `City-level rent comparison data is not currently available for ${stateName}.`;
       })(),
     },
@@ -70,7 +74,7 @@ const RentByState = () => {
       a: (() => {
         const expensive = [...cities].sort((a, b) => b.avgFmr[1] - a.avgFmr[1])[0];
         return expensive
-          ? `${expensive.city} has the highest average 1-bedroom FMR in ${stateName} at ${fmt(expensive.avgFmr[1])}/month.`
+          ? `${expensive.city} has the highest average 1-bedroom HUD Fair Market Rent in ${stateName} at ${fmt(expensive.avgFmr[1])}/month.`
           : `City-level rent comparison data is not currently available for ${stateName}.`;
       })(),
     },
@@ -83,8 +87,8 @@ const RentByState = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEO
-        title={`Rent Data for ${stateName} — Average Rent by City (2026)`}
-        description={`Average 1-BR rent in ${stateName}: ${fmt(avgFmr1br)}/mo. Browse rent data for ${cities.length} cities across ${totalZips.toLocaleString()} zip codes.`}
+        title={metaTitle}
+        description={metaDesc}
         canonical={`/rent-data/${stateSlug}`}
         jsonLd={[
           {
@@ -108,42 +112,22 @@ const RentByState = () => {
         ]}
       />
 
-      {/* Noscript fallback for crawlers */}
+      {/* Noscript fallback */}
       <noscript>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
           <h1>{`Rent Data for ${stateName} — Average Rent by City (2026)`}</h1>
-          <p>{`The average fair market rent for a 1-bedroom in ${stateName} is ${fmt(avgFmr1br)}/month. Browse rent data for ${cities.length} cities across ${totalZips.toLocaleString()} zip codes.`}</p>
+          <p>{`The average 1-BR HUD Fair Market Rent in ${stateName} is ${fmt(avgFmr1br)}/month. Browse rent data for ${cities.length} cities across ${totalZips.toLocaleString()} zip codes.`}</p>
           <p><a href="https://www.renewalreply.com/">{`Check if your rent increase is fair →`}</a></p>
-
           <h2>{`Cities in ${stateName}`}</h2>
           <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-            <thead>
-              <tr>
-                <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: 8 }}>City</th>
-                <th style={{ textAlign: 'right', borderBottom: '1px solid #ccc', padding: 8 }}>1-BR FMR</th>
-                <th style={{ textAlign: 'right', borderBottom: '1px solid #ccc', padding: 8 }}>Zip Codes</th>
-              </tr>
-            </thead>
+            <thead><tr><th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: 8 }}>City</th><th style={{ textAlign: 'right', borderBottom: '1px solid #ccc', padding: 8 }}>1-BR Fair Market Rent</th><th style={{ textAlign: 'right', borderBottom: '1px solid #ccc', padding: 8 }}>Zip Codes</th></tr></thead>
             <tbody>
               {cities.map(c => (
-                <tr key={c.citySlug}>
-                  <td style={{ padding: 8, borderBottom: '1px solid #eee' }}>
-                    <a href={`https://www.renewalreply.com/rent-data/${stateSlug}/${c.citySlug}`}>{c.city}</a>
-                  </td>
-                  <td style={{ padding: 8, borderBottom: '1px solid #eee', textAlign: 'right' }}>{fmt(c.avgFmr[1])}</td>
-                  <td style={{ padding: 8, borderBottom: '1px solid #eee', textAlign: 'right' }}>{c.zips.length}</td>
-                </tr>
+                <tr key={c.citySlug}><td style={{ padding: 8, borderBottom: '1px solid #eee' }}><a href={`https://www.renewalreply.com/rent-data/${stateSlug}/${c.citySlug}`}>{c.city}</a></td><td style={{ padding: 8, borderBottom: '1px solid #eee', textAlign: 'right' }}>{fmt(c.avgFmr[1])}</td><td style={{ padding: 8, borderBottom: '1px solid #eee', textAlign: 'right' }}>{c.zips.length}</td></tr>
               ))}
             </tbody>
           </table>
-
-          {faqItems.map((f, i) => (
-            <div key={i}>
-              <h3>{f.q}</h3>
-              <p>{f.a}</p>
-            </div>
-          ))}
-
+          {faqItems.map((f, i) => (<div key={i}><h3>{f.q}</h3><p>{f.a}</p></div>))}
           <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY2026</small></p>
           <p><a href="https://www.renewalreply.com/rent-data">← Browse all rent data</a></p>
         </div>
@@ -164,34 +148,38 @@ const RentByState = () => {
         {/* Hero */}
         <section className="mb-12">
           <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-            Rent Data for {stateName}
+            Average Rent in {stateName} (2026)
           </h1>
 
-          {/* AI-extractable answer block */}
+          <div className="mt-6">
+            <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">Average 1-Bedroom Fair Market Rent</p>
+            <p className="text-5xl md:text-6xl font-bold tabular-nums text-foreground leading-none">{fmt(avgFmr1br)}<span className="text-xl font-normal text-muted-foreground">/mo</span></p>
+            <p className="text-xs text-muted-foreground/70 mt-2">Source: HUD Fair Market Rent FY2026 · {totalZips.toLocaleString()} zip codes</p>
+          </div>
+
+          {/* Tightened summary */}
           <p className="mt-4 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
-            In {stateName}, the average fair market rent for a 1-bedroom apartment is {fmt(avgFmr1br)}/month according to HUD FY2026 data. {stateName} has {cities.length} cities with rent data covering {totalZips.toLocaleString()} zip codes. Use the table below to find average rent by city.
+            The average 1-bedroom rent in {stateName} is {fmt(avgFmr1br)}/month according to HUD FY2026 Fair Market Rent data. {stateName} has {cities.length} cities with rent data covering {totalZips.toLocaleString()} zip codes.
           </p>
         </section>
 
+        {/* Mid-page CTA */}
+        <DataPageCTA location={stateName} />
+
         {/* Search */}
         <div className="mb-6">
-          <Input
-            type="text"
-            placeholder={`Search cities in ${stateName}…`}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="h-11 w-full max-w-sm"
-          />
+          <Input type="text" placeholder={`Search cities in ${stateName}…`} value={search} onChange={(e) => setSearch(e.target.value)} className="h-11 w-full max-w-sm" />
         </div>
 
         {/* Cities Table */}
         <section className="mb-12">
+          <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Rent by City in {stateName}</h2>
           <div className="rounded-lg border border-border overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>City</TableHead>
-                  <TableHead className="text-right">1-BR FMR</TableHead>
+                  <TableHead className="text-right">1-BR Fair Market Rent</TableHead>
                   <TableHead className="text-right hidden sm:table-cell">Zip Codes</TableHead>
                   <TableHead className="text-right hidden md:table-cell">YoY</TableHead>
                 </TableRow>
@@ -204,12 +192,12 @@ const RentByState = () => {
                         {c.city}
                       </Link>
                     </TableCell>
-                    <TableCell className="text-right tabular-nums">{fmt(c.avgFmr[1])}</TableCell>
+                    <TableCell className="text-right tabular-nums">{c.avgFmr[1] > 0 ? fmt(c.avgFmr[1]) : '—'}</TableCell>
                     <TableCell className="text-right tabular-nums hidden sm:table-cell">{c.zips.length}</TableCell>
                     <TableCell className="text-right tabular-nums hidden md:table-cell">
                       {c.yoyChange !== null ? (
-                        <span className={c.yoyChange > 0 ? 'text-destructive' : c.yoyChange < 0 ? 'text-accent-green' : ''}>
-                          {c.yoyChange > 0 ? '+' : ''}{c.yoyChange.toFixed(1)}%
+                        <span className={`${c.yoyChange > 3 ? 'text-destructive' : c.yoyChange < 0 ? 'text-accent' : ''} ${Math.abs(c.yoyChange) > 20 ? 'opacity-60' : ''}`}>
+                          {c.yoyChange > 0 ? '+' : ''}{c.yoyChange.toFixed(1)}%{Math.abs(c.yoyChange) > 20 ? ' ⚠' : ''}
                         </span>
                       ) : '—'}
                     </TableCell>
@@ -221,10 +209,10 @@ const RentByState = () => {
           {filteredCities.length === 0 && (
             <p className="text-sm text-muted-foreground mt-4 text-center">No cities match "{search}"</p>
           )}
-          <p className="mt-2 text-xs text-muted-foreground">Sorted by number of zip codes (most first). Source: HUD SAFMR FY2026.</p>
+          <p className="mt-2 text-xs text-muted-foreground/70">Sorted by number of zip codes. Source: HUD SAFMR FY2026.</p>
         </section>
 
-        {/* ═══ FAQ ═══ */}
+        {/* FAQ */}
         <section className="mb-12">
           <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Frequently Asked Questions</h2>
           <Accordion type="multiple" className="space-y-2">
@@ -237,23 +225,17 @@ const RentByState = () => {
           </Accordion>
         </section>
 
-        {/* CTA */}
-        <section className="mb-12 text-center py-10">
-          <h2 className="font-display text-2xl text-foreground mb-3 tracking-tight">
-            Got a rent increase?
-          </h2>
-          <p className="text-muted-foreground mb-6">Check if it's fair — it's free.</p>
-          <Link
-            to="/"
-            className="inline-block bg-primary text-primary-foreground px-8 py-3 rounded-lg font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
-          >
-            Check my rent →
-          </Link>
-        </section>
+        {/* Internal links */}
+        <div className="mb-12 flex flex-col gap-2 text-sm">
+          <Link to="/rent-data" className="text-primary underline hover:text-primary/80">← Browse all rent data</Link>
+        </div>
+
+        {/* Bottom CTA */}
+        <DataPageCTA location={stateName} variant="bottom" />
 
         {/* Disclaimer */}
         <p className="text-xs text-muted-foreground/60 italic">
-          Data reflects HUD FY2026 fair market rent benchmarks. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
+          Data reflects HUD FY2026 Fair Market Rent benchmarks. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
         </p>
       </main>
 
@@ -267,9 +249,7 @@ function LoadingSkeleton() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-        <Link to="/" className="h-7 w-36">
-          <Skeleton className="h-7 w-36" />
-        </Link>
+        <Link to="/" className="h-7 w-36"><Skeleton className="h-7 w-36" /></Link>
       </nav>
       <main className="max-w-3xl mx-auto px-6 py-12 flex-1 w-full">
         <Skeleton className="h-6 w-48 mb-6" />
