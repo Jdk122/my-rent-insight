@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { FairnessScoreResult, FMR_COMPONENT_TOOLTIP } from '@/lib/fairnessScore';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -146,7 +147,8 @@ const FairnessScoreGauge = ({ score, dynamicMessage }: FairnessScoreGaugeProps) 
                 </div>
               ))}
               <p className="text-[11px] text-muted-foreground leading-relaxed pt-2">
-                The Fairness Score combines five independent data points to measure how your rent increase compares to local market conditions.
+                The Fairness Score combines five independent data points to measure how your rent increase compares to local market conditions.{' '}
+                <Link to="/methodology" className="text-primary hover:underline">See methodology →</Link>
               </p>
             </div>
           </CollapsibleContent>
