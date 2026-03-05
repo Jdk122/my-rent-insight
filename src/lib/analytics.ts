@@ -24,7 +24,8 @@ export type EventName =
   | 'report_shared'
   | 'report_viewed'
   | 'score_details_expanded'
-  | 'report_link_generated';
+  | 'report_link_generated'
+  | 'user_property_type';
 
 export function trackEvent(name: string, params?: Record<string, string | number | boolean | null | undefined>) {
   try {

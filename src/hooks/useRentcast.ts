@@ -21,6 +21,7 @@ export interface RentcastResult {
   rentEstimate: number | null;
   rentRangeLow: number | null;
   rentRangeHigh: number | null;
+  propertyType: string | null;
   comparables: RentcastComparable[];
 }
 
