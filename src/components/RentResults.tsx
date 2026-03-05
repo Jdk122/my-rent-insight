@@ -407,25 +407,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     <>
       <SectionNav sections={navSections} />
 
-      {/* ━━━ Rent Regulation Warning ━━━ */}
-      {showRentRegulationWarning && hasIncrease && (
-        <div className="w-full bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-800">
-          <div className="max-w-[620px] mx-auto px-5 sm:px-6 py-4">
-            <div className="flex gap-3 items-start">
-              <span className="text-lg flex-shrink-0">⚠️</span>
-              <p className="text-sm text-amber-900 dark:text-amber-200 leading-relaxed">
-                <strong>Your area has rent regulation laws.</strong> This score reflects market conditions only — not legal limits on your rent increase. If your apartment is rent-stabilized or rent-controlled, your landlord may be legally limited to a smaller increase than what the market shows.{' '}
-                <button
-                  onClick={() => document.getElementById('section-rights')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="underline font-medium hover:text-amber-700 dark:hover:text-amber-100 transition-colors"
-                >
-                  Check your rights below
-                </button>{' '}before making any decisions.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Rent regulation warning removed — replaced by inline note below verdict */}
       {/* ━━━ ACT 1: THE VERDICT — full-width warm hero zone ━━━ */}
       <div
         className="w-full"
@@ -496,13 +478,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             fairnessScore && fairnessScore.total >= 40 ? (
                               marketYoy < -0.5 ? (
                                 <>Rents near you dropped {Math.abs(marketYoy)}% — your landlord is asking for{' '}
-                                  <span className="text-accent-amber">{increasePct}%, slightly above trend.</span></>
+                                  <span className="text-accent-amber">{increasePct}%, {increasePct - Math.abs(marketYoy) > 4 ? 'well above' : 'above'} trend.</span></>
                               ) : marketYoy >= -0.5 && marketYoy <= 0.5 ? (
                                 <>Rents near you have been flat — your landlord is asking for{' '}
                                   <span className="text-accent-amber">{increasePct}%, above the current trend.</span></>
                               ) : (
                                 <>Rents near you went up {marketYoy}% — your landlord is asking for{' '}
-                                  <span className="text-accent-amber">{increasePct}%, slightly above trend.</span></>
+                                  <span className="text-accent-amber">{increasePct}%, {increasePct - marketYoy > 4 ? 'well above' : 'above'} trend.</span></>
                               )
                             ) : (
                               marketYoy < -0.5 ? (
@@ -539,6 +521,17 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <>At ${fmt(newRent)}/mo, you're getting a competitive deal compared to similar units in {city}.</>
                           )}
                         </p>
+                        {isNycZip(rentData.zip) && hasIncrease && (
+                          <p className="text-xs text-muted-foreground mt-2">
+                            Live in a rent-stabilized apartment? Your increase may be legally capped —{' '}
+                            <button
+                              onClick={() => document.getElementById('section-rights')?.scrollIntoView({ behavior: 'smooth' })}
+                              className="underline hover:text-foreground transition-colors"
+                            >
+                              check your rights below
+                            </button>.
+                          </p>
+                        )}
                       </div>
                     }
                   />
