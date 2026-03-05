@@ -406,23 +406,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     <>
       <SectionNav sections={navSections} />
 
-        {/* ━━━ YOUR NEXT STEPS ━━━ */}
-        {hasIncrease && (
-          <NextStepsSection
-            isAboveMarket={isAboveMarket}
-            fairnessScore={fairnessScore?.total ?? null}
-            verdictLabel={verdictLabel}
-            zip={rentData.zip}
-            bedrooms={bedroomNum}
-            currentRent={formData.currentRent}
-            proposedRent={newRent}
-            propertyType={propertyData?.propertyType}
-            onShareClick={() => {
-              document.getElementById('section-share')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-          />
-        )}
-
 
       {/* ━━━ ACT 1: THE VERDICT — full-width warm hero zone ━━━ */}
       <div
