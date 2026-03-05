@@ -8,7 +8,9 @@ import { captureUtmParams } from "@/lib/utm";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Index from "./pages/Index";
 import PageSkeleton from "./components/PageSkeleton";
+import CookieConsent from "./components/CookieConsent";
 const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
 const Outcome = lazy(() => import("./pages/Outcome"));
 const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -36,6 +38,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/privacy" element={<Suspense fallback={<PageSkeleton />}><Privacy /></Suspense>} />
+          <Route path="/terms" element={<Suspense fallback={<PageSkeleton />}><Terms /></Suspense>} />
           <Route path="/contact" element={<Suspense fallback={<PageSkeleton />}><Contact /></Suspense>} />
           <Route path="/about" element={<Suspense fallback={<PageSkeleton />}><About /></Suspense>} />
           <Route path="/methodology" element={<Suspense fallback={<PageSkeleton />}><Methodology /></Suspense>} />
@@ -49,6 +52,7 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<Suspense fallback={<PageSkeleton />}><NotFound /></Suspense>} />
         </Routes>
+        <CookieConsent />
         </ErrorBoundary>
       </BrowserRouter>
     </TooltipProvider>

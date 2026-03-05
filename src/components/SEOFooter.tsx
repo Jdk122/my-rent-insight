@@ -18,6 +18,7 @@ const SEOFooter = ({ onContactClick }: SEOFooterProps) => (
           <Link to="/about" className="hover:text-foreground transition-colors">About</Link>
           <Link to="/methodology" className="hover:text-foreground transition-colors">Methodology</Link>
           <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
+          <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
           {onContactClick ? (
             <button onClick={onContactClick} className="hover:text-foreground transition-colors">Contact</button>
           ) : (

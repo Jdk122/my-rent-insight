@@ -77,7 +77,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
         p_email: email,
         p_analysis_id: leadContext?.analysisId || null,
         p_capture_source: captureSource,
-        p_address: leadContext?.address || null,
+        p_address: null,
         p_city: leadContext?.city || null,
         p_state: leadContext?.state || null,
         p_zip: leadContext?.zip || null,
@@ -107,7 +107,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
         analysis_id: leadContext?.analysisId || null,
         event_type: captureSource,
         fairness_score: leadContext?.fairnessScore ?? null,
-        address: leadContext?.address || null,
+        address: null,
         zip: leadContext?.zip || null,
         current_rent: leadContext?.currentRent ?? null,
         proposed_rent: leadContext?.proposedRent ?? null,
@@ -201,7 +201,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
       </form>
       <div className="max-w-[440px] mx-auto mt-2 space-y-1.5">
         <p className="text-[12px] text-muted-foreground/70 text-center">
-          We'll email you about your lease and relevant housing info. See our{' '}
+          We'll email you about your lease and relevant housing info. Unsubscribe anytime. See our{' '}
           <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
         </p>
         <label className="flex items-start gap-2 justify-center cursor-pointer select-none">
