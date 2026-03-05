@@ -11,6 +11,7 @@ import { Lock, ExternalLink, ChevronDown, AlertTriangle, CheckCircle2, Clock, Se
 import { calculateFairnessScore, type FairnessScoreInput } from '@/lib/fairnessScore';
 import { supabase } from '@/integrations/supabase/client';
 import type { RentZipRaw, ZhviZipRaw, ApartmentListZipRaw, Hud50ZipRaw } from '@/data/dataLoader';
+import AdminNav from '@/components/admin/AdminNav';
 
 const ADMIN_PASSWORD = 'renewalreply2026';
 
@@ -100,7 +101,7 @@ function PasswordGate({ onAuth }: { onAuth: () => void }) {
 // ─── Main Dashboard ───
 
 export default function AdminDataQuality() {
-  const [authed, setAuthed] = useState(false);
+  const [authed, setAuthed] = useState(() => sessionStorage.getItem('rr_admin_authed') === 'true');
   const [freshness, setFreshness] = useState<Record<string, string> | null>(null);
   const [rentData, setRentData] = useState<Record<string, RentZipRaw> | null>(null);
   const [countyData, setCountyData] = useState<Record<string, RentZipRaw>>({});
@@ -168,13 +169,14 @@ export default function AdminDataQuality() {
     });
   }, [authed]);
 
-  if (!authed) return <PasswordGate onAuth={() => setAuthed(true)} />;
+  if (!authed) return <PasswordGate onAuth={() => { sessionStorage.setItem('rr_admin_authed', 'true'); setAuthed(true); }} />;
   if (!allRentData || !freshness) {
     return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading data...</div>;
   }
 
   return (
     <div className="min-h-screen bg-background">
+      <AdminNav />
       <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-8">
         <div className="flex items-center gap-3">
           <ShieldCheck className="h-6 w-6 text-primary" />
