@@ -14,7 +14,9 @@ interface UserUnit {
 interface CompsListProps {
   proposedRent: number;
   comparables: RentcastComparable[];
+  furnishedComps?: RentcastComparable[];
   medianCompRent: number;
+  hudFmr?: number;
   brLabel: string;
   city: string;
   state: string;
@@ -175,7 +177,9 @@ function CompsWithRentLine({
 export const CompsList = ({
   proposedRent,
   comparables,
+  furnishedComps = [],
   medianCompRent,
+  hudFmr,
   brLabel,
   city,
   state,
@@ -199,6 +203,9 @@ export const CompsList = ({
   }, [belowComps]);
 
   const browseLinks = buildBrowseLinks(zip, city, state, bedrooms);
+
+  // SAFMR context note: show when comp median is 50%+ above HUD SAFMR
+  const showSafmrNote = hudFmr && hudFmr > 0 && medianCompRent > hudFmr * 1.5;
 
   return (
     <div>
@@ -234,7 +241,46 @@ export const CompsList = ({
           Nearby Comparable Listings
         </p>
         <CompsWithRentLine comparables={comparables} proposedRent={proposedRent} userUnit={userUnit} />
+
+        {/* Furnished comps (excluded from median, shown for transparency) */}
+        {furnishedComps.length > 0 && (
+          <div className="mt-3 space-y-1">
+            {furnishedComps.map((comp, i) => (
+              <div
+                key={`furnished-${i}`}
+                className="flex items-start justify-between gap-4 px-4 py-3 rounded-md opacity-60"
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-muted-foreground truncate flex items-center gap-1.5">
+                    <MapPin className="w-3 h-3 text-muted-foreground/40 flex-shrink-0" />
+                    {comp.formattedAddress}
+                    <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-muted text-muted-foreground border border-border">
+                      Furnished — not directly comparable
+                    </span>
+                  </p>
+                  <p className="text-xs text-muted-foreground/60 mt-0.5">
+                    {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
+                    {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
+                    {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
+                  </p>
+                </div>
+                {comp.rent !== null && (
+                  <span className="text-sm font-semibold text-muted-foreground whitespace-nowrap">
+                    ${fmt(comp.rent)}/mo
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
+
+      {/* SAFMR context note */}
+      {showSafmrNote && (
+        <p className="text-xs text-muted-foreground mt-4 px-4 py-3 rounded-md bg-muted/50 border border-border">
+          Note: Nearby listings are significantly above the federal rent benchmark for this area. This is common in high-cost neighborhoods where local market rents exceed national standards.
+        </p>
+      )}
 
       {/* Browse more links */}
       <p className="text-sm text-muted-foreground mt-6 text-center">
