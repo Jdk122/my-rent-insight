@@ -22,6 +22,8 @@ const SharedReport = lazy(() => import("./pages/SharedReport"));
 const About = lazy(() => import("./pages/About"));
 const Methodology = lazy(() => import("./pages/Methodology"));
 const AdminDataQuality = lazy(() => import("./pages/AdminDataQuality"));
+const AdminLeadDashboard = lazy(() => import("./pages/AdminLeadDashboard"));
+const AdminMarketIntelligence = lazy(() => import("./pages/AdminMarketIntelligence"));
 
 const queryClient = new QueryClient();
 
@@ -49,6 +51,8 @@ const App = () => (
           <Route path="/rent-data/:stateSlug" element={<Suspense fallback={<PageSkeleton />}><RentByState /></Suspense>} />
           <Route path="/report/:shortId" element={<Suspense fallback={<PageSkeleton />}><SharedReport /></Suspense>} />
           <Route path="/admin/data-quality" element={<Suspense fallback={<PageSkeleton />}><AdminDataQuality /></Suspense>} />
+          <Route path="/admin/leads" element={<Suspense fallback={<PageSkeleton />}><AdminLeadDashboard /></Suspense>} />
+          <Route path="/admin/markets" element={<Suspense fallback={<PageSkeleton />}><AdminMarketIntelligence /></Suspense>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<Suspense fallback={<PageSkeleton />}><NotFound /></Suspense>} />
         </Routes>

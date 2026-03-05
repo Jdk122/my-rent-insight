@@ -496,6 +496,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_daily_submissions: { Args: { p_days?: number }; Returns: Json }
+      admin_dashboard_stats: { Args: never; Returns: Json }
+      admin_traffic_stats: { Args: never; Returns: Json }
+      admin_zip_leaderboard: { Args: never; Returns: Json }
       get_analyses_count: { Args: never; Returns: number }
       get_shared_report: {
         Args: { p_short_id: string }
