@@ -231,7 +231,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       : null;
 
     supabase.from('analyses').insert({
-      address: formData.fullAddress || null,
+      address: null,
       city: rentData.city,
       state: rentData.state,
       zip: rentData.zip,
@@ -259,7 +259,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   const leadContext = useMemo(() => ({
     analysisId,
-    address: formData.fullAddress,
+    address: null,
     city: rentData.city,
     state: rentData.state,
     zip: rentData.zip,

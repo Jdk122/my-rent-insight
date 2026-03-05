@@ -1,0 +1,141 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import SEO from '@/components/SEO';
+import SEOFooter from '@/components/SEOFooter';
+import ContactModal from '@/components/ContactModal';
+import PageNav from '@/components/PageNav';
+
+const Terms = () => {
+  const [contactOpen, setContactOpen] = useState(false);
+  return (
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
+      <SEO
+        title="Terms of Service — RenewalReply"
+        description="Terms of Service for RenewalReply. Read about your rights and responsibilities when using our free rent analysis tool."
+        canonical="/terms"
+      />
+
+      <PageNav />
+
+      <main className="max-w-[620px] mx-auto px-6 py-16">
+        <h1 className="font-display text-[28px] font-semibold tracking-tight mb-2" style={{ letterSpacing: '-0.02em' }}>
+          Terms of Service
+        </h1>
+        <p className="text-sm text-muted-foreground mb-8">Last updated: March 2026</p>
+
+        <div className="space-y-8 text-[15px] leading-relaxed text-muted-foreground">
+          <section>
+            <h2 className="text-lg font-semibold text-foreground mb-2">About RenewalReply</h2>
+            <p>
+              RenewalReply ("we," "us," "our") provides a free online tool that helps renters evaluate
+              whether their rent increase is in line with local market conditions. By using this website,
+              you agree to these Terms of Service.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-foreground mb-2">Informational Purposes Only</h2>
+            <p>
+              RenewalReply provides market analysis for informational purposes only. Our tool does not
+              constitute legal, financial, or real estate advice. We are not a law firm, financial advisor,
+              or licensed real estate professional. You should consult with qualified professionals before
+              making decisions about your housing situation.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-foreground mb-2">Eligibility</h2>
+            <p>
+              You must be at least 18 years old to use RenewalReply. By using the site, you represent
+              that you meet this requirement.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-foreground mb-2">Data Accuracy</h2>
+            <p>
+              Our analysis is based on publicly available housing data from government agencies, market
+              indices, and third-party data providers. While we make every effort to provide accurate and
+              current information, we do not guarantee the accuracy, completeness, or timeliness of any
+              data displayed. Market conditions change frequently, and data sources may have inherent
+              limitations or delays.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-foreground mb-2">Service Availability</h2>
+            <p>
+              We may modify, suspend, or discontinue any aspect of the service at any time without prior
+              notice. We are not liable for any modification, suspension, or discontinuation of the service.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-foreground mb-2">Limitation of Liability</h2>
+            <p>
+              To the fullest extent permitted by law, RenewalReply and its operators shall not be liable
+              for any indirect, incidental, special, consequential, or punitive damages, or any loss of
+              profits or revenues, arising out of or related to your use of the service. We are not
+              responsible for any decisions you make based on the tool's output, including but not limited
+              to negotiation outcomes, lease decisions, or moving decisions.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-foreground mb-2">Acceptable Use</h2>
+            <p>
+              You agree not to use the service for any unlawful purpose, to attempt to gain unauthorized
+              access to our systems, to scrape or automated-harvest data from the site, or to interfere
+              with the proper functioning of the service.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-foreground mb-2">Intellectual Property</h2>
+            <p>
+              All content on RenewalReply, including text, graphics, logos, and software, is the property
+              of RenewalReply or its content suppliers and is protected by applicable intellectual property
+              laws. The negotiation letters generated by the tool are provided for your personal use.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-foreground mb-2">Privacy</h2>
+            <p>
+              Your use of RenewalReply is also governed by our{' '}
+              <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>,
+              which describes how we collect, use, and protect your information.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-foreground mb-2">Changes to These Terms</h2>
+            <p>
+              We may update these Terms from time to time. Continued use of the service after changes
+              are posted constitutes acceptance of the revised Terms.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-foreground mb-2">Contact</h2>
+            <p>
+              Questions about these terms? Email{' '}
+              <a href="mailto:privacy@renewalreply.com" className="text-primary hover:underline">
+                privacy@renewalreply.com
+              </a>.
+            </p>
+          </section>
+        </div>
+
+        <div className="mt-12 pt-8 border-t border-border">
+          <Link to="/" className="text-sm text-primary hover:underline">← Back to RenewalReply</Link>
+        </div>
+      </main>
+
+      <SEOFooter onContactClick={() => setContactOpen(true)} />
+      <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
+    </div>
+  );
+};
+
+export default Terms;

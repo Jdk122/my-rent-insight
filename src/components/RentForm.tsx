@@ -337,6 +337,12 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
         >
           {isLoading ? 'Loading data…' : 'See if your increase is fair →'}
         </button>
+        <p className="text-[11px] text-muted-foreground/60 text-center mt-3">
+          By using this tool, you agree to our{' '}
+          <a href="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</a>
+          {' '}and{' '}
+          <a href="/terms" className="underline hover:text-foreground transition-colors">Terms of Service</a>.
+        </p>
       </form>
 
       {/* Credibility badges */}
