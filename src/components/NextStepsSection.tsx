@@ -31,9 +31,9 @@ const cardBorder = 'border border-[rgba(0,0,0,0.06)]';
 const cardShadow = 'shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] hover:-translate-y-0.5';
 
 const primaryBtn =
-  'inline-flex items-center justify-center gap-1.5 h-10 px-5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:brightness-105 transition-all';
+  'inline-flex items-center justify-center gap-1.5 h-10 px-5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:brightness-105 transition-all whitespace-nowrap';
 const ghostBtn =
-  'inline-flex items-center justify-center gap-1.5 h-10 px-5 rounded-lg border border-primary/30 text-primary text-sm font-medium hover:bg-primary/5 transition-all';
+  'inline-flex items-center justify-center gap-1.5 h-10 px-5 rounded-lg border border-primary/30 text-primary text-sm font-medium hover:bg-primary/5 transition-all whitespace-nowrap';
 
 const IconWrap = ({ children }: { children: React.ReactNode }) => (
   <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4 shrink-0">
@@ -107,7 +107,7 @@ const NextStepsSection = ({
                 The average local move in {state} costs $1,200–$2,500. Compare quotes before you commit.
               </p>
               <a
-                href="https://renewalreply.com/moving"
+                href="https://www.moving.com/movers/quotes/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={ghostBtn}
@@ -125,7 +125,7 @@ const NextStepsSection = ({
                 {card3Subtitle}
               </p>
               <a
-                href="https://renewalreply.com/mortgage"
+                href="https://www.bankrate.com/mortgages/mortgage-calculator/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={ghostBtn}
@@ -148,7 +148,7 @@ const NextStepsSection = ({
                 Renters insurance from $5/mo. Covers theft, damage, and liability.
               </p>
               <a
-                href="https://renewalreply.com/insurance"
+                href="https://www.lemonade.com/renters"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={primaryBtn}
@@ -184,7 +184,7 @@ const NextStepsSection = ({
             At ${fmt(currentRent)}/mo in rent, you might be able to own.
           </span>
           <a
-            href="https://renewalreply.com/mortgage"
+            href="https://www.bankrate.com/mortgages/mortgage-calculator/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[13px] font-medium text-primary hover:underline inline-flex items-center gap-1"
