@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_leads: {
+        Row: {
+          bathrooms: string | null
+          bedrooms: string | null
+          created_at: string
+          current_rent: number | null
+          email: string
+          fairness_score: number | null
+          id: string
+          move_date: string | null
+          name: string
+          neighborhoods: string | null
+          phone: string | null
+          property_type: string | null
+          proposed_rent: number | null
+          verdict_label: string | null
+          zip: string | null
+        }
+        Insert: {
+          bathrooms?: string | null
+          bedrooms?: string | null
+          created_at?: string
+          current_rent?: number | null
+          email: string
+          fairness_score?: number | null
+          id?: string
+          move_date?: string | null
+          name: string
+          neighborhoods?: string | null
+          phone?: string | null
+          property_type?: string | null
+          proposed_rent?: number | null
+          verdict_label?: string | null
+          zip?: string | null
+        }
+        Update: {
+          bathrooms?: string | null
+          bedrooms?: string | null
+          created_at?: string
+          current_rent?: number | null
+          email?: string
+          fairness_score?: number | null
+          id?: string
+          move_date?: string | null
+          name?: string
+          neighborhoods?: string | null
+          phone?: string | null
+          property_type?: string | null
+          proposed_rent?: number | null
+          verdict_label?: string | null
+          zip?: string | null
+        }
+        Relationships: []
+      }
       analyses: {
         Row: {
           address: string | null

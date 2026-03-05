@@ -25,6 +25,7 @@ import { assessConfidence, detectOutliers, checkCrossSourceConsistency, getCompR
 import { calculateFairnessScore, scoreToVerdict, FairnessScoreResult } from '@/lib/fairnessScore';
 import FairnessScoreGauge, { ComponentSourceInfo } from './FairnessScoreGauge';
 import MarketSnapshot from './MarketSnapshot';
+import NextStepsSection from './NextStepsSection';
 
 interface RentResultsProps {
   formData: RentFormData;
@@ -405,7 +406,24 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     <>
       <SectionNav sections={navSections} />
 
-      
+        {/* ━━━ YOUR NEXT STEPS ━━━ */}
+        {hasIncrease && (
+          <NextStepsSection
+            isAboveMarket={isAboveMarket}
+            fairnessScore={fairnessScore?.total ?? null}
+            verdictLabel={verdictLabel}
+            zip={rentData.zip}
+            bedrooms={bedroomNum}
+            currentRent={formData.currentRent}
+            proposedRent={newRent}
+            propertyType={propertyData?.propertyType}
+            onShareClick={() => {
+              document.getElementById('section-share')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          />
+        )}
+
+
       {/* ━━━ ACT 1: THE VERDICT — full-width warm hero zone ━━━ */}
       <div
         className="w-full"
@@ -819,6 +837,23 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           <motion.section {...fade(0.15)} className="py-12">
             <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} />
           </motion.section>
+        )}
+
+        {/* ━━━ YOUR NEXT STEPS ━━━ */}
+        {hasIncrease && (
+          <NextStepsSection
+            isAboveMarket={isAboveMarket}
+            fairnessScore={fairnessScore?.total ?? null}
+            verdictLabel={verdictLabel}
+            zip={rentData.zip}
+            bedrooms={bedroomNum}
+            currentRent={formData.currentRent}
+            proposedRent={newRent}
+            propertyType={propertyData?.propertyType}
+            onShareClick={() => {
+              document.getElementById('section-share')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          />
         )}
 
         {/* ━━━ Know Your Rights — only if rent control applies ━━━ */}
