@@ -12,7 +12,7 @@ import LetterGate from './LetterGate';
 import RentControlCard from './RentControlCard';
 import { PropertyLookupResult, PropertyLookupError } from '@/hooks/usePropertyLookup';
 import TurnoverCostSection from './TurnoverCostSection';
-import { getRentControlByStateCity, getApplicableCap } from '@/data/rentControlData';
+import { getRentControlByStateCity, getApplicableCap, isNycZip } from '@/data/rentControlData';
 import { useRentcast } from '@/hooks/useRentcast';
 import { useRentcastMarket } from '@/hooks/useRentcastMarket';
 import { useHcrLookup } from '@/hooks/useHcrLookup';
@@ -387,10 +387,32 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   let rowIdx = 0;
 
+  // Determine if rent regulation warning should show
+  const showRentRegulationWarning = hasRentControl || isNycZip(rentData.zip) || !!hcrLookup.result?.found;
+
   return (
     <>
       <SectionNav sections={navSections} />
 
+      {/* ━━━ Rent Regulation Warning ━━━ */}
+      {showRentRegulationWarning && hasIncrease && (
+        <div className="w-full bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-800">
+          <div className="max-w-[620px] mx-auto px-5 sm:px-6 py-4">
+            <div className="flex gap-3 items-start">
+              <span className="text-lg flex-shrink-0">⚠️</span>
+              <p className="text-sm text-amber-900 dark:text-amber-200 leading-relaxed">
+                <strong>Your area has rent regulation laws.</strong> This score reflects market conditions only — not legal limits on your rent increase. If your apartment is rent-stabilized or rent-controlled, your landlord may be legally limited to a smaller increase than what the market shows.{' '}
+                <button
+                  onClick={() => document.getElementById('section-rights')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="underline font-medium hover:text-amber-700 dark:hover:text-amber-100 transition-colors"
+                >
+                  Check your rights below
+                </button>{' '}before making any decisions.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
       {/* ━━━ ACT 1: THE VERDICT — full-width warm hero zone ━━━ */}
       <div
         className="w-full"
@@ -517,12 +539,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 transition={{ delay: 0.2, duration: 0.5 }}
                 className="mt-5 sm:mt-6 w-full grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-[540px]"
               >
-                {[
-                  { label: 'You pay now', value: `$${fmt(formData.currentRent)}`, color: 'text-foreground' },
-                  { label: 'They want', value: `$${fmt(newRent)}`, color: isAboveMarket ? 'text-destructive' : isBelowMarket ? 'text-verdict-good' : 'text-foreground' },
-                  { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%`, color: 'text-foreground' },
-                  { label: 'Your increase', value: `${increasePct}%`, color: verdictColor },
-                ].map((stat) => (
+                {(() => {
+                  const trendSourceShort = rentData.alYoY !== null && rentData.alYoY !== undefined
+                    ? 'Apartment List' : rentData.yoySource === 'zillow' ? 'Zillow ZORI' : 'HUD FMR';
+                  return [
+                    { label: 'You pay now', value: `$${fmt(formData.currentRent)}`, color: 'text-foreground', sub: null },
+                    { label: 'They want', value: `$${fmt(newRent)}`, color: isAboveMarket ? 'text-destructive' : isBelowMarket ? 'text-verdict-good' : 'text-foreground', sub: null },
+                    { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%`, color: 'text-foreground', sub: trendSourceShort },
+                    { label: 'Your increase', value: `${increasePct}%`, color: verdictColor, sub: null },
+                  ];
+                })().map((stat) => (
                     <div
                       key={stat.label}
                       className="text-center rounded-lg border border-border/80 bg-card px-2 sm:px-3 py-3 sm:py-4 flex flex-col justify-between"
@@ -532,6 +558,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       <p className={`font-display text-[20px] sm:text-[24px] md:text-[28px] tracking-tight tabular-nums ${stat.color}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
                         {stat.value}
                       </p>
+                      {stat.sub && <p className="text-[9px] text-muted-foreground/60 mt-1">{stat.sub}</p>}
                     </div>
                 ))}
               </motion.div>
@@ -637,6 +664,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   <span className="context-value">
                     {marketYoy > 0 ? '+' : ''}{marketYoy}%
                     {rentData.yoyCapped && <span className="context-sub"> (capped)</span>}
+                    <span className="context-sub"> ({rentData.alYoY !== null && rentData.alYoY !== undefined ? 'Apartment List' : rentData.yoySource === 'zillow' ? 'Zillow ZORI' : 'HUD FMR'})</span>
                   </span>
                 </div>
                 {rentData.zillowMonthly !== null && rentData.zillowDirection && (
@@ -646,6 +674,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       {rentData.zillowMonthly > 0 ? '+' : ''}{rentData.zillowMonthly}%/mo
                       <span className="context-sub">
                         {rentData.zillowDirection === 'rising' ? ' ↑ rising' : rentData.zillowDirection === 'falling' ? ' ↓ cooling' : ' → steady'}
+                        {' (Zillow ZORI)'}
                       </span>
                     </span>
                   </div>
@@ -653,7 +682,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 {calc && (
                   <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
                     <span className="context-label">What most {brLabel} go for</span>
-                    <span className="context-value">${fmt(calc.typicalRangeLow)} – ${fmt(calc.typicalRangeHigh)}</span>
+                    <span className="context-value">
+                      ${fmt(calc.typicalRangeLow)} – ${fmt(calc.typicalRangeHigh)}
+                      <span className="context-sub"> (HUD SAFMR FY2026)</span>
+                    </span>
                   </div>
                 )}
                 {calc && (
@@ -729,6 +761,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             </h2>
             <p className="text-[12px] text-muted-foreground text-center mb-6">
               Showing {outlierResult?.filtered.length ?? 0} comparable rental{(outlierResult?.filtered.length ?? 0) !== 1 ? 's' : ''}{compRadius.label ? ` ${compRadius.label}` : ''}, sorted by relevance.
+              <span className="text-muted-foreground/60"> (Source: Real-time market listings)</span>
             </p>
 
             {/* Cross-source consistency note — only when comp median diverges significantly from HUD benchmark */}

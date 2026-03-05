@@ -310,9 +310,16 @@ export async function lookupRentData(
     }
   }
 
+  // Override known problem zip-to-city mappings
+  const CITY_OVERRIDES: Record<string, string> = {
+    '07087': 'Union City',
+    '11101': 'Long Island City',
+  };
+  const cityName = CITY_OVERRIDES[zip] || raw.c || raw.m.split(',')[0] || `ZIP ${zip}`;
+
   return {
     zip,
-    city: raw.c || raw.m.split(',')[0] || `ZIP ${zip}`,
+    city: cityName,
     state,
     metro: raw.m,
     fmr,

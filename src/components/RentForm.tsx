@@ -91,7 +91,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
     if (rentIncrease && rentIncrease.trim() !== '') {
       const incVal = increaseIsPercent ? parseFloat(rentIncrease) : parseFloat(parseFormatted(rentIncrease));
       if (isNaN(incVal) || incVal < 0) {
-        errs.rentIncrease = 'Please enter a valid increase amount';
+        errs.rentIncrease = 'Looking for a rent decrease? Lucky you! This tool is designed for rent increases. Enter 0 if your rent isn\'t changing.';
       }
     }
 

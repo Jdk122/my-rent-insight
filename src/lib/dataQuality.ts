@@ -42,20 +42,20 @@ export function assessConfidence({
 
   const farComps = maxCompDistance !== null && maxCompDistance > 5;
 
-  // High: all 4 sources, 5+ comps within 5 miles
-  if (hasHud && compCount >= 5 && !farComps && hasZillow && hasCensus) {
+  // High: HUD + at least one market trend + comparable listings (3+)
+  if (hasHud && compCount >= 3 && (hasZillow || hasCensus)) {
     return { level: 'high', sources, missingSources: missing, note: null };
   }
 
-  // Limited: only HUD, or <3 comps, or comps too far
-  if ((!hasHud) || (compCount < 3) || farComps) {
-    const note = 'Limited data available for this zip code. Results should be used as a general guide only.';
-    return { level: 'limited', sources, missingSources: missing, note };
+  // Moderate: HUD + at least one market trend source (Zillow/Census) OR 3+ comps
+  if (hasHud && (hasZillow || hasCensus || compCount >= 3)) {
+    const note = `Analysis based on ${sources.join(', ')}.`;
+    return { level: 'moderate', sources, missingSources: missing, note };
   }
 
-  // Moderate: at least HUD + (comps OR zillow)
-  const note = `Limited market data available for this area — results are based on ${sources.join(', ')}.`;
-  return { level: 'moderate', sources, missingSources: missing, note };
+  // Limited: only HUD with no market trend data at all
+  const note = 'Limited data available for this zip code. Results should be used as a general guide only.';
+  return { level: 'limited', sources, missingSources: missing, note };
 }
 
 // ─── Outlier Detection (IQR method, 5+ comps minimum) ───
