@@ -13,11 +13,20 @@ interface NextStepsSectionProps {
   currentRent: number;
   proposedRent: number;
   propertyType?: string;
+  city: string;
+  state: string;
+  compMedianRent: number | null;
+  dollarOverpayment: number | null;
+  brLabel: string;
   onShareClick?: () => void;
 }
 
+const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+
+const bedroomLabel = (n: number) => n === 0 ? 'studios' : n === 1 ? '1-bedrooms' : `${n}-bedrooms`;
+
 const cardBase =
-  'relative bg-card rounded-xl flex flex-col transition-all duration-200 cursor-default';
+  'relative bg-card rounded-xl flex flex-col transition-all duration-200';
 const cardBorder = 'border border-[rgba(0,0,0,0.06)]';
 const cardShadow = 'shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] hover:-translate-y-0.5';
 
@@ -40,17 +49,36 @@ const fade = (delay: number) => ({
 
 const NextStepsSection = ({
   isAboveMarket, fairnessScore, verdictLabel, zip, bedrooms,
-  currentRent, proposedRent, propertyType, onShareClick,
+  currentRent, proposedRent, propertyType, city, state,
+  compMedianRent, dollarOverpayment, brLabel, onShareClick,
 }: NextStepsSectionProps) => {
   const [modalOpen, setModalOpen] = useState(false);
+
+  const savings = compMedianRent ? Math.round(proposedRent - compMedianRent) : null;
+  const estimatedHomePrice = Math.round(currentRent * 200);
+  const overpaymentDisplay = dollarOverpayment && dollarOverpayment > 0 ? dollarOverpayment : null;
+
+  // Dynamic heading
+  const heading = isAboveMarket
+    ? overpaymentDisplay
+      ? `You're paying ~$${fmt(overpaymentDisplay)}/mo above market — here are your options`
+      : `Your rent is above market — here are your options`
+    : `Your rent looks fair — here's how to stay protected`;
+
+  // Card 1 subtitle (above market)
+  const card1Subtitle = compMedianRent && savings && savings > 0
+    ? `Based on ${bedroomLabel(bedrooms)} in ${city}, comparable units start around $${fmt(compMedianRent)}/mo — $${fmt(savings)}/mo less than your proposed rent.`
+    : `A local rental specialist can show you ${bedroomLabel(bedrooms)} near you in ${city} — free, no obligation.`;
+
+  // Card 3 subtitle (mortgage)
+  const card3Subtitle = `At your current rent of $${fmt(currentRent)}/mo, you may qualify for a $${fmt(estimatedHomePrice)} home. See your options.`;
 
   return (
     <>
       <motion.section id="section-next-steps" {...fade(0.22)} className="pt-10 pb-6">
         {/* Divider + heading */}
         <div className="border-t border-border/60 pt-8 mb-8">
-          <h2 className="text-xl font-semibold text-foreground tracking-tight">Your Next Steps</h2>
-          <p className="text-sm text-muted-foreground mt-1">Based on your results, here's what we recommend</p>
+          <h2 className="text-xl font-semibold text-foreground tracking-tight">{heading}</h2>
         </div>
 
         {/* Cards */}
@@ -58,10 +86,13 @@ const NextStepsSection = ({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Primary — Agent match */}
             <div className={`${cardBase} ${cardBorder} ${cardShadow} p-6 border-l-[3px] border-l-primary`}>
+              <span className="inline-block text-[10px] font-semibold uppercase tracking-wider text-primary bg-primary/10 rounded-full px-2.5 py-0.5 mb-3 w-fit">
+                Recommended for you
+              </span>
               <IconWrap><Building className="w-5 h-5 text-primary" /></IconWrap>
               <h3 className="text-lg font-semibold text-foreground mb-1">See Apartments in Your Budget</h3>
               <p className="text-sm text-muted-foreground leading-relaxed mb-5 flex-1">
-                A local rental specialist can show you places near you — free, no obligation.
+                {card1Subtitle}
               </p>
               <button className={primaryBtn} onClick={() => { setModalOpen(true); trackEvent('agent_card_clicked', { zip }); }}>
                 Get Matched Free <ArrowRight className="w-3.5 h-3.5" />
@@ -73,7 +104,7 @@ const NextStepsSection = ({
               <IconWrap><Truck className="w-5 h-5 text-primary" /></IconWrap>
               <h3 className="text-lg font-semibold text-foreground mb-1">Get Free Moving Quotes</h3>
               <p className="text-sm text-muted-foreground leading-relaxed mb-5 flex-1">
-                Compare licensed movers near you. Takes 30 seconds.
+                The average local move in {state} costs $1,200–$2,500. Compare quotes before you commit.
               </p>
               <a
                 href="https://renewalreply.com/moving"
@@ -91,7 +122,7 @@ const NextStepsSection = ({
               <IconWrap><Key className="w-5 h-5 text-primary" /></IconWrap>
               <h3 className="text-lg font-semibold text-foreground mb-1">Could You Buy Instead?</h3>
               <p className="text-sm text-muted-foreground leading-relaxed mb-5 flex-1">
-                See today's mortgage rates and what you could afford.
+                {card3Subtitle}
               </p>
               <a
                 href="https://renewalreply.com/mortgage"
@@ -108,6 +139,9 @@ const NextStepsSection = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Insurance */}
             <div className={`${cardBase} ${cardBorder} ${cardShadow} p-6 border-l-[3px] border-l-primary`}>
+              <span className="inline-block text-[10px] font-semibold uppercase tracking-wider text-primary bg-primary/10 rounded-full px-2.5 py-0.5 mb-3 w-fit">
+                Recommended for you
+              </span>
               <IconWrap><Shield className="w-5 h-5 text-primary" /></IconWrap>
               <h3 className="text-lg font-semibold text-foreground mb-1">Protect Your Home</h3>
               <p className="text-sm text-muted-foreground leading-relaxed mb-5 flex-1">
@@ -144,9 +178,11 @@ const NextStepsSection = ({
           </div>
         )}
 
-        {/* Bottom banner */}
+        {/* Bottom banner — personalized */}
         <div className="mt-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 rounded-lg px-4 py-3" style={{ background: 'hsl(var(--secondary))' }}>
-          <span className="text-[13px] text-muted-foreground">Thinking about buying instead of renting?</span>
+          <span className="text-[13px] text-muted-foreground">
+            At ${fmt(currentRent)}/mo in rent, you might be able to own.
+          </span>
           <a
             href="https://renewalreply.com/mortgage"
             target="_blank"

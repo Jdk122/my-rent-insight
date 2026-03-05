@@ -833,6 +833,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             currentRent={formData.currentRent}
             proposedRent={newRent}
             propertyType={propertyData?.propertyType}
+            city={city}
+            state={rentData.state}
+            compMedianRent={medianCompRent}
+            dollarOverpayment={excessAnnual > 0 ? Math.round(excessAnnual / 12) : null}
+            brLabel={brLabel}
             onShareClick={() => {
               document.getElementById('section-share')?.scrollIntoView({ behavior: 'smooth' });
             }}
