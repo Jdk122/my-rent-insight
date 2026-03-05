@@ -27,6 +27,9 @@ serve(async (req) => {
       url.searchParams.set("input", input);
       url.searchParams.set("types", "address");
       url.searchParams.set("components", "country:us");
+      // Bias toward major US population centers (NYC area) to improve relevance
+      url.searchParams.set("location", "40.7128,-74.0060");
+      url.searchParams.set("radius", "50000");
       url.searchParams.set("key", apiKey);
 
       const res = await fetch(url.toString());

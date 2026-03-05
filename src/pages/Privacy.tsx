@@ -57,11 +57,13 @@ const Privacy = () => {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-foreground mb-2">Information We Collect Automatically</h2>
+           <h2 className="text-lg font-semibold text-foreground mb-2">Information We Collect Automatically</h2>
             <p>
               We use Google Analytics 4 to collect anonymized usage data such as pages visited, time on site,
-              and general tool usage patterns. We use cookies to enable this functionality. We do not use
-              advertising pixels or cross-site tracking.
+              and general tool usage patterns. We also use Google Ads conversion tracking to measure the
+              effectiveness of our advertising campaigns — this tells us when someone who clicked one of
+              our ads uses the tool, but does not share your personal information with advertisers.
+              We use cookies to enable these functions.
             </p>
           </section>
 
@@ -100,7 +102,7 @@ const Privacy = () => {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-foreground mb-2">Your Choices</h2>
+           <h2 className="text-lg font-semibold text-foreground mb-2">Your Choices</h2>
             <ul className="list-disc pl-5 space-y-1">
               <li>You can use the rent check tool without providing any personal contact information.</li>
               <li>If you provide your email, every message includes a one-click unsubscribe link.</li>
@@ -109,6 +111,15 @@ const Privacy = () => {
               </li>
               <li>You can disable analytics cookies through your browser settings.</li>
             </ul>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-foreground mb-2">Cookies</h2>
+            <p>
+              We use essential cookies for site functionality, analytics cookies (GA4) for usage data,
+              and Google Ads conversion tracking cookies to measure advertising effectiveness.
+              No personal information is shared with advertisers.
+            </p>
           </section>
 
           <section>

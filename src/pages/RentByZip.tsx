@@ -370,6 +370,11 @@ const RentByZip = () => {
           <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Federal Rent Benchmarks for {zip}</h2>
           <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
             HUD Fair Market Rents represent the 40th percentile of area rents, used as a federal benchmark for housing programs. They're published annually and provide a consistent baseline for comparison.
+            {raw.fs !== 'safmr' && raw.m && (
+              <span className="block mt-1 text-xs text-muted-foreground/80">
+                Note: These values represent the HUD metro-area benchmark for the {raw.m} area, not zip-specific rates.
+              </span>
+            )}
           </p>
           <div className="rounded-lg border border-border overflow-hidden">
             <Table>

@@ -466,6 +466,12 @@ const RentByCity = () => {
           ) : (
             /* ── Simple list mode: all zips share same FMR, no zip-level trends ── */
             <div className="rounded-lg border border-border p-4 bg-card">
+              {/* Note about uniform SAFMR */}
+              <div className="mb-3 px-3 py-2.5 rounded-md bg-muted/50 border border-border/60">
+                <p className="text-[12px] text-muted-foreground leading-relaxed">
+                  HUD publishes a single Fair Market Rent for the entire {data.zips[0]?.raw.m || city} metro area. For zip-level variation, the tool uses additional data sources including real-time comparable listings and local market indices.
+                </p>
+              </div>
               <div className="flex flex-wrap gap-2">
                 {displayedZips.map(({ zip }) => (
                   <Link

@@ -242,6 +242,13 @@ const SharedReport = () => {
           </ul>
         </div>
 
+        {/* Disclaimer */}
+        <div className="rounded-lg border border-border/60 bg-muted/30 px-5 py-4 mb-8">
+          <p className="text-[11px] text-muted-foreground leading-relaxed">
+            This analysis is automated and based on aggregated market data from public sources. It does not constitute a legal determination about the fairness or legality of any specific rent increase. For legal questions, consult a tenant rights attorney.
+          </p>
+        </div>
+
         {/* CTA */}
         <div className="text-center py-10 border-t border-border">
           <p className="text-lg font-display text-foreground tracking-tight mb-2">Facing a rent increase?</p>
