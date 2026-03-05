@@ -94,10 +94,27 @@ serve(async (req) => {
 
     const data = await response.json();
 
+    // Extract subject property type or infer from closest comps
+    let propertyType: string | null = data.propertyType ?? null;
+    if (!propertyType && data.comparables?.length) {
+      const closeComps = (data.comparables as any[])
+        .filter((c: any) => c.distance != null && c.distance <= 0.25)
+        .slice(0, 3);
+      if (closeComps.length >= 2) {
+        const counts: Record<string, number> = {};
+        for (const c of closeComps) {
+          const pt = c.propertyType || "Unknown";
+          counts[pt] = (counts[pt] || 0) + 1;
+        }
+        propertyType = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+      }
+    }
+
     const result = {
       rentEstimate: data.rent ?? data.rentRangeLow ?? null,
       rentRangeLow: data.rentRangeLow ?? null,
       rentRangeHigh: data.rentRangeHigh ?? null,
+      propertyType,
       comparables: (data.comparables || []).slice(0, 5).map((comp: any) => ({
         formattedAddress: comp.formattedAddress || comp.address || "Unknown",
         rent: comp.price ?? comp.lastSeenPrice ?? null,

@@ -239,6 +239,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
     const utm = getUtmParams();
 
+    const inferredPropertyType = rentcast.data?.propertyType ?? null;
+
     supabase.from('analyses').insert({
       address: formData.fullAddress || null,
       city: rentData.city,
@@ -271,9 +273,20 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       results_shared: false,
       letter_tone: null,
       rent_stabilized: null,
+      property_type: inferredPropertyType,
     } as any).select('id').single().then(({ data }) => {
       if (data?.id) setAnalysisId(data.id);
     });
+
+    // Fire GA4 property type event
+    if (inferredPropertyType) {
+      trackEvent('user_property_type', {
+        property_type: inferredPropertyType,
+        zip_code: rentData.zip,
+        bedrooms: formData.bedrooms === 'studio' ? 0 : formData.bedrooms === 'oneBr' ? 1 : formData.bedrooms === 'twoBr' ? 2 : formData.bedrooms === 'threeBr' ? 3 : 4,
+        verdict: verdictLabel,
+      });
+    }
 
     return () => { window.removeEventListener('beforeunload', handleUnload); sectionObserver.disconnect(); };
   }, []); // intentionally run once on mount
@@ -657,7 +670,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               {/* Card A: Market Context */}
               <motion.div {...fade(0.08)} className="evidence-card">
                 <h3 className="evidence-card-header">What the Market Says</h3>
-                <p className="text-xs text-muted-foreground mb-4">{city}, {rentData.state} — {bedroomLabels[formData.bedrooms]}</p>
+                <p className="text-xs text-muted-foreground mb-4">
+                  {city}, {rentData.state} — {bedroomLabels[formData.bedrooms]}
+                  {rentcast.data?.propertyType && <> · {rentcast.data.propertyType}</>}
+                </p>
 
                 <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
                   <span className="context-label">{city} rents this year</span>

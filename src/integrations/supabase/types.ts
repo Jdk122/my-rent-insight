@@ -38,6 +38,7 @@ export type Database = {
           letter_tone: string | null
           market_trend_pct: number | null
           markup_multiplier: number | null
+          property_type: string | null
           proposed_rent: number | null
           rent_stabilized: boolean | null
           results_shared: boolean | null
@@ -72,6 +73,7 @@ export type Database = {
           letter_tone?: string | null
           market_trend_pct?: number | null
           markup_multiplier?: number | null
+          property_type?: string | null
           proposed_rent?: number | null
           rent_stabilized?: boolean | null
           results_shared?: boolean | null
@@ -106,6 +108,7 @@ export type Database = {
           letter_tone?: string | null
           market_trend_pct?: number | null
           markup_multiplier?: number | null
+          property_type?: string | null
           proposed_rent?: number | null
           rent_stabilized?: boolean | null
           results_shared?: boolean | null
