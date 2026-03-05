@@ -400,14 +400,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   let rowIdx = 0;
 
-  // Determine if rent regulation warning should show
-  const showRentRegulationWarning = hasRentControl || isNycZip(rentData.zip) || !!hcrLookup.result?.found;
 
   return (
     <>
       <SectionNav sections={navSections} />
 
-      {/* Rent regulation warning removed — replaced by inline note below verdict */}
+      
       {/* ━━━ ACT 1: THE VERDICT — full-width warm hero zone ━━━ */}
       <div
         className="w-full"
@@ -521,17 +519,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <>At ${fmt(newRent)}/mo, you're getting a competitive deal compared to similar units in {city}.</>
                           )}
                         </p>
-                        {isNycZip(rentData.zip) && hasIncrease && (
-                          <p className="text-xs text-muted-foreground mt-2">
-                            Live in a rent-stabilized apartment? Your increase may be legally capped —{' '}
-                            <button
-                              onClick={() => document.getElementById('section-rights')?.scrollIntoView({ behavior: 'smooth' })}
-                              className="underline hover:text-foreground transition-colors"
-                            >
-                              check your rights below
-                            </button>.
-                          </p>
-                        )}
                       </div>
                     }
                   />
