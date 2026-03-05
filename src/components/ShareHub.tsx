@@ -62,7 +62,7 @@ const ShareHub = ({
       const { error } = await supabase.from('shared_reports' as any).insert({
         short_id: shortId,
         zip_code: reportPayload.zip,
-        address: null,
+        address: reportPayload.address,
         bedrooms: reportPayload.bedrooms,
         current_rent: reportPayload.currentRent,
         proposed_increase: reportPayload.proposedIncrease,
