@@ -58,6 +58,78 @@ export function assessConfidence({
   return { level: 'limited', sources, missingSources: missing, note };
 }
 
+// ─── Furnished Unit Detection ───
+
+function isFurnished(comp: RentcastComparable): boolean {
+  const text = (comp.formattedAddress || '').toLowerCase();
+  return text.includes('furnished');
+}
+
+export interface FurnishedFilterResult {
+  /** Comps used for median / analysis (excludes furnished) */
+  unfurnished: RentcastComparable[];
+  /** Furnished comps kept for display with a tag */
+  furnished: RentcastComparable[];
+}
+
+export function filterFurnished(comps: RentcastComparable[]): FurnishedFilterResult {
+  const unfurnished: RentcastComparable[] = [];
+  const furnished: RentcastComparable[] = [];
+  for (const c of comps) {
+    if (isFurnished(c)) furnished.push(c);
+    else unfurnished.push(c);
+  }
+  return { unfurnished, furnished };
+}
+
+// ─── Address Deduplication ───
+
+function normalizeAddress(addr: string): string {
+  return addr
+    .trim()
+    .toLowerCase()
+    .replace(/\bapt\.?\s*/gi, '')
+    .replace(/\bunit\.?\s*/gi, '')
+    .replace(/\bste\.?\s*/gi, '')
+    .replace(/\bsuite\.?\s*/gi, '')
+    .replace(/\b#\s*\S+/g, '')
+    .replace(/\bstreet\b/g, 'st')
+    .replace(/\bavenue\b/g, 'ave')
+    .replace(/\bboulevard\b/g, 'blvd')
+    .replace(/\bdrive\b/g, 'dr')
+    .replace(/\broad\b/g, 'rd')
+    .replace(/\blane\b/g, 'ln')
+    .replace(/\bcourt\b/g, 'ct')
+    .replace(/\bplace\b/g, 'pl')
+    .replace(/\bcircle\b/g, 'cir')
+    .replace(/\s+/g, ' ')
+    .replace(/,\s*/g, ', ')
+    .trim();
+}
+
+function fieldCount(comp: RentcastComparable): number {
+  let count = 0;
+  if (comp.rent != null) count++;
+  if (comp.bedrooms != null) count++;
+  if (comp.bathrooms != null) count++;
+  if (comp.squareFootage != null) count++;
+  if (comp.distance != null) count++;
+  if (comp.correlation != null) count++;
+  return count;
+}
+
+export function deduplicateComps(comps: RentcastComparable[]): RentcastComparable[] {
+  const map = new Map<string, RentcastComparable>();
+  for (const comp of comps) {
+    const key = normalizeAddress(comp.formattedAddress);
+    const existing = map.get(key);
+    if (!existing || fieldCount(comp) > fieldCount(existing)) {
+      map.set(key, comp);
+    }
+  }
+  return Array.from(map.values());
+}
+
 // ─── Outlier Detection (IQR method, 5+ comps minimum) ───
 // Also filters by distance (<=3 mi) and uses correlation-weighted median
 

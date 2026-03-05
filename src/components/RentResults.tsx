@@ -21,7 +21,7 @@ import SectionNav from './SectionNav';
 import { trackEvent } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import DataConfidenceBadge from './DataConfidenceBadge';
-import { assessConfidence, detectOutliers, checkCrossSourceConsistency, getCompRadius } from '@/lib/dataQuality';
+import { assessConfidence, detectOutliers, checkCrossSourceConsistency, getCompRadius, filterFurnished, deduplicateComps } from '@/lib/dataQuality';
 import { calculateFairnessScore, scoreToVerdict, FairnessScoreResult } from '@/lib/fairnessScore';
 import FairnessScoreGauge, { ComponentSourceInfo } from './FairnessScoreGauge';
 import MarketSnapshot from './MarketSnapshot';
@@ -111,11 +111,19 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const hcrLookup = useHcrLookup(formData.fullAddress, rentData.zip);
   const hasRentcastComps = rentcast.data && rentcast.data.comparables.length > 0;
 
+  // ━━━ Preprocessing: deduplicate & filter furnished ━━━
+  const { cleanedComps, furnishedComps } = useMemo(() => {
+    if (!rentcast.data?.comparables) return { cleanedComps: [], furnishedComps: [] };
+    const deduped = deduplicateComps(rentcast.data.comparables);
+    const { unfurnished, furnished } = filterFurnished(deduped);
+    return { cleanedComps: unfurnished, furnishedComps: furnished };
+  }, [rentcast.data]);
+
   // ━━━ Outlier detection ━━━
   const outlierResult = useMemo(() => {
-    if (!rentcast.data?.comparables) return null;
-    return detectOutliers(rentcast.data.comparables);
-  }, [rentcast.data]);
+    if (cleanedComps.length === 0) return null;
+    return detectOutliers(cleanedComps);
+  }, [cleanedComps]);
 
   const medianCompRent = useMemo<number | null>(() => {
     if (outlierResult && outlierResult.filtered.length >= 2) {
@@ -781,8 +789,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
             <CompsList
               proposedRent={newRent}
-              comparables={outlierResult?.filtered ?? rentcast.data!.comparables}
+              comparables={outlierResult?.filtered ?? cleanedComps}
+              furnishedComps={furnishedComps}
               medianCompRent={medianCompRent}
+              hudFmr={rentData.fmr}
               brLabel={brLabel}
               city={city}
               state={rentData.state}
