@@ -79,7 +79,7 @@ export async function getCityData(stateSlug: string, citySlug: string): Promise<
 
   if (zips.length === 0) return null;
 
-  const cityName = zips[0].raw.c;
+  const cityName = (zips[0].raw.c || '').replace(/^Zcta\s+/i, '');
   const avgFmr = [0, 1, 2, 3, 4].map(i => avg(zips.map(z => z.raw.f[i])));
 
   // Census median rent (average of available)
@@ -118,7 +118,7 @@ export async function getStateData(stateSlug: string): Promise<StateData | null>
 
   for (const [zip, raw] of Object.entries(allData)) {
     if (raw.s !== stateAbbr) continue;
-    const cityName = raw.c || 'Unknown';
+    const cityName = (raw.c || 'Unknown').replace(/^Zcta\s+/i, '');
     if (!cityMap.has(cityName)) cityMap.set(cityName, []);
     cityMap.get(cityName)!.push({ zip, raw });
   }
@@ -176,7 +176,7 @@ export async function getNearbyCities(city: string, state: string, metro: string
 
   for (const [zip, raw] of Object.entries(allData)) {
     if (raw.m !== metro) continue;
-    const cityName = raw.c || 'Unknown';
+    const cityName = (raw.c || 'Unknown').replace(/^Zcta\s+/i, '');
     const key = `${cityName}|${raw.s}`;
     if (cityName.toLowerCase() === city.toLowerCase() && raw.s === state) continue;
     if (!cityMap.has(key)) cityMap.set(key, []);

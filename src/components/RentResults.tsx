@@ -519,6 +519,17 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <>At ${fmt(newRent)}/mo, you're getting a competitive deal compared to similar units in {city}.</>
                           )}
                         </p>
+                        {isNycZip(rentData.zip) && hasIncrease && (
+                          <p className="text-xs text-muted-foreground/70 mt-2">
+                            Live in a rent-stabilized apartment? Your increase may be legally capped —{' '}
+                            <button
+                              onClick={() => document.getElementById('section-rights')?.scrollIntoView({ behavior: 'smooth' })}
+                              className="underline hover:text-muted-foreground transition-colors"
+                            >
+                              check your rights below
+                            </button>.
+                          </p>
+                        )}
                       </div>
                     }
                   />
