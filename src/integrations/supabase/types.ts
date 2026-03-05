@@ -23,19 +23,30 @@ export type Database = {
           comp_median_rent: number | null
           comps_count: number | null
           comps_position: string | null
+          confidence_level: string | null
+          counter_offer_high: number | null
+          counter_offer_low: number | null
           created_at: string
           current_rent: number | null
+          dollar_overpayment: number | null
           fair_counter_offer: string | null
           fairness_score: number | null
           hud_fmr_value: number | null
           id: string
           increase_pct: number | null
           letter_generated: boolean | null
+          letter_tone: string | null
           market_trend_pct: number | null
           markup_multiplier: number | null
           proposed_rent: number | null
+          rent_stabilized: boolean | null
+          results_shared: boolean | null
           sale_data_found: boolean | null
           state: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          verdict_label: string | null
           zip: string | null
         }
         Insert: {
@@ -46,19 +57,30 @@ export type Database = {
           comp_median_rent?: number | null
           comps_count?: number | null
           comps_position?: string | null
+          confidence_level?: string | null
+          counter_offer_high?: number | null
+          counter_offer_low?: number | null
           created_at?: string
           current_rent?: number | null
+          dollar_overpayment?: number | null
           fair_counter_offer?: string | null
           fairness_score?: number | null
           hud_fmr_value?: number | null
           id?: string
           increase_pct?: number | null
           letter_generated?: boolean | null
+          letter_tone?: string | null
           market_trend_pct?: number | null
           markup_multiplier?: number | null
           proposed_rent?: number | null
+          rent_stabilized?: boolean | null
+          results_shared?: boolean | null
           sale_data_found?: boolean | null
           state?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          verdict_label?: string | null
           zip?: string | null
         }
         Update: {
@@ -69,19 +91,30 @@ export type Database = {
           comp_median_rent?: number | null
           comps_count?: number | null
           comps_position?: string | null
+          confidence_level?: string | null
+          counter_offer_high?: number | null
+          counter_offer_low?: number | null
           created_at?: string
           current_rent?: number | null
+          dollar_overpayment?: number | null
           fair_counter_offer?: string | null
           fairness_score?: number | null
           hud_fmr_value?: number | null
           id?: string
           increase_pct?: number | null
           letter_generated?: boolean | null
+          letter_tone?: string | null
           market_trend_pct?: number | null
           markup_multiplier?: number | null
           proposed_rent?: number | null
+          rent_stabilized?: boolean | null
+          results_shared?: boolean | null
           sale_data_found?: boolean | null
           state?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          verdict_label?: string | null
           zip?: string | null
         }
         Relationships: []

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { RentFormData } from './RentForm';
@@ -15,9 +15,11 @@ import TurnoverCostSection from './TurnoverCostSection';
 import { getRentControlByStateCity, getApplicableCap } from '@/data/rentControlData';
 import { useRentcast } from '@/hooks/useRentcast';
 import { useRentcastMarket } from '@/hooks/useRentcastMarket';
+import { useHcrLookup } from '@/hooks/useHcrLookup';
 import { supabase } from '@/integrations/supabase/client';
 import SectionNav from './SectionNav';
 import { trackEvent } from '@/lib/analytics';
+import { getUtmParams } from '@/lib/utm';
 import DataConfidenceBadge from './DataConfidenceBadge';
 import { assessConfidence, detectOutliers, checkCrossSourceConsistency, getCompRadius } from '@/lib/dataQuality';
 import { calculateFairnessScore, scoreToVerdict, FairnessScoreResult } from '@/lib/fairnessScore';
@@ -105,6 +107,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   const rentcast = useRentcast(rentData.zip, formData.bedrooms, formData.fullAddress);
   const rcMarket = useRentcastMarket(rentData.zip, formData.bedrooms);
+  const hcrLookup = useHcrLookup(formData.fullAddress, rentData.zip);
   const hasRentcastComps = rentcast.data && rentcast.data.comparables.length > 0;
 
   // ━━━ Outlier detection ━━━
@@ -230,6 +233,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       ? (calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}`)
       : null;
 
+    // Dollar overpayment: difference between proposed rent and the best benchmark
+    const benchmark = medianCompRent ?? rentData.fmr;
+    const dollarOverpayment = hasIncrease && benchmark ? Math.max(0, Math.round(newRent - benchmark)) : null;
+
+    const utm = getUtmParams();
+
     supabase.from('analyses').insert({
       address: formData.fullAddress || null,
       city: rentData.city,
@@ -250,12 +259,48 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       fairness_score: fairnessScore?.total ?? null,
       comp_median_rent: medianCompRent ?? null,
       hud_fmr_value: rentData.fmr ?? null,
+      // New enrichment fields
+      dollar_overpayment: dollarOverpayment,
+      counter_offer_low: calc?.counterLow ?? null,
+      counter_offer_high: calc?.counterHigh ?? null,
+      verdict_label: fairnessScore?.tierLabel ?? null,
+      utm_source: utm.utm_source || null,
+      utm_medium: utm.utm_medium || null,
+      utm_campaign: utm.utm_campaign || null,
+      confidence_level: confidence.level ?? null,
+      results_shared: false,
+      letter_tone: null,
+      rent_stabilized: null,
     } as any).select('id').single().then(({ data }) => {
       if (data?.id) setAnalysisId(data.id);
     });
 
     return () => { window.removeEventListener('beforeunload', handleUnload); sectionObserver.disconnect(); };
   }, []); // intentionally run once on mount
+
+  // ━━━ Lazy-update analysis record for async events ━━━
+  const updateAnalysis = useCallback((fields: Record<string, any>) => {
+    if (!analysisId) return;
+    supabase.from('analyses').update(fields as any).eq('id', analysisId).then(() => {});
+  }, [analysisId]);
+
+  // Update rent_stabilized when HCR lookup completes
+  useEffect(() => {
+    if (hcrLookup.result && analysisId) {
+      const stabilized = hcrLookup.result.found && hcrLookup.result.stabilized === true;
+      updateAnalysis({ rent_stabilized: stabilized });
+    }
+  }, [hcrLookup.result, analysisId, updateAnalysis]);
+
+  // Callback for when letter is generated (called from NegotiationLetter)
+  const handleLetterGenerated = useCallback((tone?: string) => {
+    updateAnalysis({ letter_generated: true, letter_tone: tone || 'default' });
+  }, [updateAnalysis]);
+
+  // Callback for when results are shared
+  const handleResultsShared = useCallback(() => {
+    updateAnalysis({ results_shared: true });
+  }, [updateAnalysis]);
 
   const leadContext = useMemo(() => ({
     analysisId,
@@ -800,6 +845,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     tierLabel={fairnessScore?.tierLabel ?? null}
                     maxCompDistance={compRadius.maxDistance}
                     momentumDirection={rentData.zillowDirection || (rentData.hvd ? rentData.hvd : null)}
+                    onLetterGenerated={handleLetterGenerated}
                   />
                 </LetterGate>
               </motion.section>
@@ -812,7 +858,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 <div className="flex justify-center">
                   <ShareHub
                     reportPayload={shareReportPayload}
-                    onLinkGenerated={setReportUrl}
+                    onLinkGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
                     analysisId={analysisId}
                     leadEmail={capturedEmail || undefined}
                     zipCode={rentData.zip}
@@ -915,7 +961,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               <div className="flex justify-center">
                 <ShareHub
                   reportPayload={shareReportPayload}
-                  onLinkGenerated={setReportUrl}
+                  onLinkGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
                   analysisId={analysisId}
                   leadEmail={capturedEmail || undefined}
                   zipCode={rentData.zip}
