@@ -41,6 +41,7 @@ interface NegotiationLetterProps {
   tierLabel?: string;
   maxCompDistance?: number | null;
   momentumDirection?: string | null;
+  onLetterGenerated?: () => void;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -141,6 +142,7 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
     rcMedianRent, rcTotalListings, rcAvgDaysOnMarket, alVacancy, f50Value,
     fairnessScore, tierLabel,
     maxCompDistance, momentumDirection,
+    onLetterGenerated,
   } = props;
 
   const [aiLetter, setAiLetter] = useState<string | null>(null);
@@ -192,6 +194,7 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
       if (data?.letter) {
         setAiLetter(data.letter);
         trackEvent('ai_letter_generated', { zip });
+        onLetterGenerated?.();
       } else {
         throw new Error('No letter returned');
       }
