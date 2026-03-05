@@ -90,10 +90,17 @@ const NextStepsSection = ({
                 Recommended for you
               </span>
               <IconWrap><Building className="w-5 h-5 text-primary" /></IconWrap>
-              <h3 className="text-lg font-semibold text-foreground mb-1">See Apartments in Your Budget</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-5 flex-1">
-                {card1Subtitle}
-              </p>
+              <h3 className="text-lg font-semibold text-foreground mb-2">See Apartments in Your Budget</h3>
+              {compMedianRent && savings && savings > 0 ? (
+                <div className="flex items-baseline gap-1.5 mb-4 flex-1">
+                  <span className="text-2xl font-bold text-primary">${fmt(compMedianRent)}</span>
+                  <span className="text-sm text-muted-foreground">/mo median for {bedroomLabel(bedrooms)} in {city}</span>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground leading-relaxed mb-4 flex-1">
+                  Find {bedroomLabel(bedrooms)} near you in {city} — free, no obligation.
+                </p>
+              )}
               <button className={primaryBtn} onClick={() => { setModalOpen(true); trackEvent('agent_card_clicked', { zip }); }}>
                 Get Matched Free <ArrowRight className="w-3.5 h-3.5" />
               </button>
@@ -102,10 +109,11 @@ const NextStepsSection = ({
             {/* Moving quotes */}
             <div className={`${cardBase} ${cardBorder} ${cardShadow} p-6`}>
               <IconWrap><Truck className="w-5 h-5 text-primary" /></IconWrap>
-              <h3 className="text-lg font-semibold text-foreground mb-1">Get Free Moving Quotes</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-5 flex-1">
-                The average local move in {state} costs $1,200–$2,500. Compare quotes before you commit.
-              </p>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Get Free Moving Quotes</h3>
+              <div className="flex items-baseline gap-1.5 mb-4 flex-1">
+                <span className="text-2xl font-bold text-foreground">$1,200–$2,500</span>
+                <span className="text-sm text-muted-foreground">avg in {state}</span>
+              </div>
               <a
                 href="https://www.moving.com/movers/quotes/"
                 target="_blank"
@@ -120,10 +128,11 @@ const NextStepsSection = ({
             {/* Mortgage */}
             <div className={`${cardBase} ${cardBorder} ${cardShadow} p-6`}>
               <IconWrap><Key className="w-5 h-5 text-primary" /></IconWrap>
-              <h3 className="text-lg font-semibold text-foreground mb-1">Could You Buy Instead?</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-5 flex-1">
-                {card3Subtitle}
-              </p>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Could You Buy Instead?</h3>
+              <div className="flex items-baseline gap-1.5 mb-4 flex-1">
+                <span className="text-2xl font-bold text-foreground">${fmt(estimatedHomePrice)}</span>
+                <span className="text-sm text-muted-foreground">est. home you could afford</span>
+              </div>
               <a
                 href="https://www.bankrate.com/mortgages/mortgage-calculator/"
                 target="_blank"
