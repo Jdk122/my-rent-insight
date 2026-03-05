@@ -118,7 +118,7 @@ const Index = () => {
             "@type": "WebApplication",
             "name": "RenewalReply Rent Increase Tool",
             "url": "https://www.renewalreply.com",
-            "description": "Free tool to check if your rent increase is fair using HUD, Census, and Zillow data for 38,000+ US zip codes.",
+            "description": "Free tool to check if your rent increase is fair using HUD Fair Market Rents, Zillow rent trends, and real nearby listings for 38,000+ US zip codes.",
             "applicationCategory": "FinanceApplication",
             "operatingSystem": "Web",
             "browserRequirements": "Requires JavaScript",
@@ -127,7 +127,7 @@ const Index = () => {
               "Compare rent increases to HUD Fair Market Rent",
               "Generate free negotiation letter",
               "Coverage for 38,000+ US zip codes",
-              "Uses HUD SAFMR, Zillow ZORI, and Census data"
+              "Uses HUD SAFMR, Zillow ZORI, and real comparable listings"
             ],
             "author": { "@type": "Organization", "name": "RenewalReply" }
           },
@@ -140,7 +140,7 @@ const Index = () => {
                 "name": "How do I know if my rent increase is fair?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Compare your proposed rent to the HUD Fair Market Rent for your zip code. RenewalReply checks your rent increase against HUD SAFMR data, Zillow rent indices, and Census data to determine if your increase is in line with local market conditions."
+                  "text": "Compare your proposed rent to the HUD Fair Market Rent for your zip code. RenewalReply checks your rent increase against HUD Fair Market Rent data, Zillow rent trends, and real comparable listings near your address."
                 }
               },
               {
@@ -148,7 +148,7 @@ const Index = () => {
                 "name": "What data does RenewalReply use?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "RenewalReply uses HUD Small Area Fair Market Rents (SAFMR) for FY2026, Zillow Observed Rent Index (ZORI), Census American Community Survey (ACS) 2023 data, and FRED mortgage rate data to give you a complete picture of your local rental market."
+                  "text": "RenewalReply uses HUD Small Area Fair Market Rents (SAFMR) for FY2026, Zillow Observed Rent Index (ZORI), Apartment List rent trends, and real-time comparable listings via Rentcast to give you a complete picture of your local rental market."
                 }
               },
               {
