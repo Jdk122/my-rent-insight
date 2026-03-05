@@ -23,19 +23,26 @@ interface NextStepsSectionProps {
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
-const bedroomLabel = (n: number) => n === 0 ? 'studios' : n === 1 ? '1-bedrooms' : `${n}-bedrooms`;
+const bedroomLabel = (n: number) => (n === 0 ? 'studios' : n === 1 ? '1-bedrooms' : `${n}-bedrooms`);
 
 const cardBase =
-  'group relative overflow-hidden rounded-2xl border border-border bg-card p-6 flex flex-col min-h-[238px] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md';
+  'relative rounded-xl border border-border bg-card p-6 flex flex-col min-h-[250px] shadow-sm transition-shadow duration-200 hover:shadow-md';
 
 const primaryBtn =
-  'inline-flex items-center justify-center gap-1.5 h-10 px-5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:brightness-105 transition-all whitespace-nowrap';
+  'inline-flex items-center justify-center gap-1.5 h-10 w-full rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:brightness-105 transition-all whitespace-nowrap';
 const ghostBtn =
-  'inline-flex items-center justify-center gap-1.5 h-10 px-5 rounded-lg border border-primary/30 text-primary text-sm font-medium hover:bg-primary/5 transition-all whitespace-nowrap';
+  'inline-flex items-center justify-center gap-1.5 h-10 w-full rounded-lg border border-primary/30 text-primary text-sm font-medium hover:bg-primary/5 transition-all whitespace-nowrap';
 
 const IconWrap = ({ children }: { children: React.ReactNode }) => (
-  <div className="w-10 h-10 rounded-xl bg-secondary text-primary flex items-center justify-center mb-4 shrink-0 border border-border/70">
+  <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center mb-4 shrink-0 border border-border/80 text-primary">
     {children}
+  </div>
+);
+
+const StatRow = ({ label, value, valueTone = 'default' }: { label: string; value: string; valueTone?: 'default' | 'primary' }) => (
+  <div className="flex items-center justify-between rounded-lg border border-border bg-secondary/40 px-3 py-2">
+    <span className="text-xs text-muted-foreground">{label}</span>
+    <span className={valueTone === 'primary' ? 'text-sm font-semibold text-primary' : 'text-sm font-semibold text-foreground'}>{value}</span>
   </div>
 );
 
@@ -46,9 +53,20 @@ const fade = (delay: number) => ({
 });
 
 const NextStepsSection = ({
-  isAboveMarket, fairnessScore, verdictLabel, zip, bedrooms,
-  currentRent, proposedRent, propertyType, city, state,
-  compMedianRent, dollarOverpayment, brLabel, onShareClick,
+  isAboveMarket,
+  fairnessScore,
+  verdictLabel,
+  zip,
+  bedrooms,
+  currentRent,
+  proposedRent,
+  propertyType,
+  city,
+  state,
+  compMedianRent,
+  dollarOverpayment,
+  brLabel,
+  onShareClick,
 }: NextStepsSectionProps) => {
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -71,37 +89,42 @@ const NextStepsSection = ({
 
         {isAboveMarket ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className={`${cardBase} bg-gradient-to-b from-card to-secondary/20 border-l-[3px] border-l-primary`}>
+            <div className={`${cardBase} border-l-[3px] border-l-primary`}>
               <span className="inline-block text-[10px] font-semibold uppercase tracking-wider text-primary bg-primary/10 rounded-full px-2.5 py-0.5 mb-3 w-fit">
                 Recommended for you
               </span>
-              <IconWrap><Building className="w-5 h-5" /></IconWrap>
-              <h3 className="text-[19px] font-semibold text-foreground leading-tight mb-2">See Apartments in Your Budget</h3>
-              {compMedianRent && savings && savings > 0 ? (
-                <div className="space-y-2 mb-5 flex-1">
-                  <p className="text-sm text-muted-foreground">Median {bedroomLabel(bedrooms)} in {city}</p>
-                  <div className="flex items-center justify-between rounded-lg border border-border bg-background px-3 py-2.5">
-                    <span className="text-lg font-semibold text-foreground">${fmt(compMedianRent)}/mo</span>
-                    <span className="text-xs font-medium text-primary">~${fmt(savings)} less</span>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground leading-relaxed mb-5 flex-1">
-                  Get hand-picked {bedroomLabel(bedrooms)} in {city} with no cost and no obligation.
-                </p>
-              )}
-              <button className={primaryBtn} onClick={() => { setModalOpen(true); trackEvent('agent_card_clicked', { zip }); }}>
+              <IconWrap>
+                <Building className="w-5 h-5" />
+              </IconWrap>
+              <h3 className="text-lg font-semibold text-foreground mb-2">See Apartments in Your Budget</h3>
+              <p className="text-sm text-muted-foreground mb-4">View listings and compare to what you're being asked to pay.</p>
+              <div className="space-y-2 mb-5 flex-1">
+                <StatRow
+                  label={`Median ${bedroomLabel(bedrooms)} in ${city}`}
+                  value={compMedianRent ? `$${fmt(compMedianRent)}/mo` : 'Live market rate'}
+                />
+                {savings && savings > 0 ? <StatRow label="Potential savings" value={`~$${fmt(savings)}/mo`} valueTone="primary" /> : null}
+              </div>
+              <button
+                className={primaryBtn}
+                onClick={() => {
+                  setModalOpen(true);
+                  trackEvent('agent_card_clicked', { zip });
+                }}
+              >
                 Get Matched Free <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className={`${cardBase} bg-gradient-to-b from-card to-secondary/15`}>
-              <IconWrap><Truck className="w-5 h-5" /></IconWrap>
-              <h3 className="text-[19px] font-semibold text-foreground leading-tight mb-2">Get Free Moving Quotes</h3>
-              <p className="text-sm text-muted-foreground mb-4">Compare vetted movers and lock in pricing before you commit.</p>
-              <div className="rounded-lg border border-border bg-background px-3 py-2.5 mb-5 flex-1">
-                <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Typical local move in {state}</p>
-                <p className="text-xl font-semibold text-foreground">$1,200–$2,500</p>
+            <div className={cardBase}>
+              <IconWrap>
+                <Truck className="w-5 h-5" />
+              </IconWrap>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Get Free Moving Quotes</h3>
+              <p className="text-sm text-muted-foreground mb-4">Compare vetted movers before you commit to a renewal.</p>
+              <div className="space-y-2 mb-5 flex-1">
+                <StatRow label={`Typical move in ${state}`} value="$1,200–$2,500" />
+                <StatRow label="Quote turnaround" value="Often same day" />
               </div>
               <a
                 href="https://www.moving.com/movers/quotes/"
@@ -114,13 +137,15 @@ const NextStepsSection = ({
               </a>
             </div>
 
-            <div className={`${cardBase} bg-gradient-to-b from-card to-secondary/15`}>
-              <IconWrap><Key className="w-5 h-5" /></IconWrap>
-              <h3 className="text-[19px] font-semibold text-foreground leading-tight mb-2">Could You Buy Instead?</h3>
-              <p className="text-sm text-muted-foreground mb-4">Use today’s rates to compare renting against ownership in your area.</p>
-              <div className="rounded-lg border border-border bg-background px-3 py-2.5 mb-5 flex-1">
-                <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Estimated buying power</p>
-                <p className="text-xl font-semibold text-foreground">${fmt(estimatedHomePrice)}</p>
+            <div className={cardBase}>
+              <IconWrap>
+                <Key className="w-5 h-5" />
+              </IconWrap>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Could You Buy Instead?</h3>
+              <p className="text-sm text-muted-foreground mb-4">Run a quick affordability check with current mortgage assumptions.</p>
+              <div className="space-y-2 mb-5 flex-1">
+                <StatRow label="Estimated buying power" value={`$${fmt(estimatedHomePrice)}`} />
+                <StatRow label="Based on current rent" value={`$${fmt(currentRent)}/mo`} />
               </div>
               <a
                 href="https://www.bankrate.com/mortgages/mortgage-calculator/"
@@ -135,16 +160,18 @@ const NextStepsSection = ({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className={`${cardBase} bg-gradient-to-b from-card to-secondary/20 border-l-[3px] border-l-primary`}>
+            <div className={`${cardBase} border-l-[3px] border-l-primary`}>
               <span className="inline-block text-[10px] font-semibold uppercase tracking-wider text-primary bg-primary/10 rounded-full px-2.5 py-0.5 mb-3 w-fit">
                 Recommended for you
               </span>
-              <IconWrap><Shield className="w-5 h-5" /></IconWrap>
-              <h3 className="text-[19px] font-semibold text-foreground leading-tight mb-2">Protect Your Home</h3>
-              <p className="text-sm text-muted-foreground mb-4">Quick renters coverage for theft, accidental damage, and liability.</p>
-              <div className="rounded-lg border border-border bg-background px-3 py-2.5 mb-5 flex-1">
-                <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Starting price</p>
-                <p className="text-xl font-semibold text-foreground">From $5/mo</p>
+              <IconWrap>
+                <Shield className="w-5 h-5" />
+              </IconWrap>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Protect Your Home</h3>
+              <p className="text-sm text-muted-foreground mb-4">Renters insurance can cover theft, accidental damage, and liability.</p>
+              <div className="space-y-2 mb-5 flex-1">
+                <StatRow label="Typical starting cost" value="From $5/mo" />
+                <StatRow label="Setup time" value="A few minutes" />
               </div>
               <a
                 href="https://www.lemonade.com/renters"
@@ -157,12 +184,12 @@ const NextStepsSection = ({
               </a>
             </div>
 
-            <div className={`${cardBase} bg-gradient-to-b from-card to-secondary/15`}>
-              <IconWrap><Share2 className="w-5 h-5" /></IconWrap>
-              <h3 className="text-[19px] font-semibold text-foreground leading-tight mb-2">Share With Your Neighbors</h3>
-              <p className="text-sm text-muted-foreground mb-5 flex-1">
-                Know someone dealing with a rent increase? Send them this tool.
-              </p>
+            <div className={cardBase}>
+              <IconWrap>
+                <Share2 className="w-5 h-5" />
+              </IconWrap>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Share With Your Neighbors</h3>
+              <p className="text-sm text-muted-foreground mb-5 flex-1">Know someone dealing with a rent increase? Send them this tool.</p>
               <button
                 className={ghostBtn}
                 onClick={() => {
@@ -177,9 +204,7 @@ const NextStepsSection = ({
         )}
 
         <div className="mt-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 rounded-xl border border-border bg-secondary/60 px-4 py-3">
-          <span className="text-[13px] text-muted-foreground">
-            At ${fmt(currentRent)}/mo in rent, you might be able to own.
-          </span>
+          <span className="text-[13px] text-muted-foreground">At ${fmt(currentRent)}/mo in rent, you might be able to own.</span>
           <a
             href="https://www.bankrate.com/mortgages/mortgage-calculator/"
             target="_blank"
