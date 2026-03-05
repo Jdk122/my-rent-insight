@@ -38,7 +38,7 @@ export function trackEvent(name: string, params?: Record<string, string | number
   }
 }
 
-/** Fire Google Ads lead-form conversion */
+/** Fire Google Ads lead-form conversion + Microsoft UET lead event */
 export function trackAdsConversion() {
   try {
     window.gtag?.('event', 'conversion', {
@@ -46,6 +46,11 @@ export function trackAdsConversion() {
       value: 1.0,
       currency: 'USD',
     });
+  } catch {
+    // silent
+  }
+  try {
+    (window as any).uetq?.push('event', 'lead_capture', {});
   } catch {
     // silent
   }
