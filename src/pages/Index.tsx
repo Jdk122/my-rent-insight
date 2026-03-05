@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import RentForm, { RentFormData, RentFormPrefill } from '@/components/RentForm';
 import { lookupRentData, loadFredTrend, RentLookupResult } from '@/data/rentData';
@@ -6,15 +6,13 @@ import { usePropertyLookup } from '@/hooks/usePropertyLookup';
 import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
 import SEO from '@/components/SEO';
-
-// Lazy load below-the-fold and non-critical components
-const RentResults = lazy(() => import('@/components/RentResults'));
+import RentResults from '@/components/RentResults';
 import SocialProofCounter from '@/components/SocialProofCounter';
-const ContactModal = lazy(() => import('@/components/ContactModal'));
-const LoadingAnalysis = lazy(() => import('@/components/LoadingAnalysis'));
-const HomeFAQ = lazy(() => import('@/components/HomeFAQ'));
-const HowItWorks = lazy(() => import('@/components/HowItWorks'));
-const SEOFooter = lazy(() => import('@/components/SEOFooter'));
+import ContactModal from '@/components/ContactModal';
+import LoadingAnalysis from '@/components/LoadingAnalysis';
+import HomeFAQ from '@/components/HomeFAQ';
+import HowItWorks from '@/components/HowItWorks';
+import SEOFooter from '@/components/SEOFooter';
 
 const Index = () => {
   const [searchParams] = useSearchParams();
@@ -229,9 +227,7 @@ const Index = () => {
       <div className="h-[52px] sm:h-[56px]" />
 
       {isLoading ? (
-        <Suspense fallback={<div className="flex-1" />}>
-          <LoadingAnalysis />
-        </Suspense>
+        <LoadingAnalysis />
       ) : !results ? (
         <main className="max-w-[620px] mx-auto px-5 sm:px-6 pt-12 sm:pt-16 md:pt-24 pb-10 sm:pb-14 animate-fade-in">
           <h1 className="font-display text-[2.25rem] sm:text-[clamp(3rem,8vw,5rem)] text-foreground leading-[1.08] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
@@ -247,44 +243,38 @@ const Index = () => {
         </main>
       ) : (
         <div ref={resultsRef}>
-          <Suspense fallback={<div className="flex-1 min-h-screen" />}>
-            <RentResults
-              formData={results.formData}
-              rentData={results.rentData}
-              propertyData={propertyLookup.data}
-              propertyLoading={propertyLookup.loading}
-              propertyError={propertyLookup.error}
-              onReset={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              onScrollToTop={() => {
-                setResults(null);
-                setFormKey(k => k + 1);
-                setCapturedEmail('');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              capturedEmail={capturedEmail}
-              onEmailCaptured={setCapturedEmail}
-              onVerdictReady={setIsAboveMarket}
-            />
-          </Suspense>
+          <RentResults
+            formData={results.formData}
+            rentData={results.rentData}
+            propertyData={propertyLookup.data}
+            propertyLoading={propertyLookup.loading}
+            propertyError={propertyLookup.error}
+            onReset={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            onScrollToTop={() => {
+              setResults(null);
+              setFormKey(k => k + 1);
+              setCapturedEmail('');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            capturedEmail={capturedEmail}
+            onEmailCaptured={setCapturedEmail}
+            onVerdictReady={setIsAboveMarket}
+          />
         </div>
       )}
 
       {/* How It Works + FAQ — only on landing */}
       {!results && !isLoading && (
-        <Suspense fallback={null}>
+        <>
           <HowItWorks />
           <HomeFAQ />
-        </Suspense>
+        </>
       )}
 
-      <Suspense fallback={null}>
-        <SEOFooter onContactClick={() => setContactOpen(true)} />
-      </Suspense>
+      <SEOFooter onContactClick={() => setContactOpen(true)} />
 
       {contactOpen && (
-        <Suspense fallback={null}>
-          <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
-        </Suspense>
+        <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
       )}
     </div>
   );
