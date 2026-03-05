@@ -500,6 +500,11 @@ const RentByCity = () => {
           <p className="mt-2 text-xs text-muted-foreground/70">
             {fmrVaries ? 'SAFMR rates are zip-specific.' : 'County-level FMR shown in city summary above.'} {hasZipLevelYoY ? 'YoY from Apartment List or Zillow ZORI where available.' : ''}
           </p>
+          {!fmrVaries && zips.length > 1 && (
+            <p className="mt-1 text-[11px] text-muted-foreground/60">
+              Many zip codes in this metro area share the same SAFMR rate because HUD sets Fair Market Rents at the metropolitan statistical area level.
+            </p>
+          )}
         </section>
 
         {/* ═══ Nearby City Comparison ═══ */}
@@ -512,7 +517,7 @@ const RentByCity = () => {
                 const pctDiff = Math.round((diff / avgFmr[1]) * 100);
                 return (
                   <Link key={`${nc.city}-${nc.state}`} to={`/rent-data/${nc.stateSlug}/${nc.citySlug}`} className="flex items-center justify-between rounded-lg border border-border p-4 bg-card hover:bg-muted/50 transition-colors">
-                    <span className="font-medium text-foreground">{nc.city}, {nc.state}</span>
+                    <span className="font-medium text-foreground">{nc.city.replace(/^Zcta\s+/i, '')}, {nc.state}</span>
                     <div className="text-right">
                       <span className="tabular-nums text-sm text-muted-foreground">{fmt(nc.avgFmr[1])}/mo</span>
                       <span className={`ml-2 text-xs font-medium ${diff > 0 ? 'text-destructive' : diff < 0 ? 'text-accent' : 'text-muted-foreground'}`}>
