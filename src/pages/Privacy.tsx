@@ -22,7 +22,7 @@ const Privacy = () => {
           <h2>What RenewalReply Does</h2>
           <p>RenewalReply is a free tool that helps renters understand whether their rent increase is in line with market rates.</p>
           <h2>Information You Provide</h2>
-          <p>When you use our tool, you enter property details such as your zip code, bedroom count, current rent, and proposed increase. If you choose to provide your email address, we use it to send your analysis results and optional renewal reminders.</p>
+          <p>When you use our tool, you enter property details such as your address or zip code, bedroom count, current rent, and proposed increase. If you choose to provide your email address, we use it to send your analysis results and optional renewal reminders.</p>
           <h2>How We May Share Your Information</h2>
           <p>We never sell your name, email address, or contact information to third parties.</p>
           <p><a href="https://www.renewalreply.com/">← Back to RenewalReply</a></p>
@@ -50,7 +50,7 @@ const Privacy = () => {
           <section>
             <h2 className="text-lg font-semibold text-foreground mb-2">Information You Provide</h2>
             <p>
-              When you use our tool, you enter property details such as your zip code, bedroom count,
+              When you use our tool, you enter property details such as your address or zip code, bedroom count,
               current rent, and proposed increase. If you choose to provide your email address, we use it
               to send your analysis results and optional renewal reminders.
             </p>
