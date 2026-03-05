@@ -22,8 +22,8 @@ const Privacy = () => {
           <p>When you use RenewalReply, you voluntarily enter property details (address, zip code, bedrooms, and rent amounts). If you choose to provide your email address, we store it along with your lease expiration date and analysis results.</p>
           <h2>How we use it</h2>
           <p>We use your information to deliver your rent analysis, send lease renewal reminders, and provide your negotiation letter. We may occasionally send relevant housing-related information. No spam, no marketing blasts.</p>
-          <h2>Your data stays with us</h2>
-          <p>We never sell, rent, or share your personal information with third parties.</p>
+           <h2>Your data stays with us</h2>
+           <p>We never sell or rent your personal information to third parties. RenewalReply is a free service supported by advertising and affiliate partnerships. We may display relevant ads or link to third-party services that we think are useful to you. These partners never receive your personal data unless you choose to click through and engage with them directly.</p>
           <h2>Analytics</h2>
           <p>We use Google Analytics 4 (GA4) to understand how people use the site. GA4 uses cookies to collect anonymized usage data.</p>
           <h2>Unsubscribe anytime</h2>
@@ -70,8 +70,11 @@ const Privacy = () => {
           <section>
             <h2 className="text-lg font-semibold text-foreground mb-2">Your data stays with us</h2>
             <p>
-              We never sell, rent, or share your personal information with third parties. Your data is used
-              solely to provide the RenewalReply service and is not monetized in any way.
+              We never sell or rent your personal information to third parties. RenewalReply is a free service
+              supported by advertising and affiliate partnerships. We may display relevant ads or link to
+              third-party services (such as apartment listings or renters insurance) that we think are useful
+              to you. These partners never receive your personal data unless you choose to click through
+              and engage with them directly.
             </p>
           </section>
 
