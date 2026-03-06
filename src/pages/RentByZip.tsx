@@ -131,6 +131,8 @@ const RentByZip = () => {
 
   const freshest = getFreshestDate(freshness, hasZillow, hasAL);
   const freshestFormatted = formatFreshnessDate(freshest.date);
+  const dataYear = getDataYear(freshness);
+  const hudFY = getHudFiscalYear(freshness);
 
   // Change 2: Compute YoY range when both AL and ZORI exist and differ by >1%
   const hasBothTrends = hasAL && al!.aly !== undefined && hasZillow;
