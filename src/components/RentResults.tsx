@@ -863,6 +863,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             onShareClick={() => {
               document.getElementById('section-share')?.scrollIntoView({ behavior: 'smooth' });
             }}
+            analysisId={analysisId}
+            capturedEmail={capturedEmail}
           />
         )}
 

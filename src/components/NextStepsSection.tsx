@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Building, Truck, Key, Shield, Share2, ArrowRight } from 'lucide-react';
 import { trackEvent } from '@/lib/analytics';
+import { supabase } from '@/integrations/supabase/client';
 import AgentLeadModal from './AgentLeadModal';
 
 interface NextStepsSectionProps {
@@ -19,6 +20,8 @@ interface NextStepsSectionProps {
   dollarOverpayment: number | null;
   brLabel: string;
   onShareClick?: () => void;
+  analysisId?: string | null;
+  capturedEmail?: string;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -124,8 +127,19 @@ const NextStepsSection = ({
   dollarOverpayment,
   brLabel,
   onShareClick,
+  analysisId,
+  capturedEmail,
 }: NextStepsSectionProps) => {
   const [modalOpen, setModalOpen] = useState(false);
+
+  const logReferralClick = useCallback((linkType: string) => {
+    supabase.from('referral_clicks').insert({
+      analysis_id: analysisId ?? null,
+      email: capturedEmail || null,
+      link_type: linkType,
+      zip: zip || null,
+    } as any).then(() => {});
+  }, [analysisId, capturedEmail, zip]);
 
   const savings = compMedianRent ? Math.round(proposedRent - compMedianRent) : null;
   const estimatedHomePrice = Math.round(currentRent * 200);
@@ -163,6 +177,7 @@ const NextStepsSection = ({
                 onAction={() => {
                   setModalOpen(true);
                   trackEvent('agent_card_clicked', { zip });
+                  logReferralClick('agent_matching');
                 }}
                 recommended
                 delay={0.24}
@@ -178,7 +193,7 @@ const NextStepsSection = ({
                 ]}
                 actionLabel="Compare Movers"
                 actionHref="https://www.moving.com/movers/"
-                onAction={() => trackEvent('moving_quote_clicked')}
+                onAction={() => { trackEvent('moving_quote_clicked'); logReferralClick('moving_quotes'); }}
                 delay={0.28}
               />
 
@@ -192,7 +207,7 @@ const NextStepsSection = ({
                 ]}
                 actionLabel="Check Rates"
                 actionHref="https://www.bankrate.com/mortgages/mortgage-calculator/"
-                onAction={() => trackEvent('mortgage_link_clicked')}
+                onAction={() => { trackEvent('mortgage_link_clicked'); logReferralClick('mortgage_check'); }}
                 delay={0.32}
               />
             </>
@@ -208,7 +223,7 @@ const NextStepsSection = ({
                 ]}
                 actionLabel="Get a Free Quote"
                 actionHref="https://www.lemonade.com/renters"
-                onAction={() => trackEvent('insurance_quote_clicked')}
+                onAction={() => { trackEvent('insurance_quote_clicked'); logReferralClick('renters_insurance'); }}
                 recommended
                 delay={0.24}
               />
@@ -236,7 +251,7 @@ const NextStepsSection = ({
             target="_blank"
             rel="noopener noreferrer"
             className="text-[13px] font-medium text-primary hover:underline inline-flex items-center gap-1 shrink-0"
-            onClick={() => trackEvent('mortgage_banner_clicked')}
+            onClick={() => { trackEvent('mortgage_banner_clicked'); logReferralClick('mortgage_banner'); }}
           >
             See if you qualify <ArrowRight className="w-3 h-3" />
           </a>
