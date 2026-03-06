@@ -97,6 +97,7 @@ let fredMetroMapCache: Record<string, string> | null = null;
 let zhviCache: Record<string, ZhviZipRaw> | null = null;
 let apartmentListCache: Record<string, ApartmentListZipRaw> | null = null;
 let hud50Cache: Record<string, Hud50ZipRaw> | null = null;
+let countyMetroZoriCache: Record<string, CountyMetroZoriRaw> | null = null;
 
 // ─── Lazy loaders ───
 
