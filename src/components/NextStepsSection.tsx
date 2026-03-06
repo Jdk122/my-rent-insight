@@ -127,8 +127,19 @@ const NextStepsSection = ({
   dollarOverpayment,
   brLabel,
   onShareClick,
+  analysisId,
+  capturedEmail,
 }: NextStepsSectionProps) => {
   const [modalOpen, setModalOpen] = useState(false);
+
+  const logReferralClick = useCallback((linkType: string) => {
+    supabase.from('referral_clicks').insert({
+      analysis_id: analysisId ?? null,
+      email: capturedEmail || null,
+      link_type: linkType,
+      zip: zip || null,
+    } as any).then(() => {});
+  }, [analysisId, capturedEmail, zip]);
 
   const savings = compMedianRent ? Math.round(proposedRent - compMedianRent) : null;
   const estimatedHomePrice = Math.round(currentRent * 200);
