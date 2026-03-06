@@ -13,7 +13,7 @@ import LoadingAnalysis from '@/components/LoadingAnalysis';
 import HomeFAQ from '@/components/HomeFAQ';
 import HowItWorks from '@/components/HowItWorks';
 import SEOFooter from '@/components/SEOFooter';
-import TopCityLinks from '@/components/TopCityLinks';
+
 
 const Index = () => {
   const [searchParams] = useSearchParams();
