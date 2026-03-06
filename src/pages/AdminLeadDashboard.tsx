@@ -170,6 +170,12 @@ function DashboardContent() {
   const [anomalyRows, setAnomalyRows] = useState<any[]>([]);
   const [anomalyLoading, setAnomalyLoading] = useState(false);
 
+  // ── Referral Clicks ──
+  const [referralClicks, setReferralClicks] = useState<any[]>([]);
+  const [referralLoading, setReferralLoading] = useState(false);
+  const [referralSummary, setReferralSummary] = useState<{ link_type: string; count: number }[]>([]);
+  const [showRecentClicks, setShowRecentClicks] = useState(false);
+
   // Load stats
   useEffect(() => {
     setStatsLoading(true);
@@ -190,6 +196,31 @@ function DashboardContent() {
       .then(({ data }: any) => {
         setAnomalyRows(data || []);
         setAnomalyLoading(false);
+      });
+  }, []);
+
+  // Load referral clicks
+  useEffect(() => {
+    setReferralLoading(true);
+    supabase
+      .from('referral_clicks' as any)
+      .select('id, analysis_id, email, link_type, zip, created_at')
+      .order('created_at', { ascending: false })
+      .limit(500)
+      .then(({ data }: any) => {
+        const clicks = data || [];
+        setReferralClicks(clicks);
+
+        // Build summary by link_type
+        const counts: Record<string, number> = {};
+        for (const c of clicks) {
+          counts[c.link_type] = (counts[c.link_type] || 0) + 1;
+        }
+        const summary = Object.entries(counts)
+          .map(([link_type, count]) => ({ link_type, count }))
+          .sort((a, b) => b.count - a.count);
+        setReferralSummary(summary);
+        setReferralLoading(false);
       });
   }, []);
 
