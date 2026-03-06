@@ -450,6 +450,30 @@ export type Database = {
         }
         Relationships: []
       }
+      priority_zips: {
+        Row: {
+          city: string | null
+          created_at: string
+          source: string
+          state: string | null
+          zip: string
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          source?: string
+          state?: string | null
+          zip: string
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          source?: string
+          state?: string | null
+          zip?: string
+        }
+        Relationships: []
+      }
       property_cache: {
         Row: {
           address_normalized: string

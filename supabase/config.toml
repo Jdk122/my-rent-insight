@@ -29,3 +29,9 @@ verify_jwt = false
 
 [functions.data-staleness-check]
 verify_jwt = false
+
+[functions.seed-priority-zips]
+verify_jwt = false
+
+[functions.rentcast-market-refresh]
+verify_jwt = false
