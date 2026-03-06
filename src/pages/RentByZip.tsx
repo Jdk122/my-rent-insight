@@ -158,6 +158,7 @@ const RentByZip = () => {
         description={metaDesc}
         canonical={`/rent/${zip}`}
         ogImage="/og-image.png"
+        noindex={isThinPage}
         jsonLd={[
           {
             '@context': 'https://schema.org',
