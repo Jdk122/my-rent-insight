@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { trackEvent, trackAdsConversion } from '@/lib/analytics';
+import { trackEvent } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
@@ -109,7 +109,6 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail }: 
 
     onEmailCaptured?.(email.trim());
     trackEvent('email_submitted', { verdict, zip_code: leadContext?.zip || '', source: 'letter_gate' });
-    trackAdsConversion();
     sessionStorage.setItem(SESSION_KEY, 'true');
     setUnlocked(true);
     setLoading(false);

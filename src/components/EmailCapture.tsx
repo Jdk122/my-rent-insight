@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { trackEvent, trackAdsConversion } from '@/lib/analytics';
+import { trackEvent } from '@/lib/analytics';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Check } from 'lucide-react';
@@ -123,7 +123,6 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
 
     onEmailCaptured?.(email);
     trackEvent('email_submitted', { verdict: verdict || 'unknown', zip_code: leadContext?.zip || '', source: captureSource });
-    trackAdsConversion();
     if (captureSource === 'lease_reminder') {
       trackEvent('lease_reminder_signup');
     }
