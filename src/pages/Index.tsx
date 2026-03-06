@@ -250,6 +250,7 @@ const Index = () => {
         </main>
       ) : (
         <div ref={resultsRef}>
+          <Suspense fallback={<LoadingAnalysis />}>
           <RentResults
             formData={results.formData}
             rentData={results.rentData}
