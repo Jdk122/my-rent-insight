@@ -26,3 +26,6 @@ verify_jwt = false
 
 [functions.send-lease-reminder]
 verify_jwt = false
+
+[functions.data-staleness-check]
+verify_jwt = false
