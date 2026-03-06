@@ -135,7 +135,7 @@ const RentByZip = () => {
     return () => { cancelled = true; };
   }, [zip]);
 
-  if (loading) return <LoadingSkeleton />;
+  if (loading) return <LoadingSkeleton zip={zip} />;
   if (notFound || !data || !zip) return <NotFoundPage zip={zip} />;
 
   const { raw, al, hud50, freshness, nearby, sameCity, sameMetro, metroAvgFmr1br, similarRentZips } = data;
