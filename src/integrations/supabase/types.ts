@@ -200,6 +200,30 @@ export type Database = {
         }
         Relationships: []
       }
+      data_freshness_log: {
+        Row: {
+          alert_sent: boolean
+          all_fresh: boolean
+          checked_at: string
+          id: string
+          stale_sources: Json
+        }
+        Insert: {
+          alert_sent?: boolean
+          all_fresh: boolean
+          checked_at?: string
+          id?: string
+          stale_sources?: Json
+        }
+        Update: {
+          alert_sent?: boolean
+          all_fresh?: boolean
+          checked_at?: string
+          id?: string
+          stale_sources?: Json
+        }
+        Relationships: []
+      }
       dhcr_buildings: {
         Row: {
           bldg_no: string

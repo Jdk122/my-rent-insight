@@ -171,7 +171,7 @@ export default function RentcastMarketSection({ zip, city, state }: { zip: strin
           )}
           {data.medianRent && (
             <div>
-              <p className="text-sm text-muted-foreground">Median Asking Rent</p>
+              <p className="text-sm text-muted-foreground">Typical Asking Rent</p>
               <p className="text-2xl font-bold tabular-nums">{fmt(data.medianRent)}/mo</p>
             </div>
           )}
