@@ -206,6 +206,8 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
   const increaseAmt = increaseAmount ?? Math.round(newRent - currentRent);
   const bedroomNum = ['studio', '1br', '2br', '3br', '4br'].indexOf(bedrooms);
 
+  const letterTone = props.letterTone || 'aggressive';
+
   const analysisPayload = useMemo(() => ({
     currentRent,
     proposedRent: newRent,
@@ -229,10 +231,11 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
     counterHigh,
     f50Value: f50Value ?? null,
     momentumDirection: momentumDirection ?? null,
+    letterTone,
   }), [currentRent, newRent, increasePct, increaseAmt, bedroomNum, zip,
     fairnessScore, tierLabel, compMedian, compCount, maxCompDistance, marketYoy, trendSource, trendArea,
     rcMedianRent, rcTotalListings, rcAvgDaysOnMarket, alVacancy,
-    counterLow, counterHigh, f50Value, momentumDirection, city]);
+    counterLow, counterHigh, f50Value, momentumDirection, city, letterTone]);
 
   const generateLetter = useCallback(async () => {
     setLoading(true);
