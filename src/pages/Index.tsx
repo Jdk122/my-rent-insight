@@ -274,8 +274,8 @@ const Index = () => {
         </>
       )}
 
-      {!results && !isLoading && <TopCityLinks />}
       <SEOFooter onContactClick={() => setContactOpen(true)} />
+      {!results && !isLoading && <TopCityLinks />}
 
       {contactOpen && (
         <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
