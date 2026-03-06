@@ -173,22 +173,38 @@ const RentByCity = () => {
   const ogTitle = `Average Rent in ${city}, ${state} — ${fmt(avgFmr[1])}/mo (${dataYear})`;
   const metaDesc = `1-BR rents in ${city} are ${fmt(avgFmr[1])}/mo${trendYoY !== null ? `, ${trendYoY > 0 ? 'up' : 'down'} ${Math.abs(trendYoY).toFixed(1)}% year-over-year` : ''}. See federal benchmarks, trends, and data for ${zips.length} zip codes.`;
 
+  // Metro name for context
+  const metroName = zips[0]?.raw.m || '';
+
+  // Compute affordable income threshold
+  const affordableIncome = Math.round(avgFmr[1] * 12 / 0.3);
+
   const faqItems = [
     {
       q: `What is the average rent in ${city}, ${state}?`,
-      a: `Based on HUD Fair Market Rent data, the average rent for a 1-bedroom in ${city} is ${fmt(avgFmr[1])}/month. Studios average ${fmt(avgFmr[0])}, and 2-bedrooms average ${fmt(avgFmr[2])}.`,
+      a: `Based on HUD Fair Market Rent data, the average rent for a 1-bedroom in ${city} is ${fmt(avgFmr[1])}/month. Studios average ${fmt(avgFmr[0])}, and 2-bedrooms average ${fmt(avgFmr[2])}.${cityHud50?.[1] ? ` The HUD 50th percentile (median) rent for a 1-bedroom is ${fmt(cityHud50[1])}/mo.` : ''}`,
+    },
+    {
+      q: `Can I afford to rent in ${city}?`,
+      a: `Using the 30% affordability rule, a household needs to earn at least ${fmt(affordableIncome)}/year to afford the average 1-bedroom rent of ${fmt(avgFmr[1])}/month without being cost-burdened.${censusMedianRent ? ` The Census median gross rent in ${city} is ${fmt(censusMedianRent)}/mo.` : ''}`,
     },
     {
       q: `How much has rent changed in ${city}?`,
       a: trendYoY !== null
-        ? `Rents in ${city} changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year based on ${trendSource} data.`
+        ? `Rents in ${city} changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year based on ${trendSource} data. ${Math.abs(trendYoY - 3.2) > 1 ? `This is ${trendYoY > 3.2 ? 'above' : 'below'} the national average of approximately 3.2%.` : 'This is roughly in line with the national average of approximately 3.2%.'}`
         : `Year-over-year rent change data is not currently available for ${city}.`,
     },
     {
       q: `What is the cheapest zip code in ${city}?`,
       a: cheapestZip
-        ? `The most affordable zip code in ${city} is ${cheapestZip.zip} with a 1-bedroom HUD Fair Market Rent of ${fmt(cheapestZip.fmr1br)}/month.`
+        ? `The most affordable zip code in ${city} is ${cheapestZip.zip} with a 1-bedroom HUD Fair Market Rent of ${fmt(cheapestZip.fmr1br)}/month.${avgFmr[1] > cheapestZip.fmr1br ? ` That's ${Math.round(((avgFmr[1] - cheapestZip.fmr1br) / avgFmr[1]) * 100)}% below the city average.` : ''}`
         : `Zip-level affordability data is not available for ${city}.`,
+    },
+    {
+      q: `How does ${city} compare to the metro area?`,
+      a: metroName
+        ? `${city} is part of the ${metroName} metropolitan area. The city's average 1-bedroom FMR is ${fmt(avgFmr[1])}/month. ${nearby.length > 0 ? `Nearby cities like ${nearby.slice(0, 2).map(n => `${n.city} (${fmt(n.avgFmr[1])})`).join(' and ')} offer points of comparison.` : ''}`
+        : `Metro-level comparison data is not available for ${city}.`,
     },
     {
       q: `What should rent cost in ${city}?`,
