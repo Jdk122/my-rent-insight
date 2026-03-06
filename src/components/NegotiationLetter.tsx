@@ -244,7 +244,7 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
   const [aiLetter, setAiLetter] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [copied, setCopied] = useState(false);
+  
 
   const brLabel = bedroomLabels[bedrooms];
   const increaseAmt = increaseAmount ?? Math.round(newRent - currentRent);
