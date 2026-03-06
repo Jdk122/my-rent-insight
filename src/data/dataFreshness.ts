@@ -52,7 +52,7 @@ export function formatFreshnessDate(dateStr: string): string {
 
 /** HUD fiscal year: calendar year of SAFMR date + 1 if Oct or later */
 export function getHudFiscalYear(freshness: DataFreshness): string {
-  const date = new Date(freshness.hud_safmr);
+  const date = new Date(freshness.hud_safmr + 'T00:00:00');
   const fy = date.getMonth() >= 9 ? date.getFullYear() + 1 : date.getFullYear();
   return String(fy);
 }
