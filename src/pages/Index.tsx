@@ -274,16 +274,20 @@ const Index = () => {
 
       {/* How It Works + FAQ — only on landing */}
       {!results && !isLoading && (
-        <>
+        <Suspense fallback={null}>
           <HowItWorks />
           <HomeFAQ />
-        </>
+        </Suspense>
       )}
 
-      <SEOFooter onContactClick={() => setContactOpen(true)} showCityDirectory={!results && !isLoading} />
+      <Suspense fallback={null}>
+        <SEOFooter onContactClick={() => setContactOpen(true)} showCityDirectory={!results && !isLoading} />
+      </Suspense>
 
       {contactOpen && (
-        <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
+        <Suspense fallback={null}>
+          <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
+        </Suspense>
       )}
     </div>
   );
