@@ -260,6 +260,8 @@ async function fetchFredTrend(metro: string): Promise<FredTrendData | null> {
 
 // ─── Data quality constants ───
 const YOY_CAP = 30; // Cap displayed YoY at ±30%
+const HUD_EXTREME_CAP = 3.0; // Cap HUD-only YoY when > ±10% (national FMR weighted avg)
+const HUD_EXTREME_THRESHOLD = 10; // Threshold for capping HUD YoY
 const MIN_VALID_INCOME = 10000; // Suppress income below this (bad Census data)
 const MAX_CENSUS_FMR_RATIO = 2.5; // Suppress census rent if it diverges >2.5x from FMR
 
