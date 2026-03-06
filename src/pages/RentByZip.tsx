@@ -148,9 +148,9 @@ const RentByZip = () => {
 
   // ─── OG-optimized meta ───
   const metaTitle = hasMarketData
-    ? `Average Rent in ${zip} (${city}, ${state}) — 2026 Data | RenewalReply`
-    : `Fair Market Rent in ${zip} (${city}, ${state}) — FY2026 | RenewalReply`;
-  const ogTitle = `Average Rent in ${zip} — ${fmt(heroRent)}/mo (2026)`;
+    ? `Average Rent in ${zip} (${city}, ${state}) — ${dataYear} Data | RenewalReply`
+    : `Fair Market Rent in ${zip} (${city}, ${state}) — FY${hudFY} | RenewalReply`;
+  const ogTitle = `Average Rent in ${zip} — ${fmt(heroRent)}/mo (${dataYear})`;
   const metaDesc = `1-BR rents in ${zip} are ${fmt(heroRent)}/mo${trendYoY !== null ? `, ${trendYoY > 0 ? 'up' : 'down'} ${Math.abs(trendYoY).toFixed(1)}% year-over-year` : ''}. See federal benchmarks, trends, and nearby data for ${city}, ${state}.`;
 
   return (
