@@ -513,12 +513,9 @@ export function calculateResults(
   const rentBurden = getRentBurden(proposedRent, data.medianIncome);
   const counter = getCounterOffer(currentRent, marketYoY);
 
-  // Cap counter-offer to ensure it's always below proposed rent, maintaining $25 rounding
-  const maxCounter = Math.floor(proposedRent / 25) * 25 - 25;
-  counter.counterLow = Math.min(counter.counterLow, Math.max(maxCounter, currentRent));
-  counter.counterLow = Math.round(counter.counterLow / 25) * 25;
-  counter.counterHigh = Math.min(counter.counterHigh, Math.max(maxCounter, currentRent));
-  counter.counterHigh = Math.round(counter.counterHigh / 25) * 25;
+  // Ensure counterHigh doesn't exceed counterLow (sanity) and both stay >= currentRent
+  counter.counterLow = Math.max(counter.counterLow, currentRent);
+  counter.counterHigh = Math.max(counter.counterHigh, counter.counterLow);
 
   const increaseRatio = marketYoY > 0
     ? Math.round((increasePercent / marketYoY) * 10) / 10

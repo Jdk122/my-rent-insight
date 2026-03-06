@@ -242,9 +242,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       ? (calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}`)
       : null;
 
-    // Dollar overpayment: difference between proposed rent and the best benchmark
-    const benchmark = medianCompRent ?? rentData.fmr;
-    const dollarOverpayment = hasIncrease && benchmark ? Math.max(0, Math.round(newRent - benchmark)) : null;
+    // Dollar overpayment: gap between proposed rent and the fair counter-offer (what market data says is fair)
+    const dollarOverpayment = hasIncrease && calc?.counterLow
+      ? Math.max(0, Math.round(newRent - calc.counterLow))
+      : null;
 
     const utm = getUtmParams();
 
