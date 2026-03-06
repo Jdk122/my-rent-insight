@@ -115,7 +115,7 @@ const RentByState = () => {
     },
     {
       q: `How many zip codes have rent data in ${stateName}?`,
-      a: `RenewalReply covers ${totalZips.toLocaleString()} zip codes across ${cities.length} cities in ${stateName}, using HUD Fair Market Rent benchmarks updated for FY2026.`,
+      a: `RenewalReply covers ${totalZips.toLocaleString()} zip codes across ${cities.length} cities in ${stateName}, using HUD Fair Market Rent benchmarks updated for FY${hudFY}.`,
     },
   ];
 
