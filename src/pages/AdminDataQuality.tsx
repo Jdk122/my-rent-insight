@@ -13,7 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { RentZipRaw, ZhviZipRaw, ApartmentListZipRaw, Hud50ZipRaw } from '@/data/dataLoader';
 import AdminNav from '@/components/admin/AdminNav';
 
-const ADMIN_PASSWORD = 'renewalreply2026';
+// Password is now validated server-side via the admin-query edge function
 
 // ─── Types ───
 
@@ -71,7 +71,6 @@ function pct(n: number, total: number) {
 
 function PasswordGate({ onAuth }: { onAuth: () => void }) {
   const [pw, setPw] = useState('');
-  const [error, setError] = useState(false);
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-sm">
@@ -85,11 +84,20 @@ function PasswordGate({ onAuth }: { onAuth: () => void }) {
             type="password"
             placeholder="Password"
             value={pw}
-            onChange={e => { setPw(e.target.value); setError(false); }}
-            onKeyDown={e => { if (e.key === 'Enter') { if (pw === ADMIN_PASSWORD) onAuth(); else setError(true); } }}
+            onChange={e => { setPw(e.target.value); }}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                sessionStorage.setItem('rr_admin_pw', pw);
+                sessionStorage.setItem('rr_admin_authed', 'true');
+                onAuth();
+              }
+            }}
           />
-          {error && <p className="text-destructive text-sm">Incorrect password</p>}
-          <Button className="w-full" onClick={() => { if (pw === ADMIN_PASSWORD) onAuth(); else setError(true); }}>
+          <Button className="w-full" onClick={() => {
+            sessionStorage.setItem('rr_admin_pw', pw);
+            sessionStorage.setItem('rr_admin_authed', 'true');
+            onAuth();
+          }}>
             Enter
           </Button>
         </CardContent>

@@ -28,7 +28,7 @@ const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 
 /** Fetch Freddie Mac 30-year fixed rate for a given sale date from FRED API */
 async function fetchFredMortgageRate(saleDate: string): Promise<number | null> {
   try {
-    const apiKey = import.meta.env.VITE_FRED_API_KEY || '2f091940133b890134935950c4f22eec';
+    const apiKey = import.meta.env.VITE_FRED_API_KEY;
     if (!apiKey) return null;
 
     const date = new Date(saleDate);

@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Loader2, ChevronDown, ChevronUp, TrendingUp } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import AdminPasswordGate from '@/components/admin/AdminPasswordGate';
+import AdminPasswordGate, { getAdminPassword, clearAdminSession } from '@/components/admin/AdminPasswordGate';
 import AdminNav from '@/components/admin/AdminNav';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart } from 'recharts';
 
@@ -28,14 +28,27 @@ function MarketContent() {
   const [expandedZip, setExpandedZip] = useState<string | null>(null);
 
   useEffect(() => {
+    const password = getAdminPassword();
+    const query = async (q: string, params?: any) => {
+      const { data, error } = await supabase.functions.invoke('admin-query', {
+        body: { password, query: q, params },
+      });
+      if (error || data?.error) {
+        clearAdminSession();
+        window.location.reload();
+        return null;
+      }
+      return data;
+    };
+
     Promise.all([
-      supabase.rpc('admin_zip_leaderboard' as any),
-      supabase.rpc('admin_traffic_stats' as any),
-      supabase.rpc('admin_daily_submissions' as any, { p_days: 90 }),
-    ]).then(([zipRes, trafficRes, dailyRes]: any[]) => {
-      setZipData((zipRes.data as any[]) || []);
-      setTrafficData((trafficRes.data as any[]) || []);
-      setDailyData((dailyRes.data as any[]) || []);
+      query('zip_leaderboard'),
+      query('traffic_stats'),
+      query('daily_submissions', { days: 90 }),
+    ]).then(([zipRes, trafficRes, dailyRes]) => {
+      setZipData((zipRes as any[]) || []);
+      setTrafficData((trafficRes as any[]) || []);
+      setDailyData((dailyRes as any[]) || []);
       setLoading(false);
     });
   }, []);

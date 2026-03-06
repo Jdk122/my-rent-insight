@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Loader2, Download, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Search, Filter, Check, X, AlertTriangle, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import AdminPasswordGate from '@/components/admin/AdminPasswordGate';
+import AdminPasswordGate, { getAdminPassword, clearAdminSession } from '@/components/admin/AdminPasswordGate';
 import AdminNav from '@/components/admin/AdminNav';
 import LeadDetailPanel from '@/components/admin/LeadDetailPanel';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -176,11 +176,25 @@ function DashboardContent() {
   const [referralSummary, setReferralSummary] = useState<{ link_type: string; count: number }[]>([]);
   const [showRecentClicks, setShowRecentClicks] = useState(false);
 
+  // Helper to call admin edge function
+  const adminQuery = async (query: string, params?: any) => {
+    const password = getAdminPassword();
+    const { data, error } = await supabase.functions.invoke('admin-query', {
+      body: { password, query, params },
+    });
+    if (error || data?.error) {
+      clearAdminSession();
+      window.location.reload();
+      return null;
+    }
+    return data;
+  };
+
   // Load stats
   useEffect(() => {
     setStatsLoading(true);
-    supabase.rpc('admin_dashboard_stats' as any).then(({ data }: any) => {
-      setStats(data);
+    adminQuery('dashboard_stats').then((data) => {
+      if (data) setStats(data);
       setStatsLoading(false);
     });
   }, []);
@@ -188,70 +202,41 @@ function DashboardContent() {
   // Load anomaly data
   useEffect(() => {
     setAnomalyLoading(true);
-    supabase
-      .from('analyses' as any)
-      .select('id, address, bedrooms, current_rent, dollar_overpayment, fairness_score, increase_pct, created_at')
-      .order('created_at', { ascending: false })
-      .limit(1000)
-      .then(({ data }: any) => {
-        setAnomalyRows(data || []);
-        setAnomalyLoading(false);
-      });
+    adminQuery('anomaly_data').then((data) => {
+      setAnomalyRows(data || []);
+      setAnomalyLoading(false);
+    });
   }, []);
 
   // Load referral clicks
   useEffect(() => {
     setReferralLoading(true);
-    supabase
-      .from('referral_clicks' as any)
-      .select('id, analysis_id, email, link_type, zip, created_at')
-      .order('created_at', { ascending: false })
-      .limit(500)
-      .then(({ data }: any) => {
-        const clicks = data || [];
-        setReferralClicks(clicks);
-
-        // Build summary by link_type
-        const counts: Record<string, number> = {};
-        for (const c of clicks) {
-          counts[c.link_type] = (counts[c.link_type] || 0) + 1;
-        }
-        const summary = Object.entries(counts)
-          .map(([link_type, count]) => ({ link_type, count }))
-          .sort((a, b) => b.count - a.count);
-        setReferralSummary(summary);
-        setReferralLoading(false);
-      });
+    adminQuery('referral_clicks').then((data) => {
+      const clicks = data || [];
+      setReferralClicks(clicks);
+      const counts: Record<string, number> = {};
+      for (const c of clicks) {
+        counts[c.link_type] = (counts[c.link_type] || 0) + 1;
+      }
+      const summary = Object.entries(counts)
+        .map(([link_type, count]) => ({ link_type, count }))
+        .sort((a, b) => b.count - a.count);
+      setReferralSummary(summary);
+      setReferralLoading(false);
+    });
   }, []);
 
   // Build and execute query
   const fetchRows = useCallback(async () => {
     setLoading(true);
-    let query = supabase
-      .from('analyses' as any)
-      .select(
-        'id, address, city, state, zip, bedrooms, current_rent, proposed_rent, increase_pct, fairness_score, verdict_label, dollar_overpayment, letter_generated, letter_tone, results_shared, confidence_level, rent_stabilized, utm_source, utm_medium, utm_campaign, created_at, counter_offer_low, counter_offer_high, comp_median_rent, hud_fmr_value, comps_count, comps_position, fair_counter_offer, sale_data_found, market_trend_pct, cache_hit, markup_multiplier, leads(id, email, lease_expiration_month, lease_expiration_year, partner_opt_in, capture_source, unsubscribed, outcome, reminder_sent_at, followup_sent_at, created_at)',
-        { count: 'exact' }
-      ) as any;
+    const result = await adminQuery('leads_filtered', {
+      filterZip, filterCity, filterVerdict, filterLetter, filterBedrooms,
+      filterUtm, filterConfidence, filterStabilized,
+      sortCol, sortAsc, page, pageSize: PAGE_SIZE,
+    });
+    if (!result) return;
 
-    // Apply filters
-    if (filterZip) query = query.ilike('zip', `%${filterZip}%`);
-    if (filterCity) query = query.ilike('city', `%${filterCity}%`);
-    if (filterVerdict.length > 0) query = query.in('verdict_label', filterVerdict);
-    if (filterLetter === 'yes') query = query.eq('letter_generated', true);
-    if (filterLetter === 'no') query = query.eq('letter_generated', false);
-    if (filterBedrooms) query = query.eq('bedrooms', parseInt(filterBedrooms));
-    if (filterUtm) query = query.ilike('utm_source', `%${filterUtm}%`);
-    if (filterConfidence.length > 0) query = query.in('confidence_level', filterConfidence);
-    if (filterStabilized === 'yes') query = query.eq('rent_stabilized', true);
-    if (filterStabilized === 'no') query = query.eq('rent_stabilized', false);
-    if (filterStabilized === 'unknown') query = query.is('rent_stabilized', null);
-
-    query = query.order(sortCol, { ascending: sortAsc });
-    query = query.range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
-
-    const { data, count } = await query;
-    let results = (data || []) as any[];
+    let results = (result.rows || []) as any[];
 
     // Client-side filters for joined data
     if (filterHasEmail === 'yes') results = results.filter((r: any) => r.leads?.[0]?.email);
@@ -263,7 +248,7 @@ function DashboardContent() {
     }
 
     setRows(results);
-    setTotalCount(count || 0);
+    setTotalCount(result.count || 0);
     setLoading(false);
   }, [page, sortCol, sortAsc, filterZip, filterCity, filterVerdict, filterQuality, filterHasEmail, filterLetter, filterBedrooms, filterUtm, filterConfidence, filterStabilized]);
 
@@ -271,18 +256,9 @@ function DashboardContent() {
 
   // CSV export (fetch all filtered, no pagination)
   const handleExport = async () => {
-    let query = supabase
-      .from('analyses' as any)
-      .select('id, address, city, state, zip, bedrooms, current_rent, proposed_rent, increase_pct, fairness_score, verdict_label, dollar_overpayment, letter_generated, results_shared, confidence_level, utm_source, created_at, leads(email, lease_expiration_month, lease_expiration_year)') as any;
-
-    if (filterZip) query = query.ilike('zip', `%${filterZip}%`);
-    if (filterCity) query = query.ilike('city', `%${filterCity}%`);
-    if (filterVerdict.length > 0) query = query.in('verdict_label', filterVerdict);
-    if (filterLetter === 'yes') query = query.eq('letter_generated', true);
-    if (filterLetter === 'no') query = query.eq('letter_generated', false);
-
-    query = query.order('created_at', { ascending: false }).limit(5000);
-    const { data } = await query;
+    const data = await adminQuery('leads_export', {
+      filterZip, filterCity, filterVerdict, filterLetter,
+    });
     if (data) downloadCSV(data, `renewalreply-leads-${new Date().toISOString().slice(0, 10)}.csv`);
   };
 
