@@ -18,8 +18,9 @@ interface LetterGateProps {
 
 const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail }: LetterGateProps) => {
   const [unlocked, setUnlocked] = useState(() => {
+    // Only auto-unlock if we have a real email — sessionStorage alone is not enough
     if (prefilledEmail) return true;
-    return sessionStorage.getItem(SESSION_KEY) === 'true';
+    return false;
   });
   const [email, setEmail] = useState(prefilledEmail || '');
   const [error, setError] = useState('');
