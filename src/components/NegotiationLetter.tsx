@@ -56,41 +56,70 @@ function buildFallbackLetter(props: {
   rcMedianRent?: number | null; f50Value?: number | null;
   rcTotalListings?: number | null; rcAvgDaysOnMarket?: number | null;
   alVacancy?: number | null;
+  letterTone?: 'aggressive' | 'collaborative';
 }): string {
   const {
     currentRent, newRent, increasePct, marketYoy, city, brLabel, increaseAmt,
     counterLow, counterHigh, counterLowPercent, counterHighPercent,
     compMedian, compCount, trendArea, rcMedianRent, f50Value,
     rcTotalListings, rcAvgDaysOnMarket, alVacancy,
+    letterTone = 'aggressive',
   } = props;
 
+  const isCollaborative = letterTone === 'collaborative';
   const paragraphs: string[] = [];
 
   paragraphs.push(`Dear Landlord,`);
-  paragraphs.push(
-    `Thank you for the lease renewal notice. I've enjoyed living here and would like to continue. ` +
-    `I'd like to discuss the proposed increase of $${fmt(increaseAmt)}/month (${increasePct}%), ` +
-    `which would bring my rent from $${fmt(currentRent)} to $${fmt(newRent)}/month. ` +
-    `I've done some research on current market conditions and wanted to share what I found.`
-  );
+
+  if (isCollaborative) {
+    paragraphs.push(
+      `Thank you for the lease renewal notice. I've been happy living here and would very much like to continue. ` +
+      `I appreciate that the proposed increase of $${fmt(increaseAmt)}/month (${increasePct}%) ` +
+      `from $${fmt(currentRent)} to $${fmt(newRent)}/month is within the range of what the market supports. ` +
+      `That said, I'd like to discuss whether a small adjustment might make sense for both of us.`
+    );
+  } else {
+    paragraphs.push(
+      `Thank you for the lease renewal notice. I've enjoyed living here and would like to continue. ` +
+      `I'd like to discuss the proposed increase of $${fmt(increaseAmt)}/month (${increasePct}%), ` +
+      `which would bring my rent from $${fmt(currentRent)} to $${fmt(newRent)}/month. ` +
+      `I've done some research on current market conditions and wanted to share what I found.`
+    );
+  }
 
   if (compMedian && compCount && compCount > 0) {
     const currentAboveCompPct = ((currentRent - compMedian) / compMedian) * 100;
     if (currentAboveCompPct > 30) {
-      paragraphs.push(
-        `I've reviewed ${compCount} comparable ${brLabel.toLowerCase()} rental${compCount !== 1 ? 's' : ''} near this address. ` +
-        `While my current rent reflects the premium nature of this unit, the proposed ${increasePct}% increase significantly ` +
-        `exceeds the ${Math.abs(marketYoy)}% rate at which rents in this area have been growing.`
-      );
+      if (isCollaborative) {
+        paragraphs.push(
+          `I've looked at ${compCount} comparable ${brLabel.toLowerCase()} rental${compCount !== 1 ? 's' : ''} near this address. ` +
+          `I understand my unit commands a premium, and I value the quality here. ` +
+          `The area trend of ${Math.abs(marketYoy)}% suggests a more modest adjustment might still keep this unit competitively positioned.`
+        );
+      } else {
+        paragraphs.push(
+          `I've reviewed ${compCount} comparable ${brLabel.toLowerCase()} rental${compCount !== 1 ? 's' : ''} near this address. ` +
+          `While my current rent reflects the premium nature of this unit, the proposed ${increasePct}% increase significantly ` +
+          `exceeds the ${Math.abs(marketYoy)}% rate at which rents in this area have been growing.`
+        );
+      }
     } else {
       const position = newRent > compMedian
         ? `$${fmt(newRent - compMedian)} above` : newRent < compMedian
         ? `$${fmt(compMedian - newRent)} below` : 'in line with';
-      paragraphs.push(
-        `I reviewed ${compCount} comparable ${brLabel.toLowerCase()} rental${compCount !== 1 ? 's' : ''} currently listed near this address. ` +
-        `The median asking rent for similar units is $${fmt(compMedian)}/month, ` +
-        `which puts my proposed rent of $${fmt(newRent)} ${position} the local median.`
-      );
+      if (isCollaborative && newRent <= compMedian) {
+        paragraphs.push(
+          `I reviewed ${compCount} comparable ${brLabel.toLowerCase()} rental${compCount !== 1 ? 's' : ''} currently listed nearby. ` +
+          `I understand my rent is competitively priced — the median asking rent for similar units is $${fmt(compMedian)}/month, ` +
+          `and my proposed rent of $${fmt(newRent)} is ${position} that figure.`
+        );
+      } else {
+        paragraphs.push(
+          `I reviewed ${compCount} comparable ${brLabel.toLowerCase()} rental${compCount !== 1 ? 's' : ''} currently listed near this address. ` +
+          `The median asking rent for similar units is $${fmt(compMedian)}/month, ` +
+          `which puts my proposed rent of $${fmt(newRent)} ${position} the local median.`
+        );
+      }
     }
   }
 
@@ -111,22 +140,44 @@ function buildFallbackLetter(props: {
   }
 
   if (rcTotalListings && rcAvgDaysOnMarket) {
-    const cond = rcAvgDaysOnMarket > 35 ? 'favorable' : rcAvgDaysOnMarket < 20 ? 'competitive' : 'moderate';
-    let s = `Current rental market conditions suggest ${cond} conditions for negotiation: ${rcTotalListings} rental units are currently active in this area, with an average of ${Math.round(rcAvgDaysOnMarket)} days on market.`;
-    if (alVacancy !== null && alVacancy !== undefined && alVacancy > 6) s += ` The local vacancy rate of ${alVacancy.toFixed(1)}% indicates elevated availability.`;
-    paragraphs.push(s);
+    if (isCollaborative) {
+      if (rcAvgDaysOnMarket > 25 || (alVacancy !== null && alVacancy !== undefined && alVacancy > 5)) {
+        let s = `I notice some units in the area are taking time to fill — about ${Math.round(rcAvgDaysOnMarket)} days on average across ${rcTotalListings} active listings.`;
+        if (alVacancy !== null && alVacancy !== undefined && alVacancy > 5) s += ` The local vacancy rate is around ${alVacancy.toFixed(1)}%.`;
+        s += ` Retaining a reliable tenant avoids the costs and uncertainty of turnover.`;
+        paragraphs.push(s);
+      }
+    } else {
+      const cond = rcAvgDaysOnMarket > 35 ? 'favorable' : rcAvgDaysOnMarket < 20 ? 'competitive' : 'moderate';
+      let s = `Current rental market conditions suggest ${cond} conditions for negotiation: ${rcTotalListings} rental units are currently active in this area, with an average of ${Math.round(rcAvgDaysOnMarket)} days on market.`;
+      if (alVacancy !== null && alVacancy !== undefined && alVacancy > 6) s += ` The local vacancy rate of ${alVacancy.toFixed(1)}% indicates elevated availability.`;
+      paragraphs.push(s);
+    }
   }
 
   paragraphs.push(`I'm happy to share the detailed market analysis behind these figures if helpful.`);
 
-  const counterRange = counterLow === counterHigh ? `$${fmt(counterLow)}/month` : `$${fmt(counterLow)}–$${fmt(counterHigh)}/month`;
-  const counterPctRange = counterLow === counterHigh ? `${counterLowPercent}%` : `${counterLowPercent}–${counterHighPercent}%`;
-  paragraphs.push(
-    `Based on this research, I believe a renewal rate of ${counterRange} would better reflect current market conditions. ` +
-    `This represents an increase of ${counterPctRange} over my current rent, which aligns with the ${Math.abs(marketYoy)}% trend in this market.`
-  );
+  if (isCollaborative) {
+    // Modest counter: suggest ~$50-75/mo less than proposed, or 1-2% less increase
+    const modestDiscount = Math.min(75, Math.round(increaseAmt * 0.4));
+    const counterSuggestion = newRent - modestDiscount;
+    paragraphs.push(
+      `As a long-term tenant with a strong payment history, I'd like to propose a renewal rate of $${fmt(counterSuggestion)}/month — ` +
+      `a modest adjustment of $${fmt(modestDiscount)}/month from the proposed rate. ` +
+      `I believe this small renewal incentive reflects the value of tenant retention, ` +
+      `as turnover costs — vacancy, cleaning, re-listing, and showing — typically run several months of rent.`
+    );
+    paragraphs.push(`I truly value living here and hope we can find an arrangement that works well for both of us. I'm happy to discuss this at your convenience.`);
+  } else {
+    const counterRange = counterLow === counterHigh ? `$${fmt(counterLow)}/month` : `$${fmt(counterLow)}–$${fmt(counterHigh)}/month`;
+    const counterPctRange = counterLow === counterHigh ? `${counterLowPercent}%` : `${counterLowPercent}–${counterHighPercent}%`;
+    paragraphs.push(
+      `Based on this research, I believe a renewal rate of ${counterRange} would better reflect current market conditions. ` +
+      `This represents an increase of ${counterPctRange} over my current rent, which aligns with the ${Math.abs(marketYoy)}% trend in this market.`
+    );
+    paragraphs.push(`I value my tenancy here and would like to continue our rental relationship on terms that reflect the current market. I'm happy to discuss this further at your convenience.`);
+  }
 
-  paragraphs.push(`I value my tenancy here and would like to continue our rental relationship on terms that reflect the current market. I'm happy to discuss this further at your convenience.`);
   paragraphs.push(`Sincerely,\n\n`);
   paragraphs.push(`Analysis by RenewalReply — renewalreply.com`);
 
@@ -155,6 +206,8 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
   const increaseAmt = increaseAmount ?? Math.round(newRent - currentRent);
   const bedroomNum = ['studio', '1br', '2br', '3br', '4br'].indexOf(bedrooms);
 
+  const letterTone = props.letterTone || 'aggressive';
+
   const analysisPayload = useMemo(() => ({
     currentRent,
     proposedRent: newRent,
@@ -178,10 +231,11 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
     counterHigh,
     f50Value: f50Value ?? null,
     momentumDirection: momentumDirection ?? null,
+    letterTone,
   }), [currentRent, newRent, increasePct, increaseAmt, bedroomNum, zip,
     fairnessScore, tierLabel, compMedian, compCount, maxCompDistance, marketYoy, trendSource, trendArea,
     rcMedianRent, rcTotalListings, rcAvgDaysOnMarket, alVacancy,
-    counterLow, counterHigh, f50Value, momentumDirection, city]);
+    counterLow, counterHigh, f50Value, momentumDirection, city, letterTone]);
 
   const generateLetter = useCallback(async () => {
     setLoading(true);
@@ -220,11 +274,11 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
     currentRent, newRent, increasePct, marketYoy, city, brLabel, increaseAmt,
     counterLow, counterHigh, counterLowPercent, counterHighPercent,
     compMedian, compCount, trendArea, rcMedianRent, f50Value,
-    rcTotalListings, rcAvgDaysOnMarket, alVacancy,
+    rcTotalListings, rcAvgDaysOnMarket, alVacancy, letterTone,
   }), [currentRent, newRent, increasePct, marketYoy, city, brLabel, increaseAmt,
     counterLow, counterHigh, counterLowPercent, counterHighPercent,
     compMedian, compCount, trendArea, rcMedianRent, f50Value,
-    rcTotalListings, rcAvgDaysOnMarket, alVacancy]);
+    rcTotalListings, rcAvgDaysOnMarket, alVacancy, letterTone]);
 
   const displayLetter = aiLetter || fallbackLetter;
   const isAi = !!aiLetter;
