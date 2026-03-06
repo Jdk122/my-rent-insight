@@ -679,7 +679,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             <p className="text-[13px] text-muted-foreground text-center mb-2.5">
               {isAboveMarket ? 'Get your negotiation letter emailed to you'
                 : isFair ? 'Get your negotiation letter emailed to you'
-                : hasIncrease ? 'Get a copy of this analysis emailed to you'
+                : hasIncrease ? 'Get your renewal strategy letter emailed to you'
                 : 'Get this market report emailed to you'}
             </p>
             <form
