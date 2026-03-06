@@ -126,6 +126,8 @@ const RentByZip = () => {
     ? 'Apartment List'
     : hasZillow ? 'Zillow ZORI' : 'HUD FMR';
   const hasMarketData = hasZillow || hasAL;
+  const hasHud50 = hud50 !== null && hud50.f50 !== undefined && hud50.f50[1] > 0;
+  const isThinPage = !hasMarketData && !hasHud50;
 
   const freshest = getFreshestDate(freshness, hasZillow, hasAL);
   const freshestFormatted = formatFreshnessDate(freshest.date);
@@ -156,6 +158,7 @@ const RentByZip = () => {
         description={metaDesc}
         canonical={`/rent/${zip}`}
         ogImage="/og-image.png"
+        noindex={isThinPage}
         jsonLd={[
           {
             '@context': 'https://schema.org',
@@ -293,6 +296,16 @@ const RentByZip = () => {
           {!hasMarketData && (
             <p className="mt-3 text-sm text-muted-foreground bg-muted/40 border border-border rounded-lg px-4 py-3">
               📊 Market trend data is limited for this area. The analysis below uses federal rent benchmarks.
+            </p>
+          )}
+
+          {/* Thin page note */}
+          {isThinPage && (
+            <p className="mt-2 text-sm text-muted-foreground bg-muted/40 border border-border rounded-lg px-4 py-3">
+              This area has limited data coverage. For more detailed rent data, see the{' '}
+              <Link to={`/rent-data/${stateSlug}/${citySlug}`} className="text-primary underline hover:no-underline">
+                city-level analysis for {city}
+              </Link>.
             </p>
           )}
 
