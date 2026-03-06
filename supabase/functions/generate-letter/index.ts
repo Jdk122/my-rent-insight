@@ -66,7 +66,7 @@ RULES:
 - Do not open with "I hope this email finds you well" or similar generic AI-sounding openers.
 - Never use placeholder text like [Your Name], [Landlord Name], [Apartment Address], or [Address]. Either use the ZIP code/area name from the data, or simply say "my apartment" or "my unit". The letter should have zero brackets or placeholders of any kind.
 - End with "Sincerely," followed by a blank line for the tenant to add their name.
-- Structure: Opening (acknowledge fair terms, express appreciation) → Tenant Value (reliability, turnover cost avoidance) → Strategic Ask (1-2 specific proposals) → Closing (happy to discuss, sign promptly).`;
+- Structure: Opening (acknowledge fair terms, express appreciation) → Tenant Value (reliability, turnover cost avoidance) → Strategic Ask (one specific, data-driven proposal) → Closing (happy to discuss, sign promptly).`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
