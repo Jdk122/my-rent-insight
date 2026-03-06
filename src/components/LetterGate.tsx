@@ -126,6 +126,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail }: 
       {/* Letter content — always visible */}
       <div
         ref={letterRef}
+        data-letter-content
         style={!unlocked ? { userSelect: 'none', WebkitUserSelect: 'none' } as React.CSSProperties : undefined}
       >
         {children}
