@@ -90,6 +90,7 @@ function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, incr
     upper = fmr * 1.15;
   }
   label += labelSuffix;
+  upper = Math.max(upper, fmr);
   if (currentRent >= upper) {
     const isFalling = (marketYoY ?? 0) < -0.5;
     let score: number;
