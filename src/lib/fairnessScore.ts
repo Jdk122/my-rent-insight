@@ -47,8 +47,9 @@ function scoreRateVsTrend(increasePct: number, marketYoY: number, alYoY?: number
   const diff = increasePct - effectiveYoY;
   let rawScore: number;
   if (diff <= 0) rawScore = 35;
-  else if (diff <= 3) rawScore = 23;
-  else if (diff <= 6) rawScore = 12;
+  else if (diff <= 3) rawScore = 35 - (diff / 3) * 12;
+  else if (diff <= 6) rawScore = 23 - ((diff - 3) / 3) * 11;
+  else if (diff <= 10) rawScore = 12 - ((diff - 6) / 4) * 12;
   else rawScore = 0;
   const score = Math.round((rawScore / 35) * maxPts);
   const sourceNote = (alYoY !== null && alYoY !== undefined) ? ' (Apartment List)' : '';
