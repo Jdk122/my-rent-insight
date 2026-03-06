@@ -497,7 +497,18 @@ const RentByZip = () => {
                 <p className="text-muted-foreground leading-relaxed">
                   The {heroRentLabel.toLowerCase()} for a 1-bedroom in {zip} is {fmt(heroRent)}/month ({heroRentSource}).
                   {hud50?.f50 && ` The HUD 50th percentile (typical) rent is ${fmt(hud50.f50[1])}/mo, while the 40th percentile Fair Market Rent is ${fmt(fmr1br)}/mo.`}
+                  {metroAvgFmr1br !== fmr1br && ` Across the ${raw.m} metro area, the average 1-bedroom FMR is ${fmt(metroAvgFmr1br)}/mo — making ${zip} ${fmr1br > metroAvgFmr1br ? `${Math.round(((fmr1br - metroAvgFmr1br) / metroAvgFmr1br) * 100)}% above` : `${Math.round(((metroAvgFmr1br - fmr1br) / metroAvgFmr1br) * 100)}% below`} the metro average.`}
                   {' '}For current asking rents from nearby listings, see the market data section above.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="afford">
+              <AccordionTrigger>Can I afford rent in {zip}?</AccordionTrigger>
+              <AccordionContent>
+                <p className="text-muted-foreground leading-relaxed">
+                  {raw.i && raw.i >= 10000
+                    ? `The median household income in this area is approximately ${fmt(raw.i)}/year. Using the 30% affordability rule, a household earning the median income can afford up to ${fmt(Math.round((raw.i * 0.3) / 12))}/month in rent without being cost-burdened. ${heroRent > (raw.i * 0.3) / 12 ? `At ${fmt(heroRent)}/mo, the typical 1-bedroom here exceeds the affordable threshold by ${fmt(Math.round(heroRent - (raw.i * 0.3) / 12))}/mo.` : `At ${fmt(heroRent)}/mo, the typical 1-bedroom here falls within the affordable range.`}`
+                    : `The standard affordability guideline is the 30% rule: housing costs should not exceed 30% of gross household income. For a 1-bedroom at ${fmt(heroRent)}/mo, a household would need to earn at least ${fmt(Math.round(heroRent * 12 / 0.3))}/year to stay within this threshold.`}
                 </p>
               </AccordionContent>
             </AccordionItem>
@@ -505,7 +516,9 @@ const RentByZip = () => {
               <AccordionTrigger>What should rent cost in {zip}?</AccordionTrigger>
               <AccordionContent>
                 <p className="text-muted-foreground leading-relaxed">
-                  A 1-bedroom in {zip} typically rents for {fmt(raw.f[1])} – {fmt(hud50?.f50?.[1] ?? Math.round(raw.f[1] * 1.15))} based on HUD data. See the "What Should Rent Cost" section above for all bedroom sizes.
+                  A 1-bedroom in {zip} typically rents for {fmt(raw.f[1])} – {fmt(hud50?.f50?.[1] ?? Math.round(raw.f[1] * 1.15))} based on HUD data.
+                  {metroAvgFmr1br !== fmr1br && ` For comparison, the metro-wide average is ${fmt(metroAvgFmr1br)}/mo.`}
+                  {' '}See the "What Should Rent Cost" section above for all bedroom sizes.
                 </p>
               </AccordionContent>
             </AccordionItem>
@@ -514,7 +527,7 @@ const RentByZip = () => {
               <AccordionContent>
                 <p className="text-muted-foreground leading-relaxed">
                   {trendYoY !== null
-                    ? `Rents in ${city} changed approximately ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year according to ${trendSource} data. The national average is approximately ${NATIONAL_AVG_YOY}%.`
+                    ? `Rents in ${city} changed approximately ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year according to ${trendSource} data. The national average is approximately ${NATIONAL_AVG_YOY}%. ${Math.abs(trendYoY) > Math.abs(NATIONAL_AVG_YOY) + 1 ? `This means ${city} rents are growing ${trendYoY > NATIONAL_AVG_YOY ? 'faster' : 'slower'} than the national average.` : `This is roughly in line with the national average.`}`
                     : `Year-over-year rent trend data is not currently available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}%.`}
                 </p>
               </AccordionContent>
@@ -524,6 +537,7 @@ const RentByZip = () => {
               <AccordionContent>
                 <p className="text-muted-foreground leading-relaxed">
                   The HUD Small Area Fair Market Rent for a 1-bedroom in zip code {zip} is {fmt(fmr1br)} for FY{hudFY}. This represents the 40th percentile of area rents. Other bedroom sizes: Studio {fmt(raw.f[0])}, 2-BR {fmt(raw.f[2])}, 3-BR {fmt(raw.f[3])}, 4-BR {fmt(raw.f[4])}.
+                  {raw.p[1] > 0 && ` Last year's FMR was ${fmt(raw.p[1])}, a change of ${((fmr1br - raw.p[1]) / raw.p[1] * 100).toFixed(1)}%.`}
                 </p>
               </AccordionContent>
             </AccordionItem>
@@ -539,6 +553,36 @@ const RentByZip = () => {
             </AccordionItem>
           </Accordion>
         </section>
+
+        {/* ═══ Similar Rents in Other Areas ═══ */}
+        {similarRentZips.length > 0 && (
+          <section className="mb-12">
+            <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Similar Rents in Other Areas</h2>
+            <p className="text-sm text-muted-foreground mb-3">
+              These zip codes have similar 1-bedroom rents to {zip} ({fmt(fmr1br)}/mo) — useful for comparing what your rent gets you in other markets.
+            </p>
+            <div className="rounded-lg border border-border overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Zip Code</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead className="text-right">1-BR Rent</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {similarRentZips.map(({ zip: sZip, raw: sRaw }) => (
+                    <TableRow key={sZip}>
+                      <TableCell><Link to={`/rent/${sZip}`} className="text-primary underline hover:text-primary/80 font-medium">{sZip}</Link></TableCell>
+                      <TableCell className="text-muted-foreground">{sRaw.c}, {sRaw.s}</TableCell>
+                      <TableCell className="text-right tabular-nums">{fmt(sRaw.f[1])}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </section>
+        )}
 
         {/* ═══ Nearby Areas ═══ */}
         <section className="mb-12">
