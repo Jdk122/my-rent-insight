@@ -1,0 +1,17 @@
+# Prerender.io bot-detection proxy
+# When deployed to Netlify, bot user-agents are routed through prerender.io
+# to serve fully-rendered HTML for SEO indexing.
+# Replace YOUR_PRERENDER_TOKEN with your actual prerender.io token,
+# or set it as a Netlify environment variable and reference it.
+
+# Proxy bot requests for /rent/* ZIP pages through prerender.io
+# Note: Netlify does not natively support user-agent-based redirects.
+# Use the Netlify prerender.io integration or a Netlify Edge Function instead.
+# See: https://docs.prerender.io/docs/netlify
+
+# For Netlify's built-in prerender integration, enable it in:
+# Netlify Dashboard → Site Settings → Build & Deploy → Post Processing → Prerendering
+# and paste your prerender.io token there.
+
+# SPA fallback — all routes serve index.html
+/*    /index.html   200
