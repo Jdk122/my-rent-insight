@@ -1,4 +1,3 @@
-import { Search } from 'lucide-react';
 import { BedroomType } from '@/data/rentData';
 import { trackEvent } from '@/lib/analytics';
 
@@ -7,6 +6,23 @@ interface CompLinksProps {
   city: string;
   state: string;
   bedrooms: BedroomType;
+  verdict?: string;
+  fairnessScore?: number | null;
+}
+
+const AFFILIATE_CONFIG: Record<string, { param?: string; id?: string }> = {
+  Zillow: {},
+  'Apartments.com': {},
+  'Realtor.com': {},
+  HotPads: {},
+  StreetEasy: {},
+};
+
+function appendAffiliate(url: string, platform: string): string {
+  const config = AFFILIATE_CONFIG[platform];
+  if (!config?.param || !config?.id) return url;
+  const sep = url.includes('?') ? '&' : '?';
+  return `${url}${sep}${config.param}=${config.id}`;
 }
 
 const bedroomNum: Record<BedroomType, string> = {
@@ -28,21 +44,21 @@ function buildLinks(zip: string, city: string, state: string, bedrooms: BedroomT
   if (isNYC) {
     links.push({
       name: 'StreetEasy',
-      url: `https://streeteasy.com/for-rent/${citySlug}?bedrooms=${bedrooms === 'studio' ? 'studio' : beds}`,
+      url: appendAffiliate(`https://streeteasy.com/for-rent/${citySlug}?bedrooms=${bedrooms === 'studio' ? 'studio' : beds}`, 'StreetEasy'),
     });
   }
 
   links.push(
-    { name: 'Zillow', url: `https://www.zillow.com/homes/for_rent/${zip}/${beds}-_beds/` },
-    { name: 'Apartments.com', url: `https://www.apartments.com/${citySlug}-${stateSlug}-${zip}/${bedrooms === 'studio' ? 'studios' : beds + '-bedrooms'}/` },
-    { name: 'Realtor.com', url: `https://www.realtor.com/apartments/${zip}/beds-${beds}` },
-    { name: 'HotPads', url: `https://hotpads.com/${citySlug}-${stateSlug}/apartments-for-rent/${beds === '0' ? 'studio' : beds + '-beds'}` },
+    { name: 'Zillow', url: appendAffiliate(`https://www.zillow.com/homes/for_rent/${zip}/${beds}-_beds/`, 'Zillow') },
+    { name: 'Apartments.com', url: appendAffiliate(`https://www.apartments.com/${citySlug}-${stateSlug}-${zip}/${bedrooms === 'studio' ? 'studios' : beds + '-bedrooms'}/`, 'Apartments.com') },
+    { name: 'Realtor.com', url: appendAffiliate(`https://www.realtor.com/apartments/${zip}/beds-${beds}`, 'Realtor.com') },
+    { name: 'HotPads', url: appendAffiliate(`https://hotpads.com/${citySlug}-${stateSlug}/apartments-for-rent/${beds === '0' ? 'studio' : beds + '-beds'}`, 'HotPads') },
   );
 
   return links;
 }
 
-const CompLinks = ({ zip, city, state, bedrooms }: CompLinksProps) => {
+const CompLinks = ({ zip, city, state, bedrooms, verdict, fairnessScore }: CompLinksProps) => {
   const links = buildLinks(zip, city, state, bedrooms);
 
   return (
@@ -59,7 +75,15 @@ const CompLinks = ({ zip, city, state, bedrooms }: CompLinksProps) => {
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => trackEvent('comp_link_clicked', { platform: link.name })}
+            onClick={() => trackEvent('comp_link_clicked', {
+              platform: link.name,
+              zip,
+              city,
+              state,
+              bedrooms,
+              verdict: verdict ?? null,
+              fairness_score: fairnessScore ?? null,
+            })}
             className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-border rounded text-sm font-medium text-foreground bg-card hover:border-foreground transition-colors"
           >
             {link.name}

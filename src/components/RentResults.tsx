@@ -840,7 +840,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         )}
         {!hasEnoughComps && !rentcast.loading && (
           <motion.section {...fade(0.15)} className="py-12">
-            <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} />
+            <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} verdict={verdictLabel} fairnessScore={fairnessScore?.total} />
           </motion.section>
         )}
 
