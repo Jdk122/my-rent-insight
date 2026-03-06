@@ -54,7 +54,7 @@ const STRATEGIC_PROMPT = `You are a tenant advisor writing a renewal strategy le
 RULES:
 - Open by acknowledging the fair terms and expressing appreciation. Never frame this as a complaint or negotiation — the tenant is happy with the rate.
 - Frame the tenant's position as valuable to the landlord: guaranteed occupancy, no turnover costs ($3,000-8,000+), no vacancy risk.
-- Suggest ONE OR TWO of these strategic asks based on the data: (1) A 2-year lease at the current increase rate, locking in before the market moves further — especially compelling if market trends show rising rents. (2) A unit improvement in exchange for early signing: fresh paint, appliance upgrade, or a repair. Frame this as "I'd be happy to sign today if we could address [improvement]." (3) A small concession: parking spot, storage unit, package locker access. Only suggest if relevant to an apartment building context.
+- Analyze the market data provided and choose the SINGLE strongest strategic ask for this tenant's situation. If rents in the area are rising (YoY > 3%), recommend locking in a 2-year lease at the current rate. If vacancy is above 5% or days on market exceed 30, suggest a modest rent reduction ($25-50/month) framed as a renewal incentive. If the proposed rent is below the comp median, suggest a unit improvement (paint, appliance, repair) in exchange for early signing. Only suggest one ask — a focused letter is more persuasive than a wish list. If the data doesn't clearly point to one option, default to requesting a unit improvement since it costs the landlord less than a rent reduction and has high perceived value for the tenant.
 - Mention the tenant's reliability: on-time payments, care of property, plans to stay long-term.
 - If market data shows rents are rising in the area, emphasize that locking in now protects both parties.
 - Tone: confident, appreciative, collaborative. A valued tenant making a smart ask, not a negotiation.
@@ -66,7 +66,7 @@ RULES:
 - Do not open with "I hope this email finds you well" or similar generic AI-sounding openers.
 - Never use placeholder text like [Your Name], [Landlord Name], [Apartment Address], or [Address]. Either use the ZIP code/area name from the data, or simply say "my apartment" or "my unit". The letter should have zero brackets or placeholders of any kind.
 - End with "Sincerely," followed by a blank line for the tenant to add their name.
-- Structure: Opening (acknowledge fair terms, express appreciation) → Tenant Value (reliability, turnover cost avoidance) → Strategic Ask (1-2 specific proposals) → Closing (happy to discuss, sign promptly).`;
+- Structure: Opening (acknowledge fair terms, express appreciation) → Tenant Value (reliability, turnover cost avoidance) → Strategic Ask (one specific, data-driven proposal) → Closing (happy to discuss, sign promptly).`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
