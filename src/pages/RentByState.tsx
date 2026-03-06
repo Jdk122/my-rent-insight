@@ -86,8 +86,8 @@ const RentByState = () => {
   const { stateName, stateAbbr, cities, avgFmr1br, totalZips } = data;
 
   // ─── OG-optimized meta ───
-  const ogTitle = `Average Rent in ${stateName} — ${fmt(avgFmr1br)}/mo (2026)`;
-  const metaTitle = `Average Rent in ${stateName} (2026) | Rent Data by City`;
+  const ogTitle = `Average Rent in ${stateName} — ${fmt(avgFmr1br)}/mo (${dataYear})`;
+  const metaTitle = `Average Rent in ${stateName} (${dataYear}) | Rent Data by City`;
   const metaDesc = `1-BR rents in ${stateName} are ${fmt(avgFmr1br)}/mo${stateYoY !== null ? `, ${stateYoY > 0 ? 'up' : 'down'} ${Math.abs(stateYoY).toFixed(1)}% YoY` : ''}. See rent data for ${cities.length} cities across ${totalZips.toLocaleString()} zip codes.`;
 
   const faqItems = [
