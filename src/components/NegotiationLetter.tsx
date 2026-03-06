@@ -327,32 +327,6 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
   const displayLetter = aiLetter || fallbackLetter;
   const isAi = !!aiLetter;
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(displayLetter);
-    trackEvent('letter_copied', { ai: isAi });
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
-  };
-
-  const handleDownload = () => {
-    const blob = new Blob([displayLetter], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `rent-negotiation-${zip}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success('Downloaded');
-    trackEvent('letter_downloaded', { ai: isAi });
-  };
-
-  const handleEmail = () => {
-    const subject = encodeURIComponent('Regarding my lease renewal');
-    const body = encodeURIComponent(displayLetter);
-    window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
-    trackEvent('letter_emailed', { ai: isAi });
-  };
-
   const handleRegenerate = () => {
     setAiLetter(null);
     generateLetter();
