@@ -38,9 +38,9 @@ describe('Component 5: Missing Zillow Default', () => {
     expect(comp.estimated).toBe(false);
   });
 
-  it('scores 3/10 when zillowMonthly is 0.5', () => {
+  it('scores 5/10 when zillowMonthly is 0.5 (interpolated between 0.30→7 and 0.80→3)', () => {
     const comp = getComponent({ ...baseInput, zillowMonthly: 0.5 }, 'momentum');
-    expect(comp.score).toBe(3);
+    expect(comp.score).toBe(5);
   });
 
   it('total is exactly 5 points higher than old 0/10 default would produce', () => {
