@@ -1,8 +1,17 @@
 import { useState } from 'react';
 import { Lock } from 'lucide-react';
 
-const ADMIN_PASSWORD = 'renewalreply2026';
 const SESSION_KEY = 'rr_admin_authed';
+const PW_KEY = 'rr_admin_pw';
+
+export function getAdminPassword(): string | null {
+  return sessionStorage.getItem(PW_KEY);
+}
+
+export function clearAdminSession() {
+  sessionStorage.removeItem(PW_KEY);
+  sessionStorage.removeItem(SESSION_KEY);
+}
 
 interface Props {
   children: React.ReactNode;
@@ -11,7 +20,6 @@ interface Props {
 export default function AdminPasswordGate({ children }: Props) {
   const [authed, setAuthed] = useState(() => sessionStorage.getItem(SESSION_KEY) === 'true');
   const [pw, setPw] = useState('');
-  const [error, setError] = useState(false);
 
   if (!authed) {
     return (
@@ -24,23 +32,20 @@ export default function AdminPasswordGate({ children }: Props) {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              if (pw === ADMIN_PASSWORD) {
-                sessionStorage.setItem(SESSION_KEY, 'true');
-                setAuthed(true);
-              } else {
-                setError(true);
-              }
+              // Store password for server-side validation on API calls
+              sessionStorage.setItem(PW_KEY, pw);
+              sessionStorage.setItem(SESSION_KEY, 'true');
+              setAuthed(true);
             }}
             className="space-y-3"
           >
             <input
               type="password"
               value={pw}
-              onChange={(e) => { setPw(e.target.value); setError(false); }}
+              onChange={(e) => setPw(e.target.value)}
               placeholder="Password"
               className="w-full px-4 py-3 border border-border rounded-lg bg-card text-foreground outline-none focus:border-foreground transition-colors"
             />
-            {error && <p className="text-sm text-destructive">Incorrect password</p>}
             <button type="submit" className="w-full py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition-opacity">
               Enter
             </button>
