@@ -269,7 +269,7 @@ const RentByCity = () => {
             </tbody>
           </table>
           {faqItems.map((f, i) => (<div key={i}><h3>{f.q}</h3><p>{f.a}</p></div>))}
-          <p><small>Sources: HUD SAFMR FY2026, Apartment List, Zillow ZORI</small></p>
+          <p><small>Sources: HUD SAFMR FY{hudFY}, Apartment List, Zillow ZORI</small></p>
           <p><a href={`https://www.renewalreply.com/rent-data/${stateSlugVal}`}>{`← Back to ${stateName}`}</a></p>
         </div>
       </noscript>
