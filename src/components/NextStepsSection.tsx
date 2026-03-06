@@ -177,7 +177,7 @@ const NextStepsSection = ({
                   { label: 'Quote turnaround', value: 'Often same day' },
                 ]}
                 actionLabel="Compare Movers"
-                actionHref="https://www.moving.com/movers/quotes/"
+                actionHref="https://www.moving.com/movers/"
                 onAction={() => trackEvent('moving_quote_clicked')}
                 delay={0.28}
               />
