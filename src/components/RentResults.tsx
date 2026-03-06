@@ -253,18 +253,29 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
     const inferredPropertyType = rentcast.data?.propertyType ?? null;
 
+    const bedroomNum = formData.bedrooms === 'studio' ? 0 : formData.bedrooms === 'oneBr' ? 1 : formData.bedrooms === 'twoBr' ? 2 : formData.bedrooms === 'threeBr' ? 3 : 4;
+    const compsCount = rentcast.data?.comparables?.length ?? 0;
+
+    // Build anomaly flags
+    const anomalyFlags: string[] = [];
+    if (increasePct > 50) anomalyFlags.push('extreme_increase');
+    if (formData.currentRent < 300) anomalyFlags.push('very_low_rent');
+    if (formData.currentRent > 15000) anomalyFlags.push('very_high_rent');
+    if (compsCount === 0) anomalyFlags.push('no_comps');
+    if (confidence.level === 'limited') anomalyFlags.push('low_confidence');
+
     supabase.from('analyses').insert({
       address: formData.fullAddress || null,
       city: rentData.city,
       state: rentData.state,
       zip: rentData.zip,
-      bedrooms: formData.bedrooms === 'studio' ? 0 : formData.bedrooms === 'oneBr' ? 1 : formData.bedrooms === 'twoBr' ? 2 : formData.bedrooms === 'threeBr' ? 3 : 4,
+      bedrooms: bedroomNum,
       current_rent: formData.currentRent,
       proposed_rent: newRent,
       increase_pct: increasePct,
       market_trend_pct: marketYoy,
       fair_counter_offer: counterStr,
-      comps_count: rentcast.data?.comparables?.length ?? 0,
+      comps_count: compsCount,
       comps_position: compsPosition,
       sale_data_found: !!propertyData?.lastSalePrice,
       markup_multiplier: null,
@@ -286,6 +297,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       letter_tone: null,
       rent_stabilized: null,
       property_type: inferredPropertyType,
+      anomaly_flags: anomalyFlags,
     } as any).select('id').single().then(({ data }) => {
       if (data?.id) setAnalysisId(data.id);
     });

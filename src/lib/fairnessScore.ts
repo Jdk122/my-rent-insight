@@ -208,10 +208,10 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
   else { compMax = 0; rateMax = 65; }
 
   const components = [
-    scoreRateVsTrend(input.increasePct, input.marketYoY, input.alYoY, rateMax),
-    scoreVsComps(input.proposedRent, input.compMedian, compMax),
-    scoreVsFmr(input.proposedRent, input.fmr, input.currentRent, input.increasePct, input.marketYoY, input.f50, input.bedroomCount, input.rcMedianRent, input.rcTotalListings),
-    scoreMarketMomentum(input.zillowMonthly, input.alMoM, input.hvd),
+    scoreRateVsTrend(validatedInput.increasePct, validatedInput.marketYoY, validatedInput.alYoY, rateMax),
+    scoreVsComps(validatedInput.proposedRent, validatedInput.compMedian, compMax),
+    scoreVsFmr(validatedInput.proposedRent, validatedInput.fmr, validatedInput.currentRent, validatedInput.increasePct, validatedInput.marketYoY, validatedInput.f50, validatedInput.bedroomCount, validatedInput.rcMedianRent, validatedInput.rcTotalListings),
+    scoreMarketMomentum(validatedInput.zillowMonthly, validatedInput.alMoM, validatedInput.hvd),
   ];
   const visibleComponents = components.filter(c => c.max > 0);
   const total = components.reduce((sum, c) => sum + c.score, 0);
