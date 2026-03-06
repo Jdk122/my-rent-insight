@@ -375,8 +375,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     if (hasRentControl) {
       sections.push({ id: 'section-rights', label: 'Rights' });
     }
-    if (isAboveMarket || isFair) {
-      // Above trend or Fair: Letter → Share
+    if (isAboveMarket || isFair || isBelowMarket) {
       if (hasIncrease && calc) {
         sections.push({ id: 'section-letter', label: 'Letter' });
       }
@@ -394,7 +393,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       }
     }
     return sections;
-  }, [hasIncrease, medianCompRent, hasEnoughComps, calc, isAboveMarket, isFair, hasRentControl]);
+  }, [hasIncrease, medianCompRent, hasEnoughComps, calc, isAboveMarket, isFair, isBelowMarket, hasRentControl]);
 
   // Compute annual savings for turnover section
   const annualSavingsForTurnover = useMemo(() => {
