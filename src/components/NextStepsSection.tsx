@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Building, Truck, Key, Shield, Share2, ArrowRight } from 'lucide-react';
 import { trackEvent } from '@/lib/analytics';
+import { supabase } from '@/integrations/supabase/client';
 import AgentLeadModal from './AgentLeadModal';
 
 interface NextStepsSectionProps {
