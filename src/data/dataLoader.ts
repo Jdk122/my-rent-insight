@@ -271,8 +271,8 @@ export async function lookupRentData(
   zip: string,
   bedrooms: BedroomType
 ): Promise<RentLookupResult | null> {
-  const [allData, countyData, zhviData, alData, hud50Data] = await Promise.all([
-    getRentData(), getCountyFmrData(), getZhviData(), getApartmentListData(), getHud50Data()
+  const [allData, countyData, zhviData, alData, hud50Data, cmZoriData] = await Promise.all([
+    getRentData(), getCountyFmrData(), getZhviData(), getApartmentListData(), getHud50Data(), getCountyMetroZori()
   ]);
   // Primary: SAFMR data. Fallback: county-level FMR.
   let raw = allData[zip];
@@ -287,37 +287,66 @@ export async function lookupRentData(
   const zhvi = zhviData[zip] ?? null;
   const al = alData[zip] ?? null;
   const hud50 = hud50Data[zip] ?? null;
+  const cmZori = cmZoriData[zip] ?? null;
 
   const brIdx = bedroomToIndex[bedrooms];
   const fmr = raw.f[brIdx];
   const fmrPrior = raw.p[brIdx];
 
-  // YoY Priority: Zillow ZORI > bedroom-specific HUD > pre-computed 1BR
+  // YoY Priority: (1) ZIP ZORI → (2) County/Metro ZORI → (3) bedroom-specific HUD → (4) pre-computed 1BR
   let yoyChange: number;
   let yoySource: 'zillow' | 'hud';
   let yoySourceLabel: string;
+  let yoyReliability: 'market' | 'government';
+  // Track whether we filled Zillow fields from county/metro fallback
+  let zillowMonthlyOut: number | null = raw.zm ?? null;
+  let zillowDirectionOut: string | null = raw.zd ?? null;
+  let zillow3moTrendOut: number | null = raw.zt ?? null;
 
   if (raw.zy !== undefined && raw.zy !== null) {
-    // Priority 1: Zillow ZORI (monthly, from actual listings)
+    // Priority 1: ZIP-level Zillow ZORI
     yoyChange = raw.zy;
     yoySource = 'zillow';
-    const cityName = raw.c || raw.m.split(',')[0] || `ZIP ${zip}`;
-    yoySourceLabel = `Based on ${cityName} market data through Jan 2026`;
+    yoyReliability = 'market';
+    const cName = raw.c || raw.m.split(',')[0] || `ZIP ${zip}`;
+    yoySourceLabel = `Based on ${cName} market data through Jan 2026`;
+  } else if (cmZori && cmZori.zy !== undefined && cmZori.zy !== null) {
+    // Priority 2: County/Metro ZORI fallback
+    yoyChange = cmZori.zy;
+    yoySource = 'zillow';
+    yoyReliability = 'market';
+    const cName = raw.c || raw.m.split(',')[0] || `ZIP ${zip}`;
+    const metroName = raw.m || `ZIP ${zip}`;
+    yoySourceLabel = cmZori.src === 'county'
+      ? `Based on ${cName} county market data through Jan 2026`
+      : `Based on ${metroName} metro area data through Jan 2026`;
+    // Populate Zillow fields from county/metro data
+    zillowMonthlyOut = cmZori.zm ?? null;
+    zillowDirectionOut = cmZori.zd ?? null;
+    zillow3moTrendOut = cmZori.zt ?? null;
   } else if (fmrPrior > 0) {
-    // Priority 2: Bedroom-specific HUD FMR
+    // Priority 3: Bedroom-specific HUD FMR
     yoyChange = Math.round(((fmr - fmrPrior) / fmrPrior) * 1000) / 10;
     yoySource = 'hud';
+    yoyReliability = 'government';
     yoySourceLabel = 'Based on HUD Fair Market Rent data (FY2026)';
   } else {
-    // Priority 3: Pre-computed 1BR fallback
+    // Priority 4: Pre-computed 1BR fallback
     yoyChange = raw.y;
     yoySource = 'hud';
+    yoyReliability = 'government';
     yoySourceLabel = 'Based on HUD Fair Market Rent data (FY2026)';
   }
 
   // Guard 1: Cap extreme YoY values
-  const yoyCapped = Math.abs(yoyChange) > YOY_CAP;
+  let yoyCapped = Math.abs(yoyChange) > YOY_CAP;
   yoyChange = Math.max(-YOY_CAP, Math.min(YOY_CAP, yoyChange));
+
+  // Guard 1b: Cap HUD-only extreme YoY to national average
+  if (yoyReliability === 'government' && Math.abs(yoyChange) > HUD_EXTREME_THRESHOLD) {
+    yoyChange = yoyChange > 0 ? HUD_EXTREME_CAP : -HUD_EXTREME_CAP;
+    yoyCapped = true;
+  }
 
   // Guard 2: Suppress clearly bad income data
   const validIncome = (raw.i && raw.i >= MIN_VALID_INCOME) ? raw.i : null;
@@ -353,14 +382,15 @@ export async function lookupRentData(
     yoySource,
     yoySourceLabel,
     yoyCapped: yoyCapped || undefined,
+    yoyReliability,
     priorSource: raw.ps,
     fmrSource,
     censusMedianRent: censusRent,
     medianIncome: validIncome,
     fredTrend: null,
-    zillowMonthly: raw.zm ?? null,
-    zillowDirection: raw.zd ?? null,
-    zillow3moTrend: raw.zt ?? null,
+    zillowMonthly: zillowMonthlyOut,
+    zillowDirection: zillowDirectionOut,
+    zillow3moTrend: zillow3moTrendOut,
     hvd: zhvi?.hvd ?? null,
     alYoY: al?.aly ?? null,
     alMoM: al?.alm ?? null,
