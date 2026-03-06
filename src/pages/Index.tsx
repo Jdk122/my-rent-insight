@@ -270,6 +270,7 @@ const Index = () => {
       {!results && !isLoading && (
         <>
           <HowItWorks />
+          <TopCityLinks />
           <HomeFAQ />
         </>
       )}
