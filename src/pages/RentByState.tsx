@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
 import { getStateData, fmt, slugify, type StateData } from '@/data/cityStateUtils';
 import { getApartmentListData, type ApartmentListZipRaw } from '@/data/dataLoader';
-import { getDataFreshness, getFreshestDate, formatFreshnessDate, type DataFreshness } from '@/data/dataFreshness';
+import { getDataFreshness, getFreshestDate, formatFreshnessDate, getHudFiscalYear, getDataYear, type DataFreshness } from '@/data/dataFreshness';
 import { Input } from '@/components/ui/input';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
@@ -77,6 +77,8 @@ const RentByState = () => {
     if (!freshness) return null;
     return getFreshestDate(freshness, false, Object.keys(alData).length > 0);
   }, [freshness, alData]);
+  const dataYear = freshness ? getDataYear(freshness) : '2026';
+  const hudFY = freshness ? getHudFiscalYear(freshness) : '2026';
 
   if (loading) return <LoadingSkeleton />;
   if (notFound || !data) return <NotFoundPage />;
@@ -84,14 +86,14 @@ const RentByState = () => {
   const { stateName, stateAbbr, cities, avgFmr1br, totalZips } = data;
 
   // ─── OG-optimized meta ───
-  const ogTitle = `Average Rent in ${stateName} — ${fmt(avgFmr1br)}/mo (2026)`;
-  const metaTitle = `Average Rent in ${stateName} (2026) | Rent Data by City`;
+  const ogTitle = `Average Rent in ${stateName} — ${fmt(avgFmr1br)}/mo (${dataYear})`;
+  const metaTitle = `Average Rent in ${stateName} (${dataYear}) | Rent Data by City`;
   const metaDesc = `1-BR rents in ${stateName} are ${fmt(avgFmr1br)}/mo${stateYoY !== null ? `, ${stateYoY > 0 ? 'up' : 'down'} ${Math.abs(stateYoY).toFixed(1)}% YoY` : ''}. See rent data for ${cities.length} cities across ${totalZips.toLocaleString()} zip codes.`;
 
   const faqItems = [
     {
       q: `What is the average rent in ${stateName}?`,
-      a: `The average HUD Fair Market Rent for a 1-bedroom in ${stateName} is ${fmt(avgFmr1br)}/month according to HUD FY2026 data, based on ${totalZips.toLocaleString()} zip codes across ${cities.length} cities.${stateYoY !== null ? ` Rents have changed ${stateYoY > 0 ? '+' : ''}${stateYoY.toFixed(1)}% year-over-year.` : ''}`,
+      a: `The average HUD Fair Market Rent for a 1-bedroom in ${stateName} is ${fmt(avgFmr1br)}/month according to HUD FY${hudFY} data, based on ${totalZips.toLocaleString()} zip codes across ${cities.length} cities.${stateYoY !== null ? ` Rents have changed ${stateYoY > 0 ? '+' : ''}${stateYoY.toFixed(1)}% year-over-year.` : ''}`,
     },
     {
       q: `Which city in ${stateName} has the cheapest rent?`,
@@ -113,7 +115,7 @@ const RentByState = () => {
     },
     {
       q: `How many zip codes have rent data in ${stateName}?`,
-      a: `RenewalReply covers ${totalZips.toLocaleString()} zip codes across ${cities.length} cities in ${stateName}, using HUD Fair Market Rent benchmarks updated for FY2026.`,
+      a: `RenewalReply covers ${totalZips.toLocaleString()} zip codes across ${cities.length} cities in ${stateName}, using HUD Fair Market Rent benchmarks updated for FY${hudFY}.`,
     },
   ];
 
@@ -143,7 +145,7 @@ const RentByState = () => {
             '@type': 'WebPage',
             name: ogTitle,
             description: metaDesc,
-            dateModified: freshest?.date || '2026-01-01',
+            dateModified: freshest?.date || `${dataYear}-01-01`,
             url: `https://www.renewalreply.com/rent-data/${stateSlug}`,
             publisher: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
           },
@@ -162,7 +164,7 @@ const RentByState = () => {
       {/* Noscript fallback */}
       <noscript>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
-          <h1>{`Rent Data for ${stateName} — Average Rent by City (2026)`}</h1>
+          <h1>{`Rent Data for ${stateName} — Average Rent by City (${dataYear})`}</h1>
           <p>{`The average 1-BR HUD Fair Market Rent in ${stateName} is ${fmt(avgFmr1br)}/month. Browse rent data for ${cities.length} cities across ${totalZips.toLocaleString()} zip codes.`}</p>
           <p><a href="https://www.renewalreply.com/">{`Check if your rent increase is fair →`}</a></p>
           <h2>{`Cities in ${stateName}`}</h2>
@@ -175,7 +177,7 @@ const RentByState = () => {
             </tbody>
           </table>
           {faqItems.map((f, i) => (<div key={i}><h3>{f.q}</h3><p>{f.a}</p></div>))}
-          <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY2026</small></p>
+          <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY{hudFY}</small></p>
           <p><a href="https://www.renewalreply.com/rent-data">← Browse all rent data</a></p>
         </div>
       </noscript>
@@ -196,7 +198,7 @@ const RentByState = () => {
         <section className="mb-12">
           <div className="flex items-start justify-between gap-4">
             <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-              Average Rent in {stateName} (2026)
+              Average Rent in {stateName} ({dataYear})
             </h1>
             <ShareDataButton />
           </div>
@@ -205,7 +207,7 @@ const RentByState = () => {
             <div>
               <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">Average 1-Bedroom Fair Market Rent</p>
               <p className="text-5xl md:text-6xl font-bold tabular-nums text-foreground leading-none">{fmt(avgFmr1br)}<span className="text-xl font-normal text-muted-foreground">/mo</span></p>
-              <p className="text-xs text-muted-foreground/70 mt-2">Source: HUD Fair Market Rent FY2026 · {totalZips.toLocaleString()} zip codes</p>
+              <p className="text-xs text-muted-foreground/70 mt-2">Source: HUD Fair Market Rent FY{hudFY} · {totalZips.toLocaleString()} zip codes</p>
             </div>
 
             {stateYoY !== null && (
@@ -238,7 +240,7 @@ const RentByState = () => {
           )}
 
           <p className="mt-4 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
-            The average 1-bedroom rent in {stateName} is {fmt(avgFmr1br)}/month according to HUD FY2026 Fair Market Rent data.
+            The average 1-bedroom rent in {stateName} is {fmt(avgFmr1br)}/month according to HUD FY{hudFY} Fair Market Rent data.
             {stateYoY !== null ? ` Rents have changed ${stateYoY > 0 ? '+' : ''}${stateYoY.toFixed(1)}% year-over-year.` : ''}
             {' '}{stateName} has {cities.length} cities with rent data covering {totalZips.toLocaleString()} zip codes.
           </p>
@@ -298,7 +300,7 @@ const RentByState = () => {
               </button>
             </p>
           )}
-          <p className="mt-2 text-xs text-muted-foreground/70">Sorted by number of zip codes. Source: HUD SAFMR FY2026.</p>
+          <p className="mt-2 text-xs text-muted-foreground/70">Sorted by number of zip codes. Source: HUD SAFMR FY{hudFY}.</p>
         </section>
 
         {/* FAQ */}
@@ -322,7 +324,7 @@ const RentByState = () => {
         {/* Disclaimer + freshness */}
         <DataPageFreshness freshness={freshness} />
         <p className="text-xs text-muted-foreground/60 italic mt-2">
-          Data reflects HUD FY2026 Fair Market Rent benchmarks. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
+          Data reflects HUD FY{hudFY} Fair Market Rent benchmarks. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
         </p>
       </main>
 

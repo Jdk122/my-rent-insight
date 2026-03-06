@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { getRentData, getApartmentListData, getHud50Data, type RentZipRaw, type ApartmentListZipRaw, type Hud50ZipRaw } from '@/data/dataLoader';
 import { slugify, stateNameFromAbbr } from '@/data/cityStateUtils';
 import { getRentControlForZip, getApplicableCap, isNycZip } from '@/data/rentControlData';
-import { getDataFreshness, getFreshestDate, formatFreshnessDate, type DataFreshness } from '@/data/dataFreshness';
+import { getDataFreshness, getFreshestDate, formatFreshnessDate, getHudFiscalYear, getDataYear, type DataFreshness } from '@/data/dataFreshness';
 import RentcastMarketSection from '@/components/RentcastMarketSection';
 import DhcrAlertSection from '@/components/DhcrAlertSection';
 import RenterToolsCTA from '@/components/RenterToolsCTA';
@@ -118,8 +118,8 @@ const RentByZip = () => {
 
   const heroRent = hud50?.f50?.[1] ?? fmr1br;
   const heroRentSource = hud50?.f50?.[1] ? 'HUD 50th Percentile' : 'HUD Fair Market Rent (40th Percentile)';
-  // Change 1: "Median" → "Typical"
-  const heroRentLabel = hud50?.f50?.[1] ? 'Typical Rent' : 'Fair Market Rent';
+  const heroRentLabel = hud50?.f50?.[1] ? 'Estimated Rent' : 'Fair Market Rent';
+  const heroRentLongLabel = hud50?.f50?.[1] ? 'HUD Estimated Rent (50th Percentile)' : 'Fair Market Rent (40th Percentile)';
 
   const trendYoY = al?.aly ?? raw.zy ?? (raw.p[1] > 0 ? Math.round(((raw.f[1] - raw.p[1]) / raw.p[1]) * 1000) / 10 : null);
   const trendSource = al?.aly !== undefined && al?.aly !== null
@@ -131,6 +131,8 @@ const RentByZip = () => {
 
   const freshest = getFreshestDate(freshness, hasZillow, hasAL);
   const freshestFormatted = formatFreshnessDate(freshest.date);
+  const dataYear = getDataYear(freshness);
+  const hudFY = getHudFiscalYear(freshness);
 
   // Change 2: Compute YoY range when both AL and ZORI exist and differ by >1%
   const hasBothTrends = hasAL && al!.aly !== undefined && hasZillow;
@@ -146,9 +148,9 @@ const RentByZip = () => {
 
   // ─── OG-optimized meta ───
   const metaTitle = hasMarketData
-    ? `Average Rent in ${zip} (${city}, ${state}) — 2026 Data | RenewalReply`
-    : `Fair Market Rent in ${zip} (${city}, ${state}) — FY2026 | RenewalReply`;
-  const ogTitle = `Average Rent in ${zip} — ${fmt(heroRent)}/mo (2026)`;
+    ? `Average Rent in ${zip} (${city}, ${state}) — ${dataYear} Data | RenewalReply`
+    : `Fair Market Rent in ${zip} (${city}, ${state}) — FY${hudFY} | RenewalReply`;
+  const ogTitle = `Average Rent in ${zip} — ${fmt(heroRent)}/mo (${dataYear})`;
   const metaDesc = `1-BR rents in ${zip} are ${fmt(heroRent)}/mo${trendYoY !== null ? `, ${trendYoY > 0 ? 'up' : 'down'} ${Math.abs(trendYoY).toFixed(1)}% year-over-year` : ''}. See federal benchmarks, trends, and nearby data for ${city}, ${state}.`;
 
   return (
@@ -194,7 +196,7 @@ const RentByZip = () => {
             url: `https://www.renewalreply.com/rent/${zip}`,
             creator: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
             license: 'https://creativecommons.org/licenses/by/4.0/',
-            temporalCoverage: '2026',
+            temporalCoverage: dataYear,
           },
           {
             '@context': 'https://schema.org',
@@ -213,7 +215,7 @@ const RentByZip = () => {
               {
                 '@type': 'Question',
                 name: `What is the fair market rent for a 1-bedroom in ${zip}?`,
-                acceptedAnswer: { '@type': 'Answer', text: `The HUD Small Area Fair Market Rent for a 1-bedroom in zip code ${zip} is ${fmt(fmr1br)} for FY2026. Studio: ${fmt(raw.f[0])}, 2-BR: ${fmt(raw.f[2])}, 3-BR: ${fmt(raw.f[3])}, 4-BR: ${fmt(raw.f[4])}.` },
+                acceptedAnswer: { '@type': 'Answer', text: `The HUD Small Area Fair Market Rent for a 1-bedroom in zip code ${zip} is ${fmt(fmr1br)} for FY${hudFY}. Studio: ${fmt(raw.f[0])}, 2-BR: ${fmt(raw.f[2])}, 3-BR: ${fmt(raw.f[3])}, 4-BR: ${fmt(raw.f[4])}.` },
               },
               {
                 '@type': 'Question',
@@ -240,7 +242,7 @@ const RentByZip = () => {
               ))}
             </tbody>
           </table>
-          <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY2026</small></p>
+          <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY{hudFY}</small></p>
           {nearby.length > 0 && (<><h2>Nearby Areas</h2><ul>{nearby.map(({ zip: nZip, raw: nRaw }) => (<li key={nZip}><a href={`https://www.renewalreply.com/rent/${nZip}`}>{nZip} — {nRaw.c || 'Unknown'}, {nRaw.s} — 1-BR: {fmt(nRaw.f[1])}</a></li>))}</ul></>)}
           <p><a href={`https://www.renewalreply.com/rent-data/${stateSlug}/${citySlug}`}>{`← ${city}, ${state} rent data`}</a></p>
           <p><a href="https://www.renewalreply.com/">Check if your rent increase is fair →</a></p>
@@ -438,7 +440,7 @@ const RentByZip = () => {
                   </Table>
                 </div>
                 <p className="mt-3 text-xs text-muted-foreground/70">
-                  Source: HUD {raw.fs === 'county' ? 'FMR' : 'SAFMR'} FY2026 · Updated <time dateTime={freshness.hud_safmr}>{formatFreshnessDate(freshness.hud_safmr)}</time>
+                  Source: HUD {raw.fs === 'county' ? 'FMR' : 'SAFMR'} FY{hudFY} · Updated <time dateTime={freshness.hud_safmr}>{formatFreshnessDate(freshness.hud_safmr)}</time>
                 </p>
                 {/* Change 4: Rural ZIP disclosure */}
                 {(raw.fs === 'county' || (raw.fs !== 'safmr' && raw.fs !== undefined)) && (
@@ -487,7 +489,7 @@ const RentByZip = () => {
               <AccordionTrigger>What is the HUD Fair Market Rent for a 1-bedroom in {zip}?</AccordionTrigger>
               <AccordionContent>
                 <p className="text-muted-foreground leading-relaxed">
-                  The HUD Small Area Fair Market Rent for a 1-bedroom in zip code {zip} is {fmt(fmr1br)} for FY2026. This represents the 40th percentile of area rents. Other bedroom sizes: Studio {fmt(raw.f[0])}, 2-BR {fmt(raw.f[2])}, 3-BR {fmt(raw.f[3])}, 4-BR {fmt(raw.f[4])}.
+                  The HUD Small Area Fair Market Rent for a 1-bedroom in zip code {zip} is {fmt(fmr1br)} for FY{hudFY}. This represents the 40th percentile of area rents. Other bedroom sizes: Studio {fmt(raw.f[0])}, 2-BR {fmt(raw.f[2])}, 3-BR {fmt(raw.f[3])}, 4-BR {fmt(raw.f[4])}.
                 </p>
               </AccordionContent>
             </AccordionItem>
@@ -576,14 +578,14 @@ const RentByZip = () => {
         {/* Disclaimer + freshness */}
         <DataPageFreshness freshness={freshness} />
         <p className="mb-12 text-xs text-muted-foreground/60 italic leading-relaxed mt-2">
-          Data reflects HUD FY2026 Fair Market Rent benchmarks and market data from Apartment List and Zillow. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
+          Data reflects HUD FY{hudFY} Fair Market Rent benchmarks and market data from Apartment List and Zillow. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
         </p>
       </main>
 
       {/* Data factsheet for AI extraction */}
       <div className="max-w-3xl mx-auto px-6 pb-4">
         <p className="text-sm text-muted-foreground/50">
-          Zip code: {zip} | City: {city}, {state} | 1-BR {heroRentLabel}: {fmt(heroRent)}/mo | 2-BR: {fmt(hud50?.f50?.[2] ?? raw.f[2])}/mo | Sources: {trendSource}, HUD SAFMR FY2026
+          Zip code: {zip} | City: {city}, {state} | 1-BR {heroRentLabel}: {fmt(heroRent)}/mo | 2-BR: {fmt(hud50?.f50?.[2] ?? raw.f[2])}/mo | Sources: {trendSource}, HUD SAFMR FY{hudFY}
         </p>
       </div>
 

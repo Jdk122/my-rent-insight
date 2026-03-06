@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getRentData, getApartmentListData, type RentZipRaw, type ApartmentListZipRaw } from '@/data/dataLoader';
 import { slugify, STATE_NAMES } from '@/data/cityStateUtils';
-import { getDataFreshness, formatFreshnessDate, type DataFreshness } from '@/data/dataFreshness';
+import { getDataFreshness, formatFreshnessDate, getHudFiscalYear, getDataYear, type DataFreshness } from '@/data/dataFreshness';
 import { Input } from '@/components/ui/input';
 import ShareDataButton from '@/components/ShareDataButton';
 import DataPageFreshness from '@/components/DataPageFreshness';
@@ -123,11 +123,11 @@ const RentData = () => {
             '@context': 'https://schema.org',
             '@type': 'Dataset',
             name: 'U.S. Fair Market Rent Data',
-            description: `HUD Fair Market Rent benchmarks and market rent trends for ${totalZips > 0 ? totalZips.toLocaleString() : '40,000'}+ U.S. zip codes, updated for FY2026.`,
+            description: `HUD Fair Market Rent benchmarks and market rent trends for ${totalZips > 0 ? totalZips.toLocaleString() : '40,000'}+ U.S. zip codes, updated for FY${freshness ? getHudFiscalYear(freshness) : '2026'}.`,
             url: 'https://www.renewalreply.com/rent-data',
             creator: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
             license: 'https://creativecommons.org/licenses/by/4.0/',
-            temporalCoverage: '2026',
+            temporalCoverage: freshness ? getDataYear(freshness) : '2026',
             spatialCoverage: { '@type': 'Place', name: 'United States' },
           },
         ]}
@@ -253,7 +253,7 @@ const RentData = () => {
             <section className="mb-12">
               <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Data Sources</h2>
               <p className="text-muted-foreground leading-relaxed text-sm">
-                Six data sources: HUD Fair Market Rents and 50th Percentile Rents for government benchmarks, Apartment List for rent trends from actual lease transactions, Zillow ZORI and ZHVI for market momentum, and real-time comparable listings and market statistics. Data reflects FY2026 federal housing benchmarks.
+                Six data sources: HUD Fair Market Rents and 50th Percentile Rents for government benchmarks, Apartment List for rent trends from actual lease transactions, Zillow ZORI and ZHVI for market momentum, and real-time comparable listings and market statistics. Data reflects FY{freshness ? getHudFiscalYear(freshness) : '2026'} federal housing benchmarks.
               </p>
             </section>
 

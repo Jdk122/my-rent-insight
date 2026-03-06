@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
 import { getCityData, getNearbyCities, fmt, slugify, stateNameFromAbbr, type CityData } from '@/data/cityStateUtils';
 import { getApartmentListData, getHud50Data, type ApartmentListZipRaw, type Hud50ZipRaw } from '@/data/dataLoader';
-import { getDataFreshness, getFreshestDate, formatFreshnessDate, type DataFreshness } from '@/data/dataFreshness';
+import { getDataFreshness, getFreshestDate, formatFreshnessDate, getHudFiscalYear, getDataYear, type DataFreshness } from '@/data/dataFreshness';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import ContactModal from '@/components/ContactModal';
@@ -162,13 +162,15 @@ const RentByCity = () => {
   // ─── Freshness ───
   const freshest = freshness ? getFreshestDate(freshness, hasZillow, hasAL) : null;
   const freshestFormatted = freshest ? formatFreshnessDate(freshest.date) : '';
+  const dataYear = freshness ? getDataYear(freshness) : '2026';
+  const hudFY = freshness ? getHudFiscalYear(freshness) : '2026';
 
   // ─── Dynamic meta / OG ───
   const metaTitle = hasMarketData
-    ? `Average Rent in ${city}, ${state} (2026) | Rent Data by Zip Code`
-    : `Fair Market Rent in ${city}, ${state} (FY2026) | Rent Data by Zip Code`;
+    ? `Average Rent in ${city}, ${state} (${dataYear}) | Rent Data by Zip Code`
+    : `Fair Market Rent in ${city}, ${state} (FY${hudFY}) | Rent Data by Zip Code`;
 
-  const ogTitle = `Average Rent in ${city}, ${state} — ${fmt(avgFmr[1])}/mo (2026)`;
+  const ogTitle = `Average Rent in ${city}, ${state} — ${fmt(avgFmr[1])}/mo (${dataYear})`;
   const metaDesc = `1-BR rents in ${city} are ${fmt(avgFmr[1])}/mo${trendYoY !== null ? `, ${trendYoY > 0 ? 'up' : 'down'} ${Math.abs(trendYoY).toFixed(1)}% year-over-year` : ''}. See federal benchmarks, trends, and data for ${zips.length} zip codes.`;
 
   const faqItems = [
@@ -218,7 +220,7 @@ const RentByCity = () => {
             '@type': 'WebPage',
             name: ogTitle,
             description: metaDesc,
-            dateModified: freshest?.date || '2026-01-01',
+            dateModified: freshest?.date || `${dataYear}-01-01`,
             url: `https://www.renewalreply.com/rent-data/${stateSlugVal}/${slugify(city)}`,
             publisher: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
           },
@@ -236,7 +238,7 @@ const RentByCity = () => {
             url: `https://www.renewalreply.com/rent-data/${stateSlugVal}/${slugify(city)}`,
             creator: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
             license: 'https://creativecommons.org/licenses/by/4.0/',
-            temporalCoverage: '2026',
+            temporalCoverage: dataYear,
           },
           {
             '@context': 'https://schema.org',
@@ -253,7 +255,7 @@ const RentByCity = () => {
       {/* Noscript fallback */}
       <noscript>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
-          <h1>{`Average Rent in ${city}, ${state} (2026)`}</h1>
+          <h1>{`Average Rent in ${city}, ${state} (${dataYear})`}</h1>
           <p>{`The average 1-bedroom rent in ${city} is ${fmt(avgFmr[1])}/month based on HUD Fair Market Rent data across ${zips.length} zip codes.`}{trendYoY !== null ? ` Rents changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year (${trendSource}).` : ''}</p>
           {freshestFormatted && <p>{`Last updated: ${freshestFormatted}`}</p>}
           <p><a href="https://www.renewalreply.com/">{`Check if your rent increase is fair →`}</a></p>
@@ -267,7 +269,7 @@ const RentByCity = () => {
             </tbody>
           </table>
           {faqItems.map((f, i) => (<div key={i}><h3>{f.q}</h3><p>{f.a}</p></div>))}
-          <p><small>Sources: HUD SAFMR FY2026, Apartment List, Zillow ZORI</small></p>
+          <p><small>Sources: HUD SAFMR FY{hudFY}, Apartment List, Zillow ZORI</small></p>
           <p><a href={`https://www.renewalreply.com/rent-data/${stateSlugVal}`}>{`← Back to ${stateName}`}</a></p>
         </div>
       </noscript>
@@ -289,7 +291,7 @@ const RentByCity = () => {
         <section className="mb-12">
           <div className="flex items-start justify-between gap-4">
             <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-              Average Rent in {city}, {state} (2026)
+              Average Rent in {city}, {state} ({dataYear})
             </h1>
             <ShareDataButton />
           </div>
@@ -402,7 +404,7 @@ const RentByCity = () => {
           </div>
           {freshness && (
             <p className="mt-3 text-xs text-muted-foreground/70">
-              Source: HUD SAFMR FY2026 · Updated <time dateTime={freshness.hud_safmr}>{formatFreshnessDate(freshness.hud_safmr)}</time>
+              Source: HUD SAFMR FY{hudFY} · Updated <time dateTime={freshness.hud_safmr}>{formatFreshnessDate(freshness.hud_safmr)}</time>
             </p>
           )}
         </section>
@@ -553,7 +555,7 @@ const RentByCity = () => {
         {/* Disclaimer + freshness */}
         <DataPageFreshness freshness={freshness} />
         <p className="text-xs text-muted-foreground/60 italic mt-2">
-          Data reflects HUD FY2026 fair market rent benchmarks and market data from Apartment List and Zillow. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
+          Data reflects HUD FY{hudFY} fair market rent benchmarks and market data from Apartment List and Zillow. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
         </p>
       </main>
 
