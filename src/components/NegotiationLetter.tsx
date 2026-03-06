@@ -381,34 +381,13 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
         </div>
       </div>
 
-      {/* Action buttons */}
-      <div className="flex flex-wrap gap-3 mt-5">
-        <button
-          onClick={handleCopy}
-          className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-7 py-3 rounded-lg text-sm font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
-        >
-          {copied ? <><Check size={16} /> Copied!</> : <><Copy size={16} /> Copy letter</>}
-        </button>
-        <button
-          onClick={handleEmail}
-          className="inline-flex items-center gap-2 border border-border px-7 py-3 rounded-lg text-sm font-medium text-foreground hover:border-foreground transition-colors"
-        >
-          <Mail size={16} /> Open in email
-        </button>
-        <button
-          onClick={handleDownload}
-          className="inline-flex items-center gap-2 border border-border px-5 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:border-foreground hover:text-foreground transition-colors"
-        >
-          <Download size={16} />
-        </button>
-        <button
-          onClick={handleRegenerate}
-          disabled={loading}
-          className="inline-flex items-center gap-2 border border-border px-5 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:border-foreground hover:text-foreground transition-colors disabled:opacity-50"
-        >
-          <RefreshCw size={16} /> Regenerate
-        </button>
-      </div>
+      {/* Regenerate link */}
+      <p
+        onClick={handleRegenerate}
+        className="text-xs text-muted-foreground hover:text-foreground cursor-pointer mt-3 transition-colors"
+      >
+        Not quite right? Regenerate →
+      </p>
 
 
       {/* Legal disclaimer */}
