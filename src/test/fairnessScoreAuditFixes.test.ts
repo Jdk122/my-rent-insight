@@ -93,19 +93,19 @@ describe('Component 3: Declining Market Tightening', () => {
   };
 
   describe('falling market (marketYoY = -2)', () => {
-    it('increasePct=3 → 15/25 (falls in 2-4% band)', () => {
+    it('increasePct=3 → 19/25 (interpolated in 2-4% band)', () => {
       const comp = getComponent({ ...highRentInput, marketYoY: -2, increasePct: 3 }, 'fmr');
-      expect(comp.score).toBe(15);
+      expect(comp.score).toBe(19);
     });
 
-    it('increasePct=5 → 6/25 (falls in 4-7% band)', () => {
+    it('increasePct=5 → 12/25 (interpolated in 4-7% band)', () => {
       const comp = getComponent({ ...highRentInput, marketYoY: -2, increasePct: 5 }, 'fmr');
-      expect(comp.score).toBe(6);
+      expect(comp.score).toBe(12);
     });
 
-    it('increasePct=8 → 0/25 (exceeds 7%)', () => {
+    it('increasePct=8 → 4/25 (interpolated in 7-10% band)', () => {
       const comp = getComponent({ ...highRentInput, marketYoY: -2, increasePct: 8 }, 'fmr');
-      expect(comp.score).toBe(0);
+      expect(comp.score).toBe(4);
     });
   });
 
