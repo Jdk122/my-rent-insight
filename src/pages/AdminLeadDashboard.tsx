@@ -344,6 +344,97 @@ function DashboardContent() {
         </div>
       )}
 
+      {/* ━━━ Referral Clicks ━━━ */}
+      <div>
+        <h2 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+          <ExternalLink className="w-5 h-5 text-primary" />
+          Referral Clicks
+          {referralClicks.length > 0 && <span className="text-sm font-normal text-muted-foreground">({referralClicks.length} total)</span>}
+        </h2>
+        {referralLoading ? (
+          <div className="text-sm text-muted-foreground"><Loader2 className="w-4 h-4 animate-spin inline mr-1" /> Loading…</div>
+        ) : referralSummary.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No referral clicks recorded yet.</p>
+        ) : (
+          <>
+            {/* Summary cards */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
+              {referralSummary.map((s) => {
+                const labelMap: Record<string, string> = {
+                  agent_matching: '🏠 Agent Matching',
+                  moving_quotes: '🚚 Moving Quotes',
+                  mortgage_check: '🔑 Mortgage Check',
+                  renters_insurance: '🛡️ Renters Insurance',
+                  mortgage_banner: '🏦 Mortgage Banner',
+                };
+                return (
+                  <div key={s.link_type} className="border border-border rounded-lg p-3 bg-card">
+                    <div className="text-xs text-muted-foreground mb-1">{labelMap[s.link_type] || s.link_type}</div>
+                    <div className="text-lg font-semibold text-foreground">{s.count}</div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Unique emails that clicked */}
+            {(() => {
+              const emailClicks = referralClicks.filter((c: any) => c.email);
+              const uniqueEmails = new Set(emailClicks.map((c: any) => c.email));
+              return (
+                <div className="text-sm text-muted-foreground mb-3">
+                  <span className="font-medium text-foreground">{uniqueEmails.size}</span> identified leads clicked referral links
+                </div>
+              );
+            })()}
+
+            {/* Recent clicks table */}
+            <button
+              onClick={() => setShowRecentClicks(!showRecentClicks)}
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-2"
+            >
+              {showRecentClicks ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+              {showRecentClicks ? 'Hide' : 'Show'} Recent Clicks
+            </button>
+
+            {showRecentClicks && (
+              <div className="border border-border rounded-lg overflow-x-auto bg-card">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border bg-muted/50">
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Date</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Link Type</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Email</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Zip</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Analysis</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {referralClicks.slice(0, 50).map((c: any) => {
+                      const labelMap: Record<string, string> = {
+                        agent_matching: '🏠 Agent',
+                        moving_quotes: '🚚 Movers',
+                        mortgage_check: '🔑 Mortgage',
+                        renters_insurance: '🛡️ Insurance',
+                        mortgage_banner: '🏦 Mortgage Banner',
+                      };
+                      return (
+                        <tr key={c.id} className="border-b border-border/50 hover:bg-muted/30">
+                          <td className="px-3 py-2 whitespace-nowrap text-xs">{new Date(c.created_at).toLocaleString()}</td>
+                          <td className="px-3 py-2 whitespace-nowrap text-xs">{labelMap[c.link_type] || c.link_type}</td>
+                          <td className="px-3 py-2 text-xs max-w-[160px] truncate" title={c.email || ''}>{c.email || '—'}</td>
+                          <td className="px-3 py-2 whitespace-nowrap text-xs">{c.zip || '—'}</td>
+                          <td className="px-3 py-2 whitespace-nowrap text-xs font-mono">{c.analysis_id ? c.analysis_id.slice(0, 8) : '—'}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
       {/* ━━━ Lead Table ━━━ */}
       <div>
         <div className="flex items-center justify-between mb-3">
