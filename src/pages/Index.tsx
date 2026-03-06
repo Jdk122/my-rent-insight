@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import RentForm, { RentFormData, RentFormPrefill } from '@/components/RentForm';
 import { lookupRentData, loadFredTrend, RentLookupResult } from '@/data/rentData';
@@ -6,13 +6,15 @@ import { usePropertyLookup } from '@/hooks/usePropertyLookup';
 import { toast } from 'sonner';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import SEO from '@/components/SEO';
-import RentResults from '@/components/RentResults';
-import SocialProofCounter from '@/components/SocialProofCounter';
-import ContactModal from '@/components/ContactModal';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
-import HomeFAQ from '@/components/HomeFAQ';
-import HowItWorks from '@/components/HowItWorks';
-import SEOFooter from '@/components/SEOFooter';
+
+// Lazy-load heavy below-fold components to reduce initial bundle
+const RentResults = lazy(() => import('@/components/RentResults'));
+const SocialProofCounter = lazy(() => import('@/components/SocialProofCounter'));
+const ContactModal = lazy(() => import('@/components/ContactModal'));
+const HomeFAQ = lazy(() => import('@/components/HomeFAQ'));
+const HowItWorks = lazy(() => import('@/components/HowItWorks'));
+const SEOFooter = lazy(() => import('@/components/SEOFooter'));
 
 
 const Index = () => {
