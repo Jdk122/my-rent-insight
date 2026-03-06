@@ -440,7 +440,7 @@ const RentByZip = () => {
                   </Table>
                 </div>
                 <p className="mt-3 text-xs text-muted-foreground/70">
-                  Source: HUD {raw.fs === 'county' ? 'FMR' : 'SAFMR'} FY2026 · Updated <time dateTime={freshness.hud_safmr}>{formatFreshnessDate(freshness.hud_safmr)}</time>
+                  Source: HUD {raw.fs === 'county' ? 'FMR' : 'SAFMR'} FY{hudFY} · Updated <time dateTime={freshness.hud_safmr}>{formatFreshnessDate(freshness.hud_safmr)}</time>
                 </p>
                 {/* Change 4: Rural ZIP disclosure */}
                 {(raw.fs === 'county' || (raw.fs !== 'safmr' && raw.fs !== undefined)) && (
