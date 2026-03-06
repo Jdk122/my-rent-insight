@@ -177,7 +177,7 @@ const RentByState = () => {
             </tbody>
           </table>
           {faqItems.map((f, i) => (<div key={i}><h3>{f.q}</h3><p>{f.a}</p></div>))}
-          <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY2026</small></p>
+          <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY{hudFY}</small></p>
           <p><a href="https://www.renewalreply.com/rent-data">← Browse all rent data</a></p>
         </div>
       </noscript>
