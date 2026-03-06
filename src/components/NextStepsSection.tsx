@@ -177,6 +177,7 @@ const NextStepsSection = ({
                 onAction={() => {
                   setModalOpen(true);
                   trackEvent('agent_card_clicked', { zip });
+                  logReferralClick('agent_matching');
                 }}
                 recommended
                 delay={0.24}
