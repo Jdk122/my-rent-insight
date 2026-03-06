@@ -1,0 +1,4 @@
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Prerender-Token = "oxRmt6ruZoGnPhn9A6tl"
