@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -15,6 +16,11 @@ serve(async (req) => {
   }
 
   try {
+    const sb = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+
     // Fetch data_freshness.json from the live site
     const freshnessUrl = "https://www.renewalreply.com/data/data_freshness.json";
     const res = await fetch(freshnessUrl);
@@ -50,62 +56,66 @@ serve(async (req) => {
       }
     }
 
-    if (staleItems.length === 0) {
-      return new Response(
-        JSON.stringify({ status: "ok", message: "All data sources are fresh" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    const allFresh = staleItems.length === 0;
+    let alertSent = false;
+
+    if (!allFresh) {
+      // Build email
+      const emailHtml = `
+        <h2>⚠️ RenewalReply Data Staleness Alert</h2>
+        <p>The following data sources are more than ${STALENESS_THRESHOLD_DAYS} days old:</p>
+        <ul>
+          ${staleItems
+            .map(
+              (s) =>
+                `<li><strong>${s.source}</strong>: last updated ${s.date} (${s.daysOld} days ago)</li>`
+            )
+            .join("")}
+        </ul>
+        <p>Please run the appropriate refresh scripts to update the data.</p>
+        <p style="color: #888; font-size: 12px;">This alert is sent weekly by the data-staleness-check function.</p>
+      `;
+
+      // Send via Resend
+      const resendApiKey = Deno.env.get("RESEND_API_KEY");
+      if (resendApiKey) {
+        const emailRes = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${resendApiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            from: "RenewalReply Alerts <noreply@renewalreply.com>",
+            to: [ALERT_EMAIL],
+            subject: `⚠️ Data Staleness Alert: ${staleItems.length} source${staleItems.length > 1 ? "s" : ""} outdated`,
+            html: emailHtml,
+          }),
+        });
+
+        alertSent = emailRes.ok;
+        if (!emailRes.ok) {
+          const errText = await emailRes.text();
+          console.error(`Resend error: ${emailRes.status} ${errText}`);
+        }
+      } else {
+        console.error("RESEND_API_KEY not configured — skipping alert email");
+      }
     }
 
-    // Build email
-    const staleList = staleItems
-      .map((s) => `• ${s.source}: last updated ${s.date} (${s.daysOld} days ago)`)
-      .join("\n");
-
-    const emailHtml = `
-      <h2>⚠️ RenewalReply Data Staleness Alert</h2>
-      <p>The following data sources are more than ${STALENESS_THRESHOLD_DAYS} days old:</p>
-      <ul>
-        ${staleItems
-          .map(
-            (s) =>
-              `<li><strong>${s.source}</strong>: last updated ${s.date} (${s.daysOld} days ago)</li>`
-          )
-          .join("")}
-      </ul>
-      <p>Please run the appropriate refresh scripts to update the data.</p>
-      <p style="color: #888; font-size: 12px;">This alert is sent weekly by the data-staleness-check function.</p>
-    `;
-
-    // Send via Resend
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    if (!resendApiKey) {
-      throw new Error("RESEND_API_KEY not configured");
-    }
-
-    const emailRes = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${resendApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: "RenewalReply Alerts <noreply@renewalreply.com>",
-        to: [ALERT_EMAIL],
-        subject: `⚠️ Data Staleness Alert: ${staleItems.length} source${staleItems.length > 1 ? "s" : ""} outdated`,
-        html: emailHtml,
-      }),
+    // Log result to data_freshness_log table
+    await sb.from("data_freshness_log").insert({
+      all_fresh: allFresh,
+      stale_sources: staleItems,
+      alert_sent: alertSent,
     });
-
-    if (!emailRes.ok) {
-      const errText = await emailRes.text();
-      throw new Error(`Resend error: ${emailRes.status} ${errText}`);
-    }
 
     return new Response(
       JSON.stringify({
-        status: "alert_sent",
+        status: allFresh ? "ok" : "alert_sent",
+        all_fresh: allFresh,
         stale_sources: staleItems,
+        alert_sent: alertSent,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
