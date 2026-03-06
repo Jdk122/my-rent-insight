@@ -58,10 +58,13 @@ Deno.serve(async (req) => {
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
+    const today = new Date().toISOString().slice(0, 10);
+
     // State pages
     for (const stateSlug of [...states].sort()) {
       xml += `  <url>\n`;
       xml += `    <loc>${SITE_URL}/rent-data/${stateSlug}</loc>\n`;
+      xml += `    <lastmod>${today}</lastmod>\n`;
       xml += `    <changefreq>monthly</changefreq>\n`;
       xml += `    <priority>0.7</priority>\n`;
       xml += `  </url>\n`;
@@ -71,8 +74,9 @@ Deno.serve(async (req) => {
     for (const cityPath of [...cities].sort()) {
       xml += `  <url>\n`;
       xml += `    <loc>${SITE_URL}/rent-data/${cityPath}</loc>\n`;
+      xml += `    <lastmod>${today}</lastmod>\n`;
       xml += `    <changefreq>monthly</changefreq>\n`;
-      xml += `    <priority>0.6</priority>\n`;
+      xml += `    <priority>0.7</priority>\n`;
       xml += `  </url>\n`;
     }
 

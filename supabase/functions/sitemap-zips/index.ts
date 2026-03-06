@@ -36,7 +36,7 @@ Deno.serve(async (req) => {
       for (let i = 1; i <= totalPages; i++) {
         xml += `  <sitemap>\n`;
         xml += `    <loc>${fnUrl}?page=${i}</loc>\n`;
-        xml += `    <lastmod>2026-03-01</lastmod>\n`;
+        xml += `    <lastmod>${new Date().toISOString().slice(0, 10)}</lastmod>\n`;
         xml += `  </sitemap>\n`;
       }
       xml += `</sitemapindex>`;
@@ -53,11 +53,13 @@ Deno.serve(async (req) => {
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+    const today = new Date().toISOString().slice(0, 10);
     for (const zip of slice) {
       xml += `  <url>\n`;
       xml += `    <loc>${SITE_URL}/rent/${zip}</loc>\n`;
+      xml += `    <lastmod>${today}</lastmod>\n`;
       xml += `    <changefreq>monthly</changefreq>\n`;
-      xml += `    <priority>0.6</priority>\n`;
+      xml += `    <priority>0.7</priority>\n`;
       xml += `  </url>\n`;
     }
     xml += `</urlset>`;
