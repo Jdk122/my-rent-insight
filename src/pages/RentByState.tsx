@@ -164,7 +164,7 @@ const RentByState = () => {
       {/* Noscript fallback */}
       <noscript>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
-          <h1>{`Rent Data for ${stateName} — Average Rent by City (2026)`}</h1>
+          <h1>{`Rent Data for ${stateName} — Average Rent by City (${dataYear})`}</h1>
           <p>{`The average 1-BR HUD Fair Market Rent in ${stateName} is ${fmt(avgFmr1br)}/month. Browse rent data for ${cities.length} cities across ${totalZips.toLocaleString()} zip codes.`}</p>
           <p><a href="https://www.renewalreply.com/">{`Check if your rent increase is fair →`}</a></p>
           <h2>{`Cities in ${stateName}`}</h2>
