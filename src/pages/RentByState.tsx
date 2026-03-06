@@ -93,7 +93,7 @@ const RentByState = () => {
   const faqItems = [
     {
       q: `What is the average rent in ${stateName}?`,
-      a: `The average HUD Fair Market Rent for a 1-bedroom in ${stateName} is ${fmt(avgFmr1br)}/month according to HUD FY2026 data, based on ${totalZips.toLocaleString()} zip codes across ${cities.length} cities.${stateYoY !== null ? ` Rents have changed ${stateYoY > 0 ? '+' : ''}${stateYoY.toFixed(1)}% year-over-year.` : ''}`,
+      a: `The average HUD Fair Market Rent for a 1-bedroom in ${stateName} is ${fmt(avgFmr1br)}/month according to HUD FY${hudFY} data, based on ${totalZips.toLocaleString()} zip codes across ${cities.length} cities.${stateYoY !== null ? ` Rents have changed ${stateYoY > 0 ? '+' : ''}${stateYoY.toFixed(1)}% year-over-year.` : ''}`,
     },
     {
       q: `Which city in ${stateName} has the cheapest rent?`,
