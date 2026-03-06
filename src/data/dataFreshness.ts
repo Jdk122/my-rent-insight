@@ -49,3 +49,18 @@ export function formatFreshnessDate(dateStr: string): string {
   const d = new Date(dateStr + 'T00:00:00');
   return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 }
+
+/** HUD fiscal year: calendar year of SAFMR date + 1 if Oct or later */
+export function getHudFiscalYear(freshness: DataFreshness): string {
+  const date = new Date(freshness.hud_safmr);
+  const fy = date.getMonth() >= 9 ? date.getFullYear() + 1 : date.getFullYear();
+  return String(fy);
+}
+
+/** Most recent data year across all sources */
+export function getDataYear(freshness: DataFreshness): string {
+  const dates = [freshness.apartment_list, freshness.zillow_zori, freshness.hud_safmr]
+    .map(d => new Date(d))
+    .sort((a, b) => b.getTime() - a.getTime());
+  return String(dates[0].getFullYear());
+}
