@@ -126,6 +126,8 @@ const RentByZip = () => {
     ? 'Apartment List'
     : hasZillow ? 'Zillow ZORI' : 'HUD FMR';
   const hasMarketData = hasZillow || hasAL;
+  const hasHud50 = hud50 !== null && hud50.f50 !== undefined && hud50.f50[1] > 0;
+  const isThinPage = !hasMarketData && !hasHud50;
 
   const freshest = getFreshestDate(freshness, hasZillow, hasAL);
   const freshestFormatted = formatFreshnessDate(freshest.date);
