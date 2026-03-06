@@ -299,6 +299,16 @@ const RentByZip = () => {
             </p>
           )}
 
+          {/* Thin page note */}
+          {isThinPage && (
+            <p className="mt-2 text-sm text-muted-foreground bg-muted/40 border border-border rounded-lg px-4 py-3">
+              This area has limited data coverage. For more detailed rent data, see the{' '}
+              <Link to={`/rent-data/${stateSlug}/${citySlug}`} className="text-primary underline hover:no-underline">
+                city-level analysis for {city}
+              </Link>.
+            </p>
+          )}
+
           {/* CTA */}
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link to={`/?zip=${zip}`} className="inline-flex items-center bg-primary text-primary-foreground px-6 h-11 rounded-lg font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
