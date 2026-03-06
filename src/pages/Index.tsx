@@ -270,11 +270,11 @@ const Index = () => {
       {!results && !isLoading && (
         <>
           <HowItWorks />
-          <TopCityLinks />
           <HomeFAQ />
         </>
       )}
 
+      {!results && !isLoading && <TopCityLinks />}
       <SEOFooter onContactClick={() => setContactOpen(true)} />
 
       {contactOpen && (
