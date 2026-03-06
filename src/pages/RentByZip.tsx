@@ -196,7 +196,7 @@ const RentByZip = () => {
             url: `https://www.renewalreply.com/rent/${zip}`,
             creator: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
             license: 'https://creativecommons.org/licenses/by/4.0/',
-            temporalCoverage: '2026',
+            temporalCoverage: dataYear,
           },
           {
             '@context': 'https://schema.org',
