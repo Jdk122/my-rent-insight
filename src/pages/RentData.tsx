@@ -127,7 +127,7 @@ const RentData = () => {
             url: 'https://www.renewalreply.com/rent-data',
             creator: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
             license: 'https://creativecommons.org/licenses/by/4.0/',
-            temporalCoverage: '2026',
+            temporalCoverage: freshness ? getDataYear(freshness) : '2026',
             spatialCoverage: { '@type': 'Place', name: 'United States' },
           },
         ]}
