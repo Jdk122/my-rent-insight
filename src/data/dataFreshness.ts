@@ -60,7 +60,7 @@ export function getHudFiscalYear(freshness: DataFreshness): string {
 /** Most recent data year across all sources */
 export function getDataYear(freshness: DataFreshness): string {
   const dates = [freshness.apartment_list, freshness.zillow_zori, freshness.hud_safmr]
-    .map(d => new Date(d))
+    .map(d => new Date(d + 'T00:00:00'))
     .sort((a, b) => b.getTime() - a.getTime());
   return String(dates[0].getFullYear());
 }
