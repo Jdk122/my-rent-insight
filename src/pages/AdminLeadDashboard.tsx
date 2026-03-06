@@ -536,6 +536,17 @@ function DashboardContent() {
                           {tag.emoji} {tag.label}
                         </span>
                       </td>
+                      <td className="px-2 py-2">
+                        {Array.isArray(r.anomaly_flags) && r.anomaly_flags.length > 0 ? (
+                          <div className="flex flex-wrap gap-0.5">
+                            {r.anomaly_flags.map((flag: string) => (
+                              <span key={flag} className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium border bg-red-500/15 text-red-600 border-red-500/30">
+                                {flag}
+                              </span>
+                            ))}
+                          </div>
+                        ) : '—'}
+                      </td>
                     </tr>
                   );
                 })}
