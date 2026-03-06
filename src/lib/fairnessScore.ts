@@ -47,8 +47,9 @@ function scoreRateVsTrend(increasePct: number, marketYoY: number, alYoY?: number
   const diff = increasePct - effectiveYoY;
   let rawScore: number;
   if (diff <= 0) rawScore = 35;
-  else if (diff <= 3) rawScore = 23;
-  else if (diff <= 6) rawScore = 12;
+  else if (diff <= 3) rawScore = 35 - (diff / 3) * 12;
+  else if (diff <= 6) rawScore = 23 - ((diff - 3) / 3) * 11;
+  else if (diff <= 10) rawScore = 12 - ((diff - 6) / 4) * 12;
   else rawScore = 0;
   const score = Math.round((rawScore / 35) * maxPts);
   const sourceNote = (alYoY !== null && alYoY !== undefined) ? ' (Apartment List)' : '';
@@ -66,8 +67,9 @@ function scoreVsComps(proposedRent: number, compMedian: number | null, maxPts: n
   const ratio = (proposedRent - compMedian) / compMedian;
   let rawScore: number;
   if (ratio <= 0) rawScore = 30;
-  else if (ratio <= 0.10) rawScore = 22;
-  else if (ratio <= 0.20) rawScore = 12;
+  else if (ratio <= 0.10) rawScore = 30 - (ratio / 0.10) * 8;
+  else if (ratio <= 0.20) rawScore = 22 - ((ratio - 0.10) / 0.10) * 10;
+  else if (ratio <= 0.30) rawScore = 12 - ((ratio - 0.20) / 0.10) * 12;
   else rawScore = 0;
   const score = Math.round((rawScore / 30) * maxPts);
   return { id: 'comps', label: 'Rent vs. Nearby Listings', score, max: maxPts, estimated: false };
@@ -90,25 +92,37 @@ function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, incr
   label += labelSuffix;
   if (currentRent >= upper) {
     const isFalling = (marketYoY ?? 0) < -0.5;
+    let score: number;
     if (isFalling) {
-      if (increasePct <= 2) return { id: 'fmr', label, score: 23, max: 25, estimated: false };
-      if (increasePct <= 4) return { id: 'fmr', label, score: 15, max: 25, estimated: false };
-      if (increasePct <= 7) return { id: 'fmr', label, score: 6, max: 25, estimated: false };
-      return { id: 'fmr', label, score: 0, max: 25, estimated: false };
+      if (increasePct <= 0) score = 25;
+      else if (increasePct <= 2) score = 25 - (increasePct / 2) * 2;
+      else if (increasePct <= 4) score = 23 - ((increasePct - 2) / 2) * 8;
+      else if (increasePct <= 7) score = 15 - ((increasePct - 4) / 3) * 9;
+      else if (increasePct <= 10) score = 6 - ((increasePct - 7) / 3) * 6;
+      else score = 0;
+    } else {
+      if (increasePct <= 0) score = 25;
+      else if (increasePct <= 3) score = 25 - (increasePct / 3) * 2;
+      else if (increasePct <= 6) score = 23 - ((increasePct - 3) / 3) * 8;
+      else if (increasePct <= 10) score = 15 - ((increasePct - 6) / 4) * 9;
+      else if (increasePct <= 14) score = 6 - ((increasePct - 10) / 4) * 6;
+      else score = 0;
     }
-    if (increasePct <= 3) return { id: 'fmr', label, score: 23, max: 25, estimated: false };
-    if (increasePct <= 6) return { id: 'fmr', label, score: 15, max: 25, estimated: false };
-    if (increasePct <= 10) return { id: 'fmr', label, score: 6, max: 25, estimated: false };
-    return { id: 'fmr', label, score: 0, max: 25, estimated: false };
+    score = Math.round(score);
+    return { id: 'fmr', label, score, max: 25, estimated: false };
   }
   let score: number;
-  if (proposedRent <= upper) score = 25;
-  else {
+  if (proposedRent <= upper) {
+    score = 25;
+  } else {
     const above = (proposedRent - upper) / upper;
-    if (above <= 0.10) score = 15;
-    else if (above <= 0.25) score = 6;
+    if (above <= 0) score = 25;
+    else if (above <= 0.10) score = 25 - (above / 0.10) * 10;
+    else if (above <= 0.25) score = 15 - ((above - 0.10) / 0.15) * 9;
+    else if (above <= 0.35) score = 6 - ((above - 0.25) / 0.10) * 6;
     else score = 0;
   }
+  score = Math.round(score);
   return { id: 'fmr', label, score, max: 25, estimated: false };
 }
 
@@ -117,17 +131,21 @@ function scoreMarketMomentum(zillowMonthly: number | null, alMoM?: number | null
   if (zillowMonthly !== null && zillowMonthly !== undefined) {
     let score: number;
     if (zillowMonthly <= 0) score = 10;
-    else if (zillowMonthly <= 0.30) score = 7;
+    else if (zillowMonthly <= 0.30) score = 10 - (zillowMonthly / 0.30) * 3;
+    else if (zillowMonthly <= 0.80) score = 7 - ((zillowMonthly - 0.30) / 0.50) * 4;
     else score = 3;
+    score = Math.round(score);
     return { id: 'momentum', label: 'Market Momentum', score, max: 10, estimated: false };
   }
   if (alMoM !== null && alMoM !== undefined) {
     let score: number;
     if (alMoM <= -0.3) score = 10;
-    else if (alMoM <= 0) score = 8;
-    else if (alMoM <= 0.3) score = 5;
-    else if (alMoM <= 0.6) score = 3;
+    else if (alMoM <= 0) score = 10 - ((alMoM + 0.3) / 0.3) * 2;
+    else if (alMoM <= 0.3) score = 8 - (alMoM / 0.3) * 3;
+    else if (alMoM <= 0.6) score = 5 - ((alMoM - 0.3) / 0.3) * 2;
+    else if (alMoM <= 1.0) score = 3 - ((alMoM - 0.6) / 0.4) * 2;
     else score = 1;
+    score = Math.round(score);
     return { id: 'momentum', label: 'Market Momentum (Apartment List)', score, max: 10, estimated: true };
   }
   if (hvd) {
