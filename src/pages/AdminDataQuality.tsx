@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Lock, ExternalLink, ChevronDown, AlertTriangle, CheckCircle2, Clock, Search, Database, Activity, Upload, ShieldCheck, Loader2, Download } from 'lucide-react';
+import { Lock, ExternalLink, ChevronDown, AlertTriangle, CheckCircle2, Clock, Search, Database, Activity, Upload, ShieldCheck, Loader2, Download, ClipboardCheck } from 'lucide-react';
 import { calculateFairnessScore, type FairnessScoreInput } from '@/lib/fairnessScore';
 import { supabase } from '@/integrations/supabase/client';
 import type { RentZipRaw, ZhviZipRaw, ApartmentListZipRaw, Hud50ZipRaw } from '@/data/dataLoader';
@@ -198,6 +198,7 @@ export default function AdminDataQuality() {
             <TabsTrigger value="coverage" className="gap-1.5"><Database className="h-3.5 w-3.5" />Coverage</TabsTrigger>
             <TabsTrigger value="spotcheck" className="gap-1.5"><Search className="h-3.5 w-3.5" />Spot-Check</TabsTrigger>
             <TabsTrigger value="anomalies" className="gap-1.5"><AlertTriangle className="h-3.5 w-3.5" />Anomalies</TabsTrigger>
+            <TabsTrigger value="verification" className="gap-1.5"><ClipboardCheck className="h-3.5 w-3.5" />Verification</TabsTrigger>
             <TabsTrigger value="refresh" className="gap-1.5"><Upload className="h-3.5 w-3.5" />Refresh Guide</TabsTrigger>
             <TabsTrigger value="migrate" className="gap-1.5"><Download className="h-3.5 w-3.5" />Migration</TabsTrigger>
           </TabsList>
@@ -216,6 +217,10 @@ export default function AdminDataQuality() {
 
           <TabsContent value="anomalies">
             <AnomalySection rentData={allRentData} zhviData={zhviData} alData={alData} hud50Data={hud50Data} anomalyFilter={anomalyFilter} setAnomalyFilter={setAnomalyFilter} />
+          </TabsContent>
+
+          <TabsContent value="verification">
+            <VerificationSection rentData={allRentData} zhviData={zhviData} alData={alData} hud50Data={hud50Data} />
           </TabsContent>
 
           <TabsContent value="refresh">
@@ -1013,5 +1018,281 @@ function MigrationSection() {
         )}
       </CardContent>
     </Card>
+  );
+}
+
+// ═══════════════════════════════════════
+// Section: Data Verification Panel
+// ═══════════════════════════════════════
+
+const SPOT_CHECK_ZIPS: { zip: string; expectedCity: string }[] = [
+  { zip: '07030', expectedCity: 'Hoboken' },
+  { zip: '10001', expectedCity: 'Chelsea' },
+  { zip: '10003', expectedCity: 'East Village' },
+  { zip: '90210', expectedCity: 'Beverly Hills' },
+  { zip: '60614', expectedCity: 'Lincoln Park' },
+  { zip: '02116', expectedCity: 'Back Bay' },
+  { zip: '78701', expectedCity: 'Austin' },
+  { zip: '33139', expectedCity: 'Miami Beach' },
+  { zip: '98101', expectedCity: 'Seattle' },
+  { zip: '30301', expectedCity: 'Atlanta' },
+];
+
+const CITY_OVERRIDES_CHECK: Record<string, string> = {
+  '33139': 'Miami Beach',
+  '10001': 'New York',
+  '10003': 'New York',
+  '07030': 'Hoboken',
+  '90210': 'Beverly Hills',
+  '60614': 'Chicago',
+  '02116': 'Boston',
+  '78701': 'Austin',
+  '98101': 'Seattle',
+  '30301': 'Atlanta',
+};
+
+function VerificationSection({ rentData, zhviData, alData, hud50Data }: {
+  rentData: Record<string, RentZipRaw>;
+  zhviData: Record<string, ZhviZipRaw> | null;
+  alData: Record<string, ApartmentListZipRaw> | null;
+  hud50Data: Record<string, Hud50ZipRaw> | null;
+}) {
+  // 1. Spot-Check Table
+  const spotCheckRows = useMemo(() => {
+    return SPOT_CHECK_ZIPS.map(({ zip, expectedCity }) => {
+      const rd = rentData[zip];
+      const al = alData?.[zip];
+      const h50 = hud50Data?.[zip];
+      if (!rd) return { zip, expectedCity, city: '—', fmr1br: null, hudYoY: null, zoriYoY: null, alYoY: null, h50_1br: null, missing: true };
+      return {
+        zip,
+        expectedCity,
+        city: rd.c || '—',
+        fmr1br: rd.f?.[1] ?? null,
+        hudYoY: rd.y ?? null,
+        zoriYoY: rd.zy ?? null,
+        alYoY: al?.aly ?? null,
+        h50_1br: h50?.f50?.[1] ?? null,
+        missing: false,
+      };
+    });
+  }, [rentData, alData, hud50Data]);
+
+  // 2. Coverage Summary
+  const coverage = useMemo(() => {
+    const zips = Object.keys(rentData);
+    const total = zips.length;
+    let withZori = 0, withAl = 0, withH50 = 0, hudOnly = 0, misleading = 0;
+    for (const z of zips) {
+      const rd = rentData[z];
+      const hasZori = rd.zy !== undefined && rd.zy !== null;
+      const hasAl = !!(alData?.[z]?.aly !== undefined && alData?.[z]?.aly !== null);
+      const hasH50 = !!(hud50Data?.[z]?.f50);
+      if (hasZori) withZori++;
+      if (hasAl) withAl++;
+      if (hasH50) withH50++;
+      if (!hasZori && !hasAl) hudOnly++;
+      if (!hasZori && Math.abs(rd.y ?? 0) > 15) misleading++;
+    }
+    return { total, withZori, withAl, withH50, hudOnly, misleading };
+  }, [rentData, alData, hud50Data]);
+
+  // 3. Source Divergence (ZORI vs AL > 10%)
+  const divergences = useMemo(() => {
+    const results: { zip: string; city: string; zoriYoY: number; alYoY: number; gap: number }[] = [];
+    for (const z of Object.keys(rentData)) {
+      const rd = rentData[z];
+      const al = alData?.[z];
+      if (rd.zy != null && al?.aly != null) {
+        const gap = Math.abs(rd.zy - al.aly);
+        if (gap > 10) {
+          results.push({ zip: z, city: rd.c || '—', zoriYoY: rd.zy, alYoY: al.aly, gap: Math.round(gap * 10) / 10 });
+        }
+      }
+    }
+    return results.sort((a, b) => b.gap - a.gap).slice(0, 10);
+  }, [rentData, alData]);
+
+  // 4. City Name Issues
+  const cityIssues = useMemo(() => {
+    const issues: { zip: string; actual: string; expected: string }[] = [];
+    for (const [zip, expected] of Object.entries(CITY_OVERRIDES_CHECK)) {
+      const rd = rentData[zip];
+      if (rd && rd.c && rd.c.toLowerCase() !== expected.toLowerCase()) {
+        issues.push({ zip, actual: rd.c, expected });
+      }
+    }
+    return issues;
+  }, [rentData]);
+
+  function cellClass(condition: boolean, color: 'red' | 'yellow') {
+    if (!condition) return '';
+    return color === 'red' ? 'bg-red-500/15 text-red-700' : 'bg-yellow-500/15 text-yellow-700';
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* 1. Spot-Check Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2"><ClipboardCheck className="h-5 w-5" />Spot-Check: Known ZIPs</CardTitle>
+          <CardDescription>10 well-known ZIPs with expected values. Red = HUD YoY &gt; ±15%. Yellow = ZORI/AL diverge &gt; 5pp.</CardDescription>
+        </CardHeader>
+        <CardContent className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>ZIP</TableHead>
+                <TableHead>City</TableHead>
+                <TableHead className="text-right">1BR FMR</TableHead>
+                <TableHead className="text-right">HUD YoY%</TableHead>
+                <TableHead className="text-right">ZORI YoY%</TableHead>
+                <TableHead className="text-right">AL YoY%</TableHead>
+                <TableHead className="text-right">HUD 50th 1BR</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {spotCheckRows.map(r => {
+                const hudAnomaly = r.hudYoY != null && Math.abs(r.hudYoY) > 15;
+                const zoriAlDiverge = r.zoriYoY != null && r.alYoY != null && Math.abs(r.zoriYoY - r.alYoY) > 5;
+                return (
+                  <TableRow key={r.zip}>
+                    <TableCell className="font-mono font-medium">{r.zip}</TableCell>
+                    <TableCell>{r.missing ? <span className="text-destructive italic">Not found</span> : r.city}</TableCell>
+                    <TableCell className="text-right font-mono">{r.fmr1br != null ? `$${r.fmr1br.toLocaleString()}` : '—'}</TableCell>
+                    <TableCell className={`text-right font-mono ${cellClass(hudAnomaly, 'red')}`}>
+                      {r.hudYoY != null ? `${r.hudYoY > 0 ? '+' : ''}${r.hudYoY.toFixed(1)}%` : '—'}
+                    </TableCell>
+                    <TableCell className={`text-right font-mono ${cellClass(zoriAlDiverge, 'yellow')}`}>
+                      {r.zoriYoY != null ? `${r.zoriYoY > 0 ? '+' : ''}${r.zoriYoY.toFixed(1)}%` : '—'}
+                    </TableCell>
+                    <TableCell className={`text-right font-mono ${cellClass(zoriAlDiverge, 'yellow')}`}>
+                      {r.alYoY != null ? `${r.alYoY > 0 ? '+' : ''}${r.alYoY.toFixed(1)}%` : '—'}
+                    </TableCell>
+                    <TableCell className="text-right font-mono">{r.h50_1br != null ? `$${r.h50_1br.toLocaleString()}` : '—'}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      {/* 2. Coverage Summary */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2"><Database className="h-5 w-5" />Coverage Summary</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Metric</TableHead>
+                <TableHead className="text-right">Count</TableHead>
+                <TableHead className="text-right">%</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {[
+                { label: 'Total ZIPs', count: coverage.total, p: '' },
+                { label: 'ZIPs with ZORI data', count: coverage.withZori, p: pct(coverage.withZori, coverage.total) },
+                { label: 'ZIPs with Apartment List data', count: coverage.withAl, p: pct(coverage.withAl, coverage.total) },
+                { label: 'ZIPs with HUD 50th percentile', count: coverage.withH50, p: pct(coverage.withH50, coverage.total) },
+                { label: 'ZIPs with no market data (HUD-only)', count: coverage.hudOnly, p: pct(coverage.hudOnly, coverage.total) },
+              ].map(r => (
+                <TableRow key={r.label}>
+                  <TableCell>{r.label}</TableCell>
+                  <TableCell className="text-right font-mono">{r.count.toLocaleString()}</TableCell>
+                  <TableCell className="text-right font-mono">{r.p}</TableCell>
+                </TableRow>
+              ))}
+              <TableRow>
+                <TableCell className="flex items-center gap-1.5">
+                  <AlertTriangle className="h-3.5 w-3.5 text-yellow-600" />
+                  <span className="text-yellow-700 font-medium">Potentially misleading trend data</span>
+                </TableCell>
+                <TableCell className="text-right font-mono text-yellow-700 font-medium">{coverage.misleading.toLocaleString()}</TableCell>
+                <TableCell className="text-right font-mono text-yellow-700">{pct(coverage.misleading, coverage.total)}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          <p className="text-xs text-muted-foreground mt-2">
+            "Potentially misleading" = HUD YoY &gt; ±15% with no ZORI to corroborate. These ZIPs may show extreme trends based solely on HUD benchmark changes.
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* 3. Source Divergence Alerts */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2"><AlertTriangle className="h-5 w-5 text-yellow-500" />Source Divergence Alerts</CardTitle>
+          <CardDescription>Top 10 ZIPs where ZORI and Apartment List YoY diverge by more than 10pp. Scoring may produce inconsistent results.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {divergences.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No major divergences found.</p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>ZIP</TableHead>
+                  <TableHead>City</TableHead>
+                  <TableHead className="text-right">ZORI YoY%</TableHead>
+                  <TableHead className="text-right">AL YoY%</TableHead>
+                  <TableHead className="text-right">Gap</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {divergences.map(d => (
+                  <TableRow key={d.zip}>
+                    <TableCell className="font-mono font-medium">{d.zip}</TableCell>
+                    <TableCell>{d.city}</TableCell>
+                    <TableCell className="text-right font-mono">{d.zoriYoY > 0 ? '+' : ''}{d.zoriYoY.toFixed(1)}%</TableCell>
+                    <TableCell className="text-right font-mono">{d.alYoY > 0 ? '+' : ''}{d.alYoY.toFixed(1)}%</TableCell>
+                    <TableCell className="text-right font-mono font-bold text-destructive">{d.gap.toFixed(1)}pp</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* 4. City Name Issues */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2"><Search className="h-5 w-5" />City Name Issues</CardTitle>
+          <CardDescription>ZIPs where the stored city name doesn't match expected values. Consider adding to CITY_OVERRIDES in dataLoader.ts.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {cityIssues.length === 0 ? (
+            <div className="flex items-center gap-2 text-sm text-emerald-700">
+              <CheckCircle2 className="h-4 w-4" /> All checked city names match expectations.
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>ZIP</TableHead>
+                  <TableHead>Actual City</TableHead>
+                  <TableHead>Expected City</TableHead>
+                  <TableHead>Suggested Fix</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {cityIssues.map(i => (
+                  <TableRow key={i.zip}>
+                    <TableCell className="font-mono font-medium">{i.zip}</TableCell>
+                    <TableCell className="text-destructive">{i.actual}</TableCell>
+                    <TableCell className="text-emerald-700">{i.expected}</TableCell>
+                    <TableCell className="text-xs font-mono text-muted-foreground">'{i.zip}': '{i.expected}'</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }
