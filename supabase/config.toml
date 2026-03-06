@@ -35,3 +35,6 @@ verify_jwt = false
 
 [functions.rentcast-market-refresh]
 verify_jwt = false
+
+[functions.admin-query]
+verify_jwt = false

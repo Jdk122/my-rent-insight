@@ -33,7 +33,8 @@ Deno.serve(async (req) => {
     // Create service-role client (bypasses RLS)
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } }
     );
 
     let data: unknown;
