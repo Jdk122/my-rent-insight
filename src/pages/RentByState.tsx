@@ -77,6 +77,8 @@ const RentByState = () => {
     if (!freshness) return null;
     return getFreshestDate(freshness, false, Object.keys(alData).length > 0);
   }, [freshness, alData]);
+  const dataYear = freshness ? getDataYear(freshness) : '2026';
+  const hudFY = freshness ? getHudFiscalYear(freshness) : '2026';
 
   if (loading) return <LoadingSkeleton />;
   if (notFound || !data) return <NotFoundPage />;
