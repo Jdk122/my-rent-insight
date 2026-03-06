@@ -13,7 +13,7 @@ import LoadingAnalysis from '@/components/LoadingAnalysis';
 import HomeFAQ from '@/components/HomeFAQ';
 import HowItWorks from '@/components/HowItWorks';
 import SEOFooter from '@/components/SEOFooter';
-import TopCityLinks from '@/components/TopCityLinks';
+
 
 const Index = () => {
   const [searchParams] = useSearchParams();
@@ -274,8 +274,7 @@ const Index = () => {
         </>
       )}
 
-      <SEOFooter onContactClick={() => setContactOpen(true)} />
-      {!results && !isLoading && <TopCityLinks />}
+      <SEOFooter onContactClick={() => setContactOpen(true)} showCityDirectory={!results && !isLoading} />
 
       {contactOpen && (
         <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
