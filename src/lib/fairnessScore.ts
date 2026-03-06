@@ -67,8 +67,9 @@ function scoreVsComps(proposedRent: number, compMedian: number | null, maxPts: n
   const ratio = (proposedRent - compMedian) / compMedian;
   let rawScore: number;
   if (ratio <= 0) rawScore = 30;
-  else if (ratio <= 0.10) rawScore = 22;
-  else if (ratio <= 0.20) rawScore = 12;
+  else if (ratio <= 0.10) rawScore = 30 - (ratio / 0.10) * 8;
+  else if (ratio <= 0.20) rawScore = 22 - ((ratio - 0.10) / 0.10) * 10;
+  else if (ratio <= 0.30) rawScore = 12 - ((ratio - 0.20) / 0.10) * 12;
   else rawScore = 0;
   const score = Math.round((rawScore / 30) * maxPts);
   return { id: 'comps', label: 'Rent vs. Nearby Listings', score, max: maxPts, estimated: false };
