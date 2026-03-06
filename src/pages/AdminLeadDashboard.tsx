@@ -482,6 +482,7 @@ function DashboardContent() {
                     { col: 'utm_source', label: 'UTM' },
                     { col: 'confidence_level', label: 'Conf' },
                     { col: '', label: 'Quality' },
+                    { col: '', label: 'Flags' },
                   ].map((h, i) => (
                     <th
                       key={i}
