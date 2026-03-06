@@ -374,13 +374,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     if (hasRentControl) {
       sections.push({ id: 'section-rights', label: 'Rights' });
     }
-    if (isAboveMarket) {
-      // Above trend: Letter → Share
+    if (isAboveMarket || isFair) {
+      // Above trend or Fair: Letter → Share
       if (hasIncrease && calc) {
         sections.push({ id: 'section-letter', label: 'Letter' });
       }
-      sections.push({ id: 'section-share', label: 'Send' });
-    } else {
+      if (isAboveMarket) {
+        sections.push({ id: 'section-share', label: 'Send' });
+      }
+    }
+    if (!isAboveMarket) {
       // Below/fair: Should You Move → Share
       if (hasIncrease && medianCompRent && hasEnoughComps) {
         sections.push({ id: 'section-move', label: 'Move' });
@@ -390,7 +393,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       }
     }
     return sections;
-  }, [hasIncrease, medianCompRent, hasEnoughComps, calc, isAboveMarket, hasRentControl]);
+  }, [hasIncrease, medianCompRent, hasEnoughComps, calc, isAboveMarket, isFair, hasRentControl]);
 
   // Compute annual savings for turnover section
   const annualSavingsForTurnover = useMemo(() => {
