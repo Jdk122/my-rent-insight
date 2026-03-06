@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import RentForm, { RentFormData, RentFormPrefill } from '@/components/RentForm';
 import { lookupRentData, loadFredTrend, RentLookupResult } from '@/data/rentData';
@@ -6,13 +6,15 @@ import { usePropertyLookup } from '@/hooks/usePropertyLookup';
 import { toast } from 'sonner';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import SEO from '@/components/SEO';
-import RentResults from '@/components/RentResults';
-import SocialProofCounter from '@/components/SocialProofCounter';
-import ContactModal from '@/components/ContactModal';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
-import HomeFAQ from '@/components/HomeFAQ';
-import HowItWorks from '@/components/HowItWorks';
-import SEOFooter from '@/components/SEOFooter';
+
+// Lazy-load heavy below-fold components to reduce initial bundle
+const RentResults = lazy(() => import('@/components/RentResults'));
+const SocialProofCounter = lazy(() => import('@/components/SocialProofCounter'));
+const ContactModal = lazy(() => import('@/components/ContactModal'));
+const HomeFAQ = lazy(() => import('@/components/HomeFAQ'));
+const HowItWorks = lazy(() => import('@/components/HowItWorks'));
+const SEOFooter = lazy(() => import('@/components/SEOFooter'));
 
 
 const Index = () => {
@@ -241,11 +243,14 @@ const Index = () => {
           </p>
           <section className="mt-8 sm:mt-10" aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
-            <SocialProofCounter />
+            <Suspense fallback={null}>
+              <SocialProofCounter />
+            </Suspense>
           </section>
         </main>
       ) : (
         <div ref={resultsRef}>
+          <Suspense fallback={<LoadingAnalysis />}>
           <RentResults
             formData={results.formData}
             rentData={results.rentData}
@@ -263,21 +268,26 @@ const Index = () => {
             onEmailCaptured={setCapturedEmail}
             onVerdictReady={setIsAboveMarket}
           />
+          </Suspense>
         </div>
       )}
 
       {/* How It Works + FAQ — only on landing */}
       {!results && !isLoading && (
-        <>
+        <Suspense fallback={null}>
           <HowItWorks />
           <HomeFAQ />
-        </>
+        </Suspense>
       )}
 
-      <SEOFooter onContactClick={() => setContactOpen(true)} showCityDirectory={!results && !isLoading} />
+      <Suspense fallback={null}>
+        <SEOFooter onContactClick={() => setContactOpen(true)} showCityDirectory={!results && !isLoading} />
+      </Suspense>
 
       {contactOpen && (
-        <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
+        <Suspense fallback={null}>
+          <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
+        </Suspense>
       )}
     </div>
   );

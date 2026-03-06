@@ -15,9 +15,10 @@
     <link rel="preconnect" href="https://www.google-analytics.com" />
     <link rel="dns-prefetch" href="https://piwahxgtsxpcrgoyuedy.supabase.co" />
 
-    <!-- Critical display font loads render-blocking (LCP headline) -->
+    <!-- Display font — non-blocking with swap fallback -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" as="style" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" /></noscript>
     <!-- Body font deferred (not LCP-critical) -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" media="print" onload="this.media='all'" />
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" /></noscript>
@@ -168,21 +169,28 @@
       }
     </script>
 
-    <!-- Microsoft Advertising UET tag -->
+    <!-- Microsoft Advertising UET tag — deferred -->
     <script>
-      (function(w, d, t, u, o) {
-        w[u] = w[u] || [];
-        o.ts = (new Date).getTime();
-        var n = d.createElement(t);
-        n.src = "https://bat.bing.net/bat.js?ti=" + o.ti;
-        n.async = 1;
-        n.onload = n.onreadystatechange = function() {
-          var s = this.readyState;
-          s && "loaded" !== s && "complete" !== s || (o.q = w[u], w[u] = new UET(o), w[u].push("pageLoad"), n.onload = n.onreadystatechange = null);
-        };
-        var i = d.getElementsByTagName(t)[0];
-        i.parentNode.insertBefore(n, i);
-      })(window, document, "script", "uetq", { ti: "97232861", enableAutoSpaTracking: true });
+      if (typeof requestIdleCallback === 'function') {
+        requestIdleCallback(function() { loadUET(); });
+      } else {
+        setTimeout(function() { loadUET(); }, 3000);
+      }
+      function loadUET() {
+        (function(w, d, t, u, o) {
+          w[u] = w[u] || [];
+          o.ts = (new Date).getTime();
+          var n = d.createElement(t);
+          n.src = "https://bat.bing.net/bat.js?ti=" + o.ti;
+          n.async = 1;
+          n.onload = n.onreadystatechange = function() {
+            var s = this.readyState;
+            s && "loaded" !== s && "complete" !== s || (o.q = w[u], w[u] = new UET(o), w[u].push("pageLoad"), n.onload = n.onreadystatechange = null);
+          };
+          var i = d.getElementsByTagName(t)[0];
+          i.parentNode.insertBefore(n, i);
+        })(window, document, "script", "uetq", { ti: "97232861", enableAutoSpaTracking: true });
+      }
     </script>
   </body>
 </html>
