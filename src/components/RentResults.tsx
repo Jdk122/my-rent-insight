@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { RentFormData } from './RentForm';
@@ -671,6 +672,64 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         </motion.section>
         </div>
       </div>
+
+      {/* ━━━ Early email capture bar ━━━ */}
+      {!capturedEmail && (
+        <div className="w-full bg-card border-y border-border">
+          <div className="max-w-[620px] mx-auto px-5 sm:px-6 py-4">
+            <p className="text-[13px] text-muted-foreground text-center mb-2.5">
+              {isAboveMarket ? 'Get your negotiation letter emailed to you'
+                : isFair ? 'Get your negotiation letter emailed to you'
+                : hasIncrease ? 'Get a copy of this analysis emailed to you'
+                : 'Get this market report emailed to you'}
+            </p>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const formEl = e.target as HTMLFormElement;
+                const emailVal = (formEl.elements.namedItem('early_email') as HTMLInputElement)?.value;
+                if (!emailVal) return;
+                const utm = getUtmParams();
+                try {
+                  await supabase.rpc('upsert_lead', {
+                    p_email: emailVal,
+                    p_analysis_id: leadContext?.analysisId || null,
+                    p_capture_source: 'early_capture',
+                    p_address: leadContext?.address || null,
+                    p_city: leadContext?.city || null,
+                    p_state: leadContext?.state || null,
+                    p_zip: leadContext?.zip || null,
+                    p_bedrooms: leadContext?.bedrooms ?? null,
+                    p_current_rent: leadContext?.currentRent ?? null,
+                    p_proposed_rent: leadContext?.proposedRent ?? null,
+                    p_increase_pct: leadContext?.increasePct ?? null,
+                    p_market_trend_pct: leadContext?.marketTrendPct ?? null,
+                    p_fair_counter_offer: leadContext?.fairCounterOffer || null,
+                    p_comps_position: leadContext?.compsPosition || null,
+                    p_letter_generated: leadContext?.letterGenerated ?? false,
+                    p_verdict: verdictLabel || null,
+                    p_utm_source: utm.utm_source || null,
+                    p_utm_medium: utm.utm_medium || null,
+                    p_utm_campaign: utm.utm_campaign || null,
+                    p_fairness_score: leadContext?.fairnessScore ?? null,
+                    p_comp_median_rent: leadContext?.compMedianRent ?? null,
+                    p_hud_fmr_value: leadContext?.hudFmrValue ?? null,
+                  } as any);
+                } catch (err) {
+                  console.error('Early capture failed:', err);
+                }
+                trackEvent('email_submitted', { source: 'early_capture', verdict: verdictLabel });
+                setCapturedEmail(emailVal);
+                toast.success("We'll send you a copy.");
+              }}
+              className="flex gap-2 max-w-[440px] mx-auto"
+            >
+              <input name="early_email" type="email" required placeholder="you@email.com" className="flex-1 min-w-0 px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50" />
+              <button type="submit" className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap shrink-0">Send it →</button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* ━━━ Transition edge ━━━ */}
       <div className="w-full h-px" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} />
