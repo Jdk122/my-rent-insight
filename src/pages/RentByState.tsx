@@ -240,7 +240,7 @@ const RentByState = () => {
           )}
 
           <p className="mt-4 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
-            The average 1-bedroom rent in {stateName} is {fmt(avgFmr1br)}/month according to HUD FY2026 Fair Market Rent data.
+            The average 1-bedroom rent in {stateName} is {fmt(avgFmr1br)}/month according to HUD FY{hudFY} Fair Market Rent data.
             {stateYoY !== null ? ` Rents have changed ${stateYoY > 0 ? '+' : ''}${stateYoY.toFixed(1)}% year-over-year.` : ''}
             {' '}{stateName} has {cities.length} cities with rent data covering {totalZips.toLocaleString()} zip codes.
           </p>
