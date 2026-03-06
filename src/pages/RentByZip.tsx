@@ -215,7 +215,7 @@ const RentByZip = () => {
               {
                 '@type': 'Question',
                 name: `What is the fair market rent for a 1-bedroom in ${zip}?`,
-                acceptedAnswer: { '@type': 'Answer', text: `The HUD Small Area Fair Market Rent for a 1-bedroom in zip code ${zip} is ${fmt(fmr1br)} for FY2026. Studio: ${fmt(raw.f[0])}, 2-BR: ${fmt(raw.f[2])}, 3-BR: ${fmt(raw.f[3])}, 4-BR: ${fmt(raw.f[4])}.` },
+                acceptedAnswer: { '@type': 'Answer', text: `The HUD Small Area Fair Market Rent for a 1-bedroom in zip code ${zip} is ${fmt(fmr1br)} for FY${hudFY}. Studio: ${fmt(raw.f[0])}, 2-BR: ${fmt(raw.f[2])}, 3-BR: ${fmt(raw.f[3])}, 4-BR: ${fmt(raw.f[4])}.` },
               },
               {
                 '@type': 'Question',
