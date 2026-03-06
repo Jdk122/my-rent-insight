@@ -229,31 +229,14 @@ function DashboardContent() {
   // Build and execute query
   const fetchRows = useCallback(async () => {
     setLoading(true);
-    let query = supabase
-      .from('analyses' as any)
-      .select(
-        'id, address, city, state, zip, bedrooms, current_rent, proposed_rent, increase_pct, fairness_score, verdict_label, dollar_overpayment, letter_generated, letter_tone, results_shared, confidence_level, rent_stabilized, utm_source, utm_medium, utm_campaign, created_at, counter_offer_low, counter_offer_high, comp_median_rent, hud_fmr_value, comps_count, comps_position, fair_counter_offer, sale_data_found, market_trend_pct, cache_hit, markup_multiplier, leads(id, email, lease_expiration_month, lease_expiration_year, partner_opt_in, capture_source, unsubscribed, outcome, reminder_sent_at, followup_sent_at, created_at)',
-        { count: 'exact' }
-      ) as any;
+    const result = await adminQuery('leads_filtered', {
+      filterZip, filterCity, filterVerdict, filterLetter, filterBedrooms,
+      filterUtm, filterConfidence, filterStabilized,
+      sortCol, sortAsc, page, pageSize: PAGE_SIZE,
+    });
+    if (!result) return;
 
-    // Apply filters
-    if (filterZip) query = query.ilike('zip', `%${filterZip}%`);
-    if (filterCity) query = query.ilike('city', `%${filterCity}%`);
-    if (filterVerdict.length > 0) query = query.in('verdict_label', filterVerdict);
-    if (filterLetter === 'yes') query = query.eq('letter_generated', true);
-    if (filterLetter === 'no') query = query.eq('letter_generated', false);
-    if (filterBedrooms) query = query.eq('bedrooms', parseInt(filterBedrooms));
-    if (filterUtm) query = query.ilike('utm_source', `%${filterUtm}%`);
-    if (filterConfidence.length > 0) query = query.in('confidence_level', filterConfidence);
-    if (filterStabilized === 'yes') query = query.eq('rent_stabilized', true);
-    if (filterStabilized === 'no') query = query.eq('rent_stabilized', false);
-    if (filterStabilized === 'unknown') query = query.is('rent_stabilized', null);
-
-    query = query.order(sortCol, { ascending: sortAsc });
-    query = query.range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
-
-    const { data, count } = await query;
-    let results = (data || []) as any[];
+    let results = (result.rows || []) as any[];
 
     // Client-side filters for joined data
     if (filterHasEmail === 'yes') results = results.filter((r: any) => r.leads?.[0]?.email);
@@ -265,7 +248,7 @@ function DashboardContent() {
     }
 
     setRows(results);
-    setTotalCount(count || 0);
+    setTotalCount(result.count || 0);
     setLoading(false);
   }, [page, sortCol, sortAsc, filterZip, filterCity, filterVerdict, filterQuality, filterHasEmail, filterLetter, filterBedrooms, filterUtm, filterConfidence, filterStabilized]);
 
