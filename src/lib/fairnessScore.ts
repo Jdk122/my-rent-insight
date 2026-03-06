@@ -92,25 +92,37 @@ function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, incr
   label += labelSuffix;
   if (currentRent >= upper) {
     const isFalling = (marketYoY ?? 0) < -0.5;
+    let score: number;
     if (isFalling) {
-      if (increasePct <= 2) return { id: 'fmr', label, score: 23, max: 25, estimated: false };
-      if (increasePct <= 4) return { id: 'fmr', label, score: 15, max: 25, estimated: false };
-      if (increasePct <= 7) return { id: 'fmr', label, score: 6, max: 25, estimated: false };
-      return { id: 'fmr', label, score: 0, max: 25, estimated: false };
+      if (increasePct <= 0) score = 25;
+      else if (increasePct <= 2) score = 25 - (increasePct / 2) * 2;
+      else if (increasePct <= 4) score = 23 - ((increasePct - 2) / 2) * 8;
+      else if (increasePct <= 7) score = 15 - ((increasePct - 4) / 3) * 9;
+      else if (increasePct <= 10) score = 6 - ((increasePct - 7) / 3) * 6;
+      else score = 0;
+    } else {
+      if (increasePct <= 0) score = 25;
+      else if (increasePct <= 3) score = 25 - (increasePct / 3) * 2;
+      else if (increasePct <= 6) score = 23 - ((increasePct - 3) / 3) * 8;
+      else if (increasePct <= 10) score = 15 - ((increasePct - 6) / 4) * 9;
+      else if (increasePct <= 14) score = 6 - ((increasePct - 10) / 4) * 6;
+      else score = 0;
     }
-    if (increasePct <= 3) return { id: 'fmr', label, score: 23, max: 25, estimated: false };
-    if (increasePct <= 6) return { id: 'fmr', label, score: 15, max: 25, estimated: false };
-    if (increasePct <= 10) return { id: 'fmr', label, score: 6, max: 25, estimated: false };
-    return { id: 'fmr', label, score: 0, max: 25, estimated: false };
+    score = Math.round(score);
+    return { id: 'fmr', label, score, max: 25, estimated: false };
   }
   let score: number;
-  if (proposedRent <= upper) score = 25;
-  else {
+  if (proposedRent <= upper) {
+    score = 25;
+  } else {
     const above = (proposedRent - upper) / upper;
-    if (above <= 0.10) score = 15;
-    else if (above <= 0.25) score = 6;
+    if (above <= 0) score = 25;
+    else if (above <= 0.10) score = 25 - (above / 0.10) * 10;
+    else if (above <= 0.25) score = 15 - ((above - 0.10) / 0.15) * 9;
+    else if (above <= 0.35) score = 6 - ((above - 0.25) / 0.10) * 6;
     else score = 0;
   }
+  score = Math.round(score);
   return { id: 'fmr', label, score, max: 25, estimated: false };
 }
 
