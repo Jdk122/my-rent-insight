@@ -167,10 +167,10 @@ const RentByCity = () => {
 
   // ─── Dynamic meta / OG ───
   const metaTitle = hasMarketData
-    ? `Average Rent in ${city}, ${state} (2026) | Rent Data by Zip Code`
-    : `Fair Market Rent in ${city}, ${state} (FY2026) | Rent Data by Zip Code`;
+    ? `Average Rent in ${city}, ${state} (${dataYear}) | Rent Data by Zip Code`
+    : `Fair Market Rent in ${city}, ${state} (FY${hudFY}) | Rent Data by Zip Code`;
 
-  const ogTitle = `Average Rent in ${city}, ${state} — ${fmt(avgFmr[1])}/mo (2026)`;
+  const ogTitle = `Average Rent in ${city}, ${state} — ${fmt(avgFmr[1])}/mo (${dataYear})`;
   const metaDesc = `1-BR rents in ${city} are ${fmt(avgFmr[1])}/mo${trendYoY !== null ? `, ${trendYoY > 0 ? 'up' : 'down'} ${Math.abs(trendYoY).toFixed(1)}% year-over-year` : ''}. See federal benchmarks, trends, and data for ${zips.length} zip codes.`;
 
   const faqItems = [
