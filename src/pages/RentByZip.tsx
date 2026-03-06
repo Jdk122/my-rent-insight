@@ -578,7 +578,7 @@ const RentByZip = () => {
         {/* Disclaimer + freshness */}
         <DataPageFreshness freshness={freshness} />
         <p className="mb-12 text-xs text-muted-foreground/60 italic leading-relaxed mt-2">
-          Data reflects HUD FY2026 Fair Market Rent benchmarks and market data from Apartment List and Zillow. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
+          Data reflects HUD FY{hudFY} Fair Market Rent benchmarks and market data from Apartment List and Zillow. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
         </p>
       </main>
 
