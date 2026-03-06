@@ -317,6 +317,9 @@ const RentByZip = () => {
                     <p className="text-sm text-muted-foreground">Year-over-Year Trend (Apartment List)</p>
                     <p className={`text-2xl font-bold tabular-nums ${al!.aly! > 3 ? 'text-destructive' : al!.aly! < 0 ? 'text-accent' : 'text-foreground'}`}>{al!.aly! > 0 ? '+' : ''}{al!.aly!.toFixed(1)}%</p>
                     <OutlierFlag yoy={al!.aly!} />
+                    <p className="text-[11px] text-muted-foreground/60 mt-1">
+                      Trend reflects county/metro-level data from Apartment List mapped to this ZIP.
+                    </p>
                   </div>
                 )}
                 {hasZillow && (
