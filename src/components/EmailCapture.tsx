@@ -50,7 +50,6 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
   const [leaseMonth, setLeaseMonth] = useState('');
   const [leaseYear, setLeaseYear] = useState('');
   const [submitted, setSubmitted] = useState(false);
-  const [dateError, setDateError] = useState('');
   const [partnerOptIn, setPartnerOptIn] = useState(false);
 
   useEffect(() => {
@@ -61,14 +60,8 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
     e.preventDefault();
     if (!email) return;
 
-    if (!leaseMonth || !leaseYear) {
-      setDateError('Please select both month and year so we can time your reminder.');
-      return;
-    }
-    setDateError('');
-
-    const leaseMonthNum = months.indexOf(leaseMonth) + 1;
-    const leaseYearNum = parseInt(leaseYear, 10);
+    const leaseMonthNum = leaseMonth ? months.indexOf(leaseMonth) + 1 : null;
+    const leaseYearNum = leaseYear ? parseInt(leaseYear, 10) : null;
 
     const utm = getUtmParams();
 
@@ -157,32 +150,6 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
         {subtext || `We'll send you updated market data for ${city || 'your area'} before your next renewal.`}
       </p>
       <form onSubmit={handleSubmit} className="max-w-[440px] mx-auto space-y-2">
-        {/* Lease date row */}
-        <div className="flex gap-2">
-          <select
-            value={leaseMonth}
-            onChange={(e) => { setLeaseMonth(e.target.value); setDateError(''); }}
-            className="flex-1 px-4 py-3 text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
-          >
-            <option disabled value="">Lease renewal month</option>
-            {months.map((m) => (
-              <option key={m} value={m}>{m}</option>
-            ))}
-          </select>
-          <select
-            value={leaseYear}
-            onChange={(e) => { setLeaseYear(e.target.value); setDateError(''); }}
-            className="w-[100px] px-4 py-3 text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
-          >
-            <option disabled value="">Year</option>
-            {years.map((y) => (
-              <option key={y} value={String(y)}>{y}</option>
-            ))}
-          </select>
-        </div>
-        {dateError && (
-          <p className="text-[12px] text-destructive">{dateError}</p>
-        )}
         {/* Email + button row */}
         <div className="flex gap-2">
           <input
@@ -194,8 +161,32 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
             className="flex-1 min-w-0 px-4 py-3 text-sm border border-border rounded-lg bg-card text-foreground outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
           />
           <button type="submit" className="bg-primary text-primary-foreground px-4 sm:px-5 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap shrink-0">
-            Alert me next year →
+            Send me my results →
           </button>
+        </div>
+        {/* Optional lease date row */}
+        <p className="text-[11px] text-muted-foreground/60 mt-3">Optional: tell us when your lease renews and we'll time your reminder perfectly.</p>
+        <div className="flex gap-2">
+          <select
+            value={leaseMonth}
+            onChange={(e) => setLeaseMonth(e.target.value)}
+            className="flex-1 px-4 py-3 text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
+          >
+            <option disabled value="">Lease renewal month</option>
+            {months.map((m) => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
+          <select
+            value={leaseYear}
+            onChange={(e) => setLeaseYear(e.target.value)}
+            className="w-[100px] px-4 py-3 text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
+          >
+            <option disabled value="">Year</option>
+            {years.map((y) => (
+              <option key={y} value={String(y)}>{y}</option>
+            ))}
+          </select>
         </div>
       </form>
       <div className="max-w-[440px] mx-auto mt-2 space-y-1.5">
