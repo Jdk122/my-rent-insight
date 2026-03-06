@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
 import { getCityData, getNearbyCities, fmt, slugify, stateNameFromAbbr, type CityData } from '@/data/cityStateUtils';
 import { getApartmentListData, getHud50Data, type ApartmentListZipRaw, type Hud50ZipRaw } from '@/data/dataLoader';
-import { getDataFreshness, getFreshestDate, formatFreshnessDate, type DataFreshness } from '@/data/dataFreshness';
+import { getDataFreshness, getFreshestDate, formatFreshnessDate, getHudFiscalYear, getDataYear, type DataFreshness } from '@/data/dataFreshness';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import ContactModal from '@/components/ContactModal';

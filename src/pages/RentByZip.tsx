@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { getRentData, getApartmentListData, getHud50Data, type RentZipRaw, type ApartmentListZipRaw, type Hud50ZipRaw } from '@/data/dataLoader';
 import { slugify, stateNameFromAbbr } from '@/data/cityStateUtils';
 import { getRentControlForZip, getApplicableCap, isNycZip } from '@/data/rentControlData';
-import { getDataFreshness, getFreshestDate, formatFreshnessDate, type DataFreshness } from '@/data/dataFreshness';
+import { getDataFreshness, getFreshestDate, formatFreshnessDate, getHudFiscalYear, getDataYear, type DataFreshness } from '@/data/dataFreshness';
 import RentcastMarketSection from '@/components/RentcastMarketSection';
 import DhcrAlertSection from '@/components/DhcrAlertSection';
 import RenterToolsCTA from '@/components/RenterToolsCTA';
