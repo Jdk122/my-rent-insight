@@ -85,17 +85,49 @@ const RentByZip = () => {
       const thisCity = raw.c?.toLowerCase();
       const thisState = raw.s?.toLowerCase();
       const thisMetro = raw.m?.toLowerCase();
+      const thisFmr1br = raw.f[1];
+
+      // Compute metro average for FAQ context
+      let metroSum = 0;
+      let metroCount = 0;
+
       for (const [z, r] of Object.entries(allData)) {
         if (z === zip) continue;
-        if (sameCity.length >= 5 && sameMetro.length >= 5) break;
-        if (sameCity.length < 5 && r.c?.toLowerCase() === thisCity && r.s?.toLowerCase() === thisState) {
-          sameCity.push({ zip: z, raw: r });
-        } else if (sameMetro.length < 5 && r.m?.toLowerCase() === thisMetro && (r.c?.toLowerCase() !== thisCity || r.s?.toLowerCase() !== thisState)) {
-          sameMetro.push({ zip: z, raw: r });
+        if (r.m?.toLowerCase() === thisMetro) {
+          metroSum += r.f[1];
+          metroCount++;
+          if (sameCity.length < 5 && r.c?.toLowerCase() === thisCity && r.s?.toLowerCase() === thisState) {
+            sameCity.push({ zip: z, raw: r });
+          } else if (sameMetro.length < 5 && (r.c?.toLowerCase() !== thisCity || r.s?.toLowerCase() !== thisState)) {
+            sameMetro.push({ zip: z, raw: r });
+          }
         }
       }
 
-      setData({ raw, al, hud50, freshness, nearby, sameCity, sameMetro });
+      const metroAvgFmr1br = metroCount > 0 ? Math.round((metroSum + thisFmr1br) / (metroCount + 1)) : thisFmr1br;
+
+      // Horizontal cross-links: ZIPs with similar rents (±15%) in different cities
+      const similarRentZips: { zip: string; raw: RentZipRaw }[] = [];
+      if (thisFmr1br > 0) {
+        const low = thisFmr1br * 0.85;
+        const high = thisFmr1br * 1.15;
+        const entries = Object.entries(allData);
+        // Shuffle-like: step through to avoid clustering
+        for (let i = 0; i < entries.length && similarRentZips.length < 6; i++) {
+          const [z, r] = entries[i];
+          if (z === zip) continue;
+          if (r.c?.toLowerCase() === thisCity && r.s?.toLowerCase() === thisState) continue;
+          if (r.f[1] >= low && r.f[1] <= high && r.c && r.s) {
+            // Prefer ZIPs that have market data
+            const hasData = (r.zy !== undefined) || (alData[z]?.aly !== undefined);
+            if (hasData || similarRentZips.length < 4) {
+              similarRentZips.push({ zip: z, raw: r });
+            }
+          }
+        }
+      }
+
+      setData({ raw, al, hud50, freshness, nearby, sameCity, sameMetro, metroAvgFmr1br, similarRentZips });
       setLoading(false);
     })();
     return () => { cancelled = true; };
