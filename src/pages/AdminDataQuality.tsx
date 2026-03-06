@@ -219,6 +219,10 @@ export default function AdminDataQuality() {
             <AnomalySection rentData={allRentData} zhviData={zhviData} alData={alData} hud50Data={hud50Data} anomalyFilter={anomalyFilter} setAnomalyFilter={setAnomalyFilter} />
           </TabsContent>
 
+          <TabsContent value="verification">
+            <VerificationSection rentData={allRentData} zhviData={zhviData} alData={alData} hud50Data={hud50Data} />
+          </TabsContent>
+
           <TabsContent value="refresh">
             <RefreshGuideSection />
           </TabsContent>
