@@ -159,6 +159,7 @@ const RentByZip = () => {
   const trendSource = al?.aly !== undefined && al?.aly !== null
     ? 'Apartment List'
     : hasZillow ? 'Zillow ZORI' : 'HUD FMR';
+  const isHudOnlyTrend = !hasAL && !hasZillow;
   const hasMarketData = hasZillow || hasAL;
   const hasHud50 = hud50 !== null && hud50.f50 !== undefined && hud50.f50[1] > 0;
   const isThinPage = !hasMarketData && !hasHud50;
@@ -311,7 +312,7 @@ const RentByZip = () => {
             {trendsDiverge
               ? `Rents in ${city} have grown approximately ${trendLow! > 0 ? '+' : ''}${trendLow!.toFixed(1)}% – ${trendHigh! > 0 ? '+' : ''}${trendHigh!.toFixed(1)}% over the past year based on two independent sources. A rent increase above ${trendHigh!.toFixed(1)}% is above the local market trend.`
               : trendYoY !== null
-                ? `Rents in ${city} have ${trendYoY >= 0 ? 'grown' : 'declined'} approximately ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% over the past year. A rent increase above ${Math.abs(trendYoY).toFixed(1)}% is above the local market trend.`
+                ? `Rents in ${city} have ${trendYoY >= 0 ? 'grown' : 'declined'} approximately ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}%${isHudOnlyTrend ? ' (HUD estimate)' : ''} over the past year. A rent increase above ${Math.abs(trendYoY).toFixed(1)}% is above the local market trend.`
                 : `The national average rent increase is approximately ${NATIONAL_AVG_YOY}% year-over-year. A rent increase above ${NATIONAL_AVG_YOY}% is above the national market trend.`}
           </p>
 

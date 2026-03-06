@@ -771,6 +771,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 <p className="text-[11px] text-muted-foreground mt-3">
                   {rentData.yoySourceLabel}
                 </p>
+                {rentData.yoyReliability === 'government' && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    HUD benchmark estimate — actual market trends may differ.
+                  </p>
+                )}
                 {rentData.yoySource === 'hud' && rentData.priorSource === 'm' && (
                   <p className="text-[11px] text-muted-foreground mt-1">Based on {rentData.metro} area average trend.</p>
                 )}

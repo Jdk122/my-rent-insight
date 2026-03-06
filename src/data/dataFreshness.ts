@@ -6,6 +6,7 @@ export interface DataFreshness {
   apartment_list: string;
   zillow_zori: string;
   zillow_zhvi: string;
+  county_metro_zori?: string;
   rentcast: string;
 }
 

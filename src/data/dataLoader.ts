@@ -48,6 +48,15 @@ export interface FredTrendData {
   label: string;
 }
 
+// ─── County/Metro ZORI fallback data ───
+export interface CountyMetroZoriRaw {
+  zy?: number;         // YoY %
+  zm?: number;         // Monthly %
+  zt?: number;         // 3-month annualized %
+  zd?: 'rising' | 'falling' | 'flat';
+  src?: 'county' | 'metro';
+}
+
 // ─── Combined result from all data layers ───
 export interface RentLookupResult {
   zip: string;
@@ -60,6 +69,7 @@ export interface RentLookupResult {
   yoySource: 'zillow' | 'hud';
   yoySourceLabel: string;
   yoyCapped?: boolean;
+  yoyReliability: 'market' | 'government';
   priorSource: 'f' | 'a' | 'm' | 'n';
   fmrSource: 'safmr' | 'county' | 'unknown'; // ZIP-level SAFMR vs county-level FMR
   censusMedianRent: number | null;
@@ -97,6 +107,7 @@ let fredMetroMapCache: Record<string, string> | null = null;
 let zhviCache: Record<string, ZhviZipRaw> | null = null;
 let apartmentListCache: Record<string, ApartmentListZipRaw> | null = null;
 let hud50Cache: Record<string, Hud50ZipRaw> | null = null;
+let countyMetroZoriCache: Record<string, CountyMetroZoriRaw> | null = null;
 
 // ─── Lazy loaders ───
 
@@ -173,6 +184,18 @@ export async function getHud50Data(): Promise<Record<string, Hud50ZipRaw>> {
   return hud50Cache!;
 }
 
+export async function getCountyMetroZori(): Promise<Record<string, CountyMetroZoriRaw>> {
+  if (!countyMetroZoriCache) {
+    try {
+      const response = await fetch('/data/county_metro_zori.json');
+      countyMetroZoriCache = await response.json();
+    } catch {
+      countyMetroZoriCache = {};
+    }
+  }
+  return countyMetroZoriCache!;
+}
+
 async function getFredMetroMap(): Promise<Record<string, string>> {
   if (!fredMetroMapCache) {
     const response = await fetch('/data/fredMetroMap.json');
@@ -237,6 +260,8 @@ async function fetchFredTrend(metro: string): Promise<FredTrendData | null> {
 
 // ─── Data quality constants ───
 const YOY_CAP = 30; // Cap displayed YoY at ±30%
+const HUD_EXTREME_CAP = 3.0; // Cap HUD-only YoY when > ±10% (national FMR weighted avg)
+const HUD_EXTREME_THRESHOLD = 10; // Threshold for capping HUD YoY
 const MIN_VALID_INCOME = 10000; // Suppress income below this (bad Census data)
 const MAX_CENSUS_FMR_RATIO = 2.5; // Suppress census rent if it diverges >2.5x from FMR
 
@@ -246,8 +271,8 @@ export async function lookupRentData(
   zip: string,
   bedrooms: BedroomType
 ): Promise<RentLookupResult | null> {
-  const [allData, countyData, zhviData, alData, hud50Data] = await Promise.all([
-    getRentData(), getCountyFmrData(), getZhviData(), getApartmentListData(), getHud50Data()
+  const [allData, countyData, zhviData, alData, hud50Data, cmZoriData] = await Promise.all([
+    getRentData(), getCountyFmrData(), getZhviData(), getApartmentListData(), getHud50Data(), getCountyMetroZori()
   ]);
   // Primary: SAFMR data. Fallback: county-level FMR.
   let raw = allData[zip];
@@ -262,37 +287,66 @@ export async function lookupRentData(
   const zhvi = zhviData[zip] ?? null;
   const al = alData[zip] ?? null;
   const hud50 = hud50Data[zip] ?? null;
+  const cmZori = cmZoriData[zip] ?? null;
 
   const brIdx = bedroomToIndex[bedrooms];
   const fmr = raw.f[brIdx];
   const fmrPrior = raw.p[brIdx];
 
-  // YoY Priority: Zillow ZORI > bedroom-specific HUD > pre-computed 1BR
+  // YoY Priority: (1) ZIP ZORI → (2) County/Metro ZORI → (3) bedroom-specific HUD → (4) pre-computed 1BR
   let yoyChange: number;
   let yoySource: 'zillow' | 'hud';
   let yoySourceLabel: string;
+  let yoyReliability: 'market' | 'government';
+  // Track whether we filled Zillow fields from county/metro fallback
+  let zillowMonthlyOut: number | null = raw.zm ?? null;
+  let zillowDirectionOut: string | null = raw.zd ?? null;
+  let zillow3moTrendOut: number | null = raw.zt ?? null;
 
   if (raw.zy !== undefined && raw.zy !== null) {
-    // Priority 1: Zillow ZORI (monthly, from actual listings)
+    // Priority 1: ZIP-level Zillow ZORI
     yoyChange = raw.zy;
     yoySource = 'zillow';
-    const cityName = raw.c || raw.m.split(',')[0] || `ZIP ${zip}`;
-    yoySourceLabel = `Based on ${cityName} market data through Jan 2026`;
+    yoyReliability = 'market';
+    const cName = raw.c || raw.m.split(',')[0] || `ZIP ${zip}`;
+    yoySourceLabel = `Based on ${cName} market data through Jan 2026`;
+  } else if (cmZori && cmZori.zy !== undefined && cmZori.zy !== null) {
+    // Priority 2: County/Metro ZORI fallback
+    yoyChange = cmZori.zy;
+    yoySource = 'zillow';
+    yoyReliability = 'market';
+    const cName = raw.c || raw.m.split(',')[0] || `ZIP ${zip}`;
+    const metroName = raw.m || `ZIP ${zip}`;
+    yoySourceLabel = cmZori.src === 'county'
+      ? `Based on ${cName} county market data through Jan 2026`
+      : `Based on ${metroName} metro area data through Jan 2026`;
+    // Populate Zillow fields from county/metro data
+    zillowMonthlyOut = cmZori.zm ?? null;
+    zillowDirectionOut = cmZori.zd ?? null;
+    zillow3moTrendOut = cmZori.zt ?? null;
   } else if (fmrPrior > 0) {
-    // Priority 2: Bedroom-specific HUD FMR
+    // Priority 3: Bedroom-specific HUD FMR
     yoyChange = Math.round(((fmr - fmrPrior) / fmrPrior) * 1000) / 10;
     yoySource = 'hud';
+    yoyReliability = 'government';
     yoySourceLabel = 'Based on HUD Fair Market Rent data (FY2026)';
   } else {
-    // Priority 3: Pre-computed 1BR fallback
+    // Priority 4: Pre-computed 1BR fallback
     yoyChange = raw.y;
     yoySource = 'hud';
+    yoyReliability = 'government';
     yoySourceLabel = 'Based on HUD Fair Market Rent data (FY2026)';
   }
 
   // Guard 1: Cap extreme YoY values
-  const yoyCapped = Math.abs(yoyChange) > YOY_CAP;
+  let yoyCapped = Math.abs(yoyChange) > YOY_CAP;
   yoyChange = Math.max(-YOY_CAP, Math.min(YOY_CAP, yoyChange));
+
+  // Guard 1b: Cap HUD-only extreme YoY to national average
+  if (yoyReliability === 'government' && Math.abs(yoyChange) > HUD_EXTREME_THRESHOLD) {
+    yoyChange = yoyChange > 0 ? HUD_EXTREME_CAP : -HUD_EXTREME_CAP;
+    yoyCapped = true;
+  }
 
   // Guard 2: Suppress clearly bad income data
   const validIncome = (raw.i && raw.i >= MIN_VALID_INCOME) ? raw.i : null;
@@ -328,14 +382,15 @@ export async function lookupRentData(
     yoySource,
     yoySourceLabel,
     yoyCapped: yoyCapped || undefined,
+    yoyReliability,
     priorSource: raw.ps,
     fmrSource,
     censusMedianRent: censusRent,
     medianIncome: validIncome,
     fredTrend: null,
-    zillowMonthly: raw.zm ?? null,
-    zillowDirection: raw.zd ?? null,
-    zillow3moTrend: raw.zt ?? null,
+    zillowMonthly: zillowMonthlyOut,
+    zillowDirection: zillowDirectionOut,
+    zillow3moTrend: zillow3moTrendOut,
     hvd: zhvi?.hvd ?? null,
     alYoY: al?.aly ?? null,
     alMoM: al?.alm ?? null,
