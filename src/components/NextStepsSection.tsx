@@ -20,6 +20,8 @@ interface NextStepsSectionProps {
   dollarOverpayment: number | null;
   brLabel: string;
   onShareClick?: () => void;
+  analysisId?: string | null;
+  capturedEmail?: string;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
