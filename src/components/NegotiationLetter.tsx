@@ -56,7 +56,7 @@ function buildFallbackLetter(props: {
   rcMedianRent?: number | null; f50Value?: number | null;
   rcTotalListings?: number | null; rcAvgDaysOnMarket?: number | null;
   alVacancy?: number | null;
-  letterTone?: 'aggressive' | 'collaborative';
+  letterTone?: 'aggressive' | 'collaborative' | 'strategic';
 }): string {
   const {
     currentRent, newRent, increasePct, marketYoy, city, brLabel, increaseAmt,
