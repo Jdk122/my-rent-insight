@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { trackEvent, trackAdsConversion } from '@/lib/analytics';
+import { trackEvent } from '@/lib/analytics';
 import { LeadContext } from './EmailCapture';
 import { getUtmParams } from '@/lib/utm';
 
@@ -102,7 +102,6 @@ const SaveResultsDropdown = ({ prefilledEmail, onEmailCaptured, leadContext }: S
 
     onEmailCaptured?.(email);
     trackEvent('email_submitted', { verdict: 'unknown', zip_code: leadContext?.zip || '', source: 'save_results' });
-    trackAdsConversion();
     setSubmitted(true);
     toast.success("Saved! We'll send updated data before your lease renews.");
     setTimeout(() => setOpen(false), 1500);
