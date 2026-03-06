@@ -18,6 +18,31 @@ serve(async (req) => {
   }
 
   try {
+    // --- Rate limiting (20/hour) ---
+    const rlClientIP = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const rlWindowStart = new Date();
+    rlWindowStart.setMinutes(0, 0, 0);
+    const rlWindowKey = rlWindowStart.toISOString();
+    const rlSb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const { data: rlRow } = await rlSb
+      .from("rate_limits")
+      .select("request_count")
+      .eq("ip_address", rlClientIP)
+      .eq("endpoint", "property-lookup")
+      .eq("window_start", rlWindowKey)
+      .maybeSingle();
+    if (rlRow && rlRow.request_count >= 20) {
+      return new Response(
+        JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    await rlSb.from("rate_limits").upsert(
+      { ip_address: rlClientIP, endpoint: "property-lookup", window_start: rlWindowKey, request_count: (rlRow?.request_count ?? 0) + 1 },
+      { onConflict: "ip_address,endpoint,window_start" }
+    );
+    // --- End rate limiting ---
+
     const { address } = await req.json();
 
     if (!address) {
