@@ -123,8 +123,6 @@ const LandlordCostSection = ({
         <div className="relative">
           <div className="blur-[6px] opacity-40 pointer-events-none select-none space-y-2 mb-6">
             <p className="text-sm">Mortgage: $1,0XX/mo</p>
-            <p className="text-sm">Taxes: $XXX/mo</p>
-            <p className="text-sm">Profit: $X,XXX/mo</p>
           </div>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <p className="text-2xl mb-2">🔍</p>
