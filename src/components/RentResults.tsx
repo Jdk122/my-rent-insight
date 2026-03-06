@@ -27,6 +27,7 @@ import { calculateFairnessScore, scoreToVerdict, FairnessScoreResult } from '@/l
 import FairnessScoreGauge, { ComponentSourceInfo } from './FairnessScoreGauge';
 import MarketSnapshot from './MarketSnapshot';
 import NextStepsSection from './NextStepsSection';
+import EarlyCaptureBar from './EarlyCaptureBar';
 
 interface RentResultsProps {
   formData: RentFormData;
