@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
 import { Link } from 'react-router-dom';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
-import { Check, Copy, Download, RefreshCw, Mail } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface NegotiationLetterProps {
