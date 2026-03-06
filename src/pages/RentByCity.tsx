@@ -127,7 +127,7 @@ const RentByCity = () => {
     return { fmrVaries: fmrVar, hasZipLevelYoY: hasYoY, displayedZips: displayed, hasMoreZips: more };
   }, [data, alData, zipSearch]);
 
-  if (loading) return <LoadingSkeleton />;
+  if (loading) return <LoadingSkeleton stateSlug={stateSlug} citySlug={citySlug} />;
   if (notFound || !data) return <NotFoundPage />;
 
   const { city, state, zips, avgFmr, censusMedianRent, yoyChange, cheapestZip } = data;
@@ -581,9 +581,22 @@ const RentByCity = () => {
   );
 };
 
-function LoadingSkeleton() {
+function unslugify(slug: string): string {
+  return slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function LoadingSkeleton({ stateSlug, citySlug }: { stateSlug?: string; citySlug?: string }) {
+  const cityName = citySlug ? unslugify(citySlug) : '';
+  const stateName = stateSlug ? unslugify(stateSlug) : '';
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      {citySlug && stateSlug && (
+        <SEO
+          title={`Average Rent in ${cityName}, ${stateName} | RenewalReply`}
+          description={`Rent data and fair market rent for ${cityName}, ${stateName}. See trends, zip codes, and federal benchmarks.`}
+          canonical={`/rent-data/${stateSlug}/${citySlug}`}
+        />
+      )}
       <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
         <Skeleton className="h-7 w-36" />
         <Skeleton className="h-9 w-32 rounded-lg" />

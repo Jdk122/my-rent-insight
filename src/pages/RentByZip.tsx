@@ -135,7 +135,7 @@ const RentByZip = () => {
     return () => { cancelled = true; };
   }, [zip]);
 
-  if (loading) return <LoadingSkeleton />;
+  if (loading) return <LoadingSkeleton zip={zip} />;
   if (notFound || !data || !zip) return <NotFoundPage zip={zip} />;
 
   const { raw, al, hud50, freshness, nearby, sameCity, sameMetro, metroAvgFmr1br, similarRentZips } = data;
@@ -673,9 +673,16 @@ const RentByZip = () => {
   );
 };
 
-function LoadingSkeleton() {
+function LoadingSkeleton({ zip }: { zip?: string }) {
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      {zip && (
+        <SEO
+          title={`Rent Data for ${zip} | RenewalReply`}
+          description={`Rent data, fair market rent, and market trends for zip code ${zip}.`}
+          canonical={`/rent/${zip}`}
+        />
+      )}
       <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
         <Skeleton className="h-7 w-36" />
         <Skeleton className="h-9 w-32 rounded-lg" />

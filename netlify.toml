@@ -1,4 +1,1 @@
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Prerender-Token = "oxRmt6ruZoGnPhn9A6tl"
+# Prerender.io integration is handled by the Netlify extension
