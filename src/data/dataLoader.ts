@@ -174,6 +174,18 @@ export async function getHud50Data(): Promise<Record<string, Hud50ZipRaw>> {
   return hud50Cache!;
 }
 
+export async function getCountyMetroZori(): Promise<Record<string, CountyMetroZoriRaw>> {
+  if (!countyMetroZoriCache) {
+    try {
+      const response = await fetch('/data/county_metro_zori.json');
+      countyMetroZoriCache = await response.json();
+    } catch {
+      countyMetroZoriCache = {};
+    }
+  }
+  return countyMetroZoriCache!;
+}
+
 async function getFredMetroMap(): Promise<Record<string, string>> {
   if (!fredMetroMapCache) {
     const response = await fetch('/data/fredMetroMap.json');
