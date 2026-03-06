@@ -220,7 +220,7 @@ const RentByCity = () => {
             '@type': 'WebPage',
             name: ogTitle,
             description: metaDesc,
-            dateModified: freshest?.date || '2026-01-01',
+            dateModified: freshest?.date || `${dataYear}-01-01`,
             url: `https://www.renewalreply.com/rent-data/${stateSlugVal}/${slugify(city)}`,
             publisher: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
           },
