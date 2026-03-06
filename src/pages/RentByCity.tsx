@@ -291,7 +291,7 @@ const RentByCity = () => {
         <section className="mb-12">
           <div className="flex items-start justify-between gap-4">
             <h1 className="font-display text-3xl md:text-4xl text-foreground leading-tight tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-              Average Rent in {city}, {state} (2026)
+              Average Rent in {city}, {state} ({dataYear})
             </h1>
             <ShareDataButton />
           </div>
