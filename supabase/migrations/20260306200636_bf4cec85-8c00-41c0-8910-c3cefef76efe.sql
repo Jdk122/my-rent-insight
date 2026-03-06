@@ -1,0 +1,1 @@
+ALTER TABLE public.analyses ADD COLUMN IF NOT EXISTS anomaly_flags text[] NOT NULL DEFAULT '{}';

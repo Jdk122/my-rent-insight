@@ -167,8 +167,38 @@ function getTier(total: number): Pick<FairnessScoreResult, 'tier' | 'tierLabel' 
 }
 
 export function calculateFairnessScore(input: FairnessScoreInput): FairnessScoreResult {
+  // Input validation
+  if (input.proposedRent <= 0 || input.currentRent <= 0) {
+    return {
+      total: 50,
+      tier: 'moderate',
+      tierLabel: 'Moderate',
+      tierColor: 'text-accent-amber',
+      tierColorHsl: '38 85% 36%',
+      tierMessage: 'We couldn\'t fully validate your inputs. The score shown is a neutral default.',
+      components: [],
+    };
+  }
+
+  // Clamp inputs to sane ranges
+  const clampedIncreasePct = Math.max(0, Math.min(100, input.increasePct));
+  const clampedMarketYoY = Math.max(-30, Math.min(30, input.marketYoY));
+
+  // Sanitize compMedian
+  let sanitizedCompMedian = input.compMedian;
+  if (sanitizedCompMedian !== null && (sanitizedCompMedian < 200 || sanitizedCompMedian > 25000)) {
+    sanitizedCompMedian = null;
+  }
+
+  const validatedInput = {
+    ...input,
+    increasePct: clampedIncreasePct,
+    marketYoY: clampedMarketYoY,
+    compMedian: sanitizedCompMedian,
+  };
+
   // Dynamic weight redistribution based on comp count
-  const cc = input.compCount ?? (input.compMedian !== null ? 5 : 0);
+  const cc = validatedInput.compCount ?? (validatedInput.compMedian !== null ? 5 : 0);
   let compMax: number;
   let rateMax: number;
   // Base weights: Rate=35, Comps=30, Reasonableness=25, Momentum=10 = 100
@@ -178,10 +208,10 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
   else { compMax = 0; rateMax = 65; }
 
   const components = [
-    scoreRateVsTrend(input.increasePct, input.marketYoY, input.alYoY, rateMax),
-    scoreVsComps(input.proposedRent, input.compMedian, compMax),
-    scoreVsFmr(input.proposedRent, input.fmr, input.currentRent, input.increasePct, input.marketYoY, input.f50, input.bedroomCount, input.rcMedianRent, input.rcTotalListings),
-    scoreMarketMomentum(input.zillowMonthly, input.alMoM, input.hvd),
+    scoreRateVsTrend(validatedInput.increasePct, validatedInput.marketYoY, validatedInput.alYoY, rateMax),
+    scoreVsComps(validatedInput.proposedRent, validatedInput.compMedian, compMax),
+    scoreVsFmr(validatedInput.proposedRent, validatedInput.fmr, validatedInput.currentRent, validatedInput.increasePct, validatedInput.marketYoY, validatedInput.f50, validatedInput.bedroomCount, validatedInput.rcMedianRent, validatedInput.rcTotalListings),
+    scoreMarketMomentum(validatedInput.zillowMonthly, validatedInput.alMoM, validatedInput.hvd),
   ];
   const visibleComponents = components.filter(c => c.max > 0);
   const total = components.reduce((sum, c) => sum + c.score, 0);

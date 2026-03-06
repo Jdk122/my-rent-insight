@@ -135,22 +135,42 @@ serve(async (req) => {
       }
     }
 
+    const requestedBedrooms = bedrooms !== undefined ? Number(bedrooms) : null;
+
+    const rawComps = (data.comparables || []).slice(0, 10).map((comp: any) => ({
+      formattedAddress: comp.formattedAddress || comp.address || "Unknown",
+      rent: comp.price ?? comp.lastSeenPrice ?? null,
+      bedrooms: comp.bedrooms ?? null,
+      bathrooms: comp.bathrooms ?? null,
+      squareFootage: comp.squareFootage ?? null,
+      distance: comp.distance ?? null,
+      daysOld: comp.daysOld ?? null,
+      correlation: comp.correlation ?? null,
+      listingType: comp.listingType ?? null,
+    }));
+
+    const validComps = rawComps.filter((comp: any) => {
+      if (comp.rent == null || comp.rent < 200 || comp.rent > 25000 || comp.rent <= 0) {
+        console.warn(`Rejected comp "${comp.formattedAddress}": invalid rent ${comp.rent}`);
+        return false;
+      }
+      if (requestedBedrooms !== null && comp.bedrooms != null && Math.abs(comp.bedrooms - requestedBedrooms) > 1) {
+        console.warn(`Rejected comp "${comp.formattedAddress}": bedrooms ${comp.bedrooms} vs requested ${requestedBedrooms}`);
+        return false;
+      }
+      if (comp.distance != null && comp.distance > 10) {
+        console.warn(`Rejected comp "${comp.formattedAddress}": distance ${comp.distance} miles`);
+        return false;
+      }
+      return true;
+    }).slice(0, 5);
+
     const result = {
-      rentEstimate: data.rent ?? data.rentRangeLow ?? null,
+      rentEstimate: validComps.length > 0 ? (data.rent ?? data.rentRangeLow ?? null) : null,
       rentRangeLow: data.rentRangeLow ?? null,
       rentRangeHigh: data.rentRangeHigh ?? null,
       propertyType,
-      comparables: (data.comparables || []).slice(0, 5).map((comp: any) => ({
-        formattedAddress: comp.formattedAddress || comp.address || "Unknown",
-        rent: comp.price ?? comp.lastSeenPrice ?? null,
-        bedrooms: comp.bedrooms ?? null,
-        bathrooms: comp.bathrooms ?? null,
-        squareFootage: comp.squareFootage ?? null,
-        distance: comp.distance ?? null,
-        daysOld: comp.daysOld ?? null,
-        correlation: comp.correlation ?? null,
-        listingType: comp.listingType ?? null,
-      })),
+      comparables: validComps,
     };
 
     // Upsert to cache
