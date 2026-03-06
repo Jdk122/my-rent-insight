@@ -954,12 +954,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     tierLabel={fairnessScore?.tierLabel ?? null}
                     maxCompDistance={compRadius.maxDistance}
                     momentumDirection={rentData.zillowDirection || (rentData.hvd ? rentData.hvd : null)}
+                    letterTone={isAboveMarket ? 'aggressive' : 'collaborative'}
                     onLetterGenerated={handleLetterGenerated}
                   />
                 </LetterGate>
-              </motion.section>
-            )}
+          </motion.section>
+        )}
 
+        {/* ━━━ ABOVE MARKET PATH: Share → Email ━━━ */}
+        {isAboveMarket && (
+          <>
             {/* Share Hub */}
             {hasIncrease && (
               <motion.section id="section-share" {...fade(0.21)} className="pt-8 pb-4">
