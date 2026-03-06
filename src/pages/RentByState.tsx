@@ -207,7 +207,7 @@ const RentByState = () => {
             <div>
               <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">Average 1-Bedroom Fair Market Rent</p>
               <p className="text-5xl md:text-6xl font-bold tabular-nums text-foreground leading-none">{fmt(avgFmr1br)}<span className="text-xl font-normal text-muted-foreground">/mo</span></p>
-              <p className="text-xs text-muted-foreground/70 mt-2">Source: HUD Fair Market Rent FY2026 · {totalZips.toLocaleString()} zip codes</p>
+              <p className="text-xs text-muted-foreground/70 mt-2">Source: HUD Fair Market Rent FY{hudFY} · {totalZips.toLocaleString()} zip codes</p>
             </div>
 
             {stateYoY !== null && (
