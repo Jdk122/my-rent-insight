@@ -256,18 +256,9 @@ function DashboardContent() {
 
   // CSV export (fetch all filtered, no pagination)
   const handleExport = async () => {
-    let query = supabase
-      .from('analyses' as any)
-      .select('id, address, city, state, zip, bedrooms, current_rent, proposed_rent, increase_pct, fairness_score, verdict_label, dollar_overpayment, letter_generated, results_shared, confidence_level, utm_source, created_at, leads(email, lease_expiration_month, lease_expiration_year)') as any;
-
-    if (filterZip) query = query.ilike('zip', `%${filterZip}%`);
-    if (filterCity) query = query.ilike('city', `%${filterCity}%`);
-    if (filterVerdict.length > 0) query = query.in('verdict_label', filterVerdict);
-    if (filterLetter === 'yes') query = query.eq('letter_generated', true);
-    if (filterLetter === 'no') query = query.eq('letter_generated', false);
-
-    query = query.order('created_at', { ascending: false }).limit(5000);
-    const { data } = await query;
+    const data = await adminQuery('leads_export', {
+      filterZip, filterCity, filterVerdict, filterLetter,
+    });
     if (data) downloadCSV(data, `renewalreply-leads-${new Date().toISOString().slice(0, 10)}.csv`);
   };
 
