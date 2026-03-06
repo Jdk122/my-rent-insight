@@ -375,8 +375,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     if (hasRentControl) {
       sections.push({ id: 'section-rights', label: 'Rights' });
     }
-    if (isAboveMarket || isFair) {
-      // Above trend or Fair: Letter → Share
+    if (isAboveMarket || isFair || isBelowMarket) {
       if (hasIncrease && calc) {
         sections.push({ id: 'section-letter', label: 'Letter' });
       }
@@ -394,7 +393,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       }
     }
     return sections;
-  }, [hasIncrease, medianCompRent, hasEnoughComps, calc, isAboveMarket, isFair, hasRentControl]);
+  }, [hasIncrease, medianCompRent, hasEnoughComps, calc, isAboveMarket, isFair, isBelowMarket, hasRentControl]);
 
   // Compute annual savings for turnover section
   const annualSavingsForTurnover = useMemo(() => {
@@ -680,7 +679,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             <p className="text-[13px] text-muted-foreground text-center mb-2.5">
               {isAboveMarket ? 'Get your negotiation letter emailed to you'
                 : isFair ? 'Get your negotiation letter emailed to you'
-                : hasIncrease ? 'Get a copy of this analysis emailed to you'
+                : hasIncrease ? 'Get your renewal strategy letter emailed to you'
                 : 'Get this market report emailed to you'}
             </p>
             <form
@@ -962,12 +961,17 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           </motion.section>
         )}
 
-        {/* ━━━ NEGOTIATION LETTER (Above Market + Fair) ━━━ */}
-        {(isAboveMarket || (isFair && hasIncrease)) && hasIncrease && calc && (
+        {/* ━━━ NEGOTIATION LETTER (All verdicts with increase) ━━━ */}
+        {hasIncrease && calc && (isAboveMarket || isFair || isBelowMarket) && (
           <motion.section id="section-letter" {...fade(0.19)} className="pt-8 pb-8">
-            {isFair && !isAboveMarket && (
+            {isFair && !isAboveMarket && !isBelowMarket && (
               <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">
                 Even a fair increase is worth negotiating. Landlords expect it — and avoiding turnover is worth more to them than $50-100/month.
+              </p>
+            )}
+            {isBelowMarket && (
+              <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">
+                Your landlord is offering below-market terms — that's leverage. Here's how to lock in this rate or negotiate extras like a longer lease, a unit upgrade, or a repair you've been waiting on.
               </p>
             )}
             <LetterGate
@@ -1013,7 +1017,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     tierLabel={fairnessScore?.tierLabel ?? null}
                     maxCompDistance={compRadius.maxDistance}
                     momentumDirection={rentData.zillowDirection || (rentData.hvd ? rentData.hvd : null)}
-                    letterTone={isAboveMarket ? 'aggressive' : 'collaborative'}
+                    letterTone={isAboveMarket ? 'aggressive' : isFair ? 'collaborative' : 'strategic'}
                     onLetterGenerated={handleLetterGenerated}
                   />
                 </LetterGate>
