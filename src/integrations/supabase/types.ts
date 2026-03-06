@@ -71,6 +71,7 @@ export type Database = {
       analyses: {
         Row: {
           address: string | null
+          anomaly_flags: string[]
           bedrooms: number | null
           cache_hit: boolean | null
           city: string | null
@@ -106,6 +107,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          anomaly_flags?: string[]
           bedrooms?: number | null
           cache_hit?: boolean | null
           city?: string | null
@@ -141,6 +143,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          anomaly_flags?: string[]
           bedrooms?: number | null
           cache_hit?: boolean | null
           city?: string | null

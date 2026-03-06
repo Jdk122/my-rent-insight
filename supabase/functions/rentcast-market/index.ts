@@ -116,9 +116,20 @@ serve(async (req) => {
     // Rentcast /v1/markets returns { rentalData: { ... }, saleData: { ... } }
     const rental = raw?.rentalData;
 
+    let medianRent = rental?.medianRent ?? null;
+    if (medianRent != null && (medianRent <= 0 || medianRent < 200 || medianRent > 20000)) {
+      console.warn(`Validation nullified medianRent: ${medianRent}`);
+      medianRent = null;
+    }
+    let averageRent = rental?.averageRent ?? null;
+    if (averageRent != null && (averageRent <= 0 || averageRent < 200 || averageRent > 20000)) {
+      console.warn(`Validation nullified averageRent: ${averageRent}`);
+      averageRent = null;
+    }
+
     const result = {
-      averageRent: rental?.averageRent ?? null,
-      medianRent: rental?.medianRent ?? null,
+      averageRent,
+      medianRent,
       minRent: rental?.minRent ?? null,
       maxRent: rental?.maxRent ?? null,
       totalListings: rental?.totalListings ?? null,

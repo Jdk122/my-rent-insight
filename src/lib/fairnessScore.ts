@@ -167,8 +167,38 @@ function getTier(total: number): Pick<FairnessScoreResult, 'tier' | 'tierLabel' 
 }
 
 export function calculateFairnessScore(input: FairnessScoreInput): FairnessScoreResult {
+  // Input validation
+  if (input.proposedRent <= 0 || input.currentRent <= 0) {
+    return {
+      total: 50,
+      tier: 'moderate',
+      tierLabel: 'Moderate',
+      tierColor: 'text-accent-amber',
+      tierColorHsl: '38 85% 36%',
+      tierMessage: 'We couldn\'t fully validate your inputs. The score shown is a neutral default.',
+      components: [],
+    };
+  }
+
+  // Clamp inputs to sane ranges
+  const clampedIncreasePct = Math.max(0, Math.min(100, input.increasePct));
+  const clampedMarketYoY = Math.max(-30, Math.min(30, input.marketYoY));
+
+  // Sanitize compMedian
+  let sanitizedCompMedian = input.compMedian;
+  if (sanitizedCompMedian !== null && (sanitizedCompMedian < 200 || sanitizedCompMedian > 25000)) {
+    sanitizedCompMedian = null;
+  }
+
+  const validatedInput = {
+    ...input,
+    increasePct: clampedIncreasePct,
+    marketYoY: clampedMarketYoY,
+    compMedian: sanitizedCompMedian,
+  };
+
   // Dynamic weight redistribution based on comp count
-  const cc = input.compCount ?? (input.compMedian !== null ? 5 : 0);
+  const cc = validatedInput.compCount ?? (validatedInput.compMedian !== null ? 5 : 0);
   let compMax: number;
   let rateMax: number;
   // Base weights: Rate=35, Comps=30, Reasonableness=25, Momentum=10 = 100
