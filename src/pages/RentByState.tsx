@@ -334,9 +334,21 @@ const RentByState = () => {
   );
 };
 
-function LoadingSkeleton() {
+function unslugify(slug: string): string {
+  return slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function LoadingSkeleton({ stateSlug }: { stateSlug?: string }) {
+  const stateName = stateSlug ? unslugify(stateSlug) : '';
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      {stateSlug && (
+        <SEO
+          title={`Average Rent in ${stateName} | RenewalReply`}
+          description={`Rent data by city for ${stateName}. See fair market rents, trends, and zip code data.`}
+          canonical={`/rent-data/${stateSlug}`}
+        />
+      )}
       <nav className="sticky top-0 z-[60] flex items-center justify-between px-6 py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
         <Link to="/" className="h-7 w-36"><Skeleton className="h-7 w-36" /></Link>
       </nav>
