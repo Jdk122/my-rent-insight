@@ -300,7 +300,7 @@ const RentByState = () => {
               </button>
             </p>
           )}
-          <p className="mt-2 text-xs text-muted-foreground/70">Sorted by number of zip codes. Source: HUD SAFMR FY2026.</p>
+          <p className="mt-2 text-xs text-muted-foreground/70">Sorted by number of zip codes. Source: HUD SAFMR FY{hudFY}.</p>
         </section>
 
         {/* FAQ */}
