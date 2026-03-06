@@ -482,6 +482,7 @@ function DashboardContent() {
                     { col: 'utm_source', label: 'UTM' },
                     { col: 'confidence_level', label: 'Conf' },
                     { col: '', label: 'Quality' },
+                    { col: '', label: 'Flags' },
                   ].map((h, i) => (
                     <th
                       key={i}
@@ -535,11 +536,22 @@ function DashboardContent() {
                           {tag.emoji} {tag.label}
                         </span>
                       </td>
+                      <td className="px-2 py-2">
+                        {Array.isArray(r.anomaly_flags) && r.anomaly_flags.length > 0 ? (
+                          <div className="flex flex-wrap gap-0.5">
+                            {r.anomaly_flags.map((flag: string) => (
+                              <span key={flag} className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium border bg-red-500/15 text-red-600 border-red-500/30">
+                                {flag}
+                              </span>
+                            ))}
+                          </div>
+                        ) : '—'}
+                      </td>
                     </tr>
                   );
                 })}
                 {rows.length === 0 && (
-                  <tr><td colSpan={18} className="px-4 py-8 text-center text-muted-foreground">No results found</td></tr>
+                  <tr><td colSpan={19} className="px-4 py-8 text-center text-muted-foreground">No results found</td></tr>
                 )}
               </tbody>
             </table>
