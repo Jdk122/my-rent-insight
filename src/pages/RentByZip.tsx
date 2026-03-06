@@ -400,8 +400,13 @@ const RentByZip = () => {
             </Table>
           </div>
           <p className="mt-3 text-xs text-muted-foreground/70">
-            Source: HUD SAFMR FY2026 · Updated <time dateTime={freshness.hud_safmr}>{formatFreshnessDate(freshness.hud_safmr)}</time>
+            Source: HUD {raw.fs === 'county' ? 'FMR' : 'SAFMR'} FY2026 · Updated <time dateTime={freshness.hud_safmr}>{formatFreshnessDate(freshness.hud_safmr)}</time>
           </p>
+          {(raw.fs === 'county' || (raw.fs !== 'safmr' && raw.fs !== undefined)) && (
+            <p className="mt-2 text-xs text-muted-foreground/70 bg-muted/30 border border-border rounded px-3 py-2">
+              Fair Market Rent shown is the county-level HUD benchmark. ZIP-specific data is not available for this area.
+            </p>
+          )}
         </section>
 
         {/* ═══ Section E: Renter Tools CTA ═══ */}
