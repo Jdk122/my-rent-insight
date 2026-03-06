@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Lock, ExternalLink, ChevronDown, AlertTriangle, CheckCircle2, Clock, Search, Database, Activity, Upload, ShieldCheck, Loader2, Download } from 'lucide-react';
+import { Lock, ExternalLink, ChevronDown, AlertTriangle, CheckCircle2, Clock, Search, Database, Activity, Upload, ShieldCheck, Loader2, Download, ClipboardCheck } from 'lucide-react';
 import { calculateFairnessScore, type FairnessScoreInput } from '@/lib/fairnessScore';
 import { supabase } from '@/integrations/supabase/client';
 import type { RentZipRaw, ZhviZipRaw, ApartmentListZipRaw, Hud50ZipRaw } from '@/data/dataLoader';
