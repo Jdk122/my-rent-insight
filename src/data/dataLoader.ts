@@ -368,6 +368,19 @@ export async function lookupRentData(
   const CITY_OVERRIDES: Record<string, string> = {
     '07087': 'Union City',
     '11101': 'Long Island City',
+    '33139': 'Miami Beach',
+    '33140': 'Miami Beach',
+    '33141': 'Miami Beach',
+    '10044': 'Roosevelt Island',
+    '10069': 'Manhattan',
+    '10103': 'Manhattan',
+    '10110': 'Manhattan',
+    '10119': 'Manhattan',
+    '10152': 'Manhattan',
+    '10153': 'Manhattan',
+    '10154': 'Manhattan',
+    '10162': 'Manhattan',
+    '10004': 'Financial District',
   };
   const cityName = CITY_OVERRIDES[zip] || raw.c || raw.m.split(',')[0] || `ZIP ${zip}`;
 
