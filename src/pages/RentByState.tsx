@@ -80,7 +80,7 @@ const RentByState = () => {
   const dataYear = freshness ? getDataYear(freshness) : '2026';
   const hudFY = freshness ? getHudFiscalYear(freshness) : '2026';
 
-  if (loading) return <LoadingSkeleton />;
+  if (loading) return <LoadingSkeleton stateSlug={stateSlug} />;
   if (notFound || !data) return <NotFoundPage />;
 
   const { stateName, stateAbbr, cities, avgFmr1br, totalZips } = data;
