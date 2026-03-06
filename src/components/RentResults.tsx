@@ -374,13 +374,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     if (hasRentControl) {
       sections.push({ id: 'section-rights', label: 'Rights' });
     }
-    if (isAboveMarket) {
-      // Above trend: Letter → Share
+    if (isAboveMarket || isFair) {
+      // Above trend or Fair: Letter → Share
       if (hasIncrease && calc) {
         sections.push({ id: 'section-letter', label: 'Letter' });
       }
-      sections.push({ id: 'section-share', label: 'Send' });
-    } else {
+      if (isAboveMarket) {
+        sections.push({ id: 'section-share', label: 'Send' });
+      }
+    }
+    if (!isAboveMarket) {
       // Below/fair: Should You Move → Share
       if (hasIncrease && medianCompRent && hasEnoughComps) {
         sections.push({ id: 'section-move', label: 'Move' });
@@ -390,7 +393,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       }
     }
     return sections;
-  }, [hasIncrease, medianCompRent, hasEnoughComps, calc, isAboveMarket, hasRentControl]);
+  }, [hasIncrease, medianCompRent, hasEnoughComps, calc, isAboveMarket, isFair, hasRentControl]);
 
   // Compute annual savings for turnover section
   const annualSavingsForTurnover = useMemo(() => {
@@ -900,13 +903,15 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           </motion.section>
         )}
 
-        {/* ━━━ ABOVE MARKET PATH: Letter → Share → Email ━━━ */}
-        {isAboveMarket && (
-          <>
-            {/* Negotiation Letter */}
-            {hasIncrease && calc && (
-              <motion.section id="section-letter" {...fade(0.19)} className="pt-8 pb-8">
-                <LetterGate
+        {/* ━━━ NEGOTIATION LETTER (Above Market + Fair) ━━━ */}
+        {(isAboveMarket || (isFair && hasIncrease)) && hasIncrease && calc && (
+          <motion.section id="section-letter" {...fade(0.19)} className="pt-8 pb-8">
+            {isFair && !isAboveMarket && (
+              <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">
+                Even a fair increase is worth negotiating. Landlords expect it — and avoiding turnover is worth more to them than $50-100/month.
+              </p>
+            )}
+            <LetterGate
                   leadContext={leadContext}
                   prefilledEmail={capturedEmail}
                   onEmailCaptured={setCapturedEmail}
@@ -949,12 +954,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     tierLabel={fairnessScore?.tierLabel ?? null}
                     maxCompDistance={compRadius.maxDistance}
                     momentumDirection={rentData.zillowDirection || (rentData.hvd ? rentData.hvd : null)}
+                    letterTone={isAboveMarket ? 'aggressive' : 'collaborative'}
                     onLetterGenerated={handleLetterGenerated}
                   />
                 </LetterGate>
-              </motion.section>
-            )}
+          </motion.section>
+        )}
 
+        {/* ━━━ ABOVE MARKET PATH: Share → Email ━━━ */}
+        {isAboveMarket && (
+          <>
             {/* Share Hub */}
             {hasIncrease && (
               <motion.section id="section-share" {...fade(0.21)} className="pt-8 pb-4">

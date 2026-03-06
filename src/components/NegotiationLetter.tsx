@@ -41,6 +41,7 @@ interface NegotiationLetterProps {
   tierLabel?: string;
   maxCompDistance?: number | null;
   momentumDirection?: string | null;
+  letterTone?: 'aggressive' | 'collaborative';
   onLetterGenerated?: () => void;
 }
 
