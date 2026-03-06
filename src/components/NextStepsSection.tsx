@@ -193,7 +193,7 @@ const NextStepsSection = ({
                 ]}
                 actionLabel="Compare Movers"
                 actionHref="https://www.moving.com/movers/"
-                onAction={() => trackEvent('moving_quote_clicked')}
+                onAction={() => { trackEvent('moving_quote_clicked'); logReferralClick('moving_quotes'); }}
                 delay={0.28}
               />
 
