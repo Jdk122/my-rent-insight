@@ -127,7 +127,7 @@ const RentByCity = () => {
     return { fmrVaries: fmrVar, hasZipLevelYoY: hasYoY, displayedZips: displayed, hasMoreZips: more };
   }, [data, alData, zipSearch]);
 
-  if (loading) return <LoadingSkeleton />;
+  if (loading) return <LoadingSkeleton stateSlug={stateSlug} citySlug={citySlug} />;
   if (notFound || !data) return <NotFoundPage />;
 
   const { city, state, zips, avgFmr, censusMedianRent, yoyChange, cheapestZip } = data;
