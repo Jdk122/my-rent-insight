@@ -57,7 +57,7 @@ Deno.serve(async (req) => {
         let q = supabase
           .from("analyses")
           .select(
-            "id, address, city, state, zip, bedrooms, current_rent, proposed_rent, increase_pct, fairness_score, verdict_label, dollar_overpayment, letter_generated, letter_tone, results_shared, confidence_level, rent_stabilized, utm_source, utm_medium, utm_campaign, created_at, counter_offer_low, counter_offer_high, comp_median_rent, hud_fmr_value, comps_count, comps_position, fair_counter_offer, sale_data_found, market_trend_pct, cache_hit, markup_multiplier, leads(id, email, lease_expiration_month, lease_expiration_year, partner_opt_in, capture_source, unsubscribed, outcome, reminder_sent_at, followup_sent_at, created_at)",
+            "id, address, city, state, zip, bedrooms, current_rent, proposed_rent, increase_pct, fairness_score, verdict_label, dollar_overpayment, letter_generated, letter_tone, results_shared, confidence_level, rent_stabilized, utm_source, utm_medium, utm_campaign, created_at, counter_offer_low, counter_offer_high, comp_median_rent, hud_fmr_value, comps_count, comps_position, fair_counter_offer, sale_data_found, market_trend_pct, cache_hit, markup_multiplier, anomaly_flags, leads(id, email, lease_expiration_month, lease_expiration_year, partner_opt_in, capture_source, unsubscribed, outcome, reminder_sent_at, followup_sent_at, created_at)",
             { count: "exact" }
           );
 
