@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
 import { Link } from 'react-router-dom';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
-import { Check, Copy, Download, RefreshCw, Mail } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface NegotiationLetterProps {
@@ -244,7 +244,7 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
   const [aiLetter, setAiLetter] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [copied, setCopied] = useState(false);
+  
 
   const brLabel = bedroomLabels[bedrooms];
   const increaseAmt = increaseAmount ?? Math.round(newRent - currentRent);
@@ -327,32 +327,6 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
   const displayLetter = aiLetter || fallbackLetter;
   const isAi = !!aiLetter;
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(displayLetter);
-    trackEvent('letter_copied', { ai: isAi });
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
-  };
-
-  const handleDownload = () => {
-    const blob = new Blob([displayLetter], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `rent-negotiation-${zip}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success('Downloaded');
-    trackEvent('letter_downloaded', { ai: isAi });
-  };
-
-  const handleEmail = () => {
-    const subject = encodeURIComponent('Regarding my lease renewal');
-    const body = encodeURIComponent(displayLetter);
-    window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
-    trackEvent('letter_emailed', { ai: isAi });
-  };
-
   const handleRegenerate = () => {
     setAiLetter(null);
     generateLetter();
@@ -407,34 +381,13 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
         </div>
       </div>
 
-      {/* Action buttons */}
-      <div className="flex flex-wrap gap-3 mt-5">
-        <button
-          onClick={handleCopy}
-          className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-7 py-3 rounded-lg text-sm font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
-        >
-          {copied ? <><Check size={16} /> Copied!</> : <><Copy size={16} /> Copy letter</>}
-        </button>
-        <button
-          onClick={handleEmail}
-          className="inline-flex items-center gap-2 border border-border px-7 py-3 rounded-lg text-sm font-medium text-foreground hover:border-foreground transition-colors"
-        >
-          <Mail size={16} /> Open in email
-        </button>
-        <button
-          onClick={handleDownload}
-          className="inline-flex items-center gap-2 border border-border px-5 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:border-foreground hover:text-foreground transition-colors"
-        >
-          <Download size={16} />
-        </button>
-        <button
-          onClick={handleRegenerate}
-          disabled={loading}
-          className="inline-flex items-center gap-2 border border-border px-5 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:border-foreground hover:text-foreground transition-colors disabled:opacity-50"
-        >
-          <RefreshCw size={16} /> Regenerate
-        </button>
-      </div>
+      {/* Regenerate link */}
+      <p
+        onClick={handleRegenerate}
+        className="text-xs text-muted-foreground hover:text-foreground cursor-pointer mt-3 transition-colors"
+      >
+        Not quite right? Regenerate →
+      </p>
 
 
       {/* Legal disclaimer */}
