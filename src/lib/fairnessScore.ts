@@ -131,17 +131,21 @@ function scoreMarketMomentum(zillowMonthly: number | null, alMoM?: number | null
   if (zillowMonthly !== null && zillowMonthly !== undefined) {
     let score: number;
     if (zillowMonthly <= 0) score = 10;
-    else if (zillowMonthly <= 0.30) score = 7;
+    else if (zillowMonthly <= 0.30) score = 10 - (zillowMonthly / 0.30) * 3;
+    else if (zillowMonthly <= 0.80) score = 7 - ((zillowMonthly - 0.30) / 0.50) * 4;
     else score = 3;
+    score = Math.round(score);
     return { id: 'momentum', label: 'Market Momentum', score, max: 10, estimated: false };
   }
   if (alMoM !== null && alMoM !== undefined) {
     let score: number;
     if (alMoM <= -0.3) score = 10;
-    else if (alMoM <= 0) score = 8;
-    else if (alMoM <= 0.3) score = 5;
-    else if (alMoM <= 0.6) score = 3;
+    else if (alMoM <= 0) score = 10 - ((alMoM + 0.3) / 0.3) * 2;
+    else if (alMoM <= 0.3) score = 8 - (alMoM / 0.3) * 3;
+    else if (alMoM <= 0.6) score = 5 - ((alMoM - 0.3) / 0.3) * 2;
+    else if (alMoM <= 1.0) score = 3 - ((alMoM - 0.6) / 0.4) * 2;
     else score = 1;
+    score = Math.round(score);
     return { id: 'momentum', label: 'Market Momentum (Apartment List)', score, max: 10, estimated: true };
   }
   if (hvd) {
