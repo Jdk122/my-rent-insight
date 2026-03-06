@@ -198,6 +198,7 @@ export default function AdminDataQuality() {
             <TabsTrigger value="coverage" className="gap-1.5"><Database className="h-3.5 w-3.5" />Coverage</TabsTrigger>
             <TabsTrigger value="spotcheck" className="gap-1.5"><Search className="h-3.5 w-3.5" />Spot-Check</TabsTrigger>
             <TabsTrigger value="anomalies" className="gap-1.5"><AlertTriangle className="h-3.5 w-3.5" />Anomalies</TabsTrigger>
+            <TabsTrigger value="verification" className="gap-1.5"><ClipboardCheck className="h-3.5 w-3.5" />Verification</TabsTrigger>
             <TabsTrigger value="refresh" className="gap-1.5"><Upload className="h-3.5 w-3.5" />Refresh Guide</TabsTrigger>
             <TabsTrigger value="migrate" className="gap-1.5"><Download className="h-3.5 w-3.5" />Migration</TabsTrigger>
           </TabsList>
