@@ -13,7 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { RentZipRaw, ZhviZipRaw, ApartmentListZipRaw, Hud50ZipRaw } from '@/data/dataLoader';
 import AdminNav from '@/components/admin/AdminNav';
 
-const ADMIN_PASSWORD = 'renewalreply2026';
+// Password is now validated server-side via the admin-query edge function
 
 // ─── Types ───
 
