@@ -585,7 +585,7 @@ const RentByZip = () => {
       {/* Data factsheet for AI extraction */}
       <div className="max-w-3xl mx-auto px-6 pb-4">
         <p className="text-sm text-muted-foreground/50">
-          Zip code: {zip} | City: {city}, {state} | 1-BR {heroRentLabel}: {fmt(heroRent)}/mo | 2-BR: {fmt(hud50?.f50?.[2] ?? raw.f[2])}/mo | Sources: {trendSource}, HUD SAFMR FY2026
+          Zip code: {zip} | City: {city}, {state} | 1-BR {heroRentLabel}: {fmt(heroRent)}/mo | 2-BR: {fmt(hud50?.f50?.[2] ?? raw.f[2])}/mo | Sources: {trendSource}, HUD SAFMR FY{hudFY}
         </p>
       </div>
 
