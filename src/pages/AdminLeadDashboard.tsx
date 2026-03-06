@@ -176,11 +176,25 @@ function DashboardContent() {
   const [referralSummary, setReferralSummary] = useState<{ link_type: string; count: number }[]>([]);
   const [showRecentClicks, setShowRecentClicks] = useState(false);
 
+  // Helper to call admin edge function
+  const adminQuery = async (query: string, params?: any) => {
+    const password = getAdminPassword();
+    const { data, error } = await supabase.functions.invoke('admin-query', {
+      body: { password, query, params },
+    });
+    if (error || data?.error) {
+      clearAdminSession();
+      window.location.reload();
+      return null;
+    }
+    return data;
+  };
+
   // Load stats
   useEffect(() => {
     setStatsLoading(true);
-    supabase.rpc('admin_dashboard_stats' as any).then(({ data }: any) => {
-      setStats(data);
+    adminQuery('dashboard_stats').then((data) => {
+      if (data) setStats(data);
       setStatsLoading(false);
     });
   }, []);
@@ -188,40 +202,28 @@ function DashboardContent() {
   // Load anomaly data
   useEffect(() => {
     setAnomalyLoading(true);
-    supabase
-      .from('analyses' as any)
-      .select('id, address, bedrooms, current_rent, dollar_overpayment, fairness_score, increase_pct, created_at')
-      .order('created_at', { ascending: false })
-      .limit(1000)
-      .then(({ data }: any) => {
-        setAnomalyRows(data || []);
-        setAnomalyLoading(false);
-      });
+    adminQuery('anomaly_data').then((data) => {
+      setAnomalyRows(data || []);
+      setAnomalyLoading(false);
+    });
   }, []);
 
   // Load referral clicks
   useEffect(() => {
     setReferralLoading(true);
-    supabase
-      .from('referral_clicks' as any)
-      .select('id, analysis_id, email, link_type, zip, created_at')
-      .order('created_at', { ascending: false })
-      .limit(500)
-      .then(({ data }: any) => {
-        const clicks = data || [];
-        setReferralClicks(clicks);
-
-        // Build summary by link_type
-        const counts: Record<string, number> = {};
-        for (const c of clicks) {
-          counts[c.link_type] = (counts[c.link_type] || 0) + 1;
-        }
-        const summary = Object.entries(counts)
-          .map(([link_type, count]) => ({ link_type, count }))
-          .sort((a, b) => b.count - a.count);
-        setReferralSummary(summary);
-        setReferralLoading(false);
-      });
+    adminQuery('referral_clicks').then((data) => {
+      const clicks = data || [];
+      setReferralClicks(clicks);
+      const counts: Record<string, number> = {};
+      for (const c of clicks) {
+        counts[c.link_type] = (counts[c.link_type] || 0) + 1;
+      }
+      const summary = Object.entries(counts)
+        .map(([link_type, count]) => ({ link_type, count }))
+        .sort((a, b) => b.count - a.count);
+      setReferralSummary(summary);
+      setReferralLoading(false);
+    });
   }, []);
 
   // Build and execute query
