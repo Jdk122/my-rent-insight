@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Loader2, Download, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Search, Filter, Check, X, AlertTriangle, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import AdminPasswordGate from '@/components/admin/AdminPasswordGate';
+import AdminPasswordGate, { getAdminPassword, clearAdminSession } from '@/components/admin/AdminPasswordGate';
 import AdminNav from '@/components/admin/AdminNav';
 import LeadDetailPanel from '@/components/admin/LeadDetailPanel';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
