@@ -251,7 +251,7 @@ const NextStepsSection = ({
             target="_blank"
             rel="noopener noreferrer"
             className="text-[13px] font-medium text-primary hover:underline inline-flex items-center gap-1 shrink-0"
-            onClick={() => trackEvent('mortgage_banner_clicked')}
+            onClick={() => { trackEvent('mortgage_banner_clicked'); logReferralClick('mortgage_banner'); }}
           >
             See if you qualify <ArrowRight className="w-3 h-3" />
           </a>
