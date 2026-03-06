@@ -477,14 +477,15 @@ export function getCounterOffer(currentRent: number, marketYoY: number) {
     };
   }
   const counterPct = Math.max(marketYoY, 1.0);
-  const counterLow = Math.ceil((currentRent * (1 + counterPct / 100)) / 25) * 25;
-  const counterHighPct = Math.round(counterPct) + 1;
-  const counterHigh = Math.ceil((currentRent * (1 + counterHighPct / 100)) / 25) * 25;
+  // counterLow = current rent adjusted by market trend
+  const counterLow = Math.round((currentRent * (1 + counterPct / 100)) / 25) * 25;
+  // counterHigh = counterLow + 3% buffer
+  const counterHigh = Math.round((counterLow * 1.03) / 25) * 25;
   return {
-    counterLow,
-    counterHigh,
+    counterLow: Math.max(counterLow, currentRent),
+    counterHigh: Math.max(counterHigh, counterLow),
     counterLowPercent: Math.round(counterPct * 10) / 10,
-    counterHighPercent: counterHighPct,
+    counterHighPercent: Math.round((counterHigh / currentRent - 1) * 1000) / 10,
   };
 }
 
@@ -508,14 +509,12 @@ export function calculateResults(
   const marketYoY = data.yoyChange;
 
   const range = getTypicalRange(data.fmr, data.censusMedianRent, data.city);
-  // Note: verdict is computed without comp data here; callers can re-compute with comps
   const verdict = getVerdict(increasePercent, marketYoY);
   const rentBurden = getRentBurden(proposedRent, data.medianIncome);
   const counter = getCounterOffer(currentRent, marketYoY);
 
-  // Ensure counterHigh doesn't exceed counterLow (sanity) and both stay >= currentRent
-  counter.counterLow = Math.max(counter.counterLow, currentRent);
-  counter.counterHigh = Math.max(counter.counterHigh, counter.counterLow);
+  // Flag: suppress counter-offer display if it meets or exceeds proposed rent
+  const counterExceedsProposed = counter.counterLow >= proposedRent;
 
   const increaseRatio = marketYoY > 0
     ? Math.round((increasePercent / marketYoY) * 10) / 10
@@ -543,6 +542,7 @@ export function calculateResults(
     increaseRatio,
     verdict,
     breakEvenMonths,
+    counterExceedsProposed,
     ...counter,
   };
 }

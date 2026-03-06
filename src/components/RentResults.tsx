@@ -238,14 +238,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       ? (newRent > medianCompRent ? 'above' : 'below')
       : hasEnoughComps === false ? 'insufficient' : null;
 
-    const counterStr = calc
+    const showCounter = calc && !calc.counterExceedsProposed;
+    const counterStr = showCounter
       ? (calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}`)
       : null;
 
-    // Dollar overpayment: gap between proposed rent and the fair counter-offer (what market data says is fair)
-    const dollarOverpayment = hasIncrease && calc?.counterLow
+    // Dollar overpayment: gap between proposed rent and the fair counter-offer
+    // If counter >= proposed, overpay is $0
+    const dollarOverpayment = hasIncrease && showCounter
       ? Math.max(0, Math.round(newRent - calc.counterLow))
-      : null;
+      : 0;
 
     const utm = getUtmParams();
 
@@ -336,7 +338,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     proposedRent: newRent,
     increasePct,
     marketTrendPct: marketYoy,
-    fairCounterOffer: calc ? (calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}`) : undefined,
+    fairCounterOffer: calc && !calc.counterExceedsProposed ? (calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}`) : undefined,
     compsPosition: medianCompRent ? (newRent > medianCompRent ? 'above' : 'below') : undefined,
     letterGenerated: !!(hasIncrease && isAboveMarket && calc),
     fairnessScore: fairnessScore?.total ?? null,
@@ -520,7 +522,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         </h1>
                         <p className="text-[14px] sm:text-base md:text-lg text-muted-foreground leading-relaxed">
                           {isAboveMarket && calc ? (
-                            <>That's ${fmt(increaseAmount * 12)} more per year than a market-rate increase would be. A fair counter-offer is {calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}/mo` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}/mo`}.</>
+                            calc.counterExceedsProposed
+                              ? <>Based on market data, your proposed rent appears to be in line with or below current market trends.</>
+                              : <>That's ${fmt(increaseAmount * 12)} more per year than a market-rate increase would be. A fair counter-offer is {calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}/mo` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}/mo`}.</>
                           ) : isNuancedAtMarket && medianCompRent ? (
                             <>Your proposed rent of ${fmt(newRent)} is still below the local median of ${fmt(medianCompRent)} for similar units nearby.</>
                           ) : isFair ? (
@@ -725,7 +729,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     </span>
                   </div>
                 )}
-                {isAboveMarket && calc && (
+                {isAboveMarket && calc && !calc.counterExceedsProposed && (
                   <>
                     <div className="context-row-highlight mt-2">
                       <span className="context-label">Fair counter-offer</span>
@@ -743,6 +747,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       </div>
                     )}
                   </>
+                )}
+                {isAboveMarket && calc?.counterExceedsProposed && (
+                  <div className="mt-2 px-3 py-2.5 rounded-md bg-verdict-good/10 border border-verdict-good/20">
+                    <p className="text-[12px] text-muted-foreground leading-relaxed">
+                      Based on market data, your proposed rent appears to be in line with or below current market trends.
+                    </p>
+                  </div>
                 )}
 
                 <p className="text-[11px] text-muted-foreground mt-3">
