@@ -118,8 +118,8 @@ const RentByZip = () => {
 
   const heroRent = hud50?.f50?.[1] ?? fmr1br;
   const heroRentSource = hud50?.f50?.[1] ? 'HUD 50th Percentile' : 'HUD Fair Market Rent (40th Percentile)';
-  // Change 1: "Median" → "Typical"
-  const heroRentLabel = hud50?.f50?.[1] ? 'Typical Rent' : 'Fair Market Rent';
+  const heroRentLabel = hud50?.f50?.[1] ? 'Estimated Rent' : 'Fair Market Rent';
+  const heroRentLongLabel = hud50?.f50?.[1] ? 'HUD Estimated Rent (50th Percentile)' : 'Fair Market Rent (40th Percentile)';
 
   const trendYoY = al?.aly ?? raw.zy ?? (raw.p[1] > 0 ? Math.round(((raw.f[1] - raw.p[1]) / raw.p[1]) * 1000) / 10 : null);
   const trendSource = al?.aly !== undefined && al?.aly !== null
