@@ -1,3 +1,2 @@
-/*/  https://service.prerender.io/:splat  200
-/*   https://service.prerender.io/:splat  200
-/*   /index.html                          200
+/admin/*   /index.html   200
+/*         /index.html   200
