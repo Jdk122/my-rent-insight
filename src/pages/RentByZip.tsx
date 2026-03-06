@@ -159,6 +159,7 @@ const RentByZip = () => {
   const trendSource = al?.aly !== undefined && al?.aly !== null
     ? 'Apartment List'
     : hasZillow ? 'Zillow ZORI' : 'HUD FMR';
+  const isHudOnlyTrend = !hasAL && !hasZillow;
   const hasMarketData = hasZillow || hasAL;
   const hasHud50 = hud50 !== null && hud50.f50 !== undefined && hud50.f50[1] > 0;
   const isThinPage = !hasMarketData && !hasHud50;
