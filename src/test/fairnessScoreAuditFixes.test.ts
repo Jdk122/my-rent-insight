@@ -126,9 +126,9 @@ describe('Component 3: Declining Market Tightening', () => {
     });
   });
 
-  it('marketYoY=0 (flat) uses rising breakpoints: increasePct=5 → 15/25', () => {
+  it('marketYoY=0 (flat) uses rising breakpoints: increasePct=5 → 18/25 (interpolated)', () => {
     const comp = getComponent({ ...highRentInput, marketYoY: 0, increasePct: 5 }, 'fmr');
-    expect(comp.score).toBe(15);
+    expect(comp.score).toBe(18);
   });
 });
 
