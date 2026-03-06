@@ -24,23 +24,30 @@ const TOP_CITIES = [
 ];
 
 const TopCityLinks = () => (
-  <section className="max-w-[620px] mx-auto px-5 sm:px-6 pb-12">
-    <h2 className="font-display text-lg text-foreground mb-3 tracking-tight">Rent Data by City</h2>
-    <div className="flex flex-wrap gap-2">
-      {TOP_CITIES.map(({ city, state, stateSlug, citySlug }) => (
+  <div className="border-t border-border bg-card">
+    <nav aria-label="Popular cities" className="max-w-4xl mx-auto px-5 sm:px-6 py-5 sm:py-6">
+      <h2 className="text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-muted-foreground/60 mb-3">
+        Popular Cities
+      </h2>
+      <div className="flex flex-wrap gap-x-3 gap-y-1">
+        {TOP_CITIES.map(({ city, state, stateSlug, citySlug }) => (
+          <Link
+            key={`${stateSlug}/${citySlug}`}
+            to={`/rent-data/${stateSlug}/${citySlug}`}
+            className="text-[11px] sm:text-xs text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
+          >
+            {city}, {state}
+          </Link>
+        ))}
         <Link
-          key={`${stateSlug}/${citySlug}`}
-          to={`/rent-data/${stateSlug}/${citySlug}`}
-          className="text-xs px-3 py-1.5 rounded-full border border-border bg-card text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
+          to="/rent-data"
+          className="text-[11px] sm:text-xs text-primary hover:text-primary/80 transition-colors font-medium whitespace-nowrap"
         >
-          {city}, {state}
+          All states →
         </Link>
-      ))}
-    </div>
-    <Link to="/rent-data" className="inline-block mt-3 text-xs text-primary hover:underline font-medium">
-      Browse all states & cities →
-    </Link>
-  </section>
+      </div>
+    </nav>
+  </div>
 );
 
 export default TopCityLinks;
