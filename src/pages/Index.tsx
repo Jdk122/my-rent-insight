@@ -243,7 +243,9 @@ const Index = () => {
           </p>
           <section className="mt-8 sm:mt-10" aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
-            <SocialProofCounter />
+            <Suspense fallback={null}>
+              <SocialProofCounter />
+            </Suspense>
           </section>
         </main>
       ) : (
