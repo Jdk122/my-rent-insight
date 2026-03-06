@@ -36,6 +36,12 @@ const SEO = ({
     // Save previous title for cleanup
     prevRef.current = { title: document.title };
 
+    // --- Proactive cleanup: remove stale robots meta from previous navigation ---
+    if (!noindex) {
+      const staleRobots = document.head.querySelector('meta[name="robots"]');
+      if (staleRobots) staleRobots.remove();
+    }
+
     // --- Title ---
     if (title) document.title = title;
 
@@ -67,6 +73,9 @@ const SEO = ({
       metas.push({ selector: 'meta[name="robots"]', attrs: { name: 'robots' }, content: 'noindex, nofollow' });
     }
 
+    // Track which selectors this instance manages for cleanup
+    const selectors: string[] = [];
+
     for (const { selector, attrs, content } of metas) {
       let el = document.head.querySelector(selector) as HTMLMetaElement | null;
       if (!el) {
@@ -75,7 +84,10 @@ const SEO = ({
         document.head.appendChild(el);
       }
       el.setAttribute('content', content);
+      selectors.push(selector);
     }
+
+    managedMetaRef.current = selectors;
 
     // --- Canonical ---
     let canonicalEl = document.head.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
@@ -111,6 +123,11 @@ const SEO = ({
       if (prevRef.current) {
         document.title = prevRef.current.title;
       }
+      // Clean up meta tags added by this instance
+      for (const sel of managedMetaRef.current) {
+        document.head.querySelector(sel)?.remove();
+      }
+      managedMetaRef.current = [];
       // Clean up JSON-LD scripts added by this instance
       for (const id of jsonLdIdsRef.current) {
         document.getElementById(id)?.remove();
