@@ -404,7 +404,7 @@ const RentByCity = () => {
           </div>
           {freshness && (
             <p className="mt-3 text-xs text-muted-foreground/70">
-              Source: HUD SAFMR FY2026 · Updated <time dateTime={freshness.hud_safmr}>{formatFreshnessDate(freshness.hud_safmr)}</time>
+              Source: HUD SAFMR FY{hudFY} · Updated <time dateTime={freshness.hud_safmr}>{formatFreshnessDate(freshness.hud_safmr)}</time>
             </p>
           )}
         </section>
