@@ -242,7 +242,7 @@ const RentByZip = () => {
               ))}
             </tbody>
           </table>
-          <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY2026</small></p>
+          <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY{hudFY}</small></p>
           {nearby.length > 0 && (<><h2>Nearby Areas</h2><ul>{nearby.map(({ zip: nZip, raw: nRaw }) => (<li key={nZip}><a href={`https://www.renewalreply.com/rent/${nZip}`}>{nZip} — {nRaw.c || 'Unknown'}, {nRaw.s} — 1-BR: {fmt(nRaw.f[1])}</a></li>))}</ul></>)}
           <p><a href={`https://www.renewalreply.com/rent-data/${stateSlug}/${citySlug}`}>{`← ${city}, ${state} rent data`}</a></p>
           <p><a href="https://www.renewalreply.com/">Check if your rent increase is fair →</a></p>
