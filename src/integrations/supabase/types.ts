@@ -471,6 +471,41 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_clicks: {
+        Row: {
+          analysis_id: string | null
+          created_at: string
+          email: string | null
+          id: string
+          link_type: string
+          zip: string | null
+        }
+        Insert: {
+          analysis_id?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          link_type: string
+          zip?: string | null
+        }
+        Update: {
+          analysis_id?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          link_type?: string
+          zip?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_clicks_analysis_id_fkey"
+            columns: ["analysis_id"]
+            isOneToOne: false
+            referencedRelation: "analyses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rentcast_cache: {
         Row: {
           endpoint: string
