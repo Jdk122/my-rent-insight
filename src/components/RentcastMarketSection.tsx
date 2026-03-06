@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -18,8 +18,53 @@ function fmt(n: number) {
 
 export default function RentcastMarketSection({ zip, city, state }: { zip: string; city: string; state: string }) {
   const [data, setData] = useState<MarketData | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [loaded, setLoaded] = useState(false);
+  const [hasCachedData, setHasCachedData] = useState(false);
+
+  // On mount, check if cached data exists for this ZIP
+  useEffect(() => {
+    let cancelled = false;
+    async function checkCache() {
+      try {
+        const { data: cached } = await supabase
+          .from('rentcast_cache')
+          .select('response_data, fetched_at')
+          .eq('lookup_key', `market|${zip}`)
+          .eq('endpoint', 'market-statistics')
+          .single();
+
+        if (cancelled) return;
+
+        if (cached?.response_data) {
+          const rd = cached.response_data as Record<string, unknown>;
+          if (rd.averageRent || rd.medianRent) {
+            setData({
+              averageRent: (rd.averageRent as number) ?? null,
+              medianRent: (rd.medianRent as number) ?? null,
+              minRent: (rd.minRent as number) ?? null,
+              maxRent: (rd.maxRent as number) ?? null,
+              totalListings: (rd.totalListings as number) ?? null,
+              cacheHit: true,
+            });
+            setHasCachedData(true);
+            setLoaded(true);
+            setLoading(false);
+            return;
+          }
+        }
+      } catch {
+        // No cached data — fall through to click-to-load
+      }
+
+      if (!cancelled) {
+        setLoading(false);
+      }
+    }
+
+    checkCache();
+    return () => { cancelled = true; };
+  }, [zip]);
 
   async function loadMarketData() {
     setLoading(true);
@@ -40,8 +85,24 @@ export default function RentcastMarketSection({ zip, city, state }: { zip: strin
     }
   }
 
-  // Not yet loaded — show CTA
-  if (!loaded && !loading) {
+  // Loading initial cache check
+  if (loading && !loaded) {
+    return (
+      <section className="mb-12">
+        <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">
+          Current Asking Rents in {zip}
+        </h2>
+        <div className="rounded-lg border border-border p-6 bg-card space-y-3">
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-6 w-32" />
+          <Skeleton className="h-6 w-40" />
+        </div>
+      </section>
+    );
+  }
+
+  // Not yet loaded and no cached data — show CTA
+  if (!loaded && !loading && !hasCachedData) {
     return (
       <section className="mb-12">
         <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">
@@ -63,7 +124,7 @@ export default function RentcastMarketSection({ zip, city, state }: { zip: strin
     );
   }
 
-  // Loading
+  // Loading after click
   if (loading) {
     return (
       <section className="mb-12">
