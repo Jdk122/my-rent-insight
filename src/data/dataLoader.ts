@@ -48,6 +48,15 @@ export interface FredTrendData {
   label: string;
 }
 
+// ─── County/Metro ZORI fallback data ───
+export interface CountyMetroZoriRaw {
+  zy?: number;         // YoY %
+  zm?: number;         // Monthly %
+  zt?: number;         // 3-month annualized %
+  zd?: 'rising' | 'falling' | 'flat';
+  src?: 'county' | 'metro';
+}
+
 // ─── Combined result from all data layers ───
 export interface RentLookupResult {
   zip: string;
@@ -60,6 +69,7 @@ export interface RentLookupResult {
   yoySource: 'zillow' | 'hud';
   yoySourceLabel: string;
   yoyCapped?: boolean;
+  yoyReliability: 'market' | 'government';
   priorSource: 'f' | 'a' | 'm' | 'n';
   fmrSource: 'safmr' | 'county' | 'unknown'; // ZIP-level SAFMR vs county-level FMR
   censusMedianRent: number | null;
