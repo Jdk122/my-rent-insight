@@ -219,6 +219,16 @@ const RentByState = () => {
             )}
           </div>
 
+          {/* Largest city callout */}
+          {filteredCities.length > 0 && filteredCities[0].avgFmr[1] > 0 && (
+            <p className="mt-4 text-sm text-muted-foreground">
+              Includes all regions.{' '}
+              <Link to={`/rent-data/${stateSlug}/${filteredCities[0].citySlug}`} className="text-primary hover:underline font-medium">
+                {filteredCities[0].city} average: {fmt(filteredCities[0].avgFmr[1])}/mo →
+              </Link>
+            </p>
+          )}
+
           {/* Last updated */}
           {freshest && (
             <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full">
