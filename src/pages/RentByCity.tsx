@@ -157,7 +157,7 @@ const RentByCity = () => {
 
   // ─── Best trend: AL > ZORI > HUD (waterfall) ───
   const hudYoY = yoyChange ?? null;
-  const { yoy: trendYoY, source: trendSource } = getDisplayTrend(cityAlYoY, cityZoriYoY, hudYoY);
+  const { yoy: trendYoY, source: trendSource, heroSource: trendHeroSource } = getDisplayTrend(cityAlYoY, cityZoriYoY, hudYoY);
 
   // ─── Freshness ───
   const freshest = freshness ? getFreshestDate(freshness, hasZillow, hasAL) : null;
