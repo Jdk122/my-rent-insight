@@ -6,6 +6,12 @@ import { BedroomType, bedroomLabels } from '@/data/rentData';
 import { RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
+interface CompForLetter {
+  rent: number | null;
+  isSameBuilding?: boolean;
+  isSameUnitLine?: boolean;
+}
+
 interface NegotiationLetterProps {
   currentRent: number;
   newRent: number;
@@ -43,6 +49,7 @@ interface NegotiationLetterProps {
   momentumDirection?: string | null;
   letterTone?: 'aggressive' | 'collaborative' | 'strategic';
   onLetterGenerated?: () => void;
+  comparables?: CompForLetter[];
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -57,6 +64,7 @@ function buildFallbackLetter(props: {
   rcTotalListings?: number | null; rcAvgDaysOnMarket?: number | null;
   alVacancy?: number | null;
   letterTone?: 'aggressive' | 'collaborative' | 'strategic';
+  comparables?: CompForLetter[];
 }): string {
   const {
     currentRent, newRent, increasePct, marketYoy, city, brLabel, increaseAmt,
@@ -64,6 +72,7 @@ function buildFallbackLetter(props: {
     compMedian, compCount, trendArea, rcMedianRent, f50Value,
     rcTotalListings, rcAvgDaysOnMarket, alVacancy,
     letterTone = 'aggressive',
+    comparables,
   } = props;
 
   const isCollaborative = letterTone === 'collaborative';
@@ -183,6 +192,24 @@ function buildFallbackLetter(props: {
       paragraphs.push(`${src} the median rent for a ${brLabel.toLowerCase()} in this area at $${fmt(benchmark)}/month. My proposed rent of $${fmt(newRent)} is ${ab} this benchmark.`);
     }
 
+    // Same-building / same-unit-line comp evidence
+    if (comparables && comparables.length > 0) {
+      const unitLineComps = comparables.filter(c => c.isSameUnitLine && c.rent != null);
+      const sameBuildingComps = comparables.filter(c => c.isSameBuilding && !c.isSameUnitLine && c.rent != null);
+
+      if (unitLineComps.length > 0) {
+        const avgUnitLineRent = Math.round(unitLineComps.reduce((sum, c) => sum + (c.rent || 0), 0) / unitLineComps.length);
+        paragraphs.push(
+          `Notably, ${unitLineComps.length} identical-layout unit${unitLineComps.length > 1 ? 's' : ''} in this building — same floor plan, same exposure — recently rented at an average of $${fmt(avgUnitLineRent)}/month. These are the most directly comparable data points available.`
+        );
+      } else if (sameBuildingComps.length > 0) {
+        const avgBuildingRent = Math.round(sameBuildingComps.reduce((sum, c) => sum + (c.rent || 0), 0) / sameBuildingComps.length);
+        paragraphs.push(
+          `${sameBuildingComps.length} unit${sameBuildingComps.length > 1 ? 's' : ''} in this building recently rented at an average of $${fmt(avgBuildingRent)}/month.`
+        );
+      }
+    }
+
     if (rcTotalListings && rcAvgDaysOnMarket) {
       if (isCollaborative) {
         if (rcAvgDaysOnMarket > 25 || (alVacancy !== null && alVacancy !== undefined && alVacancy > 5)) {
@@ -252,6 +279,22 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
 
   const letterTone = props.letterTone || 'aggressive';
 
+  // Compute same-building / unit-line summary for AI payload
+  const compSummary = useMemo(() => {
+    const comps = props.comparables || [];
+    const unitLineComps = comps.filter(c => c.isSameUnitLine && c.rent != null);
+    const sameBuildingComps = comps.filter(c => c.isSameBuilding && !c.isSameUnitLine && c.rent != null);
+    if (unitLineComps.length > 0) {
+      const avg = Math.round(unitLineComps.reduce((s, c) => s + (c.rent || 0), 0) / unitLineComps.length);
+      return { sameUnitLineCount: unitLineComps.length, sameUnitLineAvgRent: avg, sameBuildingCount: sameBuildingComps.length };
+    }
+    if (sameBuildingComps.length > 0) {
+      const avg = Math.round(sameBuildingComps.reduce((s, c) => s + (c.rent || 0), 0) / sameBuildingComps.length);
+      return { sameUnitLineCount: 0, sameUnitLineAvgRent: null, sameBuildingCount: sameBuildingComps.length, sameBuildingAvgRent: avg };
+    }
+    return null;
+  }, [props.comparables]);
+
   const analysisPayload = useMemo(() => ({
     currentRent,
     proposedRent: newRent,
@@ -276,10 +319,11 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
     f50Value: f50Value ?? null,
     momentumDirection: momentumDirection ?? null,
     letterTone,
+    ...(compSummary ? { compSummary } : {}),
   }), [currentRent, newRent, increasePct, increaseAmt, bedroomNum, zip,
     fairnessScore, tierLabel, compMedian, compCount, maxCompDistance, marketYoy, trendSource, trendArea,
     rcMedianRent, rcTotalListings, rcAvgDaysOnMarket, alVacancy,
-    counterLow, counterHigh, f50Value, momentumDirection, city, letterTone]);
+    counterLow, counterHigh, f50Value, momentumDirection, city, letterTone, compSummary]);
 
   const generateLetter = useCallback(async () => {
     setLoading(true);
@@ -319,10 +363,11 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
     counterLow, counterHigh, counterLowPercent, counterHighPercent,
     compMedian, compCount, trendArea, rcMedianRent, f50Value,
     rcTotalListings, rcAvgDaysOnMarket, alVacancy, letterTone,
+    comparables: props.comparables,
   }), [currentRent, newRent, increasePct, marketYoy, city, brLabel, increaseAmt,
     counterLow, counterHigh, counterLowPercent, counterHighPercent,
     compMedian, compCount, trendArea, rcMedianRent, f50Value,
-    rcTotalListings, rcAvgDaysOnMarket, alVacancy, letterTone]);
+    rcTotalListings, rcAvgDaysOnMarket, alVacancy, letterTone, props.comparables]);
 
   const displayLetter = aiLetter || fallbackLetter;
   const isAi = !!aiLetter;

@@ -1,0 +1,1 @@
+DELETE FROM rentcast_cache WHERE lookup_key LIKE '%hudson%' AND endpoint = 'rent-estimate';

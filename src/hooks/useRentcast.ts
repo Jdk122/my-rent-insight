@@ -16,6 +16,7 @@ export interface RentcastComparable {
   daysOld: number | null;
   correlation: number | null;
   isSameBuilding?: boolean;
+  isSameUnitLine?: boolean;
   relevanceScore?: number;
 }
 

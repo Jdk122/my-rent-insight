@@ -43,6 +43,49 @@ const normalizeStreetBase = (addr: string) =>
     .replace(/\s+/g, ' ')
     .trim();
 
+/**
+ * Extract the "line" identifier from a unit number.
+ * Buildings use different schemes:
+ *   "12A" → "a"  (letter suffix = the line)
+ *   "1201" → "01" (4-digit: last 2 digits = the line)
+ *   "12N" → "n"  (directional suffix)
+ *   "301" → "01" (3-digit: last 2 digits = the line)
+ *   "PH-A" → "a" (penthouse with letter)
+ *   "3" → null (single number, can't determine line)
+ */
+function extractUnitLine(address: string): string | null {
+  const unitMatch = address.match(/\b(?:apt|unit|suite|ste|#|fl|floor)\s*([a-z0-9-]+)/i)
+    || address.match(/\s+(\d+[a-z])\s*(?:,|$)/i)
+    || address.match(/\s+([a-z]\d+)\s*(?:,|$)/i)
+    || address.match(/\s+([a-z]{1,2})\s*(?:,|$)/i);
+
+  if (!unitMatch) return null;
+
+  const unit = unitMatch[1].toLowerCase().replace(/[-\s]/g, '');
+
+  // Pure letter (A, B, PH, N, S)
+  if (/^[a-z]{1,3}$/.test(unit)) return unit;
+
+  // Letter suffix: "12A" → "a", "3B" → "b"
+  const letterSuffix = unit.match(/\d+([a-z]+)$/);
+  if (letterSuffix) return letterSuffix[1];
+
+  // Letter prefix: "A12" → "a", "N3" → "n"
+  const letterPrefix = unit.match(/^([a-z]+)\d+/);
+  if (letterPrefix) return letterPrefix[1];
+
+  // 4-digit numeric: "1201" → "01"
+  if (/^\d{4}$/.test(unit)) return unit.slice(-2);
+
+  // 3-digit numeric: "301" → "01"
+  if (/^\d{3}$/.test(unit)) return unit.slice(-2);
+
+  // 2-digit numeric: "01"
+  if (/^\d{2}$/.test(unit)) return unit;
+
+  return null;
+}
+
 /** Build enriched, validated, prioritised comp list from raw Rentcast data */
 function processComps(
   rawApiComps: any[],
@@ -62,8 +105,9 @@ function processComps(
   }));
 
   const subjectStreet = address ? normalizeStreetBase(address) : '';
+  const subjectUnitLine = address ? extractUnitLine(address) : null;
 
-  // Enrich with same-building flag + relevance score
+  // Enrich with same-building flag, unit-line flag, + relevance score
   const enriched = rawComps.map((comp: any) => {
     const compStreet = normalizeStreetBase(comp.formattedAddress || '');
     const isSameBuilding =
@@ -73,18 +117,28 @@ function processComps(
         compStreet.startsWith(subjectStreet) ||
         subjectStreet.startsWith(compStreet));
 
+    // Same unit line: same building + matching line identifier
+    const compUnitLine = isSameBuilding ? extractUnitLine(comp.formattedAddress || '') : null;
+    const isSameUnitLine = !!(isSameBuilding && subjectUnitLine && compUnitLine && subjectUnitLine === compUnitLine);
+
     const freshnessScore =
       comp.daysOld !== null ? Math.max(0, 1 - comp.daysOld / 180) : 0.5;
 
     const baseCorrelation = comp.correlation ?? 0.5;
+    // Tiered relevance: unit line > building > nearby
+    const buildingBoost = isSameUnitLine ? 0.35 : isSameBuilding ? 0.25 : 0;
     const relevanceScore =
-      baseCorrelation * 0.5 + freshnessScore * 0.2 + (isSameBuilding ? 0.3 : 0);
+      baseCorrelation * 0.45 + freshnessScore * 0.2 + buildingBoost;
 
     return {
       ...comp,
       isSameBuilding,
+      isSameUnitLine,
       relevanceScore,
-      correlation: isSameBuilding
+      // Correlation boost: unit line (×1.8) > building (×1.5) > none
+      correlation: isSameUnitLine
+        ? Math.min(baseCorrelation * 1.8, 1.0)
+        : isSameBuilding
         ? Math.min(baseCorrelation * 1.5, 1.0)
         : baseCorrelation,
     };
@@ -106,13 +160,15 @@ function processComps(
   // Sort by composite relevance
   valid.sort((a: any, b: any) => b.relevanceScore - a.relevanceScore);
 
-  // Prioritise: all same-building (up to 5) + best nearby to fill 10
-  const sameBuilding = valid.filter((c: any) => c.isSameBuilding);
+  // Prioritise: same unit line first, then same building, then nearby
+  const sameUnitLine = valid.filter((c: any) => c.isSameUnitLine);
+  const sameBuildingOnly = valid.filter((c: any) => c.isSameBuilding && !c.isSameUnitLine);
   const nearby = valid.filter((c: any) => !c.isSameBuilding);
 
   return [
-    ...sameBuilding.slice(0, 5),
-    ...nearby.slice(0, Math.max(5, 10 - sameBuilding.length)),
+    ...sameUnitLine,
+    ...sameBuildingOnly.slice(0, Math.max(0, 5 - sameUnitLine.length)),
+    ...nearby.slice(0, Math.max(3, 10 - sameUnitLine.length - sameBuildingOnly.length)),
   ].slice(0, 10);
 }
 
@@ -280,7 +336,6 @@ serve(async (req) => {
         const retryData = await retryResp.json();
         prioritised = processComps(retryData.comparables || [], address, requestedBedrooms);
         retried = true;
-        // Update estimates from retry if we got better data
         if (retryData.rent) data.rent = retryData.rent;
         if (retryData.rentRangeLow) data.rentRangeLow = retryData.rentRangeLow;
         if (retryData.rentRangeHigh) data.rentRangeHigh = retryData.rentRangeHigh;

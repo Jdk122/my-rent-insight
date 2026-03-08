@@ -128,11 +128,15 @@ const RentcastCard = ({ data, loading, error, city, zip, state, bedrooms, propos
                     <p className="text-sm font-medium text-foreground truncate flex items-center gap-1.5">
                       <MapPin className="w-3 h-3 text-muted-foreground flex-shrink-0" />
                       {comp.formattedAddress}
-                      {(comp as any).isSameBuilding && (
+                      {(comp as any).isSameUnitLine ? (
+                        <span className="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide bg-verdict-good/15 text-verdict-good whitespace-nowrap">
+                          Same unit line
+                        </span>
+                      ) : (comp as any).isSameBuilding ? (
                         <span className="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide bg-accent/15 text-accent whitespace-nowrap">
                           Same building
                         </span>
-                      )}
+                      ) : null}
                     </p>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
