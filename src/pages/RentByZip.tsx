@@ -12,7 +12,7 @@ import RentTrendSummary from '@/components/RentTrendSummary';
 import WhatShouldRentCost from '@/components/WhatShouldRentCost';
 import ShareDataButton from '@/components/ShareDataButton';
 import DataPageFreshness from '@/components/DataPageFreshness';
-import TrendDiscrepancyNote from '@/components/TrendDiscrepancyNote';
+
 import OutlierFlag from '@/components/OutlierFlag';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
@@ -431,8 +431,7 @@ const RentByZip = () => {
                     <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
                       Rents in {zip} have {(trendYoY ?? 0) > 0 ? 'increased' : (trendYoY ?? 0) < 0 ? 'decreased' : 'remained flat'} by {Math.abs(trendYoY ?? 0).toFixed(1)}% over the past year, compared to the national average of {NATIONAL_AVG_YOY}%.
                     </p>
-                    <RentTrendSummary location={`${zip} (${city})`} trendYoY={trendYoY} />
-                    <TrendDiscrepancyNote alYoY={al?.aly ?? null} zoriYoY={raw.zy ?? null} />
+                    <RentTrendSummary location={`${zip} (${city})`} trendYoY={trendYoY} alYoY={al?.aly ?? null} zoriYoY={raw.zy ?? null} />
                   </div>
                   <p className="mt-3 text-xs text-muted-foreground/70">
                     Sources: {hasAL ? 'Apartment List transacted rent trends' : ''}{hasAL && hasZillow ? ', ' : ''}{hasZillow ? 'Zillow Observed Rent Index (ZORI)' : ''}

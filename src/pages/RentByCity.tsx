@@ -12,7 +12,7 @@ import RentTrendSummary from '@/components/RentTrendSummary';
 import WhatShouldRentCost from '@/components/WhatShouldRentCost';
 import ShareDataButton from '@/components/ShareDataButton';
 import DataPageFreshness from '@/components/DataPageFreshness';
-import TrendDiscrepancyNote from '@/components/TrendDiscrepancyNote';
+
 import OutlierFlag from '@/components/OutlierFlag';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
@@ -383,8 +383,7 @@ const RentByCity = () => {
               <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
                 {trendSource} data shows rents in {city} have {(trendYoY ?? 0) > 0 ? 'increased' : (trendYoY ?? 0) < 0 ? 'decreased' : 'remained flat'} by {Math.abs(trendYoY ?? 0).toFixed(1)}% over the past year.
               </p>
-              <RentTrendSummary location={city} trendYoY={trendYoY} />
-              <TrendDiscrepancyNote alYoY={cityAlYoY} zoriYoY={cityZoriYoY} />
+              <RentTrendSummary location={city} trendYoY={trendYoY} alYoY={cityAlYoY} zoriYoY={cityZoriYoY} />
             </div>
             <p className="mt-3 text-xs text-muted-foreground/70">
               Sources: {hasAL ? 'Apartment List' : ''}{hasAL && hasZillow ? ', ' : ''}{hasZillow ? 'Zillow ZORI' : ''}
