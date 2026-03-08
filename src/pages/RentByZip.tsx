@@ -12,7 +12,7 @@ import RentTrendSummary from '@/components/RentTrendSummary';
 import WhatShouldRentCost from '@/components/WhatShouldRentCost';
 import ShareDataButton from '@/components/ShareDataButton';
 import DataPageFreshness from '@/components/DataPageFreshness';
-import TrendDiscrepancyNote from '@/components/TrendDiscrepancyNote';
+
 import OutlierFlag from '@/components/OutlierFlag';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
