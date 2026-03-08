@@ -8,7 +8,7 @@ import { getDataFreshness, getFreshestDate, formatFreshnessDate, getHudFiscalYea
 import RentcastMarketSection from '@/components/RentcastMarketSection';
 import DhcrAlertSection from '@/components/DhcrAlertSection';
 import RenterToolsCTA from '@/components/RenterToolsCTA';
-import RentTrendSummary from '@/components/RentTrendSummary';
+import RentTrendSummary, { getDisplayTrend } from '@/components/RentTrendSummary';
 import WhatShouldRentCost from '@/components/WhatShouldRentCost';
 import ShareDataButton from '@/components/ShareDataButton';
 import DataPageFreshness from '@/components/DataPageFreshness';
