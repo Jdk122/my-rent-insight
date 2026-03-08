@@ -345,7 +345,7 @@ const RentByCity = () => {
           <p className="mt-4 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
             The average 1-bedroom rent in {city} is {fmt(avgFmr[1])}/month based on HUD Fair Market Rent data.
             {trendYoY !== null
-              ? ` Rents have changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year according to ${trendHeroSource}. ${trendYoY < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendYoY.toFixed(1)}% in this area is above the local market trend.`}`
+              ? ` Rents have changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year based on ${trendAttribution}. ${trendYoY < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendYoY.toFixed(1)}% in this area is above the local market trend.`}`
               : ''}
           </p>
 
