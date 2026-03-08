@@ -156,7 +156,9 @@ const RentByZip = () => {
   const heroRentLongLabel = hud50?.f50?.[1] ? 'HUD Estimated Rent' : 'HUD Fair Market Rent';
 
   const hudFallbackYoY = raw.p[1] > 0 ? Math.round(((raw.f[1] - raw.p[1]) / raw.p[1]) * 1000) / 10 : null;
-  const { yoy: trendYoY, source: trendSource, heroSource: trendHeroSource } = getDisplayTrend(al?.aly ?? null, raw.zy ?? null, hudFallbackYoY);
+  const compositeTrendResult = getDisplayTrend(al?.aly ?? null, raw.zy ?? null, hudFallbackYoY);
+  const { yoy: trendYoY, source: trendSource, heroSource: trendHeroSource, sourceCount, primarySource, spreadLow, spreadHigh } = compositeTrendResult;
+  const trendAttribution = sourceCount >= 2 ? 'local market data' : primarySource || trendHeroSource;
   const isHudOnlyTrend = !hasAL && !hasZillow;
   const hasMarketData = hasZillow || hasAL;
   const hasHud50 = hud50 !== null && hud50.f50 !== undefined && hud50.f50[1] > 0;
@@ -167,15 +169,12 @@ const RentByZip = () => {
   const dataYear = getDataYear(freshness);
   const hudFY = getHudFiscalYear(freshness);
 
-  // Change 2: Compute YoY range when both AL and ZORI exist and differ by >1%
-  const hasBothTrends = hasAL && al!.aly !== undefined && hasZillow;
-  const alYoY = al?.aly ?? null;
-  const zoriYoY = raw.zy ?? null;
-  const trendsDiverge = hasBothTrends && alYoY !== null && zoriYoY !== null && Math.abs(alYoY - zoriYoY) > 1;
-  const trendLow = trendsDiverge ? Math.min(alYoY!, zoriYoY!) : null;
-  const trendHigh = trendsDiverge ? Math.max(alYoY!, zoriYoY!) : null;
+  // Use composite spread for divergence display
+  const trendsDiverge = sourceCount >= 2 && Math.abs(spreadHigh - spreadLow) > 1;
+  const trendLow = trendsDiverge ? spreadLow : null;
+  const trendHigh = trendsDiverge ? spreadHigh : null;
 
-  // Change 3: Verdict sentence — use range or single value
+  // Verdict sentence — use range or single value
   const verdictTrendHigh = trendHigh ?? (trendYoY ?? NATIONAL_AVG_YOY);
   const verdictTrendLow = trendLow ?? verdictTrendHigh;
 
@@ -243,7 +242,7 @@ const RentByZip = () => {
               {
                 '@type': 'Question',
                 name: `How much has rent increased in ${city} (${zip})?`,
-                acceptedAnswer: { '@type': 'Answer', text: trendYoY !== null ? `Rents in ${city} changed approximately ${trendYoY > 0 ? '+' : ''}${Math.abs(trendYoY).toFixed(1)}% year-over-year according to ${trendHeroSource} data.` : `Year-over-year rent trend data is not currently available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}%.` },
+                acceptedAnswer: { '@type': 'Answer', text: trendYoY !== null ? `Rents in ${city} changed approximately ${trendYoY > 0 ? '+' : ''}${Math.abs(trendYoY).toFixed(1)}% year-over-year based on ${trendAttribution} data.` : `Year-over-year rent trend data is not currently available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}%.` },
               },
               {
                 '@type': 'Question',
@@ -264,7 +263,7 @@ const RentByZip = () => {
       <noscript>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
           <h1>{hasMarketData ? `Typical Rent in ${zip} — ${city}, ${state}` : `Fair Market Rent in ${zip} — ${city}, ${state}`}</h1>
-          <p><strong>{`The typical 1-bedroom rent in ${zip} is ${fmt(heroRent)}/month based on ${heroRentSource} data.`}{trendYoY !== null ? ` Rents changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year (${trendHeroSource}).` : ''}</strong></p>
+          <p><strong>{`The typical 1-bedroom rent in ${zip} is ${fmt(heroRent)}/month based on ${heroRentSource} data.`}{trendYoY !== null ? ` Rents changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year (${trendAttribution}).` : ''}</strong></p>
           <p>{`Last updated: ${freshestFormatted}`}</p>
           <h2>{`HUD Fair Market Rent for ${zip}`}</h2>
           <table style={{ borderCollapse: 'collapse', width: '100%' }}>
@@ -308,9 +307,9 @@ const RentByZip = () => {
           {/* Change 3: Verdict sentence first */}
           <p className="mt-6 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
             {trendsDiverge
-              ? `Rents in ${city} have grown approximately ${trendLow! > 0 ? '+' : ''}${trendLow!.toFixed(1)}% – ${trendHigh! > 0 ? '+' : ''}${trendHigh!.toFixed(1)}% over the past year based on two independent sources. ${trendHigh! < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendHigh!.toFixed(1)}% is above the local market trend.`}`
+              ? `Rents in ${city} have changed approximately ${trendLow! > 0 ? '+' : ''}${trendLow!.toFixed(1)}% – ${trendHigh! > 0 ? '+' : ''}${trendHigh!.toFixed(1)}% over the past year based on local market data. ${trendHigh! < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendHigh!.toFixed(1)}% is above the local market trend.`}`
               : trendYoY !== null
-                ? `Rents in ${city} have ${trendYoY >= 0 ? 'grown' : 'declined'} approximately ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}%${isHudOnlyTrend ? ' (HUD estimate)' : ''} over the past year. ${trendYoY < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendYoY.toFixed(1)}% is above the local market trend.`}`
+                ? `Rents in ${city} have ${trendYoY >= 0 ? 'grown' : 'declined'} approximately ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}%${isHudOnlyTrend ? ' (HUD estimate)' : ''} over the past year based on ${trendAttribution}. ${trendYoY < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendYoY.toFixed(1)}% is above the local market trend.`}`
                 : `The national average rent increase is approximately ${NATIONAL_AVG_YOY}% year-over-year. A rent increase above ${NATIONAL_AVG_YOY}% is above the national market trend.`}
           </p>
 
@@ -481,7 +480,7 @@ const RentByZip = () => {
               <AccordionContent>
                 <p className="text-muted-foreground leading-relaxed">
                   {trendYoY !== null
-                    ? `Rents in ${city} changed approximately ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year according to ${trendHeroSource} data. The national average is approximately ${NATIONAL_AVG_YOY}%. ${Math.abs(trendYoY) > Math.abs(NATIONAL_AVG_YOY) + 1 ? `This means ${city} rents are growing ${trendYoY > NATIONAL_AVG_YOY ? 'faster' : 'slower'} than the national average.` : `This is roughly in line with the national average.`}`
+                    ? `Rents in ${city} changed approximately ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year based on ${trendAttribution} data. The national average is approximately ${NATIONAL_AVG_YOY}%. ${Math.abs(trendYoY) > Math.abs(NATIONAL_AVG_YOY) + 1 ? `This means ${city} rents are growing ${trendYoY > NATIONAL_AVG_YOY ? 'faster' : 'slower'} than the national average.` : `This is roughly in line with the national average.`}`
                     : `Year-over-year rent trend data is not currently available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}%.`}
                 </p>
               </AccordionContent>

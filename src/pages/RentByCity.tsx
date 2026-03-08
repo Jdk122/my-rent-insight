@@ -157,7 +157,9 @@ const RentByCity = () => {
 
   // ─── Best trend: AL > ZORI > HUD (waterfall) ───
   const hudYoY = yoyChange ?? null;
-  const { yoy: trendYoY, source: trendSource, heroSource: trendHeroSource } = getDisplayTrend(cityAlYoY, cityZoriYoY, hudYoY);
+  const compositeTrendResult = getDisplayTrend(cityAlYoY, cityZoriYoY, hudYoY);
+  const { yoy: trendYoY, source: trendSource, heroSource: trendHeroSource, sourceCount, primarySource } = compositeTrendResult;
+  const trendAttribution = sourceCount >= 2 ? 'local market data' : primarySource || trendHeroSource;
 
   // ─── Freshness ───
   const freshest = freshness ? getFreshestDate(freshness, hasZillow, hasAL) : null;
@@ -191,7 +193,7 @@ const RentByCity = () => {
     {
       q: `How much has rent changed in ${city}?`,
       a: trendYoY !== null
-        ? `Rents in ${city} changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year based on ${trendHeroSource} data. ${Math.abs(trendYoY - 3.2) > 1 ? `This is ${trendYoY > 3.2 ? 'above' : 'below'} the national average of approximately 3.2%.` : 'This is roughly in line with the national average of approximately 3.2%.'}`
+        ? `Rents in ${city} changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year based on ${trendAttribution} data. ${Math.abs(trendYoY - 3.2) > 1 ? `This is ${trendYoY > 3.2 ? 'above' : 'below'} the national average of approximately 3.2%.` : 'This is roughly in line with the national average of approximately 3.2%.'}`
         : `Year-over-year rent change data is not currently available for ${city}.`,
     },
     {
@@ -343,7 +345,7 @@ const RentByCity = () => {
           <p className="mt-4 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
             The average 1-bedroom rent in {city} is {fmt(avgFmr[1])}/month based on HUD Fair Market Rent data.
             {trendYoY !== null
-              ? ` Rents have changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year according to ${trendHeroSource}. ${trendYoY < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendYoY.toFixed(1)}% in this area is above the local market trend.`}`
+              ? ` Rents have changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year based on ${trendAttribution}. ${trendYoY < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendYoY.toFixed(1)}% in this area is above the local market trend.`}`
               : ''}
           </p>
 
