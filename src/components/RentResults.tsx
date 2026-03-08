@@ -184,8 +184,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       f50: rentData.f50,
       rcMedianRent: rcMarket.rcMedianRent,
       rcTotalListings: rcMarket.rcTotalListings,
+      compositeTrend: compositeTrendResult.compositeTrend,
     });
-  }, [hasIncrease, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings]);
+  }, [hasIncrease, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings, compositeTrendResult]);
 
   const refinedVerdict = useMemo(() => {
     if (!fairnessScore) return null;
