@@ -64,6 +64,7 @@ function buildFallbackLetter(props: {
   rcTotalListings?: number | null; rcAvgDaysOnMarket?: number | null;
   alVacancy?: number | null;
   letterTone?: 'aggressive' | 'collaborative' | 'strategic';
+  comparables?: CompForLetter[];
 }): string {
   const {
     currentRent, newRent, increasePct, marketYoy, city, brLabel, increaseAmt,
