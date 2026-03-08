@@ -75,10 +75,27 @@ const EarlyCaptureBar = ({
         p_comp_median_rent: leadContext?.compMedianRent ?? null,
         p_hud_fmr_value: leadContext?.hudFmrValue ?? null,
       } as any);
+
+      // Insert lead_events for tracking
+      await supabase.from('lead_events' as any).insert({
+        email: emailVal,
+        analysis_id: leadContext?.analysisId || null,
+        event_type: 'early_capture',
+        fairness_score: leadContext?.fairnessScore ?? null,
+        address: leadContext?.address || null,
+        zip: leadContext?.zip || null,
+        current_rent: leadContext?.currentRent ?? null,
+        proposed_rent: leadContext?.proposedRent ?? null,
+        increase_pct: leadContext?.increasePct ?? null,
+        verdict: verdictLabel || null,
+        comp_median_rent: leadContext?.compMedianRent ?? null,
+        hud_fmr_value: leadContext?.hudFmrValue ?? null,
+      } as any);
     } catch (err) {
       console.error('Early capture failed:', err);
     }
     trackEvent('email_submitted', { source: 'early_capture', verdict: verdictLabel });
+    trackAdsConversion();
     setCapturedEmail(emailVal);
     setSubmitted(true);
     toast.success("Sent!");

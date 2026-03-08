@@ -92,7 +92,6 @@ const Index = () => {
         setResults({ formData: data, rentData });
         trackEvent('form_submitted', { zip: data.zip, bedrooms: data.bedrooms, has_address: false });
         trackEvent('address_entered', { method: 'zip_only' });
-        trackAdsConversion();
         setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
 
         loadFredTrend(rentData.metro).then((fredTrend) => {
