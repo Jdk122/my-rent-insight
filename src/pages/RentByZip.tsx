@@ -481,7 +481,7 @@ const RentByZip = () => {
               <AccordionContent>
                 <p className="text-muted-foreground leading-relaxed">
                   {trendYoY !== null
-                    ? `Rents in ${city} changed approximately ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year according to ${trendSource} data. The national average is approximately ${NATIONAL_AVG_YOY}%. ${Math.abs(trendYoY) > Math.abs(NATIONAL_AVG_YOY) + 1 ? `This means ${city} rents are growing ${trendYoY > NATIONAL_AVG_YOY ? 'faster' : 'slower'} than the national average.` : `This is roughly in line with the national average.`}`
+                    ? `Rents in ${city} changed approximately ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year according to ${trendHeroSource} data. The national average is approximately ${NATIONAL_AVG_YOY}%. ${Math.abs(trendYoY) > Math.abs(NATIONAL_AVG_YOY) + 1 ? `This means ${city} rents are growing ${trendYoY > NATIONAL_AVG_YOY ? 'faster' : 'slower'} than the national average.` : `This is roughly in line with the national average.`}`
                     : `Year-over-year rent trend data is not currently available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}%.`}
                 </p>
               </AccordionContent>

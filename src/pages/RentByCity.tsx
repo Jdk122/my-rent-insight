@@ -272,7 +272,7 @@ const RentByCity = () => {
       <noscript>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
           <h1>{`Average Rent in ${city}, ${state} (${dataYear})`}</h1>
-          <p>{`The average 1-bedroom rent in ${city} is ${fmt(avgFmr[1])}/month based on HUD Fair Market Rent data across ${zips.length} zip codes.`}{trendYoY !== null ? ` Rents changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year (${trendSource}).` : ''}</p>
+          <p>{`The average 1-bedroom rent in ${city} is ${fmt(avgFmr[1])}/month based on HUD Fair Market Rent data across ${zips.length} zip codes.`}{trendYoY !== null ? ` Rents changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year (${trendHeroSource}).` : ''}</p>
           {freshestFormatted && <p>{`Last updated: ${freshestFormatted}`}</p>}
           <p><a href="https://www.renewalreply.com/">{`Check if your rent increase is fair →`}</a></p>
           <h2>{`Rent by Zip Code in ${city}`}</h2>
