@@ -23,7 +23,7 @@ import { trackEvent } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import DataConfidenceBadge from './DataConfidenceBadge';
 import { assessConfidence, detectOutliers, checkCrossSourceConsistency, getCompRadius, filterFurnished, deduplicateComps } from '@/lib/dataQuality';
-import { calculateFairnessScore, scoreToVerdict, FairnessScoreResult } from '@/lib/fairnessScore';
+import { calculateFairnessScore, scoreToVerdict, getContextualTierMessage, FairnessScoreResult } from '@/lib/fairnessScore';
 import { calculateCompositeTrend } from '@/lib/compositeTrend';
 import FairnessScoreGauge, { ComponentSourceInfo } from './FairnessScoreGauge';
 import MarketSnapshot from './MarketSnapshot';
@@ -463,10 +463,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 const sources: ComponentSourceInfo = {};
 
                 // Component 1: Rate vs Trend
-                if (rentData.alYoY !== null && rentData.alYoY !== undefined) {
-                  sources.rate = `Source: Apartment List${rentData.alRegion ? ` (${rentData.alRegion})` : ''}`;
-                } else if (rentData.zillowMonthly !== null) {
-                  sources.rate = 'Source: Zillow ZORI';
+                if (compositeTrendResult.sourceCount >= 2) {
+                  sources.rate = `Source: ${compositeTrendResult.sources.map(s => s.label).join(', ')}`;
+                } else if (compositeTrendResult.sourceCount === 1) {
+                  sources.rate = `Source: ${compositeTrendResult.primarySource}`;
                 } else {
                   sources.rate = 'Source: HUD FMR';
                 }
@@ -534,7 +534,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                               )
                             )
                           ) : isFair ? (
-                            <>Your rent increase is <span className="text-verdict-fair">right at market.</span></>
+                            isNuancedAtMarket ? (
+                              <>Your increase is above the trend, but your <span className="text-verdict-fair">rent is still at market.</span></>
+                            ) : increasePct > marketYoy + 1.5 ? (
+                              <>Your increase is a bit high, but your <span className="text-verdict-fair">rent is still reasonable.</span></>
+                            ) : (
+                              <>Your rent increase is <span className="text-verdict-fair">right at market.</span></>
+                            )
                           ) : increasePct > 0 && increasePct <= marketYoy ? (
                             <>Your increase of {increasePct}% is{' '}
                               <span className="text-verdict-good">below the {marketYoy}% area trend.</span></>
@@ -550,10 +556,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             calc.counterExceedsProposed
                               ? <>Based on market data, your proposed rent appears to be in line with or below current market trends.</>
                               : <>That's ${fmt(increaseAmount * 12)} more per year than a market-rate increase would be. A fair counter-offer is {calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}/mo` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}/mo`}.</>
-                          ) : isNuancedAtMarket && medianCompRent ? (
-                            <>Your proposed rent of ${fmt(newRent)} is still below the local median of ${fmt(medianCompRent)} for similar units nearby.</>
                           ) : isFair ? (
-                            <>At ${fmt(newRent)}/mo, you'll be within the typical range for {brLabel} rentals in {city}.</>
+                            increasePct > marketYoy + 1.5 ? (
+                              medianCompRent ? (
+                                <>Your {increasePct}% increase is above the {marketYoy}% area trend, but at ${fmt(newRent)}/mo your rent {newRent <= medianCompRent ? `is still below the $${fmt(medianCompRent)} local median` : `is within range for ${brLabel} rentals in ${city}`}.</>
+                              ) : (
+                                <>Your {increasePct}% increase is above the {marketYoy}% area trend, but at ${fmt(newRent)}/mo you're still within the typical range for {brLabel} rentals in {city}.</>
+                              )
+                            ) : (
+                              <>At ${fmt(newRent)}/mo, you'll be within the typical range for {brLabel} rentals in {city}.</>
+                            )
                           ) : (
                             <>At ${fmt(newRent)}/mo, you're getting a competitive deal compared to similar units in {city}.</>
                           )}
@@ -583,8 +595,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 className="mt-5 sm:mt-6 w-full grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-[540px]"
               >
                 {(() => {
-                  const trendSourceShort = rentData.alYoY !== null && rentData.alYoY !== undefined
-                    ? 'Apartment List' : rentData.yoySource === 'zillow' ? 'Zillow ZORI' : 'HUD FMR';
+                  const trendSourceShort = compositeTrendResult.sourceCount >= 2
+                    ? 'Market data' : compositeTrendResult.primarySource;
                   return [
                     { label: 'You pay now', value: `$${fmt(formData.currentRent)}`, color: 'text-foreground', sub: null },
                     { label: 'They want', value: `$${fmt(newRent)}`, color: isAboveMarket ? 'text-destructive' : isBelowMarket ? 'text-verdict-good' : 'text-foreground', sub: null },
@@ -728,7 +740,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   <span className="context-value">
                     {marketYoy > 0 ? '+' : ''}{marketYoy}%
                     {rentData.yoyCapped && <span className="context-sub"> (capped)</span>}
-                    <span className="context-sub"> ({rentData.alYoY !== null && rentData.alYoY !== undefined ? 'Apartment List' : rentData.yoySource === 'zillow' ? 'Zillow ZORI' : 'HUD FMR'})</span>
+                    <span className="context-sub"> ({compositeTrendResult.sourceCount >= 2 ? 'composite — ' + compositeTrendResult.sources.map(s => s.label).join(', ') : compositeTrendResult.primarySource})</span>
                   </span>
                 </div>
                 {rentData.zillowMonthly !== null && rentData.zillowDirection && (
@@ -976,7 +988,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     compMedian={medianCompRent}
                     compCount={outlierResult?.filtered.length ?? 0}
                     compRadius={compRadius.label ? compRadius.label.replace('within ', '') : undefined}
-                    trendSource={rentData.alYoY !== null && rentData.alYoY !== undefined ? 'Apartment List' : rentData.zillowMonthly !== null ? 'Zillow' : 'HUD'}
+                    trendSource={compositeTrendResult.sourceCount >= 2 ? 'multiple market sources' : compositeTrendResult.primarySource}
                     trendArea={rentData.alRegion || rentData.city}
                     rcMedianRent={rcMarket.rcMedianRent}
                     rcTotalListings={rcMarket.rcTotalListings}
