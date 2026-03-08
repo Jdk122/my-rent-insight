@@ -72,6 +72,7 @@ function buildFallbackLetter(props: {
     compMedian, compCount, trendArea, rcMedianRent, f50Value,
     rcTotalListings, rcAvgDaysOnMarket, alVacancy,
     letterTone = 'aggressive',
+    comparables,
   } = props;
 
   const isCollaborative = letterTone === 'collaborative';
