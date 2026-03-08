@@ -15,6 +15,7 @@ export interface RentcastComparable {
   distance: number | null;
   daysOld: number | null;
   correlation: number | null;
+  isSameBuilding?: boolean;
 }
 
 export interface RentcastResult {
