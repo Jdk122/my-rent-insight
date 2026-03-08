@@ -139,7 +139,7 @@ serve(async (req) => {
 
     const requestedBedrooms = bedrooms !== undefined ? Number(bedrooms) : null;
 
-    const rawComps = (data.comparables || []).slice(0, 10).map((comp: any) => ({
+    const rawComps = (data.comparables || []).slice(0, 15).map((comp: any) => ({
       formattedAddress: comp.formattedAddress || comp.address || "Unknown",
       rent: comp.price ?? comp.lastSeenPrice ?? null,
       bedrooms: comp.bedrooms ?? null,
@@ -151,7 +151,31 @@ serve(async (req) => {
       listingType: comp.listingType ?? null,
     }));
 
-    const validComps = rawComps.filter((comp: any) => {
+    // Detect same-building comps by matching street address (ignoring unit/apt numbers)
+    const subjectStreet = address
+      ? address.replace(/\b(apt|unit|suite|ste|#)\s*\S*/gi, '').replace(/\s+/g, ' ').trim().toLowerCase()
+      : '';
+
+    const compsWithBuildingFlag = rawComps.map((comp: any) => {
+      const compStreet = (comp.formattedAddress || '')
+        .replace(/\b(apt|unit|suite|ste|#)\s*\S*/gi, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+
+      // Same building: street matches OR distance is effectively zero
+      const isSameBuilding = (subjectStreet && compStreet && compStreet.startsWith(subjectStreet.split(',')[0]))
+        || (comp.distance !== null && comp.distance <= 0.05);
+
+      return {
+        ...comp,
+        isSameBuilding,
+        // Boost correlation for same-building comps (most defensible)
+        correlation: isSameBuilding ? Math.min((comp.correlation ?? 0.5) * 1.5, 1.0) : (comp.correlation ?? null),
+      };
+    });
+
+    const validComps = compsWithBuildingFlag.filter((comp: any) => {
       if (comp.rent == null || comp.rent < 200 || comp.rent > 25000 || comp.rent <= 0) {
         console.warn(`Rejected comp "${comp.formattedAddress}": invalid rent ${comp.rent}`);
         return false;
@@ -165,7 +189,18 @@ serve(async (req) => {
         return false;
       }
       return true;
-    }).slice(0, 5);
+    });
+
+    // Prioritize same-building comps, then sort by correlation
+    const sameBuilding = validComps.filter((c: any) => c.isSameBuilding);
+    const nearby = validComps.filter((c: any) => !c.isSameBuilding)
+      .sort((a: any, b: any) => (b.correlation ?? 0) - (a.correlation ?? 0));
+
+    // Keep all same-building comps (up to 5), fill remaining slots with best nearby
+    const prioritizedComps = [
+      ...sameBuilding.slice(0, 5),
+      ...nearby.slice(0, Math.max(0, 8 - sameBuilding.length)),
+    ].slice(0, 8);
 
     const result = {
       rentEstimate: validComps.length > 0 ? (data.rent ?? data.rentRangeLow ?? null) : null,
