@@ -166,7 +166,7 @@ function DashboardContent() {
   const [filterStabilized, setFilterStabilized] = useState<'all' | 'yes' | 'no' | 'unknown'>('all');
   const [showFilters, setShowFilters] = useState(false);
 
-  // ── Anomalies ──
+   // ── Anomalies ──
   const [anomalyRows, setAnomalyRows] = useState<any[]>([]);
   const [anomalyLoading, setAnomalyLoading] = useState(false);
 
@@ -175,6 +175,10 @@ function DashboardContent() {
   const [referralLoading, setReferralLoading] = useState(false);
   const [referralSummary, setReferralSummary] = useState<{ link_type: string; count: number }[]>([]);
   const [showRecentClicks, setShowRecentClicks] = useState(false);
+
+  // ── Orphan Leads (no analysis_id) ──
+  const [orphanLeads, setOrphanLeads] = useState<any[]>([]);
+  const [orphanLoading, setOrphanLoading] = useState(false);
 
   // Helper to call admin edge function
   const adminQuery = async (query: string, params?: any) => {
