@@ -424,6 +424,49 @@ function DashboardContent() {
         )}
       </div>
 
+      {/* ━━━ Orphan Leads (no analysis) ━━━ */}
+      {orphanLeads.length > 0 && (
+        <div>
+          <h2 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-yellow-500" />
+            Early Capture Leads (no analysis linked)
+            <span className="text-sm font-normal text-muted-foreground">({orphanLeads.length})</span>
+          </h2>
+          <div className="border border-border rounded-lg overflow-x-auto bg-card">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border bg-muted/30">
+                  <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Date</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Email</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Source</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Zip</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">City</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Rent</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Score</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Verdict</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">UTM</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orphanLeads.map((lead: any) => (
+                  <tr key={lead.id} className="border-b border-border/50 hover:bg-muted/30">
+                    <td className="px-3 py-2 whitespace-nowrap text-xs">{new Date(lead.created_at).toLocaleDateString()}</td>
+                    <td className="px-3 py-2 text-xs max-w-[200px] truncate" title={lead.email}>{lead.email}</td>
+                    <td className="px-3 py-2 whitespace-nowrap text-xs">{lead.capture_source || '—'}</td>
+                    <td className="px-3 py-2 whitespace-nowrap text-xs">{lead.zip || '—'}</td>
+                    <td className="px-3 py-2 whitespace-nowrap text-xs">{lead.city || '—'}</td>
+                    <td className="px-3 py-2 whitespace-nowrap text-xs">{lead.current_rent ? fmt(lead.current_rent) : '—'}{lead.proposed_rent ? ` → ${fmt(lead.proposed_rent)}` : ''}</td>
+                    <td className="px-3 py-2 whitespace-nowrap text-xs">{lead.fairness_score ?? '—'}</td>
+                    <td className="px-3 py-2 whitespace-nowrap text-xs">{lead.verdict || '—'}</td>
+                    <td className="px-3 py-2 whitespace-nowrap text-xs">{lead.utm_source || '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       {/* ━━━ Lead Table ━━━ */}
       <div>
         <div className="flex items-center justify-between mb-3">
