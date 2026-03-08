@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { trackEvent } from '@/lib/analytics';
+import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { LeadContext } from './EmailCapture';
 import { getUtmParams } from '@/lib/utm';
 
