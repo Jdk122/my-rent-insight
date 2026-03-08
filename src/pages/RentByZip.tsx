@@ -497,7 +497,7 @@ const RentByZip = () => {
               <AccordionContent>
                 <p className="text-muted-foreground leading-relaxed">
                   The {heroRentLabel.toLowerCase()} for a 1-bedroom in {zip} is {fmt(heroRent)}/month ({heroRentSource}).
-                  {hud50?.f50 && ` The HUD 50th percentile (typical) rent is ${fmt(hud50.f50[1])}/mo, while the 40th percentile Fair Market Rent is ${fmt(fmr1br)}/mo.`}
+                  {hud50?.f50 && ` The HUD estimated rent is ${fmt(hud50.f50[1])}/mo, while the Fair Market Rent is ${fmt(fmr1br)}/mo.`}
                   {metroAvgFmr1br !== fmr1br && ` Across the ${raw.m} metro area, the average 1-bedroom FMR is ${fmt(metroAvgFmr1br)}/mo — making ${zip} ${fmr1br > metroAvgFmr1br ? `${Math.round(((fmr1br - metroAvgFmr1br) / metroAvgFmr1br) * 100)}% above` : `${Math.round(((metroAvgFmr1br - fmr1br) / metroAvgFmr1br) * 100)}% below`} the metro average.`}
                   {' '}For current asking rents from nearby listings, see the market data section above.
                 </p>
