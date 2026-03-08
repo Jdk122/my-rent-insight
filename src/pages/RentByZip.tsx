@@ -156,7 +156,7 @@ const RentByZip = () => {
   const heroRentLongLabel = hud50?.f50?.[1] ? 'HUD Estimated Rent' : 'HUD Fair Market Rent';
 
   const hudFallbackYoY = raw.p[1] > 0 ? Math.round(((raw.f[1] - raw.p[1]) / raw.p[1]) * 1000) / 10 : null;
-  const { yoy: trendYoY, source: trendSource } = getDisplayTrend(al?.aly ?? null, raw.zy ?? null, hudFallbackYoY);
+  const { yoy: trendYoY, source: trendSource, heroSource: trendHeroSource } = getDisplayTrend(al?.aly ?? null, raw.zy ?? null, hudFallbackYoY);
   const isHudOnlyTrend = !hasAL && !hasZillow;
   const hasMarketData = hasZillow || hasAL;
   const hasHud50 = hud50 !== null && hud50.f50 !== undefined && hud50.f50[1] > 0;
@@ -243,7 +243,7 @@ const RentByZip = () => {
               {
                 '@type': 'Question',
                 name: `How much has rent increased in ${city} (${zip})?`,
-                acceptedAnswer: { '@type': 'Answer', text: trendYoY !== null ? `Rents in ${city} changed approximately ${trendYoY > 0 ? '+' : ''}${Math.abs(trendYoY).toFixed(1)}% year-over-year according to ${trendSource} data.` : `Year-over-year rent trend data is not currently available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}%.` },
+                acceptedAnswer: { '@type': 'Answer', text: trendYoY !== null ? `Rents in ${city} changed approximately ${trendYoY > 0 ? '+' : ''}${Math.abs(trendYoY).toFixed(1)}% year-over-year according to ${trendHeroSource} data.` : `Year-over-year rent trend data is not currently available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}%.` },
               },
               {
                 '@type': 'Question',
@@ -264,7 +264,7 @@ const RentByZip = () => {
       <noscript>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
           <h1>{hasMarketData ? `Typical Rent in ${zip} — ${city}, ${state}` : `Fair Market Rent in ${zip} — ${city}, ${state}`}</h1>
-          <p><strong>{`The typical 1-bedroom rent in ${zip} is ${fmt(heroRent)}/month based on ${heroRentSource} data.`}{trendYoY !== null ? ` Rents changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year (${trendSource}).` : ''}</strong></p>
+          <p><strong>{`The typical 1-bedroom rent in ${zip} is ${fmt(heroRent)}/month based on ${heroRentSource} data.`}{trendYoY !== null ? ` Rents changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year (${trendHeroSource}).` : ''}</strong></p>
           <p>{`Last updated: ${freshestFormatted}`}</p>
           <h2>{`HUD Fair Market Rent for ${zip}`}</h2>
           <table style={{ borderCollapse: 'collapse', width: '100%' }}>
@@ -481,7 +481,7 @@ const RentByZip = () => {
               <AccordionContent>
                 <p className="text-muted-foreground leading-relaxed">
                   {trendYoY !== null
-                    ? `Rents in ${city} changed approximately ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year according to ${trendSource} data. The national average is approximately ${NATIONAL_AVG_YOY}%. ${Math.abs(trendYoY) > Math.abs(NATIONAL_AVG_YOY) + 1 ? `This means ${city} rents are growing ${trendYoY > NATIONAL_AVG_YOY ? 'faster' : 'slower'} than the national average.` : `This is roughly in line with the national average.`}`
+                    ? `Rents in ${city} changed approximately ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year according to ${trendHeroSource} data. The national average is approximately ${NATIONAL_AVG_YOY}%. ${Math.abs(trendYoY) > Math.abs(NATIONAL_AVG_YOY) + 1 ? `This means ${city} rents are growing ${trendYoY > NATIONAL_AVG_YOY ? 'faster' : 'slower'} than the national average.` : `This is roughly in line with the national average.`}`
                     : `Year-over-year rent trend data is not currently available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}%.`}
                 </p>
               </AccordionContent>

@@ -45,7 +45,9 @@ const RentTrendSummary = ({ location, trendYoY, alYoY, zoriYoY, vacancyRate, sho
 
   // Divergence logic
   const spread = hasBoth ? Math.abs(alYoY! - zoriYoY!) : 0;
-  const sourcesAgree = hasBoth && spread <= 3;
+  const sameDirection = hasBoth && ((alYoY! >= 0 && zoriYoY! >= 0) || (alYoY! < 0 && zoriYoY! < 0));
+  const sourcesAgree = hasBoth && spread <= 3 && sameDirection;
+  const sourcesMixed = hasBoth && spread <= 3 && !sameDirection;
   const sourcesDiverge = hasBoth && spread > 3;
   const rentersHaveLeverage = hasBoth && alYoY! < zoriYoY!;
 
@@ -69,6 +71,13 @@ const RentTrendSummary = ({ location, trendYoY, alYoY, zoriYoY, vacancyRate, sho
       {sourcesAgree && (
         <p className="text-xs text-accent font-medium mt-1">
           ✓ Confirmed by multiple sources
+        </p>
+      )}
+
+      {/* Mixed signals */}
+      {sourcesMixed && (
+        <p className="text-xs text-muted-foreground mt-1">
+          Sources show mixed signals
         </p>
       )}
 
@@ -131,19 +140,20 @@ export function getDisplayTrend(
   alYoY: number | null,
   zoriYoY: number | null,
   hudYoY: number | null
-): { yoy: number | null; source: string } {
+): { yoy: number | null; source: string; heroSource: string } {
   if (alYoY !== null) {
     const hasZori = zoriYoY !== null;
     return {
       yoy: alYoY,
       source: hasZori ? 'Apartment List, Zillow ZORI' : 'Apartment List (signed leases)',
+      heroSource: 'Apartment List',
     };
   }
   if (zoriYoY !== null) {
-    return { yoy: zoriYoY, source: 'Zillow ZORI (listing prices)' };
+    return { yoy: zoriYoY, source: 'Zillow ZORI (listing prices)', heroSource: 'Zillow ZORI' };
   }
   if (hudYoY !== null) {
-    return { yoy: hudYoY, source: 'HUD Fair Market Rent' };
+    return { yoy: hudYoY, source: 'HUD Fair Market Rent', heroSource: 'HUD Fair Market Rent' };
   }
-  return { yoy: null, source: '' };
+  return { yoy: null, source: '', heroSource: '' };
 }
