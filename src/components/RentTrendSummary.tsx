@@ -74,6 +74,13 @@ const RentTrendSummary = ({ location, trendYoY, alYoY, zoriYoY, vacancyRate, sho
         </p>
       )}
 
+      {/* Mixed signals */}
+      {sourcesMixed && (
+        <p className="text-xs text-muted-foreground mt-1">
+          Sources show mixed signals
+        </p>
+      )}
+
       {/* Range subtext when both available */}
       {hasBoth && (
         <p className="text-xs text-muted-foreground mt-1">
