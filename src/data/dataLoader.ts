@@ -414,6 +414,13 @@ export async function lookupRentData(
     alTimeOnMarket: al?.alt ?? null,
     alRegion: al?.alr ?? null,
     f50: hud50?.f50 ?? null,
+    zoriYoY: (raw.zy !== undefined && raw.zy !== null) ? raw.zy
+           : (cmZori && cmZori.zy !== undefined && cmZori.zy !== null) ? cmZori.zy
+           : null,
+    zoriGeoLevel: (raw.zy !== undefined && raw.zy !== null) ? 'zip'
+                : (cmZori && cmZori.zy !== undefined && cmZori.zy !== null)
+                  ? (cmZori.src === 'county' ? 'county' : 'metro')
+                : null,
   };
 }
 
