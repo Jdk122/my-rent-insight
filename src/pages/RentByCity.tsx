@@ -193,7 +193,7 @@ const RentByCity = () => {
     {
       q: `How much has rent changed in ${city}?`,
       a: trendYoY !== null
-        ? `Rents in ${city} changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year based on ${trendHeroSource} data. ${Math.abs(trendYoY - 3.2) > 1 ? `This is ${trendYoY > 3.2 ? 'above' : 'below'} the national average of approximately 3.2%.` : 'This is roughly in line with the national average of approximately 3.2%.'}`
+        ? `Rents in ${city} changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year based on ${trendAttribution} data. ${Math.abs(trendYoY - 3.2) > 1 ? `This is ${trendYoY > 3.2 ? 'above' : 'below'} the national average of approximately 3.2%.` : 'This is roughly in line with the national average of approximately 3.2%.'}`
         : `Year-over-year rent change data is not currently available for ${city}.`,
     },
     {
