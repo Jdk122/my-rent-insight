@@ -203,11 +203,11 @@ serve(async (req) => {
     ].slice(0, 8);
 
     const result = {
-      rentEstimate: validComps.length > 0 ? (data.rent ?? data.rentRangeLow ?? null) : null,
+      rentEstimate: prioritizedComps.length > 0 ? (data.rent ?? data.rentRangeLow ?? null) : null,
       rentRangeLow: data.rentRangeLow ?? null,
       rentRangeHigh: data.rentRangeHigh ?? null,
       propertyType,
-      comparables: validComps,
+      comparables: prioritizedComps,
     };
 
     // Upsert to cache

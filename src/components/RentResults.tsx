@@ -126,8 +126,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     if (!rentcast.data?.comparables) return { cleanedComps: [], furnishedComps: [] };
     const deduped = deduplicateComps(rentcast.data.comparables);
     const { unfurnished, furnished } = filterFurnished(deduped);
-    return { cleanedComps: unfurnished, furnishedComps: furnished };
-  }, [rentcast.data]);
+
+    // Prefer exact bedroom matches when we have enough
+    const exactBrMatch = unfurnished.filter(c => c.bedrooms === bedroomNum);
+    const nearBrMatch = unfurnished.filter(c => c.bedrooms !== bedroomNum);
+    const prioritized = exactBrMatch.length >= 3
+      ? [...exactBrMatch, ...nearBrMatch]
+      : unfurnished;
+
+    return { cleanedComps: prioritized, furnishedComps: furnished };
+  }, [rentcast.data, bedroomNum]);
 
   // ━━━ Outlier detection ━━━
   const outlierResult = useMemo(() => {
