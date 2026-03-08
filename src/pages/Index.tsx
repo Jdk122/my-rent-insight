@@ -241,6 +241,16 @@ const Index = () => {
           <p className="mt-4 sm:mt-6 text-[15px] sm:text-lg md:text-xl text-muted-foreground max-w-[540px] leading-relaxed font-normal tracking-tight">
             Most renters overpay by $50–150/month and don't know it. Enter your address, see if your landlord is overcharging you, and get a free negotiation letter<span className="text-primary font-medium"> — in 10 seconds.</span>
           </p>
+          <div className="mt-3 mb-0 text-center">
+            <p className="text-xs text-muted-foreground/60 mb-2">Built on data landlords use to set your rent — now you can see it too.</p>
+            <div className="flex flex-wrap justify-center gap-x-2 gap-y-1 text-[11px] text-muted-foreground/40 tracking-wide">
+              <span>HUD Fair Market Rent</span><span aria-hidden="true">·</span>
+              <span>Zillow ZORI</span><span aria-hidden="true">·</span>
+              <span>Apartment List</span><span aria-hidden="true">·</span>
+              <span>Rentcast</span><span aria-hidden="true">·</span>
+              <span>NY DHCR</span>
+            </div>
+          </div>
           <section className="mt-8 sm:mt-10" aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
             <Suspense fallback={null}>
