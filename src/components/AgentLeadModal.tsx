@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { trackEvent } from '@/lib/analytics';
+import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 
 interface AgentLeadModalProps {
   open: boolean;
