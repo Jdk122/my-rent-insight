@@ -556,10 +556,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             calc.counterExceedsProposed
                               ? <>Based on market data, your proposed rent appears to be in line with or below current market trends.</>
                               : <>That's ${fmt(increaseAmount * 12)} more per year than a market-rate increase would be. A fair counter-offer is {calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}/mo` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}/mo`}.</>
-                          ) : isNuancedAtMarket && medianCompRent ? (
-                            <>Your proposed rent of ${fmt(newRent)} is still below the local median of ${fmt(medianCompRent)} for similar units nearby.</>
                           ) : isFair ? (
-                            <>At ${fmt(newRent)}/mo, you'll be within the typical range for {brLabel} rentals in {city}.</>
+                            increasePct > marketYoy + 1.5 ? (
+                              medianCompRent ? (
+                                <>Your {increasePct}% increase is above the {marketYoy}% area trend, but at ${fmt(newRent)}/mo your rent {newRent <= medianCompRent ? `is still below the $${fmt(medianCompRent)} local median` : `is within range for ${brLabel} rentals in ${city}`}.</>
+                              ) : (
+                                <>Your {increasePct}% increase is above the {marketYoy}% area trend, but at ${fmt(newRent)}/mo you're still within the typical range for {brLabel} rentals in {city}.</>
+                              )
+                            ) : (
+                              <>At ${fmt(newRent)}/mo, you'll be within the typical range for {brLabel} rentals in {city}.</>
+                            )
                           ) : (
                             <>At ${fmt(newRent)}/mo, you're getting a competitive deal compared to similar units in {city}.</>
                           )}
