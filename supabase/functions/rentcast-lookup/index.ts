@@ -163,21 +163,27 @@ serve(async (req) => {
       listingType: comp.listingType ?? null,
     }));
 
-    // Detect same-building comps by matching street address (ignoring unit/apt numbers)
-    const subjectStreet = address
-      ? address.replace(/\b(apt|unit|suite|ste|#)\s*\S*/gi, '').replace(/\s+/g, ' ').trim().toLowerCase()
-      : '';
+    // Detect same-building comps by normalized street base (ignoring unit/apt/floor suffixes)
+    const normalizeStreetBase = (value: string) =>
+      value
+        .toLowerCase()
+        .split(',')[0]
+        .replace(/\b(apt|unit|suite|ste|#|fl|floor)\s*\w+\b/gi, '')
+        .replace(/\s+[0-9]+[a-z]?\b$/i, '')
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+    const subjectStreet = address ? normalizeStreetBase(address) : '';
 
     const compsWithBuildingFlag = rawComps.map((comp: any) => {
-      const compStreet = (comp.formattedAddress || '')
-        .replace(/\b(apt|unit|suite|ste|#)\s*\S*/gi, '')
-        .replace(/\s+/g, ' ')
-        .trim()
-        .toLowerCase();
+      const compStreet = normalizeStreetBase(comp.formattedAddress || '');
 
-      // Same building: street matches OR distance is effectively zero
-      const isSameBuilding = (subjectStreet && compStreet && compStreet.startsWith(subjectStreet.split(',')[0]))
-        || (comp.distance !== null && comp.distance <= 0.05);
+      const isSameBuilding = !!subjectStreet && !!compStreet && (
+        compStreet === subjectStreet ||
+        compStreet.startsWith(subjectStreet) ||
+        subjectStreet.startsWith(compStreet)
+      );
 
       return {
         ...comp,
