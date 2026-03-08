@@ -13,7 +13,7 @@ const faqs: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: 'What is Fair Market Rent (FMR)?',
-    a: 'Fair Market Rent is published annually by the U.S. Department of Housing and Urban Development (HUD). It represents the 40th percentile of rents in your area. RenewalReply also uses HUD\u2019s 50th percentile data (the actual median) and live market data when available, giving you the most precise benchmark for your bedroom count and ZIP code.',
+    a: 'Fair Market Rent is a federal rent benchmark published annually by the U.S. Department of Housing and Urban Development (HUD). RenewalReply uses both HUD Fair Market Rent and HUD Estimated Rent (the typical rent for your area), along with live market data when available, to give you the most precise benchmark for your bedroom count and ZIP code.',
   },
   {
     q: 'Can my landlord raise my rent by any amount?',

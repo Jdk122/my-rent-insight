@@ -537,7 +537,7 @@ const RentByZip = () => {
               <AccordionTrigger>What is the HUD Fair Market Rent for a 1-bedroom in {zip}?</AccordionTrigger>
               <AccordionContent>
                 <p className="text-muted-foreground leading-relaxed">
-                  The HUD Small Area Fair Market Rent for a 1-bedroom in zip code {zip} is {fmt(fmr1br)} for FY{hudFY}. This represents the 40th percentile of area rents. Other bedroom sizes: Studio {fmt(raw.f[0])}, 2-BR {fmt(raw.f[2])}, 3-BR {fmt(raw.f[3])}, 4-BR {fmt(raw.f[4])}.
+                  The HUD Fair Market Rent for a 1-bedroom in zip code {zip} is {fmt(fmr1br)} for FY{hudFY}. This is the federal rent benchmark for this area. Other bedroom sizes: Studio {fmt(raw.f[0])}, 2-BR {fmt(raw.f[2])}, 3-BR {fmt(raw.f[3])}, 4-BR {fmt(raw.f[4])}.
                   {raw.p[1] > 0 && ` Last year's FMR was ${fmt(raw.p[1])}, a change of ${((fmr1br - raw.p[1]) / raw.p[1] * 100).toFixed(1)}%.`}
                 </p>
               </AccordionContent>
