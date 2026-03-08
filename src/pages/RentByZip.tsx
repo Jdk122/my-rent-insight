@@ -456,8 +456,8 @@ const RentByZip = () => {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Bedroom Size</TableHead>
-                        <TableHead className="text-right">Fair Market Rent (40th %ile)</TableHead>
-                        {hud50 && <TableHead className="text-right">Typical Rent (50th %ile)</TableHead>}
+                        <TableHead className="text-right">Fair Market Rent</TableHead>
+                        {hud50 && <TableHead className="text-right">Estimated Rent</TableHead>}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
