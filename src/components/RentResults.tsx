@@ -83,7 +83,14 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   const newRent = formData.currentRent + increaseAmount;
   const annualExtra = increaseAmount * 12;
-  const marketYoy = rentData.yoyChange;
+  const compositeTrendResult = useMemo(() => calculateCompositeTrend({
+    alYoY: rentData.alYoY,
+    zoriYoY: rentData.zoriYoY,
+    zoriSource: rentData.zoriGeoLevel,
+    hudYoY: rentData.yoyChange,
+  }), [rentData.alYoY, rentData.zoriYoY, rentData.zoriGeoLevel, rentData.yoyChange]);
+
+  const marketYoy = compositeTrendResult.compositeTrend;
   const multiplier = calc?.increaseRatio ?? 0;
   const excessAnnual = hasIncrease
     ? Math.round(formData.currentRent * ((increasePct - marketYoy) / 100) * 12)
