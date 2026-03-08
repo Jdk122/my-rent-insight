@@ -188,7 +188,7 @@ serve(async (req) => {
       return {
         ...comp,
         isSameBuilding,
-        // Boost correlation for same-building comps (most defensible)
+        // Boost correlation for exact same-building comps (most defensible)
         correlation: isSameBuilding ? Math.min((comp.correlation ?? 0.5) * 1.5, 1.0) : (comp.correlation ?? null),
       };
     });
