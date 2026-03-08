@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { trackEvent } from '@/lib/analytics';
+import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Check } from 'lucide-react';
