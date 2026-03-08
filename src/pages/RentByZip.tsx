@@ -307,9 +307,9 @@ const RentByZip = () => {
           {/* Change 3: Verdict sentence first */}
           <p className="mt-6 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
             {trendsDiverge
-              ? `Rents in ${city} have grown approximately ${trendLow! > 0 ? '+' : ''}${trendLow!.toFixed(1)}% – ${trendHigh! > 0 ? '+' : ''}${trendHigh!.toFixed(1)}% over the past year based on two independent sources. ${trendHigh! < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendHigh!.toFixed(1)}% is above the local market trend.`}`
+              ? `Rents in ${city} have changed approximately ${trendLow! > 0 ? '+' : ''}${trendLow!.toFixed(1)}% – ${trendHigh! > 0 ? '+' : ''}${trendHigh!.toFixed(1)}% over the past year based on local market data. ${trendHigh! < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendHigh!.toFixed(1)}% is above the local market trend.`}`
               : trendYoY !== null
-                ? `Rents in ${city} have ${trendYoY >= 0 ? 'grown' : 'declined'} approximately ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}%${isHudOnlyTrend ? ' (HUD estimate)' : ''} over the past year. ${trendYoY < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendYoY.toFixed(1)}% is above the local market trend.`}`
+                ? `Rents in ${city} have ${trendYoY >= 0 ? 'grown' : 'declined'} approximately ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}%${isHudOnlyTrend ? ' (HUD estimate)' : ''} over the past year based on ${trendAttribution}. ${trendYoY < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendYoY.toFixed(1)}% is above the local market trend.`}`
                 : `The national average rent increase is approximately ${NATIONAL_AVG_YOY}% year-over-year. A rent increase above ${NATIONAL_AVG_YOY}% is above the national market trend.`}
           </p>
 
