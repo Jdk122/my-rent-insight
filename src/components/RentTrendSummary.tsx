@@ -7,43 +7,46 @@ interface RentTrendSummaryProps {
   showHeadline?: boolean;
 }
 
-function fmt(n: number) {
+function fmtPct(n: number) {
   return (n > 0 ? '+' : '') + n.toFixed(1) + '%';
 }
 
+/**
+ * Priority waterfall: AL (signed leases) > ZORI (listing prices) > HUD FMR.
+ * When both exist and agree (<= 3pp): show AL with "Confirmed by multiple sources."
+ * When both exist and diverge (> 3pp): show AL with divergence explanation.
+ */
 const RentTrendSummary = ({ location, trendYoY, alYoY, zoriYoY, vacancyRate, showHeadline = false }: RentTrendSummaryProps) => {
   const hasAl = alYoY !== undefined && alYoY !== null;
   const hasZori = zoriYoY !== undefined && zoriYoY !== null;
   const hasBoth = hasAl && hasZori;
 
-  // Compute blended primary number
+  // Waterfall: AL > ZORI > HUD
   let primary: number | null = null;
-  let sources: string[] = [];
+  let sourceLabel = '';
 
-  if (hasBoth) {
-    primary = Math.round(((alYoY! + zoriYoY!) / 2) * 10) / 10;
-    sources = ['Apartment List', 'Zillow ZORI'];
-  } else if (hasAl) {
+  if (hasAl) {
     primary = alYoY!;
-    sources = ['Apartment List'];
+    sourceLabel = hasBoth ? 'Sources: Apartment List, Zillow ZORI' : 'Source: Apartment List (signed leases)';
   } else if (hasZori) {
     primary = zoriYoY!;
-    sources = ['Zillow ZORI'];
+    sourceLabel = 'Source: Zillow ZORI (listing prices)';
   } else if (trendYoY !== null) {
     primary = trendYoY;
-    sources = ['HUD Fair Market Rent'];
+    sourceLabel = 'Source: HUD Fair Market Rent';
   }
 
-  if (primary === null) return null;
+  if (primary === null) {
+    return <p className="mt-3 text-sm text-muted-foreground">No market trend data available for this area.</p>;
+  }
 
   const direction = primary > 0.5 ? 'rising' : primary < -0.5 ? 'cooling' : 'holding steady';
   const colorClass = direction === 'rising' ? 'text-destructive' : direction === 'cooling' ? 'text-accent' : 'text-foreground';
 
-  // Range and divergence
+  // Divergence logic
   const spread = hasBoth ? Math.abs(alYoY! - zoriYoY!) : 0;
-  const lo = hasBoth ? Math.min(alYoY!, zoriYoY!) : null;
-  const hi = hasBoth ? Math.max(alYoY!, zoriYoY!) : null;
-  const showDivergence = hasBoth && spread > 3;
+  const sourcesAgree = hasBoth && spread <= 3;
+  const sourcesDiverge = hasBoth && spread > 3;
   const rentersHaveLeverage = hasBoth && alYoY! < zoriYoY!;
 
   return (
@@ -51,7 +54,7 @@ const RentTrendSummary = ({ location, trendYoY, alYoY, zoriYoY, vacancyRate, sho
       {/* Headline number */}
       {showHeadline && (
         <p className={`text-3xl font-bold tabular-nums ${colorClass}`}>
-          {fmt(primary)}
+          {fmtPct(primary)}
         </p>
       )}
 
@@ -59,23 +62,37 @@ const RentTrendSummary = ({ location, trendYoY, alYoY, zoriYoY, vacancyRate, sho
       <p className={`text-sm font-medium ${showHeadline ? 'mt-2' : ''} ${colorClass}`}>
         Rents in {location} are{' '}
         <span className="font-bold">{direction}</span>{' '}
-        at <span className="font-bold tabular-nums">{fmt(primary)}</span> year-over-year.
+        at <span className="font-bold tabular-nums">{fmtPct(primary)}</span> year-over-year.
       </p>
 
-      {/* Range subtext when both sources available */}
-      {hasBoth && lo !== null && hi !== null && (
-        <p className="text-xs text-muted-foreground mt-1">
-          Market sources range from {fmt(lo)} to {fmt(hi)}
+      {/* Confirmed by multiple sources */}
+      {sourcesAgree && (
+        <p className="text-xs text-accent font-medium mt-1">
+          ✓ Confirmed by multiple sources
         </p>
       )}
 
-      {/* Divergence explanation */}
-      {showDivergence && (
+      {/* Range subtext when both available */}
+      {hasBoth && (
+        <p className="text-xs text-muted-foreground mt-1">
+          Market sources range from {fmtPct(Math.min(alYoY!, zoriYoY!))} to {fmtPct(Math.max(alYoY!, zoriYoY!))}
+        </p>
+      )}
+
+      {/* Divergence note */}
+      {sourcesDiverge && (
+        <p className="text-xs text-muted-foreground mt-1">
+          Note: Listing prices (Zillow) suggest a different trend ({fmtPct(zoriYoY!)}). Our primary figure reflects actual lease transactions.
+        </p>
+      )}
+
+      {/* Divergence explanation box */}
+      {sourcesDiverge && (
         <div className="mt-3 rounded-lg bg-muted/50 border border-border px-4 py-3">
           <p className="text-sm text-muted-foreground leading-relaxed">
             <span className="font-semibold text-foreground">Why the range?</span>{' '}
-            Zillow ZORI tracks what landlords are <em>asking</em> for units ({fmt(zoriYoY!)}),
-            while Apartment List tracks what renters actually <em>sign leases</em> at ({fmt(alYoY!)}).
+            Zillow ZORI tracks what landlords are <em>asking</em> for units ({fmtPct(zoriYoY!)}),
+            while Apartment List tracks what renters actually <em>sign leases</em> at ({fmtPct(alYoY!)}).
             {rentersHaveLeverage ? (
               <span className="block mt-1.5 font-medium text-foreground">
                 Landlords are asking more than renters are paying — this suggests renters may have negotiating leverage in {location} right now.
@@ -98,10 +115,35 @@ const RentTrendSummary = ({ location, trendYoY, alYoY, zoriYoY, vacancyRate, sho
 
       {/* Source attribution */}
       <p className="text-xs text-muted-foreground/70 mt-1.5">
-        Sources: {sources.join(', ')}
+        {sourceLabel}
       </p>
     </div>
   );
 };
 
 export default RentTrendSummary;
+
+/**
+ * Shared waterfall logic for hero sections.
+ * Returns the primary YoY number and its source label, matching RentTrendSummary.
+ */
+export function getDisplayTrend(
+  alYoY: number | null,
+  zoriYoY: number | null,
+  hudYoY: number | null
+): { yoy: number | null; source: string } {
+  if (alYoY !== null) {
+    const hasZori = zoriYoY !== null;
+    return {
+      yoy: alYoY,
+      source: hasZori ? 'Apartment List, Zillow ZORI' : 'Apartment List (signed leases)',
+    };
+  }
+  if (zoriYoY !== null) {
+    return { yoy: zoriYoY, source: 'Zillow ZORI (listing prices)' };
+  }
+  if (hudYoY !== null) {
+    return { yoy: hudYoY, source: 'HUD Fair Market Rent' };
+  }
+  return { yoy: null, source: '' };
+}
