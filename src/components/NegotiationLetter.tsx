@@ -210,6 +210,7 @@ function buildFallbackLetter(props: {
       }
     }
 
+    if (rcTotalListings && rcAvgDaysOnMarket) {
       if (isCollaborative) {
         if (rcAvgDaysOnMarket > 25 || (alVacancy !== null && alVacancy !== undefined && alVacancy > 5)) {
           let s = `I notice some units in the area are taking time to fill — about ${Math.round(rcAvgDaysOnMarket)} days on average across ${rcTotalListings} active listings.`;
