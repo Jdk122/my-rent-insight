@@ -1009,6 +1009,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     momentumDirection={rentData.zillowDirection || (rentData.hvd ? rentData.hvd : null)}
                     letterTone={isAboveMarket ? 'aggressive' : isFair ? 'collaborative' : 'strategic'}
                     onLetterGenerated={handleLetterGenerated}
+                    comparables={rentcast.data?.comparables}
                   />
                 </LetterGate>
           </motion.section>
