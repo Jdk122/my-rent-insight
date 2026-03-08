@@ -65,7 +65,7 @@ serve(async (req) => {
 
     // Build cache key
     const lookupKey = address
-      ? `${address.toLowerCase().trim()}|br${bedrooms ?? "any"}`
+      ? `${address.toLowerCase().replace(/\s+/g, ' ').trim()}|br${bedrooms ?? "any"}`
       : `${zip}|br${bedrooms ?? "any"}`;
     const endpoint = "rent-estimate";
 
