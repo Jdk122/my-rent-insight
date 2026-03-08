@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { trackEvent } from '@/lib/analytics';
+import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import { toast } from 'sonner';
 import { Check, Copy } from 'lucide-react';
