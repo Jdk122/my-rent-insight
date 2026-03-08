@@ -156,7 +156,9 @@ const RentByZip = () => {
   const heroRentLongLabel = hud50?.f50?.[1] ? 'HUD Estimated Rent' : 'HUD Fair Market Rent';
 
   const hudFallbackYoY = raw.p[1] > 0 ? Math.round(((raw.f[1] - raw.p[1]) / raw.p[1]) * 1000) / 10 : null;
-  const { yoy: trendYoY, source: trendSource, heroSource: trendHeroSource } = getDisplayTrend(al?.aly ?? null, raw.zy ?? null, hudFallbackYoY);
+  const compositeTrendResult = getDisplayTrend(al?.aly ?? null, raw.zy ?? null, hudFallbackYoY);
+  const { yoy: trendYoY, source: trendSource, heroSource: trendHeroSource, sourceCount, primarySource, spreadLow, spreadHigh } = compositeTrendResult;
+  const trendAttribution = sourceCount >= 2 ? 'local market data' : primarySource || trendHeroSource;
   const isHudOnlyTrend = !hasAL && !hasZillow;
   const hasMarketData = hasZillow || hasAL;
   const hasHud50 = hud50 !== null && hud50.f50 !== undefined && hud50.f50[1] > 0;
@@ -167,15 +169,12 @@ const RentByZip = () => {
   const dataYear = getDataYear(freshness);
   const hudFY = getHudFiscalYear(freshness);
 
-  // Change 2: Compute YoY range when both AL and ZORI exist and differ by >1%
-  const hasBothTrends = hasAL && al!.aly !== undefined && hasZillow;
-  const alYoY = al?.aly ?? null;
-  const zoriYoY = raw.zy ?? null;
-  const trendsDiverge = hasBothTrends && alYoY !== null && zoriYoY !== null && Math.abs(alYoY - zoriYoY) > 1;
-  const trendLow = trendsDiverge ? Math.min(alYoY!, zoriYoY!) : null;
-  const trendHigh = trendsDiverge ? Math.max(alYoY!, zoriYoY!) : null;
+  // Use composite spread for divergence display
+  const trendsDiverge = sourceCount >= 2 && Math.abs(spreadHigh - spreadLow) > 1;
+  const trendLow = trendsDiverge ? spreadLow : null;
+  const trendHigh = trendsDiverge ? spreadHigh : null;
 
-  // Change 3: Verdict sentence — use range or single value
+  // Verdict sentence — use range or single value
   const verdictTrendHigh = trendHigh ?? (trendYoY ?? NATIONAL_AVG_YOY);
   const verdictTrendLow = trendLow ?? verdictTrendHigh;
 
