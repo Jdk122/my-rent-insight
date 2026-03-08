@@ -155,9 +155,9 @@ const RentByCity = () => {
     ? Math.round((zillowYoYs.reduce((a, b) => a + b, 0) / zillowYoYs.length) * 10) / 10
     : null;
 
-  // ─── Best trend: AL > ZORI > HUD ───
-  const trendYoY = cityAlYoY ?? yoyChange;
-  const trendSource = cityAlYoY !== null ? 'Apartment List' : hasZillow ? 'Zillow ZORI' : 'HUD FMR';
+  // ─── Best trend: AL > ZORI > HUD (waterfall) ───
+  const hudYoY = yoyChange ?? null;
+  const { yoy: trendYoY, source: trendSource } = getDisplayTrend(cityAlYoY, cityZoriYoY, hudYoY);
 
   // ─── Freshness ───
   const freshest = freshness ? getFreshestDate(freshness, hasZillow, hasAL) : null;
