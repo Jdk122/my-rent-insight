@@ -534,7 +534,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                               )
                             )
                           ) : isFair ? (
-                            <>Your rent increase is <span className="text-verdict-fair">right at market.</span></>
+                            isNuancedAtMarket ? (
+                              <>Your increase is above the trend, but your <span className="text-verdict-fair">rent is still at market.</span></>
+                            ) : increasePct > marketYoy + 1.5 ? (
+                              <>Your increase is a bit high, but your <span className="text-verdict-fair">rent is still reasonable.</span></>
+                            ) : (
+                              <>Your rent increase is <span className="text-verdict-fair">right at market.</span></>
+                            )
                           ) : increasePct > 0 && increasePct <= marketYoy ? (
                             <>Your increase of {increasePct}% is{' '}
                               <span className="text-verdict-good">below the {marketYoy}% area trend.</span></>
