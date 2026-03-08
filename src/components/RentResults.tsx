@@ -24,6 +24,7 @@ import { getUtmParams } from '@/lib/utm';
 import DataConfidenceBadge from './DataConfidenceBadge';
 import { assessConfidence, detectOutliers, checkCrossSourceConsistency, getCompRadius, filterFurnished, deduplicateComps } from '@/lib/dataQuality';
 import { calculateFairnessScore, scoreToVerdict, FairnessScoreResult } from '@/lib/fairnessScore';
+import { calculateCompositeTrend } from '@/lib/compositeTrend';
 import FairnessScoreGauge, { ComponentSourceInfo } from './FairnessScoreGauge';
 import MarketSnapshot from './MarketSnapshot';
 import NextStepsSection from './NextStepsSection';
@@ -82,7 +83,14 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   const newRent = formData.currentRent + increaseAmount;
   const annualExtra = increaseAmount * 12;
-  const marketYoy = rentData.yoyChange;
+  const compositeTrendResult = useMemo(() => calculateCompositeTrend({
+    alYoY: rentData.alYoY,
+    zoriYoY: rentData.zoriYoY,
+    zoriSource: rentData.zoriGeoLevel,
+    hudYoY: rentData.yoyChange,
+  }), [rentData.alYoY, rentData.zoriYoY, rentData.zoriGeoLevel, rentData.yoyChange]);
+
+  const marketYoy = compositeTrendResult.compositeTrend;
   const multiplier = calc?.increaseRatio ?? 0;
   const excessAnnual = hasIncrease
     ? Math.round(formData.currentRent * ((increasePct - marketYoy) / 100) * 12)
@@ -176,8 +184,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       f50: rentData.f50,
       rcMedianRent: rcMarket.rcMedianRent,
       rcTotalListings: rcMarket.rcTotalListings,
+      compositeTrend: compositeTrendResult.compositeTrend,
     });
-  }, [hasIncrease, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings]);
+  }, [hasIncrease, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings, compositeTrendResult]);
 
   const refinedVerdict = useMemo(() => {
     if (!fairnessScore) return null;

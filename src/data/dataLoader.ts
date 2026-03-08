@@ -89,6 +89,9 @@ export interface RentLookupResult {
   alRegion: string | null;        // Source county name
   // HUD 50th percentile (median) rents
   f50: number[] | null;           // [studio, 1br, 2br, 3br, 4br]
+  // Raw ZORI for composite trend engine
+  zoriYoY: number | null;
+  zoriGeoLevel: 'zip' | 'county' | 'metro' | null;
 }
 
 // ─── Bedroom mapping ───
@@ -411,6 +414,13 @@ export async function lookupRentData(
     alTimeOnMarket: al?.alt ?? null,
     alRegion: al?.alr ?? null,
     f50: hud50?.f50 ?? null,
+    zoriYoY: (raw.zy !== undefined && raw.zy !== null) ? raw.zy
+           : (cmZori && cmZori.zy !== undefined && cmZori.zy !== null) ? cmZori.zy
+           : null,
+    zoriGeoLevel: (raw.zy !== undefined && raw.zy !== null) ? 'zip'
+                : (cmZori && cmZori.zy !== undefined && cmZori.zy !== null)
+                  ? (cmZori.src === 'county' ? 'county' : 'metro')
+                : null,
   };
 }
 

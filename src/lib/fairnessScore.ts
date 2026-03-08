@@ -17,7 +17,7 @@ export interface FairnessScoreInput {
   f50?: number[] | null;       // HUD 50th percentile rents [studio, 1br, 2br, 3br, 4br]
   rcMedianRent?: number | null;   // Rentcast /markets median rent for bedroom count
   rcTotalListings?: number | null; // Rentcast /markets total active listings
-  // medianIncome removed — rent-to-income component eliminated
+  compositeTrend?: number | null;  // From calculateCompositeTrend (preferred for Component 1)
 }
 
 // Tooltip explainer for the FMR/Increase Reasonableness component
@@ -42,8 +42,10 @@ export interface FairnessScoreResult {
 }
 
 // Component 1: Increase Rate vs Area Trend (35 pts base)
-function scoreRateVsTrend(increasePct: number, marketYoY: number, alYoY?: number | null, maxPts: number = 35): ScoreComponent {
-  const effectiveYoY = (alYoY !== null && alYoY !== undefined) ? alYoY : marketYoY;
+function scoreRateVsTrend(increasePct: number, marketYoY: number, alYoY?: number | null, maxPts: number = 35, compositeTrend?: number | null): ScoreComponent {
+  const effectiveYoY = (compositeTrend !== null && compositeTrend !== undefined)
+    ? compositeTrend
+    : (alYoY !== null && alYoY !== undefined) ? alYoY : marketYoY;
   const diff = increasePct - effectiveYoY;
   let rawScore: number;
   if (diff <= 0) rawScore = 35;
@@ -52,7 +54,7 @@ function scoreRateVsTrend(increasePct: number, marketYoY: number, alYoY?: number
   else if (diff <= 10) rawScore = 12 - ((diff - 6) / 4) * 12;
   else rawScore = 0;
   const score = Math.round((rawScore / 35) * maxPts);
-  const sourceNote = (alYoY !== null && alYoY !== undefined) ? ' (Apartment List)' : '';
+  const sourceNote = (compositeTrend !== null && compositeTrend !== undefined) ? ' (composite)' : (alYoY !== null && alYoY !== undefined) ? ' (Apartment List)' : '';
   return { id: 'rate', label: `Increase vs. Area Trend${sourceNote}`, score, max: maxPts, estimated: false };
 }
 
@@ -227,7 +229,7 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
   else { compMax = 0; rateMax = 65; }
 
   const components = [
-    scoreRateVsTrend(validatedInput.increasePct, validatedInput.marketYoY, validatedInput.alYoY, rateMax),
+    scoreRateVsTrend(validatedInput.increasePct, validatedInput.marketYoY, validatedInput.alYoY, rateMax, validatedInput.compositeTrend),
     scoreVsComps(validatedInput.proposedRent, validatedInput.compMedian, compMax),
     scoreVsFmr(validatedInput.proposedRent, validatedInput.fmr, validatedInput.currentRent, validatedInput.increasePct, validatedInput.marketYoY, validatedInput.f50, validatedInput.bedroomCount, validatedInput.rcMedianRent, validatedInput.rcTotalListings),
     scoreMarketMomentum(validatedInput.zillowMonthly, validatedInput.alMoM, validatedInput.hvd),
