@@ -88,10 +88,17 @@ serve(async (req) => {
       }
     }
 
+    const normalizeAddressForLookup = (value: string) =>
+      value
+        .toLowerCase()
+        .replace(/\b(apt|unit|suite|ste|#|fl|floor)\s*\w+\b/gi, "")
+        .replace(/\s+[0-9]+[a-z]?\b(?=\s*,)/gi, "")
+        .replace(/\s*,\s*,/g, ",")
+        .replace(/\s+/g, " ")
+        .trim();
+
     // Strip unit/apt from address for AVM query (Rentcast returns better comps without it)
-    const strippedAddress = address
-      ? address.replace(/\b(apt|unit|suite|ste|#)\s*\S*/gi, '').replace(/,\s*,/g, ',').replace(/\s+/g, ' ').trim()
-      : null;
+    const strippedAddress = address ? normalizeAddressForLookup(address) : null;
 
     // Build query params
     const params = new URLSearchParams();
