@@ -88,10 +88,15 @@ serve(async (req) => {
       }
     }
 
+    // Strip unit/apt from address for AVM query (Rentcast returns better comps without it)
+    const strippedAddress = address
+      ? address.replace(/\b(apt|unit|suite|ste|#)\s*\S*/gi, '').replace(/,\s*,/g, ',').replace(/\s+/g, ' ').trim()
+      : null;
+
     // Build query params
     const params = new URLSearchParams();
-    if (address) {
-      params.set("address", address);
+    if (strippedAddress) {
+      params.set("address", strippedAddress);
     }
     if (bedrooms !== undefined) {
       params.set("bedrooms", String(bedrooms));
