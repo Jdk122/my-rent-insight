@@ -156,7 +156,7 @@ const RentByZip = () => {
   const heroRentLongLabel = hud50?.f50?.[1] ? 'HUD Estimated Rent' : 'HUD Fair Market Rent';
 
   const hudFallbackYoY = raw.p[1] > 0 ? Math.round(((raw.f[1] - raw.p[1]) / raw.p[1]) * 1000) / 10 : null;
-  const { yoy: trendYoY, source: trendSource } = getDisplayTrend(al?.aly ?? null, raw.zy ?? null, hudFallbackYoY);
+  const { yoy: trendYoY, source: trendSource, heroSource: trendHeroSource } = getDisplayTrend(al?.aly ?? null, raw.zy ?? null, hudFallbackYoY);
   const isHudOnlyTrend = !hasAL && !hasZillow;
   const hasMarketData = hasZillow || hasAL;
   const hasHud50 = hud50 !== null && hud50.f50 !== undefined && hud50.f50[1] > 0;

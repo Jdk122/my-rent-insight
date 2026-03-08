@@ -140,19 +140,20 @@ export function getDisplayTrend(
   alYoY: number | null,
   zoriYoY: number | null,
   hudYoY: number | null
-): { yoy: number | null; source: string } {
+): { yoy: number | null; source: string; heroSource: string } {
   if (alYoY !== null) {
     const hasZori = zoriYoY !== null;
     return {
       yoy: alYoY,
       source: hasZori ? 'Apartment List, Zillow ZORI' : 'Apartment List (signed leases)',
+      heroSource: 'Apartment List',
     };
   }
   if (zoriYoY !== null) {
-    return { yoy: zoriYoY, source: 'Zillow ZORI (listing prices)' };
+    return { yoy: zoriYoY, source: 'Zillow ZORI (listing prices)', heroSource: 'Zillow ZORI' };
   }
   if (hudYoY !== null) {
-    return { yoy: hudYoY, source: 'HUD Fair Market Rent' };
+    return { yoy: hudYoY, source: 'HUD Fair Market Rent', heroSource: 'HUD Fair Market Rent' };
   }
-  return { yoy: null, source: '' };
+  return { yoy: null, source: '', heroSource: '' };
 }
