@@ -346,10 +346,11 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
     counterLow, counterHigh, counterLowPercent, counterHighPercent,
     compMedian, compCount, trendArea, rcMedianRent, f50Value,
     rcTotalListings, rcAvgDaysOnMarket, alVacancy, letterTone,
+    comparables: props.comparables,
   }), [currentRent, newRent, increasePct, marketYoy, city, brLabel, increaseAmt,
     counterLow, counterHigh, counterLowPercent, counterHighPercent,
     compMedian, compCount, trendArea, rcMedianRent, f50Value,
-    rcTotalListings, rcAvgDaysOnMarket, alVacancy, letterTone]);
+    rcTotalListings, rcAvgDaysOnMarket, alVacancy, letterTone, props.comparables]);
 
   const displayLetter = aiLetter || fallbackLetter;
   const isAi = !!aiLetter;
