@@ -6,6 +6,12 @@ import { BedroomType, bedroomLabels } from '@/data/rentData';
 import { RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
+interface CompForLetter {
+  rent: number | null;
+  isSameBuilding?: boolean;
+  isSameUnitLine?: boolean;
+}
+
 interface NegotiationLetterProps {
   currentRent: number;
   newRent: number;
@@ -43,6 +49,7 @@ interface NegotiationLetterProps {
   momentumDirection?: string | null;
   letterTone?: 'aggressive' | 'collaborative' | 'strategic';
   onLetterGenerated?: () => void;
+  comparables?: CompForLetter[];
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
