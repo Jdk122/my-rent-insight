@@ -230,6 +230,15 @@ function DashboardContent() {
     });
   }, []);
 
+  // Load orphan leads (no linked analysis)
+  useEffect(() => {
+    setOrphanLoading(true);
+    adminQuery('orphan_leads').then((data) => {
+      setOrphanLeads(data || []);
+      setOrphanLoading(false);
+    });
+  }, []);
+
   // Build and execute query
   const fetchRows = useCallback(async () => {
     setLoading(true);
