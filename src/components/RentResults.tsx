@@ -595,8 +595,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 className="mt-5 sm:mt-6 w-full grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-[540px]"
               >
                 {(() => {
-                  const trendSourceShort = rentData.alYoY !== null && rentData.alYoY !== undefined
-                    ? 'Apartment List' : rentData.yoySource === 'zillow' ? 'Zillow ZORI' : 'HUD FMR';
+                  const trendSourceShort = compositeTrendResult.sourceCount >= 2
+                    ? 'Market data' : compositeTrendResult.primarySource;
                   return [
                     { label: 'You pay now', value: `$${fmt(formData.currentRent)}`, color: 'text-foreground', sub: null },
                     { label: 'They want', value: `$${fmt(newRent)}`, color: isAboveMarket ? 'text-destructive' : isBelowMarket ? 'text-verdict-good' : 'text-foreground', sub: null },
