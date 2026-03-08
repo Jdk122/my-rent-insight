@@ -404,7 +404,7 @@ const RentByCity = () => {
         <section className="mb-12">
           <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Federal Rent Benchmarks for {city}</h2>
           <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-            HUD Fair Market Rents represent the 40th percentile of area rents, used as a federal benchmark for housing programs. They're published annually and provide a consistent baseline for comparison.
+            HUD Fair Market Rents are federal rent benchmarks published annually by HUD. They provide a consistent baseline for comparing rents across areas.
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
             {BEDROOM_LABELS.map((label, i) => {

@@ -151,9 +151,9 @@ const RentByZip = () => {
   const citySlug = slugify(city);
 
   const heroRent = hud50?.f50?.[1] ?? fmr1br;
-  const heroRentSource = hud50?.f50?.[1] ? 'HUD 50th Percentile' : 'HUD Fair Market Rent (40th Percentile)';
+  const heroRentSource = hud50?.f50?.[1] ? 'HUD Estimated Rent' : 'HUD Fair Market Rent';
   const heroRentLabel = hud50?.f50?.[1] ? 'Estimated Rent' : 'Fair Market Rent';
-  const heroRentLongLabel = hud50?.f50?.[1] ? 'HUD Estimated Rent (50th Percentile)' : 'Fair Market Rent (40th Percentile)';
+  const heroRentLongLabel = hud50?.f50?.[1] ? 'HUD Estimated Rent' : 'HUD Fair Market Rent';
 
   const trendYoY = al?.aly ?? raw.zy ?? (raw.p[1] > 0 ? Math.round(((raw.f[1] - raw.p[1]) / raw.p[1]) * 1000) / 10 : null);
   const trendSource = al?.aly !== undefined && al?.aly !== null
@@ -444,7 +444,7 @@ const RentByZip = () => {
               <div>
                 <h3 className="font-display text-xl text-foreground mb-4 tracking-tight">Federal Rent Benchmarks for {zip}</h3>
                 <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-                  HUD Fair Market Rents represent the 40th percentile of area rents, used as a federal benchmark for housing programs.
+                  HUD Fair Market Rents are federal rent benchmarks used for housing programs, published annually by HUD.
                   {raw.fs !== 'safmr' && raw.m && (
                     <span className="block mt-1 text-xs text-muted-foreground/80">
                       Note: These values represent the HUD metro-area benchmark for the {raw.m} area, not zip-specific rates.
@@ -456,8 +456,8 @@ const RentByZip = () => {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Bedroom Size</TableHead>
-                        <TableHead className="text-right">Fair Market Rent (40th %ile)</TableHead>
-                        {hud50 && <TableHead className="text-right">Typical Rent (50th %ile)</TableHead>}
+                        <TableHead className="text-right">Fair Market Rent</TableHead>
+                        {hud50 && <TableHead className="text-right">Estimated Rent</TableHead>}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -497,7 +497,7 @@ const RentByZip = () => {
               <AccordionContent>
                 <p className="text-muted-foreground leading-relaxed">
                   The {heroRentLabel.toLowerCase()} for a 1-bedroom in {zip} is {fmt(heroRent)}/month ({heroRentSource}).
-                  {hud50?.f50 && ` The HUD 50th percentile (typical) rent is ${fmt(hud50.f50[1])}/mo, while the 40th percentile Fair Market Rent is ${fmt(fmr1br)}/mo.`}
+                  {hud50?.f50 && ` The HUD estimated rent is ${fmt(hud50.f50[1])}/mo, while the Fair Market Rent is ${fmt(fmr1br)}/mo.`}
                   {metroAvgFmr1br !== fmr1br && ` Across the ${raw.m} metro area, the average 1-bedroom FMR is ${fmt(metroAvgFmr1br)}/mo — making ${zip} ${fmr1br > metroAvgFmr1br ? `${Math.round(((fmr1br - metroAvgFmr1br) / metroAvgFmr1br) * 100)}% above` : `${Math.round(((metroAvgFmr1br - fmr1br) / metroAvgFmr1br) * 100)}% below`} the metro average.`}
                   {' '}For current asking rents from nearby listings, see the market data section above.
                 </p>
@@ -537,7 +537,7 @@ const RentByZip = () => {
               <AccordionTrigger>What is the HUD Fair Market Rent for a 1-bedroom in {zip}?</AccordionTrigger>
               <AccordionContent>
                 <p className="text-muted-foreground leading-relaxed">
-                  The HUD Small Area Fair Market Rent for a 1-bedroom in zip code {zip} is {fmt(fmr1br)} for FY{hudFY}. This represents the 40th percentile of area rents. Other bedroom sizes: Studio {fmt(raw.f[0])}, 2-BR {fmt(raw.f[2])}, 3-BR {fmt(raw.f[3])}, 4-BR {fmt(raw.f[4])}.
+                  The HUD Fair Market Rent for a 1-bedroom in zip code {zip} is {fmt(fmr1br)} for FY{hudFY}. This is the federal rent benchmark for this area. Other bedroom sizes: Studio {fmt(raw.f[0])}, 2-BR {fmt(raw.f[2])}, 3-BR {fmt(raw.f[3])}, 4-BR {fmt(raw.f[4])}.
                   {raw.p[1] > 0 && ` Last year's FMR was ${fmt(raw.p[1])}, a change of ${((fmr1br - raw.p[1]) / raw.p[1] * 100).toFixed(1)}%.`}
                 </p>
               </AccordionContent>
