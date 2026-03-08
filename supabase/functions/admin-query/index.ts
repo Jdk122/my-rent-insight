@@ -160,6 +160,18 @@ Deno.serve(async (req) => {
         break;
       }
 
+      case "orphan_leads": {
+        const { data: rows, error } = await supabase
+          .from("leads")
+          .select("id, email, capture_source, address, city, state, zip, bedrooms, current_rent, proposed_rent, increase_pct, fairness_score, comp_median_rent, hud_fmr_value, verdict, letter_generated, lease_expiration_month, lease_expiration_year, partner_opt_in, utm_source, utm_medium, utm_campaign, created_at, outcome, unsubscribed")
+          .is("analysis_id", null)
+          .order("created_at", { ascending: false })
+          .limit(200);
+        if (error) throw error;
+        data = rows;
+        break;
+      }
+
       default:
         return new Response(JSON.stringify({ error: "Unknown query type" }), {
           status: 400,
