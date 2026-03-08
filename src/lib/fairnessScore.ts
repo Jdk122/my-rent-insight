@@ -239,6 +239,50 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
   return { total, ...getTier(total), components: visibleComponents };
 }
 
+// Context-aware tier message that explains WHY the score landed where it did
+export function getContextualTierMessage(
+  result: FairnessScoreResult,
+  increasePct: number,
+  marketYoY: number,
+  proposedRent: number,
+  compMedian: number | null,
+): string {
+  const { tier } = result;
+  const rateAboveTrend = increasePct - marketYoY;
+  const rentBelowComps = compMedian !== null && proposedRent <= compMedian;
+
+  switch (tier) {
+    case 'excellent':
+      if (increasePct <= 0) return 'Your rent is staying flat or dropping. Great deal.';
+      if (increasePct < marketYoY) return `Your increase is below the ${marketYoY}% area trend. Strong position.`;
+      return 'Your rent and increase are both well within market range.';
+
+    case 'fair':
+      if (rateAboveTrend > 2 && rentBelowComps) {
+        return `Your ${increasePct}% increase is above the ${marketYoY}% trend, but your rent is still below what similar units nearby are charging. Overall: reasonable.`;
+      }
+      if (rateAboveTrend > 1.5) {
+        return `Your increase is slightly above the local trend, but your rent level is still within the normal range for your area.`;
+      }
+      return 'Your increase is in line with what the local market is doing.';
+
+    case 'moderate':
+      if (rateAboveTrend > 4) {
+        return `Your ${increasePct}% increase is well above the ${marketYoY}% area trend. You have room to negotiate.`;
+      }
+      return `Your increase is on the high side for your area. Consider negotiating.`;
+
+    case 'unfair':
+      return `Your increase significantly exceeds what the market data supports. We strongly recommend negotiating or exploring alternatives.`;
+
+    case 'excessive':
+      return `Your increase is far above market conditions. Negotiation or moving should be seriously considered.`;
+
+    default:
+      return result.tierMessage;
+  }
+}
+
 // Map score to the old verdict system for backward compatibility
 export function scoreToVerdict(score: number): 'below' | 'at-market' | 'above' {
   if (score >= 80) return 'below';

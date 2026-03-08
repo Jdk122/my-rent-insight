@@ -988,7 +988,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     compMedian={medianCompRent}
                     compCount={outlierResult?.filtered.length ?? 0}
                     compRadius={compRadius.label ? compRadius.label.replace('within ', '') : undefined}
-                    trendSource={rentData.alYoY !== null && rentData.alYoY !== undefined ? 'Apartment List' : rentData.zillowMonthly !== null ? 'Zillow' : 'HUD'}
+                    trendSource={compositeTrendResult.sourceCount >= 2 ? 'multiple market sources' : compositeTrendResult.primarySource}
                     trendArea={rentData.alRegion || rentData.city}
                     rcMedianRent={rcMarket.rcMedianRent}
                     rcTotalListings={rcMarket.rcTotalListings}
