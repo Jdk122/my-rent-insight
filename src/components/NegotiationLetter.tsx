@@ -192,7 +192,24 @@ function buildFallbackLetter(props: {
       paragraphs.push(`${src} the median rent for a ${brLabel.toLowerCase()} in this area at $${fmt(benchmark)}/month. My proposed rent of $${fmt(newRent)} is ${ab} this benchmark.`);
     }
 
-    if (rcTotalListings && rcAvgDaysOnMarket) {
+    // Same-building / same-unit-line comp evidence
+    if (comparables && comparables.length > 0) {
+      const unitLineComps = comparables.filter(c => c.isSameUnitLine && c.rent != null);
+      const sameBuildingComps = comparables.filter(c => c.isSameBuilding && !c.isSameUnitLine && c.rent != null);
+
+      if (unitLineComps.length > 0) {
+        const avgUnitLineRent = Math.round(unitLineComps.reduce((sum, c) => sum + (c.rent || 0), 0) / unitLineComps.length);
+        paragraphs.push(
+          `Notably, ${unitLineComps.length} identical-layout unit${unitLineComps.length > 1 ? 's' : ''} in this building — same floor plan, same exposure — recently rented at an average of $${fmt(avgUnitLineRent)}/month. These are the most directly comparable data points available.`
+        );
+      } else if (sameBuildingComps.length > 0) {
+        const avgBuildingRent = Math.round(sameBuildingComps.reduce((sum, c) => sum + (c.rent || 0), 0) / sameBuildingComps.length);
+        paragraphs.push(
+          `${sameBuildingComps.length} unit${sameBuildingComps.length > 1 ? 's' : ''} in this building recently rented at an average of $${fmt(avgBuildingRent)}/month.`
+        );
+      }
+    }
+
       if (isCollaborative) {
         if (rcAvgDaysOnMarket > 25 || (alVacancy !== null && alVacancy !== undefined && alVacancy > 5)) {
           let s = `I notice some units in the area are taking time to fill — about ${Math.round(rcAvgDaysOnMarket)} days on average across ${rcTotalListings} active listings.`;
