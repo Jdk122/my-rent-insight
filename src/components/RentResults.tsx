@@ -463,10 +463,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 const sources: ComponentSourceInfo = {};
 
                 // Component 1: Rate vs Trend
-                if (rentData.alYoY !== null && rentData.alYoY !== undefined) {
-                  sources.rate = `Source: Apartment List${rentData.alRegion ? ` (${rentData.alRegion})` : ''}`;
-                } else if (rentData.zillowMonthly !== null) {
-                  sources.rate = 'Source: Zillow ZORI';
+                if (compositeTrendResult.sourceCount >= 2) {
+                  sources.rate = `Source: ${compositeTrendResult.sources.map(s => s.label).join(', ')}`;
+                } else if (compositeTrendResult.sourceCount === 1) {
+                  sources.rate = `Source: ${compositeTrendResult.primarySource}`;
                 } else {
                   sources.rate = 'Source: HUD FMR';
                 }
