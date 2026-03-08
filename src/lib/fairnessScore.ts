@@ -42,8 +42,10 @@ export interface FairnessScoreResult {
 }
 
 // Component 1: Increase Rate vs Area Trend (35 pts base)
-function scoreRateVsTrend(increasePct: number, marketYoY: number, alYoY?: number | null, maxPts: number = 35): ScoreComponent {
-  const effectiveYoY = (alYoY !== null && alYoY !== undefined) ? alYoY : marketYoY;
+function scoreRateVsTrend(increasePct: number, marketYoY: number, alYoY?: number | null, maxPts: number = 35, compositeTrend?: number | null): ScoreComponent {
+  const effectiveYoY = (compositeTrend !== null && compositeTrend !== undefined)
+    ? compositeTrend
+    : (alYoY !== null && alYoY !== undefined) ? alYoY : marketYoY;
   const diff = increasePct - effectiveYoY;
   let rawScore: number;
   if (diff <= 0) rawScore = 35;
@@ -52,7 +54,7 @@ function scoreRateVsTrend(increasePct: number, marketYoY: number, alYoY?: number
   else if (diff <= 10) rawScore = 12 - ((diff - 6) / 4) * 12;
   else rawScore = 0;
   const score = Math.round((rawScore / 35) * maxPts);
-  const sourceNote = (alYoY !== null && alYoY !== undefined) ? ' (Apartment List)' : '';
+  const sourceNote = (compositeTrend !== null && compositeTrend !== undefined) ? ' (composite)' : (alYoY !== null && alYoY !== undefined) ? ' (Apartment List)' : '';
   return { id: 'rate', label: `Increase vs. Area Trend${sourceNote}`, score, max: maxPts, estimated: false };
 }
 
