@@ -45,7 +45,9 @@ const RentTrendSummary = ({ location, trendYoY, alYoY, zoriYoY, vacancyRate, sho
 
   // Divergence logic
   const spread = hasBoth ? Math.abs(alYoY! - zoriYoY!) : 0;
-  const sourcesAgree = hasBoth && spread <= 3;
+  const sameDirection = hasBoth && ((alYoY! >= 0 && zoriYoY! >= 0) || (alYoY! < 0 && zoriYoY! < 0));
+  const sourcesAgree = hasBoth && spread <= 3 && sameDirection;
+  const sourcesMixed = hasBoth && spread <= 3 && !sameDirection;
   const sourcesDiverge = hasBoth && spread > 3;
   const rentersHaveLeverage = hasBoth && alYoY! < zoriYoY!;
 
