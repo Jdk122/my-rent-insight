@@ -390,52 +390,8 @@ const RentByZip = () => {
                 <div>
                   <h3 className="font-display text-xl text-foreground mb-4 tracking-tight">Rent Trends in {city}, {state}</h3>
                   <div className="rounded-lg border border-border p-6 bg-card">
-                    {/* Change 2: Range summary when both sources diverge */}
-                    {trendsDiverge && (
-                      <p className="text-sm font-medium text-foreground mb-4 bg-muted/40 border border-border rounded-lg px-4 py-3">
-                        Local rents have grown approximately {trendLow! > 0 ? '+' : ''}{trendLow!.toFixed(1)}% – {trendHigh! > 0 ? '+' : ''}{trendHigh!.toFixed(1)}% over the past year based on two independent sources.
-                      </p>
-                    )}
-                    <div className="flex flex-wrap gap-6">
-                      {hasAL && al!.aly !== undefined && (
-                        <div>
-                          <p className="text-sm text-muted-foreground">Year-over-Year Trend (Apartment List)</p>
-                          <p className={`text-2xl font-bold tabular-nums ${al!.aly! > 3 ? 'text-destructive' : al!.aly! < 0 ? 'text-accent' : 'text-foreground'}`}>{al!.aly! > 0 ? '+' : ''}{al!.aly!.toFixed(1)}%</p>
-                          <OutlierFlag yoy={al!.aly!} />
-                          {/* Change 5: AL metro disclosure */}
-                          <p className="text-[11px] text-muted-foreground/60 mt-1">
-                            Trend reflects county/metro-level data from Apartment List mapped to this ZIP.
-                          </p>
-                        </div>
-                      )}
-                      {hasZillow && (
-                        <div>
-                          <p className="text-sm text-muted-foreground">Year-over-Year Trend (Zillow ZORI)</p>
-                          <p className={`text-2xl font-bold tabular-nums ${raw.zy! > 3 ? 'text-destructive' : raw.zy! < 0 ? 'text-accent' : 'text-foreground'}`}>{raw.zy! > 0 ? '+' : ''}{raw.zy!.toFixed(1)}%</p>
-                          <OutlierFlag yoy={raw.zy!} />
-                        </div>
-                      )}
-                      {hasZillow && raw.zm !== undefined && (
-                        <div>
-                          <p className="text-sm text-muted-foreground">Month-over-Month</p>
-                          <p className="text-2xl font-bold tabular-nums">{raw.zm! > 0 ? '+' : ''}{raw.zm!.toFixed(1)}%</p>
-                        </div>
-                      )}
-                      {hasAL && al!.alv !== undefined && al!.alv! > 0 && (
-                        <div>
-                          <p className="text-sm text-muted-foreground">Vacancy Rate</p>
-                          <p className="text-2xl font-bold tabular-nums">{al!.alv!.toFixed(1)}%</p>
-                        </div>
-                      )}
-                    </div>
-                    <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
-                      Rents in {zip} have {(trendYoY ?? 0) > 0 ? 'increased' : (trendYoY ?? 0) < 0 ? 'decreased' : 'remained flat'} by {Math.abs(trendYoY ?? 0).toFixed(1)}% over the past year, compared to the national average of {NATIONAL_AVG_YOY}%.
-                    </p>
-                    <RentTrendSummary location={`${zip} (${city})`} trendYoY={trendYoY} alYoY={al?.aly ?? null} zoriYoY={raw.zy ?? null} />
+                    <RentTrendSummary location={`${zip} (${city})`} trendYoY={trendYoY} alYoY={al?.aly ?? null} zoriYoY={raw.zy ?? null} vacancyRate={al?.alv ?? null} showHeadline />
                   </div>
-                  <p className="mt-3 text-xs text-muted-foreground/70">
-                    Sources: {hasAL ? 'Apartment List transacted rent trends' : ''}{hasAL && hasZillow ? ', ' : ''}{hasZillow ? 'Zillow Observed Rent Index (ZORI)' : ''}
-                  </p>
                 </div>
               )}
 

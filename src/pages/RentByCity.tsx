@@ -360,34 +360,8 @@ const RentByCity = () => {
           <section className="mb-12">
             <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Rent Trends in {city}</h2>
             <div className="rounded-lg border border-border p-6 bg-card">
-              <div className="flex flex-wrap gap-6">
-                {cityAlYoY !== null && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">Year-over-Year Trend (Apartment List)</p>
-                    <p className={`text-2xl font-bold tabular-nums ${cityAlYoY > 3 ? 'text-destructive' : cityAlYoY < 0 ? 'text-accent' : 'text-foreground'}`}>
-                      {cityAlYoY > 0 ? '+' : ''}{cityAlYoY.toFixed(1)}%
-                    </p>
-                    <OutlierFlag yoy={cityAlYoY} />
-                  </div>
-                )}
-                {hasZillow && yoyChange !== null && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">Year-over-Year Trend (Zillow ZORI)</p>
-                    <p className={`text-2xl font-bold tabular-nums ${yoyChange > 3 ? 'text-destructive' : yoyChange < 0 ? 'text-accent' : 'text-foreground'}`}>
-                      {yoyChange > 0 ? '+' : ''}{yoyChange.toFixed(1)}%
-                    </p>
-                    <OutlierFlag yoy={yoyChange} />
-                  </div>
-                )}
-              </div>
-              <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
-                {trendSource} data shows rents in {city} have {(trendYoY ?? 0) > 0 ? 'increased' : (trendYoY ?? 0) < 0 ? 'decreased' : 'remained flat'} by {Math.abs(trendYoY ?? 0).toFixed(1)}% over the past year.
-              </p>
-              <RentTrendSummary location={city} trendYoY={trendYoY} alYoY={cityAlYoY} zoriYoY={cityZoriYoY} />
+              <RentTrendSummary location={city} trendYoY={trendYoY} alYoY={cityAlYoY} zoriYoY={cityZoriYoY} showHeadline />
             </div>
-            <p className="mt-3 text-xs text-muted-foreground/70">
-              Sources: {hasAL ? 'Apartment List' : ''}{hasAL && hasZillow ? ', ' : ''}{hasZillow ? 'Zillow ZORI' : ''}
-            </p>
           </section>
         )}
 
