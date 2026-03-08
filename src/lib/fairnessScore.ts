@@ -17,7 +17,7 @@ export interface FairnessScoreInput {
   f50?: number[] | null;       // HUD 50th percentile rents [studio, 1br, 2br, 3br, 4br]
   rcMedianRent?: number | null;   // Rentcast /markets median rent for bedroom count
   rcTotalListings?: number | null; // Rentcast /markets total active listings
-  // medianIncome removed — rent-to-income component eliminated
+  compositeTrend?: number | null;  // From calculateCompositeTrend (preferred for Component 1)
 }
 
 // Tooltip explainer for the FMR/Increase Reasonableness component
