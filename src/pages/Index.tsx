@@ -4,7 +4,7 @@ import RentForm, { RentFormData, RentFormPrefill } from '@/components/RentForm';
 import { lookupRentData, loadFredTrend, RentLookupResult } from '@/data/rentData';
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
 import { toast } from 'sonner';
-import { trackEvent, trackAdsConversion } from '@/lib/analytics';
+import { trackEvent } from '@/lib/analytics';
 import SEO from '@/components/SEO';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
 
@@ -72,7 +72,6 @@ const Index = () => {
 
         setResults({ formData: { ...data, zip }, rentData });
         trackEvent('form_submitted', { zip, bedrooms: data.bedrooms, has_address: true });
-        trackAdsConversion();
         setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
 
         loadFredTrend(rentData.metro).then((fredTrend) => {
@@ -93,7 +92,6 @@ const Index = () => {
         setResults({ formData: data, rentData });
         trackEvent('form_submitted', { zip: data.zip, bedrooms: data.bedrooms, has_address: false });
         trackEvent('address_entered', { method: 'zip_only' });
-        trackAdsConversion();
         setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
 
         loadFredTrend(rentData.metro).then((fredTrend) => {
