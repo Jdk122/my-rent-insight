@@ -96,8 +96,10 @@ serve(async (req) => {
     if (bedrooms !== undefined) {
       params.set("bedrooms", String(bedrooms));
     }
-    params.set("compCount", "5");
+    params.set("compCount", "10");
+    params.set("maxRadius", "3");
     params.set("propertyType", "Apartment");
+    params.set("lookupSubjectAttributes", "true");
 
     const url = `https://api.rentcast.io/v1/avm/rent/long-term?${params.toString()}`;
 
