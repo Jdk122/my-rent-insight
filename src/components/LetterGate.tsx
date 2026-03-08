@@ -104,6 +104,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail }: 
 
     onEmailCaptured?.(email.trim());
     trackEvent('email_submitted', { verdict, zip_code: leadContext?.zip || '', source: 'letter_gate' });
+    trackAdsConversion();
     setUnlocked(true);
     setLoading(false);
     setShowEmailInput(false);

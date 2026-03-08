@@ -102,6 +102,7 @@ const SaveResultsDropdown = ({ prefilledEmail, onEmailCaptured, leadContext }: S
 
     onEmailCaptured?.(email);
     trackEvent('email_submitted', { verdict: 'unknown', zip_code: leadContext?.zip || '', source: 'save_results' });
+    trackAdsConversion();
     setSubmitted(true);
     toast.success("Saved! We'll send updated data before your lease renews.");
     setTimeout(() => setOpen(false), 1500);
