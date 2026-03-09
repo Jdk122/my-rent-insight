@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Loader2, ChevronDown, ChevronUp, TrendingUp } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import AdminPasswordGate, { getAdminPassword, clearAdminSession } from '@/components/admin/AdminPasswordGate';
+import SEO from '@/components/SEO';
 import AdminNav from '@/components/admin/AdminNav';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart } from 'recharts';
 
