@@ -230,7 +230,7 @@ const WhatShouldIPay = () => {
             <HowItWorks />
           </Suspense>
           <Suspense fallback={null}>
-            <HomeFAQ />
+            <WsipFAQ />
           </Suspense>
         </main>
       ) : (
