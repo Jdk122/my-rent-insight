@@ -1,9 +1,32 @@
-import { useState, useRef } from 'react';
-import { Link2, Check, Copy, Share2, MessageCircle, Mail, Facebook, Users } from 'lucide-react';
+import { useState } from 'react';
+import { Link2, Check, Copy, Share2, MessageCircle, Mail, Facebook } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { generateShortId } from '@/lib/shortId';
 import { trackEvent } from '@/lib/analytics';
 import { toast } from 'sonner';
+
+/** Clipboard helper with fallback for mobile browsers */
+const copyToClipboard = async (text: string): Promise<boolean> => {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+    // Fallback for mobile / non-secure contexts
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(textarea);
+    return ok;
+  } catch {
+    return false;
+  }
+};
 
 interface ShareHubProps {
   reportPayload: {
@@ -90,10 +113,25 @@ const ShareHub = ({
     trackEvent('report_link_generated', { zip_code: zipCode, verdict });
     const url = reportUrl || await generateReportLink();
     if (url) {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
-      toast.success('Link copied — send it to your landlord!');
+      // Try native share on mobile first
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: 'My Rent Analysis', text: 'Here\'s my rent increase analysis:', url });
+          setActivePanel('landlord');
+          return;
+        } catch (e) {
+          if ((e as Error).name === 'AbortError') return;
+          // Fall through to copy
+        }
+      }
+      const ok = await copyToClipboard(url);
+      if (ok) {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
+        toast.success('Link copied — send it to your landlord!');
+      } else {
+        toast.error('Copy failed — long-press the link to copy.');
+      }
       setActivePanel('landlord');
     }
   };
@@ -128,12 +166,12 @@ const ShareHub = ({
   const handleFacebook = () => { trackEvent('share_clicked', { share_method: 'facebook' }); window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank'); };
   const handleNeighborCopy = async () => {
     trackEvent('share_clicked', { share_method: 'copy_link' });
-    try {
-      await navigator.clipboard.writeText(shareUrl);
+    const ok = await copyToClipboard(shareUrl);
+    if (ok) {
       setNeighborCopied(true);
       setTimeout(() => setNeighborCopied(false), 2500);
       toast.success('Copied to clipboard!');
-    } catch {
+    } else {
       toast.error('Copy failed — try selecting and copying manually.');
     }
   };
@@ -164,10 +202,14 @@ const ShareHub = ({
           </div>
           <button
             onClick={async () => {
-              await navigator.clipboard.writeText(reportUrl);
-              setCopied(true);
-              setTimeout(() => setCopied(false), 2500);
-              toast.success('Link copied!');
+              const ok = await copyToClipboard(reportUrl);
+              if (ok) {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2500);
+                toast.success('Link copied!');
+              } else {
+                toast.error('Copy failed — long-press the link to copy.');
+              }
             }}
             className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:brightness-90 transition-all shadow-sm shadow-primary/20"
           >
