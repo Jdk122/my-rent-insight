@@ -237,8 +237,8 @@ const Index = () => {
           {results && !(hasIncrease && isAboveMarket) && !capturedEmail && (
             <button
               onClick={() => {
-                const target = document.getElementById('section-email-capture')
-                  || document.getElementById('section-letter')
+                const target = document.getElementById('section-letter')
+                  || document.getElementById('section-email-capture')
                   || document.querySelector('[id^="section-share"]');
                 target?.scrollIntoView({ behavior: 'smooth' });
               }}

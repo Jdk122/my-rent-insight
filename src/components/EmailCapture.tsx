@@ -6,6 +6,8 @@ import { Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { getUtmParams } from '@/lib/utm';
+import SocialProofLine from './SocialProofLine';
+import PostConversionFlow from './PostConversionFlow';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -47,10 +49,7 @@ interface EmailCaptureProps {
 
 const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, onEmailCaptured, leadContext, heading, subtext, verdict }: EmailCaptureProps) => {
   const [email, setEmail] = useState(prefilledEmail || '');
-  const [leaseMonth, setLeaseMonth] = useState('');
-  const [leaseYear, setLeaseYear] = useState('');
   const [submitted, setSubmitted] = useState(false);
-  const [partnerOptIn, setPartnerOptIn] = useState(false);
 
   useEffect(() => {
     if (prefilledEmail && !email) setEmail(prefilledEmail);
@@ -59,9 +58,6 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-
-    const leaseMonthNum = leaseMonth ? months.indexOf(leaseMonth) + 1 : null;
-    const leaseYearNum = leaseYear ? parseInt(leaseYear, 10) : null;
 
     const utm = getUtmParams();
 
@@ -82,9 +78,6 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
         p_fair_counter_offer: leadContext?.fairCounterOffer || null,
         p_comps_position: leadContext?.compsPosition || null,
         p_letter_generated: leadContext?.letterGenerated ?? false,
-        p_lease_expiration_month: leaseMonthNum,
-        p_lease_expiration_year: leaseYearNum,
-        p_partner_opt_in: partnerOptIn,
         p_verdict: verdict || null,
         p_utm_source: utm.utm_source || null,
         p_utm_medium: utm.utm_medium || null,
@@ -94,7 +87,6 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
         p_hud_fmr_value: leadContext?.hudFmrValue ?? null,
       } as any);
 
-      // Insert into lead_events for history
       await supabase.from('lead_events' as any).insert({
         email,
         analysis_id: leadContext?.analysisId || null,
@@ -111,7 +103,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
       } as any);
     } catch (err) {
       console.error('Lead save failed:', err);
-      toast.error('Something went wrong saving your info. Your reminder may not be set.');
+      toast.error('Something went wrong saving your info.');
     }
 
     onEmailCaptured?.(email);
@@ -129,15 +121,25 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="py-4"
+        className="space-y-4"
       >
-        <div className="inline-flex items-center justify-center w-8 h-8 rounded-full mb-3" style={{ background: 'hsl(var(--accent-green) / 0.1)' }}>
-          <Check className="w-4 h-4 text-verdict-good" />
+        <div className="py-4">
+          <div className="inline-flex items-center justify-center w-8 h-8 rounded-full mb-3" style={{ background: 'hsl(var(--accent-green) / 0.1)' }}>
+            <Check className="w-4 h-4 text-verdict-good" />
+          </div>
+          <h3 className="font-display text-lg font-semibold text-foreground">You're all set</h3>
+          <p className="text-xs text-muted-foreground mt-1.5 max-w-xs mx-auto">
+            We'll send you updated market data before your lease renews.
+          </p>
         </div>
-        <h3 className="font-display text-lg font-semibold text-foreground">You're all set</h3>
-        <p className="text-xs text-muted-foreground mt-1.5 max-w-xs mx-auto">
-          We'll send you updated market data{leaseMonth && leaseYear ? ` 60 days before your lease renews in ${leaseMonth} ${leaseYear}` : ' before your lease renews'}.
-        </p>
+
+        {/* Progressive reveal: lease renewal fields */}
+        <PostConversionFlow
+          email={email}
+          leadContext={leadContext}
+          verdictLabel={verdict || 'unknown'}
+          zip={leadContext?.zip || ''}
+        />
       </motion.div>
     );
   }
@@ -151,7 +153,6 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
         {subtext || `We'll send you updated market data for ${city || 'your area'} before your next renewal.`}
       </p>
       <form onSubmit={handleSubmit} className="max-w-[440px] mx-auto space-y-2">
-        {/* Email + button row */}
         <div className="flex gap-2">
           <input
             type="email"
@@ -162,45 +163,18 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
             className="flex-1 min-w-0 px-4 py-3 text-sm border border-border rounded-lg bg-card text-foreground outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
           />
           <button type="submit" className="bg-primary text-primary-foreground px-4 sm:px-5 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap shrink-0">
-            Send me my results →
+            Save my results →
           </button>
         </div>
-        {/* Optional lease date row */}
-        <p className="text-[11px] text-muted-foreground/60 mt-3">Optional: tell us when your lease renews and we'll time your reminder perfectly.</p>
-        <div className="flex gap-2">
-          <select
-            value={leaseMonth}
-            onChange={(e) => setLeaseMonth(e.target.value)}
-            className="flex-1 px-4 py-3 text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
-          >
-            <option disabled value="">Lease renewal month</option>
-            {months.map((m) => (
-              <option key={m} value={m}>{m}</option>
-            ))}
-          </select>
-          <select
-            value={leaseYear}
-            onChange={(e) => setLeaseYear(e.target.value)}
-            className="w-[100px] px-4 py-3 text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
-          >
-            <option disabled value="">Year</option>
-            {years.map((y) => (
-              <option key={y} value={String(y)}>{y}</option>
-            ))}
-          </select>
+        <div className="mt-2">
+          <SocialProofLine />
         </div>
       </form>
       <div className="max-w-[440px] mx-auto mt-2 space-y-1.5">
-        <p className="text-[12px] text-muted-foreground/70 text-center">
-          We'll email you about your lease and relevant housing info. Unsubscribe anytime. See our{' '}
+        <p className="text-[11px] text-muted-foreground/60 text-center">
+          No spam. Unsubscribe anytime. See our{' '}
           <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
         </p>
-        <label className="flex items-start gap-2 justify-center cursor-pointer select-none">
-          <input type="checkbox" checked={partnerOptIn} onChange={(e) => setPartnerOptIn(e.target.checked)} className="mt-[3px] accent-primary" />
-          <span className="text-[13px] text-muted-foreground/70 leading-snug">
-            I'm open to hearing from trusted partners about housing-related services.
-          </span>
-        </label>
       </div>
     </div>
   );

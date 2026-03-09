@@ -217,7 +217,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
                       disabled={loading}
                       className="bg-primary text-primary-foreground px-4 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap shrink-0 disabled:opacity-60 flex items-center gap-2"
                     >
-                      {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</> : 'Send me my letter →'}
+                      {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</> : 'Unlock my letter →'}
                     </button>
                   </div>
                   {error && <p className="text-[13px] text-destructive">{error}</p>}

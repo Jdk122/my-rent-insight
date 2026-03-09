@@ -47,7 +47,7 @@ interface ShareHubProps {
   bedroomNum: number;
   increasePct: number;
   marketYoy: number;
-  verdict?: 'above' | 'fair' | 'below';
+  verdict?: 'above' | 'fair' | 'below' | 'none';
   headline: string;
   stats: { label: string; value: string; color?: string }[];
 }
