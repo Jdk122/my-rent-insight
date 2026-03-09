@@ -1182,6 +1182,19 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </div>
               </motion.section>
             )}
+
+            {/* Cross-link to WSIP tool */}
+            {isAboveMarket && (
+              <motion.div {...fade(0.25)} className="pb-6 text-center">
+                <p className="text-sm text-muted-foreground mb-1">Thinking about moving?</p>
+                <Link
+                  to={`/what-should-i-pay?zip=${rentData.zip}&bedrooms=${formData.bedrooms}`}
+                  className="text-sm text-primary font-semibold hover:underline"
+                >
+                  Check what you'd pay somewhere else →
+                </Link>
+              </motion.div>
+            )}
           </>
         )}
 
