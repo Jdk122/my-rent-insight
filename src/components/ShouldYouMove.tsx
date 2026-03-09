@@ -23,6 +23,7 @@ interface CompsListProps {
   zip: string;
   bedrooms: BedroomType;
   userUnit?: UserUnit | null;
+  gated?: boolean;
 }
 
 interface ShouldYouMoveProps {
@@ -72,10 +73,12 @@ function CompsWithRentLine({
   comparables,
   proposedRent,
   userUnit,
+  hideRentLine = false,
 }: {
   comparables: RentcastComparable[];
   proposedRent: number;
   userUnit?: UserUnit | null;
+  hideRentLine?: boolean;
 }) {
   const sorted = useMemo(() => {
     return [...comparables]
@@ -138,7 +141,7 @@ function CompsWithRentLine({
       {userUnitRow && <div className="mb-2">{userUnitRow}</div>}
       {sorted.map((comp, i) => (
         <div key={i}>
-          {i === refIndex && rentLine}
+          {!hideRentLine && i === refIndex && rentLine}
           <motion.div
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
@@ -168,7 +171,7 @@ function CompsWithRentLine({
           </motion.div>
         </div>
       ))}
-      {refIndex === sorted.length && rentLine}
+      {!hideRentLine && refIndex === sorted.length && rentLine}
     </div>
   );
 }
@@ -186,6 +189,7 @@ export const CompsList = ({
   zip,
   bedrooms,
   userUnit,
+  gated = false,
 }: CompsListProps) => {
   const isAboveMedian = proposedRent > medianCompRent;
   const isAtMedian = proposedRent === medianCompRent;
@@ -240,7 +244,7 @@ export const CompsList = ({
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 text-center">
           Nearby Comparable Listings
         </p>
-        <CompsWithRentLine comparables={comparables} proposedRent={proposedRent} userUnit={userUnit} />
+        <CompsWithRentLine comparables={comparables} proposedRent={proposedRent} userUnit={userUnit} hideRentLine={gated} />
 
         {/* Furnished comps (excluded from median, shown for transparency) */}
         {furnishedComps.length > 0 && (
@@ -282,18 +286,19 @@ export const CompsList = ({
         </p>
       )}
 
-      {/* Browse more links */}
-      <p className="text-sm text-muted-foreground mt-6 text-center">
-        Want to browse more?{' '}
-        {browseLinks.map((link, i) => (
-          <span key={link.name}>
-            <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-              {link.name} →
-            </a>
-            {i < browseLinks.length - 1 && <span className="mx-1.5">·</span>}
-          </span>
-        ))}
-      </p>
+      {!gated && (
+        <p className="text-sm text-muted-foreground mt-6 text-center">
+          Want to browse more?{' '}
+          {browseLinks.map((link, i) => (
+            <span key={link.name}>
+              <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                {link.name} →
+              </a>
+              {i < browseLinks.length - 1 && <span className="mx-1.5">·</span>}
+            </span>
+          ))}
+        </p>
+      )}
 
       <p className="text-[10px] text-muted-foreground/60 mt-3 text-center">
         Market data sources include MLS, public records & proprietary datasets.

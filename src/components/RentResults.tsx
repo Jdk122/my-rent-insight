@@ -971,6 +971,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 bathrooms: propertyData.bathrooms,
                 squareFootage: propertyData.squareFootage,
               } : null}
+              gated={gatedComps.length > 0 && !compsUnlocked}
             />
 
             {/* Comp gate: capture card ABOVE blurred rows */}
