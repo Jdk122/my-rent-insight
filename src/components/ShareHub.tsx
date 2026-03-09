@@ -50,7 +50,8 @@ interface ShareHubProps {
   verdict?: 'above' | 'fair' | 'below' | 'none';
   headline: string;
   stats: { label: string; value: string; color?: string }[];
-}
+  landlordLabel?: string;
+  neighborsLabel?: string;
 
 type ActivePanel = null | 'landlord' | 'neighbors';
 
