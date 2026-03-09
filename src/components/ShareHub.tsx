@@ -113,10 +113,25 @@ const ShareHub = ({
     trackEvent('report_link_generated', { zip_code: zipCode, verdict });
     const url = reportUrl || await generateReportLink();
     if (url) {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
-      toast.success('Link copied — send it to your landlord!');
+      // Try native share on mobile first
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: 'My Rent Analysis', text: 'Here\'s my rent increase analysis:', url });
+          setActivePanel('landlord');
+          return;
+        } catch (e) {
+          if ((e as Error).name === 'AbortError') return;
+          // Fall through to copy
+        }
+      }
+      const ok = await copyToClipboard(url);
+      if (ok) {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
+        toast.success('Link copied — send it to your landlord!');
+      } else {
+        toast.error('Copy failed — long-press the link to copy.');
+      }
       setActivePanel('landlord');
     }
   };
