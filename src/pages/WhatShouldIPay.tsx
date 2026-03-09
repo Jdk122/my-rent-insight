@@ -348,13 +348,13 @@ const WsipResults = ({
 
   // Market condition editorial
   const marketCondition = useMemo(() => {
-    const vacancy = rentData.vacancyRate;
+    const vacancy = rentData.alVacancy;
     const daysOnMarket = rcMarket.rcAvgDaysOnMarket;
     if (vacancy !== null && vacancy !== undefined && vacancy > 7) return "renter's";
     if (daysOnMarket !== null && daysOnMarket > 45) return "renter's";
     if (vacancy !== null && vacancy !== undefined && vacancy < 4 && daysOnMarket !== null && daysOnMarket < 20) return "landlord's";
     return 'balanced';
-  }, [rentData.vacancyRate, rcMarket.rcAvgDaysOnMarket]);
+  }, [rentData.alVacancy, rcMarket.rcAvgDaysOnMarket]);
 
   // Lead context
   const leadContext = useMemo<LeadContext>(() => ({
