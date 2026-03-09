@@ -14,7 +14,7 @@ export interface RentcastMarketResult {
   rcRentHistory: { month: string; medianRent: number }[] | null;
 }
 
-export function useRentcastMarket(zip: string, bedrooms: BedroomType): RentcastMarketResult & { loading: boolean } {
+export function useRentcastMarket(zip: string, bedrooms: BedroomType, enabled = true): RentcastMarketResult & { loading: boolean } {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<RentcastMarketResult>({
     rcMedianRent: null,
@@ -25,6 +25,7 @@ export function useRentcastMarket(zip: string, bedrooms: BedroomType): RentcastM
   });
 
   useEffect(() => {
+    if (!enabled) { setLoading(false); return; }
     let cancelled = false;
 
     async function load() {
