@@ -713,25 +713,24 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 className="mt-5 sm:mt-6 w-full grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-[540px]"
               >
                 {(() => {
-                  const trendSourceShort = compositeTrendResult.sourceCount >= 2
-                    ? 'Market data' : compositeTrendResult.primarySource;
+                  const increaseIsHighGap = increasePct > marketYoy * 2 && increasePct > 0 && marketYoy > 0;
                   return [
-                    { label: 'You pay now', value: `$${fmt(formData.currentRent)}`, color: 'text-foreground', sub: null },
-                    { label: 'They want', value: `$${fmt(newRent)}`, color: isAboveMarket ? 'text-destructive' : isBelowMarket ? 'text-verdict-good' : 'text-foreground', sub: null },
-                    { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%`, color: 'text-foreground', sub: trendSourceShort },
-                    { label: 'Your increase', value: `${increasePct}%`, color: verdictColor, sub: null },
+                    { label: 'Current rent', value: `$${fmt(formData.currentRent)}`, color: 'text-foreground', sub: null, highlight: false },
+                    { label: 'Proposed rent', value: `$${fmt(newRent)}`, color: isAboveMarket ? 'text-destructive' : isBelowMarket ? 'text-verdict-good' : 'text-foreground', sub: null, highlight: false },
+                    { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%`, color: 'text-foreground', sub: null, highlight: false },
+                    { label: 'Your increase', value: `${increasePct}%`, color: verdictColor, sub: null, highlight: increaseIsHighGap },
                   ];
                 })().map((stat) => (
                     <div
                       key={stat.label}
-                      className="text-center rounded-lg border border-border/80 bg-card px-2 sm:px-3 py-3 sm:py-4 flex flex-col justify-between"
+                      className={`text-center rounded-lg border px-2 sm:px-3 py-3 sm:py-4 flex flex-col justify-between min-h-[76px] sm:min-h-[84px] ${stat.highlight ? 'border-destructive/30 bg-destructive/5' : 'border-border/80 bg-card'}`}
                       style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
                     >
                       <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">{stat.label}</p>
                       <p className={`font-display text-[20px] sm:text-[24px] md:text-[28px] tracking-tight tabular-nums ${stat.color}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
                         {stat.value}
                       </p>
-                      {stat.sub && <p className="text-[9px] text-muted-foreground/60 mt-1">{stat.sub}</p>}
+                      {stat.sub ? <p className="text-[9px] text-muted-foreground/60 mt-1">{stat.sub}</p> : <span className="h-[14px]" />}
                     </div>
                 ))}
               </motion.div>
@@ -1199,8 +1198,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         : `Rents near me moved ${marketYoy}% but my landlord wants ${increasePct}%.`
                     }
                     stats={[
-                      { label: 'You pay now', value: `$${fmt(formData.currentRent)}` },
-                      { label: 'They want', value: `$${fmt(newRent)}`, color: 'hsl(0, 72%, 51%)' },
+                      { label: 'Current rent', value: `$${fmt(formData.currentRent)}` },
+                      { label: 'Proposed rent', value: `$${fmt(newRent)}`, color: 'hsl(0, 72%, 51%)' },
                       { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
                       { label: 'Your increase', value: `${increasePct}%`, color: 'hsl(0, 72%, 51%)' },
                     ]}
@@ -1286,8 +1285,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       : `My rent increase is below the area trend.`
                   }
                   stats={[
-                    { label: 'You pay now', value: `$${fmt(formData.currentRent)}` },
-                    { label: 'They want', value: `$${fmt(newRent)}`, color: isBelowMarket ? 'hsl(151, 50%, 38%)' : undefined },
+                    { label: 'Current rent', value: `$${fmt(formData.currentRent)}` },
+                    { label: 'Proposed rent', value: `$${fmt(newRent)}`, color: isBelowMarket ? 'hsl(151, 50%, 38%)' : undefined },
                     { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
                     { label: 'Your increase', value: `${increasePct}%`, color: isFair ? 'hsl(45, 80%, 45%)' : 'hsl(151, 50%, 38%)' },
                   ]}
