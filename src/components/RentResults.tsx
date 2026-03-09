@@ -420,9 +420,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       }
     }
     if (!isAboveMarket) {
-      if (hasIncrease) {
-        sections.push({ id: 'section-share', label: 'Share' });
-      }
+      sections.push({ id: 'section-share', label: 'Share' });
     }
     return sections;
   }, [hasIncrease, medianCompRent, hasEnoughComps, calc, isAboveMarket, isFair, isBelowMarket, hasRentControl]);
