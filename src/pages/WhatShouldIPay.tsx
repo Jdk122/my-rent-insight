@@ -204,10 +204,10 @@ const WhatShouldIPay = () => {
       ) : !results ? (
         <main className="max-w-[620px] mx-auto px-5 sm:px-6 pt-12 sm:pt-16 md:pt-24 pb-10 sm:pb-14">
           <h1 className="font-display text-[2.25rem] sm:text-[clamp(3rem,8vw,5rem)] text-foreground leading-[1.08] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-            What should I <span className="text-primary">pay?</span>
+            Is that asking price <span className="text-primary">fair?</span>
           </h1>
           <p className="mt-4 sm:mt-6 text-[15px] sm:text-lg md:text-xl text-muted-foreground max-w-[540px] leading-relaxed font-normal tracking-tight">
-            Enter an address, see what similar units are renting for, and find out if that asking price is fair<span className="text-primary font-medium no-underline"> — before you sign.</span>
+            That listing is probably overpriced. Enter the address and find out<span className="text-primary font-medium no-underline"> — in 10 seconds.</span>
           </p>
           <section className="mt-8 sm:mt-10" aria-label="Fair rent calculator">
             <WsipForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
