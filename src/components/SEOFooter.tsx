@@ -67,6 +67,7 @@ const SEOFooter = ({ onContactClick, showCityDirectory = false }: SEOFooterProps
         </Link>
         <nav className="flex items-center justify-center gap-3 sm:gap-4 text-[12px] sm:text-[13px] text-muted-foreground flex-wrap">
           <Link to="/" className="hover:text-foreground transition-colors">Check Rent</Link>
+          <Link to="/what-should-i-pay" className="hover:text-foreground transition-colors">What Should I Pay?</Link>
           <Link to="/rent-data" className="hover:text-foreground transition-colors">Rent Data</Link>
           <Link to="/about" className="hover:text-foreground transition-colors">About</Link>
           <Link to="/methodology" className="hover:text-foreground transition-colors">Methodology</Link>
