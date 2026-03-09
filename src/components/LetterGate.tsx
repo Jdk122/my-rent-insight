@@ -14,6 +14,7 @@ interface LetterGateProps {
   leadContext?: LeadContext;
   onEmailCaptured?: (email: string) => void;
   prefilledEmail?: string;
+  verdictLabel?: string;
 }
 
 const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail }: LetterGateProps) => {
