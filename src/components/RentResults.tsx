@@ -1121,6 +1121,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   leadContext={leadContext}
                   prefilledEmail={capturedEmail}
                   onEmailCaptured={setCapturedEmail}
+                  verdictLabel={isAboveMarket ? 'above' : isBelowMarket ? 'below' : 'fair'}
                 >
                   <NegotiationLetter
                     currentRent={formData.currentRent}
