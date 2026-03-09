@@ -187,6 +187,7 @@ export const CompsList = ({
   zip,
   bedrooms,
   userUnit,
+  gated = false,
 }: CompsListProps) => {
   const isAboveMedian = proposedRent > medianCompRent;
   const isAtMedian = proposedRent === medianCompRent;
