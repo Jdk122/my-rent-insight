@@ -144,6 +144,22 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
     ? `$${leadContext.proposedRent.toLocaleString('en-US', { maximumFractionDigits: 0 })}/mo`
     : '';
 
+  const isAbove = !verdictLabel || verdictLabel.toLowerCase() === 'above' || ['Unfair', 'Excessive', 'Moderate'].includes(verdictLabel);
+  const isBelow = verdictLabel?.toLowerCase() === 'below';
+  // fair = everything else
+
+  const gateHeading = isAbove
+    ? 'Your personalized negotiation letter is ready'
+    : isBelow
+    ? 'Lock in your good deal.'
+    : 'Even a fair increase is worth negotiating.';
+
+  const gateSubline = isAbove
+    ? `Tailored to your ${fmtRent} rent${leadContext?.address ? ` at ${leadContext.address.split(',')[0]}` : ''} — includes market data and a specific counter-offer amount.`
+    : isBelow
+    ? 'Your letter positions you to secure a longer lease term or improvements while your landlord is offering below-market terms.'
+    : 'Your letter requests extras your landlord can offer instead of a lower rate — longer lease, unit upgrades, or overdue maintenance. Landlords expect this.';
+
   return (
     <div>
       <h2 className="section-title mb-4">Your Negotiation Letter</h2>
