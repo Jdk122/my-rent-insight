@@ -292,9 +292,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     if (compsCount === 0) anomalyFlags.push('no_comps');
     if (confidence.level === 'limited') anomalyFlags.push('low_confidence');
 
-    // Generate UUID client-side so we can set analysisId immediately
-    const clientGeneratedId = crypto.randomUUID();
-    setAnalysisId(clientGeneratedId);
+    // Use the pre-generated analysisId
 
     supabase.from('analyses').insert({
       id: clientGeneratedId,
