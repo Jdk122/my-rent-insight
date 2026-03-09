@@ -419,9 +419,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       }
     }
     if (!isAboveMarket) {
-      if (hasIncrease && medianCompRent && hasEnoughComps) {
-        sections.push({ id: 'section-move', label: 'Move' });
-      }
       if (hasIncrease) {
         sections.push({ id: 'section-share', label: 'Share' });
       }
