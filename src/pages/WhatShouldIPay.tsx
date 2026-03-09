@@ -207,7 +207,7 @@ const WhatShouldIPay = () => {
             Is that asking<br /> price <span className="text-primary">fair?</span>
           </h1>
           <p className="mt-4 sm:mt-6 text-[15px] sm:text-lg md:text-xl text-muted-foreground max-w-[540px] leading-relaxed font-normal tracking-tight">
-            That listing is probably overpriced. Enter the address and find out<span className="text-primary font-medium no-underline"> — in 10 seconds.</span>
+            Most listings are $100–300/month above market. Enter the address and see what it's actually worth<span className="text-primary font-medium no-underline"> — in 10 seconds.</span>
           </p>
           <section className="mt-8 sm:mt-10" aria-label="Fair rent calculator">
             <WsipForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
