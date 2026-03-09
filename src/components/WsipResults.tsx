@@ -785,6 +785,8 @@ Happy to discuss — thank you.`;
                   { label: 'Fair range', value: `$${fmt(fairRangeLow)}–$${fmt(fairRangeHigh)}` },
                   { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
                 ]}
+                landlordLabel="Share with listing agent"
+                neighborsLabel="Share with friends"
               />
             </div>
           </motion.section>
