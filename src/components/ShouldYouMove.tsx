@@ -23,6 +23,7 @@ interface CompsListProps {
   zip: string;
   bedrooms: BedroomType;
   userUnit?: UserUnit | null;
+  gated?: boolean;
 }
 
 interface ShouldYouMoveProps {
