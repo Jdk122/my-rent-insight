@@ -310,9 +310,69 @@ function DashboardContent() {
   const anomalies = useMemo(() => detectAnomalies(anomalyRows), [anomalyRows]);
   const totalAnomalies = Object.values(anomalies).reduce((sum, arr) => sum + arr.length, 0);
 
+  // ── Email list filtering ──
+  const filteredEmailLeads = useMemo(() => {
+    let list = emailLeads;
+    if (emailFilterUnsub === 'active') list = list.filter(l => !l.unsubscribed);
+    if (emailFilterUnsub === 'unsub') list = list.filter(l => l.unsubscribed);
+    if (emailFilterSource !== 'all') list = list.filter(l => (l.capture_source || 'unknown') === emailFilterSource);
+    if (emailFilterVerdict !== 'all') list = list.filter(l => (l.verdict || 'unknown') === emailFilterVerdict);
+    if (emailSearch) {
+      const q = emailSearch.toLowerCase();
+      list = list.filter(l => l.email?.toLowerCase().includes(q) || l.city?.toLowerCase().includes(q) || l.zip?.includes(q));
+    }
+    return list;
+  }, [emailLeads, emailFilterSource, emailFilterVerdict, emailFilterUnsub, emailSearch]);
+
+  const emailSourceCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const l of emailLeads.filter(l => !l.unsubscribed)) {
+      const src = l.capture_source || 'unknown';
+      counts[src] = (counts[src] || 0) + 1;
+    }
+    return Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  }, [emailLeads]);
+
+  const handleEmailExport = () => {
+    const headers = ['Email', 'Source', 'Date', 'City', 'State', 'Zip', 'Bedrooms', 'Rent', 'Score', 'Verdict', 'Lease Month', 'Lease Year', 'Partner Opt-In', 'UTM Source', 'Status'];
+    const csvRows = [headers.join(',')];
+    for (const l of filteredEmailLeads) {
+      csvRows.push([
+        l.email,
+        l.capture_source || '',
+        new Date(l.created_at).toLocaleDateString(),
+        l.city || '', l.state || '', l.zip || '',
+        l.bedrooms ?? '',
+        l.current_rent ?? '',
+        l.fairness_score ?? '',
+        l.verdict || '',
+        l.lease_expiration_month ?? '',
+        l.lease_expiration_year ?? '',
+        l.partner_opt_in ? 'Yes' : 'No',
+        l.utm_source || '',
+        l.unsubscribed ? 'Unsubscribed' : 'Active',
+      ].join(','));
+    }
+    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `renewalreply-emails-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
-    <div className="max-w-[1400px] mx-auto px-4 py-6 space-y-8">
+    <div className="max-w-[1400px] mx-auto px-4 py-6 space-y-6">
       <h1 className="text-2xl font-display font-bold text-foreground">Lead Dashboard</h1>
+
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="mb-4">
+          <TabsTrigger value="overview" className="gap-1.5"><Users className="w-3.5 h-3.5" /> Overview</TabsTrigger>
+          <TabsTrigger value="emails" className="gap-1.5"><Mail className="w-3.5 h-3.5" /> Email Lists {emailLeads.filter(l => !l.unsubscribed).length > 0 && <span className="ml-1 text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded-full">{emailLeads.filter(l => !l.unsubscribed).length}</span>}</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-8">
 
       {/* ━━━ Summary Cards ━━━ */}
       {statsLoading ? (
