@@ -211,7 +211,12 @@ const Index = () => {
           {results && hasIncrease && isAboveMarket && !capturedEmail && (
             <button
               onClick={() => {
-                document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' });
+                const target = document.getElementById('section-letter');
+                if (target) {
+                  target.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                }
               }}
               className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap"
             >
@@ -240,7 +245,11 @@ const Index = () => {
                 const target = document.getElementById('section-letter')
                   || document.getElementById('section-email-capture')
                   || document.querySelector('[id^="section-share"]');
-                target?.scrollIntoView({ behavior: 'smooth' });
+                if (target) {
+                  target.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                }
               }}
               className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap"
             >
