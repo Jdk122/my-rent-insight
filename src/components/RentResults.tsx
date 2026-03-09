@@ -1199,8 +1199,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         : `Rents near me moved ${marketYoy}% but my landlord wants ${increasePct}%.`
                     }
                     stats={[
-                      { label: 'You pay now', value: `$${fmt(formData.currentRent)}` },
-                      { label: 'They want', value: `$${fmt(newRent)}`, color: 'hsl(0, 72%, 51%)' },
+                      { label: 'Current rent', value: `$${fmt(formData.currentRent)}` },
+                      { label: 'Proposed rent', value: `$${fmt(newRent)}`, color: 'hsl(0, 72%, 51%)' },
                       { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
                       { label: 'Your increase', value: `${increasePct}%`, color: 'hsl(0, 72%, 51%)' },
                     ]}
