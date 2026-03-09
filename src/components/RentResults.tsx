@@ -1271,11 +1271,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           </>
         )}
 
-        {/* ━━━ No increase path — email capture with updated copy ━━━ */}
+        {/* ━━━ No increase path — email capture + share ━━━ */}
         {!hasIncrease && (
           <>
             {!capturedEmail ? (
-              <section className="pb-12 pt-4">
+              <section className="pb-6 pt-4">
                 <div className="rounded-xl px-5 sm:px-8 py-5 sm:py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
                   <EmailCapture
                     city={city}
@@ -1289,7 +1289,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </div>
               </section>
             ) : (
-              <section className="pb-12 pt-4">
+              <section className="pb-4 pt-2">
                 <PostConversionFlow
                   email={capturedEmail}
                   leadContext={leadContext}
@@ -1298,6 +1298,31 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 />
               </section>
             )}
+
+            {/* Share section for no-increase path */}
+            <motion.section id="section-share" {...fade(0.23)} className="pt-4 pb-10">
+              <h2 className="results-section-header mb-6">Share This Tool</h2>
+              <div className="flex justify-center">
+                <ShareHub
+                  reportPayload={shareReportPayload}
+                  onLinkGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
+                  analysisId={analysisId}
+                  leadEmail={capturedEmail || undefined}
+                  zipCode={rentData.zip}
+                  city={rentData.city}
+                  state={rentData.state}
+                  bedroomNum={bedroomNum}
+                  increasePct={0}
+                  marketYoy={marketYoy}
+                  verdict="none"
+                  headline={`My rent isn't going up — and rents in ${city} moved ${marketYoy}%.`}
+                  stats={[
+                    { label: 'Current rent', value: `$${fmt(formData.currentRent)}` },
+                    { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
+                  ]}
+                />
+              </div>
+            </motion.section>
           </>
         )}
 
