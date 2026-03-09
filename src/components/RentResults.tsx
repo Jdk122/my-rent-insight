@@ -334,6 +334,24 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         console.error('[RentResults] Analysis insert failed:', error.message, error);
       } else {
         console.log('[RentResults] Analysis logged:', clientGeneratedId);
+        // Fire admin notification email (fire-and-forget)
+        supabase.functions.invoke('notify-submission', {
+          body: {
+            zip: rentData.zip,
+            city: rentData.city,
+            state: rentData.state,
+            bedrooms: bedroomNum,
+            current_rent: formData.currentRent,
+            proposed_rent: newRent,
+            increase_pct: increasePct,
+            fairness_score: fairnessScore?.total ?? null,
+            verdict_label: fairnessScore?.tierLabel ?? null,
+            address: formData.fullAddress || null,
+            confidence_level: confidence.level ?? null,
+            comp_median_rent: medianCompRent ?? null,
+            hud_fmr_value: rentData.fmr ?? null,
+          },
+        }).catch(() => { /* silent */ });
       }
     });
 
