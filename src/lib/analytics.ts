@@ -25,7 +25,15 @@ export type EventName =
   | 'report_viewed'
   | 'score_details_expanded'
   | 'report_link_generated'
-  | 'user_property_type';
+  | 'user_property_type'
+  | 'letter_copied'
+  | 'comp_gate_shown'
+  | 'comp_gate_converted'
+  | 'exit_intent_shown'
+  | 'exit_intent_converted'
+  | 'exit_intent_dismissed'
+  | 'letter_blur_shown'
+  | 'post_conversion_lease_saved';
 
 export function trackEvent(name: string, params?: Record<string, string | number | boolean | null | undefined>) {
   try {

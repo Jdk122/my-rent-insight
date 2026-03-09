@@ -198,29 +198,55 @@ const Index = () => {
               ← New check
             </button>
           )}
-          {results && hasIncrease && isAboveMarket && (
+          {results && hasIncrease && isAboveMarket && !capturedEmail && (
             <button
               onClick={() => {
                 document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' });
               }}
               className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap"
             >
-              <span className="hidden sm:inline">Get your letter →</span>
+              <span className="hidden sm:inline">Get my letter →</span>
               <span className="sm:hidden">Get letter →</span>
             </button>
           )}
-          {results && !(hasIncrease && isAboveMarket) && (
+          {results && hasIncrease && isAboveMarket && capturedEmail && (
+            <button
+              onClick={() => {
+                const letterEl = document.querySelector('[data-letter-content]');
+                if (letterEl) {
+                  navigator.clipboard.writeText(letterEl.textContent || '');
+                  import('sonner').then(({ toast }) => toast.success('Copied to clipboard'));
+                }
+              }}
+              className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap"
+            >
+              <span className="hidden sm:inline">Copy your letter →</span>
+              <span className="sm:hidden">Copy letter →</span>
+            </button>
+          )}
+          {results && !(hasIncrease && isAboveMarket) && !capturedEmail && (
             <button
               onClick={() => {
                 const target = document.getElementById('section-email-capture')
-                  || document.querySelector('[id^="section-share"]')
-                  || document.getElementById('section-evidence');
+                  || document.getElementById('section-letter')
+                  || document.querySelector('[id^="section-share"]');
                 target?.scrollIntoView({ behavior: 'smooth' });
               }}
               className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap"
             >
-              <span className="hidden sm:inline">Set a reminder →</span>
-              <span className="sm:hidden">Reminder →</span>
+              <span className="hidden sm:inline">Save my results →</span>
+              <span className="sm:hidden">Save results →</span>
+            </button>
+          )}
+          {results && !(hasIncrease && isAboveMarket) && capturedEmail && (
+            <button
+              onClick={() => {
+                document.getElementById('section-share')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap"
+            >
+              <span className="hidden sm:inline">Share this tool →</span>
+              <span className="sm:hidden">Share →</span>
             </button>
           )}
         </div>
