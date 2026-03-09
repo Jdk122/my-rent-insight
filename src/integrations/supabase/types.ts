@@ -99,6 +99,7 @@ export type Database = {
           results_shared: boolean | null
           sale_data_found: boolean | null
           state: string | null
+          tool_type: string
           utm_campaign: string | null
           utm_medium: string | null
           utm_source: string | null
@@ -135,6 +136,7 @@ export type Database = {
           results_shared?: boolean | null
           sale_data_found?: boolean | null
           state?: string | null
+          tool_type?: string
           utm_campaign?: string | null
           utm_medium?: string | null
           utm_source?: string | null
@@ -171,6 +173,7 @@ export type Database = {
           results_shared?: boolean | null
           sale_data_found?: boolean | null
           state?: string | null
+          tool_type?: string
           utm_campaign?: string | null
           utm_medium?: string | null
           utm_source?: string | null

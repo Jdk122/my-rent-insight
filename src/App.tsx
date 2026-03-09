@@ -24,6 +24,7 @@ const Methodology = lazy(() => import("./pages/Methodology"));
 const AdminDataQuality = lazy(() => import("./pages/AdminDataQuality"));
 const AdminLeadDashboard = lazy(() => import("./pages/AdminLeadDashboard"));
 const AdminMarketIntelligence = lazy(() => import("./pages/AdminMarketIntelligence"));
+const WhatShouldIPay = lazy(() => import("./pages/WhatShouldIPay"));
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ const App = () => (
           <Route path="/methodology" element={<Suspense fallback={<PageSkeleton />}><Methodology /></Suspense>} />
           <Route path="/outcome" element={<Suspense fallback={<PageSkeleton />}><Outcome /></Suspense>} />
           <Route path="/rent-data" element={<Suspense fallback={<PageSkeleton />}><RentData /></Suspense>} />
+          <Route path="/what-should-i-pay" element={<Suspense fallback={<PageSkeleton />}><WhatShouldIPay /></Suspense>} />
           <Route path="/rent/:zip" element={<Suspense fallback={<PageSkeleton />}><RentByZip /></Suspense>} />
           <Route path="/rent-data/:stateSlug/:citySlug" element={<Suspense fallback={<PageSkeleton />}><RentByCity /></Suspense>} />
           <Route path="/rent-data/:stateSlug" element={<Suspense fallback={<PageSkeleton />}><RentByState /></Suspense>} />

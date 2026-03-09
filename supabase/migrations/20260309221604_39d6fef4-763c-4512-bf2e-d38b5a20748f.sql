@@ -1,0 +1,1 @@
+ALTER TABLE public.analyses ADD COLUMN IF NOT EXISTS tool_type text NOT NULL DEFAULT 'renewal';

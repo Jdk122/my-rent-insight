@@ -33,7 +33,15 @@ export type EventName =
   | 'exit_intent_converted'
   | 'exit_intent_dismissed'
   | 'letter_blur_shown'
-  | 'post_conversion_lease_saved';
+  | 'post_conversion_lease_saved'
+  | 'wsip_form_submitted'
+  | 'wsip_results_viewed'
+  | 'wsip_comp_gate_shown'
+  | 'wsip_comp_gate_converted'
+  | 'wsip_tips_unlocked'
+  | 'wsip_exit_intent_shown'
+  | 'wsip_exit_intent_converted'
+  | 'wsip_exit_intent_dismissed';
 
 export function trackEvent(name: string, params?: Record<string, string | number | boolean | null | undefined>) {
   try {
