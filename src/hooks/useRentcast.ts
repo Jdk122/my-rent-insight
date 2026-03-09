@@ -69,7 +69,7 @@ export function useRentcast(zip: string, bedrooms: BedroomType, fullAddress?: st
 
     fetch();
     return () => { cancelled = true; };
-  }, [zip, bedrooms, fullAddress]);
+  }, [zip, bedrooms, fullAddress, enabled]);
 
   return { data, loading, error };
 }

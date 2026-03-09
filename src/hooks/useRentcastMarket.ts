@@ -90,7 +90,7 @@ export function useRentcastMarket(zip: string, bedrooms: BedroomType, enabled = 
 
     load();
     return () => { cancelled = true; };
-  }, [zip, bedrooms]);
+  }, [zip, bedrooms, enabled]);
 
   return { ...data, loading };
 }

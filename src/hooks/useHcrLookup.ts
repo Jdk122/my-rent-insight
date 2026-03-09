@@ -26,13 +26,13 @@ function isNycZip(zip: string): boolean {
   );
 }
 
-export function useHcrLookup(address: string | null, zip: string) {
+export function useHcrLookup(address: string | null, zip: string, enabled = true) {
   const [result, setResult] = useState<HcrResult | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Only run for NYC zips with a street address
-    if (!address || !isNycZip(zip)) {
+    if (!enabled || !address || !isNycZip(zip)) {
       setResult(null);
       return;
     }
