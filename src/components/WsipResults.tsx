@@ -11,6 +11,7 @@ import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import { assessConfidence, detectOutliers, getCompRadius, filterFurnished, deduplicateComps } from '@/lib/dataQuality';
 import { calculateCompositeTrend } from '@/lib/compositeTrend';
+import { calculateFairRange } from '@/lib/fairRange';
 import DataConfidenceBadge from './DataConfidenceBadge';
 import SectionNav from './SectionNav';
 import ExitIntentModal from './ExitIntentModal';
