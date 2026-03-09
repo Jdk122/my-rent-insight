@@ -337,9 +337,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         verdict: verdictLabel,
       });
     }
-
-    return () => { window.removeEventListener('beforeunload', handleUnload); sectionObserver.disconnect(); };
-  }, []); // intentionally run once on mount
+  }, [hasIncrease, fairnessScore]); // run when fairnessScore becomes available
 
   // ━━━ Lazy-update analysis record for async events ━━━
   const updateAnalysis = useCallback((fields: Record<string, any>) => {
