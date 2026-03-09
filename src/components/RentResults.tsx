@@ -973,36 +973,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               } : null}
             />
 
-            {/* Gated comps */}
+            {/* Comp gate: capture card ABOVE blurred rows */}
             {gatedComps.length > 0 && !compsUnlocked && (
               <div ref={compGateRef} className="mt-4">
-                {/* Blurred comp rows */}
-                <div className="relative">
-                  <div className="space-y-1" style={{ filter: 'blur(6px)', userSelect: 'none', WebkitUserSelect: 'none' } as React.CSSProperties}>
-                    {gatedComps.slice(0, 4).map((comp, i) => (
-                      <div key={`gated-${i}`} className={`flex items-start justify-between gap-4 px-4 py-3 rounded-md ${i % 2 === 0 ? 'bg-muted/40' : ''}`}>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-foreground truncate">{comp.formattedAddress}</p>
-                          <p className="text-xs text-muted-foreground mt-0.5">
-                            {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
-                            {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
-                            {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
-                          </p>
-                        </div>
-                        {comp.rent !== null && (
-                          <span className="text-sm font-semibold text-foreground whitespace-nowrap">${fmt(comp.rent)}/mo</span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  {/* Overlay gradient */}
-                  <div className="absolute inset-0 pointer-events-none" style={{
-                    background: 'linear-gradient(to bottom, hsl(var(--comps-bg) / 0.3) 0%, hsl(var(--comps-bg) / 0.8) 70%, hsl(var(--comps-bg)) 100%)',
-                  }} />
-                </div>
-
-                {/* Comp gate capture card */}
-                <div className="mt-2 text-center py-4 px-4">
+                {/* Capture prompt first */}
+                <div className="text-center py-4 px-4">
                   <p className="text-sm font-semibold text-foreground mb-1">
                     {gatedComps.length} more comparable rental{gatedComps.length !== 1 ? 's' : ''} nearby
                   </p>
@@ -1029,6 +1004,30 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   <div className="mt-2">
                     <SocialProofLine />
                   </div>
+                </div>
+
+                {/* Blurred comp rows below the gate */}
+                <div className="relative">
+                  <div className="space-y-1" style={{ filter: 'blur(6px)', userSelect: 'none', WebkitUserSelect: 'none' } as React.CSSProperties}>
+                    {gatedComps.slice(0, 4).map((comp, i) => (
+                      <div key={`gated-${i}`} className={`flex items-start justify-between gap-4 px-4 py-3 rounded-md ${i % 2 === 0 ? 'bg-muted/40' : ''}`}>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">{comp.formattedAddress}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
+                            {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
+                            {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
+                          </p>
+                        </div>
+                        {comp.rent !== null && (
+                          <span className="text-sm font-semibold text-foreground whitespace-nowrap">${fmt(comp.rent)}/mo</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="absolute inset-0 pointer-events-none" style={{
+                    background: 'linear-gradient(to bottom, hsl(var(--comps-bg) / 0.3) 0%, hsl(var(--comps-bg) / 0.8) 70%, hsl(var(--comps-bg)) 100%)',
+                  }} />
                 </div>
               </div>
             )}
