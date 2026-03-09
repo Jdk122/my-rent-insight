@@ -456,8 +456,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   // ━━━ Comp gate state ━━━
   const allComps = outlierResult?.filtered ?? cleanedComps;
-  const visibleComps = allComps.slice(0, 3);
-  const gatedComps = allComps.slice(3);
+  const compsWithRent = allComps.filter(c => c.rent !== null && c.rent > 0);
+  const displayableTotal = Math.min(compsWithRent.length, 6);
+  const visibleCount = Math.min(displayableTotal, 3);
+  const visibleComps = allComps.slice(0, visibleCount);
+  const gatedComps = displayableTotal > visibleCount ? allComps.slice(visibleCount) : [];
+  const gatedDisplayCount = displayableTotal - visibleCount;
   const [compsUnlocked, setCompsUnlocked] = useState(false);
   const [compEmail, setCompEmail] = useState('');
   const [compEmailError, setCompEmailError] = useState('');
