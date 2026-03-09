@@ -58,7 +58,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     setInternalEmail(email);
     externalOnEmail?.(email);
   };
-  const [analysisId, setAnalysisId] = useState<string | null>(null);
+  // Generate analysis ID immediately so lead captures can reference it before the insert fires
+  const [analysisId] = useState<string>(() => crypto.randomUUID());
   const [reportUrl, setReportUrl] = useState<string | null>(null);
   const analysisLogged = useRef(false);
 
@@ -291,12 +292,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     if (compsCount === 0) anomalyFlags.push('no_comps');
     if (confidence.level === 'limited') anomalyFlags.push('low_confidence');
 
-    // Generate UUID client-side so we can set analysisId immediately
-    const clientGeneratedId = crypto.randomUUID();
-    setAnalysisId(clientGeneratedId);
+    // Use the pre-generated analysisId
 
     supabase.from('analyses').insert({
-      id: clientGeneratedId,
+      id: analysisId,
       address: formData.fullAddress || null,
       city: rentData.city,
       state: rentData.state,
@@ -334,7 +333,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       if (error) {
         console.error('[RentResults] Analysis insert failed:', error.message, error);
       } else {
-        console.log('[RentResults] Analysis logged:', clientGeneratedId);
+        console.log('[RentResults] Analysis logged:', analysisId);
         // Fire admin notification email (fire-and-forget)
         supabase.functions.invoke('notify-submission', {
           body: {
