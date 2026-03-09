@@ -290,7 +290,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     if (compsCount === 0) anomalyFlags.push('no_comps');
     if (confidence.level === 'limited') anomalyFlags.push('low_confidence');
 
+    // Generate UUID client-side so we can set analysisId immediately
+    const clientGeneratedId = crypto.randomUUID();
+    setAnalysisId(clientGeneratedId);
+
     supabase.from('analyses').insert({
+      id: clientGeneratedId,
       address: formData.fullAddress || null,
       city: rentData.city,
       state: rentData.state,
@@ -328,7 +333,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       if (error) {
         console.error('[RentResults] Analysis insert failed:', error.message, error);
       } else {
-        console.log('[RentResults] Analysis logged successfully');
+        console.log('[RentResults] Analysis logged:', clientGeneratedId);
       }
     });
 
