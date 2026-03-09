@@ -248,6 +248,15 @@ function DashboardContent() {
     });
   }, []);
 
+  // Load email list
+  useEffect(() => {
+    setEmailLeadsLoading(true);
+    adminQuery('email_list').then((data) => {
+      setEmailLeads(data || []);
+      setEmailLeadsLoading(false);
+    });
+  }, []);
+
   // Build and execute query
   const fetchRows = useCallback(async () => {
     setLoading(true);
