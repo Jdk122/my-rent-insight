@@ -984,7 +984,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 {/* Capture prompt first */}
                 <div className="text-center py-4 px-4">
                   <p className="text-sm font-semibold text-foreground mb-1">
-                    {gatedComps.length} more comparable rental{gatedComps.length !== 1 ? 's' : ''} nearby
+                    {gatedDisplayCount} more comparable rental{gatedDisplayCount !== 1 ? 's' : ''} nearby
                   </p>
                   <p className="text-xs text-muted-foreground mb-3">Enter your email to see all comps</p>
                   <form onSubmit={handleCompGateSubmit} className="flex gap-2 max-w-[400px] mx-auto">
