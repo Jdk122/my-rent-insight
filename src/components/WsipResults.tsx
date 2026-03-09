@@ -101,11 +101,20 @@ const WsipResults = ({
   const gatedComps = displayableTotal > visibleCount ? allComps.slice(visibleCount) : [];
   const gatedDisplayCount = displayableTotal - visibleCount;
 
-  // ━━━ Fair range ━━━
-  const fairRangeLow = rentData.fmr;
-  const rcUpperBound = medianCompRent ? Math.round(medianCompRent * 1.15) : null;
-  const hudUpperBound = Math.round(rentData.fmr * 1.15);
-  const fairRangeHigh = rcUpperBound ? Math.max(rcUpperBound, hudUpperBound) : hudUpperBound;
+  // ━━━ Fair range (p25/p75 of comps, or median ± 20% fallback) ━━━
+  const { fairRangeLow, fairRangeHigh } = useMemo(() => {
+    const rents = compsWithRent.map(c => c.rent as number).sort((a, b) => a - b);
+    if (rents.length >= 5) {
+      const p25Idx = Math.floor(rents.length * 0.25);
+      const p75Idx = Math.floor(rents.length * 0.75);
+      return { fairRangeLow: Math.round(rents[p25Idx]), fairRangeHigh: Math.round(rents[p75Idx]) };
+    }
+    if (medianCompRent) {
+      return { fairRangeLow: Math.round(medianCompRent * 0.8), fairRangeHigh: Math.round(medianCompRent * 1.2) };
+    }
+    // Final fallback: HUD-based
+    return { fairRangeLow: rentData.fmr, fairRangeHigh: Math.round(rentData.fmr * 1.15) };
+  }, [compsWithRent, medianCompRent, rentData.fmr]);
 
   // ━━━ Verdict ━━━
   type Verdict = 'below' | 'in-range' | 'above' | null;
