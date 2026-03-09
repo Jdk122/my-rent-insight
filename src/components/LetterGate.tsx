@@ -67,7 +67,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
     setLoading(true);
 
     const utm = getUtmParams();
-    const verdict = 'above';
+    const verdict = verdictLabel || 'above';
 
     try {
       const { error: dbError } = await supabase.rpc('upsert_lead', {
