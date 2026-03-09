@@ -14,9 +14,10 @@ interface LetterGateProps {
   leadContext?: LeadContext;
   onEmailCaptured?: (email: string) => void;
   prefilledEmail?: string;
+  verdictLabel?: string;
 }
 
-const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail }: LetterGateProps) => {
+const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, verdictLabel }: LetterGateProps) => {
   const [unlocked, setUnlocked] = useState(() => !!prefilledEmail);
   const [email, setEmail] = useState(prefilledEmail || '');
   const [error, setError] = useState('');
@@ -39,7 +40,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail }: 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          trackEvent('letter_blur_shown', { verdict: 'above', zip_code: leadContext?.zip || '' });
+          trackEvent('letter_blur_shown', { verdict: verdictLabel || 'above', zip_code: leadContext?.zip || '' });
           observer.disconnect();
         }
       },
@@ -66,7 +67,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail }: 
     setLoading(true);
 
     const utm = getUtmParams();
-    const verdict = 'above';
+    const verdict = verdictLabel || 'above';
 
     try {
       const { error: dbError } = await supabase.rpc('upsert_lead', {
@@ -143,6 +144,22 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail }: 
     ? `$${leadContext.proposedRent.toLocaleString('en-US', { maximumFractionDigits: 0 })}/mo`
     : '';
 
+  const isAbove = !verdictLabel || verdictLabel.toLowerCase() === 'above' || ['Unfair', 'Excessive', 'Moderate'].includes(verdictLabel);
+  const isBelow = verdictLabel?.toLowerCase() === 'below';
+  // fair = everything else
+
+  const gateHeading = isAbove
+    ? 'Your personalized negotiation letter is ready'
+    : isBelow
+    ? 'Lock in your good deal.'
+    : 'Even a fair increase is worth negotiating.';
+
+  const gateSubline = isAbove
+    ? `Tailored to your ${fmtRent} rent${leadContext?.address ? ` at ${leadContext.address.split(',')[0]}` : ''} — includes market data and a specific counter-offer amount.`
+    : isBelow
+    ? 'Your letter positions you to secure a longer lease term or improvements while your landlord is offering below-market terms.'
+    : 'Your letter requests extras your landlord can offer instead of a lower rate — longer lease, unit upgrades, or overdue maintenance. Landlords expect this.';
+
   return (
     <div>
       <h2 className="section-title mb-4">Your Negotiation Letter</h2>
@@ -178,10 +195,10 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail }: 
             <div className="absolute inset-x-0 top-[4rem] bottom-0 flex items-start justify-center pt-6 sm:pt-10">
               <div className="bg-card border border-border rounded-xl shadow-lg px-5 sm:px-8 py-6 sm:py-8 max-w-[440px] w-full mx-4 text-center pointer-events-auto">
                 <h3 className="font-display text-lg font-semibold text-foreground mb-2">
-                  Your personalized negotiation letter is ready
+                  {gateHeading}
                 </h3>
                 <p className="text-sm text-muted-foreground mb-5">
-                  Tailored to your {fmtRent} rent{leadContext?.address ? ` at ${leadContext.address.split(',')[0]}` : ''} — includes market data and a specific counter-offer amount.
+                  {gateSubline}
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-2">
@@ -237,7 +254,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail }: 
           <PostConversionFlow
             email={email || prefilledEmail || ''}
             leadContext={leadContext}
-            verdictLabel="above"
+            verdictLabel={verdictLabel || 'above'}
             zip={leadContext?.zip || ''}
           />
         </div>
