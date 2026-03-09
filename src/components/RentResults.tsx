@@ -255,9 +255,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   // ━━━ Anonymous analysis logging (waits for fairnessScore) ━━━
   useEffect(() => {
-    // Only log once fairnessScore is computed (or confirmed no increase)
+    // Only log once fairnessScore is computed (or confirmed no increase) AND rentcast has loaded
     if (analysisLogged.current) return;
     if (hasIncrease && fairnessScore === null) return; // still loading
+    if (rentcast.loading) return; // wait for comps to load
     analysisLogged.current = true;
 
     const compsPosition = medianCompRent
