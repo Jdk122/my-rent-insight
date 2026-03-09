@@ -686,10 +686,16 @@ export type Database = {
           zip_code: string
         }[]
       }
-      update_lead_outcome: {
-        Args: { p_lead_id: string; p_outcome: string }
-        Returns: undefined
-      }
+      update_lead_outcome:
+        | { Args: { p_lead_id: string; p_outcome: string }; Returns: undefined }
+        | {
+            Args: {
+              p_lead_id: string
+              p_outcome: string
+              p_testimonial?: string
+            }
+            Returns: undefined
+          }
       upsert_lead:
         | {
             Args: {
