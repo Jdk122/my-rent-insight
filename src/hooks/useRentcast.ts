@@ -28,12 +28,13 @@ export interface RentcastResult {
   comparables: RentcastComparable[];
 }
 
-export function useRentcast(zip: string, bedrooms: BedroomType, fullAddress?: string | null) {
+export function useRentcast(zip: string, bedrooms: BedroomType, fullAddress?: string | null, enabled = true) {
   const [data, setData] = useState<RentcastResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!enabled) { setLoading(false); return; }
     let cancelled = false;
 
     async function fetch() {
@@ -68,7 +69,7 @@ export function useRentcast(zip: string, bedrooms: BedroomType, fullAddress?: st
 
     fetch();
     return () => { cancelled = true; };
-  }, [zip, bedrooms, fullAddress]);
+  }, [zip, bedrooms, fullAddress, enabled]);
 
   return { data, loading, error };
 }

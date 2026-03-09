@@ -44,6 +44,7 @@ interface RentResultsProps {
   capturedEmail?: string;
   onEmailCaptured?: (email: string) => void;
   onVerdictReady?: (isAboveMarket: boolean) => void;
+  isDemo?: boolean;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -54,7 +55,7 @@ const fade = (delay: number) => ({
   transition: { duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] as const },
 });
 
-const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop, capturedEmail: externalEmail, onEmailCaptured: externalOnEmail, onVerdictReady }: RentResultsProps) => {
+const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop, capturedEmail: externalEmail, onEmailCaptured: externalOnEmail, onVerdictReady, isDemo = false }: RentResultsProps) => {
   const [internalEmail, setInternalEmail] = useState('');
   const capturedEmail = externalEmail ?? internalEmail;
   const setCapturedEmail = (email: string) => {
@@ -120,9 +121,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const isPath1 = hasSaleData && !forceMarketOnly;
   const marketMultiple = marketYoy > 0 ? Math.round((increasePct / marketYoy) * 10) / 10 : 0;
 
-  const rentcast = useRentcast(rentData.zip, formData.bedrooms, formData.fullAddress);
-  const rcMarket = useRentcastMarket(rentData.zip, formData.bedrooms);
-  const hcrLookup = useHcrLookup(formData.fullAddress, rentData.zip);
+  const rentcast = useRentcast(rentData.zip, formData.bedrooms, formData.fullAddress, !isDemo);
+  const rcMarket = useRentcastMarket(rentData.zip, formData.bedrooms, !isDemo);
+  const hcrLookup = useHcrLookup(formData.fullAddress, rentData.zip, !isDemo);
   const hasRentcastComps = rentcast.data && rentcast.data.comparables.length > 0;
 
   // ━━━ Preprocessing: deduplicate & filter furnished ━━━
