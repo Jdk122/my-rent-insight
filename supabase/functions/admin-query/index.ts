@@ -172,6 +172,18 @@ Deno.serve(async (req) => {
         break;
       }
 
+      case "email_list": {
+        const { data: rows, error } = await supabase
+          .from("leads")
+          .select("id, email, capture_source, address, city, state, zip, bedrooms, current_rent, proposed_rent, increase_pct, fairness_score, comp_median_rent, hud_fmr_value, verdict, letter_generated, lease_expiration_month, lease_expiration_year, partner_opt_in, utm_source, utm_medium, utm_campaign, created_at, outcome, unsubscribed, reminder_sent_at, followup_sent_at, sent_email_day45, analysis_id")
+          .not("email", "is", null)
+          .order("created_at", { ascending: false })
+          .limit(2000);
+        if (error) throw error;
+        data = rows;
+        break;
+      }
+
       default:
         return new Response(JSON.stringify({ error: "Unknown query type" }), {
           status: 400,
