@@ -31,6 +31,7 @@ import NextStepsSection from './NextStepsSection';
 import ExitIntentModal from './ExitIntentModal';
 import PostConversionFlow from './PostConversionFlow';
 import SocialProofLine from './SocialProofLine';
+import { demoRentcast } from '@/data/demoData';
 import { Loader2 } from 'lucide-react';
 
 interface RentResultsProps {
@@ -121,7 +122,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const isPath1 = hasSaleData && !forceMarketOnly;
   const marketMultiple = marketYoy > 0 ? Math.round((increasePct / marketYoy) * 10) / 10 : 0;
 
-  const rentcast = useRentcast(rentData.zip, formData.bedrooms, formData.fullAddress, !isDemo);
+  const rentcastRaw = useRentcast(rentData.zip, formData.bedrooms, formData.fullAddress, !isDemo);
+  const rentcast = isDemo ? { data: demoRentcast, loading: false, error: null } : rentcastRaw;
   const rcMarket = useRentcastMarket(rentData.zip, formData.bedrooms, !isDemo);
   const hcrLookup = useHcrLookup(formData.fullAddress, rentData.zip, !isDemo);
   const hasRentcastComps = rentcast.data && rentcast.data.comparables.length > 0;

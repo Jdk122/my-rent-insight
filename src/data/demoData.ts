@@ -1,6 +1,23 @@
 import { RentFormData } from '@/components/RentForm';
 import { RentLookupResult } from '@/data/dataLoader';
+import { RentcastResult, RentcastComparable } from '@/hooks/useRentcast';
 
+const mockComps: RentcastComparable[] = [
+  { formattedAddress: '125 W 28th St, Apt 4B, New York, NY 10001', rent: 2250, bedrooms: 1, bathrooms: 1, squareFootage: 620, distance: 0.01, daysOld: 12, correlation: 0.97, isSameBuilding: true, isSameUnitLine: false },
+  { formattedAddress: '125 W 28th St, Apt 3A, New York, NY 10001', rent: 2300, bedrooms: 1, bathrooms: 1, squareFootage: 640, distance: 0.01, daysOld: 25, correlation: 0.95, isSameBuilding: true, isSameUnitLine: true },
+  { formattedAddress: '130 W 28th St, Apt 6C, New York, NY 10001', rent: 2180, bedrooms: 1, bathrooms: 1, squareFootage: 600, distance: 0.05, daysOld: 18, correlation: 0.92 },
+  { formattedAddress: '145 W 27th St, Apt 2D, New York, NY 10001', rent: 2350, bedrooms: 1, bathrooms: 1, squareFootage: 650, distance: 0.12, daysOld: 30, correlation: 0.88 },
+  { formattedAddress: '200 W 26th St, Apt 8A, New York, NY 10001', rent: 2150, bedrooms: 1, bathrooms: 1, squareFootage: 590, distance: 0.18, daysOld: 45, correlation: 0.85 },
+  { formattedAddress: '220 W 29th St, Apt 5F, New York, NY 10001', rent: 2400, bedrooms: 1, bathrooms: 1, squareFootage: 670, distance: 0.22, daysOld: 60, correlation: 0.82 },
+];
+
+export const demoRentcast: RentcastResult = {
+  rentEstimate: 2270,
+  rentRangeLow: 2050,
+  rentRangeHigh: 2450,
+  propertyType: 'Apartment',
+  comparables: mockComps,
+};
 type DemoScenario = 'above' | 'fair' | 'below' | 'none';
 
 const baseRentData: RentLookupResult = {
