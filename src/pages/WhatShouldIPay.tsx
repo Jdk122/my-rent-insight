@@ -13,6 +13,7 @@ const RentResults = lazy(() => import('@/components/RentResults'));
 const SocialProofCounter = lazy(() => import('@/components/SocialProofCounter'));
 const ContactModal = lazy(() => import('@/components/ContactModal'));
 const HomeFAQ = lazy(() => import('@/components/HomeFAQ'));
+const HowItWorks = lazy(() => import('@/components/HowItWorks'));
 const SEOFooter = lazy(() => import('@/components/SEOFooter'));
 
 const WhatShouldIPay = () => {
