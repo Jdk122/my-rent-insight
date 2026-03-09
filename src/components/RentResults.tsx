@@ -221,7 +221,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const city = rentData.city;
   const brLabel = bedroomLabels[formData.bedrooms].toLowerCase();
 
-  // ━━━ Anonymous analysis logging ━━━
+  // ━━━ Analytics tracking (separate from DB logging) ━━━
   useEffect(() => {
     trackEvent('results_viewed', { zip: rentData.zip, verdict: verdictLabel });
 
@@ -250,7 +250,14 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       if (el) sectionObserver.observe(el);
     });
 
-    if (analysisLogged.current) return () => { window.removeEventListener('beforeunload', handleUnload); sectionObserver.disconnect(); };
+    return () => { window.removeEventListener('beforeunload', handleUnload); sectionObserver.disconnect(); };
+  }, []);
+
+  // ━━━ Anonymous analysis logging (waits for fairnessScore) ━━━
+  useEffect(() => {
+    // Only log once fairnessScore is computed (or confirmed no increase)
+    if (analysisLogged.current) return;
+    if (hasIncrease && fairnessScore === null) return; // still loading
     analysisLogged.current = true;
 
     const compsPosition = medianCompRent
@@ -330,9 +337,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         verdict: verdictLabel,
       });
     }
-
-    return () => { window.removeEventListener('beforeunload', handleUnload); sectionObserver.disconnect(); };
-  }, []); // intentionally run once on mount
+  }, [hasIncrease, fairnessScore]); // run when fairnessScore becomes available
 
   // ━━━ Lazy-update analysis record for async events ━━━
   const updateAnalysis = useCallback((fields: Record<string, any>) => {
