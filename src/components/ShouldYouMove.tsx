@@ -171,7 +171,7 @@ function CompsWithRentLine({
           </motion.div>
         </div>
       ))}
-      {refIndex === sorted.length && rentLine}
+      {!hideRentLine && refIndex === sorted.length && rentLine}
     </div>
   );
 }
