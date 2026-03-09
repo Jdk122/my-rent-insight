@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import RentForm, { RentFormData, RentFormPrefill } from '@/components/RentForm';
 import { lookupRentData, loadFredTrend, RentLookupResult } from '@/data/rentData';
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
