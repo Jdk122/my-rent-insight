@@ -757,6 +757,133 @@ function DashboardContent() {
         )}
       </div>
 
+        </TabsContent>
+
+        {/* ━━━ EMAIL LISTS TAB ━━━ */}
+        <TabsContent value="emails" className="space-y-6">
+          {/* Source breakdown cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            <StatCard label="Total Active Emails" value={emailLeads.filter(l => !l.unsubscribed).length} />
+            <StatCard label="Unsubscribed" value={emailLeads.filter(l => l.unsubscribed).length} />
+            <StatCard label="Partner Opt-In" value={emailLeads.filter(l => l.partner_opt_in && !l.unsubscribed).length} />
+            <StatCard label="With Lease Date" value={emailLeads.filter(l => l.lease_expiration_month && !l.unsubscribed).length} />
+            {emailSourceCounts.slice(0, 2).map(([src, count]) => (
+              <StatCard key={src} label={src === 'early_capture' ? '📩 Early Capture' : src === 'letter_gate' ? '📝 Letter Gate' : src === 'lease_reminder' ? '📅 Lease Reminder' : `📧 ${src}`} value={count} />
+            ))}
+          </div>
+
+          {/* Filters & Export */}
+          <div className="flex flex-wrap items-end gap-3">
+            <div>
+              <label className="text-[11px] text-muted-foreground mb-0.5 block">Search</label>
+              <div className="relative">
+                <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground/50" />
+                <input
+                  type="text"
+                  value={emailSearch}
+                  onChange={(e) => setEmailSearch(e.target.value)}
+                  className="w-48 pl-7 pr-2 py-1.5 text-sm border border-border rounded bg-background text-foreground outline-none focus:border-foreground transition-colors"
+                  placeholder="Email, city, zip…"
+                />
+              </div>
+            </div>
+            <FilterSelect label="Source" value={emailFilterSource} onChange={setEmailFilterSource} options={[
+              { label: 'All Sources', value: 'all' },
+              ...emailSourceCounts.map(([src]) => ({ label: src === 'early_capture' ? 'Early Capture' : src === 'letter_gate' ? 'Letter Gate' : src === 'lease_reminder' ? 'Lease Reminder' : src, value: src })),
+            ]} />
+            <FilterSelect label="Verdict" value={emailFilterVerdict} onChange={setEmailFilterVerdict} options={[
+              { label: 'All Verdicts', value: 'all' },
+              { label: 'Above Market', value: 'above' },
+              { label: 'At Market', value: 'at_market' },
+              { label: 'At-Market', value: 'at-market' },
+              { label: 'Below Market', value: 'below' },
+            ]} />
+            <FilterSelect label="Status" value={emailFilterUnsub} onChange={setEmailFilterUnsub} options={[
+              { label: 'Active Only', value: 'active' },
+              { label: 'Unsubscribed', value: 'unsub' },
+              { label: 'All', value: 'all' },
+            ]} />
+            <button onClick={handleEmailExport} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm border border-border rounded-lg hover:bg-muted transition-colors h-[34px]">
+              <Download className="w-3.5 h-3.5" /> Export {filteredEmailLeads.length} emails
+            </button>
+          </div>
+
+          {/* Email table */}
+          {emailLeadsLoading ? (
+            <div className="flex items-center justify-center py-12 text-muted-foreground">
+              <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading email list…
+            </div>
+          ) : (
+            <>
+              <p className="text-sm text-muted-foreground">Showing {filteredEmailLeads.length} of {emailLeads.length} leads</p>
+              <div className="border border-border rounded-lg overflow-x-auto bg-card">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border bg-muted/50">
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Email</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Source</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Date</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Location</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Rent</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Score</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Verdict</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Lease</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Partner</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Emails Sent</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredEmailLeads.slice(0, 200).map((l: any) => {
+                      const emailsSent = [
+                        l.reminder_sent_at && 'Reminder',
+                        l.followup_sent_at && 'Follow-up',
+                        l.sent_email_day45 && 'Day 45',
+                      ].filter(Boolean);
+                      return (
+                        <tr key={l.id} className="border-b border-border/50 hover:bg-muted/30">
+                          <td className="px-3 py-2 text-xs font-medium max-w-[220px] truncate" title={l.email}>{l.email}</td>
+                          <td className="px-3 py-2 whitespace-nowrap text-xs">
+                            <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium border ${
+                              l.capture_source === 'early_capture' ? 'bg-primary/10 text-primary border-primary/30' :
+                              l.capture_source === 'letter_gate' ? 'bg-accent/50 text-foreground border-border' :
+                              'bg-muted text-muted-foreground border-border'
+                            }`}>
+                              {l.capture_source || '—'}
+                            </span>
+                          </td>
+                          <td className="px-3 py-2 whitespace-nowrap text-xs">{new Date(l.created_at).toLocaleDateString()}</td>
+                          <td className="px-3 py-2 whitespace-nowrap text-xs">{l.city ? `${l.city}, ${l.state}` : l.zip || '—'}</td>
+                          <td className="px-3 py-2 whitespace-nowrap text-xs">{l.current_rent ? fmt(l.current_rent) : '—'}{l.proposed_rent ? ` → ${fmt(l.proposed_rent)}` : ''}</td>
+                          <td className="px-3 py-2 whitespace-nowrap text-xs">{l.fairness_score ?? '—'}</td>
+                          <td className="px-3 py-2 whitespace-nowrap text-xs">{l.verdict || '—'}</td>
+                          <td className="px-3 py-2 whitespace-nowrap text-xs">{l.lease_expiration_month && l.lease_expiration_year ? `${l.lease_expiration_month}/${l.lease_expiration_year}` : '—'}</td>
+                          <td className="px-3 py-2 text-center">{l.partner_opt_in ? <Check className="w-3.5 h-3.5 text-emerald-600 inline" /> : <X className="w-3.5 h-3.5 text-muted-foreground/40 inline" />}</td>
+                          <td className="px-3 py-2 text-xs">{emailsSent.length > 0 ? emailsSent.join(', ') : '—'}</td>
+                          <td className="px-3 py-2 text-xs">
+                            {l.unsubscribed ? (
+                              <span className="text-destructive font-medium">Unsub</span>
+                            ) : (
+                              <span className="text-emerald-600 font-medium">Active</span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    {filteredEmailLeads.length === 0 && (
+                      <tr><td colSpan={11} className="px-4 py-8 text-center text-muted-foreground">No emails found</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+              {filteredEmailLeads.length > 200 && (
+                <p className="text-xs text-muted-foreground">Showing first 200 of {filteredEmailLeads.length}. Export to see all.</p>
+              )}
+            </>
+          )}
+        </TabsContent>
+      </Tabs>
+
       {/* Detail Panel */}
       {selectedRow && <LeadDetailPanel analysis={selectedRow} onClose={() => setSelectedRow(null)} />}
     </div>
