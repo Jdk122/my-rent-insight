@@ -24,6 +24,7 @@ const Methodology = lazy(() => import("./pages/Methodology"));
 const AdminDataQuality = lazy(() => import("./pages/AdminDataQuality"));
 const AdminLeadDashboard = lazy(() => import("./pages/AdminLeadDashboard"));
 const AdminMarketIntelligence = lazy(() => import("./pages/AdminMarketIntelligence"));
+const WhatShouldIPay = lazy(() => import("./pages/WhatShouldIPay"));
 
 const queryClient = new QueryClient();
 
