@@ -669,11 +669,11 @@ const WsipResults = ({
             </div>
 
             {/* Vacancy */}
-            {rentData.vacancyRate != null && (
+            {rentData.alVacancy != null && (
               <div className="rounded-lg border border-border bg-card p-4">
                 <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">Vacancy Rate</p>
-                <p className="font-display text-xl font-bold tabular-nums text-foreground">{rentData.vacancyRate.toFixed(1)}%</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">state average</p>
+                <p className="font-display text-xl font-bold tabular-nums text-foreground">{rentData.alVacancy.toFixed(1)}%</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">Apartment List</p>
               </div>
             )}
 
