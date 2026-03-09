@@ -202,10 +202,14 @@ const ShareHub = ({
           </div>
           <button
             onClick={async () => {
-              await navigator.clipboard.writeText(reportUrl);
-              setCopied(true);
-              setTimeout(() => setCopied(false), 2500);
-              toast.success('Link copied!');
+              const ok = await copyToClipboard(reportUrl);
+              if (ok) {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2500);
+                toast.success('Link copied!');
+              } else {
+                toast.error('Copy failed — long-press the link to copy.');
+              }
             }}
             className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:brightness-90 transition-all shadow-sm shadow-primary/20"
           >
