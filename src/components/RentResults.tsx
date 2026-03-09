@@ -175,8 +175,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   }, [rentData.fmr, medianCompRent]);
 
   // ━━━ Fairness Score (replaces 3-factor verdict) ━━━
+  const asyncDataReady = !rentcast.loading && !rcMarket.loading;
+
   const fairnessScore = useMemo<FairnessScoreResult | null>(() => {
     if (!hasIncrease) return null;
+    if (!asyncDataReady) return null; // Wait for all async data before calculating
     return calculateFairnessScore({
       increasePct,
       marketYoY: marketYoy,
@@ -195,7 +198,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       rcTotalListings: rcMarket.rcTotalListings,
       compositeTrend: compositeTrendResult.compositeTrend,
     });
-  }, [hasIncrease, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings, compositeTrendResult]);
+  }, [hasIncrease, asyncDataReady, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings, compositeTrendResult]);
 
   const refinedVerdict = useMemo(() => {
     if (!fairnessScore) return null;
