@@ -12,6 +12,7 @@ const fmt = (n: number | null | undefined) =>
 export default function AdminMarketIntelligence() {
   return (
     <div className="min-h-screen bg-background">
+      <SEO noindex />
       <AdminNav />
       <AdminPasswordGate>
         <MarketContent />

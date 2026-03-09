@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/table';
 
 const BEDROOM_LABELS = ['Studio', '1-Bedroom', '2-Bedroom', '3-Bedroom', '4-Bedroom'];
+// TODO: derive from data — last updated March 2026
 const NATIONAL_AVG_YOY = 3.2;
 
 function fmt(n: number) {
