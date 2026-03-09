@@ -58,7 +58,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     setInternalEmail(email);
     externalOnEmail?.(email);
   };
-  const [analysisId, setAnalysisId] = useState<string | null>(null);
+  // Generate analysis ID immediately so lead captures can reference it before the insert fires
+  const [analysisId] = useState<string>(() => crypto.randomUUID());
   const [reportUrl, setReportUrl] = useState<string | null>(null);
   const analysisLogged = useRef(false);
 
