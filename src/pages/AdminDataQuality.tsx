@@ -12,6 +12,7 @@ import { calculateFairnessScore, type FairnessScoreInput } from '@/lib/fairnessS
 import { supabase } from '@/integrations/supabase/client';
 import type { RentZipRaw, ZhviZipRaw, ApartmentListZipRaw, Hud50ZipRaw } from '@/data/dataLoader';
 import AdminNav from '@/components/admin/AdminNav';
+import SEO from '@/components/SEO';
 
 // Password is now validated server-side via the admin-query edge function
 
