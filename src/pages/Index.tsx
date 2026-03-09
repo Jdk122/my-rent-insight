@@ -30,6 +30,15 @@ const Index = () => {
   const topRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
+  // Demo mode: ?demo=above|fair|below|none
+  useEffect(() => {
+    const demo = searchParams.get('demo');
+    const demoData = getDemoData(demo);
+    if (demoData && !results) {
+      setResults(demoData);
+    }
+  }, [searchParams]);
+
   // Read URL params for pre-fill (from reminder emails)
   const prefill = useMemo<RentFormPrefill | undefined>(() => {
     const zip = searchParams.get('zip');
