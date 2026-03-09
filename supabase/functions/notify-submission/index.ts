@@ -29,14 +29,63 @@ Deno.serve(async (req) => {
       zip, city, state, bedrooms, current_rent, proposed_rent,
       increase_pct, fairness_score, verdict_label, address,
       confidence_level, comp_median_rent, hud_fmr_value,
+      analysis_id,
     } = body;
 
-    const subject = `🏠 New submission: ${zip || "unknown"} — ${verdict_label || "N/A"} (Score ${fairness_score ?? "?"})`;
+    // Check if we have a lead email for this analysis or a recent lead matching this zip
+    let leadEmail: string | null = null;
+    let totalLeads: number | null = null;
+    try {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const sb = createClient(supabaseUrl, supabaseKey);
+
+      if (analysis_id) {
+        const { data: leadRow } = await sb
+          .from("leads")
+          .select("email")
+          .eq("analysis_id", analysis_id)
+          .limit(1)
+          .single();
+        if (leadRow?.email) leadEmail = leadRow.email;
+      }
+
+      // If no direct match, check if there's a recent lead for this zip
+      if (!leadEmail && zip) {
+        const { data: recentLead } = await sb
+          .from("leads")
+          .select("email")
+          .eq("zip", zip)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .single();
+        if (recentLead?.email) leadEmail = recentLead.email;
+      }
+
+      // Get total lead count
+      const { count } = await sb
+        .from("leads")
+        .select("*", { count: "exact", head: true });
+      totalLeads = count;
+    } catch { /* non-critical */ }
+
+    const emailBadge = leadEmail
+      ? `<tr style="background:#e6f9e6"><td style="padding:6px 12px 6px 0;color:#1a7a1a;font-weight:600">📧 Email Captured</td><td style="padding:6px 0;font-weight:700;color:#1a7a1a">${leadEmail}</td></tr>`
+      : `<tr style="background:#fff3e0"><td style="padding:6px 12px 6px 0;color:#b36b00;font-weight:600">📧 Email Captured</td><td style="padding:6px 0;font-weight:600;color:#b36b00">No — anonymous submission</td></tr>`;
+
+    const leadCountNote = totalLeads != null
+      ? `<p style="margin-top:12px;font-size:12px;color:#666">Total leads in database: <strong>${totalLeads}</strong></p>`
+      : "";
+
+    const subject = leadEmail
+      ? `🏠 New submission: ${zip || "unknown"} — ${verdict_label || "N/A"} (Score ${fairness_score ?? "?"}) ✉️ EMAIL CAPTURED`
+      : `🏠 New submission: ${zip || "unknown"} — ${verdict_label || "N/A"} (Score ${fairness_score ?? "?"})`;
 
     const html = `
       <div style="font-family:system-ui,sans-serif;max-width:560px;margin:0 auto;padding:24px">
         <h2 style="margin:0 0 16px;color:#1a1a1a">New Rent Check Submission</h2>
         <table style="width:100%;border-collapse:collapse;font-size:14px">
+          ${emailBadge}
           <tr><td style="padding:6px 12px 6px 0;color:#666;white-space:nowrap">Location</td><td style="padding:6px 0;font-weight:600">${address || "—"}<br/>${city || ""}, ${state || ""} ${zip || ""}</td></tr>
           <tr><td style="padding:6px 12px 6px 0;color:#666">Bedrooms</td><td style="padding:6px 0;font-weight:600">${bedrooms ?? "—"}</td></tr>
           <tr><td style="padding:6px 12px 6px 0;color:#666">Current Rent</td><td style="padding:6px 0;font-weight:600">${fmt(current_rent)}</td></tr>
@@ -48,7 +97,8 @@ Deno.serve(async (req) => {
           <tr><td style="padding:6px 12px 6px 0;color:#666">Comp Median</td><td style="padding:6px 0">${fmt(comp_median_rent)}</td></tr>
           <tr><td style="padding:6px 12px 6px 0;color:#666">Confidence</td><td style="padding:6px 0">${confidence_level || "—"}</td></tr>
         </table>
-        <p style="margin-top:20px;font-size:12px;color:#999">Sent by RenewalReply submission notifier</p>
+        ${leadCountNote}
+        <p style="margin-top:12px;font-size:12px;color:#999">Sent by RenewalReply submission notifier</p>
       </div>
     `;
 
