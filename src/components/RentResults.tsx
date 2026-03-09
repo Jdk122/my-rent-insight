@@ -724,11 +724,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 })().map((stat) => (
                     <div
                       key={stat.label}
-                      className={`text-center rounded-lg border px-2 sm:px-3 py-3 sm:py-4 grid grid-rows-[auto_1fr_14px] items-center min-h-[76px] sm:min-h-[84px] ${stat.highlight ? 'border-destructive/30 bg-destructive/5' : 'border-border/80 bg-card'}`}
+                      className={`text-center rounded-lg border px-2 sm:px-3 py-3 sm:py-4 grid grid-rows-[auto_1fr_14px] min-h-[76px] sm:min-h-[84px] ${stat.highlight ? 'border-destructive/30 bg-destructive/5' : 'border-border/80 bg-card'}`}
                       style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
                     >
-                      <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">{stat.label}</p>
-                      <p className={`font-display text-[20px] sm:text-[24px] md:text-[28px] tracking-tight tabular-nums ${stat.color}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
+                      <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1 self-start">{stat.label}</p>
+                      <p className={`font-display text-[20px] sm:text-[24px] md:text-[28px] tracking-tight tabular-nums self-center ${stat.color}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
                         {stat.value}
                       </p>
                       <span className="block h-[14px]" />
