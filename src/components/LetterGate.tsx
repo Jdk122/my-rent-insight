@@ -17,7 +17,7 @@ interface LetterGateProps {
   verdictLabel?: string;
 }
 
-const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail }: LetterGateProps) => {
+const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, verdictLabel }: LetterGateProps) => {
   const [unlocked, setUnlocked] = useState(() => !!prefilledEmail);
   const [email, setEmail] = useState(prefilledEmail || '');
   const [error, setError] = useState('');
