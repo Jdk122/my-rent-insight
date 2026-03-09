@@ -52,6 +52,7 @@ interface ShareHubProps {
   stats: { label: string; value: string; color?: string }[];
   landlordLabel?: string;
   neighborsLabel?: string;
+}
 
 type ActivePanel = null | 'landlord' | 'neighbors';
 
@@ -67,6 +68,8 @@ const ShareHub = ({
   increasePct,
   marketYoy,
   verdict = 'above',
+  landlordLabel = 'Share with landlord',
+  neighborsLabel = 'Share with neighbors',
 }: ShareHubProps) => {
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
 
@@ -186,7 +189,7 @@ const ShareHub = ({
         className="w-full inline-flex items-center justify-center gap-2 border border-border px-5 py-3 rounded-lg text-sm font-medium text-foreground hover:border-foreground transition-colors disabled:opacity-50"
       >
         <Link2 size={16} />
-        {generating ? 'Generating…' : copied ? 'Link copied!' : 'Share with landlord'}
+        {generating ? 'Generating…' : copied ? 'Link copied!' : landlordLabel}
       </button>
 
       {/* Context line */}
@@ -221,7 +224,7 @@ const ShareHub = ({
 
       {/* Neighbors: sharing channels — always visible */}
       <div className="mt-4">
-        <p className="text-[12px] text-muted-foreground mb-2 text-center">Share with neighbors</p>
+        <p className="text-[12px] text-muted-foreground mb-2 text-center">{neighborsLabel}</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-2.5">
           <button onClick={handleSMS} className="flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-foreground/40 hover:shadow-sm transition-all">
             <MessageCircle size={16} /> Text
