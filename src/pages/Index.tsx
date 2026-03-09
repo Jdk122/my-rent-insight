@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import RentForm, { RentFormData, RentFormPrefill } from '@/components/RentForm';
 import { lookupRentData, loadFredTrend, RentLookupResult } from '@/data/rentData';
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
@@ -268,6 +268,12 @@ const Index = () => {
               <span className="sm:hidden">Share →</span>
             </button>
           )}
+          <Link
+            to="/what-should-i-pay"
+            className="text-[12px] sm:text-[13px] text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap hidden sm:inline"
+          >
+            Check Asking Price →
+          </Link>
         </div>
       </nav>
 

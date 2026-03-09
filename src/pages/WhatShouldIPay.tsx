@@ -163,7 +163,7 @@ const WhatShouldIPay = () => {
             to="/"
             className="text-[12px] sm:text-[13px] text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap hidden sm:inline"
           >
-            Check Your Renewal →
+            Check My Increase →
           </Link>
           {results && !capturedEmail && (
             <button
