@@ -419,9 +419,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       }
     }
     if (!isAboveMarket) {
-      if (hasIncrease && medianCompRent && hasEnoughComps) {
-        sections.push({ id: 'section-move', label: 'Move' });
-      }
       if (hasIncrease) {
         sections.push({ id: 'section-share', label: 'Share' });
       }
@@ -1223,26 +1220,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </div>
             </motion.section>
 
-            {/* Estimated cost to move */}
-            {medianCompRent && hasEnoughComps && (
-              <motion.section id="section-move" {...fade(0.21)} className="pt-4 pb-4">
-                <h2 className="results-section-header mb-6">Estimated Cost to Move</h2>
-                <ShouldYouMove
-                  proposedRent={newRent}
-                  currentRent={formData.currentRent}
-                  comparables={outlierResult?.filtered ?? rentcast.data!.comparables}
-                  medianCompRent={medianCompRent}
-                  brLabel={brLabel}
-                  city={city}
-                  state={rentData.state}
-                  zip={rentData.zip}
-                  bedrooms={formData.bedrooms}
-                  counterOffer={null}
-                  isAboveMarket={false}
-                  onScrollToLetter={() => {}}
-                />
-              </motion.section>
-            )}
 
             {/* Email capture for fair/below — rewritten copy */}
             {!capturedEmail && (
