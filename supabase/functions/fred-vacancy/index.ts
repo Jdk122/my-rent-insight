@@ -6,7 +6,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-const FRED_API_KEY = "2f091940133b890134935950c4f22eec";
+const FRED_API_KEY = Deno.env.get("FRED_API_KEY") || "";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {

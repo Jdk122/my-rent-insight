@@ -12,6 +12,7 @@ import { calculateFairnessScore, type FairnessScoreInput } from '@/lib/fairnessS
 import { supabase } from '@/integrations/supabase/client';
 import type { RentZipRaw, ZhviZipRaw, ApartmentListZipRaw, Hud50ZipRaw } from '@/data/dataLoader';
 import AdminNav from '@/components/admin/AdminNav';
+import SEO from '@/components/SEO';
 
 // Password is now validated server-side via the admin-query edge function
 
@@ -184,6 +185,7 @@ export default function AdminDataQuality() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO noindex />
       <AdminNav />
       <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-8">
         <div className="flex items-center gap-3">

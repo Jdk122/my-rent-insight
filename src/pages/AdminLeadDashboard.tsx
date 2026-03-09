@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import AdminPasswordGate, { getAdminPassword, clearAdminSession } from '@/components/admin/AdminPasswordGate';
 import AdminNav from '@/components/admin/AdminNav';
 import LeadDetailPanel from '@/components/admin/LeadDetailPanel';
+import SEO from '@/components/SEO';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -132,6 +133,7 @@ function downloadCSV(rows: any[], filename: string) {
 export default function AdminLeadDashboard() {
   return (
     <div className="min-h-screen bg-background">
+      <SEO noindex />
       <AdminNav />
       <AdminPasswordGate>
         <DashboardContent />

@@ -25,27 +25,17 @@ interface LandlordCostSectionProps {
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
-/** Fetch Freddie Mac 30-year fixed rate for a given sale date from FRED API */
+/** Fetch Freddie Mac 30-year fixed rate for a given sale date via edge function */
 async function fetchFredMortgageRate(saleDate: string): Promise<number | null> {
   try {
-    const apiKey = import.meta.env.VITE_FRED_API_KEY;
-    if (!apiKey) return null;
+    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+    if (!projectId) return null;
 
-    const date = new Date(saleDate);
-    const start = new Date(date);
-    start.setDate(start.getDate() - 14);
-    const end = new Date(date);
-    end.setDate(end.getDate() + 14);
-
-    const fmt = (d: Date) => d.toISOString().split('T')[0];
-    const url = `https://api.stlouisfed.org/fred/series/observations?series_id=MORTGAGE30US&api_key=${apiKey}&file_type=json&observation_start=${fmt(start)}&observation_end=${fmt(end)}&sort_order=desc&limit=1`;
-
+    const url = `https://${projectId}.supabase.co/functions/v1/fred-mortgage?type=mortgage&sale_date=${encodeURIComponent(saleDate)}`;
     const res = await fetch(url);
     if (!res.ok) return null;
     const data = await res.json();
-    const obs = data.observations?.filter((o: { value: string }) => o.value !== '.');
-    if (!obs || obs.length === 0) return null;
-    return parseFloat(obs[0].value) / 100; // e.g. 6.42 → 0.0642
+    return data.rate ?? null;
   } catch {
     return null;
   }
