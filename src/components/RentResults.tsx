@@ -175,8 +175,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   }, [rentData.fmr, medianCompRent]);
 
   // ━━━ Fairness Score (replaces 3-factor verdict) ━━━
+  const asyncDataReady = !rentcast.loading && !rcMarket.loading;
+
   const fairnessScore = useMemo<FairnessScoreResult | null>(() => {
     if (!hasIncrease) return null;
+    if (!asyncDataReady) return null; // Wait for all async data before calculating
     return calculateFairnessScore({
       increasePct,
       marketYoY: marketYoy,
@@ -195,7 +198,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       rcTotalListings: rcMarket.rcTotalListings,
       compositeTrend: compositeTrendResult.compositeTrend,
     });
-  }, [hasIncrease, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings, compositeTrendResult]);
+  }, [hasIncrease, asyncDataReady, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings, compositeTrendResult]);
 
   const refinedVerdict = useMemo(() => {
     if (!fairnessScore) return null;
@@ -495,7 +498,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             {...fade(0)}
             className="min-h-[45vh] sm:min-h-[50vh] flex flex-col items-center justify-center text-center py-8 sm:py-12"
           >
-          {hasIncrease && fairnessScore ? (
+          {hasIncrease && !asyncDataReady ? (
+              <div className="flex flex-col items-center gap-4">
+                <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+                <p className="text-muted-foreground text-sm">Analyzing market data…</p>
+              </div>
+          ) : hasIncrease && fairnessScore ? (
             <>
               {/* Fairness Score Gauge + Dynamic Verdict */}
               {/* Build source attribution for each component */}

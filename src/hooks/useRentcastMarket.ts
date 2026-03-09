@@ -14,7 +14,8 @@ export interface RentcastMarketResult {
   rcRentHistory: { month: string; medianRent: number }[] | null;
 }
 
-export function useRentcastMarket(zip: string, bedrooms: BedroomType): RentcastMarketResult {
+export function useRentcastMarket(zip: string, bedrooms: BedroomType): RentcastMarketResult & { loading: boolean } {
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState<RentcastMarketResult>({
     rcMedianRent: null,
     rcAvgDaysOnMarket: null,
@@ -81,6 +82,8 @@ export function useRentcastMarket(zip: string, bedrooms: BedroomType): RentcastM
         }
       } catch {
         // Silent failure — rc* fields stay null
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     }
 
@@ -88,5 +91,5 @@ export function useRentcastMarket(zip: string, bedrooms: BedroomType): RentcastM
     return () => { cancelled = true; };
   }, [zip, bedrooms]);
 
-  return data;
+  return { ...data, loading };
 }
