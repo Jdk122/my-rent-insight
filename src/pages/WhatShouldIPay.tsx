@@ -239,6 +239,12 @@ const WhatShouldIPay = () => {
               <SocialProofCounter />
             </Suspense>
           </section>
+          <Suspense fallback={null}>
+            <HowItWorks />
+          </Suspense>
+          <Suspense fallback={null}>
+            <HomeFAQ />
+          </Suspense>
         </main>
       ) : (
         <div ref={resultsRef}>
