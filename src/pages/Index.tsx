@@ -300,6 +300,7 @@ const Index = () => {
           <RentResults
             formData={results.formData}
             rentData={results.rentData}
+            isDemo={!!searchParams.get('demo')}
             propertyData={propertyLookup.data}
             propertyLoading={propertyLookup.loading}
             propertyError={propertyLookup.error}
