@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { RentFormData } from '@/components/RentForm';
-import { lookupRentData, loadFredTrend, RentLookupResult } from '@/data/rentData';
+import { useSearchParams, Link } from 'react-router-dom';
+import { lookupRentData, loadFredTrend, RentLookupResult, BedroomType } from '@/data/rentData';
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
 import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
@@ -9,16 +8,28 @@ import SEO from '@/components/SEO';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
 import WsipForm, { WsipFormData } from '@/components/WsipForm';
 
-const RentResults = lazy(() => import('@/components/RentResults'));
+const WsipResults = lazy(() => import('@/components/WsipResults'));
 const SocialProofCounter = lazy(() => import('@/components/SocialProofCounter'));
 const ContactModal = lazy(() => import('@/components/ContactModal'));
 const HomeFAQ = lazy(() => import('@/components/HomeFAQ'));
 const HowItWorks = lazy(() => import('@/components/HowItWorks'));
 const SEOFooter = lazy(() => import('@/components/SEOFooter'));
 
+interface WsipResultsState {
+  zip: string;
+  fullAddress: string | null;
+  bedrooms: BedroomType;
+  askingRent: number | null;
+  rentData: RentLookupResult;
+}
+
+const bedroomNumToKey: Record<number, BedroomType> = {
+  0: 'studio', 1: 'oneBr', 2: 'twoBr', 3: 'threeBr', 4: 'fourBr',
+};
+
 const WhatShouldIPay = () => {
   const [searchParams] = useSearchParams();
-  const [results, setResults] = useState<{ formData: RentFormData; rentData: RentLookupResult } | null>(null);
+  const [results, setResults] = useState<WsipResultsState | null>(null);
   const [contactOpen, setContactOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [navScrolled, setNavScrolled] = useState(false);
@@ -49,22 +60,18 @@ const WhatShouldIPay = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, [results]);
 
-  const [isAboveMarket, setIsAboveMarket] = useState(false);
-
-  // In WSIP, hasIncrease is true only when the user entered an asking rent
-  const hasIncrease = !!(results && results.formData.rentIncrease && results.formData.rentIncrease > 0);
+  const resetAll = () => {
+    setResults(null);
+    setFormKey(k => k + 1);
+    setCapturedEmail('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleSubmit = async (data: WsipFormData) => {
     setIsLoading(true);
     setCapturedEmail('');
 
     try {
-      // Convert WSIP form data to RentFormData
-      // When asking rent is provided, we treat it as:
-      // currentRent = FMR (filled after lookup), proposedIncrease = askingRent - FMR
-      // For now, pass askingRent as currentRent with $0 increase so RentResults shows market context
-      // If askingRent provided, we'll calculate increase after getting FMR
-
       const lookupZip = data.zip;
       let propResult = null;
 
@@ -81,39 +88,14 @@ const WhatShouldIPay = () => {
         return;
       }
 
-      // Build RentFormData from WSIP inputs
-      let formData: RentFormData;
+      setResults({
+        zip,
+        fullAddress: data.fullAddress,
+        bedrooms: data.bedrooms,
+        askingRent: data.askingRent,
+        rentData,
+      });
 
-      if (data.askingRent) {
-        // User entered an asking rent — treat it as the "proposed rent"
-        // Use the FMR as the "current rent" baseline so the increase comparison works
-        // The increase = how much asking rent exceeds FMR
-        const fmr = rentData.fmr;
-        const increase = data.askingRent - fmr;
-
-        formData = {
-          zip,
-          fullAddress: data.fullAddress,
-          bedrooms: data.bedrooms,
-          currentRent: fmr,
-          rentIncrease: increase > 0 ? increase : 0,
-          increaseIsPercent: false,
-          movingCosts: 2500,
-        };
-      } else {
-        // No asking rent — show market data only ($0 increase path)
-        formData = {
-          zip,
-          fullAddress: data.fullAddress,
-          bedrooms: data.bedrooms,
-          currentRent: rentData.fmr,
-          rentIncrease: 0,
-          increaseIsPercent: false,
-          movingCosts: 2500,
-        };
-      }
-
-      setResults({ formData, rentData });
       trackEvent('wsip_form_submitted', { zip, bedrooms: data.bedrooms, has_asking_rent: !!data.askingRent });
       setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
 
@@ -135,10 +117,10 @@ const WhatShouldIPay = () => {
     <div className="min-h-screen bg-background flex flex-col overflow-x-hidden" ref={topRef}>
       <SEO
         title={results
-          ? `What Should I Pay for Rent in ${results.rentData.city}? | Fair Rent Calculator | RenewalReply`
+          ? `What Should I Pay for Rent in ${results.rentData.city}? | Fair Rent Range | RenewalReply`
           : 'What Should I Pay for Rent? | Fair Rent Calculator | RenewalReply'}
         description={results
-          ? `See fair rent ranges, comparable listings, and market conditions for ${results.rentData.city}. Know before you sign.`
+          ? `Find the fair rent range for ${results.bedrooms === 'studio' ? 'studios' : results.bedrooms.replace('Br', '-bedrooms')} in ${results.rentData.city}. Compare asking prices to real comparable listings and market data.`
           : 'Find out what you should actually pay for rent. Compare asking prices to market data, nearby listings, and HUD benchmarks.'}
         canonical="/what-should-i-pay"
         jsonLd={{
@@ -153,7 +135,7 @@ const WhatShouldIPay = () => {
         }}
       />
 
-      {/* Sticky Nav — identical to Index */}
+      {/* Sticky Nav */}
       <nav
         className={`fixed top-0 left-0 right-0 z-[60] flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 transition-all duration-200 animate-fade-in ${
           results && !navScrolled ? 'bg-transparent' : 'bg-card'
@@ -169,20 +151,25 @@ const WhatShouldIPay = () => {
           height="24"
           fetchPriority="high"
           className="h-5 sm:h-6 w-auto object-contain cursor-pointer hover:scale-105 transition-transform duration-200 shrink-0"
-          onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0 }); }}
+          onClick={() => { resetAll(); window.scrollTo({ top: 0 }); }}
         />
         <div className="flex items-center gap-2 sm:gap-3">
           {results && (
-            <button onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-[12px] sm:text-[13px] text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap">
+            <button onClick={resetAll} className="text-[12px] sm:text-[13px] text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap">
               ← New search
             </button>
           )}
+          <Link
+            to="/"
+            className="text-[12px] sm:text-[13px] text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap hidden sm:inline"
+          >
+            Check Your Renewal →
+          </Link>
           {results && !capturedEmail && (
             <button
               onClick={() => {
                 const target = document.getElementById('section-comps')
-                  || document.getElementById('section-evidence')
-                  || document.getElementById('section-email-capture');
+                  || document.getElementById('section-market');
                 if (target) {
                   target.scrollIntoView({ behavior: 'smooth' });
                 } else {
@@ -202,7 +189,7 @@ const WhatShouldIPay = () => {
               }}
               className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap"
             >
-              <span className="hidden sm:inline">Share this analysis →</span>
+              <span className="hidden sm:inline">Share this →</span>
               <span className="sm:hidden">Share →</span>
             </button>
           )}
@@ -249,22 +236,15 @@ const WhatShouldIPay = () => {
       ) : (
         <div ref={resultsRef}>
           <Suspense fallback={<LoadingAnalysis />}>
-            <RentResults
-              formData={results.formData}
+            <WsipResults
+              zip={results.zip}
+              fullAddress={results.fullAddress}
+              bedrooms={results.bedrooms}
+              askingRent={results.askingRent}
               rentData={results.rentData}
-              propertyData={propertyLookup.data}
-              propertyLoading={propertyLookup.loading}
-              propertyError={propertyLookup.error}
-              onReset={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              onScrollToTop={() => {
-                setResults(null);
-                setFormKey(k => k + 1);
-                setCapturedEmail('');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
               capturedEmail={capturedEmail}
               onEmailCaptured={setCapturedEmail}
-              onVerdictReady={setIsAboveMarket}
+              onReset={resetAll}
             />
           </Suspense>
         </div>
