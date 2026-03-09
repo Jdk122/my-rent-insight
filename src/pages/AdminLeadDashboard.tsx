@@ -132,6 +132,7 @@ function downloadCSV(rows: any[], filename: string) {
 export default function AdminLeadDashboard() {
   return (
     <div className="min-h-screen bg-background">
+      <SEO noindex />
       <AdminNav />
       <AdminPasswordGate>
         <DashboardContent />
