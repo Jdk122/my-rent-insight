@@ -195,10 +195,10 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
             <div className="absolute inset-x-0 top-[4rem] bottom-0 flex items-start justify-center pt-6 sm:pt-10">
               <div className="bg-card border border-border rounded-xl shadow-lg px-5 sm:px-8 py-6 sm:py-8 max-w-[440px] w-full mx-4 text-center pointer-events-auto">
                 <h3 className="font-display text-lg font-semibold text-foreground mb-2">
-                  Your personalized negotiation letter is ready
+                  {gateHeading}
                 </h3>
                 <p className="text-sm text-muted-foreground mb-5">
-                  Tailored to your {fmtRent} rent{leadContext?.address ? ` at ${leadContext.address.split(',')[0]}` : ''} — includes market data and a specific counter-offer amount.
+                  {gateSubline}
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-2">
