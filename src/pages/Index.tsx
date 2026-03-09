@@ -268,6 +268,12 @@ const Index = () => {
               <span className="sm:hidden">Share →</span>
             </button>
           )}
+          <Link
+            to="/what-should-i-pay"
+            className="text-[12px] sm:text-[13px] text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap hidden sm:inline"
+          >
+            Check Asking Price →
+          </Link>
         </div>
       </nav>
 
