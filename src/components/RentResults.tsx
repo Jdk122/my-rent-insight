@@ -324,12 +324,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       rent_stabilized: null,
       property_type: inferredPropertyType,
       anomaly_flags: anomalyFlags,
-    } as any).select('id').single().then(({ data, error }) => {
+    } as any).then(({ error }) => {
       if (error) {
         console.error('[RentResults] Analysis insert failed:', error.message, error);
-      } else if (data?.id) {
-        setAnalysisId(data.id);
-        console.log('[RentResults] Analysis logged:', data.id);
+      } else {
+        console.log('[RentResults] Analysis logged successfully');
       }
     });
 
