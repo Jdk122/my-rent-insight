@@ -40,7 +40,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          trackEvent('letter_blur_shown', { verdict: 'above', zip_code: leadContext?.zip || '' });
+          trackEvent('letter_blur_shown', { verdict: verdictLabel || 'above', zip_code: leadContext?.zip || '' });
           observer.disconnect();
         }
       },
