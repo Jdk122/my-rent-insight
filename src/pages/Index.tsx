@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
 import SEO from '@/components/SEO';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
+import { getDemoData } from '@/data/demoData';
 
 // Lazy-load heavy below-fold components to reduce initial bundle
 const RentResults = lazy(() => import('@/components/RentResults'));
@@ -28,6 +29,15 @@ const Index = () => {
   const propertyLookup = usePropertyLookup();
   const topRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+
+  // Demo mode: ?demo=above|fair|below|none
+  useEffect(() => {
+    const demo = searchParams.get('demo');
+    const demoData = getDemoData(demo);
+    if (demoData && !results) {
+      setResults(demoData);
+    }
+  }, [searchParams]);
 
   // Read URL params for pre-fill (from reminder emails)
   const prefill = useMemo<RentFormPrefill | undefined>(() => {
