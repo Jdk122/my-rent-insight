@@ -68,6 +68,8 @@ const ShareHub = ({
   increasePct,
   marketYoy,
   verdict = 'above',
+  landlordLabel = 'Share with landlord',
+  neighborsLabel = 'Share with neighbors',
 }: ShareHubProps) => {
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
 
