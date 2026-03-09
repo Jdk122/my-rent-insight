@@ -1008,16 +1008,20 @@ const WsipResults = ({
                   bedroomLabel: bedroomLabels[bedrooms],
                 },
               }}
-              zip={zip}
+              analysisId={analysisId}
+              leadEmail={capturedEmail}
+              zipCode={zip}
               city={city}
               state={state}
-              brLabel={brLabel}
-              analysisId={analysisId}
-              verdictLabel={verdictLabel}
-              capturedEmail={capturedEmail}
-              medianCompRent={medianCompRent}
-              askingRent={askingPrice ?? 0}
-              fairnessScore={null}
+              bedroomNum={bedroomNum}
+              increasePct={0}
+              marketYoy={marketYoy}
+              verdict="none"
+              headline={`Fair rent for a ${brLabel}: ${fmtCurrency(rangeLow)}–${fmtCurrency(rangeHigh)}`}
+              stats={[
+                { label: 'Fair Range', value: `${fmtCurrency(rangeLow)}–${fmtCurrency(rangeHigh)}` },
+                ...(askingPrice ? [{ label: 'Asking', value: fmtCurrency(askingPrice), color: askingVerdict === 'above' ? 'text-destructive' : 'text-verdict-good' }] : []),
+              ]}
             />
           </Suspense>
         </motion.div>
