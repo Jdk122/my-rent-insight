@@ -324,8 +324,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       rent_stabilized: null,
       property_type: inferredPropertyType,
       anomaly_flags: anomalyFlags,
-    } as any).select('id').single().then(({ data }) => {
-      if (data?.id) setAnalysisId(data.id);
+    } as any).select('id').single().then(({ data, error }) => {
+      if (error) {
+        console.error('[RentResults] Analysis insert failed:', error.message, error);
+      } else if (data?.id) {
+        setAnalysisId(data.id);
+        console.log('[RentResults] Analysis logged:', data.id);
+      }
     });
 
     // Fire GA4 property type event
