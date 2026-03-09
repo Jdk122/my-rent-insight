@@ -181,6 +181,14 @@ function DashboardContent() {
   const [orphanLeads, setOrphanLeads] = useState<any[]>([]);
   const [orphanLoading, setOrphanLoading] = useState(false);
 
+  // ── Email List ──
+  const [emailLeads, setEmailLeads] = useState<any[]>([]);
+  const [emailLeadsLoading, setEmailLeadsLoading] = useState(false);
+  const [emailFilterSource, setEmailFilterSource] = useState<string>('all');
+  const [emailFilterVerdict, setEmailFilterVerdict] = useState<string>('all');
+  const [emailFilterUnsub, setEmailFilterUnsub] = useState<string>('active');
+  const [emailSearch, setEmailSearch] = useState('');
+
   // Helper to call admin edge function
   const adminQuery = async (query: string, params?: any) => {
     const password = getAdminPassword();
