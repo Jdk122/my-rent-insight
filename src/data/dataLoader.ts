@@ -221,23 +221,18 @@ async function fetchFredTrend(metro: string): Promise<FredTrendData | null> {
     const seriesId = getFredSeriesFromMetro(metro, metroMap);
     if (!seriesId) return null;
 
-    const apiKey = import.meta.env.VITE_FRED_API_KEY;
-    if (!apiKey) return null;
+    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+    if (!projectId) return null;
 
-    const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=13`;
+    const url = `https://${projectId}.supabase.co/functions/v1/fred-mortgage?type=trend&series_id=${encodeURIComponent(seriesId)}`;
 
     const response = await fetch(url);
     if (!response.ok) return null;
 
     const data = await response.json();
-    const observations = data.observations
-      .filter((o: { value: string }) => o.value !== '.')
-      .map((o: { date: string; value: string }) => ({
-        date: o.date,
-        value: parseFloat(o.value),
-      }));
+    const observations = data.observations;
 
-    if (observations.length < 2) return null;
+    if (!observations || observations.length < 2) return null;
 
     const latest = observations[0].value;
     const prior = observations[1].value;
