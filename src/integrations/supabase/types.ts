@@ -372,6 +372,7 @@ export type Database = {
           reminder_sent_at: string | null
           sent_email_day45: string | null
           state: string | null
+          testimonial: string | null
           unsubscribed: boolean | null
           utm_campaign: string | null
           utm_medium: string | null
@@ -407,6 +408,7 @@ export type Database = {
           reminder_sent_at?: string | null
           sent_email_day45?: string | null
           state?: string | null
+          testimonial?: string | null
           unsubscribed?: boolean | null
           utm_campaign?: string | null
           utm_medium?: string | null
@@ -442,6 +444,7 @@ export type Database = {
           reminder_sent_at?: string | null
           sent_email_day45?: string | null
           state?: string | null
+          testimonial?: string | null
           unsubscribed?: boolean | null
           utm_campaign?: string | null
           utm_medium?: string | null
