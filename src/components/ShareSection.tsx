@@ -24,10 +24,27 @@ const ShareSection = ({ increasePct, marketPct, excessAnnual, multiplier, landlo
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
   const fullText = `${shareText} Check yours: ${shareUrl}`;
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(fullText);
+  const handleCopy = async () => {
+    let ok = false;
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(fullText);
+        ok = true;
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = fullText;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        ok = document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+    } catch {}
     trackEvent('share_clicked', { share_method: 'copy_link' });
-    toast.success('Copied to clipboard');
+    if (ok) toast.success('Copied to clipboard');
+    else toast.error('Copy failed — try selecting and copying manually.');
   };
 
   return (
