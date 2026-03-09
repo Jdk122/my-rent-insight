@@ -141,7 +141,7 @@ function CompsWithRentLine({
       {userUnitRow && <div className="mb-2">{userUnitRow}</div>}
       {sorted.map((comp, i) => (
         <div key={i}>
-          {i === refIndex && rentLine}
+          {!hideRentLine && i === refIndex && rentLine}
           <motion.div
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
