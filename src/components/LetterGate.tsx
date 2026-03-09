@@ -254,7 +254,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
           <PostConversionFlow
             email={email || prefilledEmail || ''}
             leadContext={leadContext}
-            verdictLabel="above"
+            verdictLabel={verdictLabel || 'above'}
             zip={leadContext?.zip || ''}
           />
         </div>
