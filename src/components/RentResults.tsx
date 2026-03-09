@@ -121,9 +121,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const isPath1 = hasSaleData && !forceMarketOnly;
   const marketMultiple = marketYoy > 0 ? Math.round((increasePct / marketYoy) * 10) / 10 : 0;
 
-  const rentcast = useRentcast(rentData.zip, formData.bedrooms, formData.fullAddress);
-  const rcMarket = useRentcastMarket(rentData.zip, formData.bedrooms);
-  const hcrLookup = useHcrLookup(formData.fullAddress, rentData.zip);
+  const rentcast = useRentcast(rentData.zip, formData.bedrooms, formData.fullAddress, !isDemo);
+  const rcMarket = useRentcastMarket(rentData.zip, formData.bedrooms, !isDemo);
+  const hcrLookup = useHcrLookup(formData.fullAddress, rentData.zip, !isDemo);
   const hasRentcastComps = rentcast.data && rentcast.data.comparables.length > 0;
 
   // ━━━ Preprocessing: deduplicate & filter furnished ━━━
