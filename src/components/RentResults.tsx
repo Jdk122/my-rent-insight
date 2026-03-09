@@ -1286,8 +1286,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       : `My rent increase is below the area trend.`
                   }
                   stats={[
-                    { label: 'You pay now', value: `$${fmt(formData.currentRent)}` },
-                    { label: 'They want', value: `$${fmt(newRent)}`, color: isBelowMarket ? 'hsl(151, 50%, 38%)' : undefined },
+                    { label: 'Current rent', value: `$${fmt(formData.currentRent)}` },
+                    { label: 'Proposed rent', value: `$${fmt(newRent)}`, color: isBelowMarket ? 'hsl(151, 50%, 38%)' : undefined },
                     { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
                     { label: 'Your increase', value: `${increasePct}%`, color: isFair ? 'hsl(45, 80%, 45%)' : 'hsl(151, 50%, 38%)' },
                   ]}
