@@ -106,3 +106,45 @@ export function getDemoData(scenario: string | null): { formData: RentFormData; 
   const key = scenario.toLowerCase() as DemoScenario;
   return scenarios[key] ?? null;
 }
+
+/* ── WSIP demo scenarios ── */
+
+type WsipDemoScenario = 'overpriced' | 'fair' | 'deal';
+
+interface WsipDemoResult {
+  zip: string;
+  fullAddress: string | null;
+  bedrooms: 'studio' | 'oneBr' | 'twoBr' | 'threeBr' | 'fourBr';
+  askingRent: number | null;
+  rentData: RentLookupResult;
+}
+
+const wsipScenarios: Record<WsipDemoScenario, WsipDemoResult> = {
+  overpriced: {
+    zip: '10001',
+    fullAddress: '350 W 30th St, New York, NY 10001',
+    bedrooms: 'oneBr',
+    askingRent: 2650,
+    rentData: { ...baseRentData },
+  },
+  fair: {
+    zip: '10001',
+    fullAddress: '456 W 34th St, New York, NY 10001',
+    bedrooms: 'oneBr',
+    askingRent: 2100,
+    rentData: { ...baseRentData },
+  },
+  deal: {
+    zip: '10001',
+    fullAddress: '789 8th Ave, New York, NY 10001',
+    bedrooms: 'oneBr',
+    askingRent: 1850,
+    rentData: { ...baseRentData, fmr: 2100, fmrPrior: 2000 },
+  },
+};
+
+export function getWsipDemoData(scenario: string | null): WsipDemoResult | null {
+  if (!scenario) return null;
+  const key = scenario.toLowerCase() as WsipDemoScenario;
+  return wsipScenarios[key] ?? null;
+}

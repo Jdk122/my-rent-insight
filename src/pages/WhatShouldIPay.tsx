@@ -40,6 +40,15 @@ const WhatShouldIPay = () => {
   const topRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
+  // Demo mode: ?demo=overpriced|fair|deal
+  useEffect(() => {
+    const demo = searchParams.get('demo');
+    const demoData = getWsipDemoData(demo);
+    if (demoData && !results) {
+      setResults(demoData);
+    }
+  }, [searchParams]);
+
   const prefill = useMemo(() => {
     const zip = searchParams.get('zip');
     const bedrooms = searchParams.get('bedrooms');
