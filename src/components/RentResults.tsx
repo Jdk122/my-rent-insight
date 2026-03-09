@@ -350,6 +350,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             confidence_level: confidence.level ?? null,
             comp_median_rent: medianCompRent ?? null,
             hud_fmr_value: rentData.fmr ?? null,
+            analysis_id: analysisId,
           },
         }).catch(() => { /* silent */ });
       }
