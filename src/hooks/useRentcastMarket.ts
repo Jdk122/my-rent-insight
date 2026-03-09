@@ -82,6 +82,8 @@ export function useRentcastMarket(zip: string, bedrooms: BedroomType): RentcastM
         }
       } catch {
         // Silent failure — rc* fields stay null
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     }
 
@@ -89,5 +91,5 @@ export function useRentcastMarket(zip: string, bedrooms: BedroomType): RentcastM
     return () => { cancelled = true; };
   }, [zip, bedrooms]);
 
-  return data;
+  return { ...data, loading };
 }
