@@ -171,7 +171,7 @@ const WhatShouldIPay = () => {
           )}
           <Link
             to="/"
-            className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap hidden sm:inline-block"
+            className="border border-border text-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:bg-muted transition-all duration-150 whitespace-nowrap hidden sm:inline-block"
           >
             Check My Increase →
           </Link>
