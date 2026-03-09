@@ -629,52 +629,24 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                           style={{ letterSpacing: '-0.02em' }}
                         >
                           {isAboveMarket && calc ? (
-                            fairnessScore && fairnessScore.total >= 40 ? (
-                              marketYoy < -0.5 ? (
-                                <>Rents near you dropped {Math.abs(marketYoy)}% — your landlord is asking for{' '}
-                                  <span className="text-accent-amber">{increasePct}%, {increasePct - Math.abs(marketYoy) > 4 ? 'well above' : 'above'} trend.</span></>
-                              ) : marketYoy >= -0.5 && marketYoy <= 0.5 ? (
-                                <>Rents near you have been flat — your landlord is asking for{' '}
-                                  <span className="text-accent-amber">{increasePct}%, above the current trend.</span></>
-                              ) : (
-                                <>Rents near you went up {marketYoy}% — your landlord is asking for{' '}
-                                  <span className="text-accent-amber">{increasePct}%, {increasePct - marketYoy > 4 ? 'well above' : 'above'} trend.</span></>
-                              )
-                            ) : (
-                              marketYoy < -0.5 ? (
-                                <>Rents near you dropped {Math.abs(marketYoy)}% — but your landlord wants{' '}
-                                  <span className="text-destructive">{increasePct}% more.</span></>
-                              ) : marketYoy >= -0.5 && marketYoy <= 0.5 ? (
-                                <>Rents near you have been flat — but your landlord wants{' '}
-                                  <span className="text-destructive">{increasePct}% more.</span></>
-                              ) : (
-                                <>Rents near you went up {marketYoy}% — but your landlord wants{' '}
-                                  <span className="text-destructive">{increasePct}% more.</span></>
-                              )
-                            )
+                            <>Your rent increase is <span className="text-destructive">above market.</span></>
                           ) : isFair ? (
-                            isNuancedAtMarket ? (
+                            isNuancedAtMarket || (increasePct > marketYoy + 1.5 && medianCompRent && newRent <= medianCompRent) ? (
                               <>Your rent is <span className="text-verdict-fair">still at market.</span></>
-                            ) : increasePct > marketYoy + 1.5 ? (
-                              <>Your rent is <span className="text-verdict-fair">still reasonable.</span></>
                             ) : (
                               <>Your rent increase is <span className="text-verdict-fair">right at market.</span></>
                             )
-                          ) : increasePct > 0 && increasePct <= marketYoy ? (
-                            <>Your increase of {increasePct}% is{' '}
-                              <span className="text-verdict-good">below the {marketYoy}% area trend.</span></>
-                          ) : increasePct <= 0 ? (
-                            <>Your rent is staying the same or going down — that's{' '}
-                              <span className="text-verdict-good">below the {marketYoy}% area trend.</span></>
-                          ) : (
+                          ) : increasePct > 0 ? (
                             <>Your rent increase is <span className="text-verdict-good">below market.</span></>
+                          ) : (
+                            <>Good news — <span className="text-verdict-good">your rent isn't going up.</span></>
                           )}
                         </h1>
                         <p className="text-[14px] sm:text-base md:text-lg text-muted-foreground leading-relaxed">
                           {isAboveMarket && calc ? (
                             calc.counterExceedsProposed
                               ? <>Based on market data, your proposed rent appears to be in line with or below current market trends.</>
-                              : <>That's ${fmt(increaseAmount * 12)} more per year than a market-rate increase would be. A fair counter-offer is {calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}/mo` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}/mo`}.</>
+                              : <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. That's ${fmt(increaseAmount * 12)} more per year. A fair counter-offer is {calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}/mo` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}/mo`}.</>
                           ) : isFair ? (
                             isNuancedAtMarket || increasePct > marketYoy + 1.5 ? (
                               medianCompRent ? (
@@ -683,10 +655,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                                 <>Your {increasePct}% increase is above the {marketYoy}% area trend — but at ${fmt(newRent)}/mo, you're still within the typical range for {brLabel} rentals in {city}.</>
                               )
                             ) : (
-                              <>At ${fmt(newRent)}/mo, you'll be within the typical range for {brLabel} rentals in {city}.</>
+                              <>At ${fmt(newRent)}/mo, your {increasePct}% increase tracks the {marketYoy}% area trend for {brLabel} rentals in {city}.</>
                             )
+                          ) : increasePct > 0 ? (
+                            <>Your {increasePct}% increase is below the {marketYoy}% area trend. At ${fmt(newRent)}/mo, you're getting a competitive deal in {city}.</>
                           ) : (
-                            <>At ${fmt(newRent)}/mo, you're getting a competitive deal compared to similar units in {city}.</>
+                            <>Rents in {city} moved {marketYoy}% this year. Your landlord keeping your rent at ${fmt(formData.currentRent)}/mo means you're coming out ahead.</>
                           )}
                         </p>
                         {isNycZip(rentData.zip) && hasIncrease && (
