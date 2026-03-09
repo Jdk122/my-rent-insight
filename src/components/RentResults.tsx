@@ -456,8 +456,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   // ━━━ Comp gate state ━━━
   const allComps = outlierResult?.filtered ?? cleanedComps;
-  const visibleComps = allComps.slice(0, 3);
-  const gatedComps = allComps.slice(3);
+  const compsWithRent = allComps.filter(c => c.rent !== null && c.rent > 0);
+  const displayableTotal = Math.min(compsWithRent.length, 6);
+  const visibleCount = Math.min(displayableTotal, 3);
+  const visibleComps = allComps.slice(0, visibleCount);
+  const gatedComps = displayableTotal > visibleCount ? allComps.slice(visibleCount) : [];
+  const gatedDisplayCount = displayableTotal - visibleCount;
   const [compsUnlocked, setCompsUnlocked] = useState(false);
   const [compEmail, setCompEmail] = useState('');
   const [compEmailError, setCompEmailError] = useState('');
@@ -980,7 +984,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 {/* Capture prompt first */}
                 <div className="text-center py-4 px-4">
                   <p className="text-sm font-semibold text-foreground mb-1">
-                    {gatedComps.length} more comparable rental{gatedComps.length !== 1 ? 's' : ''} nearby
+                    {gatedDisplayCount} more comparable rental{gatedDisplayCount !== 1 ? 's' : ''} nearby
                   </p>
                   <p className="text-xs text-muted-foreground mb-3">Enter your email to see all comps</p>
                   <form onSubmit={handleCompGateSubmit} className="flex gap-2 max-w-[400px] mx-auto">
