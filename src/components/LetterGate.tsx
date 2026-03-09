@@ -148,11 +148,17 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail }: 
       <h2 className="section-title mb-4">Your Negotiation Letter</h2>
 
       {/* Letter container */}
-      <div className="relative" ref={blurRef}>
+      <div className="relative" ref={blurRef} style={!unlocked ? { minHeight: '500px' } : undefined}>
+        {/* Full letter renders behind the blur — all content visible as blurred outlines */}
         <div
           ref={letterRef}
           data-letter-content
-          style={!unlocked ? { userSelect: 'none', WebkitUserSelect: 'none' } as React.CSSProperties : undefined}
+          style={!unlocked ? {
+            userSelect: 'none',
+            WebkitUserSelect: 'none',
+            filter: 'blur(4px)',
+            pointerEvents: 'none',
+          } as React.CSSProperties : undefined}
         >
           {children}
         </div>
@@ -160,25 +166,16 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail }: 
         {/* Blur overlay when locked */}
         {!unlocked && (
           <>
-            {/* Gradient fade + blur that covers everything after ~4 lines */}
+            {/* Gradient: clear first ~4 lines, then gentle fade to semi-transparent */}
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
-                background: 'linear-gradient(to bottom, transparent 6rem, hsl(var(--card) / 0.4) 8rem, hsl(var(--card) / 0.85) 12rem, hsl(var(--card)) 16rem)',
-              }}
-            />
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                backdropFilter: 'blur(0px)',
-                WebkitBackdropFilter: 'blur(0px)',
-                maskImage: 'linear-gradient(to bottom, transparent 5rem, black 10rem)',
-                WebkitMaskImage: 'linear-gradient(to bottom, transparent 5rem, black 10rem)',
+                background: 'linear-gradient(to bottom, hsl(var(--card) / 0) 0%, hsl(var(--card) / 0.15) 5rem, hsl(var(--card) / 0.45) 10rem, hsl(var(--card) / 0.55) 100%)',
               }}
             />
 
-            {/* Capture card overlay */}
-            <div className="absolute inset-x-0 bottom-0 top-[8rem] flex items-start justify-center pt-8 sm:pt-12">
+            {/* Capture card overlay — centered over the blurred letter */}
+            <div className="absolute inset-x-0 top-[4rem] bottom-0 flex items-start justify-center pt-6 sm:pt-10">
               <div className="bg-card border border-border rounded-xl shadow-lg px-5 sm:px-8 py-6 sm:py-8 max-w-[440px] w-full mx-4 text-center pointer-events-auto">
                 <h3 className="font-display text-lg font-semibold text-foreground mb-2">
                   Your personalized negotiation letter is ready
