@@ -295,8 +295,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     // Use the pre-generated analysisId
 
     supabase.from('analyses').insert({
-      id: analysisId,
-      address: formData.fullAddress || null,
+      id: analysis   address: formData.fullAddress || null,
       city: rentData.city,
       state: rentData.state,
       zip: rentData.zip,
@@ -333,8 +332,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       if (error) {
         console.error('[RentResults] Analysis insert failed:', error.message, error);
       } else {
-        console.log('[RentResults] Analysis logged:', clientGeneratedId);
-        // Fire admin notification email (fire-and-forget)
+        console.log('[RentResults] Analysis logged:', clientGanalysis      // Fire admin notification email (fire-and-forget)
         supabase.functions.invoke('notify-submission', {
           body: {
             zip: rentData.zip,
