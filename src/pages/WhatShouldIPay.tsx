@@ -4,6 +4,7 @@ import { lookupRentData, loadFredTrend, RentLookupResult, BedroomType } from '@/
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
 import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
+import { getWsipDemoData } from '@/data/demoData';
 import SEO from '@/components/SEO';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
 import WsipForm, { WsipFormData } from '@/components/WsipForm';
@@ -38,6 +39,15 @@ const WhatShouldIPay = () => {
   const propertyLookup = usePropertyLookup();
   const topRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+
+  // Demo mode: ?demo=overpriced|fair|deal
+  useEffect(() => {
+    const demo = searchParams.get('demo');
+    const demoData = getWsipDemoData(demo);
+    if (demoData && !results) {
+      setResults(demoData);
+    }
+  }, [searchParams]);
 
   const prefill = useMemo(() => {
     const zip = searchParams.get('zip');
