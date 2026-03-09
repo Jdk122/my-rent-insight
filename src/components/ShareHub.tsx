@@ -189,7 +189,7 @@ const ShareHub = ({
         className="w-full inline-flex items-center justify-center gap-2 border border-border px-5 py-3 rounded-lg text-sm font-medium text-foreground hover:border-foreground transition-colors disabled:opacity-50"
       >
         <Link2 size={16} />
-        {generating ? 'Generating…' : copied ? 'Link copied!' : 'Share with landlord'}
+        {generating ? 'Generating…' : copied ? 'Link copied!' : landlordLabel}
       </button>
 
       {/* Context line */}
