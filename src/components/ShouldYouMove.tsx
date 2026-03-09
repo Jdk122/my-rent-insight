@@ -244,7 +244,7 @@ export const CompsList = ({
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 text-center">
           Nearby Comparable Listings
         </p>
-        <CompsWithRentLine comparables={comparables} proposedRent={proposedRent} userUnit={userUnit} />
+        <CompsWithRentLine comparables={comparables} proposedRent={proposedRent} userUnit={userUnit} hideRentLine={gated} />
 
         {/* Furnished comps (excluded from median, shown for transparency) */}
         {furnishedComps.length > 0 && (
