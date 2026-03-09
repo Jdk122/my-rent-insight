@@ -166,12 +166,12 @@ const ShareHub = ({
   const handleFacebook = () => { trackEvent('share_clicked', { share_method: 'facebook' }); window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank'); };
   const handleNeighborCopy = async () => {
     trackEvent('share_clicked', { share_method: 'copy_link' });
-    try {
-      await navigator.clipboard.writeText(shareUrl);
+    const ok = await copyToClipboard(shareUrl);
+    if (ok) {
       setNeighborCopied(true);
       setTimeout(() => setNeighborCopied(false), 2500);
       toast.success('Copied to clipboard!');
-    } catch {
+    } else {
       toast.error('Copy failed — try selecting and copying manually.');
     }
   };
