@@ -365,7 +365,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         verdict: verdictLabel,
       });
     }
-  }, [hasIncrease, fairnessScore]); // run when fairnessScore becomes available
+  }, [hasIncrease, fairnessScore, rentcast.loading]); // run when fairnessScore & comps become available
 
   // ━━━ Lazy-update analysis record for async events ━━━
   const updateAnalysis = useCallback((fields: Record<string, any>) => {
