@@ -1,9 +1,32 @@
-import { useState, useRef } from 'react';
-import { Link2, Check, Copy, Share2, MessageCircle, Mail, Facebook, Users } from 'lucide-react';
+import { useState } from 'react';
+import { Link2, Check, Copy, Share2, MessageCircle, Mail, Facebook } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { generateShortId } from '@/lib/shortId';
 import { trackEvent } from '@/lib/analytics';
 import { toast } from 'sonner';
+
+/** Clipboard helper with fallback for mobile browsers */
+const copyToClipboard = async (text: string): Promise<boolean> => {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+    // Fallback for mobile / non-secure contexts
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(textarea);
+    return ok;
+  } catch {
+    return false;
+  }
+};
 
 interface ShareHubProps {
   reportPayload: {
