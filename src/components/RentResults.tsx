@@ -31,6 +31,7 @@ import NextStepsSection from './NextStepsSection';
 import ExitIntentModal from './ExitIntentModal';
 import PostConversionFlow from './PostConversionFlow';
 import SocialProofLine from './SocialProofLine';
+import { demoRentcast } from '@/data/demoData';
 import { Loader2 } from 'lucide-react';
 
 interface RentResultsProps {
