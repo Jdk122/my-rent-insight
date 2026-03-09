@@ -122,7 +122,7 @@ const WsipForm = ({ onSubmit, isLoading, prefill }: WsipFormProps) => {
         {/* Address — primary input */}
         {!showZipOnly && (
           <div className="space-y-1.5" ref={addressRef}>
-            <Label className="text-sm font-medium text-foreground">Address or Neighborhood</Label>
+            <Label className="text-sm font-medium text-foreground">Address or ZIP Code</Label>
             <AddressAutocomplete
               className={`h-12 text-sm bg-background ${errorClass('address')}`}
               placeholder="Start typing an address..."
