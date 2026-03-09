@@ -73,10 +73,12 @@ function CompsWithRentLine({
   comparables,
   proposedRent,
   userUnit,
+  hideRentLine = false,
 }: {
   comparables: RentcastComparable[];
   proposedRent: number;
   userUnit?: UserUnit | null;
+  hideRentLine?: boolean;
 }) {
   const sorted = useMemo(() => {
     return [...comparables]
