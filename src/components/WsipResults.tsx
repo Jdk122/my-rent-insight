@@ -207,6 +207,12 @@ const WsipResults = ({
     hasCensus: rentData.censusMedianRent !== null,
   }), [outlierResult, compRadius, rentData]);
 
+  // ━━━ Rent control cap ━━━
+  const rentControlCap = useMemo(() => {
+    const result = getRentControlByStateCity(rentData.state, rentData.city);
+    return getApplicableCap(result);
+  }, [rentData.state, rentData.city]);
+
   // ━━━ Market editorial ━━━
   const marketEditorial = useMemo(() => {
     const vacancy = rentData.alVacancy;
