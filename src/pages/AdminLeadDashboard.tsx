@@ -189,6 +189,7 @@ function DashboardContent() {
   const [emailFilterSource, setEmailFilterSource] = useState<string>('all');
   const [emailFilterVerdict, setEmailFilterVerdict] = useState<string>('all');
   const [emailFilterUnsub, setEmailFilterUnsub] = useState<string>('active');
+  const [emailFilterToolType, setEmailFilterToolType] = useState<string>('all');
   const [emailSearch, setEmailSearch] = useState('');
 
   // Helper to call admin edge function

@@ -835,6 +835,7 @@ const WsipPostConversion = ({ email, leadContext, verdictLabel, zip }: {
         p_utm_campaign: utm.utm_campaign || null,
         p_comp_median_rent: leadContext?.compMedianRent ?? null,
         p_hud_fmr_value: leadContext?.hudFmrValue ?? null,
+        p_tool_type: 'wsip',
       } as any);
     } catch (err) {
       console.error('Post-conversion save failed:', err);
