@@ -11,6 +11,8 @@ import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import { assessConfidence, detectOutliers, getCompRadius, filterFurnished, deduplicateComps, applySeasonalAdjustment } from '@/lib/dataQuality';
 import { calculateCompositeTrend } from '@/lib/compositeTrend';
+import { getRentControlByStateCity, getApplicableCap } from '@/data/rentControlData';
+import { getUtilityNote } from '@/lib/contextualFlags';
 import { calculateFairRange } from '@/lib/fairRange';
 import { tierComps, getTierWeights } from '@/lib/compTiering';
 import { getBuildingRange } from '@/lib/buildingRange';

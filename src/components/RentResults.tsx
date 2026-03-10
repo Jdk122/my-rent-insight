@@ -11,6 +11,7 @@ import NegotiationLetter from './NegotiationLetter';
 import RentControlCard from './RentControlCard';
 import { PropertyLookupResult, PropertyLookupError } from '@/hooks/usePropertyLookup';
 import { getRentControlByStateCity, getApplicableCap, isNycZip } from '@/data/rentControlData';
+import { getUtilityNote, getBrokerFeeInfo } from '@/lib/contextualFlags';
 import { useRentcast } from '@/hooks/useRentcast';
 import { useRentcastMarket } from '@/hooks/useRentcastMarket';
 import { useHcrLookup } from '@/hooks/useHcrLookup';
