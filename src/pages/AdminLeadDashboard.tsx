@@ -239,14 +239,6 @@ function DashboardContent() {
     });
   }, []);
 
-  // Load orphan leads (no linked analysis)
-  useEffect(() => {
-    setOrphanLoading(true);
-    adminQuery('orphan_leads').then((data) => {
-      setOrphanLeads(data || []);
-      setOrphanLoading(false);
-    });
-  }, []);
 
   // Load email list
   useEffect(() => {
