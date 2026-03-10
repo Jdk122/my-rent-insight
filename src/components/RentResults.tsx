@@ -601,13 +601,17 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         )}
                         {/* Rent control cap in Phase 1 */}
                         {rentControlCap && hasIncrease && rentControlCap.maxIncreaseFormula && (
-                          increasePct > (rentControlCap.maxIncreasePct ?? 999) ? (
-                            <p className="text-sm font-medium text-red-600 mt-3">
-                              ⚠️ {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreaseFormula}. Your increase of {increasePct}% may exceed this limit.
+                          rentControlCap.maxIncreasePct != null && increasePct > rentControlCap.maxIncreasePct ? (
+                            <p className="text-sm font-medium text-destructive mt-3">
+                              ⚠️ {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreasePct}%. Your increase of {increasePct}% exceeds this limit.
+                            </p>
+                          ) : rentControlCap.maxIncreasePct != null ? (
+                            <p className="text-xs text-muted-foreground mt-2">
+                              {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreasePct}%. Your increase of {increasePct}% is within this limit.
                             </p>
                           ) : (
                             <p className="text-xs text-muted-foreground mt-2">
-                              {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreaseFormula}. Your increase of {increasePct}% is within this guideline.
+                              {rentControlCap.jurisdiction} regulates rent increases ({rentControlCap.maxIncreaseFormula}). Check if your {increasePct}% increase complies.
                             </p>
                           )
                         )}
