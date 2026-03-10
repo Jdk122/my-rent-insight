@@ -572,7 +572,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                               <>At ${fmt(newRent)}/mo, your {increasePct}% increase tracks the {marketYoy}% area trend for {brLabel} rentals in {city}.</>
                             )
                           ) : increasePct > 0 ? (
-                            <>Your {increasePct}% increase is below the {marketYoy}% area trend. At ${fmt(newRent)}/mo, you're getting a competitive deal in {city}.</>
+                            <>At ${fmt(newRent)}/mo, your rent is below the local market average for {brLabel} rentals in {city} — even with a {increasePct}% increase, you're getting a competitive deal.</>
                           ) : (
                             <>Rents in {city} moved {marketYoy}% this year. Your landlord keeping your rent at ${fmt(formData.currentRent)}/mo means you're coming out ahead.</>
                           )}
@@ -601,13 +601,17 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         )}
                         {/* Rent control cap in Phase 1 */}
                         {rentControlCap && hasIncrease && rentControlCap.maxIncreaseFormula && (
-                          increasePct > (rentControlCap.maxIncreasePct ?? 999) ? (
-                            <p className="text-sm font-medium text-red-600 mt-3">
-                              ⚠️ {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreaseFormula}. Your increase of {increasePct}% may exceed this limit.
+                          rentControlCap.maxIncreasePct != null && increasePct > rentControlCap.maxIncreasePct ? (
+                            <p className="text-sm font-medium text-destructive mt-3">
+                              ⚠️ {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreasePct}%. Your increase of {increasePct}% exceeds this limit.
+                            </p>
+                          ) : rentControlCap.maxIncreasePct != null ? (
+                            <p className="text-xs text-muted-foreground mt-2">
+                              {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreasePct}%. Your increase of {increasePct}% is within this limit.
                             </p>
                           ) : (
                             <p className="text-xs text-muted-foreground mt-2">
-                              {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreaseFormula}. Your increase of {increasePct}% is within this guideline.
+                              {rentControlCap.jurisdiction} regulates rent increases ({rentControlCap.maxIncreaseFormula}). Check if your {increasePct}% increase complies.
                             </p>
                           )
                         )}
@@ -1128,7 +1132,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       : isFair
                       ? `My rent increase is right at market.`
                       : isBelowMarket
-                      ? `My rent increase is below the area trend.`
+                      ? `My rent is below market — even with a ${increasePct}% increase.`
                       : `My rent isn't going up — and rents in ${city} moved ${marketYoy}%.`
                   }
                   stats={
