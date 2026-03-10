@@ -73,8 +73,8 @@ export function calculateFairRange(input: FairRangeInput): FairRangeResult {
     const wOther = (hasOther ? otherCompWeight : 0) * scale;
     const wHud = hudPart * scale;
 
-    const auxLow = hasMarketMedian ? input.rcMarketMedian! * 0.85 : hasZori ? input.zoriRent! * 0.85 : hudFmr;
-    const auxHigh = hasMarketMedian ? input.rcMarketMedian! * 1.15 : hasZori ? input.zoriRent! * 1.15 : hudFmr * 1.15;
+    const auxLow = hasMarketMedian ? rcMarketMedian! * 0.85 : hasZori ? zoriRent! * 0.85 : hudFmr;
+    const auxHigh = hasMarketMedian ? rcMarketMedian! * 1.15 : hasZori ? zoriRent! * 1.15 : hudFmr * 1.15;
     const wAux = auxPart * scale;
 
     const rangeLow = Math.round(wT1 * t1Low + wOther * otherLow + wHud * hudFmr + wAux * auxLow);
