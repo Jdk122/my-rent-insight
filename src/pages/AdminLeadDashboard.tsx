@@ -338,7 +338,7 @@ function DashboardContent() {
   }, [emailLeads]);
 
   const handleEmailExport = () => {
-    const headers = ['Email', 'Source', 'Date', 'City', 'State', 'Zip', 'Bedrooms', 'Rent', 'Score', 'Verdict', 'Lease Month', 'Lease Year', 'Partner Opt-In', 'UTM Source', 'Status'];
+    const headers = ['Email', 'Source', 'Tool', 'Date', 'City', 'State', 'Zip', 'Bedrooms', 'Rent', 'Score', 'Verdict', 'Lease Month', 'Lease Year', 'Partner Opt-In', 'UTM Source', 'Status'];
     const csvRows = [headers.join(',')];
     for (const l of filteredEmailLeads) {
       csvRows.push([
