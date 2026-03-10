@@ -52,6 +52,7 @@ const RentByZip = () => {
   const [loading, setLoading] = useState(true);
   const [contactOpen, setContactOpen] = useState(false);
   const [searchZip, setSearchZip] = useState('');
+  const [NATIONAL_AVG_YOY, setNationalAvgYoY] = useState(3.2);
 
   useEffect(() => {
     if (!zip || zip.length !== 5) { setNotFound(true); setLoading(false); return; }
@@ -59,9 +60,11 @@ const RentByZip = () => {
     (async () => {
       setLoading(true);
       setNotFound(false);
-      const [allData, alData, hud50Data, freshness] = await Promise.all([
-        getRentData(), getApartmentListData(), getHud50Data(), getDataFreshness()
+      const [allData, alData, hud50Data, freshness, natAvg] = await Promise.all([
+        getRentData(), getApartmentListData(), getHud50Data(), getDataFreshness(), getNationalAvgYoY()
       ]);
+      if (cancelled) return;
+      setNationalAvgYoY(natAvg);
       if (cancelled) return;
       const raw = allData[zip];
       if (!raw) { setNotFound(true); setLoading(false); return; }
