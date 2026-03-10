@@ -7,7 +7,7 @@ import { RentLookupResult, bedroomLabels, calculateResults } from '@/data/rentDa
 import ShareHub from './ShareHub';
 import EmailCapture from './EmailCapture';
 import CompLinks from './CompLinks';
-import ShouldYouMove, { CompsList } from './ShouldYouMove';
+import { CompsList } from './ShouldYouMove';
 import NegotiationLetter from './NegotiationLetter';
 import LetterGate from './LetterGate';
 import RentControlCard from './RentControlCard';
