@@ -44,3 +44,6 @@ verify_jwt = false
 
 [functions.fred-mortgage]
 verify_jwt = false
+
+[functions.send-wsip-followup]
+verify_jwt = false
