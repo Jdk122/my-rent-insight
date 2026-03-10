@@ -399,7 +399,7 @@ const WsipResults = ({
             {/* Building context line */}
             {bldg.hasBuildingData && (
               <p className="text-[13px] sm:text-[15px] font-medium text-verdict-good mb-1">
-                Other units in this building rent for ${fmt(bldg.buildingLow)}
+                Other {bldg.bedroomFilterLabel ? `${bldg.bedroomFilterLabel} ` : ''}units in this building rent for ${fmt(bldg.buildingLow)}
                 {bldg.buildingLow !== bldg.buildingHigh && ` – $${fmt(bldg.buildingHigh)}`}/month
               </p>
             )}

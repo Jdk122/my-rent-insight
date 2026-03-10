@@ -7,7 +7,8 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const CACHE_DAYS_RENT = 30;
+const CACHE_DAYS_RENT_DEFAULT = 30;
+const CACHE_DAYS_RENT_DENSE = 7;
 
 // Dense urban ZIP prefixes → 1-mile radius; everything else → 3 miles
 const DENSE_ZIP_PREFIXES = [
