@@ -819,6 +819,28 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </motion.h2>
 
               <div className="space-y-6">
+                {/* Property Profile Card */}
+                {propertyData && (
+                  <motion.div {...fade(0.06)} className="evidence-card">
+                    <h3 className="evidence-card-header">Your Landlord's Property</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {formData.fullAddress}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {propertyData.propertyType && `${propertyData.propertyType}`}
+                      {propertyData.yearBuilt && ` · Built ${propertyData.yearBuilt}`}
+                      {propertyData.bedrooms && ` · ${propertyData.bedrooms} bed`}
+                      {propertyData.bathrooms && ` / ${propertyData.bathrooms} bath`}
+                      {propertyData.squareFootage && ` · ${propertyData.squareFootage.toLocaleString()} sqft`}
+                    </p>
+                    {propertyData.lastSalePrice && propertyData.lastSaleDate && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Purchased {new Date(propertyData.lastSaleDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} for ${propertyData.lastSalePrice.toLocaleString()}
+                      </p>
+                    )}
+                  </motion.div>
+                )}
+
                 {/* Card A: Market Context */}
                 <motion.div {...fade(0.08)} className="evidence-card">
                   <h3 className="evidence-card-header">What the Market Says</h3>
