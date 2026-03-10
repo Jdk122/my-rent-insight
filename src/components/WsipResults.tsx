@@ -401,13 +401,13 @@ Happy to discuss — thank you.`;
           >
             {/* Verdict headline */}
             <h1
-              className="font-display text-[1.35rem] sm:text-[clamp(1.5rem,4.5vw,2.2rem)] text-foreground leading-[1.15] tracking-tight mb-3"
+              className="font-display text-[1.35rem] sm:text-[clamp(1.5rem,4.5vw,2.2rem)] text-foreground leading-[1.15] tracking-tight mb-3 whitespace-nowrap"
               style={{ letterSpacing: '-0.02em' }}
             >
-              {verdict === 'below' && <><span className="text-verdict-good">That's a good deal.</span></>}
-              {verdict === 'in-range' && <><span className="text-verdict-fair">That's a fair price.</span></>}
-              {verdict === 'above' && <><span className="text-destructive">That's overpriced.</span></>}
-              {!verdict && <>Here's what you should pay.</>}
+              {verdict === 'below' && <span className="text-verdict-good">That's a good deal.</span>}
+              {verdict === 'in-range' && <span className="text-verdict-fair">That's a fair price.</span>}
+              {verdict === 'above' && <span className="text-destructive">That's overpriced.</span>}
+              {!verdict && <>Here's your fair range.</>}
             </h1>
 
             {/* Building rent line — strongest trust signal */}
