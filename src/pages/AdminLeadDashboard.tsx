@@ -840,6 +840,7 @@ function DashboardContent() {
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Verdict</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Lease</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Partner</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Tool</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Emails Sent</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Status</th>
                     </tr>
