@@ -5,14 +5,11 @@ import { Link } from 'react-router-dom';
 import { RentFormData } from './RentForm';
 import { RentLookupResult, bedroomLabels, calculateResults } from '@/data/rentData';
 import ShareHub from './ShareHub';
-import EmailCapture from './EmailCapture';
 import CompLinks from './CompLinks';
 import { CompsList } from './ShouldYouMove';
 import NegotiationLetter from './NegotiationLetter';
-import LetterGate from './LetterGate';
 import RentControlCard from './RentControlCard';
 import { PropertyLookupResult, PropertyLookupError } from '@/hooks/usePropertyLookup';
-import TurnoverCostSection from './TurnoverCostSection';
 import { getRentControlByStateCity, getApplicableCap, isNycZip } from '@/data/rentControlData';
 import { useRentcast } from '@/hooks/useRentcast';
 import { useRentcastMarket } from '@/hooks/useRentcastMarket';
@@ -23,7 +20,7 @@ import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import DataConfidenceBadge from './DataConfidenceBadge';
 import { assessConfidence, detectOutliers, checkCrossSourceConsistency, getCompRadius, filterFurnished, deduplicateComps } from '@/lib/dataQuality';
-import { calculateFairnessScore, scoreToVerdict, getContextualTierMessage, FairnessScoreResult } from '@/lib/fairnessScore';
+import { calculateFairnessScore, scoreToVerdict, FairnessScoreResult } from '@/lib/fairnessScore';
 import { calculateCompositeTrend } from '@/lib/compositeTrend';
 import FairnessScoreGauge, { ComponentSourceInfo } from './FairnessScoreGauge';
 import MarketSnapshot from './MarketSnapshot';
@@ -31,8 +28,8 @@ import NextStepsSection from './NextStepsSection';
 import ExitIntentModal from './ExitIntentModal';
 import PostConversionFlow from './PostConversionFlow';
 import SocialProofLine from './SocialProofLine';
+import ReportGate from './ReportGate';
 import { demoRentcast } from '@/data/demoData';
-import { Loader2 } from 'lucide-react';
 
 interface RentResultsProps {
   formData: RentFormData;
@@ -63,7 +60,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     setInternalEmail(email);
     externalOnEmail?.(email);
   };
-  // Generate analysis ID immediately so lead captures can reference it before the insert fires
   const [analysisId] = useState<string>(() => crypto.randomUUID());
   const [reportUrl, setReportUrl] = useState<string | null>(null);
   const analysisLogged = useRef(false);
@@ -133,14 +129,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     if (!rentcast.data?.comparables) return { cleanedComps: [], furnishedComps: [] };
     const deduped = deduplicateComps(rentcast.data.comparables);
     const { unfurnished, furnished } = filterFurnished(deduped);
-
-    // Prefer exact bedroom matches when we have enough
     const exactBrMatch = unfurnished.filter(c => c.bedrooms === bedroomNum);
     const nearBrMatch = unfurnished.filter(c => c.bedrooms !== bedroomNum);
     const prioritized = exactBrMatch.length >= 3
       ? [...exactBrMatch, ...nearBrMatch]
       : unfurnished;
-
     return { cleanedComps: prioritized, furnishedComps: furnished };
   }, [rentcast.data, bedroomNum]);
 
@@ -180,7 +173,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     return checkCrossSourceConsistency(rentData.fmr, medianCompRent);
   }, [rentData.fmr, medianCompRent]);
 
-  // ━━━ Fairness Score (replaces 3-factor verdict) ━━━
+  // ━━━ Fairness Score ━━━
   const asyncDataReady = !rentcast.loading && !rcMarket.loading;
 
   const fairnessScore = useMemo<FairnessScoreResult | null>(() => {
@@ -230,6 +223,20 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const city = rentData.city;
   const brLabel = bedroomLabels[formData.bedrooms].toLowerCase();
 
+  // ━━━ High pain detection for gate aggressiveness ━━━
+  const isHighPain = isAboveMarket;
+
+  // ━━━ All comps ━━━
+  const allComps = outlierResult?.filtered ?? cleanedComps;
+  const compsWithRent = allComps.filter(c => c.rent !== null && c.rent > 0);
+
+  // ━━━ Sample comp(s) for Phase 1 — closest comp(s) with rent ━━━
+  const sampleComps = useMemo(() => {
+    const sorted = [...compsWithRent].sort((a, b) => (a.distance ?? 99) - (b.distance ?? 99));
+    const count = isHighPain ? 1 : 2;
+    return sorted.slice(0, count);
+  }, [compsWithRent, isHighPain]);
+
   // ━━━ Analytics tracking ━━━
   useEffect(() => {
     trackEvent('results_viewed', { zip: rentData.zip, verdict: verdictLabel });
@@ -241,7 +248,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     };
     window.addEventListener('beforeunload', handleUnload);
 
-    const sectionIds = ['section-verdict', 'section-evidence', 'section-comps', 'section-letter', 'section-share'];
+    const sectionIds = ['section-verdict', 'section-gate', 'section-comps', 'section-letter', 'section-share'];
     const firedSections = new Set<string>();
     const sectionObserver = new IntersectionObserver(
       (entries) => {
@@ -262,7 +269,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     return () => { window.removeEventListener('beforeunload', handleUnload); sectionObserver.disconnect(); };
   }, []);
 
-  // ━━━ Anonymous analysis logging (waits for fairnessScore) ━━━
+  // ━━━ Anonymous analysis logging ━━━
   useEffect(() => {
     if (analysisLogged.current) return;
     if (hasIncrease && fairnessScore === null) return;
@@ -406,33 +413,22 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   const navSections = useMemo(() => {
     const sections = [{ id: 'section-verdict', label: 'Verdict' }];
-    sections.push({ id: 'section-evidence', label: 'Evidence' });
-    if (hasIncrease && medianCompRent && hasEnoughComps) {
-      sections.push({ id: 'section-comps', label: 'Comps' });
-    }
-    if (hasRentControl) {
-      sections.push({ id: 'section-rights', label: 'Rights' });
-    }
-    if (isAboveMarket || isFair || isBelowMarket) {
+    if (!capturedEmail) {
+      sections.push({ id: 'section-gate', label: 'Report' });
+    } else {
+      if (hasIncrease && medianCompRent && hasEnoughComps) {
+        sections.push({ id: 'section-comps', label: 'Comps' });
+      }
+      if (hasRentControl) {
+        sections.push({ id: 'section-rights', label: 'Rights' });
+      }
       if (hasIncrease && calc) {
         sections.push({ id: 'section-letter', label: 'Letter' });
       }
-      if (isAboveMarket) {
-        sections.push({ id: 'section-share', label: 'Send' });
-      }
-    }
-    if (!isAboveMarket) {
       sections.push({ id: 'section-share', label: 'Share' });
     }
     return sections;
-  }, [hasIncrease, medianCompRent, hasEnoughComps, calc, isAboveMarket, isFair, isBelowMarket, hasRentControl]);
-
-  const annualSavingsForTurnover = useMemo(() => {
-    if (!medianCompRent || !hasIncrease) return 0;
-    const diff = newRent - medianCompRent;
-    return diff > 0 ? Math.round(diff * 12) : 0;
-  }, [medianCompRent, newRent, hasIncrease]);
-  const proposedRentAboveMedian = medianCompRent ? newRent > medianCompRent : false;
+  }, [capturedEmail, hasIncrease, medianCompRent, hasEnoughComps, calc, hasRentControl]);
 
   const shareReportPayload = useMemo(() => ({
     zip: rentData.zip,
@@ -455,112 +451,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     },
   }), [rentData, formData, bedroomNum, increasePct, newRent, marketYoy, calc, medianCompRent, rentcast.data]);
 
-  // ━━━ Comp gate state ━━━
-  const allComps = outlierResult?.filtered ?? cleanedComps;
-  const compsWithRent = allComps.filter(c => c.rent !== null && c.rent > 0);
-  const displayableTotal = Math.min(compsWithRent.length, 6);
-  const visibleCount = Math.min(displayableTotal, 3);
-  const visibleComps = allComps.slice(0, visibleCount);
-  const gatedComps = displayableTotal > visibleCount ? allComps.slice(visibleCount) : [];
-  const gatedDisplayCount = displayableTotal - visibleCount;
-  const [compsUnlocked, setCompsUnlocked] = useState(false);
-  const [compEmail, setCompEmail] = useState('');
-  const [compEmailError, setCompEmailError] = useState('');
-  const [compEmailLoading, setCompEmailLoading] = useState(false);
-  const compGateRef = useRef<HTMLDivElement>(null);
-
-  // Auto-unlock comps if email already captured
-  useEffect(() => {
-    if (capturedEmail) setCompsUnlocked(true);
-  }, [capturedEmail]);
-
-  // Track comp gate visibility
-  useEffect(() => {
-    if (gatedComps.length === 0 || compsUnlocked) return;
-    const el = compGateRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          trackEvent('comp_gate_shown', { verdict: verdictLabel, zip_code: rentData.zip });
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.3 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [gatedComps.length, compsUnlocked, verdictLabel, rentData.zip]);
-
-  const handleCompGateSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!compEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(compEmail.trim())) {
-      setCompEmailError('Please enter a valid email.');
-      return;
-    }
-    setCompEmailError('');
-    setCompEmailLoading(true);
-
-    const utm = getUtmParams();
-    try {
-      const { error: rpcError } = await supabase.rpc('upsert_lead', {
-        p_email: compEmail.trim(),
-        p_analysis_id: leadContext?.analysisId || null,
-        p_capture_source: 'comp_gate',
-        p_address: leadContext?.address || null,
-        p_city: leadContext?.city || null,
-        p_state: leadContext?.state || null,
-        p_zip: leadContext?.zip || null,
-        p_bedrooms: leadContext?.bedrooms ?? null,
-        p_current_rent: leadContext?.currentRent ?? null,
-        p_proposed_rent: leadContext?.proposedRent ?? null,
-        p_increase_pct: leadContext?.increasePct ?? null,
-        p_verdict: verdictLabel || null,
-        p_utm_source: utm.utm_source || null,
-        p_utm_medium: utm.utm_medium || null,
-        p_utm_campaign: utm.utm_campaign || null,
-        p_fairness_score: leadContext?.fairnessScore ?? null,
-        p_comp_median_rent: leadContext?.compMedianRent ?? null,
-        p_hud_fmr_value: leadContext?.hudFmrValue ?? null,
-      } as any);
-      if (rpcError) console.error('[lead] upsert_lead failed (comp_gate):', rpcError.message);
-
-      const { error: evtError } = await supabase.from('lead_events' as any).insert({
-        email: compEmail.trim(),
-        analysis_id: leadContext?.analysisId || null,
-        event_type: 'comp_gate',
-        fairness_score: leadContext?.fairnessScore ?? null,
-        address: leadContext?.address || null,
-        zip: leadContext?.zip || null,
-        current_rent: leadContext?.currentRent ?? null,
-        proposed_rent: leadContext?.proposedRent ?? null,
-        increase_pct: leadContext?.increasePct ?? null,
-        verdict: verdictLabel || null,
-        comp_median_rent: leadContext?.compMedianRent ?? null,
-        hud_fmr_value: leadContext?.hudFmrValue ?? null,
-      } as any);
-      if (evtError) console.error('[lead] lead_events insert failed (comp_gate):', evtError.message);
-    } catch (err) {
-      console.error('[lead] comp_gate unexpected error:', err);
-    }
-
-    setCapturedEmail(compEmail.trim());
-    setCompsUnlocked(true);
-    setCompEmailLoading(false);
-    trackEvent('comp_gate_converted', { verdict: verdictLabel, zip_code: rentData.zip });
-    trackEvent('email_submitted', { verdict: verdictLabel, zip_code: rentData.zip, source: 'comp_gate' });
-    trackAdsConversion();
-    toast.success('All comps unlocked!');
-  };
-
   let rowIdx = 0;
-
 
   return (
     <>
       <SectionNav sections={navSections} />
 
-      {/* Exit Intent Modal (desktop only) */}
+      {/* Exit Intent Modal (desktop only) — safety net */}
       <ExitIntentModal
         capturedEmail={capturedEmail}
         leadContext={leadContext}
@@ -570,7 +467,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         onEmailCaptured={setCapturedEmail}
       />
 
-      {/* ━━━ ACT 1: THE VERDICT — full-width warm hero zone ━━━ */}
+      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           PHASE 1: FREE CREDIBILITY LAYER
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <div
         className="w-full"
         style={{ background: 'hsl(var(--verdict-bg))' }}
@@ -737,13 +636,54 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </p>
               </motion.div>
 
+              {/* ── Sample comp(s) — tangible proof ── */}
+              {sampleComps.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.4 }}
+                  className="mt-6 w-full max-w-[540px]"
+                >
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                    Sample comparable{sampleComps.length > 1 ? 's' : ''}:
+                  </p>
+                  <div className="space-y-2">
+                    {sampleComps.map((comp, i) => (
+                      <div key={i} className="flex items-start justify-between gap-4 px-4 py-3 rounded-lg border border-border/80 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">{comp.formattedAddress}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
+                            {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
+                            {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
+                          </p>
+                        </div>
+                        {comp.rent !== null && (
+                          <span className="text-sm font-semibold text-foreground whitespace-nowrap">${fmt(comp.rent)}/mo</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* ── "Why this result" line ── */}
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.35, duration: 0.4 }}
+                className="mt-4 text-[12px] text-muted-foreground/60 text-center max-w-[480px] leading-relaxed"
+              >
+                Based on {compsWithRent.length > 0 ? `${compsWithRent.length} comparable listing${compsWithRent.length !== 1 ? 's' : ''}, ` : ''}HUD Fair Market Rent data, and Zillow rent trends for {city}.
+              </motion.p>
+
               {/* See evidence + reset */}
               <div className="mt-4 flex flex-col items-center gap-2">
                 <button
-                  onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={() => document.getElementById(capturedEmail ? 'section-comps' : 'section-gate')?.scrollIntoView({ behavior: 'smooth' })}
                   className="text-base font-semibold text-primary hover:text-primary/80 transition-colors duration-150"
                 >
-                  See the evidence ↓
+                  {capturedEmail ? 'See full report ↓' : 'Get the full report ↓'}
                 </button>
                 <button onClick={onReset} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                   ← Check a different address
@@ -783,10 +723,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
               <div className="mt-5 flex flex-col items-center gap-2">
                 <button
-                  onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={() => document.getElementById(capturedEmail ? 'section-evidence' : 'section-gate')?.scrollIntoView({ behavior: 'smooth' })}
                   className="text-base font-semibold text-primary hover:text-primary/80 transition-colors duration-150"
                 >
-                  See the market data ↓
+                  {capturedEmail ? 'See the market data ↓' : 'Get the full report ↓'}
                 </button>
                 <button onClick={onReset} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                   ← Check a different address
@@ -801,402 +741,370 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       {/* ━━━ Transition edge ━━━ */}
       <div className="w-full h-px" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} />
 
-      {/* ━━━ ACT 2: THE EVIDENCE — white background ━━━ */}
+      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           PHASE 2: EMAIL GATE (if not captured)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <div className="w-full bg-card">
         <div className="max-w-[620px] mx-auto px-5 sm:px-6">
 
-        {(
-          <section id="section-evidence" className="pt-10 pb-8">
-            <motion.h2 {...fade(0.05)} className="results-section-header mb-10">
-              {hasIncrease ? 'The Evidence' : 'What the Market Says'}
-            </motion.h2>
-
-            <div className="space-y-6">
-
-              {/* Card A: Market Context */}
-              <motion.div {...fade(0.08)} className="evidence-card">
-                <h3 className="evidence-card-header">What the Market Says</h3>
-                <p className="text-xs text-muted-foreground mb-4">
-                  {city}, {rentData.state} — {bedroomLabels[formData.bedrooms]}
-                  {rentcast.data?.propertyType && <> · {rentcast.data.propertyType}</>}
-                </p>
-
-                <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
-                  <span className="context-label">{city} rents this year</span>
-                  <span className="context-value">
-                    {marketYoy > 0 ? '+' : ''}{marketYoy}%
-                    {rentData.yoyCapped && <span className="context-sub"> (capped)</span>}
-                    <span className="context-sub"> ({compositeTrendResult.sourceCount >= 2 ? 'composite — ' + compositeTrendResult.sources.map(s => s.label).join(', ') : compositeTrendResult.primarySource})</span>
-                  </span>
-                </div>
-                {rentData.zillowMonthly !== null && rentData.zillowDirection && (
-                  <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
-                    <span className="context-label">Monthly trend</span>
-                    <span className="context-value">
-                      {rentData.zillowMonthly > 0 ? '+' : ''}{rentData.zillowMonthly}%/mo
-                      <span className="context-sub">
-                        {rentData.zillowDirection === 'rising' ? ' ↑ rising' : rentData.zillowDirection === 'falling' ? ' ↓ cooling' : ' → steady'}
-                        {' (Zillow ZORI)'}
-                      </span>
-                    </span>
-                  </div>
-                )}
-                {calc && (
-                  <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
-                    <span className="context-label">What most {brLabel} go for</span>
-                    <span className="context-value">
-                      ${fmt(calc.typicalRangeLow)} – ${fmt(calc.typicalRangeHigh)}
-                      <span className="context-sub"> (HUD SAFMR FY2026)</span>
-                    </span>
-                  </div>
-                )}
-                {calc && (
-                  <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
-                    <span className="context-label">Your current rent</span>
-                    <span className={`context-value ${
-                      formData.currentRent < calc.typicalRangeLow
-                        ? 'text-verdict-good'
-                        : formData.currentRent > calc.typicalRangeHigh
-                        ? 'text-destructive'
-                        : 'text-muted-foreground'
-                    }`}>
-                      ${fmt(formData.currentRent)} — {
-                        formData.currentRent < calc.typicalRangeLow
-                          ? 'below this range'
-                          : formData.currentRent > calc.typicalRangeHigh
-                          ? 'above this range'
-                          : 'within this range'
-                      }
-                    </span>
-                  </div>
-                )}
-                {isAboveMarket && calc && !calc.counterExceedsProposed && (
-                  <>
-                    <div className="context-row-highlight mt-2">
-                      <span className="context-label">Fair counter-offer</span>
-                      <span className="context-value text-verdict-good font-bold">
-                        {calc.counterLow === calc.counterHigh
-                          ? `$${fmt(calc.counterLow)}/mo`
-                          : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}/mo`}
-                      </span>
-                    </div>
-                    {medianCompRent && calc.counterLow > medianCompRent && (
-                      <div className="mt-2 px-3 py-2 rounded-md bg-accent/50 border border-border/50">
-                        <p className="text-[11px] text-muted-foreground leading-relaxed">
-                          Note: Your counter range (${fmt(calc.counterLow)}–${fmt(calc.counterHigh)}) is above the area median of ${fmt(medianCompRent)} for similar units. You may have additional negotiating room.
-                        </p>
-                      </div>
-                    )}
-                  </>
-                )}
-                {isAboveMarket && calc?.counterExceedsProposed && (
-                  <div className="mt-2 px-3 py-2.5 rounded-md bg-verdict-good/10 border border-verdict-good/20">
-                    <p className="text-[12px] text-muted-foreground leading-relaxed">
-                      Based on market data, your proposed rent appears to be in line with or below current market trends.
-                    </p>
-                  </div>
-                )}
-
-                <p className="text-[11px] text-muted-foreground mt-3">
-                  {rentData.yoySourceLabel}
-                </p>
-                {rentData.yoyReliability === 'government' && (
-                  <p className="text-xs text-muted-foreground mt-1">
-                    HUD benchmark estimate — actual market trends may differ.
-                  </p>
-                )}
-                {rentData.yoySource === 'hud' && rentData.priorSource === 'm' && (
-                  <p className="text-[11px] text-muted-foreground mt-1">Based on {rentData.metro} area average trend.</p>
-                )}
-                {rentData.yoySource === 'hud' && rentData.priorSource === 'n' && (
-                  <p className="text-[11px] text-muted-foreground mt-1">Note: This uses the national rent trend because local data is limited for this area.</p>
-                )}
-              </motion.div>
-
-              {/* ━━━ Market Snapshot ━━━ */}
-              {hasIncrease && (
-                <MarketSnapshot
-                  rcTotalListings={rcMarket.rcTotalListings}
-                  rcNewListings={rcMarket.rcNewListings}
-                  rcAvgDaysOnMarket={rcMarket.rcAvgDaysOnMarket}
-                  alVacancy={rentData.alVacancy}
-                />
-              )}
-
-            </div>
+        {!capturedEmail && (
+          <section id="section-gate" className="py-10">
+            <ReportGate
+              toolType="renewal"
+              compsCount={compsWithRent.length}
+              verdictLabel={verdictLabel}
+              isHighPain={isHighPain}
+              leadContext={leadContext}
+              analysisId={analysisId}
+              zip={rentData.zip}
+              city={city}
+              onEmailCaptured={setCapturedEmail}
+              prefilledEmail={capturedEmail}
+            />
           </section>
         )}
 
-        {/* ━━━ COMPARABLE LISTINGS with comp gate ━━━ */}
-        {hasIncrease && medianCompRent && hasEnoughComps && (
-          <motion.section id="section-comps" {...fade(0.15)} className="py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>
-            <h2 className="results-section-header mb-2">
-              How Your Rent Compares to Nearby Units
-            </h2>
-            <p className="text-[12px] text-muted-foreground text-center mb-6">
-              Showing {allComps.length} comparable rental{allComps.length !== 1 ? 's' : ''}{compRadius.label ? ` ${compRadius.label}` : ''}, sorted by relevance.
-              <span className="text-muted-foreground/60"> (Source: Real-time market listings)</span>
-            </p>
+        {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+             PHASE 3: EVERYTHING UNLOCKED (after email)
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        {capturedEmail && (
+          <>
+            {/* ━━━ EVIDENCE SECTION ━━━ */}
+            <section id="section-evidence" className="pt-10 pb-8">
+              <motion.h2 {...fade(0.05)} className="results-section-header mb-10">
+                {hasIncrease ? 'The Evidence' : 'What the Market Says'}
+              </motion.h2>
 
-            {consistencyNote && (
-              <div className="px-4 py-3 rounded-md border border-border bg-muted/50 text-[12px] text-muted-foreground leading-relaxed mb-6">
-                {consistencyNote}
-              </div>
-            )}
-
-            {/* Show first 3 comps via CompsList with only visible comps */}
-            <CompsList
-              proposedRent={newRent}
-              comparables={compsUnlocked ? allComps : visibleComps}
-              furnishedComps={compsUnlocked ? furnishedComps : []}
-              medianCompRent={medianCompRent}
-              hudFmr={rentData.fmr}
-              brLabel={brLabel}
-              city={city}
-              state={rentData.state}
-              zip={rentData.zip}
-              bedrooms={formData.bedrooms}
-              userUnit={propertyData ? {
-                address: formData.fullAddress,
-                bedrooms: propertyData.bedrooms,
-                bathrooms: propertyData.bathrooms,
-                squareFootage: propertyData.squareFootage,
-              } : null}
-              gated={gatedComps.length > 0 && !compsUnlocked}
-            />
-
-            {/* Comp gate: capture card ABOVE blurred rows */}
-            {gatedComps.length > 0 && !compsUnlocked && (
-              <div ref={compGateRef} className="mt-4">
-                {/* Capture prompt first */}
-                <div className="text-center py-4 px-4">
-                  <p className="text-sm font-semibold text-foreground mb-1">
-                    {gatedDisplayCount} more comparable rental{gatedDisplayCount !== 1 ? 's' : ''} nearby
+              <div className="space-y-6">
+                {/* Card A: Market Context */}
+                <motion.div {...fade(0.08)} className="evidence-card">
+                  <h3 className="evidence-card-header">What the Market Says</h3>
+                  <p className="text-xs text-muted-foreground mb-4">
+                    {city}, {rentData.state} — {bedroomLabels[formData.bedrooms]}
+                    {rentcast.data?.propertyType && <> · {rentcast.data.propertyType}</>}
                   </p>
-                  <p className="text-xs text-muted-foreground mb-3">Enter your email to see all comps</p>
-                  <form onSubmit={handleCompGateSubmit} className="flex gap-2 max-w-[400px] mx-auto">
-                    <input
-                      type="email"
-                      placeholder="you@email.com"
-                      value={compEmail}
-                      onChange={(e) => { setCompEmail(e.target.value); if (compEmailError) setCompEmailError(''); }}
-                      className={`flex-1 min-w-0 px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 ${
-                        compEmailError ? 'border-destructive' : 'border-border focus:border-foreground'
-                      }`}
-                    />
-                    <button
-                      type="submit"
-                      disabled={compEmailLoading}
-                      className="bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap disabled:opacity-60"
-                    >
-                      {compEmailLoading ? 'Unlocking…' : 'Unlock all comps →'}
-                    </button>
-                  </form>
-                  {compEmailError && <p className="text-xs text-destructive mt-1">{compEmailError}</p>}
-                  <div className="mt-2">
-                    <SocialProofLine />
-                  </div>
-                </div>
 
-                {/* Blurred comp rows below the gate */}
-                <div className="relative">
-                  <div className="space-y-1" style={{ filter: 'blur(6px)', userSelect: 'none', WebkitUserSelect: 'none' } as React.CSSProperties}>
-                    {gatedComps.slice(0, 4).map((comp, i) => (
-                      <div key={`gated-${i}`} className={`flex items-start justify-between gap-4 px-4 py-3 rounded-md ${i % 2 === 0 ? 'bg-muted/40' : ''}`}>
+                  <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
+                    <span className="context-label">{city} rents this year</span>
+                    <span className="context-value">
+                      {marketYoy > 0 ? '+' : ''}{marketYoy}%
+                      {rentData.yoyCapped && <span className="context-sub"> (capped)</span>}
+                      <span className="context-sub"> ({compositeTrendResult.sourceCount >= 2 ? 'composite — ' + compositeTrendResult.sources.map(s => s.label).join(', ') : compositeTrendResult.primarySource})</span>
+                    </span>
+                  </div>
+                  {rentData.zillowMonthly !== null && rentData.zillowDirection && (
+                    <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
+                      <span className="context-label">Monthly trend</span>
+                      <span className="context-value">
+                        {rentData.zillowMonthly > 0 ? '+' : ''}{rentData.zillowMonthly}%/mo
+                        <span className="context-sub">
+                          {rentData.zillowDirection === 'rising' ? ' ↑ rising' : rentData.zillowDirection === 'falling' ? ' ↓ cooling' : ' → steady'}
+                          {' (Zillow ZORI)'}
+                        </span>
+                      </span>
+                    </div>
+                  )}
+                  {calc && (
+                    <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
+                      <span className="context-label">What most {brLabel} go for</span>
+                      <span className="context-value">
+                        ${fmt(calc.typicalRangeLow)} – ${fmt(calc.typicalRangeHigh)}
+                        <span className="context-sub"> (HUD SAFMR FY2026)</span>
+                      </span>
+                    </div>
+                  )}
+                  {calc && (
+                    <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
+                      <span className="context-label">Your current rent</span>
+                      <span className={`context-value ${
+                        formData.currentRent < calc.typicalRangeLow
+                          ? 'text-verdict-good'
+                          : formData.currentRent > calc.typicalRangeHigh
+                          ? 'text-destructive'
+                          : 'text-muted-foreground'
+                      }`}>
+                        ${fmt(formData.currentRent)} — {
+                          formData.currentRent < calc.typicalRangeLow
+                            ? 'below this range'
+                            : formData.currentRent > calc.typicalRangeHigh
+                            ? 'above this range'
+                            : 'within this range'
+                        }
+                      </span>
+                    </div>
+                  )}
+                  {isAboveMarket && calc && !calc.counterExceedsProposed && (
+                    <>
+                      <div className="context-row-highlight mt-2">
+                        <span className="context-label">Fair counter-offer</span>
+                        <span className="context-value text-verdict-good font-bold">
+                          {calc.counterLow === calc.counterHigh
+                            ? `$${fmt(calc.counterLow)}/mo`
+                            : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}/mo`}
+                        </span>
+                      </div>
+                      {medianCompRent && calc.counterLow > medianCompRent && (
+                        <div className="mt-2 px-3 py-2 rounded-md bg-accent/50 border border-border/50">
+                          <p className="text-[11px] text-muted-foreground leading-relaxed">
+                            Note: Your counter range (${fmt(calc.counterLow)}–${fmt(calc.counterHigh)}) is above the area median of ${fmt(medianCompRent)} for similar units. You may have additional negotiating room.
+                          </p>
+                        </div>
+                      )}
+                    </>
+                  )}
+                  {isAboveMarket && calc?.counterExceedsProposed && (
+                    <div className="mt-2 px-3 py-2.5 rounded-md bg-verdict-good/10 border border-verdict-good/20">
+                      <p className="text-[12px] text-muted-foreground leading-relaxed">
+                        Based on market data, your proposed rent appears to be in line with or below current market trends.
+                      </p>
+                    </div>
+                  )}
+
+                  <p className="text-[11px] text-muted-foreground mt-3">
+                    {rentData.yoySourceLabel}
+                  </p>
+                  {rentData.yoyReliability === 'government' && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      HUD benchmark estimate — actual market trends may differ.
+                    </p>
+                  )}
+                  {rentData.yoySource === 'hud' && rentData.priorSource === 'm' && (
+                    <p className="text-[11px] text-muted-foreground mt-1">Based on {rentData.metro} area average trend.</p>
+                  )}
+                  {rentData.yoySource === 'hud' && rentData.priorSource === 'n' && (
+                    <p className="text-[11px] text-muted-foreground mt-1">Note: This uses the national rent trend because local data is limited for this area.</p>
+                  )}
+                </motion.div>
+
+                {/* Market Snapshot */}
+                {hasIncrease && (
+                  <MarketSnapshot
+                    rcTotalListings={rcMarket.rcTotalListings}
+                    rcNewListings={rcMarket.rcNewListings}
+                    rcAvgDaysOnMarket={rcMarket.rcAvgDaysOnMarket}
+                    alVacancy={rentData.alVacancy}
+                  />
+                )}
+              </div>
+            </section>
+
+            {/* ━━━ COMPARABLE LISTINGS — fully visible ━━━ */}
+            {hasIncrease && medianCompRent && hasEnoughComps && (
+              <motion.section id="section-comps" {...fade(0.15)} className="py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>
+                <h2 className="results-section-header mb-2">
+                  How Your Rent Compares to Nearby Units
+                </h2>
+                <p className="text-[12px] text-muted-foreground text-center mb-6">
+                  Showing {allComps.length} comparable rental{allComps.length !== 1 ? 's' : ''}{compRadius.label ? ` ${compRadius.label}` : ''}, sorted by relevance.
+                  <span className="text-muted-foreground/60"> (Source: Real-time market listings)</span>
+                </p>
+
+                {consistencyNote && (
+                  <div className="px-4 py-3 rounded-md border border-border bg-muted/50 text-[12px] text-muted-foreground leading-relaxed mb-6">
+                    {consistencyNote}
+                  </div>
+                )}
+
+                <CompsList
+                  proposedRent={newRent}
+                  comparables={allComps}
+                  furnishedComps={furnishedComps}
+                  medianCompRent={medianCompRent}
+                  hudFmr={rentData.fmr}
+                  brLabel={brLabel}
+                  city={city}
+                  state={rentData.state}
+                  zip={rentData.zip}
+                  bedrooms={formData.bedrooms}
+                  userUnit={propertyData ? {
+                    address: formData.fullAddress,
+                    bedrooms: propertyData.bedrooms,
+                    bathrooms: propertyData.bathrooms,
+                    squareFootage: propertyData.squareFootage,
+                  } : null}
+                  gated={false}
+                />
+
+                {/* Outlier notice */}
+                {outlierResult && outlierResult.outliers.length > 0 && (
+                  <div className="mt-4 space-y-1">
+                    {outlierResult.outliers.map((comp, i) => (
+                      <div key={`outlier-${i}`} className="flex items-start justify-between gap-4 px-4 py-2 rounded-md opacity-50">
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-foreground truncate">{comp.formattedAddress}</p>
-                          <p className="text-xs text-muted-foreground mt-0.5">
-                            {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
-                            {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
-                            {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
+                          <p className="text-xs text-muted-foreground truncate">{comp.formattedAddress}</p>
+                          <p className="text-[10px] text-muted-foreground/60">
+                            Excluded from analysis — {comp.rent !== null && medianCompRent && comp.rent > medianCompRent ? 'significantly above' : 'significantly below'} local median
                           </p>
                         </div>
                         {comp.rent !== null && (
-                          <span className="text-sm font-semibold text-foreground whitespace-nowrap">${fmt(comp.rent)}/mo</span>
+                          <span className="text-xs text-muted-foreground line-through">${fmt(comp.rent)}/mo</span>
                         )}
                       </div>
                     ))}
                   </div>
-                  <div className="absolute inset-0 pointer-events-none" style={{
-                    background: 'linear-gradient(to bottom, hsl(var(--comps-bg) / 0.3) 0%, hsl(var(--comps-bg) / 0.8) 70%, hsl(var(--comps-bg)) 100%)',
-                  }} />
+                )}
+
+                {/* CompLinks */}
+                <div className="mt-6">
+                  <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} verdict={verdictLabel} fairnessScore={fairnessScore?.total} />
                 </div>
-              </div>
+              </motion.section>
             )}
 
-            {/* Outlier notice */}
-            {outlierResult && outlierResult.outliers.length > 0 && (
-              <div className="mt-4 space-y-1">
-                {outlierResult.outliers.map((comp, i) => (
-                  <div key={`outlier-${i}`} className="flex items-start justify-between gap-4 px-4 py-2 rounded-md opacity-50">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs text-muted-foreground truncate">{comp.formattedAddress}</p>
-                      <p className="text-[10px] text-muted-foreground/60">
-                        Excluded from analysis — {comp.rent !== null && medianCompRent && comp.rent > medianCompRent ? 'significantly above' : 'significantly below'} local median
-                      </p>
-                    </div>
-                    {comp.rent !== null && (
-                      <span className="text-xs text-muted-foreground line-through">${fmt(comp.rent)}/mo</span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* CompLinks — only post-conversion */}
-            {capturedEmail && (
-              <div className="mt-6">
-                <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} verdict={verdictLabel} fairnessScore={fairnessScore?.total} />
-              </div>
-            )}
-          </motion.section>
-        )}
-        {!hasEnoughComps && !rentcast.loading && capturedEmail && (
-          <motion.section {...fade(0.15)} className="py-12">
-            <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} verdict={verdictLabel} fairnessScore={fairnessScore?.total} />
-          </motion.section>
-        )}
-
-        {/* ━━━ YOUR NEXT STEPS — only after email capture ━━━ */}
-        {hasIncrease && capturedEmail && (
-          <NextStepsSection
-            isAboveMarket={isAboveMarket}
-            fairnessScore={fairnessScore?.total ?? null}
-            verdictLabel={verdictLabel}
-            zip={rentData.zip}
-            bedrooms={bedroomNum}
-            currentRent={formData.currentRent}
-            proposedRent={newRent}
-            propertyType={propertyData?.propertyType}
-            city={city}
-            state={rentData.state}
-            compMedianRent={medianCompRent}
-            dollarOverpayment={excessAnnual > 0 ? Math.round(excessAnnual / 12) : null}
-            brLabel={brLabel}
-            onShareClick={() => {
-              document.getElementById('section-share')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            analysisId={analysisId}
-            capturedEmail={capturedEmail}
-          />
-        )}
-
-        {/* ━━━ Know Your Rights ━━━ */}
-        {hasRentControl && (
-          <motion.section id="section-rights" {...fade(0.17)} className="pt-8 pb-4">
-            <div className="evidence-card">
-              <RentControlCard
-                state={rentData.state}
-                city={rentData.city}
-                zip={rentData.zip}
-                increasePct={increasePct}
-                address={formData.fullAddress}
-              />
-            </div>
-          </motion.section>
-        )}
-
-        {/* ━━━ NEGOTIATION LETTER (All verdicts with increase) ━━━ */}
-        {hasIncrease && calc && (isAboveMarket || isFair || isBelowMarket) && (
-          <motion.section id="section-letter" {...fade(0.19)} className="pt-8 pb-8">
-            {isFair && !isAboveMarket && !isBelowMarket && (
-              <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">
-                Even a fair increase is worth negotiating. Landlords expect it — and avoiding turnover is worth more to them than $50-100/month.
-              </p>
-            )}
-            {isBelowMarket && (
-              <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">
-                Your landlord is offering below-market terms — that's leverage. Here's how to lock in this rate or negotiate extras like a longer lease, a unit upgrade, or a repair you've been waiting on.
-              </p>
-            )}
-            <LetterGate
-                  leadContext={leadContext}
-                  prefilledEmail={capturedEmail}
-                  onEmailCaptured={setCapturedEmail}
-                  verdictLabel={isAboveMarket ? 'above' : isBelowMarket ? 'below' : 'fair'}
-                >
-                  <NegotiationLetter
-                    currentRent={formData.currentRent}
-                    newRent={newRent}
-                    increasePct={increasePct}
-                    marketYoy={marketYoy}
-                    fmr={rentData.fmr}
-                    zip={rentData.zip}
-                    city={rentData.city}
-                    state={rentData.state}
-                    bedrooms={formData.bedrooms}
-                    increaseAmount={increaseAmount}
-                    counterLow={calc.counterLow}
-                    counterHigh={calc.counterHigh}
-                    counterLowPercent={calc.counterLowPercent}
-                    counterHighPercent={calc.counterHighPercent}
-                    analysisId={analysisId}
-                    prefilledEmail={capturedEmail}
-                    onEmailCaptured={setCapturedEmail}
-                    leadContext={leadContext}
-                    reportUrl={reportUrl}
-                    onGenerateReport={() => {
-                      const btn = document.querySelector('[data-share-report-btn]') as HTMLButtonElement;
-                      btn?.click();
-                    }}
-                    compMedian={medianCompRent}
-                    compCount={outlierResult?.filtered.length ?? 0}
-                    compRadius={compRadius.label ? compRadius.label.replace('within ', '') : undefined}
-                    trendSource={compositeTrendResult.sourceCount >= 2 ? 'multiple market sources' : compositeTrendResult.primarySource}
-                    trendArea={rentData.alRegion || rentData.city}
-                    rcMedianRent={rcMarket.rcMedianRent}
-                    rcTotalListings={rcMarket.rcTotalListings}
-                    rcAvgDaysOnMarket={rcMarket.rcAvgDaysOnMarket}
-                    alVacancy={rentData.alVacancy}
-                    f50Value={rentData.f50 && bedroomNum >= 0 && bedroomNum <= 4 ? rentData.f50[bedroomNum] : null}
-                    fairnessScore={fairnessScore?.total ?? null}
-                    tierLabel={fairnessScore?.tierLabel ?? null}
-                    maxCompDistance={compRadius.maxDistance}
-                    momentumDirection={rentData.zillowDirection || (rentData.hvd ? rentData.hvd : null)}
-                    letterTone={isAboveMarket ? 'aggressive' : isFair ? 'collaborative' : 'strategic'}
-                    onLetterGenerated={handleLetterGenerated}
-                    comparables={rentcast.data?.comparables}
-                  />
-                </LetterGate>
-          </motion.section>
-        )}
-
-        {/* ━━━ ABOVE MARKET PATH: Share ━━━ */}
-        {isAboveMarket && (
-          <>
+            {/* ━━━ YOUR NEXT STEPS ━━━ */}
             {hasIncrease && (
-              <motion.section id="section-share" {...fade(0.21)} className="pt-8 pb-10">
-                <h2 className="results-section-header mb-6">Share Your Analysis</h2>
-                <div className="flex justify-center">
-                  <ShareHub
-                    reportPayload={shareReportPayload}
-                    onLinkGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
-                    analysisId={analysisId}
-                    leadEmail={capturedEmail || undefined}
-                    zipCode={rentData.zip}
-                    city={rentData.city}
+              <NextStepsSection
+                isAboveMarket={isAboveMarket}
+                fairnessScore={fairnessScore?.total ?? null}
+                verdictLabel={verdictLabel}
+                zip={rentData.zip}
+                bedrooms={bedroomNum}
+                currentRent={formData.currentRent}
+                proposedRent={newRent}
+                propertyType={propertyData?.propertyType}
+                city={city}
+                state={rentData.state}
+                compMedianRent={medianCompRent}
+                dollarOverpayment={excessAnnual > 0 ? Math.round(excessAnnual / 12) : null}
+                brLabel={brLabel}
+                onShareClick={() => {
+                  document.getElementById('section-share')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                analysisId={analysisId}
+                capturedEmail={capturedEmail}
+              />
+            )}
+
+            {/* ━━━ Know Your Rights ━━━ */}
+            {hasRentControl && (
+              <motion.section id="section-rights" {...fade(0.17)} className="pt-8 pb-4">
+                <div className="evidence-card">
+                  <RentControlCard
                     state={rentData.state}
-                    bedroomNum={bedroomNum}
+                    city={rentData.city}
+                    zip={rentData.zip}
                     increasePct={increasePct}
-                    marketYoy={marketYoy}
-                    verdict="above"
-                    headline={
-                      isPath1
-                        ? `My landlord is asking for $${fmt(newRent - (calc?.counterHigh ?? 0))}/mo more than the market supports.`
-                        : `Rents near me moved ${marketYoy}% but my landlord wants ${increasePct}%.`
-                    }
-                    stats={[
-                      { label: 'Current rent', value: `$${fmt(formData.currentRent)}` },
-                      { label: 'Proposed rent', value: `$${fmt(newRent)}`, color: 'hsl(0, 72%, 51%)' },
-                      { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
-                      { label: 'Your increase', value: `${increasePct}%`, color: 'hsl(0, 72%, 51%)' },
-                    ]}
+                    address={formData.fullAddress}
                   />
                 </div>
               </motion.section>
             )}
 
-            {/* Cross-link to WSIP tool */}
+            {/* ━━━ NEGOTIATION LETTER — fully visible ━━━ */}
+            {hasIncrease && calc && (isAboveMarket || isFair || isBelowMarket) && (
+              <motion.section id="section-letter" {...fade(0.19)} className="pt-8 pb-8">
+                {isFair && !isAboveMarket && !isBelowMarket && (
+                  <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">
+                    Even a fair increase is worth negotiating. Landlords expect it — and avoiding turnover is worth more to them than $50-100/month.
+                  </p>
+                )}
+                {isBelowMarket && (
+                  <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">
+                    Your landlord is offering below-market terms — that's leverage. Here's how to lock in this rate or negotiate extras like a longer lease, a unit upgrade, or a repair you've been waiting on.
+                  </p>
+                )}
+                <NegotiationLetter
+                  currentRent={formData.currentRent}
+                  newRent={newRent}
+                  increasePct={increasePct}
+                  marketYoy={marketYoy}
+                  fmr={rentData.fmr}
+                  zip={rentData.zip}
+                  city={rentData.city}
+                  state={rentData.state}
+                  bedrooms={formData.bedrooms}
+                  increaseAmount={increaseAmount}
+                  counterLow={calc.counterLow}
+                  counterHigh={calc.counterHigh}
+                  counterLowPercent={calc.counterLowPercent}
+                  counterHighPercent={calc.counterHighPercent}
+                  analysisId={analysisId}
+                  prefilledEmail={capturedEmail}
+                  onEmailCaptured={setCapturedEmail}
+                  leadContext={leadContext}
+                  reportUrl={reportUrl}
+                  onGenerateReport={() => {
+                    const btn = document.querySelector('[data-share-report-btn]') as HTMLButtonElement;
+                    btn?.click();
+                  }}
+                  compMedian={medianCompRent}
+                  compCount={outlierResult?.filtered.length ?? 0}
+                  compRadius={compRadius.label ? compRadius.label.replace('within ', '') : undefined}
+                  trendSource={compositeTrendResult.sourceCount >= 2 ? 'multiple market sources' : compositeTrendResult.primarySource}
+                  trendArea={rentData.alRegion || rentData.city}
+                  rcMedianRent={rcMarket.rcMedianRent}
+                  rcTotalListings={rcMarket.rcTotalListings}
+                  rcAvgDaysOnMarket={rcMarket.rcAvgDaysOnMarket}
+                  alVacancy={rentData.alVacancy}
+                  f50Value={rentData.f50 && bedroomNum >= 0 && bedroomNum <= 4 ? rentData.f50[bedroomNum] : null}
+                  fairnessScore={fairnessScore?.total ?? null}
+                  tierLabel={fairnessScore?.tierLabel ?? null}
+                  maxCompDistance={compRadius.maxDistance}
+                  momentumDirection={rentData.zillowDirection || (rentData.hvd ? rentData.hvd : null)}
+                  letterTone={isAboveMarket ? 'aggressive' : isFair ? 'collaborative' : 'strategic'}
+                  onLetterGenerated={handleLetterGenerated}
+                  comparables={rentcast.data?.comparables}
+                />
+              </motion.section>
+            )}
+
+            {/* ━━━ Post-conversion flow ━━━ */}
+            <section className="pb-4 pt-2">
+              <PostConversionFlow
+                email={capturedEmail}
+                leadContext={leadContext}
+                verdictLabel={verdictLabel}
+                zip={rentData.zip}
+              />
+            </section>
+
+            {/* ━━━ Share ━━━ */}
+            <motion.section id="section-share" {...fade(0.23)} className="pt-4 pb-10">
+              <h2 className="results-section-header mb-6">
+                {isAboveMarket ? 'Share Your Analysis' : 'Share This Tool'}
+              </h2>
+              <div className="flex justify-center">
+                <ShareHub
+                  reportPayload={shareReportPayload}
+                  onLinkGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
+                  analysisId={analysisId}
+                  leadEmail={capturedEmail || undefined}
+                  zipCode={rentData.zip}
+                  city={rentData.city}
+                  state={rentData.state}
+                  bedroomNum={bedroomNum}
+                  increasePct={hasIncrease ? increasePct : 0}
+                  marketYoy={marketYoy}
+                  verdict={isAboveMarket ? 'above' : isFair ? 'fair' : isBelowMarket ? 'below' : 'none'}
+                  headline={
+                    isAboveMarket && isPath1
+                      ? `My landlord is asking for $${fmt(newRent - (calc?.counterHigh ?? 0))}/mo more than the market supports.`
+                      : isAboveMarket
+                      ? `Rents near me moved ${marketYoy}% but my landlord wants ${increasePct}%.`
+                      : isFair
+                      ? `My rent increase is right at market.`
+                      : isBelowMarket
+                      ? `My rent increase is below the area trend.`
+                      : `My rent isn't going up — and rents in ${city} moved ${marketYoy}%.`
+                  }
+                  stats={
+                    hasIncrease
+                      ? [
+                          { label: 'Current rent', value: `$${fmt(formData.currentRent)}` },
+                          { label: 'Proposed rent', value: `$${fmt(newRent)}`, color: isAboveMarket ? 'hsl(0, 72%, 51%)' : isBelowMarket ? 'hsl(151, 50%, 38%)' : undefined },
+                          { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
+                          { label: 'Your increase', value: `${increasePct}%`, color: isAboveMarket ? 'hsl(0, 72%, 51%)' : isFair ? 'hsl(45, 80%, 45%)' : 'hsl(151, 50%, 38%)' },
+                        ]
+                      : [
+                          { label: 'Current rent', value: `$${fmt(formData.currentRent)}` },
+                          { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
+                        ]
+                  }
+                />
+              </div>
+            </motion.section>
+
+            {/* Cross-link to WSIP */}
             {isAboveMarket && (
               <motion.div {...fade(0.25)} className="pb-6 text-center">
                 <p className="text-sm text-muted-foreground mb-1">Thinking about moving?</p>
@@ -1208,147 +1116,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </Link>
               </motion.div>
             )}
-          </>
-        )}
-
-        {/* ━━━ BELOW / FAIR MARKET PATH ━━━ */}
-        {!isAboveMarket && hasIncrease && (
-          <>
-            {/* Reassurance message */}
-            <motion.section {...fade(0.19)} className="pt-2 pb-4">
-              <div className="px-5 py-5 rounded-xl border border-verdict-good/20 bg-verdict-good/5 text-center">
-                <p className="text-base font-medium text-foreground leading-relaxed">
-                  {isBelowMarket
-                    ? "Your landlord's ask is below market. Renewing at this rate is a solid decision."
-                    : "Your landlord's ask is at market. Renewing at this rate is a solid decision."}
-                </p>
-              </div>
-            </motion.section>
-
-
-            {/* Email capture for fair/below — rewritten copy */}
-            {!capturedEmail && (
-              <section id="section-email-capture" className="pb-6 pt-4">
-                <div className="rounded-xl px-5 sm:px-8 py-5 sm:py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
-                  <EmailCapture
-                    city={city}
-                    captureSource="lease_reminder"
-                    prefilledEmail={capturedEmail}
-                    onEmailCaptured={setCapturedEmail}
-                    leadContext={leadContext}
-                    verdict={isBelowMarket ? 'below' : 'at_market'}
-                    heading={
-                      isFair
-                        ? "Your increase is fair — but you can still save."
-                        : "You're getting a good deal. Lock it in."
-                    }
-                    subtext={
-                      isFair
-                        ? "Get a letter to negotiate extras: longer lease, unit upgrades, or maintenance. We'll also alert you before your next renewal."
-                        : "We'll send you this analysis and alert you when market conditions change in your area."
-                    }
-                  />
-                </div>
-              </section>
-            )}
-
-            {/* Post-conversion flow for fair/below */}
-            {capturedEmail && (
-              <section className="pb-4 pt-2">
-                <PostConversionFlow
-                  email={capturedEmail}
-                  leadContext={leadContext}
-                  verdictLabel={verdictLabel}
-                  zip={rentData.zip}
-                />
-              </section>
-            )}
-
-            {/* Share */}
-            <motion.section id="section-share" {...fade(0.23)} className="pt-4 pb-10">
-              <h2 className="results-section-header mb-6">Share This Tool</h2>
-              <div className="flex justify-center">
-                <ShareHub
-                  reportPayload={shareReportPayload}
-                  onLinkGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
-                  analysisId={analysisId}
-                  leadEmail={capturedEmail || undefined}
-                  zipCode={rentData.zip}
-                  city={rentData.city}
-                  state={rentData.state}
-                  bedroomNum={bedroomNum}
-                  increasePct={increasePct}
-                  marketYoy={marketYoy}
-                  verdict={isFair ? 'fair' : 'below'}
-                  headline={
-                    isFair
-                      ? `My rent increase is right at market.`
-                      : `My rent increase is below the area trend.`
-                  }
-                  stats={[
-                    { label: 'Current rent', value: `$${fmt(formData.currentRent)}` },
-                    { label: 'Proposed rent', value: `$${fmt(newRent)}`, color: isBelowMarket ? 'hsl(151, 50%, 38%)' : undefined },
-                    { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
-                    { label: 'Your increase', value: `${increasePct}%`, color: isFair ? 'hsl(45, 80%, 45%)' : 'hsl(151, 50%, 38%)' },
-                  ]}
-                />
-              </div>
-            </motion.section>
-          </>
-        )}
-
-        {/* ━━━ No increase path — email capture + share ━━━ */}
-        {!hasIncrease && (
-          <>
-            {!capturedEmail ? (
-              <section className="pb-6 pt-4">
-                <div className="rounded-xl px-5 sm:px-8 py-5 sm:py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
-                  <EmailCapture
-                    city={city}
-                    captureSource="lease_reminder"
-                    prefilledEmail={capturedEmail}
-                    onEmailCaptured={setCapturedEmail}
-                    leadContext={leadContext}
-                    heading="Your rent could go up next year."
-                    subtext={`We'll monitor market data for ${city} and alert you before your next renewal.`}
-                  />
-                </div>
-              </section>
-            ) : (
-              <section className="pb-4 pt-2">
-                <PostConversionFlow
-                  email={capturedEmail}
-                  leadContext={leadContext}
-                  verdictLabel={verdictLabel}
-                  zip={rentData.zip}
-                />
-              </section>
-            )}
-
-            {/* Share section for no-increase path */}
-            <motion.section id="section-share" {...fade(0.23)} className="pt-4 pb-10">
-              <h2 className="results-section-header mb-6">Share This Tool</h2>
-              <div className="flex justify-center">
-                <ShareHub
-                  reportPayload={shareReportPayload}
-                  onLinkGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
-                  analysisId={analysisId}
-                  leadEmail={capturedEmail || undefined}
-                  zipCode={rentData.zip}
-                  city={rentData.city}
-                  state={rentData.state}
-                  bedroomNum={bedroomNum}
-                  increasePct={0}
-                  marketYoy={marketYoy}
-                  verdict="none"
-                  headline={`My rent isn't going up — and rents in ${city} moved ${marketYoy}%.`}
-                  stats={[
-                    { label: 'Current rent', value: `$${fmt(formData.currentRent)}` },
-                    { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
-                  ]}
-                />
-              </div>
-            </motion.section>
           </>
         )}
 
