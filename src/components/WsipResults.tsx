@@ -457,28 +457,44 @@ Happy to discuss — thank you.`;
               className="font-display text-[1.35rem] sm:text-[clamp(1.5rem,4.5vw,2.2rem)] text-foreground leading-[1.15] tracking-tight mb-3 whitespace-nowrap"
               style={{ letterSpacing: '-0.02em' }}
             >
-              {verdict === 'below' && <span className="text-verdict-good">That's a good deal.</span>}
-              {verdict === 'in-range' && <span className="text-verdict-fair">That's a fair price.</span>}
-              {verdict === 'above' && <span className="text-destructive">That's overpriced.</span>}
-              {!verdict && <>Here's your fair range.</>}
+              {verdictHeadline ? (
+                <span className={verdict === 'below' ? 'text-verdict-good' : verdict === 'above' ? 'text-destructive' : 'text-verdict-fair'}>
+                  {verdictHeadline}
+                </span>
+              ) : (
+                <>
+                  {verdict === 'below' && <span className="text-verdict-good">That's a good deal.</span>}
+                  {verdict === 'in-range' && <span className="text-verdict-fair">That's a fair price.</span>}
+                  {verdict === 'above' && <span className="text-destructive">That's overpriced.</span>}
+                  {!verdict && <>Here's your fair range.</>}
+                </>
+              )}
             </h1>
 
-            {/* Building rent line — strongest trust signal */}
-            {tiering.buildingRentRange && (
-              <p className="text-[13px] sm:text-[15px] font-medium text-verdict-good mb-3">
-                Other units in this building rent for ${fmt(tiering.buildingRentRange.low)}
-                {tiering.buildingRentRange.low !== tiering.buildingRentRange.high && ` – $${fmt(tiering.buildingRentRange.high)}`}/month
+            {/* Building rent context line */}
+            {bldg.hasBuildingData && (
+              <p className="text-[13px] sm:text-[15px] font-medium text-verdict-good mb-1">
+                Other units in this building rent for ${fmt(bldg.buildingLow)}
+                {bldg.buildingLow !== bldg.buildingHigh && ` – $${fmt(bldg.buildingHigh)}`}/month
               </p>
+            )}
+            {bldg.hasBuildingData && bldg.buildingHigh > fairRangeHigh * 1.15 && (
+              <p className="text-[11px] text-muted-foreground mb-2">This building rents above the area average.</p>
+            )}
+            {bldg.hasBuildingData && bldg.buildingHigh < fairRangeHigh * 0.85 && (
+              <p className="text-[11px] text-muted-foreground mb-2">This building rents below the area average — good value for the area.</p>
             )}
 
             <p className="text-[14px] sm:text-base text-muted-foreground leading-relaxed max-w-[480px] mb-6">
-              {askingRent ? (
+              {verdictSubtitle ? (
+                verdictSubtitle
+              ) : askingRent ? (
                 <>
                   The fair range for {brLabel}s in {city} is ${fmt(fairRangeLow)} – ${fmt(fairRangeHigh)}/month.
                   The asking price of ${fmt(askingRent)} is{' '}
                   {verdict === 'below' ? 'below' : verdict === 'in-range' ? 'within' : 'above'} this range.
-                  {verdict === 'above' && (
-                    <> You could save <strong className="text-foreground">${fmt(askingRent - fairRangeHigh)}/month</strong> by negotiating.</>
+                  {savings !== null && savings > 0 && (
+                    <> You could save <strong className="text-foreground">${fmt(savings)}/month</strong> (${fmt(savings * 12)}/year) by negotiating.</>
                   )}
                 </>
               ) : (
