@@ -547,7 +547,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                           {isAboveMarket && calc ? (
                             calc.counterExceedsProposed
                               ? <>Based on market data, your proposed rent appears to be in line with or below current market trends.</>
-                              : <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. That's ${fmt(increaseAmount * 12)} more per year. A fair counter-offer is {calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}/mo` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}/mo`}.</>
+                              : <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. That's ${fmt(increaseAmount * 12)} more per year. Unlock your report to see the fair counter-offer and negotiation letter.</>
                           ) : isFair ? (
                             isNuancedAtMarket || increasePct > marketYoy + 1.5 ? (
                               medianCompRent ? (
