@@ -113,13 +113,17 @@ const WsipResults = ({
 
   // Tier 1 (in-building) shown ungated; others gated
   const tier1Comps = tiering.tier1;
+  const hasBuilding = bldg.hasBuildingData && tier1Comps.length >= 2;
   const nonBuildingComps = allComps.filter(c => c.tier !== 1);
   const nonBuildingWithRent = nonBuildingComps.filter(c => c.rent !== null && c.rent > 0);
   const displayableNonBuilding = Math.min(nonBuildingWithRent.length, 6);
-  const visibleNonBuildingCount = Math.min(displayableNonBuilding, 3);
+  // When building comps exist, gate ALL nearby comps; otherwise 3 free + rest gated
+  const visibleNonBuildingCount = hasBuilding ? 0 : Math.min(displayableNonBuilding, 3);
   const visibleNonBuildingComps = nonBuildingComps.slice(0, visibleNonBuildingCount);
-  const gatedComps = displayableNonBuilding > visibleNonBuildingCount ? nonBuildingComps.slice(visibleNonBuildingCount) : [];
-  const gatedDisplayCount = displayableNonBuilding - visibleNonBuildingCount;
+  const gatedComps = hasBuilding
+    ? nonBuildingComps.slice(0, displayableNonBuilding)
+    : (displayableNonBuilding > visibleNonBuildingCount ? nonBuildingComps.slice(visibleNonBuildingCount) : []);
+  const gatedDisplayCount = hasBuilding ? displayableNonBuilding : displayableNonBuilding - visibleNonBuildingCount;
 
   // ━━━ Fair range (weighted composite with tier overrides) ━━━
   const fairRange = useMemo(() => {
@@ -244,10 +248,10 @@ const WsipResults = ({
       { id: 'section-market', label: 'Market' },
     ];
     if (compsWithRent.length > 0) sections.push({ id: 'section-comps', label: 'Comps' });
-    if (askingRent && verdict === 'above') sections.push({ id: 'section-playbook', label: 'Negotiate' });
+    if (askingRent) sections.push({ id: 'section-nextsteps', label: 'Next Steps' });
     sections.push({ id: 'section-share', label: 'Share' });
     return sections;
-  }, [compsWithRent.length, askingRent, verdict]);
+  }, [compsWithRent.length, askingRent]);
 
   // ━━━ Analytics ━━━
   useEffect(() => {
@@ -419,6 +423,12 @@ Happy to discuss — thank you.`;
   const rangeLowPct = ((barLow - rangeBarMin) / rangeSpan) * 100;
   const rangeHighPct = ((barHigh - rangeBarMin) / rangeSpan) * 100;
   const askingPct = askingRent ? Math.min(100, Math.max(0, ((askingRent - rangeBarMin) / rangeSpan) * 100)) : null;
+
+  // Verdict-adaptive gate CTA
+  const gateCtaText = !askingRent ? 'Unlock all comps →'
+    : verdict === 'above' ? 'Unlock comps + negotiation tips →'
+    : verdict === 'below' ? 'Unlock comps + how to lock this in →'
+    : 'Unlock comps + application tips →';
 
   const handleResultsShared = useCallback(() => {
     supabase.from('analyses' as any).update({ results_shared: true } as any).eq('id', analysisId).then(() => {});
@@ -737,10 +747,20 @@ Happy to discuss — thank you.`;
                 />
               )}
 
-              {/* Tier 2-4: nearby comps — gated */}
-              {nonBuildingComps.length > 0 && (
+              {/* Tier 2-4: nearby comps — shown when unlocked */}
+              {nonBuildingComps.length > 0 && compsUnlocked && (
                 <WsipCompsList
-                  comparables={compsUnlocked ? nonBuildingComps : visibleNonBuildingComps}
+                  comparables={nonBuildingComps}
+                  askingRent={askingRent}
+                  medianCompRent={medianCompRent}
+                  sectionLabel={tier1Comps.length > 0 ? 'Nearby' : undefined}
+                />
+              )}
+
+              {/* Partial nearby when no building data and not unlocked */}
+              {!compsUnlocked && !hasBuilding && visibleNonBuildingComps.length > 0 && (
+                <WsipCompsList
+                  comparables={visibleNonBuildingComps}
                   askingRent={askingRent}
                   medianCompRent={medianCompRent}
                   sectionLabel={tier1Comps.length > 0 ? 'Nearby' : undefined}
@@ -750,11 +770,18 @@ Happy to discuss — thank you.`;
               {/* Comp gate */}
               {gatedComps.length > 0 && !compsUnlocked && (
                 <div ref={compGateRef} className="mt-4">
+                  {/* Nearby header when all nearby gated (building exists) */}
+                  {hasBuilding && (
+                    <div className="flex items-center gap-2 px-4 mb-1.5">
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Nearby</span>
+                      <span className="flex-1 h-px bg-border/50" />
+                    </div>
+                  )}
                   <div className="text-center py-4 px-4">
                     <p className="text-sm font-semibold text-foreground mb-1">
                       {gatedDisplayCount} more comparable rental{gatedDisplayCount !== 1 ? 's' : ''} nearby
                     </p>
-                    <p className="text-xs text-muted-foreground mb-3">Enter your email to see all comps</p>
+                    <p className="text-xs text-muted-foreground mb-3">Enter your email to unlock</p>
                     <form onSubmit={handleCompGateSubmit} className="flex gap-2 max-w-[400px] mx-auto">
                       <input
                         type="email"
@@ -770,14 +797,13 @@ Happy to discuss — thank you.`;
                         disabled={compEmailLoading}
                         className="bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap disabled:opacity-60"
                       >
-                        {compEmailLoading ? 'Unlocking…' : 'Unlock all comps →'}
+                        {compEmailLoading ? 'Unlocking…' : gateCtaText}
                       </button>
                     </form>
                     {compEmailError && <p className="text-xs text-destructive mt-1">{compEmailError}</p>}
                     <div className="mt-2">
                       <SocialProofLine />
                     </div>
-                    
                   </div>
 
                   {/* Blurred rows */}
@@ -808,62 +834,110 @@ Happy to discuss — thank you.`;
             </motion.section>
           )}
 
-          {/* ━━━ SECTION 4: NEGOTIATION PLAYBOOK (gated, above-market only) ━━━ */}
-          {askingRent && verdict === 'above' && (
-            <motion.section id="section-playbook" {...fade(0.19)} className="pt-8 pb-8">
-              <h2 className="results-section-header mb-6">How to Negotiate This Rent</h2>
+          {/* ━━━ SECTION 4: YOUR NEXT STEPS (all verdicts, gated) ━━━ */}
+          {askingRent && (
+            <motion.section id="section-nextsteps" {...fade(0.19)} className="pt-8 pb-8">
+              <h2 className="results-section-header mb-6">Your Next Steps</h2>
 
               {compsUnlocked ? (
                 <div className="evidence-card space-y-4">
-                  <ul className="space-y-3 text-sm text-foreground">
-                    {bldg.hasBuildingData && askingRent > bldg.buildingHigh && (
-                      <li className="flex gap-2">
-                        <span className="text-primary font-bold shrink-0">•</span>
-                        The highest similar unit in this building rents for ${fmt(bldg.buildingHigh)} — the asking price of ${fmt(askingRent)} is ${fmt(askingRent - bldg.buildingHigh)} above this.
-                      </li>
-                    )}
-                    {bldg.hasBuildingData && (
-                      <li className="flex gap-2">
-                        <span className="text-primary font-bold shrink-0">•</span>
-                        There are {bldg.buildingComps.length} other units in this building, giving you direct comparisons.
-                      </li>
-                    )}
-                    {!bldg.hasBuildingData && (
-                      <li className="flex gap-2">
-                        <span className="text-primary font-bold shrink-0">•</span>
-                        The asking price of ${fmt(askingRent)} is ${fmt(askingRent - (medianCompRent ?? fairRangeHigh))} above the area median of ${fmt(medianCompRent ?? fairRangeHigh)}.
-                      </li>
-                    )}
-                    {rcMarket.rcTotalListings !== null && rcMarket.rcTotalListings > 5 && (
-                      <li className="flex gap-2">
-                        <span className="text-primary font-bold shrink-0">•</span>
-                        There are {rcMarket.rcTotalListings} active listings in this ZIP — mention that you're exploring options.
-                      </li>
-                    )}
-                    {rcMarket.rcAvgDaysOnMarket !== null && (
-                      <li className="flex gap-2">
-                        <span className="text-primary font-bold shrink-0">•</span>
-                        Units sit for {Math.round(rcMarket.rcAvgDaysOnMarket)} days on average — the landlord has incentive to close quickly.
-                      </li>
-                    )}
-                    <li className="flex gap-2">
-                      <span className="text-primary font-bold shrink-0">•</span>
-                      The market trend is {trendLabel}.
-                    </li>
-                  </ul>
+                  {/* OVERPRICED */}
+                  {verdict === 'above' && (
+                    <>
+                      <p className="text-sm font-medium text-foreground">How to negotiate this rent down:</p>
+                      <ul className="space-y-3 text-sm text-foreground">
+                        {bldg.hasBuildingData && askingRent > bldg.buildingHigh && (
+                          <li className="flex gap-2">
+                            <span className="text-primary font-bold shrink-0">•</span>
+                            The highest similar unit in this building rents for ${fmt(bldg.buildingHigh)} — the asking price of ${fmt(askingRent)} is ${fmt(askingRent - bldg.buildingHigh)} above this.
+                          </li>
+                        )}
+                        {bldg.hasBuildingData && (
+                          <li className="flex gap-2">
+                            <span className="text-primary font-bold shrink-0">•</span>
+                            There are {bldg.buildingComps.length} other units in this building, giving you direct comparisons.
+                          </li>
+                        )}
+                        {!bldg.hasBuildingData && (
+                          <li className="flex gap-2">
+                            <span className="text-primary font-bold shrink-0">•</span>
+                            The asking price of ${fmt(askingRent)} is ${fmt(askingRent - (medianCompRent ?? fairRangeHigh))} above the area median of ${fmt(medianCompRent ?? fairRangeHigh)}.
+                          </li>
+                        )}
+                        {rcMarket.rcTotalListings !== null && rcMarket.rcTotalListings > 5 && (
+                          <li className="flex gap-2">
+                            <span className="text-primary font-bold shrink-0">•</span>
+                            There are {rcMarket.rcTotalListings} active listings in this ZIP — mention that you're exploring options.
+                          </li>
+                        )}
+                        {rcMarket.rcAvgDaysOnMarket !== null && (
+                          <li className="flex gap-2">
+                            <span className="text-primary font-bold shrink-0">•</span>
+                            Units sit for {Math.round(rcMarket.rcAvgDaysOnMarket)} days on average — the landlord has incentive to close quickly.
+                          </li>
+                        )}
+                        <li className="flex gap-2">
+                          <span className="text-primary font-bold shrink-0">•</span>
+                          The market trend is {trendLabel}.
+                        </li>
+                      </ul>
 
-                  {/* Email template */}
-                  <div className="rounded-lg border border-border bg-muted/30 p-4 relative">
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">Copy-paste email template</p>
-                    <p className="text-sm text-foreground whitespace-pre-line leading-relaxed">{emailTemplate}</p>
-                    <button
-                      onClick={handleCopyTemplate}
-                      className="absolute top-3 right-3 p-2 rounded-md hover:bg-muted transition-colors"
-                      aria-label="Copy template"
-                    >
-                      {templateCopied ? <Check className="w-4 h-4 text-verdict-good" /> : <Copy className="w-4 h-4 text-muted-foreground" />}
-                    </button>
-                  </div>
+                      {/* Email template */}
+                      <div className="rounded-lg border border-border bg-muted/30 p-4 relative">
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">Copy-paste email template</p>
+                        <p className="text-sm text-foreground whitespace-pre-line leading-relaxed">{emailTemplate}</p>
+                        <button
+                          onClick={handleCopyTemplate}
+                          className="absolute top-3 right-3 p-2 rounded-md hover:bg-muted transition-colors"
+                          aria-label="Copy template"
+                        >
+                          {templateCopied ? <Check className="w-4 h-4 text-verdict-good" /> : <Copy className="w-4 h-4 text-muted-foreground" />}
+                        </button>
+                      </div>
+                    </>
+                  )}
+
+                  {/* FAIR */}
+                  {verdict === 'in-range' && (
+                    <>
+                      <p className="text-sm font-medium text-foreground">This is a fair price. Here's how to strengthen your application to secure this unit:</p>
+                      <ul className="space-y-3 text-sm text-foreground">
+                        <li className="flex gap-2">
+                          <span className="text-primary font-bold shrink-0">•</span>
+                          <strong>Apply quickly.</strong> Fair-priced units go fast. Submit your application the same day you tour, or even before if the listing allows it.
+                        </li>
+                        <li className="flex gap-2">
+                          <span className="text-primary font-bold shrink-0">•</span>
+                          <strong>Show you've done your research.</strong> Tell the landlord: "I've looked at the market data and this is in line with comparable units — I'm ready to move forward."
+                        </li>
+                        <li className="flex gap-2">
+                          <span className="text-primary font-bold shrink-0">•</span>
+                          <strong>Include references.</strong> A brief note from a previous landlord confirming on-time payments can set you apart from other applicants.
+                        </li>
+                      </ul>
+                    </>
+                  )}
+
+                  {/* GOOD DEAL */}
+                  {verdict === 'below' && (
+                    <>
+                      <p className="text-sm font-medium text-foreground">This is below market — act fast. Here's how to lock it in:</p>
+                      <ul className="space-y-3 text-sm text-foreground">
+                        <li className="flex gap-2">
+                          <span className="text-primary font-bold shrink-0">•</span>
+                          <strong>Apply the same day.</strong> Below-market units attract heavy interest. Don't wait for a second tour — submit your application immediately.
+                        </li>
+                        <li className="flex gap-2">
+                          <span className="text-primary font-bold shrink-0">•</span>
+                          <strong>Offer to sign immediately.</strong> Tell the landlord you're ready to sign the lease today. Certainty is valuable to them.
+                        </li>
+                        <li className="flex gap-2">
+                          <span className="text-primary font-bold shrink-0">•</span>
+                          <strong>Have your documents ready.</strong> Bring proof of income, ID, references, and any deposit funds. Removing friction speeds up the process.
+                        </li>
+                      </ul>
+                    </>
+                  )}
                 </div>
               ) : (
                 /* Gated — blurred with email prompt */
@@ -873,7 +947,9 @@ Happy to discuss — thank you.`;
                       <ul className="space-y-3 text-sm text-foreground">
                         <li className="flex gap-2">
                           <span className="text-primary font-bold shrink-0">•</span>
-                          The asking price is above the area median by a significant amount.
+                          {verdict === 'above' ? 'The asking price is above the area median by a significant amount.'
+                            : verdict === 'below' ? 'This is priced below comparable units in the area.'
+                            : 'This listing is priced within the expected range for the area.'}
                         </li>
                         <li className="flex gap-2">
                           <span className="text-primary font-bold shrink-0">•</span>
@@ -881,18 +957,21 @@ Happy to discuss — thank you.`;
                         </li>
                         <li className="flex gap-2">
                           <span className="text-primary font-bold shrink-0">•</span>
-                          Units sit for many days on average — landlords have incentive to negotiate.
+                          {verdict === 'above' ? 'Units sit for many days on average — landlords have incentive to negotiate.'
+                            : verdict === 'below' ? 'Below-market units go fast — here\'s how to move quickly.'
+                            : 'Fair-priced units attract competition — here\'s how to stand out.'}
                         </li>
                       </ul>
-                      <div className="rounded-lg border border-border bg-muted/30 p-4">
-                        <p className="text-sm text-foreground">Hi, I'm interested in the unit...</p>
-                      </div>
                     </div>
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="bg-card rounded-xl border border-border shadow-lg px-6 py-5 max-w-[380px] w-full text-center">
-                      <p className="text-sm font-semibold text-foreground mb-1">Unlock negotiation tips & email template</p>
-                      <p className="text-xs text-muted-foreground mb-3">Enter your email to see all comps and negotiation playbook</p>
+                      <p className="text-sm font-semibold text-foreground mb-1">
+                        {verdict === 'above' ? 'Unlock negotiation tips & email template'
+                          : verdict === 'below' ? 'Unlock tips to secure this deal'
+                          : 'Unlock application tips'}
+                      </p>
+                      <p className="text-xs text-muted-foreground mb-3">Enter your email to see your personalized next steps</p>
                       <form onSubmit={handleCompGateSubmit} className="flex gap-2">
                         <input
                           type="email"
@@ -919,11 +998,10 @@ Happy to discuss — thank you.`;
                   </div>
                 </div>
               )}
-
             </motion.section>
           )}
 
-          {/* ━━━ SECTION 5: POST-CONVERSION FLOW ━━━ */}
+          {/* ━━━ POST-CONVERSION FLOW ━━━ */}
           {capturedEmail && (
             <section className="pb-4 pt-2">
               <WsipPostConversion
@@ -935,18 +1013,21 @@ Happy to discuss — thank you.`;
             </section>
           )}
 
-          {/* Email capture for users who haven't converted yet (no-asking-rent or in-range/below) */}
+          {/* ━━━ SECONDARY EMAIL CAPTURE — above share section ━━━ */}
           {!capturedEmail && (
             <section className="pb-6 pt-4">
-              <div className="rounded-xl px-5 sm:px-8 py-5 sm:py-6 text-center" style={{ background: 'hsl(var(--secondary))' }}>
-                <h2 className="font-display text-xl font-semibold text-foreground mb-1.5" style={{ letterSpacing: '-0.01em' }}>
+              <div className="rounded-xl border border-primary/20 px-5 sm:px-8 py-6 sm:py-8 text-center" style={{ background: 'hsl(var(--primary) / 0.04)' }}>
+                <h2 className="font-display text-xl sm:text-2xl font-semibold text-foreground mb-2" style={{ letterSpacing: '-0.01em' }}>
                   {askingRent
-                    ? verdict === 'above' ? "Get negotiation tips for this listing."
+                    ? verdict === 'above' ? "Get your negotiation playbook."
+                    : verdict === 'below' ? "Lock in this deal."
                     : "Track this market."
                     : "Get notified when rents change."}
                 </h2>
-                <p className="text-sm text-foreground/70 mb-5">
-                  We'll send you this analysis and alert you when market conditions change in {city}.
+                <p className="text-sm text-muted-foreground mb-5 max-w-[400px] mx-auto">
+                  {askingRent && verdict === 'above'
+                    ? `We'll send you this analysis with comps and a ready-to-send negotiation email for ${city}.`
+                    : `We'll send you this analysis and alert you when market conditions change in ${city}.`}
                 </p>
                 <form onSubmit={handleCompGateSubmit} className="max-w-[440px] mx-auto space-y-2">
                   <div className="flex gap-2">
@@ -960,16 +1041,16 @@ Happy to discuss — thank you.`;
                     <button
                       type="submit"
                       disabled={compEmailLoading}
-                      className="bg-primary text-primary-foreground px-4 sm:px-5 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap shrink-0 disabled:opacity-60"
+                      className="bg-primary text-primary-foreground px-5 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap shrink-0 disabled:opacity-60"
                     >
-                      Save my results →
+                      {gateCtaText}
                     </button>
                   </div>
                   <div className="mt-2">
                     <SocialProofLine />
                   </div>
                 </form>
-                <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
+                <p className="text-[11px] text-muted-foreground/60 text-center mt-3">
                   No spam. Unsubscribe anytime. See our{' '}
                   <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
                 </p>
