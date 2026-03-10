@@ -11,6 +11,7 @@ import NegotiationLetter from './NegotiationLetter';
 import RentControlCard from './RentControlCard';
 import { PropertyLookupResult, PropertyLookupError } from '@/hooks/usePropertyLookup';
 import { getRentControlByStateCity, getApplicableCap, isNycZip } from '@/data/rentControlData';
+import { getUtilityNote, getBrokerFeeInfo } from '@/lib/contextualFlags';
 import { useRentcast } from '@/hooks/useRentcast';
 import { useRentcastMarket } from '@/hooks/useRentcastMarket';
 import { useHcrLookup } from '@/hooks/useHcrLookup';
@@ -414,6 +415,15 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     return !!getApplicableCap(result);
   }, [rentData.state, rentData.city]);
 
+  const rentControlCap = useMemo(() => {
+    const result = getRentControlByStateCity(rentData.state, rentData.city);
+    return getApplicableCap(result);
+  }, [rentData.state, rentData.city]);
+
+  const utilityNote = useMemo(() => getUtilityNote(propertyData, rentData.state), [propertyData, rentData.state]);
+
+  const brokerFee = useMemo(() => getBrokerFeeInfo(rentData.state, rentData.city), [rentData.state, rentData.city]);
+
   const navSections = useMemo(() => {
     const sections = [{ id: 'section-verdict', label: 'Verdict' }];
     if (!capturedEmail) {
@@ -587,6 +597,24 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             >
                               check your rights below
                             </button>.
+                          </p>
+                        )}
+                        {/* Rent control cap in Phase 1 */}
+                        {rentControlCap && hasIncrease && rentControlCap.maxIncreaseFormula && (
+                          increasePct > (rentControlCap.maxIncreasePct ?? 999) ? (
+                            <p className="text-sm font-medium text-red-600 mt-3">
+                              ⚠️ {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreaseFormula}. Your increase of {increasePct}% may exceed this limit.
+                            </p>
+                          ) : (
+                            <p className="text-xs text-muted-foreground mt-2">
+                              {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreaseFormula}. Your increase of {increasePct}% is within this guideline.
+                            </p>
+                          )
+                        )}
+                        {/* Broker fee reminder */}
+                        {isAboveMarket && brokerFee.brokerFeeMarket && hasIncrease && (
+                          <p className="text-xs text-muted-foreground mt-2">
+                            Keep in mind: moving in {brokerFee.brokerFeeCity} typically involves a broker fee of ~${fmt(Math.round(formData.currentRent))}. Factor this into your stay-vs-move decision.
                           </p>
                         )}
                       </div>
@@ -786,6 +814,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     {city}, {rentData.state} — {bedroomLabels[formData.bedrooms]}
                     {rentcast.data?.propertyType && <> · {rentcast.data.propertyType}</>}
                   </p>
+                  {utilityNote && (
+                    <p className="text-sm text-muted-foreground mb-4 flex items-start gap-1.5">
+                      <span className="shrink-0 mt-0.5">ℹ️</span>
+                      {utilityNote}
+                    </p>
+                  )}
 
                   <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
                     <span className="context-label">{city} rents this year</span>
@@ -906,6 +940,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   <div className="px-4 py-3 rounded-md border border-border bg-muted/50 text-[12px] text-muted-foreground leading-relaxed mb-6">
                     {consistencyNote}
                   </div>
+                )}
+
+                {utilityNote && (
+                  <p className="text-xs text-muted-foreground mb-4 px-4 flex items-start gap-1.5">
+                    <span className="shrink-0 mt-0.5">ℹ️</span>
+                    {utilityNote}
+                  </p>
                 )}
 
                 <CompsList

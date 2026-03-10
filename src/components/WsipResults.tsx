@@ -11,6 +11,8 @@ import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import { assessConfidence, detectOutliers, getCompRadius, filterFurnished, deduplicateComps, applySeasonalAdjustment } from '@/lib/dataQuality';
 import { calculateCompositeTrend } from '@/lib/compositeTrend';
+import { getRentControlByStateCity, getApplicableCap } from '@/data/rentControlData';
+import { getUtilityNote } from '@/lib/contextualFlags';
 import { calculateFairRange } from '@/lib/fairRange';
 import { tierComps, getTierWeights } from '@/lib/compTiering';
 import { getBuildingRange } from '@/lib/buildingRange';
@@ -204,6 +206,12 @@ const WsipResults = ({
     hasZillow: rentData.zillowMonthly !== null,
     hasCensus: rentData.censusMedianRent !== null,
   }), [outlierResult, compRadius, rentData]);
+
+  // ━━━ Rent control cap ━━━
+  const rentControlCap = useMemo(() => {
+    const result = getRentControlByStateCity(rentData.state, rentData.city);
+    return getApplicableCap(result);
+  }, [rentData.state, rentData.city]);
 
   // ━━━ Market editorial ━━━
   const marketEditorial = useMemo(() => {
@@ -412,7 +420,7 @@ const WsipResults = ({
               <p className="text-[11px] text-muted-foreground mb-2">This building rents below the area average — good value for the area.</p>
             )}
 
-            <p className="text-[14px] sm:text-base text-muted-foreground leading-relaxed max-w-[480px] mb-6">
+            <p className="text-[14px] sm:text-base text-muted-foreground leading-relaxed max-w-[480px] mb-4">
               {verdictSubtitle ? (
                 verdictSubtitle
               ) : askingRent ? (
@@ -425,6 +433,13 @@ const WsipResults = ({
                 <>{brLabel}s in {city} typically rent for <strong className="text-foreground">${fmt(fairRangeLow)} – ${fmt(fairRangeHigh)}/month</strong>.</>
               )}
             </p>
+
+            {/* Rent control note (WSIP) */}
+            {rentControlCap && rentControlCap.maxIncreaseFormula && (
+              <p className="text-xs text-muted-foreground mb-4 max-w-[480px]">
+                Note: {rentControlCap.jurisdiction} has rent control regulations that may affect pricing in this area.
+              </p>
+            )}
 
             {/* Range bar */}
             <div className="w-full max-w-[480px] mb-6">
