@@ -34,19 +34,13 @@ function percentile(sorted: number[], p: number): number {
   return sorted[lower] + (sorted[upper] - sorted[lower]) * (idx - lower);
 }
 
-export function calculateFairRange({
-  compRents,
-  hudFmr,
-  zoriRent,
-  rcMarketMedian,
-}: FairRangeInput): FairRangeResult {
-  const { tierOverride } = input;
-  const sorted = [...input.compRents].filter(r => r > 0).sort((a, b) => a - b);
+export function calculateFairRange(input: FairRangeInput): FairRangeResult {
+  const { tierOverride, compRents, hudFmr, zoriRent, rcMarketMedian } = input;
+  const sorted = [...compRents].filter(r => r > 0).sort((a, b) => a - b);
   const hasComps = sorted.length >= 1;
-  const hasZori = input.zoriRent !== null && input.zoriRent > 0;
-  const hasMarketMedian = input.rcMarketMedian !== null && input.rcMarketMedian > 0;
+  const hasZori = zoriRent !== null && zoriRent > 0;
+  const hasMarketMedian = rcMarketMedian !== null && rcMarketMedian > 0;
   const fewComps = sorted.length < 3;
-  const hudFmr = input.hudFmr;
 
   // ── Sources ──
   const sources: string[] = ['HUD SAFMR'];
