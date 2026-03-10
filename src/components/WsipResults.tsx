@@ -264,6 +264,7 @@ const WsipResults = ({
         p_utm_campaign: utm.utm_campaign || null,
         p_comp_median_rent: medianCompRent ?? null,
         p_hud_fmr_value: rentData.fmr,
+        p_tool_type: 'wsip',
       } as any);
 
       await supabase.from('lead_events' as any).insert({
