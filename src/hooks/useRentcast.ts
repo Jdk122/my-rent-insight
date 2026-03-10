@@ -18,6 +18,10 @@ export interface RentcastComparable {
   isSameBuilding?: boolean;
   isSameUnitLine?: boolean;
   relevanceScore?: number;
+  /** Seasonally adjusted rent (only set when adjustment was applied) */
+  seasonalRent?: number | null;
+  /** Whether this comp's rent was seasonally adjusted */
+  seasonallyAdjusted?: boolean;
 }
 
 export interface RentcastResult {

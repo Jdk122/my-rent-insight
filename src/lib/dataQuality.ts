@@ -1,4 +1,5 @@
 import { RentcastComparable } from '@/hooks/useRentcast';
+import { seasonallyAdjustRent, listingMonthFromDaysOld } from '@/lib/seasonalAdjust';
 
 // ─── Data Confidence ───
 
