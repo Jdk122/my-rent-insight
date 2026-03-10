@@ -21,7 +21,7 @@ const steps = [
 
 const WsipHowItWorks = React.forwardRef<HTMLElement>((_, ref) => (
   <section ref={ref} className="w-full border-t border-border/60" aria-label="How it works">
-    <div className="max-w-[620px] mx-auto px-5 sm:px-6 py-14 sm:py-20">
+    <div className="max-w-[620px] mx-auto px-5 sm:px-6 py-10 sm:py-14">
       <h2
         className="font-display text-[22px] sm:text-[26px] text-foreground text-center tracking-tight mb-2"
         style={{ letterSpacing: '-0.02em' }}
