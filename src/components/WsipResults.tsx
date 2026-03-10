@@ -410,6 +410,14 @@ Happy to discuss — thank you.`;
               {!verdict && <>Here's what you should pay.</>}
             </h1>
 
+            {/* Building rent line — strongest trust signal */}
+            {tiering.buildingRentRange && (
+              <p className="text-[13px] sm:text-[15px] font-medium text-verdict-good mb-3">
+                Other units in this building rent for ${fmt(tiering.buildingRentRange.low)}
+                {tiering.buildingRentRange.low !== tiering.buildingRentRange.high && ` – $${fmt(tiering.buildingRentRange.high)}`}/month
+              </p>
+            )}
+
             <p className="text-[14px] sm:text-base text-muted-foreground leading-relaxed max-w-[480px] mb-6">
               {askingRent ? (
                 <>
