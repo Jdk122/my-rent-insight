@@ -179,9 +179,6 @@ function DashboardContent() {
   const [referralSummary, setReferralSummary] = useState<{ link_type: string; count: number }[]>([]);
   const [showRecentClicks, setShowRecentClicks] = useState(false);
 
-  // ── Orphan Leads (no analysis_id) ──
-  const [orphanLeads, setOrphanLeads] = useState<any[]>([]);
-  const [orphanLoading, setOrphanLoading] = useState(false);
 
   // ── Email List ──
   const [emailLeads, setEmailLeads] = useState<any[]>([]);
