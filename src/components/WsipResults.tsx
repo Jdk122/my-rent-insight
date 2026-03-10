@@ -379,13 +379,20 @@ const WsipResults = ({
 
   // ━━━ Copy template ━━━
   const suggestedPrice = useMemo(() => {
+    if (bldg.hasBuildingData) return fmt(bldg.buildingMedian);
     const compMedian = medianCompRent ?? Infinity;
     const rangeTop = fairRangeHigh;
     const suggested = Math.min(compMedian, rangeTop);
     return fmt(isFinite(suggested) ? suggested : fairRangeLow);
-  }, [medianCompRent, fairRangeHigh, fairRangeLow]);
+  }, [bldg, medianCompRent, fairRangeHigh, fairRangeLow]);
 
-  const emailTemplate = `Hi,
+  const emailTemplate = bldg.hasBuildingData
+    ? `Hi,
+
+I'm interested in the unit at ${fullAddress || `ZIP ${zip}`}. Based on comparable units in this building renting for $${fmt(bldg.buildingLow)}–$${fmt(bldg.buildingHigh)}, I'd like to propose $${suggestedPrice}/month for the ${brLabel}. I'm ready to sign a lease and can move in quickly.
+
+Happy to discuss — thank you.`
+    : `Hi,
 
 I'm interested in the unit at ${fullAddress || `ZIP ${zip}`}. Based on comparable rentals in the area, I'd like to propose $${suggestedPrice}/month for the ${brLabel}. I'm ready to sign a lease and can move in quickly.
 
@@ -402,12 +409,15 @@ Happy to discuss — thank you.`;
     }
   };
 
-  // ━━━ Range bar ━━━
-  const rangeBarMin = Math.round(fairRangeLow * 0.85);
-  const rangeBarMax = Math.round(fairRangeHigh * 1.15);
+  // ━━━ Range bar (building override) ━━━
+  const barLow = bldg.hasBuildingData ? bldg.buildingLow : fairRangeLow;
+  const barHigh = bldg.hasBuildingData ? bldg.buildingHigh : fairRangeHigh;
+  const barLabel = bldg.hasBuildingData ? 'This Building' : 'Fair Range';
+  const rangeBarMin = Math.round(barLow * 0.85);
+  const rangeBarMax = Math.round(barHigh * 1.15);
   const rangeSpan = rangeBarMax - rangeBarMin;
-  const rangeLowPct = ((fairRangeLow - rangeBarMin) / rangeSpan) * 100;
-  const rangeHighPct = ((fairRangeHigh - rangeBarMin) / rangeSpan) * 100;
+  const rangeLowPct = ((barLow - rangeBarMin) / rangeSpan) * 100;
+  const rangeHighPct = ((barHigh - rangeBarMin) / rangeSpan) * 100;
   const askingPct = askingRent ? Math.min(100, Math.max(0, ((askingRent - rangeBarMin) / rangeSpan) * 100)) : null;
 
   const handleResultsShared = useCallback(() => {
