@@ -20,7 +20,7 @@ export function getUtilityNote(
   // Check for 6+ units: explicit unit count, or infer from multi-family type
   const isLargeMultiFamily =
     propertyData.units >= 6 ||
-    (propertyData.propertyType?.toLowerCase().includes('multi') && propertyData.units >= 6);
+    (propertyData.propertyType?.toLowerCase().includes('multi') && (!propertyData.units || propertyData.units >= 6));
 
   if (!isLargeMultiFamily) return null;
 
