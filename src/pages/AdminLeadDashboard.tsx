@@ -189,6 +189,7 @@ function DashboardContent() {
   const [emailFilterSource, setEmailFilterSource] = useState<string>('all');
   const [emailFilterVerdict, setEmailFilterVerdict] = useState<string>('all');
   const [emailFilterUnsub, setEmailFilterUnsub] = useState<string>('active');
+  const [emailFilterToolType, setEmailFilterToolType] = useState<string>('all');
   const [emailSearch, setEmailSearch] = useState('');
 
   // Helper to call admin edge function
@@ -319,12 +320,13 @@ function DashboardContent() {
     if (emailFilterUnsub === 'unsub') list = list.filter(l => l.unsubscribed);
     if (emailFilterSource !== 'all') list = list.filter(l => (l.capture_source || 'unknown') === emailFilterSource);
     if (emailFilterVerdict !== 'all') list = list.filter(l => (l.verdict || 'unknown') === emailFilterVerdict);
+    if (emailFilterToolType !== 'all') list = list.filter(l => (l.tool_type || 'renewal') === emailFilterToolType);
     if (emailSearch) {
       const q = emailSearch.toLowerCase();
       list = list.filter(l => l.email?.toLowerCase().includes(q) || l.city?.toLowerCase().includes(q) || l.zip?.includes(q));
     }
     return list;
-  }, [emailLeads, emailFilterSource, emailFilterVerdict, emailFilterUnsub, emailSearch]);
+  }, [emailLeads, emailFilterSource, emailFilterVerdict, emailFilterUnsub, emailFilterToolType, emailSearch]);
 
   const emailSourceCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -336,12 +338,13 @@ function DashboardContent() {
   }, [emailLeads]);
 
   const handleEmailExport = () => {
-    const headers = ['Email', 'Source', 'Date', 'City', 'State', 'Zip', 'Bedrooms', 'Rent', 'Score', 'Verdict', 'Lease Month', 'Lease Year', 'Partner Opt-In', 'UTM Source', 'Status'];
+    const headers = ['Email', 'Source', 'Tool', 'Date', 'City', 'State', 'Zip', 'Bedrooms', 'Rent', 'Score', 'Verdict', 'Lease Month', 'Lease Year', 'Partner Opt-In', 'UTM Source', 'Status'];
     const csvRows = [headers.join(',')];
     for (const l of filteredEmailLeads) {
       csvRows.push([
         l.email,
         l.capture_source || '',
+        l.tool_type || 'renewal',
         new Date(l.created_at).toLocaleDateString(),
         l.city || '', l.state || '', l.zip || '',
         l.bedrooms ?? '',
@@ -764,12 +767,14 @@ function DashboardContent() {
         {/* ━━━ EMAIL LISTS TAB ━━━ */}
         <TabsContent value="emails" className="space-y-6">
           {/* Source breakdown cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
             <StatCard label="Total Active Emails" value={emailLeads.filter(l => !l.unsubscribed).length} />
             <StatCard label="Unsubscribed" value={emailLeads.filter(l => l.unsubscribed).length} />
             <StatCard label="Partner Opt-In" value={emailLeads.filter(l => l.partner_opt_in && !l.unsubscribed).length} />
             <StatCard label="With Lease Date" value={emailLeads.filter(l => l.lease_expiration_month && !l.unsubscribed).length} />
-            {emailSourceCounts.slice(0, 2).map(([src, count]) => (
+            <StatCard label="🔄 Renewal Leads" value={emailLeads.filter(l => (l.tool_type || 'renewal') === 'renewal' && !l.unsubscribed).length} />
+            <StatCard label="🏠 WSIP Leads" value={emailLeads.filter(l => l.tool_type === 'wsip' && !l.unsubscribed).length} />
+            {emailSourceCounts.slice(0, 1).map(([src, count]) => (
               <StatCard key={src} label={src === 'early_capture' ? '📩 Early Capture' : src === 'letter_gate' ? '📝 Letter Gate' : src === 'lease_reminder' ? '📅 Lease Reminder' : `📧 ${src}`} value={count} />
             ))}
           </div>
@@ -805,6 +810,11 @@ function DashboardContent() {
               { label: 'Unsubscribed', value: 'unsub' },
               { label: 'All', value: 'all' },
             ]} />
+            <FilterSelect label="Tool" value={emailFilterToolType} onChange={setEmailFilterToolType} options={[
+              { label: 'All Tools', value: 'all' },
+              { label: '🔄 Renewal', value: 'renewal' },
+              { label: '🏠 WSIP', value: 'wsip' },
+            ]} />
             <button onClick={handleEmailExport} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm border border-border rounded-lg hover:bg-muted transition-colors h-[34px]">
               <Download className="w-3.5 h-3.5" /> Export {filteredEmailLeads.length} emails
             </button>
@@ -831,6 +841,7 @@ function DashboardContent() {
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Verdict</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Lease</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Partner</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Tool</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Emails Sent</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Status</th>
                     </tr>
@@ -861,6 +872,13 @@ function DashboardContent() {
                           <td className="px-3 py-2 whitespace-nowrap text-xs">{l.verdict || '—'}</td>
                           <td className="px-3 py-2 whitespace-nowrap text-xs">{l.lease_expiration_month && l.lease_expiration_year ? `${l.lease_expiration_month}/${l.lease_expiration_year}` : '—'}</td>
                           <td className="px-3 py-2 text-center">{l.partner_opt_in ? <Check className="w-3.5 h-3.5 text-emerald-600 inline" /> : <X className="w-3.5 h-3.5 text-muted-foreground/40 inline" />}</td>
+                          <td className="px-3 py-2 text-xs">
+                            <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium border ${
+                              l.tool_type === 'wsip' ? 'bg-blue-500/10 text-blue-700 border-blue-500/30' : 'bg-muted text-muted-foreground border-border'
+                            }`}>
+                              {l.tool_type === 'wsip' ? 'WSIP' : 'Renewal'}
+                            </span>
+                          </td>
                           <td className="px-3 py-2 text-xs">{emailsSent.length > 0 ? emailsSent.join(', ') : '—'}</td>
                           <td className="px-3 py-2 text-xs">
                             {l.unsubscribed ? (
@@ -873,7 +891,7 @@ function DashboardContent() {
                       );
                     })}
                     {filteredEmailLeads.length === 0 && (
-                      <tr><td colSpan={11} className="px-4 py-8 text-center text-muted-foreground">No emails found</td></tr>
+                      <tr><td colSpan={12} className="px-4 py-8 text-center text-muted-foreground">No emails found</td></tr>
                     )}
                   </tbody>
                 </table>
