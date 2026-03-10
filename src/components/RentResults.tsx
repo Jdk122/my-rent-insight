@@ -656,6 +656,19 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 ))}
               </motion.div>
 
+              {/* WSIP cross-link — below stat cards */}
+              {isAboveMarket && hasIncrease && (
+                <p className="text-xs text-muted-foreground/70 mt-3 text-center">
+                  Browsing listings?{' '}
+                  <Link
+                    to={`/what-should-i-pay?zip=${rentData.zip}&bedrooms=${bedroomNum}`}
+                    className="underline text-primary hover:text-primary/80 transition-colors"
+                  >
+                    Check if any asking price is fair before you sign →
+                  </Link>
+                </p>
+              )}
+
               {/* Data Confidence Badge */}
               <motion.div
                 initial={{ opacity: 0 }}
