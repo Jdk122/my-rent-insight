@@ -942,6 +942,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   </div>
                 )}
 
+                {utilityNote && (
+                  <p className="text-xs text-muted-foreground mb-4 px-4 flex items-start gap-1.5">
+                    <span className="shrink-0 mt-0.5">ℹ️</span>
+                    {utilityNote}
+                  </p>
+                )}
+
                 <CompsList
                   proposedRent={newRent}
                   comparables={allComps}
