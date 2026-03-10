@@ -23,7 +23,7 @@ const STROKE_WIDTH = 10;
 const RADIUS = (GAUGE_SIZE - STROKE_WIDTH) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-const FairnessScoreGauge = ({ score, dynamicMessage, componentSources }: FairnessScoreGaugeProps) => {
+const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNotes }: FairnessScoreGaugeProps) => {
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [expandedComponent, setExpandedComponent] = useState<string | null>(null);
   const progress = score.total / 100;
