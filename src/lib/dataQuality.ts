@@ -181,7 +181,7 @@ export function detectOutliers(comps: RentcastComparable[], subjectSqft?: number
 
   if (withRent.length < 5) {
     // Not enough data for outlier detection — use all, but with correlation-weighted median
-    const median = correlationWeightedMedian(withRent);
+    const median = correlationWeightedMedian(withRent, subjectSqft);
     return { filtered: withRent, outliers: [], median };
   }
 
