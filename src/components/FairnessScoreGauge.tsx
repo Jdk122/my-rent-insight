@@ -15,6 +15,7 @@ interface FairnessScoreGaugeProps {
   score: FairnessScoreResult;
   dynamicMessage: React.ReactNode;
   componentSources?: ComponentSourceInfo;
+  contextNotes?: React.ReactNode;
 }
 
 const GAUGE_SIZE = 140;
