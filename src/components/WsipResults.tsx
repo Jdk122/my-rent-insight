@@ -113,13 +113,17 @@ const WsipResults = ({
 
   // Tier 1 (in-building) shown ungated; others gated
   const tier1Comps = tiering.tier1;
+  const hasBuilding = bldg.hasBuildingData && tier1Comps.length >= 2;
   const nonBuildingComps = allComps.filter(c => c.tier !== 1);
   const nonBuildingWithRent = nonBuildingComps.filter(c => c.rent !== null && c.rent > 0);
   const displayableNonBuilding = Math.min(nonBuildingWithRent.length, 6);
-  const visibleNonBuildingCount = Math.min(displayableNonBuilding, 3);
+  // When building comps exist, gate ALL nearby comps; otherwise 3 free + rest gated
+  const visibleNonBuildingCount = hasBuilding ? 0 : Math.min(displayableNonBuilding, 3);
   const visibleNonBuildingComps = nonBuildingComps.slice(0, visibleNonBuildingCount);
-  const gatedComps = displayableNonBuilding > visibleNonBuildingCount ? nonBuildingComps.slice(visibleNonBuildingCount) : [];
-  const gatedDisplayCount = displayableNonBuilding - visibleNonBuildingCount;
+  const gatedComps = hasBuilding
+    ? nonBuildingComps.slice(0, displayableNonBuilding)
+    : (displayableNonBuilding > visibleNonBuildingCount ? nonBuildingComps.slice(visibleNonBuildingCount) : []);
+  const gatedDisplayCount = hasBuilding ? displayableNonBuilding : displayableNonBuilding - visibleNonBuildingCount;
 
   // ━━━ Fair range (weighted composite with tier overrides) ━━━
   const fairRange = useMemo(() => {
