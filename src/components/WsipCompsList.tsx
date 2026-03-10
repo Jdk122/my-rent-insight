@@ -52,7 +52,7 @@ const CompRow = ({ comp, idx, offset }: { comp: RentcastComparable; idx: number;
   );
 };
 
-const WsipCompsList = ({ comparables, askingRent, medianCompRent, userSqft, sectionLabel }: WsipCompsListProps) => {
+const WsipCompsList = ({ comparables, askingRent, medianCompRent, userSqft, sectionLabel, hideMedianLine }: WsipCompsListProps) => {
   if (comparables.length === 0) return null;
 
   // Split into same-building vs nearby (legacy flag-based)
