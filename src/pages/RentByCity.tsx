@@ -401,7 +401,7 @@ const RentByCity = () => {
         </section>
 
         {/* ═══ Section E: Renter Tools CTA ═══ */}
-        <RenterToolsCTA />
+        <RenterToolsCTA zip={zips[0]?.zip} />
 
         {/* ═══ Section F: Rent Data by Zip Code ═══ */}
         <section className="mb-12">
