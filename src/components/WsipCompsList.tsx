@@ -55,6 +55,18 @@ const CompRow = ({ comp, idx, offset }: { comp: RentcastComparable; idx: number;
           {comp.squareFootage !== null && comp.squareFootage > 0 && ` · ${fmt(comp.squareFootage)} sqft`}
           {ppsf !== null && ` · $${fmtSqft(ppsf)}/sqft`}
           {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
+          {(() => {
+            const age = compAgeLabel(comp.daysOld);
+            if (!age) return null;
+            return (
+              <>
+                {' · '}<span className={age.className}>{age.text}</span>
+                {comp.daysOld !== null && comp.daysOld > 90 && (
+                  <span className="text-amber-600 ml-0.5" title="Older listing — pricing may have changed">⚠</span>
+                )}
+              </>
+            );
+          })()}
         </p>
       </div>
       {comp.rent !== null && (

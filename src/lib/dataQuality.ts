@@ -189,13 +189,25 @@ export function correlationWeightedMedian(
   // Use seasonally adjusted rent when available, else original
   const getRent = (c: RentcastComparable) => c.seasonalRent ?? c.rent!;
 
+  // Freshness weight: multiply correlation by time-decay factor
+  // If ALL comps are >120 days old, skip freshness weighting entirely
+  const allStale = valid.every(c => c.daysOld !== null && c.daysOld > 120);
+  const getFreshnessMultiplier = (c: RentcastComparable): number => {
+    if (allStale || c.daysOld === null) return 1;
+    if (c.daysOld <= 60) return 1;
+    if (c.daysOld <= 120) return 0.75;
+    return 0.5;
+  };
+
+  const getWeight = (c: RentcastComparable) => (c.correlation ?? 1) * getFreshnessMultiplier(c);
+
   const sorted = [...valid].sort((a, b) => getRent(a) - getRent(b));
-  const totalWeight = sorted.reduce((sum, c) => sum + (c.correlation ?? 1), 0);
+  const totalWeight = sorted.reduce((sum, c) => sum + getWeight(c), 0);
   const halfWeight = totalWeight / 2;
 
   let cumWeight = 0;
   for (const comp of sorted) {
-    cumWeight += comp.correlation ?? 1;
+    cumWeight += getWeight(comp);
     if (cumWeight >= halfWeight) return getRent(comp);
   }
   return getRent(sorted[sorted.length - 1]);

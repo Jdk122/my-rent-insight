@@ -159,6 +159,18 @@ function CompsWithRentLine({
                 {comp.squareFootage !== null && comp.squareFootage > 0 && ` · ${fmt(comp.squareFootage)} sqft`}
                 {comp.rent != null && comp.squareFootage != null && comp.squareFootage > 0 && ` · $${(comp.rent / comp.squareFootage).toFixed(2)}/sqft`}
                 {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
+                {(() => {
+                  const age = compAgeLabel(comp.daysOld);
+                  if (!age) return null;
+                  return (
+                    <>
+                      {' · '}<span className={age.className}>{age.text}</span>
+                      {comp.daysOld !== null && comp.daysOld > 90 && (
+                        <span className="text-amber-600 ml-0.5" title="Older listing — pricing may have changed">⚠</span>
+                      )}
+                    </>
+                  );
+                })()}
                 {matchLabel(comp.correlation) && (
                   <span className={`ml-1 ${matchColor(comp.correlation)}`}> · {matchLabel(comp.correlation)}</span>
                 )}
