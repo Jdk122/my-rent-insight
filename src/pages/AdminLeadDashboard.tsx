@@ -809,6 +809,11 @@ function DashboardContent() {
               { label: 'Unsubscribed', value: 'unsub' },
               { label: 'All', value: 'all' },
             ]} />
+            <FilterSelect label="Tool" value={emailFilterToolType} onChange={setEmailFilterToolType} options={[
+              { label: 'All Tools', value: 'all' },
+              { label: '🔄 Renewal', value: 'renewal' },
+              { label: '🏠 WSIP', value: 'wsip' },
+            ]} />
             <button onClick={handleEmailExport} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm border border-border rounded-lg hover:bg-muted transition-colors h-[34px]">
               <Download className="w-3.5 h-3.5" /> Export {filteredEmailLeads.length} emails
             </button>
