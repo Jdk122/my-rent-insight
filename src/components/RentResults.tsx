@@ -599,6 +599,24 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             </button>.
                           </p>
                         )}
+                        {/* Rent control cap in Phase 1 */}
+                        {rentControlCap && hasIncrease && rentControlCap.maxIncreaseFormula && (
+                          increasePct > (rentControlCap.maxIncreasePct ?? 999) ? (
+                            <p className="text-sm font-medium text-red-600 mt-3">
+                              ⚠️ {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreaseFormula}. Your increase of {increasePct}% may exceed this limit.
+                            </p>
+                          ) : (
+                            <p className="text-xs text-muted-foreground mt-2">
+                              {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreaseFormula}. Your increase of {increasePct}% is within this guideline.
+                            </p>
+                          )
+                        )}
+                        {/* Broker fee reminder */}
+                        {isAboveMarket && brokerFee.brokerFeeMarket && hasIncrease && (
+                          <p className="text-xs text-muted-foreground mt-2">
+                            Keep in mind: moving in {brokerFee.brokerFeeCity} typically involves a broker fee of ~${fmt(Math.round(formData.currentRent))}. Factor this into your stay-vs-move decision.
+                          </p>
+                        )}
                       </div>
                     }
                   />
