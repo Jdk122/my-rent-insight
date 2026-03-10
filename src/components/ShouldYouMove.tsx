@@ -57,7 +57,7 @@ interface ShouldYouMoveProps {
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
-const brokerFeeStates = ['NJ', 'NY'];
+const brokerFeeStates = ['NJ', 'NY', 'MA'];
 
 const bedroomNum: Record<BedroomType, string> = {
   studio: '0', oneBr: '1', twoBr: '2', threeBr: '3', fourBr: '4',
