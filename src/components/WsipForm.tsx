@@ -154,6 +154,9 @@ const WsipForm = ({ onSubmit, isLoading, prefill }: WsipFormProps) => {
             >
               Don't have an address? Just use a zip code →
             </button>
+            <p className="text-xs text-muted-foreground/70">
+              💡 Browsing Zillow or Apartments.com? Paste any listing address here.
+            </p>
             {errors.address && <p className="text-[13px] text-destructive mt-1">{errors.address}</p>}
           </div>
         )}
