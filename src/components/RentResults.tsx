@@ -814,6 +814,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     {city}, {rentData.state} — {bedroomLabels[formData.bedrooms]}
                     {rentcast.data?.propertyType && <> · {rentcast.data.propertyType}</>}
                   </p>
+                  {utilityNote && (
+                    <p className="text-sm text-muted-foreground mb-4 flex items-start gap-1.5">
+                      <span className="shrink-0 mt-0.5">ℹ️</span>
+                      {utilityNote}
+                    </p>
+                  )}
 
                   <div className={`context-row ${rowIdx++ % 2 === 0 ? 'context-row-even' : 'context-row-odd'}`}>
                     <span className="context-label">{city} rents this year</span>
