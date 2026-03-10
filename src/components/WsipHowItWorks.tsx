@@ -61,6 +61,8 @@ const WsipHowItWorks = () => (
       </p>
     </div>
   </section>
-);
+));
+
+WsipHowItWorks.displayName = 'WsipHowItWorks';
 
 export default WsipHowItWorks;
