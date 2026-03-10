@@ -172,7 +172,7 @@ export function correlationWeightedMedian(
   return sorted[sorted.length - 1].rent!;
 }
 
-export function detectOutliers(comps: RentcastComparable[]): OutlierResult {
+export function detectOutliers(comps: RentcastComparable[], subjectSqft?: number | null): OutlierResult {
   // Step 1: Distance filter (<=3 miles), fallback to all if none pass
   const nearbyComps = comps.filter(c => c.distance === null || c.distance <= 3);
   const workingComps = nearbyComps.length > 0 ? nearbyComps : comps;
