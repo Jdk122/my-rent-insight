@@ -128,11 +128,11 @@ export function calculateFairRange(input: FairRangeInput): FairRangeResult {
   const hudLow = hudFmr;
   const hudHigh = hudFmr * 1.15;
 
-  const zoriLow = hasZori ? input.zoriRent! * 0.85 : 0;
-  const zoriHigh = hasZori ? input.zoriRent! * 1.15 : 0;
+  const zoriLow = hasZori ? zoriRent! * 0.85 : 0;
+  const zoriHigh = hasZori ? zoriRent! * 1.15 : 0;
 
-  const medLow = hasMarketMedian ? input.rcMarketMedian! * 0.85 : 0;
-  const medHigh = hasMarketMedian ? input.rcMarketMedian! * 1.15 : 0;
+  const medLow = hasMarketMedian ? rcMarketMedian! * 0.85 : 0;
+  const medHigh = hasMarketMedian ? rcMarketMedian! * 1.15 : 0;
 
   // ── Weighted average ──
   const rangeLow = Math.round(
