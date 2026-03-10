@@ -54,7 +54,7 @@ const WsipForm = ({ onSubmit, isLoading, prefill }: WsipFormProps) => {
   const [askingRent, setAskingRent] = useState(
     prefill?.rent ? fmtInput(String(prefill.rent)) : ''
   );
-  const [showZipOnly, setShowZipOnly] = useState(!!prefill?.zip && !prefill?.address);
+  const [showZipOnly, setShowZipOnly] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [attempted, setAttempted] = useState(false);
 
