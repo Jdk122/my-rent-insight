@@ -871,6 +871,13 @@ function DashboardContent() {
                           <td className="px-3 py-2 whitespace-nowrap text-xs">{l.verdict || '—'}</td>
                           <td className="px-3 py-2 whitespace-nowrap text-xs">{l.lease_expiration_month && l.lease_expiration_year ? `${l.lease_expiration_month}/${l.lease_expiration_year}` : '—'}</td>
                           <td className="px-3 py-2 text-center">{l.partner_opt_in ? <Check className="w-3.5 h-3.5 text-emerald-600 inline" /> : <X className="w-3.5 h-3.5 text-muted-foreground/40 inline" />}</td>
+                          <td className="px-3 py-2 text-xs">
+                            <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium border ${
+                              l.tool_type === 'wsip' ? 'bg-blue-500/10 text-blue-700 border-blue-500/30' : 'bg-muted text-muted-foreground border-border'
+                            }`}>
+                              {l.tool_type === 'wsip' ? 'WSIP' : 'Renewal'}
+                            </span>
+                          </td>
                           <td className="px-3 py-2 text-xs">{emailsSent.length > 0 ? emailsSent.join(', ') : '—'}</td>
                           <td className="px-3 py-2 text-xs">
                             {l.unsubscribed ? (
