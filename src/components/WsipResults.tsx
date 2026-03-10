@@ -817,7 +817,7 @@ const WsipResults = ({
                   )}
 
                   {/* FAIR */}
-                  {verdict === 'in-range' && (
+                  {!showNegotiation && verdict === 'in-range' && (
                     <>
                       <p className="text-sm font-medium text-foreground">This is a fair price. Here's how to strengthen your application to secure this unit:</p>
                       <ul className="space-y-3 text-sm text-foreground">
