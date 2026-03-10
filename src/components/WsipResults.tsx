@@ -320,9 +320,27 @@ const WsipResults = ({
     return fmt(isFinite(suggested) ? suggested : fairRangeLow);
   }, [bldg, medianCompRent, fairRangeHigh, fairRangeLow]);
 
-  const emailTemplate = bldg.hasBuildingData
-    ? `Hi,\n\nI'm interested in the unit at ${fullAddress || `ZIP ${zip}`}. Based on comparable units in this building renting for $${fmt(bldg.buildingLow)}–$${fmt(bldg.buildingHigh)}, I'd like to propose $${suggestedPrice}/month for the ${brLabel}. I'm ready to sign a lease and can move in quickly.\n\nHappy to discuss — thank you.`
-    : `Hi,\n\nI'm interested in the unit at ${fullAddress || `ZIP ${zip}`}. Based on comparable rentals in the area, I'd like to propose $${suggestedPrice}/month for the ${brLabel}. I'm ready to sign a lease and can move in quickly.\n\nHappy to discuss — thank you.`;
+  // Whether to show negotiation advice (building override can trigger even if area verdict is 'in-range')
+  const showNegotiation = verdict === 'above' || (bldg.hasBuildingData && askingRent !== null && askingRent > bldg.buildingHigh);
+
+  const emailTemplate = useMemo(() => {
+    const addr = fullAddress || `ZIP ${zip}`;
+    const compCount = compsWithRent.length;
+    const bedroomDesc = bedroomNum === 0 ? 'studio' : `${bedroomNum}-bedroom`;
+    const lines = [
+      `Subject: Inquiry About ${addr} — ${brLabel} Listing\n`,
+      `Hi,\n`,
+      `I'm interested in ${addr} and have been researching comparable units in the area. Based on ${compCount} similar ${bedroomDesc} listings nearby, the typical range is $${fmt(fairRangeLow)}–$${fmt(fairRangeHigh)} per month.`,
+    ];
+    if (bldg.hasBuildingData) {
+      lines.push(`\nOther units in this building are currently listed between $${fmt(bldg.buildingLow)} and $${fmt(bldg.buildingHigh)}.`);
+    }
+    if (askingRent) {
+      lines.push(`\nThe asking price of $${fmt(askingRent)} is above this range. I'd like to discuss whether there's flexibility on the monthly rent. I'm a reliable tenant and ready to move forward quickly if we can agree on terms.`);
+    }
+    lines.push(`\nThank you for your time.`);
+    return lines.join('\n');
+  }, [fullAddress, zip, compsWithRent.length, bedroomNum, brLabel, fairRangeLow, fairRangeHigh, bldg, askingRent]);
 
   const handleCopyTemplate = async () => {
     try {
@@ -742,8 +760,8 @@ const WsipResults = ({
                 <h2 className="results-section-header mb-6">Your Next Steps</h2>
 
                 <div className="evidence-card space-y-4">
-                  {/* OVERPRICED */}
-                  {verdict === 'above' && (
+                  {/* NEGOTIATION (overpriced by area OR building range) */}
+                  {showNegotiation && (
                     <>
                       <p className="text-sm font-medium text-foreground">How to negotiate this rent down:</p>
                       <ul className="space-y-3 text-sm text-foreground">
@@ -799,7 +817,7 @@ const WsipResults = ({
                   )}
 
                   {/* FAIR */}
-                  {verdict === 'in-range' && (
+                  {!showNegotiation && verdict === 'in-range' && (
                     <>
                       <p className="text-sm font-medium text-foreground">This is a fair price. Here's how to strengthen your application to secure this unit:</p>
                       <ul className="space-y-3 text-sm text-foreground">
@@ -820,7 +838,7 @@ const WsipResults = ({
                   )}
 
                   {/* GOOD DEAL */}
-                  {verdict === 'below' && (
+                  {!showNegotiation && verdict === 'below' && (
                     <>
                       <p className="text-sm font-medium text-foreground">This is below market — act fast. Here's how to lock it in:</p>
                       <ul className="space-y-3 text-sm text-foreground">
