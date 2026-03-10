@@ -544,6 +544,30 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   <FairnessScoreGauge
                     score={fairnessScore}
                     componentSources={sources}
+                    contextNotes={
+                      <>
+                        {rentControlCap && hasIncrease && rentControlCap.maxIncreaseFormula && (
+                          rentControlCap.maxIncreasePct != null && increasePct > rentControlCap.maxIncreasePct ? (
+                            <p className="text-[12px] font-medium text-destructive">
+                              ⚠️ {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreasePct}%. Your increase of {increasePct}% exceeds this limit.
+                            </p>
+                          ) : rentControlCap.maxIncreasePct != null ? (
+                            <p className="text-[11px] text-muted-foreground">
+                              {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreasePct}%. Your increase of {increasePct}% is within this limit.
+                            </p>
+                          ) : (
+                            <p className="text-[11px] text-muted-foreground">
+                              {rentControlCap.jurisdiction} regulates rent increases ({rentControlCap.maxIncreaseFormula}). Check if your {increasePct}% increase complies.
+                            </p>
+                          )
+                        )}
+                        {isAboveMarket && brokerFee.brokerFeeMarket && hasIncrease && (
+                          <p className="text-[11px] text-muted-foreground">
+                            Keep in mind: moving in {brokerFee.brokerFeeCity} typically involves a broker fee of ~${fmt(Math.round(formData.currentRent))}. Factor this into your stay-vs-move decision.
+                          </p>
+                        )}
+                      </>
+                    }
                     dynamicMessage={
                       <div className="space-y-2">
                         <h1
@@ -568,7 +592,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                           {isAboveMarket && calc ? (
                             calc.counterExceedsProposed
                               ? <>Based on market data, your proposed rent appears to be in line with or below current market trends.</>
-                              : <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. That's ${fmt(increaseAmount * 12)} more per year. Unlock your report to see the fair counter-offer and negotiation letter.</>
+                              : <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. That's ${fmt(increaseAmount * 12)} more per year.</>
                           ) : isFair ? (
                             isNuancedAtMarket || increasePct > marketYoy + 1.5 ? (
                               medianCompRent ? (
@@ -585,17 +609,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <>Rents in {city} moved {marketYoy}% this year. Your landlord keeping your rent at ${fmt(formData.currentRent)}/mo means you're coming out ahead.</>
                           )}
                         </p>
-                        {isAboveMarket && hasIncrease && (
-                          <p className="text-xs text-muted-foreground/70 mt-2">
-                            Thinking about moving instead?{' '}
-                            <Link
-                              to={`/what-should-i-pay?zip=${rentData.zip}&bedrooms=${bedroomNum}`}
-                              className="underline text-primary hover:text-primary/80 transition-colors"
-                            >
-                              See what you'd actually pay →
-                            </Link>
-                          </p>
-                        )}
                         {isNycZip(rentData.zip) && hasIncrease && (
                           <p className="text-xs text-muted-foreground/70 mt-2">
                             Live in a rent-stabilized apartment? Your increase may be legally capped —{' '}
@@ -605,28 +618,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             >
                               check your rights below
                             </button>.
-                          </p>
-                        )}
-                        {/* Rent control cap in Phase 1 */}
-                        {rentControlCap && hasIncrease && rentControlCap.maxIncreaseFormula && (
-                          rentControlCap.maxIncreasePct != null && increasePct > rentControlCap.maxIncreasePct ? (
-                            <p className="text-sm font-medium text-destructive mt-3">
-                              ⚠️ {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreasePct}%. Your increase of {increasePct}% exceeds this limit.
-                            </p>
-                          ) : rentControlCap.maxIncreasePct != null ? (
-                            <p className="text-xs text-muted-foreground mt-2">
-                              {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreasePct}%. Your increase of {increasePct}% is within this limit.
-                            </p>
-                          ) : (
-                            <p className="text-xs text-muted-foreground mt-2">
-                              {rentControlCap.jurisdiction} regulates rent increases ({rentControlCap.maxIncreaseFormula}). Check if your {increasePct}% increase complies.
-                            </p>
-                          )
-                        )}
-                        {/* Broker fee reminder */}
-                        {isAboveMarket && brokerFee.brokerFeeMarket && hasIncrease && (
-                          <p className="text-xs text-muted-foreground mt-2">
-                            Keep in mind: moving in {brokerFee.brokerFeeCity} typically involves a broker fee of ~${fmt(Math.round(formData.currentRent))}. Factor this into your stay-vs-move decision.
                           </p>
                         )}
                       </div>
@@ -664,6 +655,19 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     </div>
                 ))}
               </motion.div>
+
+              {/* WSIP cross-link — below stat cards */}
+              {isAboveMarket && hasIncrease && (
+                <p className="text-xs text-muted-foreground/70 mt-3 text-center">
+                  Browsing listings?{' '}
+                  <Link
+                    to={`/what-should-i-pay?zip=${rentData.zip}&bedrooms=${bedroomNum}`}
+                    className="underline text-primary hover:text-primary/80 transition-colors"
+                  >
+                    Check if any asking price is fair before you sign →
+                  </Link>
+                </p>
+              )}
 
               {/* Data Confidence Badge */}
               <motion.div

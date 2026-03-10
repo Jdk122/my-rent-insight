@@ -15,6 +15,7 @@ interface FairnessScoreGaugeProps {
   score: FairnessScoreResult;
   dynamicMessage: React.ReactNode;
   componentSources?: ComponentSourceInfo;
+  contextNotes?: React.ReactNode;
 }
 
 const GAUGE_SIZE = 140;
@@ -22,7 +23,7 @@ const STROKE_WIDTH = 10;
 const RADIUS = (GAUGE_SIZE - STROKE_WIDTH) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-const FairnessScoreGauge = ({ score, dynamicMessage, componentSources }: FairnessScoreGaugeProps) => {
+const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNotes }: FairnessScoreGaugeProps) => {
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [expandedComponent, setExpandedComponent] = useState<string | null>(null);
   const progress = score.total / 100;
@@ -167,6 +168,11 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources }: Fairnes
                 The Fairness Score combines five independent data points to measure how your rent increase compares to local market conditions.{' '}
                 <Link to="/methodology" className="text-primary hover:underline">See methodology →</Link>
               </p>
+              {contextNotes && (
+                <div className="pt-3 mt-3 border-t border-border/50 space-y-2">
+                  {contextNotes}
+                </div>
+              )}
             </div>
           </CollapsibleContent>
         </Collapsible>
