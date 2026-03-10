@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -28,8 +29,8 @@ const faqs: { q: string; a: React.ReactNode }[] = [
   },
 ];
 
-const WsipFAQ = () => (
-  <section className="max-w-[620px] mx-auto px-5 sm:px-6 pt-14 sm:pt-20 pb-14 sm:pb-20 border-t border-border/60" aria-label="Frequently asked questions">
+const WsipFAQ = React.forwardRef<HTMLElement>((_, ref) => (
+  <section ref={ref} className="max-w-[620px] mx-auto px-5 sm:px-6 pt-14 sm:pt-20 pb-14 sm:pb-20 border-t border-border/60" aria-label="Frequently asked questions">
     <h2 className="font-display text-[22px] sm:text-[26px] text-foreground tracking-tight text-center mb-2" style={{ letterSpacing: '-0.02em' }}>
       Frequently Asked Questions
     </h2>
@@ -49,6 +50,8 @@ const WsipFAQ = () => (
       ))}
     </Accordion>
   </section>
-);
+));
+
+WsipFAQ.displayName = 'WsipFAQ';
 
 export default WsipFAQ;

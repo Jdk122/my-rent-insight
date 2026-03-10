@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 interface SEOFooterProps {
@@ -28,8 +29,8 @@ const TOP_CITIES = [
   { city: 'Minneapolis', state: 'MN', stateSlug: 'minnesota', citySlug: 'minneapolis' },
 ];
 
-const SEOFooter = ({ onContactClick, showCityDirectory = false }: SEOFooterProps) => (
-  <footer className="mt-auto border-t border-border bg-card">
+const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClick, showCityDirectory = false }, ref) => (
+  <footer ref={ref} className="mt-auto border-t border-border bg-card">
     {/* City directory — integrated into footer like Zillow/Redfin */}
     {showCityDirectory && (
       <div className="border-b border-border/50">
@@ -66,7 +67,7 @@ const SEOFooter = ({ onContactClick, showCityDirectory = false }: SEOFooterProps
           <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-5 sm:h-6 w-auto object-contain" />
         </Link>
         <nav className="flex items-center justify-center gap-3 sm:gap-4 text-[12px] sm:text-[13px] text-muted-foreground flex-wrap">
-          <Link to="/" className="hover:text-foreground transition-colors">Check Rent</Link>
+          <Link to="/" className="hover:text-foreground transition-colors">Check My Increase</Link>
           <Link to="/what-should-i-pay" className="hover:text-foreground transition-colors">What Should I Pay?</Link>
           <Link to="/rent-data" className="hover:text-foreground transition-colors">Rent Data</Link>
           <Link to="/about" className="hover:text-foreground transition-colors">About</Link>
@@ -92,6 +93,8 @@ const SEOFooter = ({ onContactClick, showCityDirectory = false }: SEOFooterProps
       </p>
     </div>
   </footer>
-);
+));
+
+SEOFooter.displayName = 'SEOFooter';
 
 export default SEOFooter;

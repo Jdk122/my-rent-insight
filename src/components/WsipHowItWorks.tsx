@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 const steps = [
@@ -18,8 +19,8 @@ const steps = [
   },
 ];
 
-const WsipHowItWorks = () => (
-  <section className="w-full border-t border-border/60" aria-label="How it works">
+const WsipHowItWorks = React.forwardRef<HTMLElement>((_, ref) => (
+  <section ref={ref} className="w-full border-t border-border/60" aria-label="How it works">
     <div className="max-w-[620px] mx-auto px-5 sm:px-6 py-14 sm:py-20">
       <h2
         className="font-display text-[22px] sm:text-[26px] text-foreground text-center tracking-tight mb-2"
@@ -60,6 +61,8 @@ const WsipHowItWorks = () => (
       </p>
     </div>
   </section>
-);
+));
+
+WsipHowItWorks.displayName = 'WsipHowItWorks';
 
 export default WsipHowItWorks;
