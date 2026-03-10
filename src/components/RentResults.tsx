@@ -159,6 +159,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const hasEnoughComps = outlierResult ? outlierResult.filtered.length >= 3 : false;
   const isHighRent = formData.currentRent > rentData.fmr * 1.5;
 
+  // ━━━ Building range ━━━
+  const bldg = useMemo(() => getBuildingRange(
+    outlierResult?.filtered ?? cleanedComps,
+    formData.fullAddress ?? null,
+    bedroomNum,
+  ), [outlierResult, cleanedComps, formData.fullAddress, bedroomNum]);
+
   // ━━━ Data confidence ━━━
   const compRadius = useMemo(() => {
     if (!rentcast.data?.comparables) return { maxDistance: null, label: '' };
