@@ -29,6 +29,8 @@ export type EventName =
   | 'letter_copied'
   | 'comp_gate_shown'
   | 'comp_gate_converted'
+  | 'report_gate_shown'
+  | 'report_gate_converted'
   | 'exit_intent_shown'
   | 'exit_intent_converted'
   | 'exit_intent_dismissed'
