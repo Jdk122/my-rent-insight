@@ -133,6 +133,31 @@ export function deduplicateComps(comps: RentcastComparable[]): RentcastComparabl
   return Array.from(map.values());
 }
 
+// ─── Seasonal Comp Adjustment ───
+
+/**
+ * Apply seasonal rent adjustment to comps based on their listing month.
+ * Mutates copies — returns new array with seasonalRent and seasonallyAdjusted fields.
+ */
+export function applySeasonalAdjustment(
+  comps: RentcastComparable[],
+  state: string,
+  targetMonth?: number,
+): RentcastComparable[] {
+  const tMonth = targetMonth ?? (new Date().getMonth() + 1);
+  return comps.map(c => {
+    if (c.rent == null || c.rent <= 0) return { ...c, seasonalRent: null, seasonallyAdjusted: false };
+    const listMonth = listingMonthFromDaysOld(c.daysOld);
+    if (listMonth === null) return { ...c, seasonalRent: null, seasonallyAdjusted: false };
+    const { adjusted, wasAdjusted } = seasonallyAdjustRent(c.rent, listMonth, tMonth, state);
+    return {
+      ...c,
+      seasonalRent: wasAdjusted ? adjusted : null,
+      seasonallyAdjusted: wasAdjusted,
+    };
+  });
+}
+
 // ─── Outlier Detection (IQR method, 5+ comps minimum) ───
 // Also filters by distance (<=3 mi) and uses correlation-weighted median
 
@@ -161,16 +186,19 @@ export function correlationWeightedMedian(
     }
   }
 
-  const sorted = [...valid].sort((a, b) => a.rent! - b.rent!);
+  // Use seasonally adjusted rent when available, else original
+  const getRent = (c: RentcastComparable) => c.seasonalRent ?? c.rent!;
+
+  const sorted = [...valid].sort((a, b) => getRent(a) - getRent(b));
   const totalWeight = sorted.reduce((sum, c) => sum + (c.correlation ?? 1), 0);
   const halfWeight = totalWeight / 2;
 
   let cumWeight = 0;
   for (const comp of sorted) {
     cumWeight += comp.correlation ?? 1;
-    if (cumWeight >= halfWeight) return comp.rent!;
+    if (cumWeight >= halfWeight) return getRent(comp);
   }
-  return sorted[sorted.length - 1].rent!;
+  return getRent(sorted[sorted.length - 1]);
 }
 
 export function detectOutliers(comps: RentcastComparable[], subjectSqft?: number | null): OutlierResult {
@@ -180,13 +208,15 @@ export function detectOutliers(comps: RentcastComparable[], subjectSqft?: number
 
   const withRent = workingComps.filter(c => c.rent !== null && c.rent > 0);
 
+  // Use seasonally adjusted rent when available for outlier bounds
+  const getRent = (c: RentcastComparable) => c.seasonalRent ?? c.rent!;
+
   if (withRent.length < 5) {
-    // Not enough data for outlier detection — use all, but with correlation-weighted median
     const median = correlationWeightedMedian(withRent, subjectSqft);
     return { filtered: withRent, outliers: [], median };
   }
 
-  const rents = withRent.map(c => c.rent!).sort((a, b) => a - b);
+  const rents = withRent.map(c => getRent(c)).sort((a, b) => a - b);
   const q1Idx = Math.floor(rents.length * 0.25);
   const q3Idx = Math.floor(rents.length * 0.75);
   const q1 = rents[q1Idx];
@@ -199,14 +229,14 @@ export function detectOutliers(comps: RentcastComparable[], subjectSqft?: number
   const outliers: RentcastComparable[] = [];
 
   for (const comp of withRent) {
-    if (comp.rent! < lowerBound || comp.rent! > upperBound) {
+    const r = getRent(comp);
+    if (r < lowerBound || r > upperBound) {
       outliers.push(comp);
     } else {
       filtered.push(comp);
     }
   }
 
-  // Step 2: Correlation-weighted median instead of simple median
   const median = correlationWeightedMedian(filtered, subjectSqft);
 
   return { filtered, outliers, median };
