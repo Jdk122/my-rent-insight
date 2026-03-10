@@ -141,10 +141,24 @@ export interface OutlierResult {
   median: number | null;
 }
 
-function correlationWeightedMedian(comps: RentcastComparable[]): number | null {
-  const valid = comps.filter(c => c.rent != null && c.rent > 0);
+export function correlationWeightedMedian(
+  comps: RentcastComparable[],
+  subjectSqft?: number | null,
+): number | null {
+  let valid = comps.filter(c => c.rent != null && c.rent > 0);
   if (valid.length === 0) return null;
   if (valid.length === 1) return valid[0].rent!;
+
+  // When subject sqft is known and enough comps have sqft, filter to ±25%
+  if (subjectSqft && subjectSqft > 0) {
+    const sqftFiltered = valid.filter(
+      c => c.squareFootage != null && c.squareFootage > 0 &&
+        Math.abs(c.squareFootage - subjectSqft) / subjectSqft <= 0.25,
+    );
+    if (sqftFiltered.length >= 3) {
+      valid = sqftFiltered;
+    }
+  }
 
   const sorted = [...valid].sort((a, b) => a.rent! - b.rent!);
   const totalWeight = sorted.reduce((sum, c) => sum + (c.correlation ?? 1), 0);

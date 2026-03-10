@@ -13,6 +13,8 @@ export interface BuildingRangeResult {
   buildingMedian: number;
   buildingComps: RentcastComparable[];
   otherComps: RentcastComparable[];
+  /** Label like "1BR" or "studio" describing which bedroom filter matched */
+  bedroomFilterLabel: string | null;
 }
 
 function median(nums: number[]): number {
@@ -23,13 +25,24 @@ function median(nums: number[]): number {
     : sorted[mid];
 }
 
+function brLabel(n: number): string {
+  if (n === 0) return 'studio';
+  return `${n}BR`;
+}
+
 /**
  * Separate comps into building vs other, and compute building rent range.
  * Returns hasBuildingData = true only when 2+ same-building comps have rent data.
+ *
+ * When bedroomCount is provided, filters building comps by:
+ *   1. Exact bedroom match → if 2+ with rent, use those
+ *   2. ±1 bedroom fallback → if 2+ with rent, use those
+ *   3. All bedrooms fallback (original behavior)
  */
 export function getBuildingRange(
   allComps: RentcastComparable[],
   subjectAddress: string | null,
+  bedroomCount?: number | null,
 ): BuildingRangeResult {
   const empty: BuildingRangeResult = {
     hasBuildingData: false,
@@ -38,6 +51,7 @@ export function getBuildingRange(
     buildingMedian: 0,
     buildingComps: [],
     otherComps: allComps,
+    bedroomFilterLabel: null,
   };
 
   if (!subjectAddress) return empty;
@@ -55,12 +69,50 @@ export function getBuildingRange(
     }
   }
 
-  const rents = buildingComps
-    .filter(c => c.rent !== null && c.rent > 0)
-    .map(c => c.rent as number);
+  // Helper: get rents from a set of comps
+  const getRents = (comps: RentcastComparable[]) =>
+    comps.filter(c => c.rent !== null && c.rent > 0).map(c => c.rent as number);
+
+  // Try bedroom-filtered subsets when bedroomCount is provided
+  if (bedroomCount !== null && bedroomCount !== undefined) {
+    // 1. Exact bedroom match
+    const exactMatch = buildingComps.filter(c => c.bedrooms === bedroomCount);
+    const exactRents = getRents(exactMatch);
+    if (exactRents.length >= 2) {
+      return {
+        hasBuildingData: true,
+        buildingLow: Math.min(...exactRents),
+        buildingHigh: Math.max(...exactRents),
+        buildingMedian: median(exactRents),
+        buildingComps: exactMatch,
+        otherComps: [...otherComps, ...buildingComps.filter(c => c.bedrooms !== bedroomCount)],
+        bedroomFilterLabel: brLabel(bedroomCount),
+      };
+    }
+
+    // 2. ±1 bedroom fallback
+    const nearMatch = buildingComps.filter(
+      c => c.bedrooms !== null && Math.abs(c.bedrooms - bedroomCount) <= 1,
+    );
+    const nearRents = getRents(nearMatch);
+    if (nearRents.length >= 2) {
+      return {
+        hasBuildingData: true,
+        buildingLow: Math.min(...nearRents),
+        buildingHigh: Math.max(...nearRents),
+        buildingMedian: median(nearRents),
+        buildingComps: nearMatch,
+        otherComps: [...otherComps, ...buildingComps.filter(c => !nearMatch.includes(c))],
+        bedroomFilterLabel: null, // mixed bedrooms, no specific label
+      };
+    }
+  }
+
+  // 3. All bedrooms fallback (original behavior)
+  const rents = getRents(buildingComps);
 
   if (rents.length < 2) {
-    return { ...empty, buildingComps, otherComps };
+    return { ...empty, buildingComps, otherComps, bedroomFilterLabel: null };
   }
 
   return {
@@ -70,5 +122,6 @@ export function getBuildingRange(
     buildingMedian: median(rents),
     buildingComps,
     otherComps,
+    bedroomFilterLabel: null,
   };
 }
