@@ -157,8 +157,7 @@ const ReportGate = ({
         </button>
       </form>
       {error && <p className="text-xs text-destructive mt-1">{error}</p>}
-      <p className="text-[12px] text-muted-foreground/70 mt-3">Free. No account required.</p>
-      <div className="mt-2">
+      <div className="mt-3">
         <SocialProofLine />
       </div>
       <p className="text-[11px] text-muted-foreground/60 text-center mt-3">
