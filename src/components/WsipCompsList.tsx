@@ -9,6 +9,7 @@ interface WsipCompsListProps {
   medianCompRent: number | null;
   userSqft?: number | null;
   sectionLabel?: string;
+  hideMedianLine?: boolean;
 }
 
 const CompRow = ({ comp, idx, offset }: { comp: RentcastComparable; idx: number; offset: number }) => {
