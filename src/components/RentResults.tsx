@@ -134,8 +134,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     const prioritized = exactBrMatch.length >= 3
       ? [...exactBrMatch, ...nearBrMatch]
       : unfurnished;
-    return { cleanedComps: prioritized, furnishedComps: furnished };
-  }, [rentcast.data, bedroomNum]);
+    // Apply seasonal adjustment using state
+    const seasonallyAdjusted = applySeasonalAdjustment(prioritized, rentData.state);
+    return { cleanedComps: seasonallyAdjusted, furnishedComps: furnished };
+  }, [rentcast.data, bedroomNum, rentData.state]);
 
   // ━━━ Outlier detection ━━━
   const subjectSqft = propertyData?.squareFootage ?? null;

@@ -82,8 +82,10 @@ const WsipResults = ({
     const exactBrMatch = unfurnished.filter(c => c.bedrooms === bedroomNum);
     const nearBrMatch = unfurnished.filter(c => c.bedrooms !== bedroomNum);
     const prioritized = exactBrMatch.length >= 3 ? [...exactBrMatch, ...nearBrMatch] : unfurnished;
-    return { cleanedComps: prioritized };
-  }, [rentcast.data, bedroomNum]);
+    // Apply seasonal adjustment using state
+    const seasonallyAdjusted = applySeasonalAdjustment(prioritized, rentData.state);
+    return { cleanedComps: seasonallyAdjusted };
+  }, [rentcast.data, bedroomNum, rentData.state]);
 
   const outlierResult = useMemo(() => {
     if (cleanedComps.length === 0) return null;
