@@ -93,6 +93,8 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
       </p>
     </div>
   </footer>
-);
+));
+
+SEOFooter.displayName = 'SEOFooter';
 
 export default SEOFooter;
