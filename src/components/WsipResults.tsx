@@ -625,11 +625,25 @@ Happy to discuss — thank you.`;
                 Showing {allComps.length} comparable rental{allComps.length !== 1 ? 's' : ''}{compRadius.label ? ` ${compRadius.label}` : ''}.
               </p>
 
-              <WsipCompsList
-                comparables={compsUnlocked ? allComps : visibleComps}
-                askingRent={askingRent}
-                medianCompRent={medianCompRent}
-              />
+              {/* Tier 1: in-building comps — always ungated */}
+              {tier1Comps.length > 0 && (
+                <WsipCompsList
+                  comparables={tier1Comps}
+                  askingRent={askingRent}
+                  medianCompRent={medianCompRent}
+                  sectionLabel="In this building"
+                />
+              )}
+
+              {/* Tier 2-4: nearby comps — gated */}
+              {nonBuildingComps.length > 0 && (
+                <WsipCompsList
+                  comparables={compsUnlocked ? nonBuildingComps : visibleNonBuildingComps}
+                  askingRent={askingRent}
+                  medianCompRent={medianCompRent}
+                  sectionLabel={tier1Comps.length > 0 ? 'Nearby' : undefined}
+                />
+              )}
 
               {/* Comp gate */}
               {gatedComps.length > 0 && !compsUnlocked && (
