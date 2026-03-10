@@ -9,6 +9,14 @@ export interface FairRangeInput {
   hudFmr: number;
   zoriRent: number | null;
   rcMarketMedian: number | null;
+  /** Tier-based weight overrides (from compTiering) */
+  tierOverride?: {
+    tier1Rents: number[];
+    otherRents: number[];
+    tier1CompWeight: number;
+    otherCompWeight: number;
+    hudZoriWeight: number;
+  } | null;
 }
 
 export interface FairRangeResult {
