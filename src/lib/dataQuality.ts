@@ -206,7 +206,7 @@ export function detectOutliers(comps: RentcastComparable[], subjectSqft?: number
   }
 
   // Step 2: Correlation-weighted median instead of simple median
-  const median = correlationWeightedMedian(filtered);
+  const median = correlationWeightedMedian(filtered, subjectSqft);
 
   return { filtered, outliers, median };
 }
