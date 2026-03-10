@@ -537,19 +537,38 @@ Happy to discuss — thank you.`;
                 )}
               </div>
               <div className="flex justify-between mt-1.5 px-1">
-                <span className="text-[11px] text-muted-foreground">${fmt(fairRangeLow)}</span>
-                <span className="text-[11px] text-muted-foreground/60">Fair Range</span>
-                <span className="text-[11px] text-muted-foreground">${fmt(fairRangeHigh)}</span>
+                <span className="text-[11px] text-muted-foreground">${fmt(barLow)}</span>
+                <span className="text-[11px] text-muted-foreground/60">{barLabel}</span>
+                <span className="text-[11px] text-muted-foreground">${fmt(barHigh)}</span>
               </div>
+              {bldg.hasBuildingData && (
+                <p className="text-[10px] text-muted-foreground/50 text-center mt-1">
+                  Area average: ${fmt(fairRangeLow)} – ${fmt(fairRangeHigh)}
+                </p>
+              )}
             </div>
 
             {/* Stat cards — always show all four */}
             <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-[540px]">
               <div className="text-center rounded-lg border border-border/80 bg-card px-2 sm:px-3 py-3 sm:py-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-                <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Fair Range</p>
-                <p className="font-display text-[18px] sm:text-[22px] tracking-tight text-foreground tabular-nums" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
-                  ${fmt(fairRangeLow)}–${fmt(fairRangeHigh)}
+                <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">
+                  {bldg.hasBuildingData ? 'Range' : 'Fair Range'}
                 </p>
+                {bldg.hasBuildingData ? (
+                  <div>
+                    <p className="font-display text-[16px] sm:text-[19px] tracking-tight text-foreground tabular-nums" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
+                      ${fmt(bldg.buildingLow)}–${fmt(bldg.buildingHigh)}
+                    </p>
+                    <p className="text-[9px] text-muted-foreground/60 mt-1">This building</p>
+                    <p className="text-[10px] text-muted-foreground/50 mt-0.5">
+                      Area: ${fmt(fairRangeLow)}–${fmt(fairRangeHigh)}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="font-display text-[18px] sm:text-[22px] tracking-tight text-foreground tabular-nums" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
+                    ${fmt(fairRangeLow)}–${fmt(fairRangeHigh)}
+                  </p>
+                )}
               </div>
               <div className="text-center rounded-lg border border-border/80 bg-card px-2 sm:px-3 py-3 sm:py-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
                 <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Area Trend</p>
