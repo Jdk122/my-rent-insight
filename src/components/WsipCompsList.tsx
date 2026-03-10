@@ -51,12 +51,12 @@ const CompRow = ({ comp, idx, offset }: { comp: RentcastComparable; idx: number;
   );
 };
 
-const WsipCompsList = ({ comparables, askingRent, medianCompRent, userSqft }: WsipCompsListProps) => {
+const WsipCompsList = ({ comparables, askingRent, medianCompRent, userSqft, sectionLabel }: WsipCompsListProps) => {
   if (comparables.length === 0) return null;
 
-  // Split into same-building vs nearby
-  const inBuilding = comparables.filter(c => c.isSameBuilding);
-  const nearby = comparables.filter(c => !c.isSameBuilding);
+  // Split into same-building vs nearby (legacy flag-based)
+  const inBuilding = sectionLabel ? [] : comparables.filter(c => c.isSameBuilding);
+  const nearby = sectionLabel ? comparables : comparables.filter(c => !c.isSameBuilding);
 
   // Calculate avg $/sqft across comps with sqft data
   const compsWithSqft = comparables.filter(c => c.rent && c.squareFootage && c.squareFootage > 0);
