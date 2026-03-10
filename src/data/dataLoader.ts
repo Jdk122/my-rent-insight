@@ -122,6 +122,18 @@ export async function getRentData(): Promise<Record<string, RentZipRaw>> {
   return rentDataCache!;
 }
 
+/** Compute national average YoY rent change from all ZORI-covered ZIPs */
+let nationalAvgCache: number | null = null;
+export async function getNationalAvgYoY(): Promise<number> {
+  if (nationalAvgCache !== null) return nationalAvgCache;
+  const data = await getRentData();
+  const vals = Object.values(data).map(z => z.zy).filter((v): v is number => v != null);
+  nationalAvgCache = vals.length > 0
+    ? Math.round((vals.reduce((s, v) => s + v, 0) / vals.length) * 10) / 10
+    : 3.2; // fallback
+  return nationalAvgCache;
+}
+
 async function getCountyFmrData(): Promise<Record<string, RentZipRaw>> {
   if (!countyFmrCache) {
     const urls = ['/data/county_fmr.json'];

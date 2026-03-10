@@ -1,7 +1,7 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
-import { getRentData, getApartmentListData, getHud50Data, type RentZipRaw, type ApartmentListZipRaw, type Hud50ZipRaw } from '@/data/dataLoader';
+import { getRentData, getApartmentListData, getHud50Data, getNationalAvgYoY, type RentZipRaw, type ApartmentListZipRaw, type Hud50ZipRaw } from '@/data/dataLoader';
 import { slugify, stateNameFromAbbr } from '@/data/cityStateUtils';
 import { getRentControlForZip, getApplicableCap, isNycZip } from '@/data/rentControlData';
 import { getDataFreshness, getFreshestDate, formatFreshnessDate, getHudFiscalYear, getDataYear, type DataFreshness } from '@/data/dataFreshness';
@@ -27,8 +27,6 @@ import {
 } from '@/components/ui/table';
 
 const BEDROOM_LABELS = ['Studio', '1-Bedroom', '2-Bedroom', '3-Bedroom', '4-Bedroom'];
-// TODO: derive from data — last updated March 2026
-const NATIONAL_AVG_YOY = 3.2;
 
 function fmt(n: number) {
   return n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
@@ -54,6 +52,7 @@ const RentByZip = () => {
   const [loading, setLoading] = useState(true);
   const [contactOpen, setContactOpen] = useState(false);
   const [searchZip, setSearchZip] = useState('');
+  const [NATIONAL_AVG_YOY, setNationalAvgYoY] = useState(3.2);
 
   useEffect(() => {
     if (!zip || zip.length !== 5) { setNotFound(true); setLoading(false); return; }
@@ -61,9 +60,11 @@ const RentByZip = () => {
     (async () => {
       setLoading(true);
       setNotFound(false);
-      const [allData, alData, hud50Data, freshness] = await Promise.all([
-        getRentData(), getApartmentListData(), getHud50Data(), getDataFreshness()
+      const [allData, alData, hud50Data, freshness, natAvg] = await Promise.all([
+        getRentData(), getApartmentListData(), getHud50Data(), getDataFreshness(), getNationalAvgYoY()
       ]);
+      if (cancelled) return;
+      setNationalAvgYoY(natAvg);
       if (cancelled) return;
       const raw = allData[zip];
       if (!raw) { setNotFound(true); setLoading(false); return; }
