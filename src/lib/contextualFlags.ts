@@ -66,5 +66,19 @@ export function getBrokerFeeInfo(state: string, city: string): BrokerFeeInfo {
     };
   }
 
+  const NJ_GOLD_COAST = [
+    'hoboken', 'jersey city', 'weehawken', 'union city',
+    'north bergen', 'west new york', 'edgewater', 'fort lee',
+    'cliffside park',
+  ];
+
+  if (stateUpper === 'NJ' && NJ_GOLD_COAST.includes(cityLower)) {
+    return {
+      brokerFeeMarket: true,
+      brokerFeeNote: 'Broker fees are common in the NJ Gold Coast — typically 1 month\'s rent',
+      brokerFeeCity: 'NJ',
+    };
+  }
+
   return { brokerFeeMarket: false, brokerFeeNote: null, brokerFeeCity: null };
 }
