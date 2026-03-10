@@ -20,7 +20,7 @@ export function getUtilityNote(
   // Check for 6+ units: explicit unit count, or infer from multi-family type
   const isLargeMultiFamily =
     propertyData.units >= 6 ||
-    (propertyData.propertyType?.toLowerCase().includes('multi') && propertyData.units >= 6);
+    (propertyData.propertyType?.toLowerCase().includes('multi') && (!propertyData.units || propertyData.units >= 6));
 
   if (!isLargeMultiFamily) return null;
 
@@ -63,6 +63,20 @@ export function getBrokerFeeInfo(state: string, city: string): BrokerFeeInfo {
       brokerFeeMarket: true,
       brokerFeeNote: 'Broker fees are common in Boston — typically 1 month\'s rent',
       brokerFeeCity: 'Boston',
+    };
+  }
+
+  const NJ_GOLD_COAST = [
+    'hoboken', 'jersey city', 'weehawken', 'union city',
+    'north bergen', 'west new york', 'edgewater', 'fort lee',
+    'cliffside park',
+  ];
+
+  if (stateUpper === 'NJ' && NJ_GOLD_COAST.includes(cityLower)) {
+    return {
+      brokerFeeMarket: true,
+      brokerFeeNote: 'Broker fees are common in the NJ Gold Coast — typically 1 month\'s rent',
+      brokerFeeCity: 'NJ',
     };
   }
 
