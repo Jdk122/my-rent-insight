@@ -19,7 +19,7 @@ import SectionNav from './SectionNav';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import DataConfidenceBadge from './DataConfidenceBadge';
-import { assessConfidence, detectOutliers, checkCrossSourceConsistency, getCompRadius, filterFurnished, deduplicateComps } from '@/lib/dataQuality';
+import { assessConfidence, detectOutliers, checkCrossSourceConsistency, getCompRadius, filterFurnished, deduplicateComps, applySeasonalAdjustment } from '@/lib/dataQuality';
 import { calculateFairnessScore, scoreToVerdict, FairnessScoreResult } from '@/lib/fairnessScore';
 import { calculateCompositeTrend } from '@/lib/compositeTrend';
 import FairnessScoreGauge, { ComponentSourceInfo } from './FairnessScoreGauge';
