@@ -50,6 +50,8 @@ const WsipFAQ = React.forwardRef<HTMLElement>((_, ref) => (
       ))}
     </Accordion>
   </section>
-);
+));
+
+WsipFAQ.displayName = 'WsipFAQ';
 
 export default WsipFAQ;
