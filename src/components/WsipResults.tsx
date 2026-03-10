@@ -9,7 +9,7 @@ import { useRentcastMarket } from '@/hooks/useRentcastMarket';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
-import { assessConfidence, detectOutliers, getCompRadius, filterFurnished, deduplicateComps } from '@/lib/dataQuality';
+import { assessConfidence, detectOutliers, getCompRadius, filterFurnished, deduplicateComps, applySeasonalAdjustment } from '@/lib/dataQuality';
 import { calculateCompositeTrend } from '@/lib/compositeTrend';
 import { calculateFairRange } from '@/lib/fairRange';
 import { tierComps, getTierWeights } from '@/lib/compTiering';
