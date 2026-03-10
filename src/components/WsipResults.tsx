@@ -768,10 +768,6 @@ Happy to discuss — thank you.`;
                 </div>
               )}
 
-              {compsUnlocked && (() => {
-                trackEvent('wsip_tips_unlocked', { zip_code: zip, verdict: verdictLabel });
-                return null;
-              })()}
             </motion.section>
           )}
 
