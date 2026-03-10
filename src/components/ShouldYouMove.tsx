@@ -4,6 +4,20 @@ import { MapPin } from 'lucide-react';
 import { RentcastComparable } from '@/hooks/useRentcast';
 import { BedroomType } from '@/data/rentData';
 
+function compAgeLabel(daysOld: number | null): { text: string; className: string } | null {
+  if (daysOld === null || daysOld < 0) return null;
+  if (daysOld < 30) {
+    return { text: `Listed ${daysOld} days ago`, className: 'text-green-600' };
+  }
+  if (daysOld <= 90) {
+    const weeks = Math.round(daysOld / 7);
+    const text = weeks >= 6 ? `Listed ${Math.round(daysOld / 30)} months ago` : `Listed ${weeks} weeks ago`;
+    return { text, className: 'text-muted-foreground' };
+  }
+  const months = Math.round(daysOld / 30);
+  return { text: `Listed ${months} months ago`, className: 'text-amber-600' };
+}
+
 interface UserUnit {
   address?: string | null;
   bedrooms?: number | null;
@@ -159,6 +173,18 @@ function CompsWithRentLine({
                 {comp.squareFootage !== null && comp.squareFootage > 0 && ` · ${fmt(comp.squareFootage)} sqft`}
                 {comp.rent != null && comp.squareFootage != null && comp.squareFootage > 0 && ` · $${(comp.rent / comp.squareFootage).toFixed(2)}/sqft`}
                 {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
+                {(() => {
+                  const age = compAgeLabel(comp.daysOld);
+                  if (!age) return null;
+                  return (
+                    <>
+                      {' · '}<span className={age.className}>{age.text}</span>
+                      {comp.daysOld !== null && comp.daysOld > 90 && (
+                        <span className="text-amber-600 ml-0.5" title="Older listing — pricing may have changed">⚠</span>
+                      )}
+                    </>
+                  );
+                })()}
                 {matchLabel(comp.correlation) && (
                   <span className={`ml-1 ${matchColor(comp.correlation)}`}> · {matchLabel(comp.correlation)}</span>
                 )}
