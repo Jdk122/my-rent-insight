@@ -1132,7 +1132,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       : isFair
                       ? `My rent increase is right at market.`
                       : isBelowMarket
-                      ? `My rent increase is below the area trend.`
+                      ? `My rent is below market — even with a ${increasePct}% increase.`
                       : `My rent isn't going up — and rents in ${city} moved ${marketYoy}%.`
                   }
                   stats={
