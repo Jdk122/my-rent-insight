@@ -109,7 +109,8 @@ const WsipResults = ({
   const bldg = useMemo(() => getBuildingRange(
     outlierResult?.filtered ?? cleanedComps,
     fullAddress,
-  ), [outlierResult, cleanedComps, fullAddress]);
+    bedroomNum,
+  ), [outlierResult, cleanedComps, fullAddress, bedroomNum]);
 
   const tier1Comps = tiering.tier1;
   const hasBuilding = bldg.hasBuildingData && tier1Comps.length >= 2;
