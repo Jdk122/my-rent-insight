@@ -13,7 +13,7 @@ const WsipResults = lazy(() => import('@/components/WsipResults'));
 const SocialProofCounter = lazy(() => import('@/components/SocialProofCounter'));
 const ContactModal = lazy(() => import('@/components/ContactModal'));
 const WsipFAQ = lazy(() => import('@/components/WsipFAQ'));
-const HowItWorks = lazy(() => import('@/components/HowItWorks'));
+const WsipHowItWorks = lazy(() => import('@/components/WsipHowItWorks'));
 const SEOFooter = lazy(() => import('@/components/SEOFooter'));
 
 interface WsipResultsState {
@@ -237,11 +237,23 @@ const WhatShouldIPay = () => {
             </Suspense>
           </section>
           <Suspense fallback={null}>
-            <HowItWorks />
+            <WsipHowItWorks />
           </Suspense>
           <Suspense fallback={null}>
             <WsipFAQ />
           </Suspense>
+
+          {/* Noscript fallback for WSIP */}
+          <noscript>
+            <div style={{ maxWidth: '620px', margin: '0 auto', padding: '40px 24px', fontFamily: 'sans-serif' }}>
+              <h2>What Should I Pay for Rent?</h2>
+              <p>
+                RenewalReply helps you check if a rental listing is fairly priced before you sign.
+                Enter an address and bedroom count to see the fair rent range based on HUD Fair Market Rent,
+                Zillow rent trends, and real comparable listings. Coverage for 38,000+ US zip codes.
+              </p>
+            </div>
+          </noscript>
         </main>
       ) : (
         <div ref={resultsRef}>

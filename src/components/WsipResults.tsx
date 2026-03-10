@@ -136,17 +136,17 @@ const WsipResults = ({
     hasCensus: rentData.censusMedianRent !== null,
   }), [outlierResult, compRadius, rentData]);
 
-  // ━━━ Market editorial ━━━
+  // ━━━ Market editorial (recalibrated) ━━━
   const marketEditorial = useMemo(() => {
     const vacancy = rentData.alVacancy;
     const dom = rcMarket.rcAvgDaysOnMarket;
-    if (vacancy !== null && vacancy < 3 && dom !== null && dom < 20) {
-      return "This is a competitive market — landlords have pricing power. Be ready to move fast.";
+    if (dom !== null && dom < 25 && vacancy !== null && vacancy < 3) {
+      return "This is a competitive market — landlords have pricing power. Move fast on good deals.";
     }
-    if ((vacancy !== null && vacancy > 5) || (dom !== null && dom > 35)) {
+    if ((dom !== null && dom > 50) || (vacancy !== null && vacancy > 6)) {
       return "This is a renter's market — you have leverage to negotiate.";
     }
-    return "This market is balanced — negotiate, but be realistic.";
+    return "This market is balanced — negotiate, but be realistic about competing offers.";
   }, [rentData.alVacancy, rcMarket.rcAvgDaysOnMarket]);
 
   // ━━━ Comp gate state ━━━
@@ -313,10 +313,16 @@ const WsipResults = ({
   }), [zip, fullAddress, bedroomNum, askingRent, rentData, brLabel, fairRangeLow, fairRangeHigh, verdictLabel, marketYoy, medianCompRent]);
 
   // ━━━ Copy template ━━━
-  const suggestedPrice = medianCompRent ? fmt(medianCompRent) : fmt(fairRangeLow);
+  const suggestedPrice = useMemo(() => {
+    const compMedian = medianCompRent ?? Infinity;
+    const rangeTop = fairRangeHigh;
+    const suggested = Math.min(compMedian, rangeTop);
+    return fmt(isFinite(suggested) ? suggested : fairRangeLow);
+  }, [medianCompRent, fairRangeHigh, fairRangeLow]);
+
   const emailTemplate = `Hi,
 
-I'm interested in the unit at ${fullAddress || `ZIP ${zip}`}. Based on comparable rentals in the area, I'd like to propose $${suggestedPrice}/month for the ${brLabel}. I'm ready to sign a lease and can move in on your timeline.
+I'm interested in the unit at ${fullAddress || `ZIP ${zip}`}. Based on comparable rentals in the area, I'd like to propose $${suggestedPrice}/month for the ${brLabel}. I'm ready to sign a lease and can move in quickly.
 
 Happy to discuss — thank you.`;
 
@@ -342,6 +348,13 @@ Happy to discuss — thank you.`;
   const handleResultsShared = useCallback(() => {
     supabase.from('analyses' as any).update({ results_shared: true } as any).eq('id', analysisId).then(() => {});
   }, [analysisId]);
+
+  // ━━━ Market trend label ━━━
+  const trendLabel = useMemo(() => {
+    if (marketYoy > 1) return `rising at ${marketYoy}%/yr`;
+    if (marketYoy < -1) return `cooling at ${marketYoy}%/yr`;
+    return `flat at ${marketYoy}%/yr`;
+  }, [marketYoy]);
 
   return (
     <>
@@ -414,7 +427,7 @@ Happy to discuss — thank you.`;
                 {/* High marker */}
                 <div className="absolute top-0 bottom-0 w-px bg-border" style={{ left: `${rangeHighPct}%` }} />
 
-                {/* Asking rent dot */}
+                {/* Asking rent dot — only when asking price provided */}
                 {askingPct !== null && (
                   <div
                     className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full border-2 border-card shadow-md ${
@@ -431,7 +444,7 @@ Happy to discuss — thank you.`;
               </div>
             </div>
 
-            {/* Stat cards */}
+            {/* Stat cards — always show all four */}
             <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-[540px]">
               <div className="text-center rounded-lg border border-border/80 bg-card px-2 sm:px-3 py-3 sm:py-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
                 <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Fair Range</p>
@@ -445,22 +458,18 @@ Happy to discuss — thank you.`;
                   {marketYoy > 0 ? '+' : ''}{marketYoy}%
                 </p>
               </div>
-              {rentData.alVacancy !== null && (
-                <div className="text-center rounded-lg border border-border/80 bg-card px-2 sm:px-3 py-3 sm:py-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-                  <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Vacancy Rate</p>
-                  <p className="font-display text-[18px] sm:text-[22px] tracking-tight text-foreground tabular-nums" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
-                    {rentData.alVacancy.toFixed(1)}%
-                  </p>
-                </div>
-              )}
-              {rcMarket.rcAvgDaysOnMarket !== null && (
-                <div className="text-center rounded-lg border border-border/80 bg-card px-2 sm:px-3 py-3 sm:py-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-                  <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Days on Market</p>
-                  <p className="font-display text-[18px] sm:text-[22px] tracking-tight text-foreground tabular-nums" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
-                    {Math.round(rcMarket.rcAvgDaysOnMarket)}
-                  </p>
-                </div>
-              )}
+              <div className="text-center rounded-lg border border-border/80 bg-card px-2 sm:px-3 py-3 sm:py-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+                <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Vacancy Rate</p>
+                <p className="font-display text-[18px] sm:text-[22px] tracking-tight text-foreground tabular-nums" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
+                  {rentData.alVacancy !== null ? `${rentData.alVacancy.toFixed(1)}%` : '—'}
+                </p>
+              </div>
+              <div className="text-center rounded-lg border border-border/80 bg-card px-2 sm:px-3 py-3 sm:py-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+                <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Days on Market</p>
+                <p className="font-display text-[18px] sm:text-[22px] tracking-tight text-foreground tabular-nums" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
+                  {rcMarket.rcAvgDaysOnMarket !== null ? Math.round(rcMarket.rcAvgDaysOnMarket) : '—'}
+                </p>
+              </div>
             </div>
 
             {/* Confidence badge */}
@@ -546,42 +555,45 @@ Happy to discuss — thank you.`;
                 )}
               </div>
 
-              {/* Market snapshot */}
-              {(rcMarket.rcTotalListings !== null || rcMarket.rcAvgDaysOnMarket !== null) && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15, duration: 0.4 }}
-                  className="rounded-lg border border-border bg-card px-4 py-4"
-                >
-                  <h3 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Local Market Snapshot</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                    {rcMarket.rcTotalListings !== null && (
-                      <div className="flex items-center gap-2.5">
-                        <div>
-                          <p className="text-[15px] font-semibold text-foreground tabular-nums">{rcMarket.rcTotalListings}</p>
-                          <p className="text-[11px] text-muted-foreground leading-tight">Active rentals in your ZIP</p>
-                        </div>
+              {/* Market snapshot — always show */}
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15, duration: 0.4 }}
+                className="rounded-lg border border-border bg-card px-4 py-4"
+              >
+                <h3 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Local Market Snapshot</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                  {rcMarket.rcTotalListings !== null && (
+                    <div className="flex items-center gap-2.5">
+                      <div>
+                        <p className="text-[15px] font-semibold text-foreground tabular-nums">{rcMarket.rcTotalListings}</p>
+                        <p className="text-[11px] text-muted-foreground leading-tight">
+                          Active rentals in your ZIP
+                          {rcMarket.rcNewListings !== null && rcMarket.rcNewListings > 0 && (
+                            <span className="text-muted-foreground/70"> · +{rcMarket.rcNewListings} new this month</span>
+                          )}
+                        </p>
                       </div>
-                    )}
-                    {rcMarket.rcAvgDaysOnMarket !== null && (
-                      <div className="flex items-center gap-2.5">
-                        <div>
-                          <p className={`text-[15px] font-semibold tabular-nums ${
-                            rcMarket.rcAvgDaysOnMarket > 35 ? 'text-verdict-good' : rcMarket.rcAvgDaysOnMarket < 20 ? 'text-destructive' : 'text-accent-amber'
-                          }`}>{Math.round(rcMarket.rcAvgDaysOnMarket)} days</p>
-                          <p className="text-[11px] text-muted-foreground leading-tight">Avg days on market</p>
-                        </div>
+                    </div>
+                  )}
+                  {rcMarket.rcAvgDaysOnMarket !== null && (
+                    <div className="flex items-center gap-2.5">
+                      <div>
+                        <p className={`text-[15px] font-semibold tabular-nums ${
+                          rcMarket.rcAvgDaysOnMarket > 50 ? 'text-verdict-good' : rcMarket.rcAvgDaysOnMarket < 25 ? 'text-destructive' : 'text-accent-amber'
+                        }`}>{Math.round(rcMarket.rcAvgDaysOnMarket)} days</p>
+                        <p className="text-[11px] text-muted-foreground leading-tight">Avg days on market</p>
                       </div>
-                    )}
-                  </div>
-                  <p className="text-[12px] text-muted-foreground leading-relaxed">{marketEditorial}</p>
-                </motion.div>
-              )}
+                    </div>
+                  )}
+                </div>
+                <p className="text-[12px] text-muted-foreground leading-relaxed">{marketEditorial}</p>
+              </motion.div>
             </div>
           </motion.section>
 
-          {/* ━━━ SECTION 3: COMPARABLE LISTINGS ━━━ */}
+          {/* ━━━ SECTION 3: COMPARABLE LISTINGS — always show ━━━ */}
           {compsWithRent.length > 0 && (
             <motion.section id="section-comps" {...fade(0.15)} className="py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>
               <h2 className="results-section-header mb-2">
@@ -627,6 +639,7 @@ Happy to discuss — thank you.`;
                     <div className="mt-2">
                       <SocialProofLine />
                     </div>
+                    <p className="text-xs text-muted-foreground/50 mt-1">Free. No account required.</p>
                   </div>
 
                   {/* Blurred rows */}
@@ -657,50 +670,105 @@ Happy to discuss — thank you.`;
             </motion.section>
           )}
 
-          {/* ━━━ SECTION 4: NEGOTIATION PLAYBOOK ━━━ */}
-          {askingRent && verdict === 'above' && capturedEmail && (
+          {/* ━━━ SECTION 4: NEGOTIATION PLAYBOOK (gated, above-market only) ━━━ */}
+          {askingRent && verdict === 'above' && (
             <motion.section id="section-playbook" {...fade(0.19)} className="pt-8 pb-8">
               <h2 className="results-section-header mb-6">How to Negotiate This Rent</h2>
 
-              <div className="evidence-card space-y-4">
-                <ul className="space-y-3 text-sm text-foreground">
-                  <li className="flex gap-2">
-                    <span className="text-primary font-bold shrink-0">•</span>
-                    The asking price of ${fmt(askingRent)} is ${fmt(askingRent - (medianCompRent ?? fairRangeHigh))} above the area median.
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-primary font-bold shrink-0">•</span>
-                    Offer ${suggestedPrice} and cite the {allComps.length} comparable unit{allComps.length !== 1 ? 's' : ''} listed above.
-                  </li>
-                  {rcMarket.rcTotalListings !== null && rcMarket.rcTotalListings > 5 && (
+              {compsUnlocked ? (
+                <div className="evidence-card space-y-4">
+                  <ul className="space-y-3 text-sm text-foreground">
                     <li className="flex gap-2">
                       <span className="text-primary font-bold shrink-0">•</span>
-                      There are {rcMarket.rcTotalListings} active listings in this ZIP — mention that you're exploring options.
+                      The asking price of ${fmt(askingRent)} is ${fmt(askingRent - (medianCompRent ?? fairRangeHigh))} above the area median of ${fmt(medianCompRent ?? fairRangeHigh)}.
                     </li>
-                  )}
-                  {rcMarket.rcAvgDaysOnMarket !== null && (
+                    {rcMarket.rcTotalListings !== null && rcMarket.rcTotalListings > 5 && (
+                      <li className="flex gap-2">
+                        <span className="text-primary font-bold shrink-0">•</span>
+                        There are {rcMarket.rcTotalListings} active listings in this ZIP — mention that you're exploring options.
+                      </li>
+                    )}
+                    {rcMarket.rcAvgDaysOnMarket !== null && (
+                      <li className="flex gap-2">
+                        <span className="text-primary font-bold shrink-0">•</span>
+                        Units sit for {Math.round(rcMarket.rcAvgDaysOnMarket)} days on average — the landlord has incentive to close quickly.
+                      </li>
+                    )}
                     <li className="flex gap-2">
                       <span className="text-primary font-bold shrink-0">•</span>
-                      Units sit for {Math.round(rcMarket.rcAvgDaysOnMarket)} days on average — the landlord has incentive to close quickly.
+                      The market trend is {trendLabel}.
                     </li>
-                  )}
-                </ul>
+                  </ul>
 
-                {/* Email template */}
-                <div className="rounded-lg border border-border bg-muted/30 p-4 relative">
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">Copy-paste email template</p>
-                  <p className="text-sm text-foreground whitespace-pre-line leading-relaxed">{emailTemplate}</p>
-                  <button
-                    onClick={handleCopyTemplate}
-                    className="absolute top-3 right-3 p-2 rounded-md hover:bg-muted transition-colors"
-                    aria-label="Copy template"
-                  >
-                    {templateCopied ? <Check className="w-4 h-4 text-verdict-good" /> : <Copy className="w-4 h-4 text-muted-foreground" />}
-                  </button>
+                  {/* Email template */}
+                  <div className="rounded-lg border border-border bg-muted/30 p-4 relative">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">Copy-paste email template</p>
+                    <p className="text-sm text-foreground whitespace-pre-line leading-relaxed">{emailTemplate}</p>
+                    <button
+                      onClick={handleCopyTemplate}
+                      className="absolute top-3 right-3 p-2 rounded-md hover:bg-muted transition-colors"
+                      aria-label="Copy template"
+                    >
+                      {templateCopied ? <Check className="w-4 h-4 text-verdict-good" /> : <Copy className="w-4 h-4 text-muted-foreground" />}
+                    </button>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                /* Gated — blurred with email prompt */
+                <div className="relative">
+                  <div style={{ filter: 'blur(6px)', userSelect: 'none', WebkitUserSelect: 'none', minHeight: '200px' } as React.CSSProperties}>
+                    <div className="evidence-card space-y-4">
+                      <ul className="space-y-3 text-sm text-foreground">
+                        <li className="flex gap-2">
+                          <span className="text-primary font-bold shrink-0">•</span>
+                          The asking price is above the area median by a significant amount.
+                        </li>
+                        <li className="flex gap-2">
+                          <span className="text-primary font-bold shrink-0">•</span>
+                          There are multiple active listings in this ZIP code.
+                        </li>
+                        <li className="flex gap-2">
+                          <span className="text-primary font-bold shrink-0">•</span>
+                          Units sit for many days on average — landlords have incentive to negotiate.
+                        </li>
+                      </ul>
+                      <div className="rounded-lg border border-border bg-muted/30 p-4">
+                        <p className="text-sm text-foreground">Hi, I'm interested in the unit...</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="bg-card rounded-xl border border-border shadow-lg px-6 py-5 max-w-[380px] w-full text-center">
+                      <p className="text-sm font-semibold text-foreground mb-1">Unlock negotiation tips & email template</p>
+                      <p className="text-xs text-muted-foreground mb-3">Enter your email to see all comps and negotiation playbook</p>
+                      <form onSubmit={handleCompGateSubmit} className="flex gap-2">
+                        <input
+                          type="email"
+                          placeholder="you@email.com"
+                          value={compEmail}
+                          onChange={(e) => { setCompEmail(e.target.value); if (compEmailError) setCompEmailError(''); }}
+                          className={`flex-1 min-w-0 px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 ${
+                            compEmailError ? 'border-destructive' : 'border-border focus:border-foreground'
+                          }`}
+                        />
+                        <button
+                          type="submit"
+                          disabled={compEmailLoading}
+                          className="bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap disabled:opacity-60"
+                        >
+                          {compEmailLoading ? 'Unlocking…' : 'Unlock →'}
+                        </button>
+                      </form>
+                      {compEmailError && <p className="text-xs text-destructive mt-1">{compEmailError}</p>}
+                      <div className="mt-2">
+                        <SocialProofLine />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
-              {(() => {
+              {compsUnlocked && (() => {
                 trackEvent('wsip_tips_unlocked', { zip_code: zip, verdict: verdictLabel });
                 return null;
               })()}
