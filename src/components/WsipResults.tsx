@@ -733,6 +733,7 @@ Happy to discuss — thank you.`;
                   askingRent={askingRent}
                   medianCompRent={medianCompRent}
                   sectionLabel="In this building"
+                  hideMedianLine
                 />
               )}
 
