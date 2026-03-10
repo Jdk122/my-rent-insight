@@ -13,6 +13,7 @@ import { assessConfidence, detectOutliers, getCompRadius, filterFurnished, dedup
 import { calculateCompositeTrend } from '@/lib/compositeTrend';
 import { calculateFairRange } from '@/lib/fairRange';
 import { tierComps, getTierWeights } from '@/lib/compTiering';
+import { getBuildingRange } from '@/lib/buildingRange';
 import DataConfidenceBadge from './DataConfidenceBadge';
 import SectionNav from './SectionNav';
 import ExitIntentModal from './ExitIntentModal';
@@ -104,6 +105,12 @@ const WsipResults = ({
   const allComps = tiering.tiered;
   const compsWithRent = allComps.filter(c => c.rent !== null && c.rent > 0);
 
+  // ━━━ Building range override ━━━
+  const bldg = useMemo(() => getBuildingRange(
+    outlierResult?.filtered ?? cleanedComps,
+    fullAddress,
+  ), [outlierResult, cleanedComps, fullAddress]);
+
   // Tier 1 (in-building) shown ungated; others gated
   const tier1Comps = tiering.tier1;
   const nonBuildingComps = allComps.filter(c => c.tier !== 1);
@@ -134,13 +141,47 @@ const WsipResults = ({
   const fairRangeLow = fairRange.rangeLow;
   const fairRangeHigh = fairRange.rangeHigh;
 
-  // ━━━ Verdict ━━━
+  // ━━━ Verdict (building override when available) ━━━
   type Verdict = 'below' | 'in-range' | 'above' | null;
-  const verdict: Verdict = askingRent
-    ? askingRent < fairRangeLow ? 'below'
-      : askingRent > fairRangeHigh ? 'above'
-      : 'in-range'
-    : null;
+
+  const { verdict, verdictHeadline, verdictSubtitle, savings } = useMemo(() => {
+    if (!askingRent) {
+      return { verdict: null as Verdict, verdictHeadline: null, verdictSubtitle: null, savings: null };
+    }
+
+    // Building-level override when 2+ same-building comps
+    if (bldg.hasBuildingData) {
+      const { buildingLow: bLow, buildingHigh: bHigh } = bldg;
+      let v: Verdict;
+      let headline: string;
+      let subtitle: string;
+
+      if (askingRent <= bLow) {
+        v = 'below';
+        headline = "That's a good deal.";
+        subtitle = `This is below what other units in this building rent for ($${fmt(bLow)} – $${fmt(bHigh)}).`;
+      } else if (askingRent <= bHigh) {
+        v = 'in-range';
+        headline = "That's fair for this building.";
+        subtitle = `Other units here rent for $${fmt(bLow)} – $${fmt(bHigh)}. The asking price of $${fmt(askingRent)} is within this range.`;
+      } else if (askingRent <= bHigh * 1.10) {
+        v = 'in-range';
+        headline = "Slightly above this building's range.";
+        subtitle = `Other units here rent for $${fmt(bLow)} – $${fmt(bHigh)}. The asking price of $${fmt(askingRent)} is slightly above — worth negotiating.`;
+      } else {
+        v = 'above';
+        headline = "That's overpriced.";
+        subtitle = `The highest-priced similar unit in this building rents for $${fmt(bHigh)}. You could save $${fmt(askingRent - bHigh)}/month by negotiating.`;
+      }
+
+      const sav = askingRent > bHigh ? askingRent - bHigh : null;
+      return { verdict: v, verdictHeadline: headline, verdictSubtitle: subtitle, savings: sav };
+    }
+
+    // Fallback: area fair range
+    const v: Verdict = askingRent < fairRangeLow ? 'below' : askingRent > fairRangeHigh ? 'above' : 'in-range';
+    return { verdict: v, verdictHeadline: null, verdictSubtitle: null, savings: v === 'above' ? askingRent - fairRangeHigh : null };
+  }, [askingRent, bldg, fairRangeLow, fairRangeHigh]);
 
   const verdictLabel = verdict === 'above' ? 'above' : verdict === 'below' ? 'below' : verdict === 'in-range' ? 'fair' : 'none';
 
@@ -252,6 +293,8 @@ const WsipResults = ({
       confidence_level: confidence.level,
       tool_type: 'wsip',
       verdict_label: verdictLabel === 'none' ? null : verdictLabel,
+      counter_offer_low: bldg.hasBuildingData ? bldg.buildingLow : null,
+      counter_offer_high: bldg.hasBuildingData ? bldg.buildingHigh : null,
       utm_source: utm.utm_source || null,
       utm_medium: utm.utm_medium || null,
       utm_campaign: utm.utm_campaign || null,
@@ -336,13 +379,20 @@ const WsipResults = ({
 
   // ━━━ Copy template ━━━
   const suggestedPrice = useMemo(() => {
+    if (bldg.hasBuildingData) return fmt(bldg.buildingMedian);
     const compMedian = medianCompRent ?? Infinity;
     const rangeTop = fairRangeHigh;
     const suggested = Math.min(compMedian, rangeTop);
     return fmt(isFinite(suggested) ? suggested : fairRangeLow);
-  }, [medianCompRent, fairRangeHigh, fairRangeLow]);
+  }, [bldg, medianCompRent, fairRangeHigh, fairRangeLow]);
 
-  const emailTemplate = `Hi,
+  const emailTemplate = bldg.hasBuildingData
+    ? `Hi,
+
+I'm interested in the unit at ${fullAddress || `ZIP ${zip}`}. Based on comparable units in this building renting for $${fmt(bldg.buildingLow)}–$${fmt(bldg.buildingHigh)}, I'd like to propose $${suggestedPrice}/month for the ${brLabel}. I'm ready to sign a lease and can move in quickly.
+
+Happy to discuss — thank you.`
+    : `Hi,
 
 I'm interested in the unit at ${fullAddress || `ZIP ${zip}`}. Based on comparable rentals in the area, I'd like to propose $${suggestedPrice}/month for the ${brLabel}. I'm ready to sign a lease and can move in quickly.
 
@@ -359,12 +409,15 @@ Happy to discuss — thank you.`;
     }
   };
 
-  // ━━━ Range bar ━━━
-  const rangeBarMin = Math.round(fairRangeLow * 0.85);
-  const rangeBarMax = Math.round(fairRangeHigh * 1.15);
+  // ━━━ Range bar (building override) ━━━
+  const barLow = bldg.hasBuildingData ? bldg.buildingLow : fairRangeLow;
+  const barHigh = bldg.hasBuildingData ? bldg.buildingHigh : fairRangeHigh;
+  const barLabel = bldg.hasBuildingData ? 'This Building' : 'Fair Range';
+  const rangeBarMin = Math.round(barLow * 0.85);
+  const rangeBarMax = Math.round(barHigh * 1.15);
   const rangeSpan = rangeBarMax - rangeBarMin;
-  const rangeLowPct = ((fairRangeLow - rangeBarMin) / rangeSpan) * 100;
-  const rangeHighPct = ((fairRangeHigh - rangeBarMin) / rangeSpan) * 100;
+  const rangeLowPct = ((barLow - rangeBarMin) / rangeSpan) * 100;
+  const rangeHighPct = ((barHigh - rangeBarMin) / rangeSpan) * 100;
   const askingPct = askingRent ? Math.min(100, Math.max(0, ((askingRent - rangeBarMin) / rangeSpan) * 100)) : null;
 
   const handleResultsShared = useCallback(() => {
@@ -404,28 +457,44 @@ Happy to discuss — thank you.`;
               className="font-display text-[1.35rem] sm:text-[clamp(1.5rem,4.5vw,2.2rem)] text-foreground leading-[1.15] tracking-tight mb-3 whitespace-nowrap"
               style={{ letterSpacing: '-0.02em' }}
             >
-              {verdict === 'below' && <span className="text-verdict-good">That's a good deal.</span>}
-              {verdict === 'in-range' && <span className="text-verdict-fair">That's a fair price.</span>}
-              {verdict === 'above' && <span className="text-destructive">That's overpriced.</span>}
-              {!verdict && <>Here's your fair range.</>}
+              {verdictHeadline ? (
+                <span className={verdict === 'below' ? 'text-verdict-good' : verdict === 'above' ? 'text-destructive' : 'text-verdict-fair'}>
+                  {verdictHeadline}
+                </span>
+              ) : (
+                <>
+                  {verdict === 'below' && <span className="text-verdict-good">That's a good deal.</span>}
+                  {verdict === 'in-range' && <span className="text-verdict-fair">That's a fair price.</span>}
+                  {verdict === 'above' && <span className="text-destructive">That's overpriced.</span>}
+                  {!verdict && <>Here's your fair range.</>}
+                </>
+              )}
             </h1>
 
-            {/* Building rent line — strongest trust signal */}
-            {tiering.buildingRentRange && (
-              <p className="text-[13px] sm:text-[15px] font-medium text-verdict-good mb-3">
-                Other units in this building rent for ${fmt(tiering.buildingRentRange.low)}
-                {tiering.buildingRentRange.low !== tiering.buildingRentRange.high && ` – $${fmt(tiering.buildingRentRange.high)}`}/month
+            {/* Building rent context line */}
+            {bldg.hasBuildingData && (
+              <p className="text-[13px] sm:text-[15px] font-medium text-verdict-good mb-1">
+                Other units in this building rent for ${fmt(bldg.buildingLow)}
+                {bldg.buildingLow !== bldg.buildingHigh && ` – $${fmt(bldg.buildingHigh)}`}/month
               </p>
+            )}
+            {bldg.hasBuildingData && bldg.buildingHigh > fairRangeHigh * 1.15 && (
+              <p className="text-[11px] text-muted-foreground mb-2">This building rents above the area average.</p>
+            )}
+            {bldg.hasBuildingData && bldg.buildingHigh < fairRangeHigh * 0.85 && (
+              <p className="text-[11px] text-muted-foreground mb-2">This building rents below the area average — good value for the area.</p>
             )}
 
             <p className="text-[14px] sm:text-base text-muted-foreground leading-relaxed max-w-[480px] mb-6">
-              {askingRent ? (
+              {verdictSubtitle ? (
+                verdictSubtitle
+              ) : askingRent ? (
                 <>
                   The fair range for {brLabel}s in {city} is ${fmt(fairRangeLow)} – ${fmt(fairRangeHigh)}/month.
                   The asking price of ${fmt(askingRent)} is{' '}
                   {verdict === 'below' ? 'below' : verdict === 'in-range' ? 'within' : 'above'} this range.
-                  {verdict === 'above' && (
-                    <> You could save <strong className="text-foreground">${fmt(askingRent - fairRangeHigh)}/month</strong> by negotiating.</>
+                  {savings !== null && savings > 0 && (
+                    <> You could save <strong className="text-foreground">${fmt(savings)}/month</strong> (${fmt(savings * 12)}/year) by negotiating.</>
                   )}
                 </>
               ) : (
@@ -468,19 +537,38 @@ Happy to discuss — thank you.`;
                 )}
               </div>
               <div className="flex justify-between mt-1.5 px-1">
-                <span className="text-[11px] text-muted-foreground">${fmt(fairRangeLow)}</span>
-                <span className="text-[11px] text-muted-foreground/60">Fair Range</span>
-                <span className="text-[11px] text-muted-foreground">${fmt(fairRangeHigh)}</span>
+                <span className="text-[11px] text-muted-foreground">${fmt(barLow)}</span>
+                <span className="text-[11px] text-muted-foreground/60">{barLabel}</span>
+                <span className="text-[11px] text-muted-foreground">${fmt(barHigh)}</span>
               </div>
+              {bldg.hasBuildingData && (
+                <p className="text-[10px] text-muted-foreground/50 text-center mt-1">
+                  Area average: ${fmt(fairRangeLow)} – ${fmt(fairRangeHigh)}
+                </p>
+              )}
             </div>
 
             {/* Stat cards — always show all four */}
             <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-[540px]">
               <div className="text-center rounded-lg border border-border/80 bg-card px-2 sm:px-3 py-3 sm:py-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-                <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Fair Range</p>
-                <p className="font-display text-[18px] sm:text-[22px] tracking-tight text-foreground tabular-nums" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
-                  ${fmt(fairRangeLow)}–${fmt(fairRangeHigh)}
+                <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">
+                  {bldg.hasBuildingData ? 'Range' : 'Fair Range'}
                 </p>
+                {bldg.hasBuildingData ? (
+                  <div>
+                    <p className="font-display text-[16px] sm:text-[19px] tracking-tight text-foreground tabular-nums" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
+                      ${fmt(bldg.buildingLow)}–${fmt(bldg.buildingHigh)}
+                    </p>
+                    <p className="text-[9px] text-muted-foreground/60 mt-1">This building</p>
+                    <p className="text-[10px] text-muted-foreground/50 mt-0.5">
+                      Area: ${fmt(fairRangeLow)}–${fmt(fairRangeHigh)}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="font-display text-[18px] sm:text-[22px] tracking-tight text-foreground tabular-nums" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
+                    ${fmt(fairRangeLow)}–${fmt(fairRangeHigh)}
+                  </p>
+                )}
               </div>
               <div className="text-center rounded-lg border border-border/80 bg-card px-2 sm:px-3 py-3 sm:py-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
                 <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Area Trend</p>
@@ -722,10 +810,24 @@ Happy to discuss — thank you.`;
               {compsUnlocked ? (
                 <div className="evidence-card space-y-4">
                   <ul className="space-y-3 text-sm text-foreground">
-                    <li className="flex gap-2">
-                      <span className="text-primary font-bold shrink-0">•</span>
-                      The asking price of ${fmt(askingRent)} is ${fmt(askingRent - (medianCompRent ?? fairRangeHigh))} above the area median of ${fmt(medianCompRent ?? fairRangeHigh)}.
-                    </li>
+                    {bldg.hasBuildingData && askingRent > bldg.buildingHigh && (
+                      <li className="flex gap-2">
+                        <span className="text-primary font-bold shrink-0">•</span>
+                        The highest similar unit in this building rents for ${fmt(bldg.buildingHigh)} — the asking price of ${fmt(askingRent)} is ${fmt(askingRent - bldg.buildingHigh)} above this.
+                      </li>
+                    )}
+                    {bldg.hasBuildingData && (
+                      <li className="flex gap-2">
+                        <span className="text-primary font-bold shrink-0">•</span>
+                        There are {bldg.buildingComps.length} other units in this building, giving you direct comparisons.
+                      </li>
+                    )}
+                    {!bldg.hasBuildingData && (
+                      <li className="flex gap-2">
+                        <span className="text-primary font-bold shrink-0">•</span>
+                        The asking price of ${fmt(askingRent)} is ${fmt(askingRent - (medianCompRent ?? fairRangeHigh))} above the area median of ${fmt(medianCompRent ?? fairRangeHigh)}.
+                      </li>
+                    )}
                     {rcMarket.rcTotalListings !== null && rcMarket.rcTotalListings > 5 && (
                       <li className="flex gap-2">
                         <span className="text-primary font-bold shrink-0">•</span>
