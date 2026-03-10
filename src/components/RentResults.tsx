@@ -503,7 +503,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
     const utm = getUtmParams();
     try {
-      await supabase.rpc('upsert_lead', {
+      const { error: rpcError } = await supabase.rpc('upsert_lead', {
         p_email: compEmail.trim(),
         p_analysis_id: leadContext?.analysisId || null,
         p_capture_source: 'comp_gate',
@@ -523,8 +523,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         p_comp_median_rent: leadContext?.compMedianRent ?? null,
         p_hud_fmr_value: leadContext?.hudFmrValue ?? null,
       } as any);
+      if (rpcError) console.error('[lead] upsert_lead failed (comp_gate):', rpcError.message);
 
-      await supabase.from('lead_events' as any).insert({
+      const { error: evtError } = await supabase.from('lead_events' as any).insert({
         email: compEmail.trim(),
         analysis_id: leadContext?.analysisId || null,
         event_type: 'comp_gate',
@@ -538,8 +539,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         comp_median_rent: leadContext?.compMedianRent ?? null,
         hud_fmr_value: leadContext?.hudFmrValue ?? null,
       } as any);
-    } catch {
-      // silent
+      if (evtError) console.error('[lead] lead_events insert failed (comp_gate):', evtError.message);
+    } catch (err) {
+      console.error('[lead] comp_gate unexpected error:', err);
     }
 
     setCapturedEmail(compEmail.trim());
