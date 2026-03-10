@@ -105,6 +105,12 @@ const WsipResults = ({
   const allComps = tiering.tiered;
   const compsWithRent = allComps.filter(c => c.rent !== null && c.rent > 0);
 
+  // ━━━ Building range override ━━━
+  const bldg = useMemo(() => getBuildingRange(
+    outlierResult?.filtered ?? cleanedComps,
+    fullAddress,
+  ), [outlierResult, cleanedComps, fullAddress]);
+
   // Tier 1 (in-building) shown ungated; others gated
   const tier1Comps = tiering.tier1;
   const nonBuildingComps = allComps.filter(c => c.tier !== 1);
@@ -135,13 +141,47 @@ const WsipResults = ({
   const fairRangeLow = fairRange.rangeLow;
   const fairRangeHigh = fairRange.rangeHigh;
 
-  // ━━━ Verdict ━━━
+  // ━━━ Verdict (building override when available) ━━━
   type Verdict = 'below' | 'in-range' | 'above' | null;
-  const verdict: Verdict = askingRent
-    ? askingRent < fairRangeLow ? 'below'
-      : askingRent > fairRangeHigh ? 'above'
-      : 'in-range'
-    : null;
+
+  const { verdict, verdictHeadline, verdictSubtitle, savings } = useMemo(() => {
+    if (!askingRent) {
+      return { verdict: null as Verdict, verdictHeadline: null, verdictSubtitle: null, savings: null };
+    }
+
+    // Building-level override when 2+ same-building comps
+    if (bldg.hasBuildingData) {
+      const { buildingLow: bLow, buildingHigh: bHigh } = bldg;
+      let v: Verdict;
+      let headline: string;
+      let subtitle: string;
+
+      if (askingRent <= bLow) {
+        v = 'below';
+        headline = "That's a good deal.";
+        subtitle = `This is below what other units in this building rent for ($${fmt(bLow)} – $${fmt(bHigh)}).`;
+      } else if (askingRent <= bHigh) {
+        v = 'in-range';
+        headline = "That's fair for this building.";
+        subtitle = `Other units here rent for $${fmt(bLow)} – $${fmt(bHigh)}. The asking price of $${fmt(askingRent)} is within this range.`;
+      } else if (askingRent <= bHigh * 1.10) {
+        v = 'in-range';
+        headline = "Slightly above this building's range.";
+        subtitle = `Other units here rent for $${fmt(bLow)} – $${fmt(bHigh)}. The asking price of $${fmt(askingRent)} is slightly above — worth negotiating.`;
+      } else {
+        v = 'above';
+        headline = "That's overpriced.";
+        subtitle = `The highest-priced similar unit in this building rents for $${fmt(bHigh)}. You could save $${fmt(askingRent - bHigh)}/month by negotiating.`;
+      }
+
+      const sav = askingRent > bHigh ? askingRent - bHigh : null;
+      return { verdict: v, verdictHeadline: headline, verdictSubtitle: subtitle, savings: sav };
+    }
+
+    // Fallback: area fair range
+    const v: Verdict = askingRent < fairRangeLow ? 'below' : askingRent > fairRangeHigh ? 'above' : 'in-range';
+    return { verdict: v, verdictHeadline: null, verdictSubtitle: null, savings: v === 'above' ? askingRent - fairRangeHigh : null };
+  }, [askingRent, bldg, fairRangeLow, fairRangeHigh]);
 
   const verdictLabel = verdict === 'above' ? 'above' : verdict === 'below' ? 'below' : verdict === 'in-range' ? 'fair' : 'none';
 
