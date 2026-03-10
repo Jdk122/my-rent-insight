@@ -663,6 +663,17 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <>Rents in {city} moved {marketYoy}% this year. Your landlord keeping your rent at ${fmt(formData.currentRent)}/mo means you're coming out ahead.</>
                           )}
                         </p>
+                        {isAboveMarket && hasIncrease && (
+                          <p className="text-xs text-muted-foreground/70 mt-2">
+                            Thinking about moving instead?{' '}
+                            <Link
+                              to={`/what-should-i-pay?zip=${rentData.zip}&bedrooms=${bedroomNum}`}
+                              className="underline text-primary hover:text-primary/80 transition-colors"
+                            >
+                              See what you'd actually pay →
+                            </Link>
+                          </p>
+                        )}
                         {isNycZip(rentData.zip) && hasIncrease && (
                           <p className="text-xs text-muted-foreground/70 mt-2">
                             Live in a rent-stabilized apartment? Your increase may be legally capped —{' '}

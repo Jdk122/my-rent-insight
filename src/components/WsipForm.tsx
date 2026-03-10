@@ -220,7 +220,7 @@ const WsipForm = ({ onSubmit, isLoading, prefill }: WsipFormProps) => {
             <Input
               type="text"
               inputMode="numeric"
-              placeholder="2,500"
+              placeholder="e.g. 3,000"
               value={askingRent}
               onChange={(e) => setAskingRent(fmtInput(e.target.value))}
               className="h-12 pl-8 font-mono text-lg bg-background"
