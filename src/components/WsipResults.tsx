@@ -18,9 +18,9 @@ import DataConfidenceBadge from './DataConfidenceBadge';
 import SectionNav from './SectionNav';
 import ExitIntentModal from './ExitIntentModal';
 import SocialProofLine from './SocialProofLine';
-import PostConversionFlow from './PostConversionFlow';
 import ShareHub from './ShareHub';
 import WsipCompsList from './WsipCompsList';
+import ReportGate from './ReportGate';
 import type { LeadContext } from './EmailCapture';
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -111,21 +111,11 @@ const WsipResults = ({
     fullAddress,
   ), [outlierResult, cleanedComps, fullAddress]);
 
-  // Tier 1 (in-building) shown ungated; others gated
   const tier1Comps = tiering.tier1;
   const hasBuilding = bldg.hasBuildingData && tier1Comps.length >= 2;
   const nonBuildingComps = allComps.filter(c => c.tier !== 1);
-  const nonBuildingWithRent = nonBuildingComps.filter(c => c.rent !== null && c.rent > 0);
-  const displayableNonBuilding = Math.min(nonBuildingWithRent.length, 6);
-  // When building comps exist, gate ALL nearby comps; otherwise 3 free + rest gated
-  const visibleNonBuildingCount = hasBuilding ? 0 : Math.min(displayableNonBuilding, 3);
-  const visibleNonBuildingComps = nonBuildingComps.slice(0, visibleNonBuildingCount);
-  const gatedComps = hasBuilding
-    ? nonBuildingComps.slice(0, displayableNonBuilding)
-    : (displayableNonBuilding > visibleNonBuildingCount ? nonBuildingComps.slice(visibleNonBuildingCount) : []);
-  const gatedDisplayCount = hasBuilding ? displayableNonBuilding : displayableNonBuilding - visibleNonBuildingCount;
 
-  // ━━━ Fair range (weighted composite with tier overrides) ━━━
+  // ━━━ Fair range ━━━
   const fairRange = useMemo(() => {
     const tierWeights = getTierWeights(tiering.tier1.length);
     const tierOverride = tierWeights ? {
@@ -145,7 +135,7 @@ const WsipResults = ({
   const fairRangeLow = fairRange.rangeLow;
   const fairRangeHigh = fairRange.rangeHigh;
 
-  // ━━━ Verdict (building override when available) ━━━
+  // ━━━ Verdict ━━━
   type Verdict = 'below' | 'in-range' | 'above' | null;
 
   const { verdict, verdictHeadline, verdictSubtitle, savings } = useMemo(() => {
@@ -153,7 +143,6 @@ const WsipResults = ({
       return { verdict: null as Verdict, verdictHeadline: null, verdictSubtitle: null, savings: null };
     }
 
-    // Building-level override when 2+ same-building comps
     if (bldg.hasBuildingData) {
       const { buildingLow: bLow, buildingHigh: bHigh } = bldg;
       let v: Verdict;
@@ -182,12 +171,21 @@ const WsipResults = ({
       return { verdict: v, verdictHeadline: headline, verdictSubtitle: subtitle, savings: sav };
     }
 
-    // Fallback: area fair range
     const v: Verdict = askingRent < fairRangeLow ? 'below' : askingRent > fairRangeHigh ? 'above' : 'in-range';
     return { verdict: v, verdictHeadline: null, verdictSubtitle: null, savings: v === 'above' ? askingRent - fairRangeHigh : null };
   }, [askingRent, bldg, fairRangeLow, fairRangeHigh]);
 
   const verdictLabel = verdict === 'above' ? 'above' : verdict === 'below' ? 'below' : verdict === 'in-range' ? 'fair' : 'none';
+
+  // ━━━ High pain detection for gate aggressiveness ━━━
+  const isHighPain = verdict === 'above';
+
+  // ━━━ Sample comp(s) for Phase 1 ━━━
+  const sampleComps = useMemo(() => {
+    const sorted = [...compsWithRent].sort((a, b) => (a.distance ?? 99) - (b.distance ?? 99));
+    const count = isHighPain ? 1 : 2;
+    return sorted.slice(0, count);
+  }, [compsWithRent, isHighPain]);
 
   // ━━━ Data confidence ━━━
   const compRadius = useMemo(() => {
@@ -203,7 +201,7 @@ const WsipResults = ({
     hasCensus: rentData.censusMedianRent !== null,
   }), [outlierResult, compRadius, rentData]);
 
-  // ━━━ Market editorial (recalibrated) ━━━
+  // ━━━ Market editorial ━━━
   const marketEditorial = useMemo(() => {
     const vacancy = rentData.alVacancy;
     const dom = rcMarket.rcAvgDaysOnMarket;
@@ -215,17 +213,6 @@ const WsipResults = ({
     }
     return "This market is balanced — negotiate, but be realistic about competing offers.";
   }, [rentData.alVacancy, rcMarket.rcAvgDaysOnMarket]);
-
-  // ━━━ Comp gate state ━━━
-  const [compsUnlocked, setCompsUnlocked] = useState(false);
-  const [compEmail, setCompEmail] = useState('');
-  const [compEmailError, setCompEmailError] = useState('');
-  const [compEmailLoading, setCompEmailLoading] = useState(false);
-  const compGateRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (capturedEmail) setCompsUnlocked(true);
-  }, [capturedEmail]);
 
   // ━━━ Lead context ━━━
   const leadContext = useMemo<LeadContext>(() => ({
@@ -245,36 +232,22 @@ const WsipResults = ({
   const navSections = useMemo(() => {
     const sections = [
       { id: 'section-verdict', label: 'Verdict' },
-      { id: 'section-market', label: 'Market' },
     ];
-    if (compsWithRent.length > 0) sections.push({ id: 'section-comps', label: 'Comps' });
-    if (askingRent) sections.push({ id: 'section-nextsteps', label: 'Next Steps' });
-    sections.push({ id: 'section-share', label: 'Share' });
+    if (!capturedEmail) {
+      sections.push({ id: 'section-gate', label: 'Report' });
+    } else {
+      sections.push({ id: 'section-market', label: 'Market' });
+      if (compsWithRent.length > 0) sections.push({ id: 'section-comps', label: 'Comps' });
+      if (askingRent) sections.push({ id: 'section-nextsteps', label: 'Next Steps' });
+      sections.push({ id: 'section-share', label: 'Share' });
+    }
     return sections;
-  }, [compsWithRent.length, askingRent]);
+  }, [capturedEmail, compsWithRent.length, askingRent]);
 
   // ━━━ Analytics ━━━
   useEffect(() => {
     trackEvent('wsip_results_viewed', { zip, bedrooms: bedroomNum, has_asking_rent: !!askingRent });
   }, []);
-
-  // Track comp gate visibility
-  useEffect(() => {
-    if (gatedComps.length === 0 || compsUnlocked) return;
-    const el = compGateRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          trackEvent('wsip_comp_gate_shown', { verdict: verdictLabel, zip_code: zip });
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.3 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [gatedComps.length, compsUnlocked, verdictLabel, zip]);
 
   // ━━━ Log analysis to DB ━━━
   useEffect(() => {
@@ -304,63 +277,6 @@ const WsipResults = ({
       utm_campaign: utm.utm_campaign || null,
     } as any).then(() => {});
   }, []);
-
-  // ━━━ Comp gate submit ━━━
-  const handleCompGateSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!compEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(compEmail.trim())) {
-      setCompEmailError('Please enter a valid email.');
-      return;
-    }
-    setCompEmailError('');
-    setCompEmailLoading(true);
-
-    const utm = getUtmParams();
-    try {
-      const { error: rpcError } = await supabase.rpc('upsert_lead', {
-        p_email: compEmail.trim(),
-        p_analysis_id: analysisId,
-        p_capture_source: 'wsip_comp_gate',
-        p_address: fullAddress || null,
-        p_city: rentData.city,
-        p_state: rentData.state,
-        p_zip: zip,
-        p_bedrooms: bedroomNum,
-        p_current_rent: askingRent ?? rentData.fmr,
-        p_verdict: verdictLabel || null,
-        p_utm_source: utm.utm_source || null,
-        p_utm_medium: utm.utm_medium || null,
-        p_utm_campaign: utm.utm_campaign || null,
-        p_comp_median_rent: medianCompRent ?? null,
-        p_hud_fmr_value: rentData.fmr,
-        p_tool_type: 'wsip',
-      } as any);
-      if (rpcError) console.error('[lead] upsert_lead failed (wsip_comp_gate):', rpcError.message);
-
-      const { error: evtError } = await supabase.from('lead_events' as any).insert({
-        email: compEmail.trim(),
-        analysis_id: analysisId,
-        event_type: 'wsip_comp_gate',
-        address: fullAddress || null,
-        zip,
-        current_rent: askingRent ?? rentData.fmr,
-        verdict: verdictLabel || null,
-        comp_median_rent: medianCompRent ?? null,
-        hud_fmr_value: rentData.fmr,
-      } as any);
-      if (evtError) console.error('[lead] lead_events insert failed (wsip_comp_gate):', evtError.message);
-    } catch (err) {
-      console.error('[lead] wsip_comp_gate unexpected error:', err);
-    }
-
-    onEmailCaptured(compEmail.trim());
-    setCompsUnlocked(true);
-    setCompEmailLoading(false);
-    trackEvent('wsip_comp_gate_converted', { verdict: verdictLabel, zip_code: zip });
-    trackEvent('email_submitted', { verdict: verdictLabel, zip_code: zip, source: 'wsip_comp_gate' });
-    trackAdsConversion();
-    toast.success('All comps unlocked!');
-  };
 
   // ━━━ Share report payload ━━━
   const shareReportPayload = useMemo(() => ({
@@ -393,16 +309,8 @@ const WsipResults = ({
   }, [bldg, medianCompRent, fairRangeHigh, fairRangeLow]);
 
   const emailTemplate = bldg.hasBuildingData
-    ? `Hi,
-
-I'm interested in the unit at ${fullAddress || `ZIP ${zip}`}. Based on comparable units in this building renting for $${fmt(bldg.buildingLow)}–$${fmt(bldg.buildingHigh)}, I'd like to propose $${suggestedPrice}/month for the ${brLabel}. I'm ready to sign a lease and can move in quickly.
-
-Happy to discuss — thank you.`
-    : `Hi,
-
-I'm interested in the unit at ${fullAddress || `ZIP ${zip}`}. Based on comparable rentals in the area, I'd like to propose $${suggestedPrice}/month for the ${brLabel}. I'm ready to sign a lease and can move in quickly.
-
-Happy to discuss — thank you.`;
+    ? `Hi,\n\nI'm interested in the unit at ${fullAddress || `ZIP ${zip}`}. Based on comparable units in this building renting for $${fmt(bldg.buildingLow)}–$${fmt(bldg.buildingHigh)}, I'd like to propose $${suggestedPrice}/month for the ${brLabel}. I'm ready to sign a lease and can move in quickly.\n\nHappy to discuss — thank you.`
+    : `Hi,\n\nI'm interested in the unit at ${fullAddress || `ZIP ${zip}`}. Based on comparable rentals in the area, I'd like to propose $${suggestedPrice}/month for the ${brLabel}. I'm ready to sign a lease and can move in quickly.\n\nHappy to discuss — thank you.`;
 
   const handleCopyTemplate = async () => {
     try {
@@ -415,7 +323,7 @@ Happy to discuss — thank you.`;
     }
   };
 
-  // ━━━ Range bar (building override) ━━━
+  // ━━━ Range bar ━━━
   const barLow = bldg.hasBuildingData ? bldg.buildingLow : fairRangeLow;
   const barHigh = bldg.hasBuildingData ? bldg.buildingHigh : fairRangeHigh;
   const barLabel = bldg.hasBuildingData ? 'This Building' : 'Fair Range';
@@ -425,12 +333,6 @@ Happy to discuss — thank you.`;
   const rangeLowPct = ((barLow - rangeBarMin) / rangeSpan) * 100;
   const rangeHighPct = ((barHigh - rangeBarMin) / rangeSpan) * 100;
   const askingPct = askingRent ? Math.min(100, Math.max(0, ((askingRent - rangeBarMin) / rangeSpan) * 100)) : null;
-
-  // Verdict-adaptive gate CTA
-  const gateCtaText = !askingRent ? 'Unlock all comps →'
-    : verdict === 'above' ? 'Unlock comps + negotiation tips →'
-    : verdict === 'below' ? 'Unlock comps + how to lock this in →'
-    : 'Unlock comps + application tips →';
 
   const handleResultsShared = useCallback(() => {
     supabase.from('analyses' as any).update({ results_shared: true } as any).eq('id', analysisId).then(() => {});
@@ -456,7 +358,9 @@ Happy to discuss — thank you.`;
         onEmailCaptured={onEmailCaptured}
       />
 
-      {/* ━━━ SECTION 1: THE VERDICT ━━━ */}
+      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           PHASE 1: FREE CREDIBILITY LAYER
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <div className="w-full" style={{ background: 'hsl(var(--verdict-bg))' }}>
         <div className="max-w-[620px] mx-auto px-5 sm:px-6">
           <motion.section
@@ -483,7 +387,14 @@ Happy to discuss — thank you.`;
               )}
             </h1>
 
-            {/* Building rent context line */}
+            {/* Summary line */}
+            {askingRent && savings !== null && savings > 0 && (
+              <p className="text-base sm:text-lg font-medium text-destructive mb-2">
+                ${fmt(savings)}/month above market
+              </p>
+            )}
+
+            {/* Building context line */}
             {bldg.hasBuildingData && (
               <p className="text-[13px] sm:text-[15px] font-medium text-verdict-good mb-1">
                 Other units in this building rent for ${fmt(bldg.buildingLow)}
@@ -505,9 +416,6 @@ Happy to discuss — thank you.`;
                   The fair range for {brLabel}s in {city} is ${fmt(fairRangeLow)} – ${fmt(fairRangeHigh)}/month.
                   The asking price of ${fmt(askingRent)} is{' '}
                   {verdict === 'below' ? 'below' : verdict === 'in-range' ? 'within' : 'above'} this range.
-                  {savings !== null && savings > 0 && (
-                    <> You could save <strong className="text-foreground">${fmt(savings)}/month</strong> (${fmt(savings * 12)}/year) by negotiating.</>
-                  )}
                 </>
               ) : (
                 <>{brLabel}s in {city} typically rent for <strong className="text-foreground">${fmt(fairRangeLow)} – ${fmt(fairRangeHigh)}/month</strong>.</>
@@ -517,28 +425,11 @@ Happy to discuss — thank you.`;
             {/* Range bar */}
             <div className="w-full max-w-[480px] mb-6">
               <div className="relative h-8 rounded-full overflow-hidden bg-muted/50">
-                {/* Below range zone - green */}
-                <div
-                  className="absolute top-0 bottom-0 bg-verdict-good/15"
-                  style={{ left: 0, width: `${rangeLowPct}%` }}
-                />
-                {/* In range zone - neutral */}
-                <div
-                  className="absolute top-0 bottom-0 bg-verdict-fair/20"
-                  style={{ left: `${rangeLowPct}%`, width: `${rangeHighPct - rangeLowPct}%` }}
-                />
-                {/* Above range zone - red */}
-                <div
-                  className="absolute top-0 bottom-0 bg-destructive/15"
-                  style={{ left: `${rangeHighPct}%`, right: 0 }}
-                />
-
-                {/* Low marker */}
+                <div className="absolute top-0 bottom-0 bg-verdict-good/15" style={{ left: 0, width: `${rangeLowPct}%` }} />
+                <div className="absolute top-0 bottom-0 bg-verdict-fair/20" style={{ left: `${rangeLowPct}%`, width: `${rangeHighPct - rangeLowPct}%` }} />
+                <div className="absolute top-0 bottom-0 bg-destructive/15" style={{ left: `${rangeHighPct}%`, right: 0 }} />
                 <div className="absolute top-0 bottom-0 w-px bg-border" style={{ left: `${rangeLowPct}%` }} />
-                {/* High marker */}
                 <div className="absolute top-0 bottom-0 w-px bg-border" style={{ left: `${rangeHighPct}%` }} />
-
-                {/* Asking rent dot — only when asking price provided */}
                 {askingPct !== null && (
                   <div
                     className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full border-2 border-card shadow-md ${
@@ -611,13 +502,54 @@ Happy to discuss — thank you.`;
               </p>
             </div>
 
+            {/* ── Sample comp(s) — tangible proof ── */}
+            {sampleComps.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.4 }}
+                className="mt-6 w-full max-w-[540px]"
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                  Sample comparable{sampleComps.length > 1 ? 's' : ''}:
+                </p>
+                <div className="space-y-2">
+                  {sampleComps.map((comp, i) => (
+                    <div key={i} className="flex items-start justify-between gap-4 px-4 py-3 rounded-lg border border-border/80 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">{comp.formattedAddress}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
+                          {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
+                          {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
+                        </p>
+                      </div>
+                      {comp.rent !== null && (
+                        <span className="text-sm font-semibold text-foreground whitespace-nowrap">${fmt(comp.rent)}/mo</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {/* "Why this result" line */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.35, duration: 0.4 }}
+              className="mt-4 text-[12px] text-muted-foreground/60 text-center max-w-[480px] leading-relaxed"
+            >
+              Based on {compsWithRent.length > 0 ? `${compsWithRent.length} comparable listing${compsWithRent.length !== 1 ? 's' : ''}, ` : ''}HUD Fair Market Rent data, and Zillow rent trends for {city}.
+            </motion.p>
+
             {/* CTA */}
             <div className="mt-4 flex flex-col items-center gap-2">
               <button
-                onClick={() => document.getElementById('section-market')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => document.getElementById(capturedEmail ? 'section-market' : 'section-gate')?.scrollIntoView({ behavior: 'smooth' })}
                 className="text-base font-semibold text-primary hover:text-primary/80 transition-colors duration-150"
               >
-                See market details ↓
+                {capturedEmail ? 'See full report ↓' : 'Get the full report ↓'}
               </button>
               <button onClick={onReset} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                 ← Check a different address
@@ -630,218 +562,166 @@ Happy to discuss — thank you.`;
       {/* Transition edge */}
       <div className="w-full h-px" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} />
 
-      {/* ━━━ CONTENT SECTIONS ━━━ */}
+      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           PHASE 2: EMAIL GATE (if not captured)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <div className="w-full bg-card">
         <div className="max-w-[620px] mx-auto px-5 sm:px-6">
 
-          {/* ━━━ SECTION 2: MARKET CONDITIONS ━━━ */}
-          <motion.section id="section-market" {...fade(0.05)} className="pt-10 pb-8">
-            <h2 className="results-section-header mb-6">Market Conditions in {city}</h2>
+        {!capturedEmail && (
+          <section id="section-gate" className="py-10">
+            <ReportGate
+              toolType="wsip"
+              compsCount={compsWithRent.length}
+              verdictLabel={verdictLabel}
+              isHighPain={isHighPain}
+              leadContext={leadContext}
+              analysisId={analysisId}
+              zip={zip}
+              city={city}
+              onEmailCaptured={onEmailCaptured}
+              prefilledEmail={capturedEmail}
+            />
+          </section>
+        )}
 
-            <div className="space-y-6">
-              <div className="evidence-card">
-                <h3 className="evidence-card-header">What the Market Says</h3>
-                <p className="text-xs text-muted-foreground mb-4">
-                  {city}, {rentData.state} — {brLabel}
+        {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+             PHASE 3: EVERYTHING UNLOCKED (after email)
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        {capturedEmail && (
+          <>
+            {/* ━━━ MARKET CONDITIONS ━━━ */}
+            <motion.section id="section-market" {...fade(0.05)} className="pt-10 pb-8">
+              <h2 className="results-section-header mb-6">Market Conditions in {city}</h2>
+
+              <div className="space-y-6">
+                <div className="evidence-card">
+                  <h3 className="evidence-card-header">What the Market Says</h3>
+                  <p className="text-xs text-muted-foreground mb-4">
+                    {city}, {rentData.state} — {brLabel}
+                  </p>
+
+                  <div className="context-row context-row-even">
+                    <span className="context-label">{city} rents this year</span>
+                    <span className="context-value">
+                      {marketYoy > 0 ? '+' : ''}{marketYoy}%
+                      <span className="context-sub"> ({compositeTrendResult.sourceCount >= 2
+                        ? 'composite — ' + compositeTrendResult.sources.map(s => s.label).join(', ')
+                        : compositeTrendResult.primarySource})</span>
+                    </span>
+                  </div>
+
+                  {rentData.zillowMonthly !== null && rentData.zillowDirection && (
+                    <div className="context-row context-row-odd">
+                      <span className="context-label">Monthly trend</span>
+                      <span className="context-value">
+                        {rentData.zillowMonthly > 0 ? '+' : ''}{rentData.zillowMonthly}%/mo
+                        <span className="context-sub">
+                          {rentData.zillowDirection === 'rising' ? ' ↑ rising' : rentData.zillowDirection === 'falling' ? ' ↓ cooling' : ' → steady'}
+                        </span>
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="context-row context-row-even">
+                    <span className="context-label">Fair rent range</span>
+                    <span className="context-value">
+                      ${fmt(fairRangeLow)} – ${fmt(fairRangeHigh)}
+                      <span className="context-sub"> (HUD SAFMR + market comps)</span>
+                    </span>
+                  </div>
+
+                  {askingRent && (
+                    <div className={`context-row ${verdict === 'above' ? 'context-row-highlight' : 'context-row-odd'}`}>
+                      <span className="context-label">Asking price</span>
+                      <span className={`context-value ${verdict === 'above' ? 'text-destructive font-bold' : verdict === 'below' ? 'text-verdict-good font-bold' : ''}`}>
+                        ${fmt(askingRent)} — {bldg.hasBuildingData
+                          ? (askingRent <= bldg.buildingLow ? "below this building's range"
+                            : askingRent <= bldg.buildingHigh ? "within this building's range"
+                            : askingRent <= bldg.buildingHigh * 1.10 ? "slightly above this building's range"
+                            : "above this building's range")
+                          : (verdict === 'below' ? 'below range' : verdict === 'in-range' ? 'within range' : 'above range')}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Local Market Snapshot */}
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15, duration: 0.4 }}
+                  className="rounded-lg border border-border bg-card px-4 py-4"
+                >
+                  <h3 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Local Market Snapshot</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                    {rcMarket.rcTotalListings !== null && (
+                      <div className="flex items-center gap-2.5">
+                        <div>
+                          <p className="text-[15px] font-semibold text-foreground tabular-nums">{rcMarket.rcTotalListings}</p>
+                          <p className="text-[11px] text-muted-foreground leading-tight">
+                            Active rentals in your ZIP
+                            {rcMarket.rcNewListings !== null && rcMarket.rcNewListings > 0 && (
+                              <span className="text-muted-foreground/70"> · +{rcMarket.rcNewListings} new this month</span>
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    {rcMarket.rcAvgDaysOnMarket !== null && (
+                      <div className="flex items-center gap-2.5">
+                        <div>
+                          <p className={`text-[15px] font-semibold tabular-nums ${
+                            rcMarket.rcAvgDaysOnMarket > 50 ? 'text-verdict-good' : rcMarket.rcAvgDaysOnMarket < 25 ? 'text-destructive' : 'text-accent-amber'
+                          }`}>{Math.round(rcMarket.rcAvgDaysOnMarket)} days</p>
+                          <p className="text-[11px] text-muted-foreground leading-tight">Avg days on market</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-[12px] text-muted-foreground leading-relaxed">{marketEditorial}</p>
+                </motion.div>
+              </div>
+            </motion.section>
+
+            {/* ━━━ COMPARABLE LISTINGS — fully visible ━━━ */}
+            {compsWithRent.length > 0 && (
+              <motion.section id="section-comps" {...fade(0.15)} className="py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>
+                <h2 className="results-section-header mb-2">
+                  What Similar Units Actually Rent For
+                </h2>
+                <p className="text-[12px] text-muted-foreground text-center mb-6">
+                  Showing {allComps.length} comparable rental{allComps.length !== 1 ? 's' : ''}{compRadius.label ? ` ${compRadius.label}` : ''}.
                 </p>
 
-                <div className="context-row context-row-even">
-                  <span className="context-label">{city} rents this year</span>
-                  <span className="context-value">
-                    {marketYoy > 0 ? '+' : ''}{marketYoy}%
-                    <span className="context-sub"> ({compositeTrendResult.sourceCount >= 2
-                      ? 'composite — ' + compositeTrendResult.sources.map(s => s.label).join(', ')
-                      : compositeTrendResult.primarySource})</span>
-                  </span>
-                </div>
-
-                {rentData.zillowMonthly !== null && rentData.zillowDirection && (
-                  <div className="context-row context-row-odd">
-                    <span className="context-label">Monthly trend</span>
-                    <span className="context-value">
-                      {rentData.zillowMonthly > 0 ? '+' : ''}{rentData.zillowMonthly}%/mo
-                      <span className="context-sub">
-                        {rentData.zillowDirection === 'rising' ? ' ↑ rising' : rentData.zillowDirection === 'falling' ? ' ↓ cooling' : ' → steady'}
-                      </span>
-                    </span>
-                  </div>
+                {/* Tier 1: in-building comps */}
+                {tier1Comps.length > 0 && (
+                  <WsipCompsList
+                    comparables={tier1Comps}
+                    askingRent={askingRent}
+                    medianCompRent={medianCompRent}
+                    sectionLabel="In this building"
+                    hideMedianLine
+                  />
                 )}
 
-                <div className="context-row context-row-even">
-                  <span className="context-label">Fair rent range</span>
-                  <span className="context-value">
-                    ${fmt(fairRangeLow)} – ${fmt(fairRangeHigh)}
-                    <span className="context-sub"> (HUD SAFMR + market comps)</span>
-                  </span>
-                </div>
-
-                {askingRent && (
-                  <div className={`context-row ${verdict === 'above' ? 'context-row-highlight' : 'context-row-odd'}`}>
-                    <span className="context-label">Asking price</span>
-                    <span className={`context-value ${verdict === 'above' ? 'text-destructive font-bold' : verdict === 'below' ? 'text-verdict-good font-bold' : ''}`}>
-                      ${fmt(askingRent)} — {bldg.hasBuildingData
-                        ? (askingRent <= bldg.buildingLow ? "below this building's range"
-                          : askingRent <= bldg.buildingHigh ? "within this building's range"
-                          : askingRent <= bldg.buildingHigh * 1.10 ? "slightly above this building's range"
-                          : "above this building's range")
-                        : (verdict === 'below' ? 'below range' : verdict === 'in-range' ? 'within range' : 'above range')}
-                    </span>
-                  </div>
+                {/* Tier 2-4: nearby comps — all visible */}
+                {nonBuildingComps.length > 0 && (
+                  <WsipCompsList
+                    comparables={nonBuildingComps}
+                    askingRent={askingRent}
+                    medianCompRent={medianCompRent}
+                    sectionLabel={tier1Comps.length > 0 ? 'Nearby' : undefined}
+                  />
                 )}
-              </div>
+              </motion.section>
+            )}
 
-              {/* Market snapshot — always show */}
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15, duration: 0.4 }}
-                className="rounded-lg border border-border bg-card px-4 py-4"
-              >
-                <h3 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Local Market Snapshot</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                  {rcMarket.rcTotalListings !== null && (
-                    <div className="flex items-center gap-2.5">
-                      <div>
-                        <p className="text-[15px] font-semibold text-foreground tabular-nums">{rcMarket.rcTotalListings}</p>
-                        <p className="text-[11px] text-muted-foreground leading-tight">
-                          Active rentals in your ZIP
-                          {rcMarket.rcNewListings !== null && rcMarket.rcNewListings > 0 && (
-                            <span className="text-muted-foreground/70"> · +{rcMarket.rcNewListings} new this month</span>
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                  {rcMarket.rcAvgDaysOnMarket !== null && (
-                    <div className="flex items-center gap-2.5">
-                      <div>
-                        <p className={`text-[15px] font-semibold tabular-nums ${
-                          rcMarket.rcAvgDaysOnMarket > 50 ? 'text-verdict-good' : rcMarket.rcAvgDaysOnMarket < 25 ? 'text-destructive' : 'text-accent-amber'
-                        }`}>{Math.round(rcMarket.rcAvgDaysOnMarket)} days</p>
-                        <p className="text-[11px] text-muted-foreground leading-tight">Avg days on market</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <p className="text-[12px] text-muted-foreground leading-relaxed">{marketEditorial}</p>
-              </motion.div>
-            </div>
-          </motion.section>
+            {/* ━━━ YOUR NEXT STEPS — fully visible ━━━ */}
+            {askingRent && (
+              <motion.section id="section-nextsteps" {...fade(0.19)} className="pt-8 pb-8">
+                <h2 className="results-section-header mb-6">Your Next Steps</h2>
 
-          {/* ━━━ SECTION 3: COMPARABLE LISTINGS — always show ━━━ */}
-          {compsWithRent.length > 0 && (
-            <motion.section id="section-comps" {...fade(0.15)} className="py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>
-              <h2 className="results-section-header mb-2">
-                What Similar Units Actually Rent For
-              </h2>
-              <p className="text-[12px] text-muted-foreground text-center mb-6">
-                Showing {allComps.length} comparable rental{allComps.length !== 1 ? 's' : ''}{compRadius.label ? ` ${compRadius.label}` : ''}.
-              </p>
-
-              {/* Tier 1: in-building comps — always ungated */}
-              {tier1Comps.length > 0 && (
-                <WsipCompsList
-                  comparables={tier1Comps}
-                  askingRent={askingRent}
-                  medianCompRent={medianCompRent}
-                  sectionLabel="In this building"
-                  hideMedianLine
-                />
-              )}
-
-              {/* Tier 2-4: nearby comps — shown when unlocked */}
-              {nonBuildingComps.length > 0 && compsUnlocked && (
-                <WsipCompsList
-                  comparables={nonBuildingComps}
-                  askingRent={askingRent}
-                  medianCompRent={medianCompRent}
-                  sectionLabel={tier1Comps.length > 0 ? 'Nearby' : undefined}
-                />
-              )}
-
-              {/* Partial nearby when no building data and not unlocked */}
-              {!compsUnlocked && !hasBuilding && visibleNonBuildingComps.length > 0 && (
-                <WsipCompsList
-                  comparables={visibleNonBuildingComps}
-                  askingRent={askingRent}
-                  medianCompRent={medianCompRent}
-                  sectionLabel={tier1Comps.length > 0 ? 'Nearby' : undefined}
-                />
-              )}
-
-              {/* Comp gate */}
-              {gatedComps.length > 0 && !compsUnlocked && (
-                <div ref={compGateRef} className="mt-4">
-                  {/* Nearby header when all nearby gated (building exists) */}
-                  {hasBuilding && (
-                    <div className="flex items-center gap-2 px-4 mb-1.5">
-                      <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Nearby</span>
-                      <span className="flex-1 h-px bg-border/50" />
-                    </div>
-                  )}
-                  <div className="text-center py-4 px-4">
-                    <p className="text-sm font-semibold text-foreground mb-1">
-                      {gatedDisplayCount} more comparable rental{gatedDisplayCount !== 1 ? 's' : ''} nearby
-                    </p>
-                    <p className="text-xs text-muted-foreground mb-3">Enter your email to unlock</p>
-                    <form onSubmit={handleCompGateSubmit} className="flex gap-2 max-w-[400px] mx-auto">
-                      <input
-                        type="email"
-                        placeholder="you@email.com"
-                        value={compEmail}
-                        onChange={(e) => { setCompEmail(e.target.value); if (compEmailError) setCompEmailError(''); }}
-                        className={`flex-1 min-w-0 px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 ${
-                          compEmailError ? 'border-destructive' : 'border-border focus:border-foreground'
-                        }`}
-                      />
-                      <button
-                        type="submit"
-                        disabled={compEmailLoading}
-                        className="bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap disabled:opacity-60"
-                      >
-                        {compEmailLoading ? 'Unlocking…' : gateCtaText}
-                      </button>
-                    </form>
-                    {compEmailError && <p className="text-xs text-destructive mt-1">{compEmailError}</p>}
-                    <div className="mt-2">
-                      <SocialProofLine />
-                    </div>
-                  </div>
-
-                  {/* Blurred rows */}
-                  <div className="relative">
-                    <div className="space-y-1" style={{ filter: 'blur(6px)', userSelect: 'none', WebkitUserSelect: 'none' } as React.CSSProperties}>
-                      {gatedComps.slice(0, 4).map((comp, i) => (
-                        <div key={`gated-${i}`} className={`flex items-start justify-between gap-4 px-4 py-3 rounded-md ${i % 2 === 0 ? 'bg-muted/40' : ''}`}>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground truncate">{comp.formattedAddress}</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">
-                              {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
-                              {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
-                              {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
-                            </p>
-                          </div>
-                          {comp.rent !== null && (
-                            <span className="text-sm font-semibold text-foreground whitespace-nowrap">${fmt(comp.rent)}/mo</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="absolute inset-0 pointer-events-none" style={{
-                      background: 'linear-gradient(to bottom, hsl(var(--comps-bg) / 0.3) 0%, hsl(var(--comps-bg) / 0.8) 70%, hsl(var(--comps-bg)) 100%)',
-                    }} />
-                  </div>
-                </div>
-              )}
-            </motion.section>
-          )}
-
-          {/* ━━━ SECTION 4: YOUR NEXT STEPS (all verdicts, gated) ━━━ */}
-          {askingRent && (
-            <motion.section id="section-nextsteps" {...fade(0.19)} className="pt-8 pb-8">
-              <h2 className="results-section-header mb-6">Your Next Steps</h2>
-
-              {compsUnlocked ? (
                 <div className="evidence-card space-y-4">
                   {/* OVERPRICED */}
                   {verdict === 'above' && (
@@ -941,70 +821,10 @@ Happy to discuss — thank you.`;
                     </>
                   )}
                 </div>
-              ) : (
-                /* Gated — blurred with email prompt */
-                <div className="relative">
-                  <div style={{ filter: 'blur(6px)', userSelect: 'none', WebkitUserSelect: 'none', minHeight: '200px' } as React.CSSProperties}>
-                    <div className="evidence-card space-y-4">
-                      <ul className="space-y-3 text-sm text-foreground">
-                        <li className="flex gap-2">
-                          <span className="text-primary font-bold shrink-0">•</span>
-                          {verdict === 'above' ? 'The asking price is above the area median by a significant amount.'
-                            : verdict === 'below' ? 'This is priced below comparable units in the area.'
-                            : 'This listing is priced within the expected range for the area.'}
-                        </li>
-                        <li className="flex gap-2">
-                          <span className="text-primary font-bold shrink-0">•</span>
-                          There are multiple active listings in this ZIP code.
-                        </li>
-                        <li className="flex gap-2">
-                          <span className="text-primary font-bold shrink-0">•</span>
-                          {verdict === 'above' ? 'Units sit for many days on average — landlords have incentive to negotiate.'
-                            : verdict === 'below' ? 'Below-market units go fast — here\'s how to move quickly.'
-                            : 'Fair-priced units attract competition — here\'s how to stand out.'}
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-card rounded-xl border border-border shadow-lg px-6 py-5 max-w-[380px] w-full text-center">
-                      <p className="text-sm font-semibold text-foreground mb-1">
-                        {verdict === 'above' ? 'Unlock negotiation tips & email template'
-                          : verdict === 'below' ? 'Unlock tips to secure this deal'
-                          : 'Unlock application tips'}
-                      </p>
-                      <p className="text-xs text-muted-foreground mb-3">Enter your email to see your personalized next steps</p>
-                      <form onSubmit={handleCompGateSubmit} className="flex gap-2">
-                        <input
-                          type="email"
-                          placeholder="you@email.com"
-                          value={compEmail}
-                          onChange={(e) => { setCompEmail(e.target.value); if (compEmailError) setCompEmailError(''); }}
-                          className={`flex-1 min-w-0 px-4 py-2.5 text-sm border rounded-lg bg-card text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 ${
-                            compEmailError ? 'border-destructive' : 'border-border focus:border-foreground'
-                          }`}
-                        />
-                        <button
-                          type="submit"
-                          disabled={compEmailLoading}
-                          className="bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap disabled:opacity-60"
-                        >
-                          {compEmailLoading ? 'Unlocking…' : 'Unlock →'}
-                        </button>
-                      </form>
-                      {compEmailError && <p className="text-xs text-destructive mt-1">{compEmailError}</p>}
-                      <div className="mt-2">
-                        <SocialProofLine />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </motion.section>
-          )}
+              </motion.section>
+            )}
 
-          {/* ━━━ POST-CONVERSION FLOW ━━━ */}
-          {capturedEmail && (
+            {/* ━━━ Post-conversion flow ━━━ */}
             <section className="pb-4 pt-2">
               <WsipPostConversion
                 email={capturedEmail}
@@ -1013,90 +833,46 @@ Happy to discuss — thank you.`;
                 zip={zip}
               />
             </section>
-          )}
 
-          {/* ━━━ SECONDARY EMAIL CAPTURE — above share section ━━━ */}
-          {!capturedEmail && (
-            <section className="pb-6 pt-4">
-              <div className="rounded-xl border border-primary/20 px-5 sm:px-8 py-6 sm:py-8 text-center" style={{ background: 'hsl(var(--primary) / 0.04)' }}>
-                <h2 className="font-display text-xl sm:text-2xl font-semibold text-foreground mb-2" style={{ letterSpacing: '-0.01em' }}>
-                  {askingRent
-                    ? verdict === 'above' ? "Get your negotiation playbook."
-                    : verdict === 'below' ? "Lock in this deal."
-                    : "Track this market."
-                    : "Get notified when rents change."}
-                </h2>
-                <p className="text-sm text-muted-foreground mb-5 max-w-[400px] mx-auto">
-                  {askingRent && verdict === 'above'
-                    ? `We'll send you this analysis with comps and a ready-to-send negotiation email for ${city}.`
-                    : `We'll send you this analysis and alert you when market conditions change in ${city}.`}
-                </p>
-                <form onSubmit={handleCompGateSubmit} className="max-w-[440px] mx-auto space-y-2">
-                  <div className="flex gap-2">
-                    <input
-                      type="email"
-                      placeholder="you@email.com"
-                      value={compEmail}
-                      onChange={(e) => { setCompEmail(e.target.value); if (compEmailError) setCompEmailError(''); }}
-                      className="flex-1 min-w-0 px-4 py-3 text-sm border border-border rounded-lg bg-card text-foreground outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
-                    />
-                    <button
-                      type="submit"
-                      disabled={compEmailLoading}
-                      className="bg-primary text-primary-foreground px-5 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap shrink-0 disabled:opacity-60"
-                    >
-                      {gateCtaText}
-                    </button>
-                  </div>
-                  <div className="mt-2">
-                    <SocialProofLine />
-                  </div>
-                </form>
-                <p className="text-[11px] text-muted-foreground/60 text-center mt-3">
-                  No spam. Unsubscribe anytime. See our{' '}
-                  <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
-                </p>
+            {/* ━━━ SHARE + CROSS-LINK ━━━ */}
+            <motion.section id="section-share" {...fade(0.23)} className="pt-4 pb-10">
+              <h2 className="results-section-header mb-6">Share This Analysis</h2>
+              <div className="flex justify-center">
+                <ShareHub
+                  reportPayload={shareReportPayload}
+                  onLinkGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
+                  analysisId={analysisId}
+                  leadEmail={capturedEmail || undefined}
+                  zipCode={zip}
+                  city={city}
+                  state={rentData.state}
+                  bedroomNum={bedroomNum}
+                  increasePct={0}
+                  marketYoy={marketYoy}
+                  verdict={verdictLabel === 'above' ? 'above' : verdictLabel === 'below' ? 'below' : verdictLabel === 'fair' ? 'fair' : 'none'}
+                  headline={`What ${brLabel}s rent for in ${city}`}
+                  stats={[
+                    { label: 'Fair range', value: `$${fmt(fairRangeLow)}–$${fmt(fairRangeHigh)}` },
+                    { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
+                  ]}
+                  landlordLabel="Share with listing agent"
+                  neighborsLabel="Share with friends"
+                />
               </div>
-            </section>
-          )}
+            </motion.section>
 
-          {/* ━━━ SECTION 6: SHARE + CROSS-LINK ━━━ */}
-          <motion.section id="section-share" {...fade(0.23)} className="pt-4 pb-10">
-            <h2 className="results-section-header mb-6">Share This Analysis</h2>
-            <div className="flex justify-center">
-              <ShareHub
-                reportPayload={shareReportPayload}
-                onLinkGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
-                analysisId={analysisId}
-                leadEmail={capturedEmail || undefined}
-                zipCode={zip}
-                city={city}
-                state={rentData.state}
-                bedroomNum={bedroomNum}
-                increasePct={0}
-                marketYoy={marketYoy}
-                verdict={verdictLabel === 'above' ? 'above' : verdictLabel === 'below' ? 'below' : verdictLabel === 'fair' ? 'fair' : 'none'}
-                headline={`What ${brLabel}s rent for in ${city}`}
-                stats={[
-                  { label: 'Fair range', value: `$${fmt(fairRangeLow)}–$${fmt(fairRangeHigh)}` },
-                  { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
-                ]}
-                landlordLabel="Share with listing agent"
-                neighborsLabel="Share with friends"
-              />
-            </div>
-          </motion.section>
-
-          {/* Cross-link */}
-          <motion.div {...fade(0.25)} className="pb-8 text-center">
-            <p className="text-sm text-muted-foreground mb-1">Already have a lease?</p>
-            <Link
-              to={`/?zip=${zip}&bedrooms=${bedroomNum}`}
-              className="text-sm text-primary font-semibold hover:underline"
-            >
-              Check if your next rent increase is fair →
-            </Link>
-          </motion.div>
+            {/* Cross-link */}
+            <motion.div {...fade(0.25)} className="pb-8 text-center">
+              <p className="text-sm text-muted-foreground mb-1">Already have a lease?</p>
+              <Link
+                to={`/?zip=${zip}&bedrooms=${bedroomNum}`}
+                className="text-sm text-primary font-semibold hover:underline"
+              >
+                Check if your next rent increase is fair →
+              </Link>
+            </motion.div>
+          </>
+        )}
 
         </div>
       </div>
