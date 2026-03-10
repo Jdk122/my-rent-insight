@@ -71,7 +71,17 @@ const WsipCompsList = ({ comparables, askingRent, medianCompRent, userSqft, sect
 
   return (
     <div className="space-y-1">
-      {/* Same-building comps */}
+      {/* Section label when provided externally */}
+      {sectionLabel && (
+        <div className="flex items-center gap-2 px-4 mb-1.5">
+          <span className={`text-[11px] font-semibold uppercase tracking-wider ${
+            sectionLabel === 'In this building' ? 'text-verdict-good' : 'text-muted-foreground'
+          }`}>{sectionLabel}</span>
+          <span className={`flex-1 h-px ${sectionLabel === 'In this building' ? 'bg-verdict-good/20' : 'bg-border/50'}`} />
+        </div>
+      )}
+
+      {/* Same-building comps (legacy path) */}
       {inBuilding.length > 0 && (
         <div className="mb-3">
           <div className="flex items-center gap-2 px-4 mb-1.5">
