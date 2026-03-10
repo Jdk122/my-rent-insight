@@ -320,12 +320,13 @@ function DashboardContent() {
     if (emailFilterUnsub === 'unsub') list = list.filter(l => l.unsubscribed);
     if (emailFilterSource !== 'all') list = list.filter(l => (l.capture_source || 'unknown') === emailFilterSource);
     if (emailFilterVerdict !== 'all') list = list.filter(l => (l.verdict || 'unknown') === emailFilterVerdict);
+    if (emailFilterToolType !== 'all') list = list.filter(l => (l.tool_type || 'renewal') === emailFilterToolType);
     if (emailSearch) {
       const q = emailSearch.toLowerCase();
       list = list.filter(l => l.email?.toLowerCase().includes(q) || l.city?.toLowerCase().includes(q) || l.zip?.includes(q));
     }
     return list;
-  }, [emailLeads, emailFilterSource, emailFilterVerdict, emailFilterUnsub, emailSearch]);
+  }, [emailLeads, emailFilterSource, emailFilterVerdict, emailFilterUnsub, emailFilterToolType, emailSearch]);
 
   const emailSourceCounts = useMemo(() => {
     const counts: Record<string, number> = {};
