@@ -890,7 +890,7 @@ function DashboardContent() {
                       );
                     })}
                     {filteredEmailLeads.length === 0 && (
-                      <tr><td colSpan={11} className="px-4 py-8 text-center text-muted-foreground">No emails found</td></tr>
+                      <tr><td colSpan={12} className="px-4 py-8 text-center text-muted-foreground">No emails found</td></tr>
                     )}
                   </tbody>
                 </table>
