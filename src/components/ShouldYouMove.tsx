@@ -165,9 +165,16 @@ function CompsWithRentLine({
               </p>
             </div>
             {comp.rent !== null && (
-              <span className="text-sm font-semibold text-foreground whitespace-nowrap">
-                ${fmt(comp.rent)}/mo
-              </span>
+              <div className="flex flex-col items-end shrink-0">
+                <span className="text-sm font-semibold text-foreground whitespace-nowrap">
+                  ${fmt(comp.rent)}/mo
+                </span>
+                {comp.seasonallyAdjusted && comp.seasonalRent != null && (
+                  <span className="text-[10px] text-muted-foreground/70" title="Adjusted for seasonal pricing differences">
+                    adj. ${fmt(comp.seasonalRent)}
+                  </span>
+                )}
+              </div>
             )}
           </motion.div>
         </div>
