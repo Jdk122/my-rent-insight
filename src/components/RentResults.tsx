@@ -572,7 +572,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                               <>At ${fmt(newRent)}/mo, your {increasePct}% increase tracks the {marketYoy}% area trend for {brLabel} rentals in {city}.</>
                             )
                           ) : increasePct > 0 ? (
-                            <>Your {increasePct}% increase is below the {marketYoy}% area trend. At ${fmt(newRent)}/mo, you're getting a competitive deal in {city}.</>
+                            <>At ${fmt(newRent)}/mo, your rent is below the local market average for {brLabel} rentals in {city} — even with a {increasePct}% increase, you're getting a competitive deal.</>
                           ) : (
                             <>Rents in {city} moved {marketYoy}% this year. Your landlord keeping your rent at ${fmt(formData.currentRent)}/mo means you're coming out ahead.</>
                           )}
