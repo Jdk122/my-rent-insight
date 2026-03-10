@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Building2, Clock, TrendingDown } from 'lucide-react';
+import { Building2, Clock, TrendingDown, Info } from 'lucide-react';
 
 interface MarketSnapshotProps {
   rcTotalListings: number | null;
@@ -87,6 +87,13 @@ const MarketSnapshot = ({ rcTotalListings, rcNewListings, rcAvgDaysOnMarket, alV
       </div>
 
       <p className="text-[12px] text-muted-foreground leading-relaxed">{interpretation}</p>
+
+      {hasDaysOnMarket && rcAvgDaysOnMarket > 30 && (
+        <p className="text-[12px] text-muted-foreground/80 leading-relaxed mt-2 flex items-start gap-1.5">
+          <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-muted-foreground/60" />
+          Units in your area take an average of {Math.round(rcAvgDaysOnMarket)} days to fill. Your landlord has incentive to keep a reliable tenant.
+        </p>
+      )}
     </motion.div>
   );
 };
