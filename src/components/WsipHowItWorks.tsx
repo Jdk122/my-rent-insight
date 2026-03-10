@@ -19,7 +19,7 @@ const steps = [
   },
 ];
 
-const WsipHowItWorks = () => (
+const WsipHowItWorks = React.forwardRef<HTMLElement>((_, ref) => (
   <section className="w-full border-t border-border/60" aria-label="How it works">
     <div className="max-w-[620px] mx-auto px-5 sm:px-6 py-14 sm:py-20">
       <h2
