@@ -221,9 +221,9 @@ const WhatShouldIPay = () => {
           </p>
           <section className="mt-8 sm:mt-10" aria-label="Fair rent calculator">
             <WsipForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
-            <div className="mt-6 mb-1 max-w-[540px]">
-              <div className="border-t border-b border-border/40 py-3 px-1">
-                <p className="text-[11px] text-muted-foreground/50 text-center mb-2 tracking-wide uppercase font-medium">Built on the data landlords use to set your rent — now you can see it too.</p>
+            <div className="mt-3 max-w-[540px]">
+              <div className="border-t border-b border-border/40 py-2.5 px-1">
+                <p className="text-[11px] text-muted-foreground/50 text-center mb-1.5 tracking-wide uppercase font-medium">Built on the data landlords use to set your rent — now you can see it too.</p>
                 <div className="flex flex-wrap justify-center items-center gap-x-4 sm:gap-x-6 gap-y-1 text-[11px] text-muted-foreground/40 tracking-wide">
                   <span>HUD Fair Market Rent</span>
                   <span>Zillow ZORI</span>
