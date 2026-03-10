@@ -760,8 +760,8 @@ const WsipResults = ({
                 <h2 className="results-section-header mb-6">Your Next Steps</h2>
 
                 <div className="evidence-card space-y-4">
-                  {/* OVERPRICED */}
-                  {verdict === 'above' && (
+                  {/* NEGOTIATION (overpriced by area OR building range) */}
+                  {showNegotiation && (
                     <>
                       <p className="text-sm font-medium text-foreground">How to negotiate this rent down:</p>
                       <ul className="space-y-3 text-sm text-foreground">
