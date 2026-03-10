@@ -168,6 +168,11 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
                 The Fairness Score combines five independent data points to measure how your rent increase compares to local market conditions.{' '}
                 <Link to="/methodology" className="text-primary hover:underline">See methodology →</Link>
               </p>
+              {contextNotes && (
+                <div className="pt-3 mt-3 border-t border-border/50 space-y-2">
+                  {contextNotes}
+                </div>
+              )}
             </div>
           </CollapsibleContent>
         </Collapsible>
