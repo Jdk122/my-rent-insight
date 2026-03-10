@@ -22,6 +22,7 @@ import { getUtmParams } from '@/lib/utm';
 import DataConfidenceBadge from './DataConfidenceBadge';
 import { assessConfidence, detectOutliers, checkCrossSourceConsistency, getCompRadius, filterFurnished, deduplicateComps, applySeasonalAdjustment } from '@/lib/dataQuality';
 import { calculateFairnessScore, scoreToVerdict, FairnessScoreResult } from '@/lib/fairnessScore';
+import { getBuildingRange } from '@/lib/buildingRange';
 import { calculateCompositeTrend } from '@/lib/compositeTrend';
 import FairnessScoreGauge, { ComponentSourceInfo } from './FairnessScoreGauge';
 import MarketSnapshot from './MarketSnapshot';
@@ -157,6 +158,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   const hasEnoughComps = outlierResult ? outlierResult.filtered.length >= 3 : false;
   const isHighRent = formData.currentRent > rentData.fmr * 1.5;
+
+  // ━━━ Building range ━━━
+  const bldg = useMemo(() => getBuildingRange(
+    outlierResult?.filtered ?? cleanedComps,
+    formData.fullAddress ?? null,
+    bedroomNum,
+  ), [outlierResult, cleanedComps, formData.fullAddress, bedroomNum]);
 
   // ━━━ Data confidence ━━━
   const compRadius = useMemo(() => {
@@ -811,6 +819,28 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </motion.h2>
 
               <div className="space-y-6">
+                {/* Property Profile Card */}
+                {propertyData && (
+                  <motion.div {...fade(0.06)} className="evidence-card">
+                    <h3 className="evidence-card-header">Your Landlord's Property</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {formData.fullAddress}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {propertyData.propertyType && `${propertyData.propertyType}`}
+                      {propertyData.yearBuilt && ` · Built ${propertyData.yearBuilt}`}
+                      {propertyData.bedrooms && ` · ${propertyData.bedrooms} bed`}
+                      {propertyData.bathrooms && ` / ${propertyData.bathrooms} bath`}
+                      {propertyData.squareFootage && ` · ${propertyData.squareFootage.toLocaleString()} sqft`}
+                    </p>
+                    {propertyData.lastSalePrice && propertyData.lastSaleDate && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Purchased {new Date(propertyData.lastSaleDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} for ${propertyData.lastSalePrice.toLocaleString()}
+                      </p>
+                    )}
+                  </motion.div>
+                )}
+
                 {/* Card A: Market Context */}
                 <motion.div {...fade(0.08)} className="evidence-card">
                   <h3 className="evidence-card-header">What the Market Says</h3>
@@ -914,6 +944,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   )}
                   {rentData.yoySource === 'hud' && rentData.priorSource === 'n' && (
                     <p className="text-[11px] text-muted-foreground mt-1">Note: This uses the national rent trend because local data is limited for this area.</p>
+                  )}
+                  {bldg.hasBuildingData && (
+                    <p className="text-sm text-muted-foreground mt-3 flex items-start gap-1.5">
+                      <span className="shrink-0 mt-0.5">🏢</span>
+                      Other {bldg.bedroomFilterLabel ? `${bldg.bedroomFilterLabel} ` : ''}units in this building rent for ${fmt(bldg.buildingLow)}
+                      {bldg.buildingLow !== bldg.buildingHigh && ` – $${fmt(bldg.buildingHigh)}`}/month
+                    </p>
                   )}
                 </motion.div>
 
