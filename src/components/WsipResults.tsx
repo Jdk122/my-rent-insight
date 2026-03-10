@@ -777,7 +777,7 @@ Happy to discuss — thank you.`;
                     <div className="mt-2">
                       <SocialProofLine />
                     </div>
-                    <p className="text-xs text-muted-foreground/50 mt-1">Free. No account required.</p>
+                    
                   </div>
 
                   {/* Blurred rows */}

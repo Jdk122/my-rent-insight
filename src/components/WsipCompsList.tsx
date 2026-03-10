@@ -123,7 +123,7 @@ const WsipCompsList = ({ comparables, askingRent, medianCompRent, userSqft, sect
       )}
 
       {/* Median comparison */}
-      {askingRent && medianCompRent && (
+      {!hideMedianLine && askingRent && medianCompRent && (
         <p className="text-xs text-muted-foreground mt-3 px-4">
           The asking price of ${fmt(askingRent)} is{' '}
           <span className={askingRent > medianCompRent ? 'text-destructive font-medium' : 'text-verdict-good font-medium'}>
