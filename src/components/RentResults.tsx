@@ -915,6 +915,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   {rentData.yoySource === 'hud' && rentData.priorSource === 'n' && (
                     <p className="text-[11px] text-muted-foreground mt-1">Note: This uses the national rent trend because local data is limited for this area.</p>
                   )}
+                  {bldg.hasBuildingData && (
+                    <p className="text-sm text-muted-foreground mt-3 flex items-start gap-1.5">
+                      <span className="shrink-0 mt-0.5">🏢</span>
+                      Other {bldg.bedroomFilterLabel ? `${bldg.bedroomFilterLabel} ` : ''}units in this building rent for ${fmt(bldg.buildingLow)}
+                      {bldg.buildingLow !== bldg.buildingHigh && ` – $${fmt(bldg.buildingHigh)}`}/month
+                    </p>
+                  )}
                 </motion.div>
 
                 {/* Market Snapshot */}

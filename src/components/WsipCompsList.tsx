@@ -34,6 +34,11 @@ const CompRow = ({ comp, idx, offset }: { comp: RentcastComparable; idx: number;
               Same line
             </span>
           )}
+          {comp.isSameBuilding && !comp.isSameUnitLine && (
+            <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-green-500/10 text-green-700 border border-green-500/20">
+              Same building
+            </span>
+          )}
         </div>
         <p className="text-xs text-muted-foreground mt-0.5">
           {comp.bedrooms !== null &&

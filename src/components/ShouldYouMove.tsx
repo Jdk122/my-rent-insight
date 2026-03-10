@@ -154,6 +154,16 @@ function CompsWithRentLine({
               <p className="text-sm font-medium text-foreground truncate flex items-center gap-1.5">
                 <MapPin className="w-3 h-3 text-muted-foreground flex-shrink-0" />
                 {comp.formattedAddress}
+                {comp.isSameUnitLine && (
+                  <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
+                    Same line
+                  </span>
+                )}
+                {comp.isSameBuilding && !comp.isSameUnitLine && (
+                  <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-green-500/10 text-green-700 border border-green-500/20">
+                    Same building
+                  </span>
+                )}
               </p>
               <p className="text-xs text-muted-foreground mt-0.5">
                 {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
