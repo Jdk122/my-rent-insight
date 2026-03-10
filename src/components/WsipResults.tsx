@@ -293,6 +293,8 @@ const WsipResults = ({
       confidence_level: confidence.level,
       tool_type: 'wsip',
       verdict_label: verdictLabel === 'none' ? null : verdictLabel,
+      counter_offer_low: bldg.hasBuildingData ? bldg.buildingLow : null,
+      counter_offer_high: bldg.hasBuildingData ? bldg.buildingHigh : null,
       utm_source: utm.utm_source || null,
       utm_medium: utm.utm_medium || null,
       utm_campaign: utm.utm_campaign || null,
