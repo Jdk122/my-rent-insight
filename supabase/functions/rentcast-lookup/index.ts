@@ -285,9 +285,21 @@ serve(async (req) => {
     const isDense = DENSE_ZIP_PREFIXES.includes(zipPrefix);
     params.set('maxRadius', isDense ? '1' : '3');
 
-    // ── Primary fetch ─────────────────────────────────────────────────
+    // ── Primary fetch with retry for transient failures ──────────────
     const apiUrl = `https://api.rentcast.io/v1/avm/rent/long-term?${params.toString()}`;
-    const response = await fetch(apiUrl, {
+
+    async function fetchWithRetry(url: string, opts: RequestInit, retries = 1): Promise<Response> {
+      const resp = await fetch(url, opts);
+      if (retries > 0 && (resp.status === 502 || resp.status === 503 || resp.status === 504)) {
+        console.log(`Rentcast returned ${resp.status}, retrying in 1s...`);
+        await resp.text(); // consume body
+        await new Promise(r => setTimeout(r, 1000));
+        return fetchWithRetry(url, opts, retries - 1);
+      }
+      return resp;
+    }
+
+    const response = await fetchWithRetry(apiUrl, {
       headers: { Accept: 'application/json', 'X-Api-Key': apiKey },
     });
 
