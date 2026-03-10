@@ -3,6 +3,20 @@ import type { RentcastComparable } from '@/hooks/useRentcast';
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 const fmtSqft = (n: number) => n.toFixed(2);
 
+function compAgeLabel(daysOld: number | null): { text: string; className: string } | null {
+  if (daysOld === null || daysOld < 0) return null;
+  if (daysOld < 30) {
+    return { text: `Listed ${daysOld} days ago`, className: 'text-green-600' };
+  }
+  if (daysOld <= 90) {
+    const weeks = Math.round(daysOld / 7);
+    const text = weeks >= 6 ? `Listed ${Math.round(daysOld / 30)} months ago` : `Listed ${weeks} weeks ago`;
+    return { text, className: 'text-muted-foreground' };
+  }
+  const months = Math.round(daysOld / 30);
+  return { text: `Listed ${months} months ago`, className: 'text-amber-600' };
+}
+
 interface WsipCompsListProps {
   comparables: RentcastComparable[];
   askingRent?: number | null;
