@@ -344,6 +344,7 @@ function DashboardContent() {
       csvRows.push([
         l.email,
         l.capture_source || '',
+        l.tool_type || 'renewal',
         new Date(l.created_at).toLocaleDateString(),
         l.city || '', l.state || '', l.zip || '',
         l.bedrooms ?? '',
