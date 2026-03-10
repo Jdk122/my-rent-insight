@@ -415,6 +415,15 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     return !!getApplicableCap(result);
   }, [rentData.state, rentData.city]);
 
+  const rentControlCap = useMemo(() => {
+    const result = getRentControlByStateCity(rentData.state, rentData.city);
+    return getApplicableCap(result);
+  }, [rentData.state, rentData.city]);
+
+  const utilityNote = useMemo(() => getUtilityNote(propertyData, rentData.state), [propertyData, rentData.state]);
+
+  const brokerFee = useMemo(() => getBrokerFeeInfo(rentData.state, rentData.city), [rentData.state, rentData.city]);
+
   const navSections = useMemo(() => {
     const sections = [{ id: 'section-verdict', label: 'Verdict' }];
     if (!capturedEmail) {
