@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Building2, Clock, TrendingDown } from 'lucide-react';
+import { Building2, Clock, TrendingDown, Info } from 'lucide-react';
 
 interface MarketSnapshotProps {
   rcTotalListings: number | null;
