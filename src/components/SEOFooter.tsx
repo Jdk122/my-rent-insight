@@ -29,8 +29,8 @@ const TOP_CITIES = [
   { city: 'Minneapolis', state: 'MN', stateSlug: 'minnesota', citySlug: 'minneapolis' },
 ];
 
-const SEOFooter = ({ onContactClick, showCityDirectory = false }: SEOFooterProps) => (
-  <footer className="mt-auto border-t border-border bg-card">
+const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClick, showCityDirectory = false }, ref) => (
+  <footer ref={ref} className="mt-auto border-t border-border bg-card">
     {/* City directory — integrated into footer like Zillow/Redfin */}
     {showCityDirectory && (
       <div className="border-b border-border/50">
