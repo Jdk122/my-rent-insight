@@ -4,26 +4,31 @@ interface RenterToolsCTAProps {
   zip?: string;
 }
 
-const tools = [
-  {
-    title: 'Got a Rent Increase?',
-    sub: 'See if your landlord is overcharging — in 60 seconds.',
-    cta: 'Check Your Increase →',
-  },
-  {
-    title: 'Is This Listing Fair?',
-    sub: 'Compare any asking rent to real market data.',
-    cta: 'Check a Listing →',
-  },
-  {
-    title: 'Set a Renewal Reminder',
-    sub: 'Get market data emailed before your lease expires.',
-    cta: 'Set Reminder →',
-  },
-];
-
 const RenterToolsCTA = ({ zip }: RenterToolsCTAProps) => {
-  const linkTo = zip ? `/?zip=${zip}` : '/';
+  const renewalLink = zip ? `/?zip=${zip}` : '/';
+  const wsipLink = zip ? `/what-should-i-pay?zip=${zip}` : '/what-should-i-pay';
+  const reminderLink = renewalLink;
+
+  const tools = [
+    {
+      title: 'Got a Rent Increase?',
+      sub: 'See if your landlord is overcharging — in 60 seconds.',
+      cta: 'Check Your Increase →',
+      to: renewalLink,
+    },
+    {
+      title: 'Is This Listing Fair?',
+      sub: 'Compare any asking rent to real market data.',
+      cta: 'Check a Listing →',
+      to: wsipLink,
+    },
+    {
+      title: 'Set a Renewal Reminder',
+      sub: 'Get market data emailed before your lease expires.',
+      cta: 'Set Reminder →',
+      to: reminderLink,
+    },
+  ];
 
   return (
     <section className="mb-12">
@@ -34,7 +39,7 @@ const RenterToolsCTA = ({ zip }: RenterToolsCTAProps) => {
             <h3 className="font-semibold text-foreground text-[15px] mb-1">{t.title}</h3>
             <p className="text-xs text-muted-foreground leading-relaxed mb-4 flex-1">{t.sub}</p>
             <Link
-              to={linkTo}
+              to={t.to}
               className="inline-flex items-center justify-center bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
             >
               {t.cta}
