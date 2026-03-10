@@ -138,10 +138,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   }, [rentcast.data, bedroomNum]);
 
   // ━━━ Outlier detection ━━━
+  const subjectSqft = propertyData?.squareFootage ?? null;
   const outlierResult = useMemo(() => {
     if (cleanedComps.length === 0) return null;
-    return detectOutliers(cleanedComps);
-  }, [cleanedComps]);
+    return detectOutliers(cleanedComps, subjectSqft);
+  }, [cleanedComps, subjectSqft]);
 
   const medianCompRent = useMemo<number | null>(() => {
     if (outlierResult && outlierResult.filtered.length >= 2) {
