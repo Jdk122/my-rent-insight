@@ -810,10 +810,24 @@ Happy to discuss — thank you.`;
               {compsUnlocked ? (
                 <div className="evidence-card space-y-4">
                   <ul className="space-y-3 text-sm text-foreground">
-                    <li className="flex gap-2">
-                      <span className="text-primary font-bold shrink-0">•</span>
-                      The asking price of ${fmt(askingRent)} is ${fmt(askingRent - (medianCompRent ?? fairRangeHigh))} above the area median of ${fmt(medianCompRent ?? fairRangeHigh)}.
-                    </li>
+                    {bldg.hasBuildingData && askingRent > bldg.buildingHigh && (
+                      <li className="flex gap-2">
+                        <span className="text-primary font-bold shrink-0">•</span>
+                        The highest similar unit in this building rents for ${fmt(bldg.buildingHigh)} — the asking price of ${fmt(askingRent)} is ${fmt(askingRent - bldg.buildingHigh)} above this.
+                      </li>
+                    )}
+                    {bldg.hasBuildingData && (
+                      <li className="flex gap-2">
+                        <span className="text-primary font-bold shrink-0">•</span>
+                        There are {bldg.buildingComps.length} other units in this building, giving you direct comparisons.
+                      </li>
+                    )}
+                    {!bldg.hasBuildingData && (
+                      <li className="flex gap-2">
+                        <span className="text-primary font-bold shrink-0">•</span>
+                        The asking price of ${fmt(askingRent)} is ${fmt(askingRent - (medianCompRent ?? fairRangeHigh))} above the area median of ${fmt(medianCompRent ?? fairRangeHigh)}.
+                      </li>
+                    )}
                     {rcMarket.rcTotalListings !== null && rcMarket.rcTotalListings > 5 && (
                       <li className="flex gap-2">
                         <span className="text-primary font-bold shrink-0">•</span>
