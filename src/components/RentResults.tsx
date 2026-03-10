@@ -19,7 +19,7 @@ import SectionNav from './SectionNav';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import DataConfidenceBadge from './DataConfidenceBadge';
-import { assessConfidence, detectOutliers, checkCrossSourceConsistency, getCompRadius, filterFurnished, deduplicateComps } from '@/lib/dataQuality';
+import { assessConfidence, detectOutliers, checkCrossSourceConsistency, getCompRadius, filterFurnished, deduplicateComps, applySeasonalAdjustment } from '@/lib/dataQuality';
 import { calculateFairnessScore, scoreToVerdict, FairnessScoreResult } from '@/lib/fairnessScore';
 import { calculateCompositeTrend } from '@/lib/compositeTrend';
 import FairnessScoreGauge, { ComponentSourceInfo } from './FairnessScoreGauge';
@@ -134,8 +134,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     const prioritized = exactBrMatch.length >= 3
       ? [...exactBrMatch, ...nearBrMatch]
       : unfurnished;
-    return { cleanedComps: prioritized, furnishedComps: furnished };
-  }, [rentcast.data, bedroomNum]);
+    // Apply seasonal adjustment using state
+    const seasonallyAdjusted = applySeasonalAdjustment(prioritized, rentData.state);
+    return { cleanedComps: seasonallyAdjusted, furnishedComps: furnished };
+  }, [rentcast.data, bedroomNum, rentData.state]);
 
   // ━━━ Outlier detection ━━━
   const subjectSqft = propertyData?.squareFootage ?? null;

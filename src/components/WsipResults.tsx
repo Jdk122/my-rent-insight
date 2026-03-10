@@ -9,7 +9,7 @@ import { useRentcastMarket } from '@/hooks/useRentcastMarket';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
-import { assessConfidence, detectOutliers, getCompRadius, filterFurnished, deduplicateComps } from '@/lib/dataQuality';
+import { assessConfidence, detectOutliers, getCompRadius, filterFurnished, deduplicateComps, applySeasonalAdjustment } from '@/lib/dataQuality';
 import { calculateCompositeTrend } from '@/lib/compositeTrend';
 import { calculateFairRange } from '@/lib/fairRange';
 import { tierComps, getTierWeights } from '@/lib/compTiering';
@@ -82,8 +82,10 @@ const WsipResults = ({
     const exactBrMatch = unfurnished.filter(c => c.bedrooms === bedroomNum);
     const nearBrMatch = unfurnished.filter(c => c.bedrooms !== bedroomNum);
     const prioritized = exactBrMatch.length >= 3 ? [...exactBrMatch, ...nearBrMatch] : unfurnished;
-    return { cleanedComps: prioritized };
-  }, [rentcast.data, bedroomNum]);
+    // Apply seasonal adjustment using state
+    const seasonallyAdjusted = applySeasonalAdjustment(prioritized, rentData.state);
+    return { cleanedComps: seasonallyAdjusted };
+  }, [rentcast.data, bedroomNum, rentData.state]);
 
   const outlierResult = useMemo(() => {
     if (cleanedComps.length === 0) return null;
