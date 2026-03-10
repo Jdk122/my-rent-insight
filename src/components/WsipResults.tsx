@@ -95,21 +95,42 @@ const WsipResults = ({
     return null;
   }, [outlierResult, rentcast.data]);
 
-  const allComps = outlierResult?.filtered ?? cleanedComps;
-  const compsWithRent = allComps.filter(c => c.rent !== null && c.rent > 0);
-  const displayableTotal = Math.min(compsWithRent.length, 6);
-  const visibleCount = Math.min(displayableTotal, 3);
-  const visibleComps = allComps.slice(0, visibleCount);
-  const gatedComps = displayableTotal > visibleCount ? allComps.slice(visibleCount) : [];
-  const gatedDisplayCount = displayableTotal - visibleCount;
+  // ━━━ Comp tiering ━━━
+  const tiering = useMemo(() => tierComps(
+    outlierResult?.filtered ?? cleanedComps,
+    fullAddress,
+  ), [outlierResult, cleanedComps, fullAddress]);
 
-  // ━━━ Fair range (weighted composite) ━━━
-  const fairRange = useMemo(() => calculateFairRange({
-    compRents: compsWithRent.map(c => c.rent as number),
-    hudFmr: rentData.fmr,
-    zoriRent: null, // ZORI is YoY only, no absolute rent value available
-    rcMarketMedian: rcMarket.rcMedianRent,
-  }), [compsWithRent, rentData.fmr, rcMarket.rcMedianRent]);
+  const allComps = tiering.tiered;
+  const compsWithRent = allComps.filter(c => c.rent !== null && c.rent > 0);
+
+  // Tier 1 (in-building) shown ungated; others gated
+  const tier1Comps = tiering.tier1;
+  const nonBuildingComps = allComps.filter(c => c.tier !== 1);
+  const nonBuildingWithRent = nonBuildingComps.filter(c => c.rent !== null && c.rent > 0);
+  const displayableNonBuilding = Math.min(nonBuildingWithRent.length, 6);
+  const visibleNonBuildingCount = Math.min(displayableNonBuilding, 3);
+  const visibleNonBuildingComps = nonBuildingComps.slice(0, visibleNonBuildingCount);
+  const gatedComps = displayableNonBuilding > visibleNonBuildingCount ? nonBuildingComps.slice(visibleNonBuildingCount) : [];
+  const gatedDisplayCount = displayableNonBuilding - visibleNonBuildingCount;
+
+  // ━━━ Fair range (weighted composite with tier overrides) ━━━
+  const fairRange = useMemo(() => {
+    const tierWeights = getTierWeights(tiering.tier1.length);
+    const tierOverride = tierWeights ? {
+      tier1Rents: tiering.tier1.filter(c => c.rent && c.rent > 0).map(c => c.rent as number),
+      otherRents: nonBuildingComps.filter(c => c.rent && c.rent > 0).map(c => c.rent as number),
+      ...tierWeights,
+    } : null;
+
+    return calculateFairRange({
+      compRents: compsWithRent.map(c => c.rent as number),
+      hudFmr: rentData.fmr,
+      zoriRent: null,
+      rcMarketMedian: rcMarket.rcMedianRent,
+      tierOverride,
+    });
+  }, [compsWithRent, rentData.fmr, rcMarket.rcMedianRent, tiering, nonBuildingComps]);
   const fairRangeLow = fairRange.rangeLow;
   const fairRangeHigh = fairRange.rangeHigh;
 
