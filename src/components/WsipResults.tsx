@@ -317,7 +317,7 @@ const WsipResults = ({
 
     const utm = getUtmParams();
     try {
-      await supabase.rpc('upsert_lead', {
+      const { error: rpcError } = await supabase.rpc('upsert_lead', {
         p_email: compEmail.trim(),
         p_analysis_id: analysisId,
         p_capture_source: 'wsip_comp_gate',
@@ -335,8 +335,9 @@ const WsipResults = ({
         p_hud_fmr_value: rentData.fmr,
         p_tool_type: 'wsip',
       } as any);
+      if (rpcError) console.error('[lead] upsert_lead failed (wsip_comp_gate):', rpcError.message);
 
-      await supabase.from('lead_events' as any).insert({
+      const { error: evtError } = await supabase.from('lead_events' as any).insert({
         email: compEmail.trim(),
         analysis_id: analysisId,
         event_type: 'wsip_comp_gate',
@@ -347,8 +348,9 @@ const WsipResults = ({
         comp_median_rent: medianCompRent ?? null,
         hud_fmr_value: rentData.fmr,
       } as any);
-    } catch {
-      // silent
+      if (evtError) console.error('[lead] lead_events insert failed (wsip_comp_gate):', evtError.message);
+    } catch (err) {
+      console.error('[lead] wsip_comp_gate unexpected error:', err);
     }
 
     onEmailCaptured(compEmail.trim());

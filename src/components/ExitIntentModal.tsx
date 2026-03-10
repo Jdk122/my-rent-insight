@@ -65,7 +65,7 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
 
     const utm = getUtmParams();
     try {
-      await supabase.rpc('upsert_lead', {
+      const { error: rpcError } = await supabase.rpc('upsert_lead', {
         p_email: email.trim(),
         p_analysis_id: leadContext?.analysisId || null,
         p_capture_source: 'exit_intent',
@@ -85,8 +85,9 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
         p_comp_median_rent: leadContext?.compMedianRent ?? null,
         p_hud_fmr_value: leadContext?.hudFmrValue ?? null,
       } as any);
+      if (rpcError) console.error('[lead] upsert_lead failed (exit_intent):', rpcError.message);
 
-      await supabase.from('lead_events' as any).insert({
+      const { error: evtError } = await supabase.from('lead_events' as any).insert({
         email: email.trim(),
         analysis_id: leadContext?.analysisId || null,
         event_type: 'exit_intent',
@@ -100,8 +101,9 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
         comp_median_rent: leadContext?.compMedianRent ?? null,
         hud_fmr_value: leadContext?.hudFmrValue ?? null,
       } as any);
-    } catch {
-      // silent
+      if (evtError) console.error('[lead] lead_events insert failed (exit_intent):', evtError.message);
+    } catch (err) {
+      console.error('[lead] exit_intent unexpected error:', err);
     }
 
     onEmailCaptured(email.trim());

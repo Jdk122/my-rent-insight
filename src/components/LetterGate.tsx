@@ -70,7 +70,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
     const verdict = verdictLabel || 'above';
 
     try {
-      const { error: dbError } = await supabase.rpc('upsert_lead', {
+      const { error: rpcError } = await supabase.rpc('upsert_lead', {
         p_email: email.trim(),
         p_analysis_id: leadContext?.analysisId || null,
         p_capture_source: 'letter_gate',
@@ -95,7 +95,10 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
         p_hud_fmr_value: leadContext?.hudFmrValue ?? null,
       } as any);
 
-      if (dbError) throw dbError;
+      if (rpcError) {
+        console.error('[lead] upsert_lead failed (letter_gate):', rpcError.message);
+        throw rpcError;
+      }
 
       if (leadContext?.analysisId) {
         await supabase.from('leads' as any).update({
@@ -103,7 +106,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
         } as any).eq('analysis_id', leadContext.analysisId);
       }
 
-      await supabase.from('lead_events' as any).insert({
+      const { error: evtError } = await supabase.from('lead_events' as any).insert({
         email: email.trim(),
         analysis_id: leadContext?.analysisId || null,
         event_type: 'letter_gate',
@@ -117,7 +120,9 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
         comp_median_rent: leadContext?.compMedianRent ?? null,
         hud_fmr_value: leadContext?.hudFmrValue ?? null,
       } as any);
-    } catch {
+      if (evtError) console.error('[lead] lead_events insert failed (letter_gate):', evtError.message);
+    } catch (err) {
+      console.error('[lead] letter_gate error:', err);
       setLoading(false);
       setError('Something went wrong. Please try again.');
       return;
