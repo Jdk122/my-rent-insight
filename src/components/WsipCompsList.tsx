@@ -8,6 +8,7 @@ interface WsipCompsListProps {
   askingRent?: number | null;
   medianCompRent: number | null;
   userSqft?: number | null;
+  sectionLabel?: string;
 }
 
 const CompRow = ({ comp, idx, offset }: { comp: RentcastComparable; idx: number; offset: number }) => {
