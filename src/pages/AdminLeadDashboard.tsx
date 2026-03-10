@@ -766,12 +766,14 @@ function DashboardContent() {
         {/* ━━━ EMAIL LISTS TAB ━━━ */}
         <TabsContent value="emails" className="space-y-6">
           {/* Source breakdown cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
             <StatCard label="Total Active Emails" value={emailLeads.filter(l => !l.unsubscribed).length} />
             <StatCard label="Unsubscribed" value={emailLeads.filter(l => l.unsubscribed).length} />
             <StatCard label="Partner Opt-In" value={emailLeads.filter(l => l.partner_opt_in && !l.unsubscribed).length} />
             <StatCard label="With Lease Date" value={emailLeads.filter(l => l.lease_expiration_month && !l.unsubscribed).length} />
-            {emailSourceCounts.slice(0, 2).map(([src, count]) => (
+            <StatCard label="🔄 Renewal Leads" value={emailLeads.filter(l => (l.tool_type || 'renewal') === 'renewal' && !l.unsubscribed).length} />
+            <StatCard label="🏠 WSIP Leads" value={emailLeads.filter(l => l.tool_type === 'wsip' && !l.unsubscribed).length} />
+            {emailSourceCounts.slice(0, 1).map(([src, count]) => (
               <StatCard key={src} label={src === 'early_capture' ? '📩 Early Capture' : src === 'letter_gate' ? '📝 Letter Gate' : src === 'lease_reminder' ? '📅 Lease Reminder' : `📧 ${src}`} value={count} />
             ))}
           </div>
