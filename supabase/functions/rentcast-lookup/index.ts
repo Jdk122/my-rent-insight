@@ -7,7 +7,8 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const CACHE_DAYS_RENT = 30;
+const CACHE_DAYS_RENT_DEFAULT = 30;
+const CACHE_DAYS_RENT_DENSE = 7;
 
 // Dense urban ZIP prefixes → 1-mile radius; everything else → 3 miles
 const DENSE_ZIP_PREFIXES = [
@@ -256,9 +257,23 @@ serve(async (req) => {
       .single();
 
     if (cached) {
+      // Dynamic TTL: check if this ZIP has dense cache (50+ entries)
+      const zipCode4cache = zip || address?.match(/\d{5}/)?.[0] || '';
+      let cacheDays = CACHE_DAYS_RENT_DEFAULT;
+      if (zipCode4cache) {
+        const { count } = await sb
+          .from('rentcast_cache')
+          .select('id', { count: 'exact', head: true })
+          .like('lookup_key', `%${zipCode4cache}%`)
+          .eq('endpoint', 'rent-estimate');
+        if (count !== null && count >= 50) {
+          cacheDays = CACHE_DAYS_RENT_DENSE;
+        }
+      }
+
       const ageMs = Date.now() - new Date(cached.fetched_at).getTime();
-      if (ageMs < CACHE_DAYS_RENT * 24 * 60 * 60 * 1000) {
-        console.log(`Cache hit for ${endpointKey}: ${lookupKey}`);
+      if (ageMs < cacheDays * 24 * 60 * 60 * 1000) {
+        console.log(`Cache hit for ${endpointKey}: ${lookupKey} (TTL: ${cacheDays}d)`);
         return new Response(
           JSON.stringify({ ...cached.response_data, cacheHit: true }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },

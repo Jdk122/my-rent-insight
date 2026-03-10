@@ -156,7 +156,8 @@ function CompsWithRentLine({
               <p className="text-xs text-muted-foreground mt-0.5">
                 {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
                 {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
-                {comp.squareFootage !== null && ` · ${fmt(comp.squareFootage)} sqft`}
+                {comp.squareFootage !== null && comp.squareFootage > 0 && ` · ${fmt(comp.squareFootage)} sqft`}
+                {comp.rent != null && comp.squareFootage != null && comp.squareFootage > 0 && ` · $${(comp.rent / comp.squareFootage).toFixed(2)}/sqft`}
                 {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
                 {matchLabel(comp.correlation) && (
                   <span className={`ml-1 ${matchColor(comp.correlation)}`}> · {matchLabel(comp.correlation)}</span>

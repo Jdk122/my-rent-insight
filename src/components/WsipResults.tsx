@@ -109,7 +109,8 @@ const WsipResults = ({
   const bldg = useMemo(() => getBuildingRange(
     outlierResult?.filtered ?? cleanedComps,
     fullAddress,
-  ), [outlierResult, cleanedComps, fullAddress]);
+    bedroomNum,
+  ), [outlierResult, cleanedComps, fullAddress, bedroomNum]);
 
   const tier1Comps = tiering.tier1;
   const hasBuilding = bldg.hasBuildingData && tier1Comps.length >= 2;
@@ -144,7 +145,8 @@ const WsipResults = ({
     }
 
     if (bldg.hasBuildingData) {
-      const { buildingLow: bLow, buildingHigh: bHigh } = bldg;
+      const { buildingLow: bLow, buildingHigh: bHigh, bedroomFilterLabel } = bldg;
+      const unitDesc = bedroomFilterLabel ? `${bedroomFilterLabel} units` : 'units';
       let v: Verdict;
       let headline: string;
       let subtitle: string;
@@ -152,15 +154,15 @@ const WsipResults = ({
       if (askingRent <= bLow) {
         v = 'below';
         headline = "That's a good deal.";
-        subtitle = `This is below what other units in this building rent for ($${fmt(bLow)} – $${fmt(bHigh)}).`;
+        subtitle = `This is below what other ${unitDesc} in this building rent for ($${fmt(bLow)} – $${fmt(bHigh)}).`;
       } else if (askingRent <= bHigh) {
         v = 'in-range';
         headline = "That's fair for this building.";
-        subtitle = `Other units here rent for $${fmt(bLow)} – $${fmt(bHigh)}. The asking price of $${fmt(askingRent)} is within this range.`;
+        subtitle = `Other ${unitDesc} here rent for $${fmt(bLow)} – $${fmt(bHigh)}. The asking price of $${fmt(askingRent)} is within this range.`;
       } else if (askingRent <= bHigh * 1.10) {
         v = 'in-range';
         headline = "Slightly above this building's range.";
-        subtitle = `Other units here rent for $${fmt(bLow)} – $${fmt(bHigh)}. The asking price of $${fmt(askingRent)} is slightly above — worth negotiating.`;
+        subtitle = `Other ${unitDesc} here rent for $${fmt(bLow)} – $${fmt(bHigh)}. The asking price of $${fmt(askingRent)} is slightly above — worth negotiating.`;
       } else {
         v = 'above';
         headline = "That's overpriced.";
@@ -397,7 +399,7 @@ const WsipResults = ({
             {/* Building context line */}
             {bldg.hasBuildingData && (
               <p className="text-[13px] sm:text-[15px] font-medium text-verdict-good mb-1">
-                Other units in this building rent for ${fmt(bldg.buildingLow)}
+                Other {bldg.bedroomFilterLabel ? `${bldg.bedroomFilterLabel} ` : ''}units in this building rent for ${fmt(bldg.buildingLow)}
                 {bldg.buildingLow !== bldg.buildingHigh && ` – $${fmt(bldg.buildingHigh)}`}/month
               </p>
             )}

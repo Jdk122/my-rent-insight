@@ -141,10 +141,24 @@ export interface OutlierResult {
   median: number | null;
 }
 
-function correlationWeightedMedian(comps: RentcastComparable[]): number | null {
-  const valid = comps.filter(c => c.rent != null && c.rent > 0);
+export function correlationWeightedMedian(
+  comps: RentcastComparable[],
+  subjectSqft?: number | null,
+): number | null {
+  let valid = comps.filter(c => c.rent != null && c.rent > 0);
   if (valid.length === 0) return null;
   if (valid.length === 1) return valid[0].rent!;
+
+  // When subject sqft is known and enough comps have sqft, filter to ±25%
+  if (subjectSqft && subjectSqft > 0) {
+    const sqftFiltered = valid.filter(
+      c => c.squareFootage != null && c.squareFootage > 0 &&
+        Math.abs(c.squareFootage - subjectSqft) / subjectSqft <= 0.25,
+    );
+    if (sqftFiltered.length >= 3) {
+      valid = sqftFiltered;
+    }
+  }
 
   const sorted = [...valid].sort((a, b) => a.rent! - b.rent!);
   const totalWeight = sorted.reduce((sum, c) => sum + (c.correlation ?? 1), 0);
@@ -158,7 +172,7 @@ function correlationWeightedMedian(comps: RentcastComparable[]): number | null {
   return sorted[sorted.length - 1].rent!;
 }
 
-export function detectOutliers(comps: RentcastComparable[]): OutlierResult {
+export function detectOutliers(comps: RentcastComparable[], subjectSqft?: number | null): OutlierResult {
   // Step 1: Distance filter (<=3 miles), fallback to all if none pass
   const nearbyComps = comps.filter(c => c.distance === null || c.distance <= 3);
   const workingComps = nearbyComps.length > 0 ? nearbyComps : comps;
@@ -167,7 +181,7 @@ export function detectOutliers(comps: RentcastComparable[]): OutlierResult {
 
   if (withRent.length < 5) {
     // Not enough data for outlier detection — use all, but with correlation-weighted median
-    const median = correlationWeightedMedian(withRent);
+    const median = correlationWeightedMedian(withRent, subjectSqft);
     return { filtered: withRent, outliers: [], median };
   }
 
@@ -192,7 +206,7 @@ export function detectOutliers(comps: RentcastComparable[]): OutlierResult {
   }
 
   // Step 2: Correlation-weighted median instead of simple median
-  const median = correlationWeightedMedian(filtered);
+  const median = correlationWeightedMedian(filtered, subjectSqft);
 
   return { filtered, outliers, median };
 }

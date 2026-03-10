@@ -228,6 +228,13 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
   else if (cc >= 1) { compMax = 10; rateMax = 55; }
   else { compMax = 0; rateMax = 65; }
 
+  // Premium rent tier: when currentRent > 2× FMR, comps are less reliable
+  if (validatedInput.currentRent > validatedInput.fmr * 2.0 && compMax > 0) {
+    const compReduction = Math.min(compMax, 10);
+    compMax -= compReduction;
+    rateMax += compReduction;
+  }
+
   const components = [
     scoreRateVsTrend(validatedInput.increasePct, validatedInput.marketYoY, validatedInput.alYoY, rateMax, validatedInput.compositeTrend),
     scoreVsComps(validatedInput.proposedRent, validatedInput.compMedian, compMax),
