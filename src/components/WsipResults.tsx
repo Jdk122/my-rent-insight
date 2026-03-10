@@ -424,6 +424,12 @@ Happy to discuss — thank you.`;
   const rangeHighPct = ((barHigh - rangeBarMin) / rangeSpan) * 100;
   const askingPct = askingRent ? Math.min(100, Math.max(0, ((askingRent - rangeBarMin) / rangeSpan) * 100)) : null;
 
+  // Verdict-adaptive gate CTA
+  const gateCtaText = !askingRent ? 'Unlock all comps →'
+    : verdict === 'above' ? 'Unlock comps + negotiation tips →'
+    : verdict === 'below' ? 'Unlock comps + how to lock this in →'
+    : 'Unlock comps + application tips →';
+
   const handleResultsShared = useCallback(() => {
     supabase.from('analyses' as any).update({ results_shared: true } as any).eq('id', analysisId).then(() => {});
   }, [analysisId]);
