@@ -8,6 +8,7 @@ interface WsipCompsListProps {
   askingRent?: number | null;
   medianCompRent: number | null;
   userSqft?: number | null;
+  sectionLabel?: string;
 }
 
 const CompRow = ({ comp, idx, offset }: { comp: RentcastComparable; idx: number; offset: number }) => {
@@ -50,12 +51,12 @@ const CompRow = ({ comp, idx, offset }: { comp: RentcastComparable; idx: number;
   );
 };
 
-const WsipCompsList = ({ comparables, askingRent, medianCompRent, userSqft }: WsipCompsListProps) => {
+const WsipCompsList = ({ comparables, askingRent, medianCompRent, userSqft, sectionLabel }: WsipCompsListProps) => {
   if (comparables.length === 0) return null;
 
-  // Split into same-building vs nearby
-  const inBuilding = comparables.filter(c => c.isSameBuilding);
-  const nearby = comparables.filter(c => !c.isSameBuilding);
+  // Split into same-building vs nearby (legacy flag-based)
+  const inBuilding = sectionLabel ? [] : comparables.filter(c => c.isSameBuilding);
+  const nearby = sectionLabel ? comparables : comparables.filter(c => !c.isSameBuilding);
 
   // Calculate avg $/sqft across comps with sqft data
   const compsWithSqft = comparables.filter(c => c.rent && c.squareFootage && c.squareFootage > 0);
@@ -70,7 +71,17 @@ const WsipCompsList = ({ comparables, askingRent, medianCompRent, userSqft }: Ws
 
   return (
     <div className="space-y-1">
-      {/* Same-building comps */}
+      {/* Section label when provided externally */}
+      {sectionLabel && (
+        <div className="flex items-center gap-2 px-4 mb-1.5">
+          <span className={`text-[11px] font-semibold uppercase tracking-wider ${
+            sectionLabel === 'In this building' ? 'text-verdict-good' : 'text-muted-foreground'
+          }`}>{sectionLabel}</span>
+          <span className={`flex-1 h-px ${sectionLabel === 'In this building' ? 'bg-verdict-good/20' : 'bg-border/50'}`} />
+        </div>
+      )}
+
+      {/* Same-building comps (legacy path) */}
       {inBuilding.length > 0 && (
         <div className="mb-3">
           <div className="flex items-center gap-2 px-4 mb-1.5">
