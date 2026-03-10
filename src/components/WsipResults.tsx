@@ -248,10 +248,10 @@ const WsipResults = ({
       { id: 'section-market', label: 'Market' },
     ];
     if (compsWithRent.length > 0) sections.push({ id: 'section-comps', label: 'Comps' });
-    if (askingRent && verdict === 'above') sections.push({ id: 'section-playbook', label: 'Negotiate' });
+    if (askingRent) sections.push({ id: 'section-nextsteps', label: 'Next Steps' });
     sections.push({ id: 'section-share', label: 'Share' });
     return sections;
-  }, [compsWithRent.length, askingRent, verdict]);
+  }, [compsWithRent.length, askingRent]);
 
   // ━━━ Analytics ━━━
   useEffect(() => {
