@@ -184,6 +184,8 @@ const cityNameAliases: Record<string, string> = {
   'Hoboken': 'Hoboken',
   'Jersey City': 'Jersey City',
   'Washington': 'Washington',
+  'Oakland': 'Oakland',
+  'Berkeley': 'Berkeley',
 };
 
 function normalizeCityName(city: string): string | undefined {
