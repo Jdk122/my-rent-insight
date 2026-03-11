@@ -48,6 +48,7 @@ interface NegotiationLetterProps {
   maxCompDistance?: number | null;
   momentumDirection?: string | null;
   letterTone?: 'aggressive' | 'collaborative' | 'strategic';
+  belowFmrHighIncrease?: boolean;
   onLetterGenerated?: () => void;
   comparables?: CompForLetter[];
 }
@@ -319,6 +320,7 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
     f50Value: f50Value ?? null,
     momentumDirection: momentumDirection ?? null,
     letterTone,
+    belowFmrHighIncrease: props.belowFmrHighIncrease ?? false,
     ...(compSummary ? { compSummary } : {}),
   }), [currentRent, newRent, increasePct, increaseAmt, bedroomNum, zip,
     fairnessScore, tierLabel, compMedian, compCount, maxCompDistance, marketYoy, trendSource, trendArea,

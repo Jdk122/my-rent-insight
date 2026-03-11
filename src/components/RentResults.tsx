@@ -1279,9 +1279,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   tierLabel={fairnessScore?.tierLabel ?? null}
                   maxCompDistance={compRadius.maxDistance}
                   momentumDirection={rentData.zillowDirection || (rentData.hvd ? rentData.hvd : null)}
-                  letterTone={isAboveMarket ? 'aggressive' : isFair ? 'collaborative' : 'strategic'}
+                  letterTone={isAboveMarket ? 'aggressive' : (isBelowFmrHighIncrease ? 'aggressive' : isFair ? 'collaborative' : 'strategic')}
                   onLetterGenerated={handleLetterGenerated}
                   comparables={rentcast.data?.comparables}
+                  belowFmrHighIncrease={isBelowFmrHighIncrease}
                 />
               </motion.section>
             )}
