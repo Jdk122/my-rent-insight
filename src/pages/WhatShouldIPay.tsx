@@ -105,6 +105,7 @@ const WhatShouldIPay = () => {
         bedrooms: data.bedrooms,
         askingRent: data.askingRent,
         rentData,
+        propertyData: propResult ?? null,
       });
 
       trackEvent('wsip_form_submitted', { zip, bedrooms: data.bedrooms, has_asking_rent: !!data.askingRent });
