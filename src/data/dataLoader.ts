@@ -557,8 +557,9 @@ export function getCounterOffer(
   marketYoY: number,
   buildingMedian?: number | null,
   compMedian?: number | null,
+  sameLineMedian?: number | null,
 ) {
-  if (marketYoY <= 0 && buildingMedian == null && compMedian == null) {
+  if (marketYoY <= 0 && buildingMedian == null && compMedian == null && sameLineMedian == null) {
     return {
       counterLow: currentRent,
       counterHigh: currentRent,
@@ -567,14 +568,33 @@ export function getCounterOffer(
     };
   }
 
-  // Determine anchor rent from comps/building data
-  const anchor = buildingMedian ?? compMedian ?? currentRent;
+  // Determine anchor rent: same-line > building (non-premium) > comps > current
+  let anchor: number;
+  let useMinStrategy = true; // min(trend, anchor) for non-premium anchors
+
+  if (sameLineMedian != null && sameLineMedian > 0) {
+    anchor = sameLineMedian;
+  } else if (buildingMedian != null && buildingMedian > 0) {
+    const isPremium = currentRent > buildingMedian * 1.20;
+    if (isPremium) {
+      // Premium unit: don't anchor to building median — this unit legitimately costs more
+      anchor = currentRent;
+      useMinStrategy = false;
+    } else {
+      anchor = buildingMedian;
+    }
+  } else if (compMedian != null && compMedian > 0) {
+    anchor = compMedian;
+  } else {
+    anchor = currentRent;
+    useMinStrategy = false;
+  }
 
   const counterPct = Math.max(marketYoY, 0);
   const trendBased = Math.round((currentRent * (1 + counterPct / 100)) / 25) * 25;
 
-  // Pick whichever is lower — renter wants the best deal
-  let counterLow = Math.min(anchor, trendBased);
+  // Pick whichever is lower for non-premium anchors; trend-only for premium/fallback
+  let counterLow = useMinStrategy ? Math.min(anchor, trendBased) : trendBased;
 
   // Floor: don't suggest more than 15% reduction
   const floor = Math.round(currentRent * 0.85);

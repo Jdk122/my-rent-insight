@@ -62,17 +62,21 @@ function scoreRateVsTrend(increasePct: number, marketYoY: number, alYoY?: number
 }
 
 // Component 2: Proposed Rent vs Comp Median (30 pts base)
-function scoreVsComps(proposedRent: number, compMedian: number | null, maxPts: number = 30, buildingMedian?: number | null, buildingCompCount?: number | null): ScoreComponent {
+function scoreVsComps(proposedRent: number, compMedian: number | null, maxPts: number = 30, buildingMedian?: number | null, buildingCompCount?: number | null, sameLineMedian?: number | null, currentRent?: number | null): ScoreComponent {
   if (maxPts === 0) {
     return { id: 'comps', label: 'Rent vs. Nearby Listings', score: 0, max: 0, estimated: true };
   }
 
-  // Determine effective reference rent: building > blended > area comps
+  // Determine effective reference rent: same-line > building (non-premium) > blended > area comps
   let effectiveMedian: number | null = compMedian;
   let label = 'Rent vs. Nearby Listings';
   const bcc = buildingCompCount ?? 0;
+  const isPremium = buildingMedian != null && buildingMedian > 0 && currentRent != null && currentRent > buildingMedian * 1.20;
 
-  if (buildingMedian != null && buildingMedian > 0) {
+  if (sameLineMedian != null && sameLineMedian > 0) {
+    effectiveMedian = sameLineMedian;
+    label = 'Rent vs. Same Unit Line';
+  } else if (buildingMedian != null && buildingMedian > 0 && !isPremium) {
     if (bcc >= 3) {
       effectiveMedian = buildingMedian;
       label = 'Rent vs. Your Building';
@@ -85,6 +89,7 @@ function scoreVsComps(proposedRent: number, compMedian: number | null, maxPts: n
     }
     // bcc < 2: ignore building data, use compMedian as-is
   }
+  // For premium units, skip building data entirely → use compMedian (area-level)
 
   if (effectiveMedian === null) {
     return { id: 'comps', label, score: Math.round((18 / 30) * maxPts), max: maxPts, estimated: true };
