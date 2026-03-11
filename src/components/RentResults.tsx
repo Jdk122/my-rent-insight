@@ -975,26 +975,26 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       </span>
                     </div>
                   )}
-                  {isAboveMarket && calc && !calc.counterExceedsProposed && (
+                  {isAboveMarket && counterOffer && !counterExceedsProposed && (
                     <>
                       <div className="context-row-highlight mt-2">
                         <span className="context-label">Fair counter-offer</span>
                         <span className="context-value text-verdict-good font-bold">
-                          {calc.counterLow === calc.counterHigh
-                            ? `$${fmt(calc.counterLow)}/mo`
-                            : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}/mo`}
+                          {counterOffer.counterLow === counterOffer.counterHigh
+                            ? `$${fmt(counterOffer.counterLow)}/mo`
+                            : `$${fmt(counterOffer.counterLow)}–$${fmt(counterOffer.counterHigh)}/mo`}
                         </span>
                       </div>
-                      {medianCompRent && calc.counterLow > medianCompRent && (
+                      {medianCompRent && counterOffer.counterLow > medianCompRent && (
                         <div className="mt-2 px-3 py-2 rounded-md bg-accent/50 border border-border/50">
                           <p className="text-[11px] text-muted-foreground leading-relaxed">
-                            Note: Your counter range (${fmt(calc.counterLow)}–${fmt(calc.counterHigh)}) is above the area median of ${fmt(medianCompRent)} for similar units. You may have additional negotiating room.
+                            Note: Your counter range (${fmt(counterOffer.counterLow)}–${fmt(counterOffer.counterHigh)}) is above the area median of ${fmt(medianCompRent)} for similar units. You may have additional negotiating room.
                           </p>
                         </div>
                       )}
                     </>
                   )}
-                  {isAboveMarket && calc?.counterExceedsProposed && (
+                  {isAboveMarket && counterExceedsProposed && (
                     <div className="mt-2 px-3 py-2.5 rounded-md bg-verdict-good/10 border border-verdict-good/20">
                       <p className="text-[12px] text-muted-foreground leading-relaxed">
                         Based on market data, your proposed rent appears to be in line with or below current market trends.
