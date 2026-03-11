@@ -3,12 +3,17 @@ import { useEffect } from "react";
 import SEO from "@/components/SEO";
 import SEOFooter from "@/components/SEOFooter";
 import PageNav from "@/components/PageNav";
+import { trackEvent } from "@/lib/analytics";
 
 const NotFound = () => {
   const location = useLocation();
 
   useEffect(() => {
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
+    trackEvent('page_not_found', {
+      path: location.pathname,
+      referrer: document.referrer || 'direct',
+    });
   }, [location.pathname]);
 
   return (

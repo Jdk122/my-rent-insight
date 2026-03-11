@@ -1,12 +1,14 @@
 // Capture UTM parameters from URL on first load and persist in sessionStorage.
 
-const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign'] as const;
+const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'] as const;
 const STORAGE_KEY = 'rr_utm';
 
 export interface UtmParams {
   utm_source?: string;
   utm_medium?: string;
   utm_campaign?: string;
+  utm_content?: string;
+  utm_term?: string;
 }
 
 export function captureUtmParams(): void {

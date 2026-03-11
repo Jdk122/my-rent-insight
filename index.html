@@ -120,6 +120,15 @@
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
+
+      // Consent Mode v2 — deny by default, grant on consent
+      gtag('consent', 'default', {
+        'analytics_storage': 'denied',
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+      });
+
       gtag('js', new Date());
       // Defer loading the GA4 script until after first paint
       if (typeof requestIdleCallback === 'function') {
