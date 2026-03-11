@@ -325,13 +325,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       ? (newRent > medianCompRent ? 'above' : 'below')
       : hasEnoughComps === false ? 'insufficient' : null;
 
-    const showCounter = calc && !calc.counterExceedsProposed;
+    const showCounter = counterOffer && !counterExceedsProposed;
     const counterStr = showCounter
-      ? (calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}`)
+      ? (counterOffer.counterLow === counterOffer.counterHigh ? `$${fmt(counterOffer.counterLow)}` : `$${fmt(counterOffer.counterLow)}–$${fmt(counterOffer.counterHigh)}`)
       : null;
 
     const dollarOverpayment = hasIncrease && showCounter
-      ? Math.max(0, Math.round(newRent - calc.counterLow))
+      ? Math.max(0, Math.round(newRent - counterOffer.counterLow))
       : 0;
 
     const utm = getUtmParams();
