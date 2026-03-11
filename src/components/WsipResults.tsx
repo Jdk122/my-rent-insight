@@ -179,7 +179,7 @@ const WsipResults = ({
 
     const v: Verdict = askingRent < fairRangeLow ? 'below' : askingRent > fairRangeHigh ? 'above' : 'in-range';
     return { verdict: v, verdictHeadline: null, verdictSubtitle: null, savings: v === 'above' ? askingRent - fairRangeHigh : null };
-  }, [askingRent, bldg, fairRangeLow, fairRangeHigh, isPremiumWsip]);
+  }, [askingRent, bldg, fairRangeLow, fairRangeHigh]);
 
   const verdictLabel = verdict === 'above' ? 'above' : verdict === 'below' ? 'below' : verdict === 'in-range' ? 'fair' : 'none';
 
