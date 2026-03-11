@@ -46,7 +46,7 @@ const WhatShouldIPay = () => {
     const demo = searchParams.get('demo');
     const demoData = getWsipDemoData(demo);
     if (demoData && !results) {
-      setResults(demoData);
+      setResults({ ...demoData, propertyData: null });
     }
   }, [searchParams]);
 
