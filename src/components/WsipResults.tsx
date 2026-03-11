@@ -386,6 +386,7 @@ const WsipResults = ({
         zip={zip}
         city={city}
         onEmailCaptured={onEmailCaptured}
+        toolType="wsip"
       />
 
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

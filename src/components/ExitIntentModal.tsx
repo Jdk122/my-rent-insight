@@ -15,11 +15,12 @@ interface ExitIntentModalProps {
   zip: string;
   city: string;
   onEmailCaptured: (email: string) => void;
+  toolType?: 'renewal' | 'wsip';
 }
 
 const SESSION_KEY = 'rr_exit_intent_shown';
 
-const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, onEmailCaptured }: ExitIntentModalProps) => {
+const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, onEmailCaptured, toolType = 'renewal' }: ExitIntentModalProps) => {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
@@ -121,24 +122,28 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
       state: leadContext?.state,
       zip: leadContext?.zip || zip,
       bedrooms: leadContext?.bedrooms,
-      toolType: 'renewal',
+      toolType: toolType === 'wsip' ? 'wsip' : 'renewal',
       fairnessScore: leadContext?.fairnessScore,
       verdictLabel,
     });
   };
 
   const handleShare = (method: string) => {
-    const url = 'https://www.renewalreply.com';
-    const text = 'Check if your rent increase is fair — most renters overpay $50-150/mo.';
+    const isWsip = toolType === 'wsip';
+    const url = isWsip ? 'https://www.renewalreply.com/what-should-i-pay' : 'https://www.renewalreply.com';
+    const text = isWsip
+      ? 'Check if that apartment listing is fairly priced — most are $100-300/mo above market.'
+      : 'Check if your rent increase is fair — most renters overpay $50-150/mo.';
+    const subject = isWsip ? 'Is that apartment fairly priced?' : 'Is your rent increase fair?';
     if (method === 'text') {
       window.open(`sms:?body=${encodeURIComponent(text + ' ' + url)}`, '_blank');
     } else if (method === 'email') {
-      window.open(`mailto:?subject=${encodeURIComponent('Is your rent increase fair?')}&body=${encodeURIComponent(text + '\n\n' + url)}`, '_blank');
+      window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text + '\n\n' + url)}`, '_blank');
     } else if (method === 'copy') {
       navigator.clipboard.writeText(url);
       toast.success('Link copied!');
     }
-    trackEvent('share_clicked', { method, source: 'exit_intent' });
+    trackEvent('share_clicked', { method, source: 'exit_intent', tool_type: toolType });
     setOpen(false);
   };
 
@@ -158,8 +163,16 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
         {capturedEmail ? (
           // Share prompt
           <div className="text-center space-y-4">
-            <h3 className="font-display text-lg font-semibold text-foreground">Know someone dealing with a rent increase?</h3>
-            <p className="text-sm text-muted-foreground">Share this tool — most renters overpay $50-150/mo.</p>
+            <h3 className="font-display text-lg font-semibold text-foreground">
+              {toolType === 'wsip'
+                ? 'Know anyone else browsing apartments?'
+                : 'Know someone dealing with a rent increase?'}
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {toolType === 'wsip'
+                ? 'Share this tool — most listings are $100-300/mo above market.'
+                : 'Share this tool — most renters overpay $50-150/mo.'}
+            </p>
             <div className="flex flex-col gap-2 max-w-[280px] mx-auto">
               <button onClick={() => handleShare('text')} className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors">
                 <MessageCircle className="w-4 h-4" /> Share via Text
@@ -175,8 +188,16 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
         ) : (
           // Email capture
           <div className="text-center space-y-4">
-            <h3 className="font-display text-lg font-semibold text-foreground">Don't negotiate without your data.</h3>
-            <p className="text-sm text-muted-foreground">We'll email your full analysis and negotiation letter so you have it when you're ready.</p>
+            <h3 className="font-display text-lg font-semibold text-foreground">
+              {toolType === 'wsip'
+                ? 'Don\'t sign a lease without the data.'
+                : 'Don\'t negotiate without your data.'}
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {toolType === 'wsip'
+                ? 'We\'ll email your full market comparison so you have it when you tour.'
+                : 'We\'ll email your full analysis and negotiation letter so you have it when you\'re ready.'}
+            </p>
             <form onSubmit={handleSubmit} className="space-y-2">
               <div className="flex gap-2">
                 <input
