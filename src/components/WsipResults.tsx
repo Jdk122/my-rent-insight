@@ -94,8 +94,8 @@ const WsipResults = ({
 
   const outlierResult = useMemo(() => {
     if (cleanedComps.length === 0) return null;
-    return detectOutliers(cleanedComps);
-  }, [cleanedComps]);
+    return detectOutliers(cleanedComps, propertyData?.squareFootage ?? undefined);
+  }, [cleanedComps, propertyData?.squareFootage]);
 
   const medianCompRent = useMemo<number | null>(() => {
     if (outlierResult && outlierResult.filtered.length >= 2) return outlierResult.median;
