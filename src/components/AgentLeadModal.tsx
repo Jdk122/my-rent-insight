@@ -146,6 +146,7 @@ const AgentLeadModal = ({
                           required
                           value={email}
                           onChange={e => setEmail(e.target.value)}
+                          autoComplete="email"
                           className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow"
                           placeholder="you@email.com"
                         />
