@@ -266,6 +266,7 @@ const WhatShouldIPay = () => {
               bedrooms={results.bedrooms}
               askingRent={results.askingRent}
               rentData={results.rentData}
+              propertyData={results.propertyData}
               capturedEmail={capturedEmail}
               onEmailCaptured={setCapturedEmail}
               onReset={resetAll}
