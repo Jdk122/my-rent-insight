@@ -157,6 +157,7 @@ const AgentLeadModal = ({
                           type="tel"
                           value={phone}
                           onChange={e => setPhone(e.target.value)}
+                          autoComplete="tel"
                           className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow"
                           placeholder="(555) 123-4567"
                         />
