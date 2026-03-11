@@ -143,12 +143,19 @@ const WsipResults = ({
   // ━━━ Verdict ━━━
   type Verdict = 'below' | 'in-range' | 'above' | null;
 
+  // Premium unit detection — must be before verdict
+  const isPremiumWsip = bldg.hasBuildingData &&
+    bldg.buildingMedian > 0 &&
+    askingRent !== null &&
+    askingRent > bldg.buildingMedian * 1.20;
+
   const { verdict, verdictHeadline, verdictSubtitle, savings } = useMemo(() => {
     if (!askingRent) {
       return { verdict: null as Verdict, verdictHeadline: null, verdictSubtitle: null, savings: null };
     }
 
-    if (bldg.hasBuildingData) {
+    // Use building data for verdict ONLY for non-premium units
+    if (bldg.hasBuildingData && !isPremiumWsip) {
       const { buildingLow: bLow, buildingHigh: bHigh, bedroomFilterLabel } = bldg;
       const unitDesc = bedroomFilterLabel ? `${bedroomFilterLabel} units` : 'units';
       let v: Verdict;
@@ -179,7 +186,7 @@ const WsipResults = ({
 
     const v: Verdict = askingRent < fairRangeLow ? 'below' : askingRent > fairRangeHigh ? 'above' : 'in-range';
     return { verdict: v, verdictHeadline: null, verdictSubtitle: null, savings: v === 'above' ? askingRent - fairRangeHigh : null };
-  }, [askingRent, bldg, fairRangeLow, fairRangeHigh]);
+  }, [askingRent, bldg, fairRangeLow, fairRangeHigh, isPremiumWsip]);
 
   const verdictLabel = verdict === 'above' ? 'above' : verdict === 'below' ? 'below' : verdict === 'in-range' ? 'fair' : 'none';
 
