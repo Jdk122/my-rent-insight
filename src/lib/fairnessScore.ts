@@ -20,6 +20,7 @@ export interface FairnessScoreInput {
   compositeTrend?: number | null;  // From calculateCompositeTrend (preferred for Component 1)
   buildingMedian?: number | null;  // Median rent of same-building comps
   buildingCompCount?: number | null; // Number of same-building comps with rent data
+  sameLineMedian?: number | null;  // Median rent of same-unit-line comps
 }
 
 // Tooltip explainer for the FMR/Increase Reasonableness component
