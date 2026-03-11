@@ -26,13 +26,17 @@ function emailFooter(cityLabel: string, unsubUrl: string) {
 }
 
 function buildRenewalHtml(data: any) {
-  const { city, state, zip, bedrooms, fairness_score, verdict_label } = data;
+  const { city, state, zip, bedrooms, fairness_score, verdict_label, report_url } = data;
   const cityLabel = city && state ? `${city}, ${state}` : zip ? `ZIP ${zip}` : "your area";
-  const reportUrl = `${BASE_URL}/?zip=${zip || ""}&bedrooms=${bedrooms || ""}`;
+  const reportUrl = report_url || `${BASE_URL}/?zip=${zip || ""}&bedrooms=${bedrooms || ""}`;
   const unsubUrl = `${BASE_URL}/outcome?result=unsubscribe&id=`;
 
   const scoreLine = fairness_score != null
     ? `<p style="font-family:'DM Serif Display',Georgia,serif;font-size:18px;font-weight:700;color:#1b1f27;margin:16px 0 4px;">Your Fairness Score: ${fairness_score}/100 — ${verdict_label || "See report"}</p>`
+    : "";
+
+  const persistentNote = report_url
+    ? `<p style="font-size:14px;color:#6b7280;margin-top:20px;line-height:1.6;">This link is your permanent report — you can access it anytime, even from a different device.</p>`
     : "";
 
   return `
@@ -46,20 +50,22 @@ function buildRenewalHtml(data: any) {
       <a href="${reportUrl}" style="display:inline-block;padding:14px 24px;background:#168eca;color:#fff;border-radius:8px;text-decoration:none;font-size:15px;font-weight:600;">
         View your full report →
       </a>
-      <p style="font-size:14px;color:#6b7280;margin-top:20px;line-height:1.6;">
-        💡 <strong>Tip:</strong> Bookmark your results page so you can reference it during your negotiation.
-      </p>
+      ${persistentNote}
       ${emailFooter(cityLabel, unsubUrl)}
     </div>
   `;
 }
 
 function buildWsipHtml(data: any) {
-  const { city, state, zip, bedrooms } = data;
+  const { city, state, zip, bedrooms, report_url } = data;
   const cityLabel = city && state ? `${city}, ${state}` : zip ? `ZIP ${zip}` : "your area";
-  const reportUrl = `${BASE_URL}/what-should-i-pay?zip=${zip || ""}&bedrooms=${bedrooms || ""}`;
+  const reportUrl = report_url || `${BASE_URL}/what-should-i-pay?zip=${zip || ""}&bedrooms=${bedrooms || ""}`;
   const renewalUrl = BASE_URL;
   const unsubUrl = `${BASE_URL}/outcome?result=unsubscribe&id=`;
+
+  const persistentNote = report_url
+    ? `<p style="font-size:14px;color:#6b7280;margin-top:20px;line-height:1.6;">This link is your permanent report — you can access it anytime, even from a different device.</p>`
+    : "";
 
   return `
     <div style="font-family:'DM Sans',Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
@@ -71,6 +77,7 @@ function buildWsipHtml(data: any) {
       <a href="${reportUrl}" style="display:inline-block;padding:14px 24px;background:#168eca;color:#fff;border-radius:8px;text-decoration:none;font-size:15px;font-weight:600;">
         View your full report →
       </a>
+      ${persistentNote}
       <p style="font-size:14px;color:#6b7280;margin-top:20px;line-height:1.6;">
         Already have a lease? <a href="${renewalUrl}" style="color:#168eca;text-decoration:underline;">Check if your next rent increase is fair →</a>
       </p>
@@ -94,7 +101,7 @@ Deno.serve(async (req) => {
 
   try {
     const data = await req.json();
-    const { email, city, state, zip, bedrooms, tool_type, fairness_score, verdict_label } = data;
+    const { email, city, state, zip, bedrooms, tool_type, fairness_score, verdict_label, report_url } = data;
 
     if (!email) {
       return new Response(

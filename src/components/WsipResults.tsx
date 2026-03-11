@@ -402,6 +402,8 @@ const WsipResults = ({
         city={city}
         onEmailCaptured={onEmailCaptured}
         toolType="wsip"
+        shareReportPayload={shareReportPayload}
+        onReportGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
       />
 
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -645,6 +647,8 @@ const WsipResults = ({
               city={city}
               onEmailCaptured={onEmailCaptured}
               prefilledEmail={capturedEmail}
+              shareReportPayload={shareReportPayload}
+              onReportGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
             />
           </section>
         )}

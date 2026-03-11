@@ -9,6 +9,7 @@ interface ConfirmationEmailParams {
   toolType: 'renewal' | 'wsip';
   fairnessScore?: number | null;
   verdictLabel?: string | null;
+  reportUrl?: string | null;
 }
 
 export async function sendConfirmationEmail(params: ConfirmationEmailParams) {
@@ -23,6 +24,7 @@ export async function sendConfirmationEmail(params: ConfirmationEmailParams) {
         tool_type: params.toolType,
         fairness_score: params.fairnessScore ?? null,
         verdict_label: params.verdictLabel || null,
+        report_url: params.reportUrl || null,
       },
     });
   } catch (err) {
