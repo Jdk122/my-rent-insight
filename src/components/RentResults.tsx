@@ -211,7 +211,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       buildingMedian: bldg.hasBuildingData ? bldg.buildingMedian : null,
       buildingCompCount: bldg.hasBuildingData ? bldg.buildingComps.length : null,
     });
-  }, [hasIncrease, asyncDataReady, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings, compositeTrendResult]);
+  }, [hasIncrease, asyncDataReady, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings, compositeTrendResult, bldg]);
 
   const refinedVerdict = useMemo(() => {
     if (!fairnessScore) return null;
