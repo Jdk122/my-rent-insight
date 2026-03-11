@@ -210,11 +210,23 @@ const WsipResults = ({
     hasCensus: rentData.censusMedianRent !== null,
   }), [outlierResult, compRadius, rentData]);
 
-  // ━━━ Rent control cap ━━━
+  // ━━━ Rent control cap + building eligibility ━━━
   const rentControlCap = useMemo(() => {
     const result = getRentControlByStateCity(rentData.state, rentData.city);
     return getApplicableCap(result);
   }, [rentData.state, rentData.city]);
+
+  const buildingEligibility = useMemo(() => {
+    if (!rentControlCap) return 'unknown' as const;
+    return checkBuildingEligibility(rentControlCap, propertyData ? {
+      yearBuilt: propertyData.yearBuilt ?? null,
+      units: propertyData.units ?? null,
+      propertyType: propertyData.propertyType ?? null,
+    } : null);
+  }, [rentControlCap, propertyData]);
+
+  // ━━━ Contextual flags ━━━
+  const utilityNote = useMemo(() => getUtilityNote(propertyData, rentData.state), [propertyData, rentData.state]);
 
   // ━━━ Market editorial ━━━
   const marketEditorial = useMemo(() => {
