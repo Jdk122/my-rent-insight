@@ -505,7 +505,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     reportData: {
       city: rentData.city, state: rentData.state, newRent, increasePct, marketYoy,
       fmr: rentData.fmr, verdict: calc?.verdict || '',
-      counterLow: calc?.counterLow ?? null, counterHigh: calc?.counterHigh ?? null,
+      counterLow: counterOffer?.counterLow ?? null, counterHigh: counterOffer?.counterHigh ?? null,
       censusMedianRent: rentData.censusMedianRent, medianIncome: rentData.medianIncome,
       bedroomLabel: bedroomLabels[formData.bedrooms],
       zillowMonthly: rentData.zillowMonthly, zillowDirection: rentData.zillowDirection,
