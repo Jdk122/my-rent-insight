@@ -143,19 +143,12 @@ const WsipResults = ({
   // ━━━ Verdict ━━━
   type Verdict = 'below' | 'in-range' | 'above' | null;
 
-  // Premium unit detection — must be before verdict
-  const isPremiumWsip = bldg.hasBuildingData &&
-    bldg.buildingMedian > 0 &&
-    askingRent !== null &&
-    askingRent > bldg.buildingMedian * 1.20;
-
   const { verdict, verdictHeadline, verdictSubtitle, savings } = useMemo(() => {
     if (!askingRent) {
       return { verdict: null as Verdict, verdictHeadline: null, verdictSubtitle: null, savings: null };
     }
 
-    // Use building data for verdict ONLY for non-premium units
-    if (bldg.hasBuildingData && !isPremiumWsip) {
+    if (bldg.hasBuildingData) {
       const { buildingLow: bLow, buildingHigh: bHigh, bedroomFilterLabel } = bldg;
       const unitDesc = bedroomFilterLabel ? `${bedroomFilterLabel} units` : 'units';
       let v: Verdict;
