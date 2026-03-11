@@ -15,6 +15,7 @@ interface ExitIntentModalProps {
   zip: string;
   city: string;
   onEmailCaptured: (email: string) => void;
+  toolType?: 'renewal' | 'wsip';
 }
 
 const SESSION_KEY = 'rr_exit_intent_shown';
