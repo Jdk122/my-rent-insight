@@ -52,8 +52,8 @@ export function getBrokerFeeInfo(state: string, city: string): BrokerFeeInfo {
 
   if (stateUpper === 'NY' && NYC_CITIES.includes(cityLower)) {
     return {
-      brokerFeeMarket: true,
-      brokerFeeNote: 'Broker fees are common in NYC — typically 12–15% of annual rent or 1 month\'s rent',
+      brokerFeeMarket: false,
+      brokerFeeNote: 'NYC\'s FARE Act (June 2025) eliminated most tenant-paid broker fees. Moving costs are significantly lower than they used to be.',
       brokerFeeCity: 'NYC',
     };
   }
@@ -61,7 +61,7 @@ export function getBrokerFeeInfo(state: string, city: string): BrokerFeeInfo {
   if (stateUpper === 'MA' && BOSTON_CITIES.includes(cityLower)) {
     return {
       brokerFeeMarket: true,
-      brokerFeeNote: 'Broker fees are common in Boston — typically 1 month\'s rent',
+      brokerFeeNote: 'Broker fees are still common in Boston — typically 1 month\'s rent. Factor this into moving costs.',
       brokerFeeCity: 'Boston',
     };
   }

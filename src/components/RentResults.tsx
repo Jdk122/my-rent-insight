@@ -643,6 +643,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             Keep in mind: moving in {brokerFee.brokerFeeCity} typically involves a broker fee of ~${fmt(Math.round(formData.currentRent))}. Factor this into your stay-vs-move decision.
                           </p>
                         )}
+                        {isAboveMarket && hasIncrease && brokerFee.brokerFeeCity === 'NYC' && !brokerFee.brokerFeeMarket && (
+                          <p className="text-[11px] text-muted-foreground">
+                            NYC's FARE Act eliminated most tenant-paid broker fees in 2025. If your landlord won't negotiate, moving is more affordable than it used to be.
+                          </p>
+                        )}
                       </>
                     }
                     dynamicMessage={
@@ -743,13 +748,27 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               {/* WSIP cross-link — below stat cards */}
               {isAboveMarket && hasIncrease && (
                 <p className="text-xs text-muted-foreground/70 mt-3 text-center">
-                  Browsing listings?{' '}
-                  <Link
-                    to={`/what-should-i-pay?zip=${rentData.zip}&bedrooms=${bedroomNum}`}
-                    className="underline text-primary hover:text-primary/80 transition-colors"
-                  >
-                    Check if any asking price is fair before you sign →
-                  </Link>
+                  {brokerFee.brokerFeeCity === 'NYC' ? (
+                    <>
+                      With NYC broker fees gone, moving is more affordable than ever.{' '}
+                      <Link
+                        to={`/what-should-i-pay?zip=${rentData.zip}&bedrooms=${bedroomNum}`}
+                        className="underline text-primary hover:text-primary/80 transition-colors"
+                      >
+                        Check if any listing is fairly priced →
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      Browsing listings?{' '}
+                      <Link
+                        to={`/what-should-i-pay?zip=${rentData.zip}&bedrooms=${bedroomNum}`}
+                        className="underline text-primary hover:text-primary/80 transition-colors"
+                      >
+                        Check if any asking price is fair before you sign →
+                      </Link>
+                    </>
+                  )}
                 </p>
               )}
 
