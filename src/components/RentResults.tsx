@@ -671,7 +671,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <>Rents in {city} moved {marketYoy}% this year. Your landlord keeping your rent at ${fmt(formData.currentRent)}/mo means you're coming out ahead.</>
                           )}
                         </p>
-                        {isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !calc.counterExceedsProposed && (
+                        {isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !counterExceedsProposed && (
                           <p className="text-xs text-muted-foreground/70 mt-1">
                             Area rents moved {marketYoy}% this year.
                           </p>
