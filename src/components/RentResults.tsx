@@ -163,6 +163,20 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     bedroomNum,
   ), [outlierResult, cleanedComps, formData.fullAddress, bedroomNum]);
 
+  // ━━━ Same-unit-line median ━━━
+  const sameLineMedian = useMemo(() => {
+    if (!bldg.hasBuildingData) return null;
+    const sameLineComps = bldg.buildingComps.filter(
+      (c: any) => c.isSameUnitLine && c.rent != null && c.rent > 0
+    );
+    if (sameLineComps.length < 2) return null;
+    const rents = sameLineComps.map((c: any) => c.rent!).sort((a: number, b: number) => a - b);
+    const mid = Math.floor(rents.length / 2);
+    return rents.length % 2 === 0
+      ? (rents[mid - 1] + rents[mid]) / 2
+      : rents[mid];
+  }, [bldg]);
+
   // ━━━ Calc (moved after bldg and medianCompRent) ━━━
   const calc = useMemo(() => {
     if (!hasIncrease) return null;
@@ -171,7 +185,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     );
   }, [formData.currentRent, increasePct, formData.movingCosts, rentData, hasIncrease]);
 
-  // ━━━ Counter-offer (separate from calc, anchored to building/comps) ━━━
+  // ━━━ Counter-offer (separate from calc, anchored to same-line/building/comps) ━━━
   const counterOffer = useMemo(() => {
     if (!hasIncrease) return null;
     return getCounterOffer(
@@ -179,8 +193,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       marketYoy,
       bldg.hasBuildingData ? bldg.buildingMedian : null,
       medianCompRent,
+      sameLineMedian,
     );
-  }, [hasIncrease, formData.currentRent, marketYoy, bldg, medianCompRent]);
+  }, [hasIncrease, formData.currentRent, marketYoy, bldg, medianCompRent, sameLineMedian]);
 
   const counterExceedsProposed = counterOffer
     ? counterOffer.counterLow >= newRent
@@ -232,28 +247,38 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       compositeTrend: compositeTrendResult.compositeTrend,
       buildingMedian: bldg.hasBuildingData ? bldg.buildingMedian : null,
       buildingCompCount: bldg.hasBuildingData ? bldg.buildingComps.length : null,
+      sameLineMedian,
     });
-  }, [hasIncrease, asyncDataReady, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings, compositeTrendResult, bldg]);
+  }, [hasIncrease, asyncDataReady, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings, compositeTrendResult, bldg, sameLineMedian]);
 
-  // ━━━ Verdict with building override ━━━
+  // ━━━ Premium unit detection ━━━
+  const isPremiumUnit = bldg.hasBuildingData &&
+    bldg.buildingMedian > 0 &&
+    formData.currentRent > bldg.buildingMedian * 1.20;
+
+  // ━━━ Verdict with building override (premium-aware) ━━━
   const refinedVerdict = useMemo(() => {
     if (!fairnessScore) return null;
-    const baseVerdict = scoreToVerdict(fairnessScore.total);
-    // Override when building data clearly conflicts
-    if (bldg.hasBuildingData && bldg.buildingComps.length >= 3) {
-      if (newRent > bldg.buildingHigh) return 'above';
-      if (newRent < bldg.buildingLow) return 'below';
-    }
-    return baseVerdict;
-  }, [fairnessScore, bldg, newRent]);
+    return scoreToVerdict(fairnessScore.total);
+  }, [fairnessScore]);
 
-  const isAboveMarket = refinedVerdict === 'above';
-  const isFair = refinedVerdict === 'at-market';
-  const isBelowMarket = refinedVerdict === 'below';
+  const buildingOverride = useMemo(() => {
+    if (!bldg.hasBuildingData || bldg.buildingComps.length < 3) return null;
+    // Don't override for premium units — their rent is legitimately above building average
+    if (isPremiumUnit) return null;
+    if (newRent > bldg.buildingHigh) return 'above' as const;
+    if (newRent < bldg.buildingLow) return 'below' as const;
+    return null;
+  }, [bldg, newRent, isPremiumUnit]);
+
+  const effectiveVerdict = buildingOverride ?? refinedVerdict;
+  const isAboveMarket = effectiveVerdict === 'above';
+  const isFair = effectiveVerdict === 'at-market';
+  const isBelowMarket = effectiveVerdict === 'below';
 
   useEffect(() => {
-    if (refinedVerdict) onVerdictReady?.(isAboveMarket);
-  }, [refinedVerdict]);
+    if (effectiveVerdict) onVerdictReady?.(isAboveMarket);
+  }, [effectiveVerdict]);
 
   const isNuancedAtMarket = isFair && increasePct - marketYoy > 2 && medianCompRent != null && newRent <= medianCompRent;
   const proposedFarBelowMedian = medianCompRent != null && newRent < medianCompRent * 0.8;
