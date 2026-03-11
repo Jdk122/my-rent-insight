@@ -13,6 +13,12 @@ export interface RentControlLaw {
   exemptions: string; // what's excluded
   ordinanceUrl: string | null;
   notes: string | null;
+  /** true when maxIncreasePct is estimated from a formula range, not a fixed statutory number */
+  isFormulaCap?: boolean;
+  /** Year-built cutoff for building eligibility (buildings built before this year) */
+  yearBuiltCutoff?: number | null;
+  /** Minimum units for building eligibility */
+  minUnits?: number | null;
 }
 
 // Lookup: zip → jurisdiction key(s)
@@ -178,6 +184,8 @@ const cityNameAliases: Record<string, string> = {
   'Hoboken': 'Hoboken',
   'Jersey City': 'Jersey City',
   'Washington': 'Washington',
+  'Oakland': 'Oakland',
+  'Berkeley': 'Berkeley',
 };
 
 function normalizeCityName(city: string): string | undefined {
@@ -210,23 +218,29 @@ const cityLaws: Record<string, RentControlLaw> = {
     hasRentControl: true,
     maxIncreasePct: 3,
     maxIncreaseFormula: '60% of Bay Area CPI increase (typically 1–3%)',
+    isFormulaCap: true,
     noticePeriodDays: 30,
     applicability: 'Units in buildings with 2+ units built before June 13, 1979',
     exemptions: 'Single-family homes, condos, units built after 1979',
     ordinanceUrl: 'https://sfrb.org/',
     notes: '2024 allowable increase: 1.7%. Landlords may also pass through certain capital improvement costs.',
+    yearBuiltCutoff: 1979,
+    minUnits: 2,
   },
   'Los Angeles': {
     jurisdiction: 'Los Angeles',
     level: 'city',
     hasRentControl: true,
-    maxIncreasePct: 8,
+    maxIncreasePct: 4,
     maxIncreaseFormula: '3–8% (set annually by LAHD, based on CPI)',
+    isFormulaCap: true,
     noticePeriodDays: 30,
     applicability: 'Units in buildings with 2+ units built before October 1, 1978 (RSO)',
     exemptions: 'Single-family homes, condos, units built after 1978',
     ordinanceUrl: 'https://housing.lacity.org/residents/rso-overview',
     notes: '2024 allowable increase: 4%. LA also has a Just Cause eviction requirement for RSO units.',
+    yearBuiltCutoff: 1978,
+    minUnits: 2,
   },
   'Hoboken': {
     jurisdiction: 'Hoboken',
@@ -234,6 +248,7 @@ const cityLaws: Record<string, RentControlLaw> = {
     hasRentControl: true,
     maxIncreasePct: 4,
     maxIncreaseFormula: 'CPI-based (typically 2–4%)',
+    isFormulaCap: true,
     noticePeriodDays: 30,
     applicability: 'Most multi-family rental units',
     exemptions: 'New construction (30-year exemption), owner-occupied 2-3 unit buildings',
@@ -246,6 +261,7 @@ const cityLaws: Record<string, RentControlLaw> = {
     hasRentControl: true,
     maxIncreasePct: 4,
     maxIncreaseFormula: 'CPI-based (typically 2–4%)',
+    isFormulaCap: true,
     noticePeriodDays: 30,
     applicability: 'Most multi-family rental units',
     exemptions: 'New construction (30-year tax abatement exemption), owner-occupied 2-3 unit buildings',
@@ -256,13 +272,45 @@ const cityLaws: Record<string, RentControlLaw> = {
     jurisdiction: 'Washington, DC',
     level: 'city',
     hasRentControl: true,
-    maxIncreasePct: 10,
+    maxIncreasePct: 5,
     maxIncreaseFormula: 'CPI + 2% (max 10%)',
+    isFormulaCap: true,
     noticePeriodDays: 30,
     applicability: 'Rental units built before 1975',
     exemptions: 'Units built after 1975, federally or DC-subsidized units',
     ordinanceUrl: 'https://ota.dc.gov/page/rent-stabilization-program',
     notes: 'Elderly and disabled tenants have a lower cap (CPI only). Registration with OTA required.',
+    yearBuiltCutoff: 1975,
+  },
+  'Oakland': {
+    jurisdiction: 'Oakland',
+    level: 'city',
+    hasRentControl: true,
+    maxIncreasePct: 3,
+    maxIncreaseFormula: 'CPI-based (typically 1–3%)',
+    isFormulaCap: true,
+    noticePeriodDays: 30,
+    applicability: 'Units in buildings with 2+ units built before January 1, 1983',
+    exemptions: 'Single-family homes, condos, units built after 1983',
+    ordinanceUrl: 'https://www.oaklandca.gov/topics/rent-adjustment-program',
+    notes: 'Oakland Rent Adjustment Program oversees disputes.',
+    yearBuiltCutoff: 1983,
+    minUnits: 2,
+  },
+  'Berkeley': {
+    jurisdiction: 'Berkeley',
+    level: 'city',
+    hasRentControl: true,
+    maxIncreasePct: 3,
+    maxIncreaseFormula: '65% of Bay Area CPI (typically 1–3%)',
+    isFormulaCap: true,
+    noticePeriodDays: 30,
+    applicability: 'Units in buildings built before June 1980',
+    exemptions: 'Single-family homes, condos, units built after 1980',
+    ordinanceUrl: 'https://www.cityofberkeley.info/rent/',
+    notes: 'Berkeley Rent Stabilization Board oversees disputes.',
+    yearBuiltCutoff: 1980,
+    minUnits: 2,
   },
 };
 
@@ -270,9 +318,38 @@ const cityLaws: Record<string, RentControlLaw> = {
 // NYC zips are handled dynamically via isNycZip() below
 const zipToCityLaw: Record<string, string> = {
   '94102': 'San Francisco',
+  '94103': 'San Francisco',
+  '94107': 'San Francisco',
+  '94108': 'San Francisco',
+  '94109': 'San Francisco',
+  '94110': 'San Francisco',
+  '94112': 'San Francisco',
+  '94114': 'San Francisco',
+  '94115': 'San Francisco',
+  '94116': 'San Francisco',
+  '94117': 'San Francisco',
+  '94118': 'San Francisco',
+  '94121': 'San Francisco',
+  '94122': 'San Francisco',
+  '94123': 'San Francisco',
+  '94124': 'San Francisco',
+  '94127': 'San Francisco',
+  '94131': 'San Francisco',
+  '94132': 'San Francisco',
+  '94133': 'San Francisco',
+  '94134': 'San Francisco',
   '90001': 'Los Angeles',
   '90024': 'Los Angeles',
   '07030': 'Hoboken',
+  // Oakland zips
+  '94601': 'Oakland', '94602': 'Oakland', '94603': 'Oakland', '94605': 'Oakland',
+  '94606': 'Oakland', '94607': 'Oakland', '94608': 'Oakland', '94609': 'Oakland',
+  '94610': 'Oakland', '94611': 'Oakland', '94612': 'Oakland', '94613': 'Oakland',
+  '94618': 'Oakland', '94619': 'Oakland', '94621': 'Oakland',
+  // Berkeley zips
+  '94702': 'Berkeley', '94703': 'Berkeley', '94704': 'Berkeley', '94705': 'Berkeley',
+  '94706': 'Berkeley', '94707': 'Berkeley', '94708': 'Berkeley', '94709': 'Berkeley',
+  '94710': 'Berkeley',
 };
 
 // NYC zip code ranges cover all 5 boroughs
@@ -371,6 +448,51 @@ export function getApplicableCap(result: RentControlResult): RentControlLaw | nu
   if (result.cityLaw?.hasRentControl) return result.cityLaw;
   if (result.stateLaw?.hasRentControl) return result.stateLaw;
   return null;
+}
+
+/** Check if a building plausibly qualifies for rent control based on property data */
+export interface BuildingEligibilityInput {
+  yearBuilt?: number | null;
+  units?: number | null;
+  propertyType?: string | null;
+  dhcrMatch?: boolean;
+}
+
+export function checkBuildingEligibility(
+  cap: RentControlLaw,
+  building: BuildingEligibilityInput | null,
+): 'eligible' | 'ineligible' | 'unknown' {
+  if (!building) return 'unknown';
+
+  // NYC special case — DHCR registry is definitive
+  if (cap.jurisdiction === 'New York City') {
+    if (building.dhcrMatch) return 'eligible';
+    if (building.yearBuilt && building.yearBuilt < 1974) {
+      if (building.units && building.units >= 6) return 'eligible';
+      if ((!building.units || building.units === 0) &&
+          building.propertyType?.toLowerCase().includes('multi')) return 'eligible';
+    }
+    // Post-1974 or small building not in DHCR → ineligible
+    if (building.yearBuilt && building.yearBuilt >= 1974) return 'ineligible';
+    if (building.units && building.units < 6 && !building.dhcrMatch) return 'ineligible';
+    return 'unknown';
+  }
+
+  // For jurisdictions with year-built cutoffs
+  if (cap.yearBuiltCutoff) {
+    if (building.yearBuilt && building.yearBuilt >= cap.yearBuiltCutoff) return 'ineligible';
+  }
+  if (cap.minUnits) {
+    if (building.units && building.units < cap.minUnits) return 'ineligible';
+  }
+
+  // If we have year data and it's before the cutoff → eligible
+  if (cap.yearBuiltCutoff && building.yearBuilt && building.yearBuilt < cap.yearBuiltCutoff) {
+    if (!cap.minUnits || (building.units && building.units >= cap.minUnits)) return 'eligible';
+    if (!building.units) return 'unknown'; // year qualifies but units unknown
+  }
+
+  return 'unknown';
 }
 
 export function getNoticeRequirement(result: RentControlResult): { days: number; source: string } | null {

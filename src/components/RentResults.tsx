@@ -10,7 +10,7 @@ import { CompsList } from './ShouldYouMove';
 import NegotiationLetter from './NegotiationLetter';
 import RentControlCard from './RentControlCard';
 import { PropertyLookupResult, PropertyLookupError } from '@/hooks/usePropertyLookup';
-import { getRentControlByStateCity, getApplicableCap, isNycZip } from '@/data/rentControlData';
+import { getRentControlByStateCity, getApplicableCap, isNycZip, checkBuildingEligibility } from '@/data/rentControlData';
 import { getUtilityNote, getBrokerFeeInfo } from '@/lib/contextualFlags';
 import { useRentcast } from '@/hooks/useRentcast';
 import { useRentcastMarket } from '@/hooks/useRentcastMarket';
@@ -446,6 +446,17 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     return getApplicableCap(result);
   }, [rentData.state, rentData.city]);
 
+  /** Whether the specific building plausibly qualifies for rent control */
+  const buildingEligibility = useMemo(() => {
+    if (!rentControlCap) return 'unknown' as const;
+    return checkBuildingEligibility(rentControlCap, propertyData ? {
+      yearBuilt: propertyData.yearBuilt ?? null,
+      units: propertyData.units ?? null,
+      propertyType: propertyData.propertyType ?? null,
+      dhcrMatch: hcrLookup.result?.found === true && hcrLookup.result?.stabilized === true,
+    } : null);
+  }, [rentControlCap, propertyData, hcrLookup.result]);
+
   const utilityNote = useMemo(() => getUtilityNote(propertyData, rentData.state), [propertyData, rentData.state]);
 
   const brokerFee = useMemo(() => getBrokerFeeInfo(rentData.state, rentData.city), [rentData.state, rentData.city]);
@@ -564,20 +575,36 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     componentSources={sources}
                     contextNotes={
                       <>
-                        {rentControlCap && hasIncrease && rentControlCap.maxIncreaseFormula && (
-                          rentControlCap.maxIncreasePct != null && increasePct > rentControlCap.maxIncreasePct ? (
-                            <p className="text-[12px] font-medium text-destructive">
-                              ⚠️ {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreasePct}%. Your increase of {increasePct}% exceeds this limit.
-                            </p>
-                          ) : rentControlCap.maxIncreasePct != null ? (
-                            <p className="text-[11px] text-muted-foreground">
-                              {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreasePct}%. Your increase of {increasePct}% is within this limit.
-                            </p>
-                          ) : (
-                            <p className="text-[11px] text-muted-foreground">
-                              {rentControlCap.jurisdiction} regulates rent increases ({rentControlCap.maxIncreaseFormula}). Check if your {increasePct}% increase complies.
-                            </p>
-                          )
+                        {rentControlCap && hasIncrease && rentControlCap.maxIncreaseFormula && buildingEligibility !== 'ineligible' && (
+                          (() => {
+                            const approxPrefix = rentControlCap.isFormulaCap ? 'approximately ' : '';
+                            const likelyWord = rentControlCap.isFormulaCap ? ' likely' : '';
+                            const softNote = buildingEligibility === 'unknown' && !propertyData
+                              ? ` Enter your full address to check if your building qualifies.`
+                              : buildingEligibility === 'unknown'
+                              ? ` This may apply depending on your building's age and size.`
+                              : '';
+
+                            if (rentControlCap.maxIncreasePct != null && increasePct > rentControlCap.maxIncreasePct) {
+                              return (
+                                <p className="text-[12px] font-medium text-destructive">
+                                  ⚠️ {rentControlCap.jurisdiction} limits annual rent increases to {approxPrefix}{rentControlCap.maxIncreasePct}%. Your increase of {increasePct}%{likelyWord} exceeds this limit.{softNote}
+                                </p>
+                              );
+                            } else if (rentControlCap.maxIncreasePct != null) {
+                              return (
+                                <p className="text-[11px] text-muted-foreground">
+                                  {rentControlCap.jurisdiction} limits annual rent increases to {approxPrefix}{rentControlCap.maxIncreasePct}%. Your increase of {increasePct}% is within this limit.{softNote}
+                                </p>
+                              );
+                            } else {
+                              return (
+                                <p className="text-[11px] text-muted-foreground">
+                                  {rentControlCap.jurisdiction} has rent control laws that may apply to your building depending on its age and size.
+                                </p>
+                              );
+                            }
+                          })()
                         )}
                         {isAboveMarket && brokerFee.brokerFeeMarket && hasIncrease && (
                           <p className="text-[11px] text-muted-foreground">
