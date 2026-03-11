@@ -311,17 +311,24 @@ const WsipResults = ({
     },
   }), [zip, fullAddress, bedroomNum, askingRent, rentData, brLabel, fairRangeLow, fairRangeHigh, verdictLabel, marketYoy, medianCompRent]);
 
+  // ━━━ Premium unit detection (WSIP) ━━━
+  const isPremiumUnit = bldg.hasBuildingData &&
+    bldg.buildingMedian > 0 &&
+    askingRent !== null &&
+    askingRent > bldg.buildingMedian * 1.20;
+
   // ━━━ Copy template ━━━
   const suggestedPrice = useMemo(() => {
-    if (bldg.hasBuildingData) return fmt(bldg.buildingMedian);
+    if (bldg.hasBuildingData && !isPremiumUnit) return fmt(bldg.buildingMedian);
     const compMedian = medianCompRent ?? Infinity;
     const rangeTop = fairRangeHigh;
     const suggested = Math.min(compMedian, rangeTop);
     return fmt(isFinite(suggested) ? suggested : fairRangeLow);
-  }, [bldg, medianCompRent, fairRangeHigh, fairRangeLow]);
+  }, [bldg, medianCompRent, fairRangeHigh, fairRangeLow, isPremiumUnit]);
 
   // Whether to show negotiation advice (building override can trigger even if area verdict is 'in-range')
-  const showNegotiation = verdict === 'above' || (bldg.hasBuildingData && askingRent !== null && askingRent > bldg.buildingHigh);
+  // Don't override for premium units — their asking price is legitimately above building average
+  const showNegotiation = verdict === 'above' || (!isPremiumUnit && bldg.hasBuildingData && askingRent !== null && askingRent > bldg.buildingHigh);
 
   const emailTemplate = useMemo(() => {
     const addr = fullAddress || `ZIP ${zip}`;
