@@ -738,6 +738,25 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 );
               })()}
 
+              {isBelowFmrHighIncrease && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                  className="mt-4 w-full max-w-[540px] rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900/50 dark:bg-blue-950/20 p-4"
+                >
+                  <div className="flex gap-3">
+                    <Info className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground mb-1">Important context about your rent</p>
+                      <p className="text-[13px] text-muted-foreground leading-relaxed">
+                        Your rent is currently below the area median for similar units. However, area medians include units of all conditions and amenity levels — including renovated units and buildings with more amenities. A lower rent may already reflect fair value for your specific unit. Regardless, a {increasePct}% increase is significantly above the local rent trend of {marketYoy}%, which gives you room to negotiate the rate of increase.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
               {/* ── Stat dashboard strip ── */}
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
