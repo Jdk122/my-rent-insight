@@ -129,6 +129,7 @@ const WsipForm = ({ onSubmit, isLoading, prefill }: WsipFormProps) => {
               onSelect={(addr) => {
                 if (addr.zip) setZip(addr.zip);
                 setFullAddress(addr.fullAddress);
+                if (addr.unit) setUnit(addr.unit);
                 clearError('address');
               }}
             />
