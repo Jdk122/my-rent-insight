@@ -113,8 +113,8 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
 
     onEmailCaptured(email.trim());
     trackEvent('exit_intent_converted', { verdict: verdictLabel, zip_code: zip });
-    trackEvent('email_submitted', { verdict: verdictLabel, zip_code: zip, source: 'exit_intent' });
-    trackAdsConversion();
+    trackEvent('email_submitted', { verdict: verdictLabel, zip_code: zip, source: 'exit_intent', tool_type: toolType });
+    trackAdsConversion(toolType, email.trim());
     setLoading(false);
     setOpen(false);
     toast.success('Sent to your email!');

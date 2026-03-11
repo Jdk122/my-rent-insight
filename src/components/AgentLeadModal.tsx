@@ -55,7 +55,7 @@ const AgentLeadModal = ({
         fairness_score: fairnessScore ?? null,
       } as any);
       trackEvent('agent_lead_captured', { zip: zip || '', bedrooms, verdict_label: verdictLabel || '' });
-      trackAdsConversion();
+      trackAdsConversion('renewal', email);
       setSubmitted(true);
     } catch {
       // silent

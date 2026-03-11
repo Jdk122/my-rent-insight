@@ -43,7 +43,8 @@ export type EventName =
   | 'wsip_tips_unlocked'
   | 'wsip_exit_intent_shown'
   | 'wsip_exit_intent_converted'
-  | 'wsip_exit_intent_dismissed';
+  | 'wsip_exit_intent_dismissed'
+  | 'page_not_found';
 
 export function trackEvent(name: string, params?: Record<string, string | number | boolean | null | undefined>) {
   try {
@@ -57,10 +58,25 @@ export function trackEvent(name: string, params?: Record<string, string | number
 }
 
 /** Fire Google Ads lead-form conversion + Microsoft UET lead event */
-export function trackAdsConversion() {
+export function trackAdsConversion(
+  toolType: 'renewal' | 'wsip' = 'renewal',
+  userEmail?: string,
+) {
   try {
+    // Enhanced Conversions — send hashed email
+    if (userEmail) {
+      window.gtag?.('set', 'user_data', {
+        email: userEmail,
+      });
+    }
+
+    // Tool-specific conversion action
+    const conversionLabel = toolType === 'wsip'
+      ? 'AW-17990530610/WSIP_CONVERSION_LABEL'
+      : 'AW-17990530610/H5tjCKStoIIcELLsxoJD';
+
     window.gtag?.('event', 'conversion', {
-      send_to: 'AW-17990530610/H5tjCKStoIIcELLsxoJD',
+      send_to: conversionLabel,
       value: 1.0,
       currency: 'USD',
     });
@@ -68,7 +84,9 @@ export function trackAdsConversion() {
     // silent
   }
   try {
-    (window as any).uetq?.push('event', 'lead_capture', {});
+    (window as any).uetq?.push('event', 'lead_capture', {
+      event_category: toolType,
+    });
   } catch {
     // silent
   }

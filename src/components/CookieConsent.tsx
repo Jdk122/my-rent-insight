@@ -7,7 +7,15 @@ const CookieConsent = () => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!localStorage.getItem(STORAGE_KEY)) {
+    // If consent was previously granted, restore it for returning users
+    if (localStorage.getItem(STORAGE_KEY)) {
+      window.gtag?.('consent', 'update', {
+        'analytics_storage': 'granted',
+        'ad_storage': 'granted',
+        'ad_user_data': 'granted',
+        'ad_personalization': 'granted',
+      });
+    } else {
       // Small delay so it doesn't flash on initial paint
       const t = setTimeout(() => setVisible(true), 1200);
       return () => clearTimeout(t);
@@ -15,6 +23,12 @@ const CookieConsent = () => {
   }, []);
 
   const handleAccept = () => {
+    window.gtag?.('consent', 'update', {
+      'analytics_storage': 'granted',
+      'ad_storage': 'granted',
+      'ad_user_data': 'granted',
+      'ad_personalization': 'granted',
+    });
     localStorage.setItem(STORAGE_KEY, '1');
     setVisible(false);
   };
