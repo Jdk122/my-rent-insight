@@ -10,6 +10,12 @@ const fmt = (n: number | null) =>
   n != null ? `$${Math.round(n).toLocaleString("en-US")}` : "—";
 
 const BASE_URL = "https://renewalreply.com";
+const WORDMARK = `${BASE_URL}/renewalreply-wordmark.png`;
+
+const emailHeader = `
+  <img src="${WORDMARK}" alt="RenewalReply" width="140" style="display:block;margin:0 0 16px;" />
+  <div style="height:2px;background:#168eca;margin:0 0 24px;"></div>
+`;
 
 function buildWsipFollowupHtml(lead: any) {
   const unsubUrl = `${BASE_URL}/outcome?id=${lead.id}&result=unsubscribe`;
@@ -33,27 +39,25 @@ function buildWsipFollowupHtml(lead: any) {
     : "";
 
   return `
-    <div style="font-family: 'DM Sans', Arial, sans-serif; max-width: 520px; margin: 0 auto; padding: 32px 24px;">
-      <p style="font-size: 20px; font-weight: 700; color: #2d6a4f; margin-bottom: 4px;">
-        Renewal<span style="font-weight: 400; color: #c77d3c;">Reply</span>
-      </p>
-      <h1 style="font-size: 20px; color: #1a1a1a; margin: 24px 0 12px;">Still apartment hunting in ${cityLabel}?</h1>
-      <p style="font-size: 15px; color: #555; line-height: 1.7;">
+    <div style="font-family:'DM Sans',Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
+      ${emailHeader}
+      <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:#1b1f27;margin:0 0 12px;">Still apartment hunting in ${cityLabel}?</h1>
+      <p style="font-size:15px;color:#555;line-height:1.7;">
         Hi — a few days ago you used our "What Should I Pay?" tool to check fair pricing in ${cityLabel}.
         ${rentLine}.
       </p>
       ${medianLine}
-      <p style="font-size: 15px; color: #555; line-height: 1.7; margin: 16px 0 24px;">
+      <p style="font-size:15px;color:#555;line-height:1.7;margin:16px 0 24px;">
         Prices and availability change fast. Run a fresh search to see what's fair right now:
       </p>
-      <a href="${wsipUrl}" style="display:inline-block;padding:14px 24px;background:#2d6a4f;color:#fff;border-radius:8px;text-decoration:none;font-size:15px;font-weight:600;">
+      <a href="${wsipUrl}" style="display:inline-block;padding:14px 24px;background:#168eca;color:#fff;border-radius:8px;text-decoration:none;font-size:15px;font-weight:600;">
         Check current fair rent →
       </a>
-      <p style="font-size: 15px; color: #555; margin-top: 28px;">— RenewalReply</p>
-      <hr style="border: none; border-top: 1px solid #eee; margin: 32px 0 16px;" />
-      <p style="font-size: 11px; color: #999; text-align: center;">
+      <p style="font-family:'DM Sans',Arial,sans-serif;font-size:15px;color:#555;margin-top:28px;">— RenewalReply</p>
+      <hr style="border:none;border-top:1px solid #eee;margin:32px 0 16px;" />
+      <p style="font-size:11px;color:#999;text-align:center;">
         You received this because you used the What Should I Pay tool on RenewalReply.<br/>
-        <a href="${unsubUrl}" style="color: #999; text-decoration: underline;">Unsubscribe</a>
+        <a href="${unsubUrl}" style="color:#999;text-decoration:underline;">Unsubscribe</a>
       </p>
     </div>
   `;
@@ -78,7 +82,6 @@ Deno.serve(async (req) => {
   const now = new Date();
   let sent = 0;
 
-  // Target leads created ~5 days ago via WSIP tool
   const target = new Date(now);
   target.setDate(target.getDate() - 5);
   const windowStart = new Date(target);
