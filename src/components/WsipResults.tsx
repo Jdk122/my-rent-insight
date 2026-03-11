@@ -143,19 +143,12 @@ const WsipResults = ({
   // ━━━ Verdict ━━━
   type Verdict = 'below' | 'in-range' | 'above' | null;
 
-  // Premium unit detection — must be before verdict
-  const isPremiumWsip = bldg.hasBuildingData &&
-    bldg.buildingMedian > 0 &&
-    askingRent !== null &&
-    askingRent > bldg.buildingMedian * 1.20;
-
   const { verdict, verdictHeadline, verdictSubtitle, savings } = useMemo(() => {
     if (!askingRent) {
       return { verdict: null as Verdict, verdictHeadline: null, verdictSubtitle: null, savings: null };
     }
 
-    // Use building data for verdict ONLY for non-premium units
-    if (bldg.hasBuildingData && !isPremiumWsip) {
+    if (bldg.hasBuildingData) {
       const { buildingLow: bLow, buildingHigh: bHigh, bedroomFilterLabel } = bldg;
       const unitDesc = bedroomFilterLabel ? `${bedroomFilterLabel} units` : 'units';
       let v: Verdict;
@@ -186,7 +179,7 @@ const WsipResults = ({
 
     const v: Verdict = askingRent < fairRangeLow ? 'below' : askingRent > fairRangeHigh ? 'above' : 'in-range';
     return { verdict: v, verdictHeadline: null, verdictSubtitle: null, savings: v === 'above' ? askingRent - fairRangeHigh : null };
-  }, [askingRent, bldg, fairRangeLow, fairRangeHigh, isPremiumWsip]);
+  }, [askingRent, bldg, fairRangeLow, fairRangeHigh]);
 
   const verdictLabel = verdict === 'above' ? 'above' : verdict === 'below' ? 'below' : verdict === 'in-range' ? 'fair' : 'none';
 
@@ -320,16 +313,15 @@ const WsipResults = ({
 
   // ━━━ Copy template ━━━
   const suggestedPrice = useMemo(() => {
-    if (bldg.hasBuildingData && !isPremiumWsip) return fmt(bldg.buildingMedian);
+    if (bldg.hasBuildingData) return fmt(bldg.buildingMedian);
     const compMedian = medianCompRent ?? Infinity;
     const rangeTop = fairRangeHigh;
     const suggested = Math.min(compMedian, rangeTop);
     return fmt(isFinite(suggested) ? suggested : fairRangeLow);
-  }, [bldg, medianCompRent, fairRangeHigh, fairRangeLow, isPremiumWsip]);
+  }, [bldg, medianCompRent, fairRangeHigh, fairRangeLow]);
 
   // Whether to show negotiation advice (building override can trigger even if area verdict is 'in-range')
-  // Don't override for premium units — their asking price is legitimately above building average
-  const showNegotiation = verdict === 'above' || (!isPremiumWsip && bldg.hasBuildingData && askingRent !== null && askingRent > bldg.buildingHigh);
+  const showNegotiation = verdict === 'above' || (bldg.hasBuildingData && askingRent !== null && askingRent > bldg.buildingHigh);
 
   const emailTemplate = useMemo(() => {
     const addr = fullAddress || `ZIP ${zip}`;
@@ -362,10 +354,9 @@ const WsipResults = ({
   };
 
   // ━━━ Range bar ━━━
-  const useBuildingBar = bldg.hasBuildingData && !isPremiumWsip;
-  const barLow = useBuildingBar ? bldg.buildingLow : fairRangeLow;
-  const barHigh = useBuildingBar ? bldg.buildingHigh : fairRangeHigh;
-  const barLabel = useBuildingBar ? 'This Building' : 'Fair Range';
+  const barLow = bldg.hasBuildingData ? bldg.buildingLow : fairRangeLow;
+  const barHigh = bldg.hasBuildingData ? bldg.buildingHigh : fairRangeHigh;
+  const barLabel = bldg.hasBuildingData ? 'This Building' : 'Fair Range';
   const rangeBarMin = Math.round(barLow * 0.85);
   const rangeBarMax = Math.round(barHigh * 1.15);
   const rangeSpan = rangeBarMax - rangeBarMin;
