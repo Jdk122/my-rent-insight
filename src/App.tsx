@@ -25,6 +25,8 @@ const AdminDataQuality = lazy(() => import("./pages/AdminDataQuality"));
 const AdminLeadDashboard = lazy(() => import("./pages/AdminLeadDashboard"));
 const AdminMarketIntelligence = lazy(() => import("./pages/AdminMarketIntelligence"));
 const WhatShouldIPay = lazy(() => import("./pages/WhatShouldIPay"));
+const Guides = lazy(() => import("./pages/Guides"));
+const Guide = lazy(() => import("./pages/Guide"));
 
 const queryClient = new QueryClient();
 
@@ -76,6 +78,8 @@ const App = () => (
           <Route path="/admin/data-quality" element={<Suspense fallback={<PageSkeleton />}><AdminDataQuality /></Suspense>} />
           <Route path="/admin/leads" element={<Suspense fallback={<PageSkeleton />}><AdminLeadDashboard /></Suspense>} />
           <Route path="/admin/markets" element={<Suspense fallback={<PageSkeleton />}><AdminMarketIntelligence /></Suspense>} />
+          <Route path="/guides" element={<Suspense fallback={<PageSkeleton />}><Guides /></Suspense>} />
+          <Route path="/guides/:slug" element={<Suspense fallback={<PageSkeleton />}><Guide /></Suspense>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<Suspense fallback={<PageSkeleton />}><NotFound /></Suspense>} />
         </Routes>
