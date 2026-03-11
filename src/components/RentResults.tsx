@@ -1058,10 +1058,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   </div>
                 )}
 
-                {/* CompLinks */}
-                <div className="mt-6">
-                  <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} verdict={verdictLabel} fairnessScore={fairnessScore?.total} />
-                </div>
+
               </motion.section>
             )}
 
