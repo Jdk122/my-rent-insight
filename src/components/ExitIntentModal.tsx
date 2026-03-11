@@ -20,7 +20,7 @@ interface ExitIntentModalProps {
 
 const SESSION_KEY = 'rr_exit_intent_shown';
 
-const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, onEmailCaptured }: ExitIntentModalProps) => {
+const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, onEmailCaptured, toolType = 'renewal' }: ExitIntentModalProps) => {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
