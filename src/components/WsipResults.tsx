@@ -433,6 +433,15 @@ const WsipResults = ({
               )}
             </h1>
 
+            {/* Property context line */}
+            {propertyData && (
+              <p className="text-xs text-muted-foreground mb-2">
+                {propertyData.propertyType}
+                {propertyData.yearBuilt && ` · Built ${propertyData.yearBuilt}`}
+                {propertyData.squareFootage && ` · ${propertyData.squareFootage.toLocaleString()} sqft`}
+              </p>
+            )}
+
             {/* Summary line */}
             {askingRent && savings !== null && savings > 0 && (
               <p className="text-base sm:text-lg font-medium text-destructive mb-2">
