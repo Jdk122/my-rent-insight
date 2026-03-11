@@ -208,7 +208,7 @@ const cityLaws: Record<string, RentControlLaw> = {
     jurisdiction: 'San Francisco',
     level: 'city',
     hasRentControl: true,
-    maxIncreasePct: null,
+    maxIncreasePct: 3,
     maxIncreaseFormula: '60% of Bay Area CPI increase (typically 1–3%)',
     noticePeriodDays: 30,
     applicability: 'Units in buildings with 2+ units built before June 13, 1979',
