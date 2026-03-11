@@ -219,6 +219,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   // ━━━ Fairness Score ━━━
   const asyncDataReady = !rentcast.loading && !rcMarket.loading;
 
+  const allSameBuilding = useMemo(() => {
+    const filtered = outlierResult?.filtered ?? [];
+    return filtered.length > 0 && filtered.every(c => c.isSameBuilding);
+  }, [outlierResult]);
+
   const fairnessScore = useMemo<FairnessScoreResult | null>(() => {
     if (!hasIncrease) return null;
     if (!asyncDataReady) return null;
@@ -242,8 +247,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       buildingMedian: bldg.hasBuildingData ? bldg.buildingMedian : null,
       buildingCompCount: bldg.hasBuildingData ? bldg.buildingComps.length : null,
       sameLineMedian,
+      allSameBuilding,
     });
-  }, [hasIncrease, asyncDataReady, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings, compositeTrendResult, bldg, sameLineMedian]);
+  }, [hasIncrease, asyncDataReady, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings, compositeTrendResult, bldg, sameLineMedian, allSameBuilding]);
 
   // ━━━ Premium unit detection ━━━
   const isPremiumUnit = bldg.hasBuildingData &&

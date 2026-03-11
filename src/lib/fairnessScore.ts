@@ -292,6 +292,12 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
     scoreVsFmr(validatedInput.proposedRent, validatedInput.fmr, validatedInput.currentRent, validatedInput.increasePct, validatedInput.marketYoY, validatedInput.f50, validatedInput.bedroomCount, validatedInput.rcMedianRent, validatedInput.rcTotalListings),
     scoreMarketMomentum(validatedInput.zillowMonthly, validatedInput.alMoM, validatedInput.hvd),
   ];
+  // Apply sanity cap to comp component if needed
+  const compComponent = components.find(c => c.id === 'comps');
+  if (compComponent && compScoreCap < compComponent.max) {
+    compComponent.score = Math.min(compComponent.score, compScoreCap);
+  }
+
   const visibleComponents = components.filter(c => c.max > 0);
   const total = components.reduce((sum, c) => sum + c.score, 0);
   return { total, ...getTier(total), components: visibleComponents };
