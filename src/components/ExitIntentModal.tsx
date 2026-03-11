@@ -129,17 +129,21 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
   };
 
   const handleShare = (method: string) => {
-    const url = 'https://www.renewalreply.com';
-    const text = 'Check if your rent increase is fair — most renters overpay $50-150/mo.';
+    const isWsip = toolType === 'wsip';
+    const url = isWsip ? 'https://www.renewalreply.com/what-should-i-pay' : 'https://www.renewalreply.com';
+    const text = isWsip
+      ? 'Check if that apartment listing is fairly priced — most are $100-300/mo above market.'
+      : 'Check if your rent increase is fair — most renters overpay $50-150/mo.';
+    const subject = isWsip ? 'Is that apartment fairly priced?' : 'Is your rent increase fair?';
     if (method === 'text') {
       window.open(`sms:?body=${encodeURIComponent(text + ' ' + url)}`, '_blank');
     } else if (method === 'email') {
-      window.open(`mailto:?subject=${encodeURIComponent('Is your rent increase fair?')}&body=${encodeURIComponent(text + '\n\n' + url)}`, '_blank');
+      window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text + '\n\n' + url)}`, '_blank');
     } else if (method === 'copy') {
       navigator.clipboard.writeText(url);
       toast.success('Link copied!');
     }
-    trackEvent('share_clicked', { method, source: 'exit_intent' });
+    trackEvent('share_clicked', { method, source: 'exit_intent', tool_type: toolType });
     setOpen(false);
   };
 
