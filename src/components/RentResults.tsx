@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { RentFormData } from './RentForm';
 import { RentLookupResult, bedroomLabels, calculateResults } from '@/data/rentData';
 import ShareHub from './ShareHub';
-import CompLinks from './CompLinks';
+
 import { CompsList } from './ShouldYouMove';
 import NegotiationLetter from './NegotiationLetter';
 import RentControlCard from './RentControlCard';
