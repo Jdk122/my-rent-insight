@@ -39,8 +39,14 @@ describe('Should you move? logic', () => {
     expect(getMovingCost(2500, 'TX')).toBe(4500);
   });
 
-  it('MA has no broker fee (law changed 2025)', () => {
-    expect(getMovingCost(3000, 'MA')).toBe(5000);
+  it('MA gets broker fee', () => {
+    // first month (3000) + broker (3000) + moving (2000) = 8000
+    expect(getMovingCost(3000, 'MA')).toBe(8000);
+  });
+
+  it('NY has no broker fee (FARE Act 2025)', () => {
+    // first month (3000) + moving (2000) = 5000
+    expect(getMovingCost(3000, 'NY')).toBe(5000);
   });
 
   it('daily reframe rounds to nearest $0.50', () => {
