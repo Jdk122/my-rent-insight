@@ -169,11 +169,11 @@ const RentByCity = () => {
 
   // ─── Dynamic meta / OG ───
   const metaTitle = hasMarketData
-    ? `Average Rent in ${city}, ${state} (${dataYear}) | Rent Data by Zip Code`
-    : `Fair Market Rent in ${city}, ${state} (FY${hudFY}) | Rent Data by Zip Code`;
+    ? `Average Rent in ${city}, ${state} (${dataYear}) — ${fmt(avgFmr[1])}/mo for 1-BR`
+    : `Fair Market Rent in ${city}, ${state} (FY${hudFY}) — ${fmt(avgFmr[1])}/mo for 1-BR`;
 
-  const ogTitle = `Average Rent in ${city}, ${state} — ${fmt(avgFmr[1])}/mo (${dataYear})`;
-  const metaDesc = `1-BR rents in ${city} are ${fmt(avgFmr[1])}/mo${trendYoY !== null ? `, ${trendYoY > 0 ? 'up' : 'down'} ${Math.abs(trendYoY).toFixed(1)}% year-over-year` : ''}. See federal benchmarks, trends, and data for ${zips.length} zip codes.`;
+  const ogTitle = `Average Rent in ${city}, ${state} — ${fmt(avgFmr[1])}/mo for 1-BR (${dataYear})`;
+  const metaDesc = `Average 1-BR rent in ${city} is ${fmt(avgFmr[1])}/mo${trendYoY !== null ? ` (${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% YoY)` : ''}. Compare ${zips.length} zip codes, see HUD fair market rents by bedroom, and check if your rent increase is fair. Updated ${dataYear}.`;
 
   // Metro name for context
   const metroName = zips[0]?.raw.m || '';
