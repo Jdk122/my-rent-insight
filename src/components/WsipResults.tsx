@@ -6,12 +6,13 @@ import { Copy, Check } from 'lucide-react';
 import { RentLookupResult, bedroomLabels, BedroomType } from '@/data/rentData';
 import { useRentcast } from '@/hooks/useRentcast';
 import { useRentcastMarket } from '@/hooks/useRentcastMarket';
+import { PropertyLookupResult } from '@/hooks/usePropertyLookup';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import { assessConfidence, detectOutliers, getCompRadius, filterFurnished, deduplicateComps, applySeasonalAdjustment } from '@/lib/dataQuality';
 import { calculateCompositeTrend } from '@/lib/compositeTrend';
-import { getRentControlByStateCity, getApplicableCap } from '@/data/rentControlData';
+import { getRentControlByStateCity, getApplicableCap, checkBuildingEligibility } from '@/data/rentControlData';
 import { getUtilityNote } from '@/lib/contextualFlags';
 import { calculateFairRange } from '@/lib/fairRange';
 import { tierComps, getTierWeights } from '@/lib/compTiering';
@@ -39,6 +40,7 @@ interface WsipResultsProps {
   bedrooms: BedroomType;
   askingRent: number | null;
   rentData: RentLookupResult;
+  propertyData: PropertyLookupResult | null;
   capturedEmail: string;
   onEmailCaptured: (email: string) => void;
   onReset: () => void;
@@ -50,6 +52,7 @@ const WsipResults = ({
   bedrooms,
   askingRent,
   rentData,
+  propertyData,
   capturedEmail,
   onEmailCaptured,
   onReset,
@@ -91,8 +94,8 @@ const WsipResults = ({
 
   const outlierResult = useMemo(() => {
     if (cleanedComps.length === 0) return null;
-    return detectOutliers(cleanedComps);
-  }, [cleanedComps]);
+    return detectOutliers(cleanedComps, propertyData?.squareFootage ?? undefined);
+  }, [cleanedComps, propertyData?.squareFootage]);
 
   const medianCompRent = useMemo<number | null>(() => {
     if (outlierResult && outlierResult.filtered.length >= 2) return outlierResult.median;
@@ -207,11 +210,23 @@ const WsipResults = ({
     hasCensus: rentData.censusMedianRent !== null,
   }), [outlierResult, compRadius, rentData]);
 
-  // ━━━ Rent control cap ━━━
+  // ━━━ Rent control cap + building eligibility ━━━
   const rentControlCap = useMemo(() => {
     const result = getRentControlByStateCity(rentData.state, rentData.city);
     return getApplicableCap(result);
   }, [rentData.state, rentData.city]);
+
+  const buildingEligibility = useMemo(() => {
+    if (!rentControlCap) return 'unknown' as const;
+    return checkBuildingEligibility(rentControlCap, propertyData ? {
+      yearBuilt: propertyData.yearBuilt ?? null,
+      units: propertyData.units ?? null,
+      propertyType: propertyData.propertyType ?? null,
+    } : null);
+  }, [rentControlCap, propertyData]);
+
+  // ━━━ Contextual flags ━━━
+  const utilityNote = useMemo(() => getUtilityNote(propertyData, rentData.state), [propertyData, rentData.state]);
 
   // ━━━ Market editorial ━━━
   const marketEditorial = useMemo(() => {
@@ -418,6 +433,15 @@ const WsipResults = ({
               )}
             </h1>
 
+            {/* Property context line */}
+            {propertyData && (
+              <p className="text-xs text-muted-foreground mb-2">
+                {propertyData.propertyType}
+                {propertyData.yearBuilt && ` · Built ${propertyData.yearBuilt}`}
+                {propertyData.squareFootage && ` · ${propertyData.squareFootage.toLocaleString()} sqft`}
+              </p>
+            )}
+
             {/* Summary line */}
             {askingRent && savings !== null && savings > 0 && (
               <p className="text-base sm:text-lg font-medium text-destructive mb-2">
@@ -453,10 +477,12 @@ const WsipResults = ({
               )}
             </p>
 
-            {/* Rent control note (WSIP) */}
-            {rentControlCap && rentControlCap.maxIncreaseFormula && (
+            {/* Rent control note (WSIP) — building-aware */}
+            {rentControlCap && rentControlCap.maxIncreaseFormula && buildingEligibility !== 'ineligible' && (
               <p className="text-xs text-muted-foreground mb-4 max-w-[480px]">
-                Note: {rentControlCap.jurisdiction} has rent control regulations that may affect pricing for eligible buildings in this area.
+                Note: {rentControlCap.jurisdiction} has rent control regulations that may affect pricing
+                {buildingEligibility === 'eligible' ? ' for this building' : ' for eligible buildings in this area'}.
+                {buildingEligibility === 'unknown' && !propertyData && ' Enter a full address to check if this building qualifies.'}
               </p>
             )}
 
@@ -728,9 +754,14 @@ const WsipResults = ({
                 <h2 className="results-section-header mb-2">
                   What Similar Units Actually Rent For
                 </h2>
-                <p className="text-[12px] text-muted-foreground text-center mb-6">
+                <p className="text-[12px] text-muted-foreground text-center mb-4">
                   Showing {allComps.length} comparable rental{allComps.length !== 1 ? 's' : ''}{compRadius.label ? ` ${compRadius.label}` : ''}.
                 </p>
+                {utilityNote && (
+                  <p className="text-[11px] text-muted-foreground/70 text-center mb-6 max-w-[480px] mx-auto italic">
+                    💡 {utilityNote}
+                  </p>
+                )}
 
                 {/* Tier 1: in-building comps */}
                 {tier1Comps.length > 0 && (

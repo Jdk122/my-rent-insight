@@ -22,6 +22,7 @@ interface WsipResultsState {
   bedrooms: BedroomType;
   askingRent: number | null;
   rentData: RentLookupResult;
+  propertyData: import('@/hooks/usePropertyLookup').PropertyLookupResult | null;
 }
 
 const bedroomNumToKey: Record<number, BedroomType> = {
@@ -45,7 +46,7 @@ const WhatShouldIPay = () => {
     const demo = searchParams.get('demo');
     const demoData = getWsipDemoData(demo);
     if (demoData && !results) {
-      setResults(demoData);
+      setResults({ ...demoData, propertyData: null });
     }
   }, [searchParams]);
 
@@ -104,6 +105,7 @@ const WhatShouldIPay = () => {
         bedrooms: data.bedrooms,
         askingRent: data.askingRent,
         rentData,
+        propertyData: propResult ?? null,
       });
 
       trackEvent('wsip_form_submitted', { zip, bedrooms: data.bedrooms, has_asking_rent: !!data.askingRent });
@@ -264,6 +266,7 @@ const WhatShouldIPay = () => {
               bedrooms={results.bedrooms}
               askingRent={results.askingRent}
               rentData={results.rentData}
+              propertyData={results.propertyData}
               capturedEmail={capturedEmail}
               onEmailCaptured={setCapturedEmail}
               onReset={resetAll}
