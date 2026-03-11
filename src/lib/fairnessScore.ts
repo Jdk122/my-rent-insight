@@ -18,6 +18,8 @@ export interface FairnessScoreInput {
   rcMedianRent?: number | null;   // Rentcast /markets median rent for bedroom count
   rcTotalListings?: number | null; // Rentcast /markets total active listings
   compositeTrend?: number | null;  // From calculateCompositeTrend (preferred for Component 1)
+  buildingMedian?: number | null;  // Median rent of same-building comps
+  buildingCompCount?: number | null; // Number of same-building comps with rent data
 }
 
 // Tooltip explainer for the FMR/Increase Reasonableness component
