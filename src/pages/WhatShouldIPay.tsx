@@ -230,7 +230,7 @@ const WhatShouldIPay = () => {
                   <span>HUD Fair Market Rent</span>
                   <span>Zillow ZORI</span>
                   <span>Apartment List</span>
-                  <span>Rentcast</span>
+                  <span>Live Market Comps</span>
                 </div>
               </div>
             </div>
