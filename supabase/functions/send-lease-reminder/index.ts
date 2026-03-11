@@ -6,6 +6,14 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+const BASE_URL = "https://renewalreply.com";
+const WORDMARK = `${BASE_URL}/renewalreply-wordmark.png`;
+
+const emailHeader = `
+  <img src="${WORDMARK}" alt="RenewalReply" width="140" style="display:block;margin:0 0 16px;" />
+  <div style="height:2px;background:#168eca;margin:0 0 24px;"></div>
+`;
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -23,7 +31,6 @@ Deno.serve(async (req) => {
 
   const supabase = createClient(supabaseUrl, serviceKey);
 
-  // Calculate the target date ~60 days from now
   const now = new Date();
   const targetDate = new Date(now);
   targetDate.setDate(targetDate.getDate() + 60);
@@ -52,7 +59,7 @@ Deno.serve(async (req) => {
     });
   }
 
-  const siteUrl = "https://renewalreply.com";
+  const siteUrl = BASE_URL;
   const bedroomLabelMap: Record<number, string> = {
     0: "studio",
     1: "1-bedroom",
@@ -70,7 +77,6 @@ Deno.serve(async (req) => {
     const zipCode = lead.zip || null;
     const address = lead.address || null;
 
-    // Build pre-filled CTA URL with UTM params
     const params = new URLSearchParams();
     params.set("utm_source", "email");
     params.set("utm_medium", "reminder");
@@ -82,7 +88,6 @@ Deno.serve(async (req) => {
 
     const ctaUrl = `${siteUrl}/?${params.toString()}`;
 
-    // Build personal copy
     const location = [lead.city, lead.state].filter(Boolean).join(", ") || "your area";
     let personalLine: string;
     if (brLabel && zipCode && rent) {
@@ -91,20 +96,23 @@ Deno.serve(async (req) => {
       personalLine = `Your lease in <strong>${location}</strong> is coming up for renewal. Enter your new proposed rent to see if it's fair.`;
     }
 
+    const unsubUrl = `${BASE_URL}/outcome?result=unsubscribe&id=${lead.id}`;
+
     const htmlBody = `
-      <div style="font-family: 'DM Sans', Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px 24px;">
-        <p style="font-size: 20px; font-weight: 700; color: #2d6a4f; margin-bottom: 4px;">
-          Renewal<span style="font-weight: 400; color: #c77d3c;">Reply</span>
-        </p>
-        <h1 style="font-size: 22px; color: #1a1a1a; margin: 24px 0 8px;">Your lease renews in ~60 days</h1>
-        <p style="font-size: 15px; color: #555; line-height: 1.6; margin-bottom: 28px;">
+      <div style="font-family:'DM Sans',Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
+        ${emailHeader}
+        <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:#1b1f27;margin:0 0 8px;">Your lease renews in ~60 days</h1>
+        <p style="font-size:15px;color:#555;line-height:1.7;margin-bottom:28px;">
           ${personalLine}
         </p>
-        <a href="${ctaUrl}" style="display: block; text-align: center; background: #2d6a4f; color: white; padding: 14px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px; margin-bottom: 24px;">
+        <a href="${ctaUrl}" style="display:inline-block;padding:14px 24px;background:#168eca;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:15px;">
           Check my new increase →
         </a>
-        <p style="font-size: 12px; color: #999; text-align: center;">
-          RenewalReply · You signed up for lease renewal reminders.
+        <p style="font-family:'DM Sans',Arial,sans-serif;font-size:15px;color:#555;margin-top:28px;">— RenewalReply</p>
+        <hr style="border:none;border-top:1px solid #eee;margin:32px 0 16px;" />
+        <p style="font-size:11px;color:#999;text-align:center;">
+          RenewalReply · You signed up for lease renewal reminders.<br/>
+          <a href="${unsubUrl}" style="color:#999;text-decoration:underline;">Unsubscribe</a>
         </p>
       </div>
     `;

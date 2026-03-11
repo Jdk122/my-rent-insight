@@ -9,6 +9,12 @@ const corsHeaders = {
 const fmt = (n: number | null) => (n != null ? `$${Math.round(n).toLocaleString("en-US")}` : "your rent");
 
 const BASE_URL = "https://renewalreply.com";
+const WORDMARK = `${BASE_URL}/renewalreply-wordmark.png`;
+
+const emailHeader = `
+  <img src="${WORDMARK}" alt="RenewalReply" width="140" style="display:block;margin:0 0 16px;" />
+  <div style="height:2px;background:#168eca;margin:0 0 24px;"></div>
+`;
 
 function buildButton(label: string, href: string, color: string) {
   return `<a href="${href}" style="display:inline-block;padding:12px 20px;background:${color};color:#fff;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-right:8px;margin-bottom:8px;">${label}</a>`;
@@ -24,40 +30,38 @@ function buildDay7Html(lead: any) {
   const isAboveMarket = lead.verdict && ['Moderate', 'Unfair', 'Excessive', 'Above Market'].includes(lead.verdict);
 
   const movingSection = isAboveMarket ? `
-    <div style="margin-top:28px;padding:20px;background:#f8f6f3;border-radius:10px;border:1px solid #e8e4df;">
-      <p style="font-size:16px;font-weight:700;color:#1a1a1a;margin:0 0 8px;">Thinking about moving instead?</p>
+    <div style="margin-top:28px;padding:20px;background:#f6f8f8;border-radius:10px;border:1px solid #e8e4df;">
+      <p style="font-family:'DM Serif Display',Georgia,serif;font-size:16px;font-weight:700;color:#1b1f27;margin:0 0 8px;">Thinking about moving instead?</p>
       <p style="font-size:14px;color:#555;line-height:1.6;margin:0 0 16px;">
         If you share your target budget and preferred neighborhood, we can connect you with a local rental specialist — free, no obligation.
       </p>
-      ${buildButton("Tell us what you're looking for", movingUrl, "#c77d3c")}
+      ${buildButton("Tell us what you're looking for", movingUrl, "#168eca")}
     </div>
   ` : '';
 
   return `
-    <div style="font-family: 'DM Sans', Arial, sans-serif; max-width: 520px; margin: 0 auto; padding: 32px 24px;">
-      <p style="font-size: 20px; font-weight: 700; color: #2d6a4f; margin-bottom: 4px;">
-        Renewal<span style="font-weight: 400; color: #c77d3c;">Reply</span>
-      </p>
-      <h1 style="font-size: 20px; color: #1a1a1a; margin: 24px 0 12px;">How did your negotiation go?</h1>
-      <p style="font-size: 15px; color: #555; line-height: 1.7;">
+    <div style="font-family:'DM Sans',Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
+      ${emailHeader}
+      <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:#1b1f27;margin:0 0 12px;">How did your negotiation go?</h1>
+      <p style="font-size:15px;color:#555;line-height:1.7;">
         Hi — a week ago you generated a negotiation letter for your rent increase from
         ${fmt(lead.current_rent)} to ${fmt(lead.proposed_rent)} in ${lead.zip || "your area"}.
         Your Fairness Score was <strong>${lead.fairness_score ?? "—"}/100</strong>.
       </p>
-      <p style="font-size: 15px; color: #555; line-height: 1.7; margin: 16px 0 24px;">
+      <p style="font-size:15px;color:#555;line-height:1.7;margin:16px 0 24px;">
         Let us know what happened — it takes one click:
       </p>
       <div style="margin-bottom:8px;">
         ${buildButton("My landlord agreed ✓", agreedUrl, "#2d6a4f")}
         ${buildButton("My landlord countered", counteredUrl, "#b8860b")}
-        ${buildButton("No response yet", noResponseUrl, "#666")}
+        ${buildButton("No response yet", noResponseUrl, "#6b7280")}
       </div>
       ${movingSection}
-      <p style="font-size: 15px; color: #555; margin-top: 28px;">— RenewalReply</p>
-      <hr style="border: none; border-top: 1px solid #eee; margin: 32px 0 16px;" />
-      <p style="font-size: 11px; color: #999; text-align: center;">
+      <p style="font-family:'DM Sans',Arial,sans-serif;font-size:15px;color:#555;margin-top:28px;">— RenewalReply</p>
+      <hr style="border:none;border-top:1px solid #eee;margin:32px 0 16px;" />
+      <p style="font-size:11px;color:#999;text-align:center;">
         You received this because you generated a negotiation letter on RenewalReply.<br/>
-        <a href="${unsubUrl}" style="color: #999; text-decoration: underline;">Unsubscribe</a>
+        <a href="${unsubUrl}" style="color:#999;text-decoration:underline;">Unsubscribe</a>
       </p>
     </div>
   `;
@@ -70,28 +74,26 @@ function buildDay45Html(lead: any) {
   const noResponseUrl = `${BASE_URL}/outcome?id=${lead.id}&result=no_response`;
 
   return `
-    <div style="font-family: 'DM Sans', Arial, sans-serif; max-width: 520px; margin: 0 auto; padding: 32px 24px;">
-      <p style="font-size: 20px; font-weight: 700; color: #2d6a4f; margin-bottom: 4px;">
-        Renewal<span style="font-weight: 400; color: #c77d3c;">Reply</span>
-      </p>
-      <h1 style="font-size: 20px; color: #1a1a1a; margin: 24px 0 12px;">How did your rent negotiation go?</h1>
-      <p style="font-size: 15px; color: #555; line-height: 1.7;">
+    <div style="font-family:'DM Sans',Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
+      ${emailHeader}
+      <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:#1b1f27;margin:0 0 12px;">How did your rent negotiation go?</h1>
+      <p style="font-size:15px;color:#555;line-height:1.7;">
         Hi — about 6 weeks ago you used RenewalReply to check a rent increase from
         ${fmt(lead.current_rent)} to ${fmt(lead.proposed_rent)} in ${lead.zip || "your area"}.
       </p>
-      <p style="font-size: 15px; color: #555; line-height: 1.7; margin: 16px 0 24px;">
+      <p style="font-size:15px;color:#555;line-height:1.7;margin:16px 0 24px;">
         We'd love to know how it turned out:
       </p>
       <div style="margin-bottom:8px;">
         ${buildButton("My landlord agreed ✓", agreedUrl, "#2d6a4f")}
         ${buildButton("My landlord countered", counteredUrl, "#b8860b")}
-        ${buildButton("No response yet", noResponseUrl, "#666")}
+        ${buildButton("No response yet", noResponseUrl, "#6b7280")}
       </div>
-      <p style="font-size: 15px; color: #555; margin-top: 28px;">— RenewalReply</p>
-      <hr style="border: none; border-top: 1px solid #eee; margin: 32px 0 16px;" />
-      <p style="font-size: 11px; color: #999; text-align: center;">
+      <p style="font-family:'DM Sans',Arial,sans-serif;font-size:15px;color:#555;margin-top:28px;">— RenewalReply</p>
+      <hr style="border:none;border-top:1px solid #eee;margin:32px 0 16px;" />
+      <p style="font-size:11px;color:#999;text-align:center;">
         You received this because you used RenewalReply.<br/>
-        <a href="${unsubUrl}" style="color: #999; text-decoration: underline;">Unsubscribe</a>
+        <a href="${unsubUrl}" style="color:#999;text-decoration:underline;">Unsubscribe</a>
       </p>
     </div>
   `;
