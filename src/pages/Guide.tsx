@@ -148,7 +148,7 @@ const Guide = () => {
               Check if your rent increase is fair
             </p>
             <p className="text-sm text-muted-foreground mb-4">
-              Free, instant results backed by HUD, Zillow, and Rentcast data.
+              Free, instant results backed by HUD, Zillow, and real-time listing data.
             </p>
             <Link
               to="/"

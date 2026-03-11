@@ -44,9 +44,9 @@ export function calculateFairRange(input: FairRangeInput): FairRangeResult {
 
   // ── Sources ──
   const sources: string[] = ['HUD SAFMR'];
-  if (hasComps) sources.push('Rentcast Comps');
+  if (hasComps) sources.push('Nearby Listings');
   if (hasZori) sources.push('Zillow ZORI');
-  if (hasMarketMedian) sources.push('Rentcast Market');
+  if (hasMarketMedian) sources.push('Local Market Data');
 
   // ── Tier-override path ──
   if (tierOverride && tierOverride.tier1Rents.length > 0) {

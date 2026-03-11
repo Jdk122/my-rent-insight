@@ -238,7 +238,7 @@ const SharedReport = () => {
             <li>• HUD Small Area Fair Market Rents (SAFMR) — FY2026</li>
             <li>• Zillow Observed Rent Index (ZORI) — latest available</li>
             <li>• U.S. Census Bureau American Community Survey (ACS) — 2023</li>
-            {report.comparables && report.comparables.length > 0 && <li>• Rentcast — comparable rental listings</li>}
+            {report.comparables && report.comparables.length > 0 && <li>• Real-time comparable rental listings nearby</li>}
           </ul>
         </div>
 
