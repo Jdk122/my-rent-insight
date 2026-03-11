@@ -218,6 +218,7 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); if (error) setError(''); }}
                   autoFocus
+                  autoComplete="email"
                   className={`flex-1 min-w-0 px-4 py-3 text-sm border rounded-lg bg-card text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 ${
                     error ? 'border-destructive' : 'border-border focus:border-foreground'
                   }`}

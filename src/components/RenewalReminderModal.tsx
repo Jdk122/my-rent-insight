@@ -125,6 +125,7 @@ const RenewalReminderModal = ({ open, onOpenChange, zip }: RenewalReminderModalP
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  autoComplete="email"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">

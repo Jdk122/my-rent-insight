@@ -221,7 +221,7 @@ const WhatShouldIPay = () => {
           <p className="mt-4 sm:mt-6 text-[15px] sm:text-lg md:text-xl text-muted-foreground max-w-[540px] leading-relaxed font-normal tracking-tight">
             Most listings are $100–300/month above market. Enter the address and see what it's actually worth<span className="text-primary font-medium no-underline"> — in 10 seconds.</span>
           </p>
-          <section className="mt-8 sm:mt-10" aria-label="Fair rent calculator">
+          <section id="main-content" className="mt-8 sm:mt-10" aria-label="Fair rent calculator">
             <WsipForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
             <div className="mt-3 max-w-[540px]">
               <div className="border-t border-b border-border/40 py-2.5 px-1">

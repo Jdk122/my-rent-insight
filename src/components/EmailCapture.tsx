@@ -184,6 +184,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            autoComplete="email"
             className="flex-1 min-w-0 px-4 py-3 text-sm border border-border rounded-lg bg-card text-foreground outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
           />
           <button type="submit" className="bg-primary text-primary-foreground px-4 sm:px-5 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap shrink-0">
