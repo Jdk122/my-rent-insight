@@ -443,7 +443,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     proposedRent: newRent,
     increasePct,
     marketTrendPct: marketYoy,
-    fairCounterOffer: calc && !calc.counterExceedsProposed ? (calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}`) : undefined,
+    fairCounterOffer: counterOffer && !counterExceedsProposed ? (counterOffer.counterLow === counterOffer.counterHigh ? `$${fmt(counterOffer.counterLow)}` : `$${fmt(counterOffer.counterLow)}–$${fmt(counterOffer.counterHigh)}`) : undefined,
     compsPosition: medianCompRent ? (newRent > medianCompRent ? 'above' : 'below') : undefined,
     letterGenerated: !!(hasIncrease && isAboveMarket && calc),
     fairnessScore: fairnessScore?.total ?? null,
