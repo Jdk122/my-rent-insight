@@ -9,7 +9,6 @@ import { getUtmParams } from '@/lib/utm';
 import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
 import SocialProofLine from './SocialProofLine';
 import PostConversionFlow from './PostConversionFlow';
-import PostConversionFlow from './PostConversionFlow';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
