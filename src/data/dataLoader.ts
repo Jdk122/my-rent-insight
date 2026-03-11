@@ -555,76 +555,29 @@ export function getVerdict(
 export function getCounterOffer(
   currentRent: number,
   marketYoY: number,
-  buildingMedian?: number | null,
-  compMedian?: number | null,
-  sameLineMedian?: number | null,
 ) {
-  if (marketYoY <= 0 && buildingMedian == null && compMedian == null && sameLineMedian == null) {
-    return {
-      counterLow: currentRent,
-      counterHigh: currentRent,
-      counterLowPercent: 0,
-      counterHighPercent: 0,
-    };
-  }
+  const trendPct = Math.max(marketYoY, 0);
 
-  // Determine anchor rent: same-line > building (non-premium) > comps > current
-  let anchor: number;
-  let useMinStrategy = true; // min(trend, anchor) for non-premium anchors
+  // Open aggressively below market to leave negotiation
+  // room. Landlord expects to meet in the middle.
+  // At 0.25-0.50 of market trend, renter typically lands
+  // at or near the actual market rate after negotiation.
+  const counterLowPct = trendPct * 0.25;
+  const counterHighPct = trendPct * 0.50;
 
-  if (sameLineMedian != null && sameLineMedian > 0) {
-    anchor = sameLineMedian;
-  } else if (buildingMedian != null && buildingMedian > 0) {
-    const isPremium = currentRent > buildingMedian * 1.20;
-    if (isPremium) {
-      // Premium unit: don't anchor to building median — this unit legitimately costs more
-      anchor = currentRent;
-      useMinStrategy = false;
-    } else {
-      anchor = buildingMedian;
-    }
-  } else if (compMedian != null && compMedian > 0) {
-    const isPremiumVsComps = currentRent > compMedian * 1.20;
-    if (isPremiumVsComps) {
-      // Premium unit relative to comps — don't anchor down
-      anchor = currentRent;
-      useMinStrategy = false;
-    } else {
-      anchor = compMedian;
-    }
-  } else {
-    anchor = currentRent;
-    useMinStrategy = false;
-  }
+  const counterLow = Math.round(
+    (currentRent * (1 + counterLowPct / 100)) / 25
+  ) * 25;
 
-  const counterPct = Math.max(marketYoY, 0);
-  const trendBased = Math.round((currentRent * (1 + counterPct / 100)) / 25) * 25;
-
-  // Pick whichever is lower for non-premium anchors; trend-only for premium/fallback
-  let counterLow = useMinStrategy ? Math.min(anchor, trendBased) : trendBased;
-
-  // Floor: don't suggest more than 15% reduction
-  const floor = Math.round(currentRent * 0.85);
-  counterLow = Math.max(counterLow, floor);
-
-  // Round to nearest $25
-  counterLow = Math.round(counterLow / 25) * 25;
-
-  let counterHigh = Math.round((counterLow * 1.03) / 25) * 25;
-
-  // Ceiling: counterHigh cannot exceed currentRent unless trend justifies it
-  if (marketYoY <= 0) {
-    counterHigh = Math.min(counterHigh, currentRent);
-    counterLow = Math.min(counterLow, currentRent);
-  }
-
-  counterHigh = Math.max(counterHigh, counterLow);
+  const counterHigh = Math.round(
+    (currentRent * (1 + counterHighPct / 100)) / 25
+  ) * 25;
 
   return {
-    counterLow,
-    counterHigh,
-    counterLowPercent: currentRent > 0 ? Math.round(((counterLow / currentRent - 1) * 100) * 10) / 10 : 0,
-    counterHighPercent: currentRent > 0 ? Math.round(((counterHigh / currentRent - 1) * 100) * 10) / 10 : 0,
+    counterLow: Math.max(counterLow, currentRent),
+    counterHigh: Math.max(counterHigh, counterLow),
+    counterLowPercent: Math.round(counterLowPct * 10) / 10,
+    counterHighPercent: Math.round(counterHighPct * 10) / 10,
   };
 }
 

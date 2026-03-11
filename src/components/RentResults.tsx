@@ -185,17 +185,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     );
   }, [formData.currentRent, increasePct, formData.movingCosts, rentData, hasIncrease]);
 
-  // ━━━ Counter-offer (separate from calc, anchored to same-line/building/comps) ━━━
+  // ━━━ Counter-offer (trend-based with built-in negotiation room) ━━━
   const counterOffer = useMemo(() => {
     if (!hasIncrease) return null;
-    return getCounterOffer(
-      formData.currentRent,
-      marketYoy,
-      bldg.hasBuildingData ? bldg.buildingMedian : null,
-      medianCompRent,
-      sameLineMedian,
-    );
-  }, [hasIncrease, formData.currentRent, marketYoy, bldg, medianCompRent, sameLineMedian]);
+    return getCounterOffer(formData.currentRent, marketYoy);
+  }, [hasIncrease, formData.currentRent, marketYoy]);
 
   const counterExceedsProposed = counterOffer
     ? counterOffer.counterLow >= newRent
