@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
+import { generateSharedReport, SharedReportPayload } from '@/lib/generateSharedReport';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import { Check, Copy, Loader2 } from 'lucide-react';
@@ -16,9 +17,11 @@ interface LetterGateProps {
   onEmailCaptured?: (email: string) => void;
   prefilledEmail?: string;
   verdictLabel?: string;
+  shareReportPayload?: SharedReportPayload;
+  onReportGenerated?: (url: string) => void;
 }
 
-const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, verdictLabel }: LetterGateProps) => {
+const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, verdictLabel, shareReportPayload, onReportGenerated }: LetterGateProps) => {
   const [unlocked, setUnlocked] = useState(() => !!prefilledEmail);
   const [email, setEmail] = useState(prefilledEmail || '');
   const [error, setError] = useState('');
@@ -136,16 +139,25 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
     setLoading(false);
     toast.success('Letter unlocked!');
 
-    sendConfirmationEmail({
-      email: email.trim(),
-      city: leadContext?.city,
-      state: leadContext?.state,
-      zip: leadContext?.zip,
-      bedrooms: leadContext?.bedrooms,
-      toolType: 'renewal',
-      fairnessScore: leadContext?.fairnessScore,
-      verdictLabel: verdict,
-    });
+    // Generate report + send email in parallel (non-blocking)
+    (async () => {
+      let reportUrl: string | null = null;
+      if (shareReportPayload) {
+        reportUrl = await generateSharedReport(shareReportPayload, leadContext?.analysisId, email.trim());
+        if (reportUrl) onReportGenerated?.(reportUrl);
+      }
+      sendConfirmationEmail({
+        email: email.trim(),
+        city: leadContext?.city,
+        state: leadContext?.state,
+        zip: leadContext?.zip,
+        bedrooms: leadContext?.bedrooms,
+        toolType: 'renewal',
+        fairnessScore: leadContext?.fairnessScore,
+        verdictLabel: verdict,
+        reportUrl,
+      });
+    })();
   };
 
   const handleCopy = () => {

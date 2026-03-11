@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
+import { generateSharedReport, SharedReportPayload } from '@/lib/generateSharedReport';
 import { toast } from 'sonner';
 import { X, MessageCircle, Mail, Link2 } from 'lucide-react';
 import type { LeadContext } from './EmailCapture';
@@ -16,11 +17,13 @@ interface ExitIntentModalProps {
   city: string;
   onEmailCaptured: (email: string) => void;
   toolType?: 'renewal' | 'wsip';
+  shareReportPayload?: SharedReportPayload;
+  onReportGenerated?: (url: string) => void;
 }
 
 const SESSION_KEY = 'rr_exit_intent_shown';
 
-const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, onEmailCaptured, toolType = 'renewal' }: ExitIntentModalProps) => {
+const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, onEmailCaptured, toolType = 'renewal', shareReportPayload, onReportGenerated }: ExitIntentModalProps) => {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
@@ -116,16 +119,25 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
     setOpen(false);
     toast.success('Sent to your email!');
 
-    sendConfirmationEmail({
-      email: email.trim(),
-      city: leadContext?.city || city,
-      state: leadContext?.state,
-      zip: leadContext?.zip || zip,
-      bedrooms: leadContext?.bedrooms,
-      toolType: toolType === 'wsip' ? 'wsip' : 'renewal',
-      fairnessScore: leadContext?.fairnessScore,
-      verdictLabel,
-    });
+    // Generate report + send email in parallel (non-blocking)
+    (async () => {
+      let reportUrl: string | null = null;
+      if (shareReportPayload) {
+        reportUrl = await generateSharedReport(shareReportPayload, leadContext?.analysisId, email.trim());
+        if (reportUrl) onReportGenerated?.(reportUrl);
+      }
+      sendConfirmationEmail({
+        email: email.trim(),
+        city: leadContext?.city || city,
+        state: leadContext?.state,
+        zip: leadContext?.zip || zip,
+        bedrooms: leadContext?.bedrooms,
+        toolType: toolType === 'wsip' ? 'wsip' : 'renewal',
+        fairnessScore: leadContext?.fairnessScore,
+        verdictLabel,
+        reportUrl,
+      });
+    })();
   };
 
   const handleShare = (method: string) => {

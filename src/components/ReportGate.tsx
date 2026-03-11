@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
+import { generateSharedReport, SharedReportPayload } from '@/lib/generateSharedReport';
 import SocialProofLine from './SocialProofLine';
 import type { LeadContext } from './EmailCapture';
 
@@ -23,6 +24,10 @@ interface ReportGateProps {
   onEmailCaptured: (email: string) => void;
   /** Pre-filled email from form */
   prefilledEmail?: string;
+  /** Payload for auto-generating shared report */
+  shareReportPayload?: SharedReportPayload;
+  /** Callback when report link is generated */
+  onReportGenerated?: (url: string) => void;
 }
 
 const ReportGate = ({
@@ -36,6 +41,8 @@ const ReportGate = ({
   city,
   onEmailCaptured,
   prefilledEmail,
+  shareReportPayload,
+  onReportGenerated,
 }: ReportGateProps) => {
   const [email, setEmail] = useState(prefilledEmail || '');
   const [error, setError] = useState('');
@@ -113,22 +120,32 @@ const ReportGate = ({
       console.error('[lead] report_gate unexpected error:', err);
     }
 
+    // Unlock immediately
     onEmailCaptured(trimmed);
     setLoading(false);
     trackEvent('report_gate_converted', { verdict: verdictLabel, zip_code: zip, tool: toolType });
     trackEvent('email_submitted', { verdict: verdictLabel, zip_code: zip, source: 'report_gate' });
     trackAdsConversion();
 
-    sendConfirmationEmail({
-      email: trimmed,
-      city: leadContext?.city,
-      state: leadContext?.state,
-      zip: leadContext?.zip,
-      bedrooms: leadContext?.bedrooms,
-      toolType,
-      fairnessScore: leadContext?.fairnessScore,
-      verdictLabel,
-    });
+    // Generate report + send email in parallel (non-blocking)
+    (async () => {
+      let reportUrl: string | null = null;
+      if (shareReportPayload) {
+        reportUrl = await generateSharedReport(shareReportPayload, analysisId, trimmed);
+        if (reportUrl) onReportGenerated?.(reportUrl);
+      }
+      sendConfirmationEmail({
+        email: trimmed,
+        city: leadContext?.city,
+        state: leadContext?.state,
+        zip: leadContext?.zip,
+        bedrooms: leadContext?.bedrooms,
+        toolType,
+        fairnessScore: leadContext?.fairnessScore,
+        verdictLabel,
+        reportUrl,
+      });
+    })();
   };
 
   // Adaptive copy based on pain level and tool type

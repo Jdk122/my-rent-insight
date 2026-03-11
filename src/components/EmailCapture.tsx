@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { getUtmParams } from '@/lib/utm';
 import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
+import { generateSharedReport, SharedReportPayload } from '@/lib/generateSharedReport';
 import SocialProofLine from './SocialProofLine';
 import PostConversionFlow from './PostConversionFlow';
 
@@ -46,9 +47,11 @@ interface EmailCaptureProps {
   heading?: string;
   subtext?: string;
   verdict?: string;
+  shareReportPayload?: SharedReportPayload;
+  onReportGenerated?: (url: string) => void;
 }
 
-const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, onEmailCaptured, leadContext, heading, subtext, verdict }: EmailCaptureProps) => {
+const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, onEmailCaptured, leadContext, heading, subtext, verdict, shareReportPayload, onReportGenerated }: EmailCaptureProps) => {
   const [email, setEmail] = useState(prefilledEmail || '');
   const [submitted, setSubmitted] = useState(false);
 
@@ -116,16 +119,25 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
     setSubmitted(true);
     toast.success("You're on the list.");
 
-    sendConfirmationEmail({
-      email,
-      city: leadContext?.city,
-      state: leadContext?.state,
-      zip: leadContext?.zip,
-      bedrooms: leadContext?.bedrooms,
-      toolType: 'renewal',
-      fairnessScore: leadContext?.fairnessScore,
-      verdictLabel: verdict,
-    });
+    // Generate report + send email in parallel (non-blocking)
+    (async () => {
+      let reportUrl: string | null = null;
+      if (shareReportPayload) {
+        reportUrl = await generateSharedReport(shareReportPayload, leadContext?.analysisId, email);
+        if (reportUrl) onReportGenerated?.(reportUrl);
+      }
+      sendConfirmationEmail({
+        email,
+        city: leadContext?.city,
+        state: leadContext?.state,
+        zip: leadContext?.zip,
+        bedrooms: leadContext?.bedrooms,
+        toolType: 'renewal',
+        fairnessScore: leadContext?.fairnessScore,
+        verdictLabel: verdict,
+        reportUrl,
+      });
+    })();
   };
 
   if (submitted) {
