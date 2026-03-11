@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { RentFormData } from './RentForm';
-import { RentLookupResult, bedroomLabels, calculateResults } from '@/data/rentData';
+import { RentLookupResult, bedroomLabels, calculateResults, getCounterOffer } from '@/data/rentData';
 import ShareHub from './ShareHub';
 
 import { CompsList } from './ShouldYouMove';
