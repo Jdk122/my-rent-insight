@@ -21,6 +21,7 @@ export interface FairnessScoreInput {
   buildingMedian?: number | null;  // Median rent of same-building comps
   buildingCompCount?: number | null; // Number of same-building comps with rent data
   sameLineMedian?: number | null;  // Median rent of same-unit-line comps
+  allSameBuilding?: boolean;       // Whether all comps are from the same building
 }
 
 // Tooltip explainer for the FMR/Increase Reasonableness component
@@ -263,12 +264,40 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
     rateMax += compReduction;
   }
 
+  // Cross-source divergence discount: comp median wildly above FMR
+  if (validatedInput.compMedian !== null && validatedInput.fmr > 0 && compMax > 0) {
+    const compToFmrRatio = validatedInput.compMedian / validatedInput.fmr;
+    if (compToFmrRatio > 2.0) {
+      const divergenceReduction = Math.floor(compMax * 0.5);
+      compMax -= divergenceReduction;
+      rateMax += divergenceReduction;
+    }
+  }
+
+  // All-same-building discount: thin comps from a single building aren't a market sample
+  if (validatedInput.allSameBuilding && cc < 5 && compMax > 0) {
+    const bldgReduction = Math.floor(compMax * 0.5);
+    compMax -= bldgReduction;
+    rateMax += bldgReduction;
+  }
+
+  // User-rent-vs-comps sanity cap: if user pays 35%+ less than comp median, cap comp score
+  const compScoreCap = (validatedInput.compMedian !== null && validatedInput.currentRent < validatedInput.compMedian * 0.65)
+    ? Math.floor(compMax * 0.6)
+    : compMax;
+
   const components = [
     scoreRateVsTrend(validatedInput.increasePct, validatedInput.marketYoY, validatedInput.alYoY, rateMax, validatedInput.compositeTrend),
     scoreVsComps(validatedInput.proposedRent, validatedInput.compMedian, compMax, validatedInput.buildingMedian, validatedInput.buildingCompCount, validatedInput.sameLineMedian, validatedInput.currentRent),
     scoreVsFmr(validatedInput.proposedRent, validatedInput.fmr, validatedInput.currentRent, validatedInput.increasePct, validatedInput.marketYoY, validatedInput.f50, validatedInput.bedroomCount, validatedInput.rcMedianRent, validatedInput.rcTotalListings),
     scoreMarketMomentum(validatedInput.zillowMonthly, validatedInput.alMoM, validatedInput.hvd),
   ];
+  // Apply sanity cap to comp component if needed
+  const compComponent = components.find(c => c.id === 'comps');
+  if (compComponent && compScoreCap < compComponent.max) {
+    compComponent.score = Math.min(compComponent.score, compScoreCap);
+  }
+
   const visibleComponents = components.filter(c => c.max > 0);
   const total = components.reduce((sum, c) => sum + c.score, 0);
   return { total, ...getTier(total), components: visibleComponents };
