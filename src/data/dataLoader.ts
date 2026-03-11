@@ -615,8 +615,6 @@ export function calculateResults(
   increasePercent: number,
   movingCosts: number,
   data: RentLookupResult,
-  buildingMedian?: number | null,
-  compMedian?: number | null,
 ) {
   const proposedRent = Math.round(currentRent * (1 + increasePercent / 100));
   const extraPerYear = (proposedRent - currentRent) * 12;
