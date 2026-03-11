@@ -450,6 +450,51 @@ export function getApplicableCap(result: RentControlResult): RentControlLaw | nu
   return null;
 }
 
+/** Check if a building plausibly qualifies for rent control based on property data */
+export interface BuildingEligibilityInput {
+  yearBuilt?: number | null;
+  units?: number | null;
+  propertyType?: string | null;
+  dhcrMatch?: boolean;
+}
+
+export function checkBuildingEligibility(
+  cap: RentControlLaw,
+  building: BuildingEligibilityInput | null,
+): 'eligible' | 'ineligible' | 'unknown' {
+  if (!building) return 'unknown';
+
+  // NYC special case — DHCR registry is definitive
+  if (cap.jurisdiction === 'New York City') {
+    if (building.dhcrMatch) return 'eligible';
+    if (building.yearBuilt && building.yearBuilt < 1974) {
+      if (building.units && building.units >= 6) return 'eligible';
+      if ((!building.units || building.units === 0) &&
+          building.propertyType?.toLowerCase().includes('multi')) return 'eligible';
+    }
+    // Post-1974 or small building not in DHCR → ineligible
+    if (building.yearBuilt && building.yearBuilt >= 1974) return 'ineligible';
+    if (building.units && building.units < 6 && !building.dhcrMatch) return 'ineligible';
+    return 'unknown';
+  }
+
+  // For jurisdictions with year-built cutoffs
+  if (cap.yearBuiltCutoff) {
+    if (building.yearBuilt && building.yearBuilt >= cap.yearBuiltCutoff) return 'ineligible';
+  }
+  if (cap.minUnits) {
+    if (building.units && building.units < cap.minUnits) return 'ineligible';
+  }
+
+  // If we have year data and it's before the cutoff → eligible
+  if (cap.yearBuiltCutoff && building.yearBuilt && building.yearBuilt < cap.yearBuiltCutoff) {
+    if (!cap.minUnits || (building.units && building.units >= cap.minUnits)) return 'eligible';
+    if (!building.units) return 'unknown'; // year qualifies but units unknown
+  }
+
+  return 'unknown';
+}
+
 export function getNoticeRequirement(result: RentControlResult): { days: number; source: string } | null {
   // Return the longer notice period
   const cityDays = result.cityLaw?.noticePeriodDays ?? 0;
