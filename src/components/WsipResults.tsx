@@ -477,10 +477,12 @@ const WsipResults = ({
               )}
             </p>
 
-            {/* Rent control note (WSIP) */}
-            {rentControlCap && rentControlCap.maxIncreaseFormula && (
+            {/* Rent control note (WSIP) — building-aware */}
+            {rentControlCap && rentControlCap.maxIncreaseFormula && buildingEligibility !== 'ineligible' && (
               <p className="text-xs text-muted-foreground mb-4 max-w-[480px]">
-                Note: {rentControlCap.jurisdiction} has rent control regulations that may affect pricing for eligible buildings in this area.
+                Note: {rentControlCap.jurisdiction} has rent control regulations that may affect pricing
+                {buildingEligibility === 'eligible' ? ' for this building' : ' for eligible buildings in this area'}.
+                {buildingEligibility === 'unknown' && !propertyData && ' Enter a full address to check if this building qualifies.'}
               </p>
             )}
 
