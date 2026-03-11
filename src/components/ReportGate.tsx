@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
+import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
 import SocialProofLine from './SocialProofLine';
 import type { LeadContext } from './EmailCapture';
 
