@@ -22,6 +22,7 @@ interface WsipResultsState {
   bedrooms: BedroomType;
   askingRent: number | null;
   rentData: RentLookupResult;
+  propertyData: import('@/hooks/usePropertyLookup').PropertyLookupResult | null;
 }
 
 const bedroomNumToKey: Record<number, BedroomType> = {
