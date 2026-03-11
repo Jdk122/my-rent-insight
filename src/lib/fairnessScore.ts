@@ -61,14 +61,33 @@ function scoreRateVsTrend(increasePct: number, marketYoY: number, alYoY?: number
 }
 
 // Component 2: Proposed Rent vs Comp Median (30 pts base)
-function scoreVsComps(proposedRent: number, compMedian: number | null, maxPts: number = 30): ScoreComponent {
+function scoreVsComps(proposedRent: number, compMedian: number | null, maxPts: number = 30, buildingMedian?: number | null, buildingCompCount?: number | null): ScoreComponent {
   if (maxPts === 0) {
     return { id: 'comps', label: 'Rent vs. Nearby Listings', score: 0, max: 0, estimated: true };
   }
-  if (compMedian === null) {
-    return { id: 'comps', label: 'Rent vs. Nearby Listings', score: Math.round((18 / 30) * maxPts), max: maxPts, estimated: true };
+
+  // Determine effective reference rent: building > blended > area comps
+  let effectiveMedian: number | null = compMedian;
+  let label = 'Rent vs. Nearby Listings';
+  const bcc = buildingCompCount ?? 0;
+
+  if (buildingMedian != null && buildingMedian > 0) {
+    if (bcc >= 3) {
+      effectiveMedian = buildingMedian;
+      label = 'Comparable Rentals (in your building)';
+    } else if (compMedian != null) {
+      effectiveMedian = buildingMedian * 0.6 + compMedian * 0.4;
+      label = 'Rent vs. Nearby Listings';
+    } else {
+      effectiveMedian = buildingMedian;
+      label = 'Comparable Rentals (in your building)';
+    }
   }
-  const ratio = (proposedRent - compMedian) / compMedian;
+
+  if (effectiveMedian === null) {
+    return { id: 'comps', label, score: Math.round((18 / 30) * maxPts), max: maxPts, estimated: true };
+  }
+  const ratio = (proposedRent - effectiveMedian) / effectiveMedian;
   let rawScore: number;
   if (ratio <= 0) rawScore = 30;
   else if (ratio <= 0.10) rawScore = 30 - (ratio / 0.10) * 8;
@@ -76,7 +95,7 @@ function scoreVsComps(proposedRent: number, compMedian: number | null, maxPts: n
   else if (ratio <= 0.30) rawScore = 12 - ((ratio - 0.20) / 0.10) * 12;
   else rawScore = 0;
   const score = Math.round((rawScore / 30) * maxPts);
-  return { id: 'comps', label: 'Rent vs. Nearby Listings', score, max: maxPts, estimated: false };
+  return { id: 'comps', label, score, max: maxPts, estimated: false };
 }
 
 // Component 3: Increase Reasonableness (25 pts)
