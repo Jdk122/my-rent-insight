@@ -1231,7 +1231,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   verdict={isAboveMarket ? 'above' : isFair ? 'fair' : isBelowMarket ? 'below' : 'none'}
                   headline={
                     isAboveMarket && isPath1
-                      ? `My landlord is asking for $${fmt(newRent - (calc?.counterHigh ?? 0))}/mo more than the market supports.`
+                      ? `My landlord is asking for $${fmt(newRent - (counterOffer?.counterHigh ?? 0))}/mo more than the market supports.`
                       : isAboveMarket
                       ? `Rents near me moved ${marketYoy}% but my landlord wants ${increasePct}%.`
                       : isFair
