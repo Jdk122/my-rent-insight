@@ -284,6 +284,20 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const isNuancedAtMarket = isFair && increasePct - marketYoy > 2 && medianCompRent != null && newRent <= medianCompRent;
   const proposedFarBelowMedian = medianCompRent != null && newRent < medianCompRent * 0.8;
 
+  const isBelowFmrHighIncrease = useMemo(() => {
+    if (!hasIncrease || !fairnessScore) return false;
+    const bedroomNum = ['studio', '1br', '2br', '3br', '4br'].indexOf(formData.bedrooms);
+    const f50Value = rentData.f50 && bedroomNum >= 0 && bedroomNum <= 4 ? rentData.f50[bedroomNum] : 0;
+    const upper = (rcMarket.rcMedianRent && rcMarket.rcTotalListings && rcMarket.rcTotalListings >= 10)
+      ? rcMarket.rcMedianRent
+      : (f50Value && f50Value > 0) ? f50Value
+      : rentData.fmr * 1.15;
+    const effectiveUpper = Math.max(upper, rentData.fmr);
+    const rentBelowUpper = newRent <= effectiveUpper;
+    const increaseWellAboveTrend = increasePct > marketYoy * 1.5 && increasePct - marketYoy >= 3;
+    return rentBelowUpper && increaseWellAboveTrend;
+  }, [hasIncrease, fairnessScore, formData.bedrooms, rentData, rcMarket, newRent, increasePct, marketYoy]);
+
   const verdictColor = isAboveMarket ? 'text-destructive' : isFair ? 'text-verdict-fair' : 'text-verdict-good';
   const verdictLabel = !hasIncrease
     ? 'No Increase'
