@@ -318,9 +318,38 @@ const cityLaws: Record<string, RentControlLaw> = {
 // NYC zips are handled dynamically via isNycZip() below
 const zipToCityLaw: Record<string, string> = {
   '94102': 'San Francisco',
+  '94103': 'San Francisco',
+  '94107': 'San Francisco',
+  '94108': 'San Francisco',
+  '94109': 'San Francisco',
+  '94110': 'San Francisco',
+  '94112': 'San Francisco',
+  '94114': 'San Francisco',
+  '94115': 'San Francisco',
+  '94116': 'San Francisco',
+  '94117': 'San Francisco',
+  '94118': 'San Francisco',
+  '94121': 'San Francisco',
+  '94122': 'San Francisco',
+  '94123': 'San Francisco',
+  '94124': 'San Francisco',
+  '94127': 'San Francisco',
+  '94131': 'San Francisco',
+  '94132': 'San Francisco',
+  '94133': 'San Francisco',
+  '94134': 'San Francisco',
   '90001': 'Los Angeles',
   '90024': 'Los Angeles',
   '07030': 'Hoboken',
+  // Oakland zips
+  '94601': 'Oakland', '94602': 'Oakland', '94603': 'Oakland', '94605': 'Oakland',
+  '94606': 'Oakland', '94607': 'Oakland', '94608': 'Oakland', '94609': 'Oakland',
+  '94610': 'Oakland', '94611': 'Oakland', '94612': 'Oakland', '94613': 'Oakland',
+  '94618': 'Oakland', '94619': 'Oakland', '94621': 'Oakland',
+  // Berkeley zips
+  '94702': 'Berkeley', '94703': 'Berkeley', '94704': 'Berkeley', '94705': 'Berkeley',
+  '94706': 'Berkeley', '94707': 'Berkeley', '94708': 'Berkeley', '94709': 'Berkeley',
+  '94710': 'Berkeley',
 };
 
 // NYC zip code ranges cover all 5 boroughs
