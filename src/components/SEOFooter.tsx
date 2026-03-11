@@ -72,6 +72,7 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
           <Link to="/rent-data" className="hover:text-foreground transition-colors">Rent Data</Link>
           <Link to="/about" className="hover:text-foreground transition-colors">About</Link>
           <Link to="/methodology" className="hover:text-foreground transition-colors">Methodology</Link>
+          <Link to="/guides" className="hover:text-foreground transition-colors">Guides</Link>
           <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
           <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
           {onContactClick ? (

@@ -11,6 +11,7 @@ const PageNav = ({ ctaLink = '/', ctaText = 'Check Your Rent Increase →', hide
     <Link to="/" className="shrink-0">
       <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-7 sm:h-8 w-auto object-contain" />
     </Link>
+    <Link to="/guides" className="hidden sm:inline text-sm text-muted-foreground hover:text-foreground transition-colors font-medium">Guides</Link>
     {!hideCta && (
       <Link
         to={ctaLink}
