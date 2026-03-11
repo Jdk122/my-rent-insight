@@ -6,7 +6,9 @@ import { Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { getUtmParams } from '@/lib/utm';
+import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
 import SocialProofLine from './SocialProofLine';
+import PostConversionFlow from './PostConversionFlow';
 import PostConversionFlow from './PostConversionFlow';
 
 const months = [
