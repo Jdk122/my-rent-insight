@@ -446,6 +446,17 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     return getApplicableCap(result);
   }, [rentData.state, rentData.city]);
 
+  /** Whether the specific building plausibly qualifies for rent control */
+  const buildingEligibility = useMemo(() => {
+    if (!rentControlCap) return 'unknown' as const;
+    return checkBuildingEligibility(rentControlCap, propertyData ? {
+      yearBuilt: propertyData.yearBuilt ?? null,
+      units: propertyData.units ?? null,
+      propertyType: propertyData.propertyType ?? null,
+      dhcrMatch: hcrLookup.result?.found === true && hcrLookup.result?.stabilized === true,
+    } : null);
+  }, [rentControlCap, propertyData, hcrLookup.result]);
+
   const utilityNote = useMemo(() => getUtilityNote(propertyData, rentData.state), [propertyData, rentData.state]);
 
   const brokerFee = useMemo(() => getBrokerFeeInfo(rentData.state, rentData.city), [rentData.state, rentData.city]);
