@@ -584,7 +584,14 @@ export function getCounterOffer(
       anchor = buildingMedian;
     }
   } else if (compMedian != null && compMedian > 0) {
-    anchor = compMedian;
+    const isPremiumVsComps = currentRent > compMedian * 1.20;
+    if (isPremiumVsComps) {
+      // Premium unit relative to comps — don't anchor down
+      anchor = currentRent;
+      useMinStrategy = false;
+    } else {
+      anchor = compMedian;
+    }
   } else {
     anchor = currentRent;
     useMinStrategy = false;
