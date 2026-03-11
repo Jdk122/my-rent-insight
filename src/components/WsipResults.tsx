@@ -40,6 +40,7 @@ interface WsipResultsProps {
   bedrooms: BedroomType;
   askingRent: number | null;
   rentData: RentLookupResult;
+  propertyData: PropertyLookupResult | null;
   capturedEmail: string;
   onEmailCaptured: (email: string) => void;
   onReset: () => void;
