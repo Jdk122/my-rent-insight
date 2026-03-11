@@ -163,8 +163,16 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
         {capturedEmail ? (
           // Share prompt
           <div className="text-center space-y-4">
-            <h3 className="font-display text-lg font-semibold text-foreground">Know someone dealing with a rent increase?</h3>
-            <p className="text-sm text-muted-foreground">Share this tool — most renters overpay $50-150/mo.</p>
+            <h3 className="font-display text-lg font-semibold text-foreground">
+              {toolType === 'wsip'
+                ? 'Know anyone else browsing apartments?'
+                : 'Know someone dealing with a rent increase?'}
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {toolType === 'wsip'
+                ? 'Share this tool — most listings are $100-300/mo above market.'
+                : 'Share this tool — most renters overpay $50-150/mo.'}
+            </p>
             <div className="flex flex-col gap-2 max-w-[280px] mx-auto">
               <button onClick={() => handleShare('text')} className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors">
                 <MessageCircle className="w-4 h-4" /> Share via Text
@@ -180,8 +188,16 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
         ) : (
           // Email capture
           <div className="text-center space-y-4">
-            <h3 className="font-display text-lg font-semibold text-foreground">Don't negotiate without your data.</h3>
-            <p className="text-sm text-muted-foreground">We'll email your full analysis and negotiation letter so you have it when you're ready.</p>
+            <h3 className="font-display text-lg font-semibold text-foreground">
+              {toolType === 'wsip'
+                ? 'Don\'t sign a lease without the data.'
+                : 'Don\'t negotiate without your data.'}
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {toolType === 'wsip'
+                ? 'We\'ll email your full market comparison so you have it when you tour.'
+                : 'We\'ll email your full analysis and negotiation letter so you have it when you\'re ready.'}
+            </p>
             <form onSubmit={handleSubmit} className="space-y-2">
               <div className="flex gap-2">
                 <input
