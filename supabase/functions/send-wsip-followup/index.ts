@@ -9,7 +9,7 @@ const corsHeaders = {
 const fmt = (n: number | null) =>
   n != null ? `$${Math.round(n).toLocaleString("en-US")}` : "—";
 
-const BASE_URL = "https://my-rent-insight.lovable.app";
+const BASE_URL = "https://renewalreply.com";
 
 function buildWsipFollowupHtml(lead: any) {
   const unsubUrl = `${BASE_URL}/outcome?id=${lead.id}&result=unsubscribe`;

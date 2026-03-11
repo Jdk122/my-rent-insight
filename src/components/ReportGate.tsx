@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
+import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
 import SocialProofLine from './SocialProofLine';
 import type { LeadContext } from './EmailCapture';
 
@@ -117,6 +118,17 @@ const ReportGate = ({
     trackEvent('report_gate_converted', { verdict: verdictLabel, zip_code: zip, tool: toolType });
     trackEvent('email_submitted', { verdict: verdictLabel, zip_code: zip, source: 'report_gate' });
     trackAdsConversion();
+
+    sendConfirmationEmail({
+      email: trimmed,
+      city: leadContext?.city,
+      state: leadContext?.state,
+      zip: leadContext?.zip,
+      bedrooms: leadContext?.bedrooms,
+      toolType,
+      fairnessScore: leadContext?.fairnessScore,
+      verdictLabel,
+    });
   };
 
   // Adaptive copy based on pain level and tool type

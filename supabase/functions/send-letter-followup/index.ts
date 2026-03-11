@@ -8,7 +8,7 @@ const corsHeaders = {
 
 const fmt = (n: number | null) => (n != null ? `$${Math.round(n).toLocaleString("en-US")}` : "your rent");
 
-const BASE_URL = "https://my-rent-insight.lovable.app";
+const BASE_URL = "https://renewalreply.com";
 
 function buildButton(label: string, href: string, color: string) {
   return `<a href="${href}" style="display:inline-block;padding:12px 20px;background:${color};color:#fff;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-right:8px;margin-bottom:8px;">${label}</a>`;

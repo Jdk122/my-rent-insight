@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
+import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
 import { toast } from 'sonner';
 import { X, MessageCircle, Mail, Link2 } from 'lucide-react';
 import type { LeadContext } from './EmailCapture';
@@ -113,6 +114,17 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
     setLoading(false);
     setOpen(false);
     toast.success('Sent to your email!');
+
+    sendConfirmationEmail({
+      email: email.trim(),
+      city: leadContext?.city || city,
+      state: leadContext?.state,
+      zip: leadContext?.zip || zip,
+      bedrooms: leadContext?.bedrooms,
+      toolType: 'renewal',
+      fairnessScore: leadContext?.fairnessScore,
+      verdictLabel,
+    });
   };
 
   const handleShare = (method: string) => {

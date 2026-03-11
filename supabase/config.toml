@@ -47,3 +47,6 @@ verify_jwt = false
 
 [functions.send-wsip-followup]
 verify_jwt = false
+
+[functions.send-confirmation]
+verify_jwt = false

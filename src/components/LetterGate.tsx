@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
+import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import { Check, Copy, Loader2 } from 'lucide-react';
@@ -134,6 +135,17 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
     setUnlocked(true);
     setLoading(false);
     toast.success('Letter unlocked!');
+
+    sendConfirmationEmail({
+      email: email.trim(),
+      city: leadContext?.city,
+      state: leadContext?.state,
+      zip: leadContext?.zip,
+      bedrooms: leadContext?.bedrooms,
+      toolType: 'renewal',
+      fairnessScore: leadContext?.fairnessScore,
+      verdictLabel: verdict,
+    });
   };
 
   const handleCopy = () => {
