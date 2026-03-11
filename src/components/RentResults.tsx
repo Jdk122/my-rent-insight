@@ -168,10 +168,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     if (!hasIncrease) return null;
     return calculateResults(
       formData.currentRent, increasePct, formData.movingCosts, rentData,
-      bldg.hasBuildingData ? bldg.buildingMedian : null,
-      medianCompRent,
     );
-  }, [formData.currentRent, increasePct, formData.movingCosts, rentData, hasIncrease, bldg, medianCompRent]);
+  }, [formData.currentRent, increasePct, formData.movingCosts, rentData, hasIncrease]);
 
   // ━━━ Counter-offer (separate from calc, anchored to building/comps) ━━━
   const counterOffer = useMemo(() => {
