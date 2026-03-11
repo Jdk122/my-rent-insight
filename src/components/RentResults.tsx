@@ -594,7 +594,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                           {isAboveMarket && calc ? (
                             calc.counterExceedsProposed
                               ? <>Based on market data, your proposed rent appears to be in line with or below current market trends.</>
-                              : <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. That's ${fmt(increaseAmount * 12)} more per year.</>
+                              : bldg.hasBuildingData && bldg.buildingComps.length >= 3 ? (
+                                <>Other units in your building rent for ${fmt(bldg.buildingLow)}{bldg.buildingLow !== bldg.buildingHigh ? `–$${fmt(bldg.buildingHigh)}` : ''}/month. At ${fmt(newRent)}/mo, your rent is {newRent > bldg.buildingHigh ? 'above' : 'at the top of'} this range.</>
+                              ) : <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. That's ${fmt(increaseAmount * 12)} more per year.</>
                           ) : isFair ? (
                             isNuancedAtMarket || increasePct > marketYoy + 1.5 ? (
                               medianCompRent ? (
@@ -611,6 +613,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <>Rents in {city} moved {marketYoy}% this year. Your landlord keeping your rent at ${fmt(formData.currentRent)}/mo means you're coming out ahead.</>
                           )}
                         </p>
+                        {isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !calc.counterExceedsProposed && (
+                          <p className="text-xs text-muted-foreground/70 mt-1">
+                            Area rents moved {marketYoy}% this year.
+                          </p>
+                        )}
                         {isNycZip(rentData.zip) && hasIncrease && (
                           <p className="text-xs text-muted-foreground/70 mt-2">
                             Live in a rent-stabilized apartment? Your increase may be legally capped —{' '}
