@@ -13,6 +13,12 @@ export interface RentControlLaw {
   exemptions: string; // what's excluded
   ordinanceUrl: string | null;
   notes: string | null;
+  /** true when maxIncreasePct is estimated from a formula range, not a fixed statutory number */
+  isFormulaCap?: boolean;
+  /** Year-built cutoff for building eligibility (buildings built before this year) */
+  yearBuiltCutoff?: number | null;
+  /** Minimum units for building eligibility */
+  minUnits?: number | null;
 }
 
 // Lookup: zip → jurisdiction key(s)
