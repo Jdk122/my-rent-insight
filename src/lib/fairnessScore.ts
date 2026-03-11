@@ -264,27 +264,29 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
     rateMax += compReduction;
   }
 
-  // Cross-source divergence discount: comp median wildly above FMR
-  if (validatedInput.compMedian !== null && validatedInput.fmr > 0 && compMax > 0) {
-    const compToFmrRatio = validatedInput.compMedian / validatedInput.fmr;
-    if (compToFmrRatio > 2.0) {
-      const divergenceReduction = Math.floor(compMax * 0.5);
-      compMax -= divergenceReduction;
-      rateMax += divergenceReduction;
-    }
+  // ── Comp reliability discount ──
+  // Discount comp weight when comps appear unrepresentative of the user's actual market tier.
+  // Two independent trigger paths — either one reduces comp authority.
+  const compToFmrRatio = (sanitizedCompMedian !== null && validatedInput.fmr > 0)
+    ? sanitizedCompMedian / validatedInput.fmr
+    : 0;
+  const rentToCompRatio = (sanitizedCompMedian !== null && sanitizedCompMedian > 0)
+    ? validatedInput.currentRent / sanitizedCompMedian
+    : 1;
+
+  // Path A: Comps diverge significantly from government data AND user's rent confirms mismatch
+  const compsDivergent = compToFmrRatio > 1.8 && rentToCompRatio < 0.75;
+
+  // Path B: All comps from same building, thin count, and user paying notably less
+  const allSameBuilding = validatedInput.allSameBuilding ?? false;
+  const thinSameBuilding = allSameBuilding && cc < 5 && rentToCompRatio < 0.85;
+
+  if ((compsDivergent || thinSameBuilding) && compMax > 0) {
+    const compReduction = Math.round(compMax * 0.5);
+    compMax -= compReduction;
+    rateMax += compReduction;
   }
 
-  // All-same-building discount: thin comps from a single building aren't a market sample
-  if (validatedInput.allSameBuilding && cc < 5 && compMax > 0) {
-    const bldgReduction = Math.floor(compMax * 0.5);
-    compMax -= bldgReduction;
-    rateMax += bldgReduction;
-  }
-
-  // User-rent-vs-comps sanity cap: if user pays 35%+ less than comp median, cap comp score
-  const compScoreCap = (validatedInput.compMedian !== null && validatedInput.currentRent < validatedInput.compMedian * 0.65)
-    ? Math.floor(compMax * 0.6)
-    : compMax;
 
   const components = [
     scoreRateVsTrend(validatedInput.increasePct, validatedInput.marketYoY, validatedInput.alYoY, rateMax, validatedInput.compositeTrend),
