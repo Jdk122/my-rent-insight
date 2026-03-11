@@ -52,6 +52,7 @@ const WsipResults = ({
   bedrooms,
   askingRent,
   rentData,
+  propertyData,
   capturedEmail,
   onEmailCaptured,
   onReset,
