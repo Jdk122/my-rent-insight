@@ -173,6 +173,21 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     );
   }, [formData.currentRent, increasePct, formData.movingCosts, rentData, hasIncrease, bldg, medianCompRent]);
 
+  // ━━━ Counter-offer (separate from calc, anchored to building/comps) ━━━
+  const counterOffer = useMemo(() => {
+    if (!hasIncrease) return null;
+    return getCounterOffer(
+      formData.currentRent,
+      marketYoy,
+      bldg.hasBuildingData ? bldg.buildingMedian : null,
+      medianCompRent,
+    );
+  }, [hasIncrease, formData.currentRent, marketYoy, bldg, medianCompRent]);
+
+  const counterExceedsProposed = counterOffer
+    ? counterOffer.counterLow >= newRent
+    : false;
+
   const multiplier = calc?.increaseRatio ?? 0;
 
   // ━━━ Data confidence ━━━
