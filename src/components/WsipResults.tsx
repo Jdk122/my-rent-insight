@@ -754,9 +754,14 @@ const WsipResults = ({
                 <h2 className="results-section-header mb-2">
                   What Similar Units Actually Rent For
                 </h2>
-                <p className="text-[12px] text-muted-foreground text-center mb-6">
+                <p className="text-[12px] text-muted-foreground text-center mb-4">
                   Showing {allComps.length} comparable rental{allComps.length !== 1 ? 's' : ''}{compRadius.label ? ` ${compRadius.label}` : ''}.
                 </p>
+                {utilityNote && (
+                  <p className="text-[11px] text-muted-foreground/70 text-center mb-6 max-w-[480px] mx-auto italic">
+                    💡 {utilityNote}
+                  </p>
+                )}
 
                 {/* Tier 1: in-building comps */}
                 {tier1Comps.length > 0 && (
