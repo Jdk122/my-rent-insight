@@ -232,7 +232,7 @@ const cityLaws: Record<string, RentControlLaw> = {
     jurisdiction: 'Hoboken',
     level: 'city',
     hasRentControl: true,
-    maxIncreasePct: null,
+    maxIncreasePct: 4,
     maxIncreaseFormula: 'CPI-based (typically 2–4%)',
     noticePeriodDays: 30,
     applicability: 'Most multi-family rental units',
