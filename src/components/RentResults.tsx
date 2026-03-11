@@ -163,6 +163,18 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     bedroomNum,
   ), [outlierResult, cleanedComps, formData.fullAddress, bedroomNum]);
 
+  // ━━━ Calc (moved after bldg and medianCompRent) ━━━
+  const calc = useMemo(() => {
+    if (!hasIncrease) return null;
+    return calculateResults(
+      formData.currentRent, increasePct, formData.movingCosts, rentData,
+      bldg.hasBuildingData ? bldg.buildingMedian : null,
+      medianCompRent,
+    );
+  }, [formData.currentRent, increasePct, formData.movingCosts, rentData, hasIncrease, bldg, medianCompRent]);
+
+  const multiplier = calc?.increaseRatio ?? 0;
+
   // ━━━ Data confidence ━━━
   const compRadius = useMemo(() => {
     if (!rentcast.data?.comparables) return { maxDistance: null, label: '' };
@@ -210,10 +222,17 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     });
   }, [hasIncrease, asyncDataReady, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings, compositeTrendResult, bldg]);
 
+  // ━━━ Verdict with building override ━━━
   const refinedVerdict = useMemo(() => {
     if (!fairnessScore) return null;
-    return scoreToVerdict(fairnessScore.total);
-  }, [fairnessScore]);
+    const baseVerdict = scoreToVerdict(fairnessScore.total);
+    // Override when building data clearly conflicts
+    if (bldg.hasBuildingData && bldg.buildingComps.length >= 3) {
+      if (newRent > bldg.buildingHigh) return 'above';
+      if (newRent < bldg.buildingLow) return 'below';
+    }
+    return baseVerdict;
+  }, [fairnessScore, bldg, newRent]);
 
   const isAboveMarket = refinedVerdict === 'above';
   const isFair = refinedVerdict === 'at-market';
