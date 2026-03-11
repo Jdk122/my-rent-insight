@@ -455,7 +455,7 @@ const WsipResults = ({
             {/* Rent control note (WSIP) */}
             {rentControlCap && rentControlCap.maxIncreaseFormula && (
               <p className="text-xs text-muted-foreground mb-4 max-w-[480px]">
-                Note: {rentControlCap.jurisdiction} has rent control regulations that may affect pricing in this area.
+                Note: {rentControlCap.jurisdiction} has rent control regulations that may affect pricing for eligible buildings in this area.
               </p>
             )}
 

@@ -575,20 +575,36 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     componentSources={sources}
                     contextNotes={
                       <>
-                        {rentControlCap && hasIncrease && rentControlCap.maxIncreaseFormula && (
-                          rentControlCap.maxIncreasePct != null && increasePct > rentControlCap.maxIncreasePct ? (
-                            <p className="text-[12px] font-medium text-destructive">
-                              ⚠️ {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreasePct}%. Your increase of {increasePct}% exceeds this limit.
-                            </p>
-                          ) : rentControlCap.maxIncreasePct != null ? (
-                            <p className="text-[11px] text-muted-foreground">
-                              {rentControlCap.jurisdiction} limits annual rent increases to {rentControlCap.maxIncreasePct}%. Your increase of {increasePct}% is within this limit.
-                            </p>
-                          ) : (
-                            <p className="text-[11px] text-muted-foreground">
-                              {rentControlCap.jurisdiction} regulates rent increases ({rentControlCap.maxIncreaseFormula}). Check if your {increasePct}% increase complies.
-                            </p>
-                          )
+                        {rentControlCap && hasIncrease && rentControlCap.maxIncreaseFormula && buildingEligibility !== 'ineligible' && (
+                          (() => {
+                            const approxPrefix = rentControlCap.isFormulaCap ? 'approximately ' : '';
+                            const likelyWord = rentControlCap.isFormulaCap ? ' likely' : '';
+                            const softNote = buildingEligibility === 'unknown' && !propertyData
+                              ? ` Enter your full address to check if your building qualifies.`
+                              : buildingEligibility === 'unknown'
+                              ? ` This may apply depending on your building's age and size.`
+                              : '';
+
+                            if (rentControlCap.maxIncreasePct != null && increasePct > rentControlCap.maxIncreasePct) {
+                              return (
+                                <p className="text-[12px] font-medium text-destructive">
+                                  ⚠️ {rentControlCap.jurisdiction} limits annual rent increases to {approxPrefix}{rentControlCap.maxIncreasePct}%. Your increase of {increasePct}%{likelyWord} exceeds this limit.{softNote}
+                                </p>
+                              );
+                            } else if (rentControlCap.maxIncreasePct != null) {
+                              return (
+                                <p className="text-[11px] text-muted-foreground">
+                                  {rentControlCap.jurisdiction} limits annual rent increases to {approxPrefix}{rentControlCap.maxIncreasePct}%. Your increase of {increasePct}% is within this limit.{softNote}
+                                </p>
+                              );
+                            } else {
+                              return (
+                                <p className="text-[11px] text-muted-foreground">
+                                  {rentControlCap.jurisdiction} has rent control laws that may apply to your building depending on its age and size.
+                                </p>
+                              );
+                            }
+                          })()
                         )}
                         {isAboveMarket && brokerFee.brokerFeeMarket && hasIncrease && (
                           <p className="text-[11px] text-muted-foreground">
