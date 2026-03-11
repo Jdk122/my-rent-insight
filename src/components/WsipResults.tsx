@@ -362,9 +362,10 @@ const WsipResults = ({
   };
 
   // ━━━ Range bar ━━━
-  const barLow = bldg.hasBuildingData ? bldg.buildingLow : fairRangeLow;
-  const barHigh = bldg.hasBuildingData ? bldg.buildingHigh : fairRangeHigh;
-  const barLabel = bldg.hasBuildingData ? 'This Building' : 'Fair Range';
+  const useBuildingBar = bldg.hasBuildingData && !isPremiumWsip;
+  const barLow = useBuildingBar ? bldg.buildingLow : fairRangeLow;
+  const barHigh = useBuildingBar ? bldg.buildingHigh : fairRangeHigh;
+  const barLabel = useBuildingBar ? 'This Building' : 'Fair Range';
   const rangeBarMin = Math.round(barLow * 0.85);
   const rangeBarMax = Math.round(barHigh * 1.15);
   const rangeSpan = rangeBarMax - rangeBarMin;
