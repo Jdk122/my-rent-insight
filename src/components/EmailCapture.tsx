@@ -116,6 +116,17 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
     }
     setSubmitted(true);
     toast.success("You're on the list.");
+
+    sendConfirmationEmail({
+      email,
+      city: leadContext?.city,
+      state: leadContext?.state,
+      zip: leadContext?.zip,
+      bedrooms: leadContext?.bedrooms,
+      toolType: 'renewal',
+      fairnessScore: leadContext?.fairnessScore,
+      verdictLabel: verdict,
+    });
   };
 
   if (submitted) {

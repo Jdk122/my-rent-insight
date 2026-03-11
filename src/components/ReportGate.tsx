@@ -118,6 +118,17 @@ const ReportGate = ({
     trackEvent('report_gate_converted', { verdict: verdictLabel, zip_code: zip, tool: toolType });
     trackEvent('email_submitted', { verdict: verdictLabel, zip_code: zip, source: 'report_gate' });
     trackAdsConversion();
+
+    sendConfirmationEmail({
+      email: trimmed,
+      city: leadContext?.city,
+      state: leadContext?.state,
+      zip: leadContext?.zip,
+      bedrooms: leadContext?.bedrooms,
+      toolType,
+      fairnessScore: leadContext?.fairnessScore,
+      verdictLabel,
+    });
   };
 
   // Adaptive copy based on pain level and tool type

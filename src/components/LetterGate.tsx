@@ -135,6 +135,17 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
     setUnlocked(true);
     setLoading(false);
     toast.success('Letter unlocked!');
+
+    sendConfirmationEmail({
+      email: email.trim(),
+      city: leadContext?.city,
+      state: leadContext?.state,
+      zip: leadContext?.zip,
+      bedrooms: leadContext?.bedrooms,
+      toolType: 'renewal',
+      fairnessScore: leadContext?.fairnessScore,
+      verdictLabel: verdict,
+    });
   };
 
   const handleCopy = () => {
