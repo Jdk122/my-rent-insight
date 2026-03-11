@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { RentFormData } from './RentForm';
 import { RentLookupResult, bedroomLabels, calculateResults } from '@/data/rentData';
 import ShareHub from './ShareHub';
-import CompLinks from './CompLinks';
+
 import { CompsList } from './ShouldYouMove';
 import NegotiationLetter from './NegotiationLetter';
 import RentControlCard from './RentControlCard';
@@ -1058,10 +1058,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   </div>
                 )}
 
-                {/* CompLinks */}
-                <div className="mt-6">
-                  <CompLinks zip={rentData.zip} city={rentData.city} state={rentData.state} bedrooms={formData.bedrooms} verdict={verdictLabel} fairnessScore={fairnessScore?.total} />
-                </div>
+
               </motion.section>
             )}
 
