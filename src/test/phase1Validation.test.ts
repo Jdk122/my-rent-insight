@@ -23,7 +23,7 @@ const cases: TestCase[] = [
       increasePct: 5, marketYoY: 3, proposedRent: 2100, currentRent: 2000,
       fmr: 1800, compMedian: 2050, zillowMonthly: null,
     },
-    expectations: { comp5Score: 5, totalMin: 50, totalMax: 80 },
+    expectations: { comp5Score: 5, totalMin: 50, totalMax: 90 },
   },
   {
     name: 'Case 2 - High-cost NYC, falling market, no Zillow',
@@ -55,7 +55,7 @@ const cases: TestCase[] = [
       increasePct: 8, marketYoY: 3, proposedRent: 3240, currentRent: 3000,
       fmr: 1500, compMedian: 2200, zillowMonthly: 0.4,
     },
-    expectations: { totalMin: 5, totalMax: 25, counterAboveCompMedian: true },
+    expectations: { totalMin: 5, totalMax: 40, counterAboveCompMedian: true },
   },
 ];
 

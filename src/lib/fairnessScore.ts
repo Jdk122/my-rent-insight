@@ -74,14 +74,15 @@ function scoreVsComps(proposedRent: number, compMedian: number | null, maxPts: n
   if (buildingMedian != null && buildingMedian > 0) {
     if (bcc >= 3) {
       effectiveMedian = buildingMedian;
-      label = 'Comparable Rentals (in your building)';
-    } else if (compMedian != null) {
+      label = 'Rent vs. Your Building';
+    } else if (bcc >= 2 && compMedian != null) {
       effectiveMedian = buildingMedian * 0.6 + compMedian * 0.4;
       label = 'Rent vs. Nearby Listings';
-    } else {
+    } else if (bcc >= 2) {
       effectiveMedian = buildingMedian;
-      label = 'Comparable Rentals (in your building)';
+      label = 'Rent vs. Your Building';
     }
+    // bcc < 2: ignore building data, use compMedian as-is
   }
 
   if (effectiveMedian === null) {
