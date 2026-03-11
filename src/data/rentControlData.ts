@@ -220,7 +220,7 @@ const cityLaws: Record<string, RentControlLaw> = {
     jurisdiction: 'Los Angeles',
     level: 'city',
     hasRentControl: true,
-    maxIncreasePct: null,
+    maxIncreasePct: 8,
     maxIncreaseFormula: '3–8% (set annually by LAHD, based on CPI)',
     noticePeriodDays: 30,
     applicability: 'Units in buildings with 2+ units built before October 1, 1978 (RSO)',
