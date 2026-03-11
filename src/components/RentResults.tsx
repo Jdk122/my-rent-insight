@@ -671,6 +671,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             NYC's FARE Act eliminated most tenant-paid broker fees in 2025. If your landlord won't negotiate, moving is more affordable than it used to be.
                           </p>
                         )}
+                        {isBelowFmrHighIncrease && (
+                          <p className="text-[11px] text-muted-foreground/70 leading-relaxed">
+                            <strong>Note:</strong> Your rent is below the area median, but this comparison includes all unit types and conditions in your ZIP code. Units with fewer amenities or older finishes typically rent below the median even at fair market value.
+                          </p>
+                        )}
                       </>
                     }
                     dynamicMessage={
