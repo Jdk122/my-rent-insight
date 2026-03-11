@@ -651,7 +651,5 @@ export function calculateResults(
     increaseRatio,
     verdict,
     breakEvenMonths,
-    counterExceedsProposed,
-    ...counter,
   };
 }
