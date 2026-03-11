@@ -10,7 +10,7 @@ describe('Should you move? logic', () => {
   }
 
   function getMovingCost(medianRent: number, state: string) {
-    const brokerFeeStates = ['NJ', 'NY'];
+    const brokerFeeStates = ['NJ', 'MA'];
     const hasBrokerFee = brokerFeeStates.includes(state);
     return medianRent + (hasBrokerFee ? medianRent : 0) + 2000;
   }
