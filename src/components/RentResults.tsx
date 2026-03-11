@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { RentFormData } from './RentForm';
-import { RentLookupResult, bedroomLabels, calculateResults } from '@/data/rentData';
+import { RentLookupResult, bedroomLabels, calculateResults, getCounterOffer } from '@/data/rentData';
 import ShareHub from './ShareHub';
 
 import { CompsList } from './ShouldYouMove';
@@ -168,10 +168,23 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     if (!hasIncrease) return null;
     return calculateResults(
       formData.currentRent, increasePct, formData.movingCosts, rentData,
+    );
+  }, [formData.currentRent, increasePct, formData.movingCosts, rentData, hasIncrease]);
+
+  // ━━━ Counter-offer (separate from calc, anchored to building/comps) ━━━
+  const counterOffer = useMemo(() => {
+    if (!hasIncrease) return null;
+    return getCounterOffer(
+      formData.currentRent,
+      marketYoy,
       bldg.hasBuildingData ? bldg.buildingMedian : null,
       medianCompRent,
     );
-  }, [formData.currentRent, increasePct, formData.movingCosts, rentData, hasIncrease, bldg, medianCompRent]);
+  }, [hasIncrease, formData.currentRent, marketYoy, bldg, medianCompRent]);
+
+  const counterExceedsProposed = counterOffer
+    ? counterOffer.counterLow >= newRent
+    : false;
 
   const multiplier = calc?.increaseRatio ?? 0;
 
@@ -310,13 +323,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       ? (newRent > medianCompRent ? 'above' : 'below')
       : hasEnoughComps === false ? 'insufficient' : null;
 
-    const showCounter = calc && !calc.counterExceedsProposed;
+    const showCounter = counterOffer && !counterExceedsProposed;
     const counterStr = showCounter
-      ? (calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}`)
+      ? (counterOffer.counterLow === counterOffer.counterHigh ? `$${fmt(counterOffer.counterLow)}` : `$${fmt(counterOffer.counterLow)}–$${fmt(counterOffer.counterHigh)}`)
       : null;
 
     const dollarOverpayment = hasIncrease && showCounter
-      ? Math.max(0, Math.round(newRent - calc.counterLow))
+      ? Math.max(0, Math.round(newRent - counterOffer.counterLow))
       : 0;
 
     const utm = getUtmParams();
@@ -352,8 +365,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       comp_median_rent: medianCompRent ?? null,
       hud_fmr_value: rentData.fmr ?? null,
       dollar_overpayment: dollarOverpayment,
-      counter_offer_low: calc?.counterLow ?? null,
-      counter_offer_high: calc?.counterHigh ?? null,
+      counter_offer_low: counterOffer?.counterLow ?? null,
+      counter_offer_high: counterOffer?.counterHigh ?? null,
       verdict_label: fairnessScore?.tierLabel ?? null,
       utm_source: utm.utm_source || null,
       utm_medium: utm.utm_medium || null,
@@ -428,7 +441,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     proposedRent: newRent,
     increasePct,
     marketTrendPct: marketYoy,
-    fairCounterOffer: calc && !calc.counterExceedsProposed ? (calc.counterLow === calc.counterHigh ? `$${fmt(calc.counterLow)}` : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}`) : undefined,
+    fairCounterOffer: counterOffer && !counterExceedsProposed ? (counterOffer.counterLow === counterOffer.counterHigh ? `$${fmt(counterOffer.counterLow)}` : `$${fmt(counterOffer.counterLow)}–$${fmt(counterOffer.counterHigh)}`) : undefined,
     compsPosition: medianCompRent ? (newRent > medianCompRent ? 'above' : 'below') : undefined,
     letterGenerated: !!(hasIncrease && isAboveMarket && calc),
     fairnessScore: fairnessScore?.total ?? null,
@@ -490,7 +503,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     reportData: {
       city: rentData.city, state: rentData.state, newRent, increasePct, marketYoy,
       fmr: rentData.fmr, verdict: calc?.verdict || '',
-      counterLow: calc?.counterLow ?? null, counterHigh: calc?.counterHigh ?? null,
+      counterLow: counterOffer?.counterLow ?? null, counterHigh: counterOffer?.counterHigh ?? null,
       censusMedianRent: rentData.censusMedianRent, medianIncome: rentData.medianIncome,
       bedroomLabel: bedroomLabels[formData.bedrooms],
       zillowMonthly: rentData.zillowMonthly, zillowDirection: rentData.zillowDirection,
@@ -635,7 +648,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         </h1>
                         <p className="text-[14px] sm:text-base md:text-lg text-muted-foreground leading-relaxed">
                           {isAboveMarket && calc ? (
-                            calc.counterExceedsProposed
+                            counterExceedsProposed
                               ? <>Based on market data, your proposed rent appears to be in line with or below current market trends.</>
                               : bldg.hasBuildingData && bldg.buildingComps.length >= 3 ? (
                                 <>Other units in your building rent for ${fmt(bldg.buildingLow)}{bldg.buildingLow !== bldg.buildingHigh ? `–$${fmt(bldg.buildingHigh)}` : ''}/month. At ${fmt(newRent)}/mo, your rent is {newRent > bldg.buildingHigh ? 'above' : 'at the top of'} this range.</>
@@ -656,7 +669,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <>Rents in {city} moved {marketYoy}% this year. Your landlord keeping your rent at ${fmt(formData.currentRent)}/mo means you're coming out ahead.</>
                           )}
                         </p>
-                        {isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !calc.counterExceedsProposed && (
+                        {isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !counterExceedsProposed && (
                           <p className="text-xs text-muted-foreground/70 mt-1">
                             Area rents moved {marketYoy}% this year.
                           </p>
@@ -960,26 +973,26 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       </span>
                     </div>
                   )}
-                  {isAboveMarket && calc && !calc.counterExceedsProposed && (
+                  {isAboveMarket && counterOffer && !counterExceedsProposed && (
                     <>
                       <div className="context-row-highlight mt-2">
                         <span className="context-label">Fair counter-offer</span>
                         <span className="context-value text-verdict-good font-bold">
-                          {calc.counterLow === calc.counterHigh
-                            ? `$${fmt(calc.counterLow)}/mo`
-                            : `$${fmt(calc.counterLow)}–$${fmt(calc.counterHigh)}/mo`}
+                          {counterOffer.counterLow === counterOffer.counterHigh
+                            ? `$${fmt(counterOffer.counterLow)}/mo`
+                            : `$${fmt(counterOffer.counterLow)}–$${fmt(counterOffer.counterHigh)}/mo`}
                         </span>
                       </div>
-                      {medianCompRent && calc.counterLow > medianCompRent && (
+                      {medianCompRent && counterOffer.counterLow > medianCompRent && (
                         <div className="mt-2 px-3 py-2 rounded-md bg-accent/50 border border-border/50">
                           <p className="text-[11px] text-muted-foreground leading-relaxed">
-                            Note: Your counter range (${fmt(calc.counterLow)}–${fmt(calc.counterHigh)}) is above the area median of ${fmt(medianCompRent)} for similar units. You may have additional negotiating room.
+                            Note: Your counter range (${fmt(counterOffer.counterLow)}–${fmt(counterOffer.counterHigh)}) is above the area median of ${fmt(medianCompRent)} for similar units. You may have additional negotiating room.
                           </p>
                         </div>
                       )}
                     </>
                   )}
-                  {isAboveMarket && calc?.counterExceedsProposed && (
+                  {isAboveMarket && counterExceedsProposed && (
                     <div className="mt-2 px-3 py-2.5 rounded-md bg-verdict-good/10 border border-verdict-good/20">
                       <p className="text-[12px] text-muted-foreground leading-relaxed">
                         Based on market data, your proposed rent appears to be in line with or below current market trends.
@@ -1152,10 +1165,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   state={rentData.state}
                   bedrooms={formData.bedrooms}
                   increaseAmount={increaseAmount}
-                  counterLow={calc.counterLow}
-                  counterHigh={calc.counterHigh}
-                  counterLowPercent={calc.counterLowPercent}
-                  counterHighPercent={calc.counterHighPercent}
+                  counterLow={counterOffer?.counterLow ?? 0}
+                  counterHigh={counterOffer?.counterHigh ?? 0}
+                  counterLowPercent={counterOffer?.counterLowPercent ?? 0}
+                  counterHighPercent={counterOffer?.counterHighPercent ?? 0}
                   analysisId={analysisId}
                   prefilledEmail={capturedEmail}
                   onEmailCaptured={setCapturedEmail}
@@ -1216,7 +1229,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   verdict={isAboveMarket ? 'above' : isFair ? 'fair' : isBelowMarket ? 'below' : 'none'}
                   headline={
                     isAboveMarket && isPath1
-                      ? `My landlord is asking for $${fmt(newRent - (calc?.counterHigh ?? 0))}/mo more than the market supports.`
+                      ? `My landlord is asking for $${fmt(newRent - (counterOffer?.counterHigh ?? 0))}/mo more than the market supports.`
                       : isAboveMarket
                       ? `Rents near me moved ${marketYoy}% but my landlord wants ${increasePct}%.`
                       : isFair
