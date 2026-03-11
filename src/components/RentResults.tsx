@@ -80,10 +80,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   const hasIncrease = increaseAmount > 0;
 
-  const calc = useMemo(() => {
-    if (!hasIncrease) return null;
-    return calculateResults(formData.currentRent, increasePct, formData.movingCosts, rentData);
-  }, [formData.currentRent, increasePct, formData.movingCosts, rentData, hasIncrease]);
+  // calc is computed later, after bldg and medianCompRent are available
 
   const newRent = formData.currentRent + increaseAmount;
   const annualExtra = increaseAmount * 12;
