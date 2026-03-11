@@ -643,6 +643,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             Keep in mind: moving in {brokerFee.brokerFeeCity} typically involves a broker fee of ~${fmt(Math.round(formData.currentRent))}. Factor this into your stay-vs-move decision.
                           </p>
                         )}
+                        {isAboveMarket && hasIncrease && brokerFee.brokerFeeCity === 'NYC' && !brokerFee.brokerFeeMarket && (
+                          <p className="text-[11px] text-muted-foreground">
+                            NYC's FARE Act eliminated most tenant-paid broker fees in 2025. If your landlord won't negotiate, moving is more affordable than it used to be.
+                          </p>
+                        )}
                       </>
                     }
                     dynamicMessage={
