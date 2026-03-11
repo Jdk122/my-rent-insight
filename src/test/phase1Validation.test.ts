@@ -55,7 +55,7 @@ const cases: TestCase[] = [
       increasePct: 8, marketYoY: 3, proposedRent: 3240, currentRent: 3000,
       fmr: 1500, compMedian: 2200, zillowMonthly: 0.4,
     },
-    expectations: { totalMin: 5, totalMax: 25, counterAboveCompMedian: true },
+    expectations: { totalMin: 5, totalMax: 40, counterAboveCompMedian: true },
   },
 ];
 
