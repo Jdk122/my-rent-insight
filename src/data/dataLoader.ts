@@ -614,7 +614,9 @@ export function calculateResults(
   currentRent: number,
   increasePercent: number,
   movingCosts: number,
-  data: RentLookupResult
+  data: RentLookupResult,
+  buildingMedian?: number | null,
+  compMedian?: number | null,
 ) {
   const proposedRent = Math.round(currentRent * (1 + increasePercent / 100));
   const extraPerYear = (proposedRent - currentRent) * 12;
@@ -623,7 +625,7 @@ export function calculateResults(
   const range = getTypicalRange(data.fmr, data.censusMedianRent, data.city);
   const verdict = getVerdict(increasePercent, marketYoY);
   const rentBurden = getRentBurden(proposedRent, data.medianIncome);
-  const counter = getCounterOffer(currentRent, marketYoY);
+  const counter = getCounterOffer(currentRent, marketYoY, buildingMedian, compMedian);
 
   // Flag: suppress counter-offer display if it meets or exceeds proposed rent
   const counterExceedsProposed = counter.counterLow >= proposedRent;

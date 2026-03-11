@@ -256,7 +256,7 @@ const cityLaws: Record<string, RentControlLaw> = {
     jurisdiction: 'Washington, DC',
     level: 'city',
     hasRentControl: true,
-    maxIncreasePct: null,
+    maxIncreasePct: 10,
     maxIncreaseFormula: 'CPI + 2% (max 10%)',
     noticePeriodDays: 30,
     applicability: 'Rental units built before 1975',
