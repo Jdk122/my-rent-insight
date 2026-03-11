@@ -552,8 +552,13 @@ export function getVerdict(
   return Math.abs(increasePct - marketYoY) <= 2 ? 'at-market' : 'below';
 }
 
-export function getCounterOffer(currentRent: number, marketYoY: number) {
-  if (marketYoY <= 0) {
+export function getCounterOffer(
+  currentRent: number,
+  marketYoY: number,
+  buildingMedian?: number | null,
+  compMedian?: number | null,
+) {
+  if (marketYoY <= 0 && buildingMedian == null && compMedian == null) {
     return {
       counterLow: currentRent,
       counterHigh: currentRent,
@@ -561,16 +566,38 @@ export function getCounterOffer(currentRent: number, marketYoY: number) {
       counterHighPercent: 0,
     };
   }
-  const counterPct = Math.max(marketYoY, 1.0);
-  // counterLow = current rent adjusted by market trend
-  const counterLow = Math.round((currentRent * (1 + counterPct / 100)) / 25) * 25;
-  // counterHigh = counterLow + 3% buffer
-  const counterHigh = Math.round((counterLow * 1.03) / 25) * 25;
+
+  // Determine anchor rent from comps/building data
+  const anchor = buildingMedian ?? compMedian ?? currentRent;
+
+  const counterPct = Math.max(marketYoY, 0);
+  const trendBased = Math.round((currentRent * (1 + counterPct / 100)) / 25) * 25;
+
+  // Pick whichever is lower — renter wants the best deal
+  let counterLow = Math.min(anchor, trendBased);
+
+  // Floor: don't suggest more than 15% reduction
+  const floor = Math.round(currentRent * 0.85);
+  counterLow = Math.max(counterLow, floor);
+
+  // Round to nearest $25
+  counterLow = Math.round(counterLow / 25) * 25;
+
+  let counterHigh = Math.round((counterLow * 1.03) / 25) * 25;
+
+  // Ceiling: counterHigh cannot exceed currentRent unless trend justifies it
+  if (marketYoY <= 0) {
+    counterHigh = Math.min(counterHigh, currentRent);
+    counterLow = Math.min(counterLow, currentRent);
+  }
+
+  counterHigh = Math.max(counterHigh, counterLow);
+
   return {
-    counterLow: Math.max(counterLow, currentRent),
-    counterHigh: Math.max(counterHigh, counterLow),
-    counterLowPercent: Math.round(counterPct * 10) / 10,
-    counterHighPercent: Math.round((counterHigh / currentRent - 1) * 1000) / 10,
+    counterLow,
+    counterHigh,
+    counterLowPercent: currentRent > 0 ? Math.round(((counterLow / currentRent - 1) * 100) * 10) / 10 : 0,
+    counterHighPercent: currentRent > 0 ? Math.round(((counterHigh / currentRent - 1) * 100) * 10) / 10 : 0,
   };
 }
 
