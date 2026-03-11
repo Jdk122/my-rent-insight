@@ -21,6 +21,7 @@ export interface FairnessScoreInput {
   buildingMedian?: number | null;  // Median rent of same-building comps
   buildingCompCount?: number | null; // Number of same-building comps with rent data
   sameLineMedian?: number | null;  // Median rent of same-unit-line comps
+  allSameBuilding?: boolean;       // Whether all comps are from the same building
 }
 
 // Tooltip explainer for the FMR/Increase Reasonableness component
