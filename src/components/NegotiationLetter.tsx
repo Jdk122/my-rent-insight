@@ -48,6 +48,7 @@ interface NegotiationLetterProps {
   maxCompDistance?: number | null;
   momentumDirection?: string | null;
   letterTone?: 'aggressive' | 'collaborative' | 'strategic';
+  belowFmrHighIncrease?: boolean;
   onLetterGenerated?: () => void;
   comparables?: CompForLetter[];
 }
