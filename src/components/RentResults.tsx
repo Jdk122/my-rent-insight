@@ -650,7 +650,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         </h1>
                         <p className="text-[14px] sm:text-base md:text-lg text-muted-foreground leading-relaxed">
                           {isAboveMarket && calc ? (
-                            calc.counterExceedsProposed
+                            counterExceedsProposed
                               ? <>Based on market data, your proposed rent appears to be in line with or below current market trends.</>
                               : bldg.hasBuildingData && bldg.buildingComps.length >= 3 ? (
                                 <>Other units in your building rent for ${fmt(bldg.buildingLow)}{bldg.buildingLow !== bldg.buildingHigh ? `–$${fmt(bldg.buildingHigh)}` : ''}/month. At ${fmt(newRent)}/mo, your rent is {newRent > bldg.buildingHigh ? 'above' : 'at the top of'} this range.</>
