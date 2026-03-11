@@ -122,7 +122,7 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
       state: leadContext?.state,
       zip: leadContext?.zip || zip,
       bedrooms: leadContext?.bedrooms,
-      toolType: 'renewal',
+      toolType: toolType === 'wsip' ? 'wsip' : 'renewal',
       fairnessScore: leadContext?.fairnessScore,
       verdictLabel,
     });
