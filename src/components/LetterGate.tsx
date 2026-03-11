@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
+import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import { Check, Copy, Loader2 } from 'lucide-react';
