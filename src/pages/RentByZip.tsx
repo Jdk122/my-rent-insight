@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
+import { NoIndexMeta } from '@/components/NoIndexMeta';
 import { Input } from '@/components/ui/input';
 import { getRentData, getApartmentListData, getHud50Data, getNationalAvgYoY, type RentZipRaw, type ApartmentListZipRaw, type Hud50ZipRaw } from '@/data/dataLoader';
 import { slugify, stateNameFromAbbr } from '@/data/cityStateUtils';
