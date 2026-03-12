@@ -32,6 +32,8 @@ export interface RentcastResult {
   rentRangeHigh: number | null;
   propertyType: string | null;
   comparables: RentcastComparable[];
+  /** Bedroom count detected by Rentcast for the subject property */
+  detectedBedrooms?: number | null;
 }
 
 export function useRentcast(zip: string, bedrooms: BedroomType, fullAddress?: string | null, enabled = true) {
