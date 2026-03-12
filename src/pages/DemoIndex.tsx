@@ -36,16 +36,23 @@ const DemoIndex = () => (
     <div className="max-w-xl mx-auto px-5 pt-20 pb-16">
       <h1 className="text-2xl font-bold text-foreground mb-2">Demo Scenarios</h1>
       <p className="text-sm text-muted-foreground mb-8">Quick links to all static demo results — no data entry needed.</p>
-      <div className="flex flex-col gap-3">
-        {demos.map((d) => (
-          <a
-            key={d.path}
-            href={d.path}
-            className="block border border-border rounded-lg p-4 hover:bg-muted transition-colors"
-          >
-            <span className="font-semibold text-foreground text-sm">{d.label}</span>
-            <span className="block text-xs text-muted-foreground mt-1">{d.desc}</span>
-          </a>
+      <div className="flex flex-col gap-6">
+        {sections.map((section) => (
+          <div key={section.title}>
+            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{section.title}</h2>
+            <div className="flex flex-col gap-2">
+              {section.demos.map((d) => (
+                <a
+                  key={d.path}
+                  href={d.path}
+                  className="block border border-border rounded-lg p-4 hover:bg-muted transition-colors"
+                >
+                  <span className="font-semibold text-foreground text-sm">{d.label}</span>
+                  <span className="block text-xs text-muted-foreground mt-1">{d.desc}</span>
+                </a>
+              ))}
+            </div>
+          </div>
         ))}
       </div>
       <Link to="/" className="inline-block mt-8 text-sm text-primary hover:underline">← Back to home</Link>

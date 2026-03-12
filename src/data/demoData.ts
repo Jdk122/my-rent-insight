@@ -99,6 +99,86 @@ const scenarios: Record<DemoScenario, { formData: RentFormData; rentData: RentLo
     },
     rentData: { ...baseRentData },
   },
+  // Moderate: borderline score ~60-65, small increase just above trend
+  moderate: {
+    formData: {
+      zip: '10001',
+      fullAddress: '250 W 31st St, New York, NY 10001',
+      bedrooms: 'oneBr',
+      currentRent: 2000,
+      rentIncrease: 150,
+      increaseIsPercent: false,
+      movingCosts: 5000,
+    },
+    rentData: { ...baseRentData },
+  },
+  // Below-FMR + High Increase: rent is below market but increase is aggressively above trend
+  'below-fmr-high-increase': {
+    formData: {
+      zip: '10001',
+      fullAddress: '180 W 25th St, New York, NY 10001',
+      bedrooms: 'oneBr',
+      currentRent: 1700,
+      rentIncrease: 200,
+      increaseIsPercent: false,
+      movingCosts: 5000,
+    },
+    rentData: { ...baseRentData, fmr: 2100, fmrPrior: 2000 },
+  },
+  // Limited Data: no comps, HUD-only
+  limited: {
+    formData: {
+      zip: '59001',
+      fullAddress: '',
+      bedrooms: 'twoBr',
+      currentRent: 900,
+      rentIncrease: 100,
+      increaseIsPercent: false,
+      movingCosts: 3000,
+    },
+    rentData: {
+      zip: '59001',
+      city: 'Absarokee',
+      state: 'MT',
+      metro: 'Billings',
+      fmr: 950,
+      fmrPrior: 900,
+      yoyChange: 2.0,
+      yoySource: 'hud',
+      yoySourceLabel: 'HUD FMR',
+      yoyReliability: 'hud-only',
+      priorSource: 'f',
+      fmrSource: 'fmr',
+      censusMedianRent: null,
+      medianIncome: 45000,
+      fredTrend: null,
+      zillowMonthly: null,
+      zillowDirection: null,
+      zillow3moTrend: null,
+      hvd: null,
+      alYoY: null,
+      alMoM: null,
+      alVacancy: null,
+      alTimeOnMarket: null,
+      alRegion: null,
+      f50: [700, 950, 1100, 1400, 1600],
+      zoriYoY: null,
+      zoriGeoLevel: null,
+    },
+  },
+  // Premium Unit: high rent well above FMR, scoring shifts to increase-rate
+  premium: {
+    formData: {
+      zip: '10001',
+      fullAddress: '100 W 25th St, PH-A, New York, NY 10001',
+      bedrooms: 'twoBr',
+      currentRent: 6500,
+      rentIncrease: 500,
+      increaseIsPercent: false,
+      movingCosts: 8000,
+    },
+    rentData: { ...baseRentData, fmr: 2600, fmrPrior: 2500, f50: [1800, 2100, 2600, 3400, 4000] },
+  },
 };
 
 export function getDemoData(scenario: string | null): { formData: RentFormData; rentData: RentLookupResult } | null {
