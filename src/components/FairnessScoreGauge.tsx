@@ -37,9 +37,9 @@ const ARC_D = `M ${arcL.x} ${arcL.y} A ${R} ${R} 0 0 1 ${arcR.x} ${arcR.y}`;
 // Triangle marker pointing inward on the outer edge of the arc
 function markerPath(s: number): string {
   const a = Math.PI * (1 - s / 100);
-  const outerR = R + STROKE / 2 + 2;
-  const tipR = R + STROKE / 2 - 4;
-  const spread = 0.06; // radians
+  const outerR = R + STROKE / 2 + 8;
+  const tipR = R + STROKE / 2 - 6;
+  const spread = 0.09; // radians — wider triangle
   const tip = { x: CX + tipR * Math.cos(a), y: CY - tipR * Math.sin(a) };
   const left = { x: CX + outerR * Math.cos(a + spread), y: CY - outerR * Math.sin(a + spread) };
   const right = { x: CX + outerR * Math.cos(a - spread), y: CY - outerR * Math.sin(a - spread) };
