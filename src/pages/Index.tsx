@@ -9,6 +9,7 @@ import { trackEvent } from '@/lib/analytics';
 import SEO from '@/components/SEO';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
 import { getDemoData } from '@/data/demoData';
+import { getRememberedEmail, rememberEmail } from '@/lib/emailMemory';
 
 // Lazy-load heavy below-fold components to reduce initial bundle
 const RentResults = lazy(() => import('@/components/RentResults'));
@@ -25,7 +26,11 @@ const Index = () => {
   const [contactOpen, setContactOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [navScrolled, setNavScrolled] = useState(false);
-  const [capturedEmail, setCapturedEmail] = useState('');
+  const [capturedEmail, setCapturedEmailRaw] = useState(() => getRememberedEmail());
+  const setCapturedEmail = (email: string) => {
+    setCapturedEmailRaw(email);
+    if (email) rememberEmail(email);
+  };
   const [formKey, setFormKey] = useState(0);
   const propertyLookup = usePropertyLookup();
   const topRef = useRef<HTMLDivElement>(null);
@@ -70,7 +75,7 @@ const Index = () => {
 
   const handleSubmit = async (data: RentFormData) => {
     setIsLoading(true);
-    setCapturedEmail('');
+    setCapturedEmailRaw(getRememberedEmail());
 
     try {
       if (data.fullAddress) {
@@ -203,11 +208,11 @@ const Index = () => {
           height="24"
           fetchPriority="high"
           className="h-5 sm:h-6 w-auto object-contain cursor-pointer hover:scale-105 transition-transform duration-200 shrink-0"
-          onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0 }); }}
+          onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0 }); }}
         />
         <div className="flex items-center gap-2 sm:gap-3">
           {results && (
-            <button onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-[12px] sm:text-[13px] text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap">
+            <button onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-[12px] sm:text-[13px] text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap">
               ← New check
             </button>
           )}
@@ -322,11 +327,11 @@ const Index = () => {
             propertyData={propertyLookup.data}
             propertyLoading={propertyLookup.loading}
             propertyError={propertyLookup.error}
-            onReset={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            onReset={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             onScrollToTop={() => {
               setResults(null);
               setFormKey(k => k + 1);
-              setCapturedEmail('');
+              setCapturedEmailRaw(getRememberedEmail());
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             capturedEmail={capturedEmail}

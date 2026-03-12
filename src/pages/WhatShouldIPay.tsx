@@ -9,6 +9,7 @@ import { getWsipDemoData } from '@/data/demoData';
 import SEO from '@/components/SEO';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
 import WsipForm, { WsipFormData } from '@/components/WsipForm';
+import { getRememberedEmail, rememberEmail } from '@/lib/emailMemory';
 
 const WsipResults = lazy(() => import('@/components/WsipResults'));
 const SocialProofCounter = lazy(() => import('@/components/SocialProofCounter'));
@@ -36,7 +37,11 @@ const WhatShouldIPay = () => {
   const [contactOpen, setContactOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [navScrolled, setNavScrolled] = useState(false);
-  const [capturedEmail, setCapturedEmail] = useState('');
+  const [capturedEmail, setCapturedEmailRaw] = useState(() => getRememberedEmail());
+  const setCapturedEmail = (email: string) => {
+    setCapturedEmailRaw(email);
+    if (email) rememberEmail(email);
+  };
   const [formKey, setFormKey] = useState(0);
   const propertyLookup = usePropertyLookup();
   const topRef = useRef<HTMLDivElement>(null);
@@ -77,13 +82,13 @@ const WhatShouldIPay = () => {
   const resetAll = () => {
     setResults(null);
     setFormKey(k => k + 1);
-    setCapturedEmail('');
+    setCapturedEmailRaw(getRememberedEmail());
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSubmit = async (data: WsipFormData) => {
     setIsLoading(true);
-    setCapturedEmail('');
+    setCapturedEmailRaw(getRememberedEmail());
 
     try {
       const lookupZip = data.zip;
