@@ -18,36 +18,29 @@ interface FairnessScoreGaugeProps {
   contextNotes?: React.ReactNode;
 }
 
-// Geometry — all in SVG coordinate space (y increases downward)
-const W = 220;
+const W = 200;
 const STROKE = 16;
-const R = 88;
+const R = 80;
 const CX = W / 2;
-const CY = R + STROKE / 2 + 16; // pivot sits at this Y
-const SVG_H = CY + 10; // just below the pivot line
+const CY = R + STROKE / 2 + 4;
+const SVG_H = CY + 4;
 
-// Convert a score (0–100) to an SVG point on the arc.
-// Score 0 → left end (angle π), score 100 → right end (angle 0).
-function scoreToPoint(score: number, radius: number) {
-  const angle = Math.PI * (1 - score / 100); // π → 0
-  return {
-    x: CX + radius * Math.cos(angle),
-    y: CY - radius * Math.sin(angle), // subtract because SVG y is down
-  };
+function scoreToPoint(s: number, radius: number) {
+  const a = Math.PI * (1 - s / 100);
+  return { x: CX + radius * Math.cos(a), y: CY - radius * Math.sin(a) };
 }
 
-const arcStart = scoreToPoint(0, R);   // left
-const arcEnd = scoreToPoint(100, R); // right
-const ARC_D = `M ${arcStart.x} ${arcStart.y} A ${R} ${R} 0 0 1 ${arcEnd.x} ${arcEnd.y}`;
+const arcL = scoreToPoint(0, R);
+const arcR = scoreToPoint(100, R);
+const ARC_D = `M ${arcL.x} ${arcL.y} A ${R} ${R} 0 0 1 ${arcR.x} ${arcR.y}`;
 
-const TICKS = [0, 20, 40, 60, 80, 100];
-const NEEDLE_LEN = R - STROKE / 2 - 10;
+// Shorter needle so it doesn't reach the score text area
+const NEEDLE_LEN = R - STROKE / 2 - 20;
 
 const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNotes }: FairnessScoreGaugeProps) => {
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [expandedComponent, setExpandedComponent] = useState<string | null>(null);
 
-  // Animate from score 0 → actual score
   const animScore = useMotionValue(0);
   const started = useRef(false);
   useEffect(() => {
@@ -60,7 +53,6 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
     });
   }, [score.total, animScore]);
 
-  // Needle endpoint
   const nx = useTransform(animScore, (s) => {
     const a = Math.PI * (1 - s / 100);
     return CX + NEEDLE_LEN * Math.cos(a);
@@ -72,7 +64,18 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
 
   return (
     <div className="flex flex-col items-center w-full">
-      <div className="relative" style={{ width: W, height: SVG_H + 52 }}>
+      {/* Header label — above gauge */}
+      <motion.p
+        className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground text-center mb-3"
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+      >
+        RenewalReply Fairness Score™
+      </motion.p>
+
+      {/* Gauge */}
+      <div className="relative" style={{ width: W, height: SVG_H + 44 }}>
         <svg width={W} height={SVG_H} viewBox={`0 0 ${W} ${SVG_H}`} className="overflow-visible">
           <defs>
             <linearGradient id="fsg-grad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -85,67 +88,40 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
             </linearGradient>
           </defs>
 
-          {/* Full gradient arc — always fully painted */}
+          {/* Full gradient arc */}
           <path d={ARC_D} fill="none" stroke="url(#fsg-grad)" strokeWidth={STROKE} strokeLinecap="round" />
-
-          {/* Tick marks + labels */}
-          {TICKS.map((v) => {
-            const inner = scoreToPoint(v, R - STROKE / 2 - 1);
-            const outer = scoreToPoint(v, R + STROKE / 2 + 2);
-            const label = scoreToPoint(v, R + STROKE / 2 + 13);
-            return (
-              <g key={v}>
-                <line
-                  x1={inner.x} y1={inner.y}
-                  x2={outer.x} y2={outer.y}
-                  stroke="hsl(var(--foreground) / 0.2)"
-                  strokeWidth={1.5}
-                  strokeLinecap="round"
-                />
-                <text
-                  x={label.x} y={label.y}
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  className="fill-muted-foreground"
-                  style={{ fontSize: 9, fontWeight: 500 }}
-                >
-                  {v}
-                </text>
-              </g>
-            );
-          })}
 
           {/* Needle */}
           <motion.line
             x1={CX} y1={CY}
             x2={nx} y2={ny}
-            stroke="hsl(var(--foreground) / 0.7)"
+            stroke="hsl(var(--foreground) / 0.65)"
             strokeWidth={2}
             strokeLinecap="round"
           />
 
           {/* Pivot dot */}
-          <circle cx={CX} cy={CY} r={4} fill="hsl(var(--foreground) / 0.65)" stroke="hsl(var(--card))" strokeWidth={2} />
+          <circle cx={CX} cy={CY} r={4} fill="hsl(var(--foreground) / 0.6)" stroke="hsl(var(--card))" strokeWidth={2} />
         </svg>
 
-        {/* "Unfair" / "Fair" at arc ends */}
+        {/* Unfair / Fair labels */}
         <span
           className="absolute text-[9px] font-semibold text-muted-foreground"
-          style={{ left: arcStart.x, top: CY + 4, transform: 'translateX(-50%)' }}
+          style={{ left: arcL.x, top: CY + 6, transform: 'translateX(-50%)' }}
         >
           Unfair
         </span>
         <span
           className="absolute text-[9px] font-semibold text-muted-foreground"
-          style={{ left: arcEnd.x, top: CY + 4, transform: 'translateX(-50%)' }}
+          style={{ left: arcR.x, top: CY + 6, transform: 'translateX(-50%)' }}
         >
           Fair
         </span>
 
-        {/* Score + tier — centered inside the arc bowl */}
-        <div className="absolute inset-x-0 flex flex-col items-center" style={{ top: CY - 46 }}>
+        {/* Score + /100 + tier label — stacked inside arc */}
+        <div className="absolute inset-x-0 flex flex-col items-center" style={{ top: CY - 52 }}>
           <motion.span
-            className={`font-display text-[44px] leading-none tracking-tight ${score.tierColor}`}
+            className={`font-display text-[42px] leading-none tracking-tight ${score.tierColor}`}
             style={{ letterSpacing: '-0.03em' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -153,8 +129,9 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
           >
             {score.total}
           </motion.span>
+          <span className="text-[10px] text-muted-foreground font-medium mt-0.5">/ 100</span>
           <motion.span
-            className={`font-display text-[15px] tracking-tight mt-0.5 ${score.tierColor}`}
+            className={`font-display text-[15px] tracking-tight mt-1 ${score.tierColor}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8, duration: 0.4 }}
@@ -164,19 +141,9 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
         </div>
       </div>
 
-      {/* Branded label */}
-      <motion.p
-        className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground text-center -mt-3"
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.5 }}
-      >
-        RenewalReply Fairness Score™
-      </motion.p>
-
       {/* Dynamic verdict message */}
       <motion.div
-        className="mt-4 max-w-[460px] text-center"
+        className="mt-2 max-w-[460px] text-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7, duration: 0.5 }}
