@@ -380,8 +380,7 @@ const RentByZip = () => {
         {/* ═══ DHCR ═══ */}
         <DhcrAlertSection zip={zip} city={city} />
 
-        {/* ═══ Renter Tools CTA ═══ */}
-        <RenterToolsCTA zip={zip} />
+        {/* RenterToolsCTA moved below FAQ */}
 
         {/* ═══ Change 3: Collapsible full market data — native <details> for SEO ═══ */}
         <section className="mb-12">
