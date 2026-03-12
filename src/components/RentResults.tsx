@@ -459,6 +459,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             verdict_label: fairnessScore?.tierLabel ?? null,
             address: formData.fullAddress || null,
             confidence_level: confidence.level ?? null,
+            effective_confidence_level: effectiveConfidence.level ?? null,
             comp_median_rent: medianCompRent ?? null,
             hud_fmr_value: rentData.fmr ?? null,
             analysis_id: analysisId,
