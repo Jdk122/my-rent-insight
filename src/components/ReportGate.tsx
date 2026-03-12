@@ -45,6 +45,7 @@ const ReportGate = ({
   prefilledEmail,
   shareReportPayload,
   onReportGenerated,
+  marketYoy,
 }: ReportGateProps) => {
   const [email, setEmail] = useState(prefilledEmail || '');
   const [error, setError] = useState('');
