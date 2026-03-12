@@ -82,7 +82,7 @@ const WhatShouldIPay = () => {
   const resetAll = () => {
     setResults(null);
     setFormKey(k => k + 1);
-    setCapturedEmail('');
+    setCapturedEmailRaw(getRememberedEmail());
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
