@@ -139,7 +139,7 @@ const RentData = () => {
       <noscript>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
           <h1>U.S. Rent Data by Location</h1>
-          <p>RenewalReply provides free fair market rent data for over 40,000 U.S. zip codes, sourced from HUD, the U.S. Census Bureau, and FRED.</p>
+          <p>RenewalReply provides free fair market rent data for over 38,600 U.S. zip codes, sourced from HUD, Apartment List, and Zillow.</p>
           <h2>Browse by State</h2>
           <ul>
             {Object.keys(STATE_NAMES).sort((a, b) => STATE_NAMES[a].localeCompare(STATE_NAMES[b])).map(s => (
