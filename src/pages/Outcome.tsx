@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent } from '@/lib/analytics';
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import { Check } from 'lucide-react';
