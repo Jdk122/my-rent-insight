@@ -43,6 +43,7 @@ function getGateCopy(
   toolType: 'renewal' | 'wsip',
   verdict: string | undefined,
   verdictLabel: string,
+  compsCount: number,
   monthlyOverpayment?: number | null,
   monthlySavings?: number | null,
 ) {
