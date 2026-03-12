@@ -259,7 +259,7 @@ const RentByState = () => {
         </div>
 
         {/* Cities Table */}
-        <section className="mb-12">
+        <section id="section-cities" className="mb-12">
           <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Rent by City in {stateName}</h2>
           <div className="rounded-lg border border-border overflow-hidden">
             <Table>
