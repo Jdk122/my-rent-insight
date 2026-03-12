@@ -621,6 +621,19 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
                 return (
                   <FairnessScoreGauge
+                    topNote={isBelowFmrHighIncrease ? (
+                      <div className="rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900/50 dark:bg-blue-950/20 p-3">
+                        <div className="flex gap-2.5">
+                          <Info className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
+                          <div>
+                            <p className="text-[12px] font-medium text-foreground mb-0.5">Important context about your rent</p>
+                            <p className="text-[11px] text-muted-foreground leading-relaxed">
+                              Your rent is currently below the area median for similar units. However, area medians include units of all conditions and amenity levels — including renovated units and buildings with more amenities. A lower rent may already reflect fair value for your specific unit. Regardless, a {increasePct}% increase is significantly above the local rent trend of {marketYoy}%, which gives you room to negotiate the rate of increase.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ) : undefined}
                     score={fairnessScore}
                     componentSources={sources}
                     contextNotes={
