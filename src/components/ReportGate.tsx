@@ -43,6 +43,7 @@ function getGateCopy(
   toolType: 'renewal' | 'wsip',
   verdict: string | undefined,
   verdictLabel: string,
+  compsCount: number,
   monthlyOverpayment?: number | null,
   monthlySavings?: number | null,
 ) {
@@ -52,7 +53,7 @@ function getGateCopy(
         if (monthlyOverpayment && monthlyOverpayment > 0) {
           return {
             heading: `You're overpaying by ~$${fmt(monthlyOverpayment)}/month`,
-            bulletA: 'See the comps behind that number',
+            bulletA: compsCount > 0 ? `See the ${compsCount} comps behind that number` : 'See the comps behind that number',
             bulletB: 'Copy a send-ready email with your exact counter-offer',
             cta: 'Email me my counter-offer →',
           };
@@ -256,7 +257,7 @@ const ReportGate = ({
     })();
   };
 
-  const copy = getGateCopy(toolType, verdict, verdictLabel, monthlyOverpayment, monthlySavings);
+  const copy = getGateCopy(toolType, verdict, verdictLabel, compsCount, monthlyOverpayment, monthlySavings);
 
   return (
     <div ref={gateRef} className="rounded-xl border border-primary/20 px-5 sm:px-8 py-7 sm:py-9 text-center" style={{ background: 'hsl(var(--primary) / 0.04)' }}>
@@ -274,7 +275,7 @@ const ReportGate = ({
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-[480px] mx-auto">
         <input
           type="email"
-          placeholder="Enter your email for the full report"
+          placeholder="Your email"
           value={email}
           onChange={(e) => { setEmail(e.target.value); if (error) setError(''); }}
           autoComplete="email"
