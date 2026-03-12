@@ -236,9 +236,6 @@ const ReportGate = ({
       <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-3" style={{ letterSpacing: '-0.015em' }}>
         {copy.heading}
       </h2>
-      <p className="text-sm text-muted-foreground mb-5">
-        Built from {compsCount > 0 ? `${compsCount} nearby listings and ` : ''}your local rent trend.
-      </p>
       <div className="text-sm text-muted-foreground mb-6 max-w-[440px] mx-auto text-left space-y-1.5">
         {[copy.bulletA, copy.bulletB].map((item, i) => (
           <div key={i} className="flex items-start gap-2">
