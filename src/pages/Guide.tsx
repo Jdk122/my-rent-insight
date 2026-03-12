@@ -101,7 +101,10 @@ const Guide = () => {
 
           {/* Content */}
           <div className="prose-rr">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={markdownComponents}
+            >
               {article.content}
             </ReactMarkdown>
           </div>
