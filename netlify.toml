@@ -1,1 +1,6 @@
-# Prerender.io integration is handled by the Netlify extension
+# Prerender.io integration
+[[plugins]]
+  package = "netlify-plugin-prerender"
+
+  [plugins.inputs]
+    prerenderToken = ""  # Set via Netlify env var PRERENDER_TOKEN instead
