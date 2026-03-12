@@ -460,6 +460,11 @@ const RentByZip = () => {
         {/* ═══ DHCR ═══ */}
         <DhcrAlertSection zip={zip} city={city} />
 
+        {/* ═══ Know Your Rights guide link ═══ */}
+        <p className="mb-8 text-sm text-muted-foreground">
+          <Link to="/guides/rent-increase-laws-by-state" className="text-primary hover:underline font-medium">Rent Increase Laws in {stateNameFromAbbr(state)} →</Link>
+        </p>
+
         {/* RenterToolsCTA moved below FAQ */}
 
         {/* ═══ Change 3: Collapsible full market data — native <details> for SEO ═══ */}
@@ -598,6 +603,15 @@ const RentByZip = () => {
 
         {/* ═══ Renter Tools CTA ═══ */}
         <RenterToolsCTA zip={zip} pageType="zip" />
+
+        {/* ═══ Related Guides ═══ */}
+        <div className="mb-12">
+          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2 font-medium">Related Guides</p>
+          <div className="flex flex-col gap-1">
+            <Link to="/guides/how-to-negotiate-rent-increase" className="text-sm text-primary hover:underline">How to Negotiate a Rent Increase →</Link>
+            <Link to="/guides/what-should-i-pay-for-rent" className="text-sm text-primary hover:underline">What Should I Pay for Rent? →</Link>
+          </div>
+        </div>
 
         {/* ═══ Similar Rents in Other Areas ═══ */}
         {similarRentZips.length > 0 && (
