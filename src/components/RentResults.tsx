@@ -851,6 +851,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     shareReportPayload={shareReportPayload}
                     onReportGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
                     marketYoy={marketYoy}
+                    monthlyOverpayment={
+                      isAboveMarket && counterOffer && !counterExceedsProposed
+                        ? Math.max(0, Math.round(newRent - counterOffer.counterLow))
+                        : null
+                    }
                   />
                 </section>
               )}

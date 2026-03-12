@@ -605,6 +605,7 @@ const WsipResults = ({
                   shareReportPayload={shareReportPayload}
                   onReportGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
                   marketYoy={marketYoy}
+                  monthlySavings={savings}
                 />
               </section>
             )}
