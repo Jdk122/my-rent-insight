@@ -103,24 +103,24 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
           />
         </svg>
 
-        {/* Unfair / Fair */}
+        {/* Unfair / Good deal */}
         <span
-          className="absolute text-[9px] font-semibold text-muted-foreground"
-          style={{ left: arcL.x, top: CY + 6, transform: 'translateX(-50%)' }}
+          className="absolute text-[11px] font-semibold text-foreground/60 tracking-wide"
+          style={{ left: arcL.x, top: CY + 8, transform: 'translateX(-50%)' }}
         >
           Unfair
         </span>
         <span
-          className="absolute text-[9px] font-semibold text-muted-foreground"
-          style={{ left: arcR.x, top: CY + 6, transform: 'translateX(-50%)' }}
+          className="absolute text-[11px] font-semibold text-foreground/60 tracking-wide"
+          style={{ left: arcR.x, top: CY + 8, transform: 'translateX(-50%)' }}
         >
           Good deal
         </span>
 
         {/* Score + /100 + tier — centered inside arc */}
-        <div className="absolute inset-x-0 flex flex-col items-center" style={{ top: CY - 56 }}>
+        <div className="absolute inset-x-0 flex flex-col items-center" style={{ top: CY - 58 }}>
           <motion.span
-            className={`font-display text-[44px] leading-none tracking-tight ${score.tierColor}`}
+            className={`font-display text-[48px] leading-none font-bold tracking-tight ${score.tierColor}`}
             style={{ letterSpacing: '-0.03em' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -128,9 +128,9 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
           >
             {score.total}
           </motion.span>
-          <span className="text-[10px] text-muted-foreground font-medium mt-1">/ 100</span>
+          <span className="text-[11px] text-foreground/40 font-semibold mt-1">/ 100</span>
           <motion.span
-            className={`font-display text-[16px] tracking-tight mt-1.5 ${score.tierColor}`}
+            className={`font-display text-[17px] font-semibold tracking-tight mt-1.5 ${score.tierColor}`}
             style={{ letterSpacing: '-0.01em' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
