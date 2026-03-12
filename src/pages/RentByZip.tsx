@@ -516,6 +516,9 @@ const RentByZip = () => {
           </Accordion>
         </section>
 
+        {/* ═══ Renter Tools CTA ═══ */}
+        <RenterToolsCTA zip={zip} />
+
         {/* ═══ Similar Rents in Other Areas ═══ */}
         {similarRentZips.length > 0 && (
           <section className="mb-12">
