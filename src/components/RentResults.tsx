@@ -408,7 +408,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     if (formData.currentRent < 300) anomalyFlags.push('very_low_rent');
     if (formData.currentRent > 15000) anomalyFlags.push('very_high_rent');
     if (compsCount === 0) anomalyFlags.push('no_comps');
-    if (confidence.level === 'limited') anomalyFlags.push('low_confidence');
+    if (effectiveConfidence.level === 'limited') anomalyFlags.push('low_confidence');
 
     supabase.from('analyses').insert({
       id: analysisId,
