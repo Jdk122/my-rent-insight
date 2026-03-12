@@ -16,6 +16,8 @@ interface FairnessScoreGaugeProps {
   dynamicMessage: React.ReactNode;
   componentSources?: ComponentSourceInfo;
   contextNotes?: React.ReactNode;
+  /** Rendered at the top of the collapsible, before breakdown bars */
+  topNote?: React.ReactNode;
 }
 
 const W = 200;
