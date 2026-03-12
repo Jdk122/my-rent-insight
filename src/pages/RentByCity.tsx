@@ -345,7 +345,7 @@ const RentByCity = () => {
           {freshestFormatted && (
             <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent" />
-              Last updated <time dateTime={freshest?.date || ''}>{freshestFormatted}</time>
+              Data through <time dateTime={freshest?.date || ''}>{freshestFormatted}</time>
             </p>
           )}
 
