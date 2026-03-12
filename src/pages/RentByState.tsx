@@ -327,6 +327,25 @@ const RentByState = () => {
         {/* ═══ Renter Tools CTA ═══ */}
         <RenterToolsCTA zip={cities[0]?.zips[0]?.zip} stateName={stateName} pageType="state" />
 
+        {/* ═══ Renter Guides ═══ */}
+        <section className="mb-12">
+          <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Renter Guides</h2>
+          <ul className="space-y-3">
+            <li>
+              <Link to="/guides/how-to-negotiate-rent-increase" className="text-sm text-primary hover:underline font-medium">How to Negotiate a Rent Increase →</Link>
+              <p className="text-xs text-muted-foreground">A data-driven guide with free email templates for pushing back on your landlord.</p>
+            </li>
+            <li>
+              <Link to="/guides/rent-increase-laws-by-state" className="text-sm text-primary hover:underline font-medium">Rent Increase Laws in {stateName} →</Link>
+              <p className="text-xs text-muted-foreground">See notice rules, caps, and tenant protections in {stateName}.</p>
+            </li>
+            <li>
+              <Link to="/guides/what-should-i-pay-for-rent" className="text-sm text-primary hover:underline font-medium">What Should I Pay for Rent? →</Link>
+              <p className="text-xs text-muted-foreground">How to compare rent prices and know if you're getting a fair deal.</p>
+            </li>
+          </ul>
+        </section>
+
         {/* Internal links */}
         <div className="mb-12 flex flex-col gap-2 text-sm">
           <Link to="/rent-data" className="text-primary underline hover:text-primary/80">← Browse all rent data</Link>

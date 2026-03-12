@@ -604,6 +604,15 @@ const RentByZip = () => {
         {/* ═══ Renter Tools CTA ═══ */}
         <RenterToolsCTA zip={zip} pageType="zip" />
 
+        {/* ═══ Related Guides ═══ */}
+        <div className="mb-12">
+          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2 font-medium">Related Guides</p>
+          <div className="flex flex-col gap-1">
+            <Link to="/guides/how-to-negotiate-rent-increase" className="text-sm text-primary hover:underline">How to Negotiate a Rent Increase →</Link>
+            <Link to="/guides/what-should-i-pay-for-rent" className="text-sm text-primary hover:underline">What Should I Pay for Rent? →</Link>
+          </div>
+        </div>
+
         {/* ═══ Similar Rents in Other Areas ═══ */}
         {similarRentZips.length > 0 && (
           <section className="mb-12">
