@@ -898,13 +898,46 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 }
               </p>
 
-              <div className="mt-5 flex flex-col items-center gap-2">
-                <button
-                  onClick={() => document.getElementById(capturedEmail ? 'section-evidence' : 'section-gate')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="text-base font-semibold text-primary hover:text-primary/80 transition-colors duration-150"
+              {/* ── Comp teaser line (no-increase path) ── */}
+              {compsWithRent.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.25, duration: 0.4 }}
+                  className="mt-5 w-full max-w-[540px]"
                 >
-                  {capturedEmail ? 'See the market data ↓' : 'Get the full report ↓'}
-                </button>
+                  <p className="text-sm text-muted-foreground text-center font-medium">
+                    {bldg.hasBuildingData && bldg.buildingComps.length >= 2
+                      ? `We found ${compsWithRent.length} matched comps near you, including ${bldg.buildingComps.length} in your building.`
+                      : `We found ${compsWithRent.length} matched comps near you.`
+                    }
+                  </p>
+                </motion.div>
+              )}
+
+              {/* ── Email gate (no-increase path) ── */}
+              {!capturedEmail && (
+                <section id="section-gate" className="py-8">
+                  <ReportGate
+                    toolType="renewal"
+                    compsCount={compsWithRent.length}
+                    verdictLabel={verdictLabel}
+                    isHighPain={false}
+                    verdict="none"
+                    leadContext={leadContext}
+                    analysisId={analysisId}
+                    zip={rentData.zip}
+                    city={city}
+                    onEmailCaptured={setCapturedEmail}
+                    prefilledEmail={capturedEmail}
+                    shareReportPayload={shareReportPayload}
+                    onReportGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
+                    marketYoy={marketYoy}
+                  />
+                </section>
+              )}
+
+              <div className="mt-4 flex flex-col items-center gap-2">
                 <button onClick={onReset} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                   ← Check a different address
                 </button>
