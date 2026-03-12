@@ -1,0 +1,1 @@
+DELETE FROM rate_limits WHERE window_start >= '2026-03-12 02:00:00+00' AND endpoint IN ('rentcast-lookup', 'rentcast-market');
