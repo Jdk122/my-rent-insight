@@ -264,6 +264,26 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     return { overPct: Math.round(overPct * 100), dollarOver, compCount: rentBearingComps.length };
   }, [hasIncrease, medianCompRent, newRent, outlierResult]);
 
+  // ━━━ Low-comp guardrail ━━━
+  const isCompDeficient = useMemo(() => {
+    if (!hasIncrease || !fairnessScore) return false;
+    const compComponent = fairnessScore.components.find(c => c.id === 'comps');
+    if (!compComponent) return true;
+    return compComponent.max <= 10;
+  }, [hasIncrease, fairnessScore]);
+
+  // Override confidence to 'limited' when comp contribution is negligible
+  const effectiveConfidence = useMemo(() => {
+    if (isCompDeficient && confidence.level !== 'limited') {
+      return {
+        ...confidence,
+        level: 'limited' as const,
+        note: 'This analysis reflects market trend alignment. Limited comparable listings were available for direct rent comparison.',
+      };
+    }
+    return confidence;
+  }, [isCompDeficient, confidence]);
+
   // ━━━ Premium unit detection ━━━
   const isPremiumUnit = bldg.hasBuildingData &&
     bldg.buildingMedian > 0 &&
