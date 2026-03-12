@@ -446,9 +446,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   // ━━━ Lazy-update analysis record ━━━
   const updateAnalysis = useCallback((fields: Record<string, any>) => {
-    if (!analysisId) return;
+    if (!analysisId || isDemo) return;
     supabase.from('analyses').update(fields as any).eq('id', analysisId).then(() => {});
-  }, [analysisId]);
+  }, [analysisId, isDemo]);
 
   useEffect(() => {
     if (hcrLookup.result && analysisId) {
