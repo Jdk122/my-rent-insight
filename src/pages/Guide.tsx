@@ -139,7 +139,9 @@ const Guide = () => {
                       <span className="text-muted-foreground group-open:rotate-90 transition-transform">▸</span>
                       {faq.q}
                     </summary>
-                    <p className="mt-2 ml-5 text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
+                    <div className="mt-2 ml-5 text-sm text-muted-foreground leading-relaxed prose-rr">
+                      <ReactMarkdown components={{ p: ({ children }) => <span>{children}</span> }}>{faq.a}</ReactMarkdown>
+                    </div>
                   </details>
                 ))}
               </div>

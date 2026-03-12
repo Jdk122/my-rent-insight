@@ -58,7 +58,7 @@ Certain conditions tilt the negotiation further in your favor:
 
 **Winter timing.** Leases expiring November through February give you natural leverage. Fewer people move in winter, which means fewer potential replacement tenants.
 
-**Rent stabilization.** In some cities — New York, Los Angeles, San Francisco, and others — your rent increase may be legally capped. If you're not sure whether your unit qualifies, check your city's rent board.
+**Rent stabilization.** In some cities — New York, Los Angeles, San Francisco, and others — your rent increase may be legally capped. If you're not sure whether your unit qualifies, check your city's rent board or [check your state's rules in our rent increase laws by state guide](/guides/rent-increase-laws-by-state).
 
 Notice requirements for rent increases vary by state and city, so check your local rules before assuming the proposed timeline or increase is valid.
 
@@ -367,7 +367,7 @@ Not sure what rent you should be paying in the first place? Check what similar u
       { q: 'What is the most a landlord can increase rent?', a: 'In states without rent control, there is no maximum. In California, the cap is 5% plus CPI (max 10%). In Oregon, it\'s 7% plus CPI (max 10%, currently 9.5% for 2026). In Washington, it\'s 7% plus CPI or 10%, whichever is less.' },
       { q: 'How much notice does a landlord have to give for a rent increase?', a: 'It varies by state, typically 30-90 days. California requires 30 days for increases under 10% and 90 days for larger increases. Oregon and Washington require 90 days. Many states require 30-60 days. Some states have no specific statute.' },
       { q: 'Can a landlord raise rent during a lease?', a: 'Generally, no. A landlord typically cannot increase rent during a fixed-term lease unless the lease agreement specifically includes a provision allowing for it. Rent increases usually take effect at lease renewal.' },
-      { q: 'Can I negotiate a rent increase even in a state without rent control?', a: 'Absolutely. Having no rent cap doesn\'t mean you have no leverage. Market data, comparable listings, and the cost of tenant turnover all give you negotiating power.' },
+      { q: 'Can I negotiate a rent increase even in a state without rent control?', a: 'Absolutely. Having no rent cap doesn\'t mean you have no leverage. Market data, comparable listings, and the cost of tenant turnover all give you negotiating power. See our [guide on how to negotiate a rent increase](/guides/how-to-negotiate-rent-increase).' },
       { q: 'What counts as a retaliatory rent increase?', a: 'Most states prohibit landlords from raising rent in response to a tenant filing a complaint, requesting repairs, reporting code violations, or joining a tenant organization. The specific protections and timeframes vary by state.' },
       { q: 'Are there any new rent control laws coming?', a: 'Massachusetts has a 2026 rent-control initiative petition in progress, but current Massachusetts law still generally prohibits rent control. Because state legislatures, city councils, and ballot measures can change these rules quickly, tenants should confirm the current law before relying on any statewide summary.' },
     ],
