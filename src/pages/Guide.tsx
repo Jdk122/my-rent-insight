@@ -50,6 +50,7 @@ const Guide = () => {
         </main>
         <SEOFooter />
       </div>
+      </>
     );
   }
 

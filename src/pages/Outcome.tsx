@@ -11,6 +11,7 @@ type Result = 'agreed' | 'countered' | 'no_response' | 'moving' | 'unsubscribe';
 
 const Outcome = () => {
   const [params] = useSearchParams();
+  usePrerenderReady(true);
   const leadId = params.get('id');
   const result = (params.get('result') || params.get('outcome')) as Result | null;
 

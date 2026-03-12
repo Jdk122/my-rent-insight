@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
+import { NoIndexMeta } from '@/components/NoIndexMeta';
 import SEO from '@/components/SEO';
 
 const sections = [

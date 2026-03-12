@@ -41,6 +41,7 @@ const SharedReport = () => {
   const { shortId } = useParams<{ shortId: string }>();
   const [report, setReport] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
+  usePrerenderReady(!loading);
   const [error, setError] = useState(false);
   const [createdAt, setCreatedAt] = useState<string>('');
 
