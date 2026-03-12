@@ -9,6 +9,7 @@ import { trackEvent } from "@/lib/analytics";
 
 const NotFound = () => {
   const location = useLocation();
+  usePrerenderReady(true);
 
   useEffect(() => {
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);

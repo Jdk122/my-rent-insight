@@ -7,6 +7,7 @@ import PageNav from '@/components/PageNav';
 import { Badge } from '@/components/ui/badge';
 
 const Guides = () => {
+  usePrerenderReady(true);
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEO

@@ -8,6 +8,7 @@ import PageNav from '@/components/PageNav';
 
 const Contact = () => {
   const [contactOpen, setContactOpen] = useState(false);
+  usePrerenderReady(true);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

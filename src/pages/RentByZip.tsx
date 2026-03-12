@@ -139,10 +139,10 @@ const RentByZip = () => {
     return () => { cancelled = true; };
   }, [zip]);
 
-  usePrerenderReady(!loading && !notFound && !!data);
+  usePrerenderReady(!loading);
 
   if (loading) return <LoadingSkeleton zip={zip} />;
-  if (notFound || !data || !zip) return <NotFoundPage zip={zip} />;
+  if (notFound || !data || !zip) return <><NoIndexMeta /><NotFoundPage zip={zip} /></>;
 
   const { raw, al, hud50, freshness, nearby, sameCity, sameMetro, metroAvgFmr1br, similarRentZips } = data;
   const city = raw.c || 'Unknown';
