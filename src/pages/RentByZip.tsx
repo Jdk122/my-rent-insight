@@ -460,6 +460,11 @@ const RentByZip = () => {
         {/* ═══ DHCR ═══ */}
         <DhcrAlertSection zip={zip} city={city} />
 
+        {/* ═══ Know Your Rights guide link ═══ */}
+        <p className="mb-8 text-sm text-muted-foreground">
+          <Link to="/guides/rent-increase-laws-by-state" className="text-primary hover:underline font-medium">Rent Increase Laws in {stateNameFromAbbr(state)} →</Link>
+        </p>
+
         {/* RenterToolsCTA moved below FAQ */}
 
         {/* ═══ Change 3: Collapsible full market data — native <details> for SEO ═══ */}
