@@ -142,7 +142,7 @@ const Index = () => {
             "featureList": [
               "Compare rent increases to HUD Fair Market Rent",
               "Generate free negotiation letter",
-              "Coverage for 38,000+ US zip codes",
+              "Coverage for 38,600+ US zip codes",
               "Uses HUD SAFMR, Zillow ZORI, and real comparable listings"
             ],
             "author": { "@type": "Organization", "name": "RenewalReply" }
