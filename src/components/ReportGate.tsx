@@ -161,6 +161,8 @@ const ReportGate = ({
   marketYoy,
   monthlyOverpayment,
   monthlySavings,
+  belowFmrHighIncrease,
+  increasePct,
 }: ReportGateProps) => {
   const [email, setEmail] = useState(prefilledEmail || '');
   const [error, setError] = useState('');
