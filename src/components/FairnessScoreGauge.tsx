@@ -18,32 +18,27 @@ interface FairnessScoreGaugeProps {
   contextNotes?: React.ReactNode;
 }
 
-const GAUGE_WIDTH = 160;
-const GAUGE_HEIGHT = 96;
-const STROKE_WIDTH = 12;
+const GAUGE_WIDTH = 164;
+const STROKE_WIDTH = 10;
+const RADIUS = 66;
 const CENTER_X = GAUGE_WIDTH / 2;
-const CENTER_Y = GAUGE_HEIGHT - 4;
-const RADIUS = 68;
+const CENTER_Y = RADIUS + STROKE_WIDTH / 2 + 2;
+const GAUGE_HEIGHT = CENTER_Y + 28; // room for labels below arc
 
-// Build a half-circle arc path (left to right, 180°)
 function describeArc(cx: number, cy: number, r: number): string {
-  const startX = cx - r;
-  const startY = cy;
-  const endX = cx + r;
-  const endY = cy;
-  return `M ${startX} ${startY} A ${r} ${r} 0 0 1 ${endX} ${endY}`;
+  return `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
 }
 
 const ARC_PATH = describeArc(CENTER_X, CENTER_Y, RADIUS);
-const ARC_LENGTH = Math.PI * RADIUS; // half-circle
+const ARC_LENGTH = Math.PI * RADIUS;
+const NEEDLE_LENGTH = RADIUS - STROKE_WIDTH - 4;
 
 const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNotes }: FairnessScoreGaugeProps) => {
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [expandedComponent, setExpandedComponent] = useState<string | null>(null);
 
-  // Animated needle
-  const needleAngle = useMotionValue(-90); // start at left (0 score)
-  const targetAngle = (score.total / 100) * 180 - 90; // map 0-100 → -90° to +90°
+  const needleAngle = useMotionValue(-90);
+  const targetAngle = (score.total / 100) * 180 - 90;
 
   const needleRef = useRef(false);
   useEffect(() => {
@@ -58,12 +53,10 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
 
   const needleRotate = useTransform(needleAngle, (v) => `rotate(${v}deg)`);
 
-  const NEEDLE_LENGTH = RADIUS - STROKE_WIDTH - 6;
-
   return (
     <div className="flex flex-col items-center w-full">
       {/* Half-circle gauge */}
-      <div className="relative" style={{ width: GAUGE_WIDTH, height: GAUGE_HEIGHT + 36 }}>
+      <div className="relative" style={{ width: GAUGE_WIDTH, height: GAUGE_HEIGHT + 40 }}>
         <svg
           width={GAUGE_WIDTH}
           height={GAUGE_HEIGHT}
@@ -73,36 +66,24 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
           <defs>
             <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="hsl(0, 72%, 51%)" />
-              <stop offset="35%" stopColor="hsl(38, 92%, 50%)" />
-              <stop offset="60%" stopColor="hsl(48, 96%, 53%)" />
+              <stop offset="30%" stopColor="hsl(25, 95%, 53%)" />
+              <stop offset="50%" stopColor="hsl(45, 93%, 47%)" />
+              <stop offset="75%" stopColor="hsl(85, 60%, 50%)" />
               <stop offset="100%" stopColor="hsl(142, 71%, 45%)" />
             </linearGradient>
           </defs>
 
-          {/* Background arc */}
+          {/* Full gradient arc — always fully visible */}
           <path
-            d={ARC_PATH}
-            fill="none"
-            stroke="hsl(var(--border))"
-            strokeWidth={STROKE_WIDTH}
-            strokeLinecap="round"
-          />
-
-          {/* Gradient arc (progress) */}
-          <motion.path
             d={ARC_PATH}
             fill="none"
             stroke="url(#gaugeGradient)"
             strokeWidth={STROKE_WIDTH}
             strokeLinecap="round"
-            strokeDasharray={ARC_LENGTH}
-            initial={{ strokeDashoffset: ARC_LENGTH }}
-            animate={{ strokeDashoffset: ARC_LENGTH * (1 - score.total / 100) }}
-            transition={{ duration: 1.4, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
           />
         </svg>
 
-        {/* Needle */}
+        {/* Needle — thin line from pivot */}
         <motion.div
           className="absolute"
           style={{
@@ -115,48 +96,47 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
           }}
         >
           <div
-            className="absolute rounded-full"
+            className="absolute rounded-full bg-foreground/80"
             style={{
-              width: 2.5,
+              width: 2,
               height: NEEDLE_LENGTH,
-              bottom: 0,
-              left: -1.25,
+              left: -1,
               top: -NEEDLE_LENGTH,
-              backgroundColor: `hsl(${score.tierColorHsl})`,
             }}
           />
         </motion.div>
 
         {/* Pivot dot */}
         <div
-          className="absolute rounded-full border-2 border-card"
+          className="absolute rounded-full bg-foreground/70 border-2 border-card"
           style={{
-            width: 10,
-            height: 10,
-            left: CENTER_X - 5,
-            top: CENTER_Y - 5,
-            backgroundColor: `hsl(${score.tierColorHsl})`,
+            width: 8,
+            height: 8,
+            left: CENTER_X - 4,
+            top: CENTER_Y - 4,
           }}
         />
 
-        {/* Arc labels */}
+        {/* "Unfair" label — bottom-left, anchored to arc endpoint */}
         <span
           className="absolute text-[9px] font-medium text-muted-foreground"
-          style={{ left: CENTER_X - RADIUS - 2, top: CENTER_Y + 4, transform: 'translateX(-50%)' }}
+          style={{ left: CENTER_X - RADIUS - STROKE_WIDTH / 2, top: CENTER_Y + 6, transform: 'translateX(-50%)' }}
         >
           Unfair
         </span>
+
+        {/* "Fair" label — bottom-right, anchored to arc endpoint */}
         <span
           className="absolute text-[9px] font-medium text-muted-foreground"
-          style={{ left: CENTER_X + RADIUS + 2, top: CENTER_Y + 4, transform: 'translateX(-50%)' }}
+          style={{ left: CENTER_X + RADIUS + STROKE_WIDTH / 2, top: CENTER_Y + 6, transform: 'translateX(-50%)' }}
         >
           Fair
         </span>
 
-        {/* Score number below pivot */}
-        <div className="absolute flex flex-col items-center" style={{ left: 0, right: 0, top: CENTER_Y + 6 }}>
+        {/* Score number centered inside the arc */}
+        <div className="absolute flex flex-col items-center" style={{ left: 0, right: 0, top: CENTER_Y - 30 }}>
           <motion.span
-            className={`font-display text-[32px] tracking-tight leading-none ${score.tierColor}`}
+            className={`font-display text-[34px] tracking-tight leading-none ${score.tierColor}`}
             style={{ letterSpacing: '-0.03em' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -164,13 +144,13 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
           >
             {score.total}
           </motion.span>
-          <span className="text-[10px] text-muted-foreground font-medium -mt-0.5">/ 100</span>
+          <span className="text-[10px] text-muted-foreground font-medium mt-0.5">/ 100</span>
         </div>
       </div>
 
       {/* Tier label */}
       <motion.div
-        className="mt-1 text-center"
+        className="text-center -mt-1"
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5, duration: 0.5 }}
@@ -183,7 +163,7 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
         </p>
       </motion.div>
 
-      {/* Dynamic verdict message with user's data */}
+      {/* Dynamic verdict message */}
       <motion.div
         className="mt-4 max-w-[460px] text-center"
         initial={{ opacity: 0 }}
