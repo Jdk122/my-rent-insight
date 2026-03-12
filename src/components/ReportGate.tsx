@@ -161,12 +161,8 @@ const ReportGate = ({
   const trendSign = (marketYoy ?? 0) > 0 ? '+' : '';
   const trendStr = marketYoy != null ? `${trendSign}${marketYoy}%` : '';
 
-  const bulletA = toolType === 'renewal'
-    ? `${compsCount} nearby comps + a ready-to-send negotiation letter`
-    : `${compsCount} nearby comps + a copy-paste negotiation email`;
-  const bulletB = trendStr
-    ? `A data-backed counter-offer using the ${trendStr} local trend`
-    : 'A data-backed counter-offer based on your actual market';
+  const bulletA = 'A negotiation letter you can copy and send tonight';
+  const bulletB = 'A data-backed counter-offer amount for your landlord';
 
   return (
     <div ref={gateRef} className="rounded-xl border border-primary/20 px-5 sm:px-8 py-7 sm:py-9 text-center" style={{ background: 'hsl(var(--primary) / 0.04)' }}>
@@ -200,7 +196,7 @@ const ReportGate = ({
           disabled={loading}
           className="bg-primary text-primary-foreground px-6 py-3.5 rounded-lg text-base sm:text-lg font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap shrink-0 disabled:opacity-60"
         >
-          {loading ? 'Unlocking…' : 'Unlock my report →'}
+          {loading ? 'Unlocking…' : 'Unlock my negotiation package →'}
         </button>
       </form>
       {error && <p className="text-xs text-destructive mt-1">{error}</p>}
