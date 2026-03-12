@@ -97,8 +97,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const excessAnnual = hasIncrease
     ? Math.round(formData.currentRent * ((increasePct - marketYoy) / 100) * 12)
     : 0;
-  const fmrUpperBound = rentData.fmr * 1.15;
-
   // ━━━ Path 1 vs Path 2 detection ━━━
   const hasSaleData = !!(propertyData?.lastSalePrice && propertyData?.lastSaleDate);
   const bedroomNum = formData.bedrooms === 'studio' ? 0 : formData.bedrooms === 'oneBr' ? 1 : formData.bedrooms === 'twoBr' ? 2 : formData.bedrooms === 'threeBr' ? 3 : 4;
