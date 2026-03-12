@@ -9,6 +9,7 @@ import { getWsipDemoData } from '@/data/demoData';
 import SEO from '@/components/SEO';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
 import WsipForm, { WsipFormData } from '@/components/WsipForm';
+import { getRememberedEmail, rememberEmail } from '@/lib/emailMemory';
 
 const WsipResults = lazy(() => import('@/components/WsipResults'));
 const SocialProofCounter = lazy(() => import('@/components/SocialProofCounter'));
