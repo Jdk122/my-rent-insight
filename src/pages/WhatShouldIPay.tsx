@@ -37,7 +37,11 @@ const WhatShouldIPay = () => {
   const [contactOpen, setContactOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [navScrolled, setNavScrolled] = useState(false);
-  const [capturedEmail, setCapturedEmail] = useState('');
+  const [capturedEmail, setCapturedEmailRaw] = useState(() => getRememberedEmail());
+  const setCapturedEmail = (email: string) => {
+    setCapturedEmailRaw(email);
+    if (email) rememberEmail(email);
+  };
   const [formKey, setFormKey] = useState(0);
   const propertyLookup = usePropertyLookup();
   const topRef = useRef<HTMLDivElement>(null);
