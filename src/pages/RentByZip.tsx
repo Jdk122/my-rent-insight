@@ -97,9 +97,14 @@ const RentByZip = () => {
       // Compute metro average for FAQ context
       let metroSum = 0;
       let metroCount = 0;
+      let totalCityZips = 1; // count the current ZIP itself
 
       for (const [z, r] of Object.entries(allData)) {
         if (z === zip) continue;
+        // Count ALL zips in same city (authoritative total)
+        if (r.c?.toLowerCase() === thisCity && r.s?.toLowerCase() === thisState) {
+          totalCityZips++;
+        }
         if (r.m?.toLowerCase() === thisMetro) {
           metroSum += r.f[1];
           metroCount++;
