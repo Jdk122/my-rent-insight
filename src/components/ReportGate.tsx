@@ -161,51 +161,46 @@ const ReportGate = ({
   const trendSign = (marketYoy ?? 0) > 0 ? '+' : '';
   const trendStr = marketYoy != null ? `${trendSign}${marketYoy}%` : '';
 
-  const bulletItems = toolType === 'renewal'
-    ? [
-        `${compsCount} comparable listings with real addresses and rents`,
-        trendStr ? `Your rent vs. the ${trendStr} local trend — the strongest argument you have` : 'Your rent vs. the local market trend — the strongest argument you have',
-        'A negotiation letter you can copy and send tonight',
-        'A recommended counter-offer based on your actual market',
-      ]
-    : [
-        `${compsCount} comparable listings with real addresses and rents`,
-        trendStr ? `Your rent vs. the ${trendStr} local trend — the strongest argument you have` : 'Your rent vs. the local market trend — the strongest argument you have',
-        'A negotiation playbook with a copy-paste email template',
-        'A recommended price range based on your actual market',
-      ];
+  const bulletA = toolType === 'renewal'
+    ? `${compsCount} nearby comps + a ready-to-send negotiation letter`
+    : `${compsCount} nearby comps + a copy-paste negotiation email`;
+  const bulletB = trendStr
+    ? `A data-backed counter-offer using the ${trendStr} local trend`
+    : 'A data-backed counter-offer based on your actual market';
 
   return (
-    <div ref={gateRef} className="rounded-xl border border-primary/20 px-5 sm:px-8 py-6 sm:py-8 text-center" style={{ background: 'hsl(var(--primary) / 0.04)' }}>
-      <p className="text-sm font-medium text-primary mb-2 tracking-wide">Your personalized report is built.</p>
-      <h2 className="font-display text-xl sm:text-2xl font-semibold text-foreground mb-4" style={{ letterSpacing: '-0.01em' }}>
+    <div ref={gateRef} className="rounded-xl border border-primary/20 px-5 sm:px-8 py-7 sm:py-9 text-center" style={{ background: 'hsl(var(--primary) / 0.04)' }}>
+      <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-3" style={{ letterSpacing: '-0.015em' }}>
         {heading}
       </h2>
+      <p className="text-sm text-muted-foreground mb-5">
+        Built from {compsCount} nearby listings and your local rent trend.
+      </p>
       <div className="text-sm text-muted-foreground mb-6 max-w-[440px] mx-auto text-left space-y-1.5">
-        {bulletItems.map((item, i) => (
+        {[bulletA, bulletB].map((item, i) => (
           <div key={i} className="flex items-start gap-2">
-            <span className="text-primary shrink-0 mt-0.5">✓</span>
-            <span className="leading-relaxed">{item}</span>
+            <span className="text-primary shrink-0 mt-0.5 font-semibold">✓</span>
+            <span className="leading-relaxed font-medium">{item}</span>
           </div>
         ))}
       </div>
-      <form onSubmit={handleSubmit} className="flex gap-2 max-w-[440px] mx-auto">
+      <form onSubmit={handleSubmit} className="flex gap-2 max-w-[480px] mx-auto">
         <input
           type="email"
           placeholder="you@email.com"
           value={email}
           onChange={(e) => { setEmail(e.target.value); if (error) setError(''); }}
           autoComplete="email"
-          className={`flex-1 min-w-0 px-4 py-3 text-sm border rounded-lg bg-card text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 ${
+          className={`flex-1 min-w-0 px-4 py-3.5 text-sm border rounded-lg bg-card text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 ${
             error ? 'border-destructive' : 'border-border focus:border-foreground'
           }`}
         />
         <button
           type="submit"
           disabled={loading}
-          className="bg-primary text-primary-foreground px-5 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap shrink-0 disabled:opacity-60"
+          className="bg-primary text-primary-foreground px-6 py-3.5 rounded-lg text-base sm:text-lg font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap shrink-0 disabled:opacity-60"
         >
-          {loading ? 'Unlocking…' : 'Unlock my negotiation package →'}
+          {loading ? 'Unlocking…' : 'Unlock my report →'}
         </button>
       </form>
       {error && <p className="text-xs text-destructive mt-1">{error}</p>}
