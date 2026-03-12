@@ -16,6 +16,8 @@ interface ReportGateProps {
   verdictLabel: string;
   /** High pain = overpriced/above; low pain = fair/below */
   isHighPain: boolean;
+  /** Granular verdict for copy control */
+  verdict?: 'above' | 'at-market' | 'below' | 'none';
   leadContext?: LeadContext;
   analysisId: string;
   zip: string;
@@ -31,11 +33,82 @@ interface ReportGateProps {
   marketYoy?: number;
 }
 
+function getGateCopy(toolType: 'renewal' | 'wsip', verdict: string | undefined, verdictLabel: string, compsCount: number) {
+  const hasComps = compsCount > 0;
+  const compRef = hasComps ? `${compsCount}` : '';
+
+  if (toolType === 'renewal') {
+    switch (verdict) {
+      case 'above':
+        return {
+          heading: 'Your landlord-ready counteroffer is ready',
+          bulletA: hasComps ? `See the ${compRef} matched comps proving your case` : 'See the local market data backing your result',
+          bulletB: 'Get a send-ready negotiation email with your exact counter-offer',
+          cta: 'Email me my counteroffer →',
+        };
+      case 'at-market':
+        return {
+          heading: 'See the comps and your best next move',
+          bulletA: hasComps ? `See how your unit compares to ${compRef} nearby rentals` : 'See the local market data backing your result',
+          bulletB: 'Get a landlord-ready response with your best strategy',
+          cta: 'Email me my full report →',
+        };
+      case 'below':
+        return {
+          heading: 'Protect your below-market deal',
+          bulletA: hasComps ? `See why your rent is favorable vs. ${compRef} nearby units` : 'See the local market data backing your result',
+          bulletB: 'Get a smart renewal response to lock in your rate',
+          cta: 'Email me my renewal strategy →',
+        };
+      default: // 'none' or fallback
+        return {
+          heading: 'See the full market breakdown',
+          bulletA: hasComps ? `View ${compRef} comparable rentals near you` : 'See the local market data backing your result',
+          bulletB: 'Get a market report for your next lease conversation',
+          cta: 'Email me my market report →',
+        };
+    }
+  }
+
+  // WSIP tool
+  switch (verdictLabel) {
+    case 'above':
+      return {
+        heading: 'See the proof and your negotiation plan',
+        bulletA: hasComps ? `View the ${compRef} comps showing this unit is overpriced` : 'See the local market data backing your result',
+        bulletB: 'Get a data-backed plan to negotiate a better price',
+        cta: 'Email me my negotiation plan →',
+      };
+    case 'fair':
+      return {
+        heading: 'See the full market breakdown',
+        bulletA: hasComps ? `View the ${compRef} comps confirming fair market rent` : 'See the local market data backing your result',
+        bulletB: 'Get the full comps and market breakdown before you decide',
+        cta: 'Email me my market report →',
+      };
+    case 'below':
+      return {
+        heading: 'See why this rent is a great deal',
+        bulletA: hasComps ? `View the ${compRef} comps showing your rent advantage` : 'See the local market data backing your result',
+        bulletB: 'Get a renewal strategy to protect your rate',
+        cta: 'Email me my renewal strategy →',
+      };
+    default: // 'none' or fallback
+      return {
+        heading: 'See your full market report',
+        bulletA: hasComps ? `View ${compRef} comparable rentals near you` : 'See the local market data backing your result',
+        bulletB: 'Get a fair price range to negotiate with confidence',
+        cta: 'Email me my market report →',
+      };
+  }
+}
+
 const ReportGate = ({
   toolType,
   compsCount,
   verdictLabel,
   isHighPain,
+  verdict,
   leadContext,
   analysisId,
   zip,
@@ -156,24 +229,18 @@ const ReportGate = ({
     })();
   };
 
-  const heading = "Your negotiation package is ready.";
-
-  const trendSign = (marketYoy ?? 0) > 0 ? '+' : '';
-  const trendStr = marketYoy != null ? `${trendSign}${marketYoy}%` : '';
-
-  const bulletA = 'A negotiation letter you can copy and send tonight';
-  const bulletB = 'A data-backed counter-offer amount for your landlord';
+  const copy = getGateCopy(toolType, verdict, verdictLabel, compsCount);
 
   return (
     <div ref={gateRef} className="rounded-xl border border-primary/20 px-5 sm:px-8 py-7 sm:py-9 text-center" style={{ background: 'hsl(var(--primary) / 0.04)' }}>
       <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-3" style={{ letterSpacing: '-0.015em' }}>
-        {heading}
+        {copy.heading}
       </h2>
       <p className="text-sm text-muted-foreground mb-5">
-        Built from {compsCount} nearby listings and your local rent trend.
+        Built from {compsCount > 0 ? `${compsCount} nearby listings and ` : ''}your local rent trend.
       </p>
       <div className="text-sm text-muted-foreground mb-6 max-w-[440px] mx-auto text-left space-y-1.5">
-        {[bulletA, bulletB].map((item, i) => (
+        {[copy.bulletA, copy.bulletB].map((item, i) => (
           <div key={i} className="flex items-start gap-2">
             <span className="text-primary shrink-0 mt-0.5 font-semibold">✓</span>
             <span className="leading-relaxed font-medium">{item}</span>
@@ -196,12 +263,12 @@ const ReportGate = ({
           disabled={loading}
           className="w-full sm:w-auto bg-primary text-primary-foreground px-6 py-3.5 rounded-lg text-base sm:text-lg font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap shrink-0 disabled:opacity-60"
         >
-          {loading ? 'Unlocking…' : 'Unlock my negotiation package →'}
+          {loading ? 'Unlocking…' : copy.cta}
         </button>
       </form>
       {error && <p className="text-xs text-destructive mt-1">{error}</p>}
       <p className="text-sm text-muted-foreground mt-3 font-medium">
-        100% free. No account needed. No spam ever.
+        Free forever · No spam · Instant delivery
       </p>
       <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
         Unsubscribe anytime. See our{' '}

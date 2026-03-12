@@ -169,7 +169,7 @@ const Index = () => {
                 "name": "Is RenewalReply free?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes. RenewalReply is completely free. You can check if your rent increase is fair and get a data-backed negotiation letter at no cost."
+                  "text": "Yes, RenewalReply is free to use. Enter your email only if you want your full report and negotiation package delivered instantly."
                 }
               },
               {

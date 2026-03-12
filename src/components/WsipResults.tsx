@@ -189,12 +189,6 @@ const WsipResults = ({
   // ━━━ High pain detection for gate aggressiveness ━━━
   const isHighPain = verdict === 'above';
 
-  // ━━━ Sample comp(s) for Phase 1 ━━━
-  const sampleComps = useMemo(() => {
-    const sorted = [...compsWithRent].sort((a, b) => (a.distance ?? 99) - (b.distance ?? 99));
-    const count = isHighPain ? 1 : 2;
-    return sorted.slice(0, count);
-  }, [compsWithRent, isHighPain]);
 
   // ━━━ Data confidence ━━━
   const compRadius = useMemo(() => {
@@ -577,54 +571,45 @@ const WsipResults = ({
               </div>
             </div>
 
-            {/* ── Sample comp(s) — tangible proof ── */}
-            {sampleComps.length > 0 && (
+            {/* ── Comp teaser line ── */}
+            {compsWithRent.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25, duration: 0.4 }}
-                className="mt-6 w-full max-w-[540px]"
+                className="mt-5 w-full max-w-[540px]"
               >
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-                  Sample comparable{sampleComps.length > 1 ? 's' : ''}:
+                <p className="text-sm text-muted-foreground text-center font-medium">
+                  {bldg.hasBuildingData && bldg.buildingComps.length >= 2
+                    ? `We found ${compsWithRent.length} comps near you, including ${bldg.buildingComps.length} in your building.`
+                    : `We found ${compsWithRent.length} comps near you.`
+                  }
                 </p>
-                <div className="space-y-2">
-                  {sampleComps.map((comp, i) => (
-                    <div key={i} className="flex items-start justify-between gap-4 px-4 py-3 rounded-lg border border-border/80 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground truncate">{comp.formattedAddress}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
-                          {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
-                          {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
-                        </p>
-                      </div>
-                      {comp.rent !== null && (
-                        <span className="text-sm font-semibold text-foreground whitespace-nowrap">${fmt(comp.rent)}/mo</span>
-                      )}
-                    </div>
-                  ))}
-                </div>
               </motion.div>
             )}
 
-            {/* Confidence badge + disclaimer */}
-            <div className="mt-4">
-              <DataConfidenceBadge level={confidence.level} note={confidence.note} />
-              <p className="text-[11px] text-muted-foreground/60 mt-2 text-center leading-relaxed">
-                This analysis is for informational purposes only.{' '}
-                <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
-              </p>
-            </div>
+            {/* ── Email gate (moved from Phase 2) ── */}
+            {!capturedEmail && (
+              <section id="section-gate" className="py-8">
+                <ReportGate
+                  toolType="wsip"
+                  compsCount={compsWithRent.length}
+                  verdictLabel={verdictLabel}
+                  isHighPain={isHighPain}
+                  leadContext={leadContext}
+                  analysisId={analysisId}
+                  zip={zip}
+                  city={city}
+                  onEmailCaptured={onEmailCaptured}
+                  prefilledEmail={capturedEmail}
+                  shareReportPayload={shareReportPayload}
+                  onReportGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
+                  marketYoy={marketYoy}
+                />
+              </section>
+            )}
 
-            {/* CTA */}
             <div className="mt-4 flex flex-col items-center gap-2">
-              <button
-                onClick={() => document.getElementById(capturedEmail ? 'section-market' : 'section-gate')?.scrollIntoView({ behavior: 'smooth' })}
-                className="text-base font-semibold text-primary hover:text-primary/80 transition-colors duration-150"
-              >
-                {capturedEmail ? 'See full report ↓' : 'Get the full report ↓'}
-              </button>
               <button onClick={onReset} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                 ← Check a different address
               </button>
@@ -633,38 +618,11 @@ const WsipResults = ({
         </div>
       </div>
 
-      {/* Transition edge */}
-      <div className="w-full h-px" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} />
-
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           PHASE 2: EMAIL GATE (if not captured)
+           PHASE 3: EVERYTHING UNLOCKED (after email)
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <div className="w-full bg-card">
         <div className="max-w-[620px] mx-auto px-5 sm:px-6">
-
-        {!capturedEmail && (
-          <section id="section-gate" className="py-10">
-            <ReportGate
-              toolType="wsip"
-              compsCount={compsWithRent.length}
-              verdictLabel={verdictLabel}
-              isHighPain={isHighPain}
-              leadContext={leadContext}
-              analysisId={analysisId}
-              zip={zip}
-              city={city}
-              onEmailCaptured={onEmailCaptured}
-              prefilledEmail={capturedEmail}
-              shareReportPayload={shareReportPayload}
-              onReportGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
-              marketYoy={marketYoy}
-            />
-          </section>
-        )}
-
-        {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-             PHASE 3: EVERYTHING UNLOCKED (after email)
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         {capturedEmail && (
           <>
             {/* ━━━ MARKET CONDITIONS ━━━ */}
@@ -915,6 +873,20 @@ const WsipResults = ({
                 zip={zip}
               />
             </section>
+
+            {/* ━━━ Data Confidence + Disclaimer ━━━ */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+              className="pt-4 pb-2"
+            >
+              <DataConfidenceBadge level={confidence.level} note={confidence.note} />
+              <p className="text-[11px] text-muted-foreground/60 mt-2 text-center leading-relaxed">
+                This analysis is for informational purposes only.{' '}
+                <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
+              </p>
+            </motion.div>
 
             {/* ━━━ SHARE + CROSS-LINK ━━━ */}
             <motion.section id="section-share" {...fade(0.23)} className="pt-4 pb-10">
