@@ -18,148 +18,205 @@ interface FairnessScoreGaugeProps {
   contextNotes?: React.ReactNode;
 }
 
-const GAUGE_WIDTH = 164;
-const STROKE_WIDTH = 10;
-const RADIUS = 66;
-const CENTER_X = GAUGE_WIDTH / 2;
-const CENTER_Y = RADIUS + STROKE_WIDTH / 2 + 2;
-const GAUGE_HEIGHT = CENTER_Y + 28; // room for labels below arc
+const SIZE = 200;
+const STROKE = 18;
+const RADIUS = (SIZE - STROKE) / 2;
+const CENTER = SIZE / 2;
 
-function describeArc(cx: number, cy: number, r: number): string {
-  return `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
+// Arc from 180° to 0° (left to right, top half)
+function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
+  const rad = (angleDeg * Math.PI) / 180;
+  return { x: cx + r * Math.cos(rad), y: cy - r * Math.sin(rad) };
 }
 
-const ARC_PATH = describeArc(CENTER_X, CENTER_Y, RADIUS);
-const ARC_LENGTH = Math.PI * RADIUS;
-const NEEDLE_LENGTH = RADIUS - STROKE_WIDTH - 4;
+const ARC_START = polarToCartesian(CENTER, CENTER, RADIUS, 180);
+const ARC_END = polarToCartesian(CENTER, CENTER, RADIUS, 0);
+const ARC_PATH = `M ${ARC_START.x} ${ARC_START.y} A ${RADIUS} ${RADIUS} 0 0 1 ${ARC_END.x} ${ARC_END.y}`;
+
+// Tick marks at specific positions
+const TICKS = [0, 20, 40, 60, 80, 100];
+
+function tickPosition(value: number) {
+  const angle = 180 - (value / 100) * 180; // 180° (left) to 0° (right)
+  return polarToCartesian(CENTER, CENTER, RADIUS, angle);
+}
+
+function tickOuter(value: number) {
+  const angle = 180 - (value / 100) * 180;
+  return polarToCartesian(CENTER, CENTER, RADIUS + STROKE / 2 + 3, angle);
+}
+
+function tickLabelPos(value: number) {
+  const angle = 180 - (value / 100) * 180;
+  return polarToCartesian(CENTER, CENTER, RADIUS + STROKE / 2 + 14, angle);
+}
+
+const NEEDLE_LENGTH = RADIUS - STROKE / 2 - 8;
 
 const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNotes }: FairnessScoreGaugeProps) => {
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [expandedComponent, setExpandedComponent] = useState<string | null>(null);
 
-  const needleAngle = useMotionValue(-90);
-  const targetAngle = (score.total / 100) * 180 - 90;
+  const needleAngle = useMotionValue(180); // start at left (score 0)
+  const targetAngle = 180 - (score.total / 100) * 180;
 
-  const needleRef = useRef(false);
+  const started = useRef(false);
   useEffect(() => {
-    if (needleRef.current) return;
-    needleRef.current = true;
+    if (started.current) return;
+    started.current = true;
     animate(needleAngle, targetAngle, {
       duration: 1.4,
-      delay: 0.4,
+      delay: 0.5,
       ease: [0.16, 1, 0.3, 1],
     });
   }, [targetAngle, needleAngle]);
 
-  const needleRotate = useTransform(needleAngle, (v) => `rotate(${v}deg)`);
+  // Needle tip position
+  const needleX = useTransform(needleAngle, (a) => {
+    const rad = (a * Math.PI) / 180;
+    return CENTER + NEEDLE_LENGTH * Math.cos(rad);
+  });
+  const needleY = useTransform(needleAngle, (a) => {
+    const rad = (a * Math.PI) / 180;
+    return CENTER - NEEDLE_LENGTH * Math.sin(rad);
+  });
 
   return (
     <div className="flex flex-col items-center w-full">
-      {/* Half-circle gauge */}
-      <div className="relative" style={{ width: GAUGE_WIDTH, height: GAUGE_HEIGHT + 40 }}>
+      {/* Gauge */}
+      <div className="relative" style={{ width: SIZE, height: CENTER + 20 }}>
         <svg
-          width={GAUGE_WIDTH}
-          height={GAUGE_HEIGHT}
-          viewBox={`0 0 ${GAUGE_WIDTH} ${GAUGE_HEIGHT}`}
+          width={SIZE}
+          height={CENTER + 20}
+          viewBox={`0 0 ${SIZE} ${CENTER + 20}`}
           className="overflow-visible"
         >
           <defs>
-            <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="hsl(0, 72%, 51%)" />
-              <stop offset="30%" stopColor="hsl(25, 95%, 53%)" />
-              <stop offset="50%" stopColor="hsl(45, 93%, 47%)" />
-              <stop offset="75%" stopColor="hsl(85, 60%, 50%)" />
-              <stop offset="100%" stopColor="hsl(142, 71%, 45%)" />
+            <linearGradient id="fsg-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="hsl(0, 72%, 50%)" />
+              <stop offset="20%" stopColor="hsl(15, 85%, 50%)" />
+              <stop offset="40%" stopColor="hsl(35, 92%, 50%)" />
+              <stop offset="55%" stopColor="hsl(48, 96%, 50%)" />
+              <stop offset="75%" stopColor="hsl(80, 60%, 48%)" />
+              <stop offset="100%" stopColor="hsl(142, 71%, 42%)" />
             </linearGradient>
           </defs>
 
-          {/* Full gradient arc — always fully visible */}
+          {/* Full gradient arc */}
           <path
             d={ARC_PATH}
             fill="none"
-            stroke="url(#gaugeGradient)"
-            strokeWidth={STROKE_WIDTH}
+            stroke="url(#fsg-grad)"
+            strokeWidth={STROKE}
             strokeLinecap="round"
+          />
+
+          {/* Tick marks */}
+          {TICKS.map((v) => {
+            const inner = tickPosition(v);
+            const outer = tickOuter(v);
+            return (
+              <line
+                key={v}
+                x1={inner.x}
+                y1={inner.y}
+                x2={outer.x}
+                y2={outer.y}
+                stroke="hsl(var(--foreground) / 0.25)"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+              />
+            );
+          })}
+
+          {/* Tick labels */}
+          {TICKS.map((v) => {
+            const pos = tickLabelPos(v);
+            return (
+              <text
+                key={`label-${v}`}
+                x={pos.x}
+                y={pos.y}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="fill-muted-foreground"
+                style={{ fontSize: 9, fontWeight: 500 }}
+              >
+                {v}
+              </text>
+            );
+          })}
+
+          {/* Animated needle */}
+          <motion.line
+            x1={CENTER}
+            y1={CENTER}
+            x2={needleX}
+            y2={needleY}
+            stroke="hsl(var(--foreground) / 0.75)"
+            strokeWidth={2.5}
+            strokeLinecap="round"
+          />
+
+          {/* Pivot circle */}
+          <circle
+            cx={CENTER}
+            cy={CENTER}
+            r={5}
+            fill="hsl(var(--foreground) / 0.7)"
+            stroke="hsl(var(--card))"
+            strokeWidth={2}
           />
         </svg>
 
-        {/* Needle — thin line from pivot */}
-        <motion.div
-          className="absolute"
-          style={{
-            left: CENTER_X,
-            top: CENTER_Y,
-            width: 0,
-            height: 0,
-            rotate: needleRotate,
-            transformOrigin: '0 0',
-          }}
-        >
-          <div
-            className="absolute rounded-full bg-foreground/80"
-            style={{
-              width: 2,
-              height: NEEDLE_LENGTH,
-              left: -1,
-              top: -NEEDLE_LENGTH,
-            }}
-          />
-        </motion.div>
-
-        {/* Pivot dot */}
-        <div
-          className="absolute rounded-full bg-foreground/70 border-2 border-card"
-          style={{
-            width: 8,
-            height: 8,
-            left: CENTER_X - 4,
-            top: CENTER_Y - 4,
-          }}
-        />
-
-        {/* "Unfair" label — bottom-left, anchored to arc endpoint */}
+        {/* Scale endpoint labels */}
         <span
-          className="absolute text-[9px] font-medium text-muted-foreground"
-          style={{ left: CENTER_X - RADIUS - STROKE_WIDTH / 2, top: CENTER_Y + 6, transform: 'translateX(-50%)' }}
+          className="absolute text-[9px] font-semibold text-muted-foreground"
+          style={{ left: ARC_START.x - STROKE / 2, top: CENTER + 6, transform: 'translateX(-50%)' }}
         >
           Unfair
         </span>
-
-        {/* "Fair" label — bottom-right, anchored to arc endpoint */}
         <span
-          className="absolute text-[9px] font-medium text-muted-foreground"
-          style={{ left: CENTER_X + RADIUS + STROKE_WIDTH / 2, top: CENTER_Y + 6, transform: 'translateX(-50%)' }}
+          className="absolute text-[9px] font-semibold text-muted-foreground"
+          style={{ left: ARC_END.x + STROKE / 2, top: CENTER + 6, transform: 'translateX(-50%)' }}
         >
           Fair
         </span>
 
-        {/* Score number centered inside the arc */}
-        <div className="absolute flex flex-col items-center" style={{ left: 0, right: 0, top: CENTER_Y - 30 }}>
+        {/* Score number — centered inside arc */}
+        <div
+          className="absolute inset-x-0 flex flex-col items-center"
+          style={{ top: CENTER - 38 }}
+        >
           <motion.span
-            className={`font-display text-[34px] tracking-tight leading-none ${score.tierColor}`}
+            className={`font-display text-[42px] tracking-tight leading-none ${score.tierColor}`}
             style={{ letterSpacing: '-0.03em' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
+            transition={{ delay: 0.7, duration: 0.5 }}
           >
             {score.total}
           </motion.span>
-          <span className="text-[10px] text-muted-foreground font-medium mt-0.5">/ 100</span>
+          <motion.span
+            className={`font-display text-[15px] tracking-tight ${score.tierColor} mt-0.5`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8, duration: 0.4 }}
+          >
+            {score.tierLabel}
+          </motion.span>
         </div>
       </div>
 
-      {/* Tier label */}
+      {/* Branded label */}
       <motion.div
-        className="text-center -mt-1"
+        className="text-center -mt-2"
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.5 }}
+        transition={{ delay: 0.6, duration: 0.5 }}
       >
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
           RenewalReply Fairness Score™
-        </p>
-        <p className={`font-display text-[22px] tracking-tight ${score.tierColor}`} style={{ letterSpacing: '-0.02em' }}>
-          {score.tierLabel}
         </p>
       </motion.div>
 
