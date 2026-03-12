@@ -75,7 +75,7 @@ const Index = () => {
 
   const handleSubmit = async (data: RentFormData) => {
     setIsLoading(true);
-    setCapturedEmail('');
+    setCapturedEmailRaw(getRememberedEmail());
 
     try {
       if (data.fullAddress) {
