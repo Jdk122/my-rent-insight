@@ -1271,15 +1271,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </motion.section>
             )}
 
-            {/* ━━━ Feedback widget ━━━ */}
-            <FeedbackWidget
-              analysisId={analysisId}
-              page="renewal_results"
-              verdictSnapshot={verdictLabel}
-              scoreSnapshot={fairnessScore?.total ?? null}
-              confidenceSnapshot={confidence.level}
-            />
-
             {/* ━━━ Post-conversion flow ━━━ */}
             <section className="pb-4 pt-2">
               <PostConversionFlow
@@ -1289,6 +1280,15 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 zip={rentData.zip}
               />
             </section>
+
+            {/* ━━━ Feedback widget ━━━ */}
+            <FeedbackWidget
+              analysisId={analysisId}
+              page="renewal_results"
+              verdictSnapshot={verdictLabel}
+              scoreSnapshot={fairnessScore?.total ?? null}
+              confidenceSnapshot={confidence.level}
+            />
 
             {/* ━━━ Data Confidence + Disclaimer ━━━ */}
             <motion.div

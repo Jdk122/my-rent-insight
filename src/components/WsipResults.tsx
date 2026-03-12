@@ -866,15 +866,6 @@ const WsipResults = ({
               </motion.section>
             )}
 
-            {/* ━━━ Feedback widget ━━━ */}
-            <FeedbackWidget
-              analysisId={analysisId}
-              page="wsip_results"
-              verdictSnapshot={verdictLabel}
-              scoreSnapshot={null}
-              confidenceSnapshot={confidence.level}
-            />
-
             {/* ━━━ Post-conversion flow ━━━ */}
             <section className="pb-4 pt-2">
               <WsipPostConversion
@@ -884,6 +875,15 @@ const WsipResults = ({
                 zip={zip}
               />
             </section>
+
+            {/* ━━━ Feedback widget ━━━ */}
+            <FeedbackWidget
+              analysisId={analysisId}
+              page="wsip_results"
+              verdictSnapshot={verdictLabel}
+              scoreSnapshot={null}
+              confidenceSnapshot={confidence.level}
+            />
 
             {/* ━━━ Data Confidence + Disclaimer ━━━ */}
             <motion.div
