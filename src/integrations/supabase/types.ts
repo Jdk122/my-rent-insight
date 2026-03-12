@@ -667,6 +667,45 @@ export type Database = {
           },
         ]
       }
+      user_feedback: {
+        Row: {
+          analysis_id: string
+          comment: string | null
+          confidence_snapshot: string | null
+          created_at: string
+          id: string
+          page: string
+          rating: string
+          reason: string | null
+          score_snapshot: number | null
+          verdict_snapshot: string | null
+        }
+        Insert: {
+          analysis_id: string
+          comment?: string | null
+          confidence_snapshot?: string | null
+          created_at?: string
+          id?: string
+          page: string
+          rating: string
+          reason?: string | null
+          score_snapshot?: number | null
+          verdict_snapshot?: string | null
+        }
+        Update: {
+          analysis_id?: string
+          comment?: string | null
+          confidence_snapshot?: string | null
+          created_at?: string
+          id?: string
+          page?: string
+          rating?: string
+          reason?: string | null
+          score_snapshot?: number | null
+          verdict_snapshot?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
