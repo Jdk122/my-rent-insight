@@ -208,7 +208,7 @@ const Index = () => {
           height="24"
           fetchPriority="high"
           className="h-5 sm:h-6 w-auto object-contain cursor-pointer hover:scale-105 transition-transform duration-200 shrink-0"
-          onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0 }); }}
+          onClick={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0 }); }}
         />
         <div className="flex items-center gap-2 sm:gap-3">
           {results && (
