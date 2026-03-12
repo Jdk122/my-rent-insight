@@ -720,7 +720,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             Area rents moved {marketYoy}% this year.
                           </p>
                         )}
-                        {isNycZip(rentData.zip) && hasIncrease && (
+                        {capturedEmail && isNycZip(rentData.zip) && hasIncrease && (
                           <p className="text-xs text-muted-foreground/70 mt-2">
                             Live in a rent-stabilized apartment? Your increase may be legally capped —{' '}
                             <button
@@ -758,7 +758,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 >
                   <p className="text-base font-medium text-foreground leading-relaxed">
                     {isAboveMarket
-                      ? 'Your increase exceeds what the local market supports. Renters in your position have strong grounds to negotiate — your negotiation package is ready.'
+                      ? 'Your increase exceeds what the local market supports. Your counteroffer is ready.'
                       : isBelowMarket
                       ? "Your rent is below market — but you can still negotiate for value. Longer lease terms, unit improvements, or maintenance requests are all on the table. See your options."
                       : 'Your increase tracks the market — but renters who negotiate with data save an average of $1,200/year. Your full report is ready.'
@@ -824,12 +824,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   transition={{ delay: 0.25, duration: 0.4 }}
                   className="mt-5 w-full max-w-[540px]"
                 >
-                  <p className="text-sm text-muted-foreground text-center font-medium">
+                  <span className="inline-block border border-border/60 rounded-full px-4 py-1.5 text-sm font-semibold text-foreground/70">
                     {bldg.hasBuildingData && bldg.buildingComps.length >= 2
                       ? `We found ${compsWithRent.length} matched comps near you, including ${bldg.buildingComps.length} in your building.`
                       : `We found ${compsWithRent.length} matched comps near you.`
                     }
-                  </p>
+                  </span>
                 </motion.div>
               )}
 
@@ -900,12 +900,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   transition={{ delay: 0.25, duration: 0.4 }}
                   className="mt-5 w-full max-w-[540px]"
                 >
-                  <p className="text-sm text-muted-foreground text-center font-medium">
+                  <span className="inline-block border border-border/60 rounded-full px-4 py-1.5 text-sm font-semibold text-foreground/70">
                     {bldg.hasBuildingData && bldg.buildingComps.length >= 2
                       ? `We found ${compsWithRent.length} matched comps near you, including ${bldg.buildingComps.length} in your building.`
                       : `We found ${compsWithRent.length} matched comps near you.`
                     }
-                  </p>
+                  </span>
                 </motion.div>
               )}
 
