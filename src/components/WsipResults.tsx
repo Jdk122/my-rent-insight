@@ -488,7 +488,7 @@ const WsipResults = ({
               >
                 <p className="text-base font-medium text-foreground leading-relaxed">
                   {verdict === 'above'
-                    ? 'This listing is priced above comparable units in the area. You have strong data to negotiate a lower price or walk away. Your market report is ready below.'
+                    ? 'This listing is priced above comparable units in the area. You have strong data to negotiate a lower price. Your market report is ready below.'
                     : verdict === 'below'
                     ? 'This listing is priced below comparable units — a strong deal. Lock it in before it\'s gone. Get the full comp report to confirm below.'
                     : 'This listing is priced within the fair range — but that doesn\'t mean the price is final. Renters who negotiate before signing save an average of $100/month. See how to approach it below.'
