@@ -211,7 +211,7 @@ This guide covers every state: whether there's a cap, how much notice your landl
 | Colorado | No cap (max once/year) | 60 days (mobile homes / no written lease) | No — banned |
 | Connecticut | No statewide cap (Fair Rent Commissions in larger cities) | 45 days | No — banned (but FRCs can block excessive increases) |
 | Delaware | No cap | 60 days (90-120 for mobile homes) | Yes — but none exist |
-| D.C. | CPI + 2% (rent-controlled units) | Minimum 60 days | Yes — extensive local rent control |
+| [D.C.](#washington-dc) | CPI + 2% (rent-controlled units) | Minimum 60 days | Yes — extensive local rent control |
 | Florida | No cap | No specific statewide statute; check lease and local law | No — banned |
 | Georgia | No cap | 60 days | No — banned |
 | Hawaii | No cap | 45 days | Yes — but none exist |
