@@ -1345,7 +1345,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               transition={{ delay: 0.2, duration: 0.4 }}
               className="pt-4 pb-2"
             >
-              <DataConfidenceBadge level={confidence.level} note={confidence.note} />
+              <DataConfidenceBadge level={effectiveConfidence.level} note={effectiveConfidence.note} />
               <p className="text-[11px] text-muted-foreground/60 mt-2 text-center leading-relaxed">
                 This analysis is for informational purposes only and does not constitute legal, financial, or real estate advice.{' '}
                 <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
