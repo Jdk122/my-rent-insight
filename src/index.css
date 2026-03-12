@@ -280,4 +280,16 @@
   .prose-rr blockquote {
     @apply border-l-2 border-primary/30 pl-4 italic text-muted-foreground my-4;
   }
+  .prose-rr table {
+    @apply w-full text-sm border-collapse my-6;
+  }
+  .prose-rr th {
+    @apply text-left font-semibold text-foreground px-3 py-2 border-b border-border bg-muted/50;
+  }
+  .prose-rr td {
+    @apply text-foreground/85 px-3 py-2 border-b border-border/50;
+  }
+  .prose-rr tr:hover td {
+    @apply bg-accent/30;
+  }
 }
