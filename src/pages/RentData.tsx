@@ -102,7 +102,7 @@ const RentData = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <SEO
         title="U.S. Rent Data — Fair Market Rent by Zip Code | RenewalReply"
-        description={`Look up HUD fair market rent for ${totalZips > 0 ? totalZips.toLocaleString() : '40,000'}+ U.S. zip codes. Free rent data from HUD, Apartment List, and Zillow.`}
+        description={`Look up HUD fair market rent for ${totalZips > 0 ? totalZips.toLocaleString() : '38,600'}+ U.S. zip codes. Free rent data from HUD, Apartment List, and Zillow.`}
         canonical="/rent-data"
         ogImage="/og-image.png"
         jsonLd={[
