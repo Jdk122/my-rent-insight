@@ -828,6 +828,30 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </motion.div>
               )}
 
+              {/* Action Insight — ungated, below verdict */}
+              {hasIncrease && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.18, duration: 0.4 }}
+                  className={`mt-4 w-full max-w-[540px] border-l-4 pl-4 py-2 rounded-r-md ${
+                    isAboveMarket
+                      ? 'border-destructive/60 bg-destructive/5'
+                      : isBelowMarket
+                      ? 'border-verdict-good/60 bg-verdict-good/5'
+                      : 'border-blue-400/60 bg-blue-50/50 dark:bg-blue-950/20'
+                  }`}
+                >
+                  <p className="text-base font-medium text-foreground leading-relaxed">
+                    {isAboveMarket
+                      ? 'Your increase exceeds what the local market supports. You have strong grounds to negotiate a lower number.'
+                      : isBelowMarket
+                      ? "Your rent is below market — your leverage isn't on price. Ask for a longer lease at the current rate, unit improvements, or maintenance you've been waiting on."
+                      : `Your increase tracks the market — but that doesn't mean you can't negotiate. Landlords expect it. A flat renewal or smaller increase saves you $${fmt(increaseAmount * 12)}/year without changing apartments.`
+                    }
+                  </p>
+                </motion.div>
+              )}
 
 
               {/* WSIP cross-link — below sample comps */}
