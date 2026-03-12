@@ -180,21 +180,21 @@ const ReportGate = ({
           </div>
         ))}
       </div>
-      <form onSubmit={handleSubmit} className="flex gap-2 max-w-[480px] mx-auto">
+      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-[480px] mx-auto">
         <input
           type="email"
           placeholder="you@email.com"
           value={email}
           onChange={(e) => { setEmail(e.target.value); if (error) setError(''); }}
           autoComplete="email"
-          className={`flex-1 min-w-0 px-4 py-3.5 text-sm border rounded-lg bg-card text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 ${
+          className={`w-full sm:flex-1 sm:min-w-0 h-12 sm:h-auto px-4 py-3.5 text-base sm:text-sm border rounded-lg bg-card text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 ${
             error ? 'border-destructive' : 'border-border focus:border-foreground'
           }`}
         />
         <button
           type="submit"
           disabled={loading}
-          className="bg-primary text-primary-foreground px-6 py-3.5 rounded-lg text-base sm:text-lg font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap shrink-0 disabled:opacity-60"
+          className="w-full sm:w-auto bg-primary text-primary-foreground px-6 py-3.5 rounded-lg text-base sm:text-lg font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap shrink-0 disabled:opacity-60"
         >
           {loading ? 'Unlocking…' : 'Unlock my negotiation package →'}
         </button>
