@@ -222,8 +222,8 @@ This guide covers every state: whether there's a cap, how much notice your landl
 | Kansas | No cap | 30 days (60 for mobile homes) | No — banned |
 | Kentucky | No cap | No specific statewide statute; check lease and local law | No — banned |
 | Louisiana | No cap | No specific statewide statute; check lease and local law | No |
-| Maine | No cap statewide (local controls exist) | 45 days (75 days if 10%+ in past year) | Yes — Portland has rent control |
-| Maryland | No statewide cap (local controls exist) | 90 days (term over one month) | Yes — Montgomery County, Takoma Park, others |
+| [Maine](#maine) | No cap statewide (local controls exist) | 45 days (75 days if 10%+ in past year) | Yes — Portland has rent control |
+| [Maryland](#maryland) | No statewide cap (local controls exist) | 90 days (term over one month) | Yes — Montgomery County, Takoma Park, others |
 | Massachusetts | No cap (statewide prohibition in effect; 2026 ballot initiative pending) | Varies by tenancy and lease structure; check lease and local law | No — currently prohibited statewide (Rent Control Prohibition Act, Ch. 40P); 2026 ballot initiative could change this |
 | Michigan | No cap | 30 days (for certain mid-lease increases) | No — banned |
 | Minnesota | No statewide cap (local controls exist) | 60 days (mobile homes) | Yes — St. Paul has 3% cap |
