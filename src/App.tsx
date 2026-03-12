@@ -81,6 +81,7 @@ const App = () => (
           <Route path="/admin/markets" element={<Suspense fallback={<PageSkeleton />}><AdminMarketIntelligence /></Suspense>} />
           <Route path="/guides" element={<Suspense fallback={<PageSkeleton />}><Guides /></Suspense>} />
           <Route path="/guides/:slug" element={<Suspense fallback={<PageSkeleton />}><Guide /></Suspense>} />
+          <Route path="/demos" element={<Suspense fallback={<PageSkeleton />}><DemoIndex /></Suspense>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<Suspense fallback={<PageSkeleton />}><NotFound /></Suspense>} />
         </Routes>
