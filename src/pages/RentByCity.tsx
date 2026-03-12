@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { getCityData, getNearbyCities, fmt, slugify, stateNameFromAbbr, type CityData } from '@/data/cityStateUtils';
 import { getApartmentListData, getHud50Data, type ApartmentListZipRaw, type Hud50ZipRaw } from '@/data/dataLoader';
 import { getDataFreshness, getFreshestDate, formatFreshnessDate, getHudFiscalYear, getDataYear, type DataFreshness } from '@/data/dataFreshness';
@@ -126,6 +127,8 @@ const RentByCity = () => {
 
     return { fmrVaries: fmrVar, hasZipLevelYoY: hasYoY, displayedZips: displayed, hasMoreZips: more };
   }, [data, alData, zipSearch]);
+
+  usePrerenderReady(!loading && !notFound && !!data);
 
   if (loading) return <LoadingSkeleton stateSlug={stateSlug} citySlug={citySlug} />;
   if (notFound || !data) return <NotFoundPage />;
@@ -350,12 +353,17 @@ const RentByCity = () => {
           )}
 
           {/* Summary */}
-          <p className="mt-4 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
-            The average 1-bedroom rent in {city} is {fmt(avgFmr[1])}/month based on HUD Fair Market Rent data.
-            {trendYoY !== null
-              ? ` Rents have changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year based on ${trendAttribution}. ${trendYoY < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendYoY.toFixed(1)}% in this area is above the local market trend.`}`
-              : ''}
-          </p>
+          <div className="mt-4 space-y-2 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
+            <p>
+              Average rent in {city}, {state} ranges from {fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to {fmt(Math.max(...zips.map(z => z.raw.f[1])))} across {zips.length} ZIP codes.
+            </p>
+            <p>
+              The average 1-bedroom rent in {city} is {fmt(avgFmr[1])}/month based on HUD Fair Market Rent data.
+              {trendYoY !== null
+                ? ` Year-over-year rent trends in ${city} show a ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% change based on ${trendAttribution}. ${trendYoY < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendYoY.toFixed(1)}% in this area is above the local market trend.`}`
+                : ''}
+            </p>
+          </div>
 
           {/* HUD-only note */}
           {!hasMarketData && (

@@ -65,6 +65,9 @@
     }
     </script>
 
+    <!-- Prerender.io readiness flag -->
+    <script>window.prerenderReady = false;</script>
+
     <!-- Inline critical above-the-fold CSS -->
     <style>
       body{margin:0;background:hsl(200 15% 97%);color:hsl(220 18% 13%);-webkit-font-smoothing:antialiased}
@@ -73,44 +76,15 @@
   </head>
 
   <body>
-    <!-- Inline critical content: crawlers see this before JS hydrates -->
     <div id="root">
       <div style="max-width:620px;margin:0 auto;padding:80px 24px 128px">
-        <h1 style="font-size:clamp(3rem,8vw,5rem);line-height:1.05;letter-spacing:-0.02em;font-family:'DM Serif Display',Georgia,'Times New Roman',serif">
-          Is your rent increase <span style="color:hsl(200,80%,44%)">fair?</span>
-        </h1>
-        <p style="margin-top:24px;font-size:20px;color:#666;line-height:1.6;font-family:'DM Sans',system-ui,-apple-system,sans-serif">
-          Find out instantly. Get a data-backed negotiation letter if it's not.
-        </p>
+        <p style="font-size:18px;color:#666;font-family:'DM Sans',system-ui,-apple-system,sans-serif">Loading RenewalReply…</p>
       </div>
     </div>
 
-    <!-- Fallback for crawlers/browsers with JS disabled -->
     <noscript>
       <div style="max-width:620px;margin:0 auto;padding:40px 24px;font-family:sans-serif">
-        <h2>How RenewalReply Works</h2>
-        <p>RenewalReply compares your rent increase to real market data from HUD Fair Market Rents, Census ACS, Zillow, and FRED. If your landlord is overcharging, we generate a free, data-backed negotiation letter you can send immediately.</p>
-        <h3>What You Get</h3>
-        <ul>
-          <li>Instant rent increase analysis for 38,000+ zip codes</li>
-          <li>Comparison to HUD Fair Market Rents and local Zillow trends</li>
-          <li>A fair counter-offer range based on real market movement</li>
-          <li>Free negotiation letter in friendly or firm tone</li>
-          <li>Rent control and stabilization check for your address</li>
-          <li>Landlord cost breakdown and profit margin estimate</li>
-        </ul>
-        <h3>Frequently Asked Questions</h3>
-        <dl>
-          <dt>How do I know if my rent increase is fair?</dt>
-          <dd>Enter your address, current rent, and proposed increase. We compare your increase against HUD Fair Market Rent data, Zillow rent trends, and Census income data for your specific zip code.</dd>
-          <dt>What is Fair Market Rent (FMR)?</dt>
-          <dd>Fair Market Rent is a standard set by HUD that represents the cost to rent a moderately-priced dwelling in a local housing market. We use FY2026 Small Area Fair Market Rents (SAFMR).</dd>
-          <dt>Is RenewalReply really free?</dt>
-          <dd>Yes, completely free. No account required.</dd>
-        </dl>
-        <h3>Data Sources</h3>
-        <p>HUD SAFMR FY2026 · Census ACS 2023 · Zillow ZORI · FRED · NY DHCR</p>
-        <p><a href="https://www.renewalreply.com/">Enable JavaScript to use RenewalReply →</a></p>
+        <p>RenewalReply requires JavaScript to run. <a href="https://www.renewalreply.com/">Enable JavaScript to use RenewalReply →</a></p>
       </div>
     </noscript>
 

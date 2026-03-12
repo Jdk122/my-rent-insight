@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { Link, useNavigate } from 'react-router-dom';
 import { getRentData, getApartmentListData, type RentZipRaw, type ApartmentListZipRaw } from '@/data/dataLoader';
 import { slugify, STATE_NAMES } from '@/data/cityStateUtils';
@@ -94,6 +95,8 @@ const RentData = () => {
   const totalZips = useMemo(() => {
     return Object.values(stateStats).reduce((a, b) => a + b.zips, 0);
   }, [stateStats]);
+
+  usePrerenderReady(!loading && !!allData);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

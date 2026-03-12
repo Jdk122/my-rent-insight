@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { useSearchParams, Link } from 'react-router-dom';
 import RentForm, { RentFormData, RentFormPrefill } from '@/components/RentForm';
 import { lookupRentData, loadFredTrend, RentLookupResult } from '@/data/rentData';
@@ -60,6 +61,8 @@ const Index = () => {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, [results]);
+
+  usePrerenderReady(!isLoading);
 
   const [isAboveMarket, setIsAboveMarket] = useState(false);
 

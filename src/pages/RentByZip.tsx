@@ -1,5 +1,6 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { Input } from '@/components/ui/input';
 import { getRentData, getApartmentListData, getHud50Data, getNationalAvgYoY, type RentZipRaw, type ApartmentListZipRaw, type Hud50ZipRaw } from '@/data/dataLoader';
 import { slugify, stateNameFromAbbr } from '@/data/cityStateUtils';
@@ -136,6 +137,8 @@ const RentByZip = () => {
     })();
     return () => { cancelled = true; };
   }, [zip]);
+
+  usePrerenderReady(!loading && !notFound && !!data);
 
   if (loading) return <LoadingSkeleton zip={zip} />;
   if (notFound || !data || !zip) return <NotFoundPage zip={zip} />;
@@ -383,7 +386,15 @@ const RentByZip = () => {
             </p>
           )}
 
-          {/* HUD-only note (moderate pages without market trends) */}
+          {/* ── Structured SEO text for crawlers ── */}
+          <div className="mt-6 space-y-2 text-sm text-foreground/80 leading-relaxed">
+            <p>The HUD Fair Market Rent for a 1-bedroom in {zip} ({city}, {state}) is {fmt(fmr1br)} for FY{hudFY}.</p>
+            {trendYoY !== null && (
+              <p>Rents in {zip} have {trendYoY >= 0 ? 'increased' : 'decreased'} {Math.abs(trendYoY).toFixed(1)}% year-over-year based on {trendAttribution}.</p>
+            )}
+            <p>The confidence level for this estimate is {dataConfidence} based on {dataSourceCount} data source{dataSourceCount !== 1 ? 's' : ''}.</p>
+          </div>
+
           {dataConfidence === 'moderate' && !hasMarketData && (
             <p className="mt-3 text-sm text-muted-foreground bg-muted/40 border border-border rounded-lg px-4 py-3">
               📊 Market trend data is limited for this area. The analysis below uses federal rent benchmarks.

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { useSearchParams, Link } from 'react-router-dom';
 import { lookupRentData, loadFredTrend, RentLookupResult, BedroomType } from '@/data/rentData';
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
@@ -40,6 +41,8 @@ const WhatShouldIPay = () => {
   const propertyLookup = usePropertyLookup();
   const topRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+
+  usePrerenderReady(!isLoading);
 
   // Demo mode: ?demo=overpriced|fair|deal
   useEffect(() => {
