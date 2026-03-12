@@ -752,7 +752,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                                 <>Other units in your building rent for ${fmt(bldg.buildingLow)}{bldg.buildingLow !== bldg.buildingHigh ? `–$${fmt(bldg.buildingHigh)}` : ''}/month. At ${fmt(newRent)}/mo, your rent is {newRent > bldg.buildingHigh ? 'above' : 'at the top of'} this range.</>
                               ) : <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. That's ${fmt(increaseAmount * 12)} more per year.</>
                           ) : isFair ? (
-                            isNuancedAtMarket || increasePct > marketYoy + 1.5 ? (
+                            isCompDeficient ? (
+                              <>At ${fmt(newRent)}/mo with a {increasePct}% increase, your rate of increase tracks the {marketYoy}% area trend for {brLabel} rentals in {city}.</>
+                            ) : isNuancedAtMarket || increasePct > marketYoy + 1.5 ? (
                               medianCompRent ? (
                                 <>Your {increasePct}% increase is above the {marketYoy}% area trend — but at ${fmt(newRent)}/mo, you're {newRent <= medianCompRent ? `still below the $${fmt(medianCompRent)} local median` : `within range for ${brLabel} rentals in ${city}`}.</>
                               ) : (
@@ -762,7 +764,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                               <>At ${fmt(newRent)}/mo, your {increasePct}% increase tracks the {marketYoy}% area trend for {brLabel} rentals in {city}.</>
                             )
                           ) : increasePct > 0 ? (
-                            <>At ${fmt(newRent)}/mo, your rent is below the local market average for {brLabel} rentals in {city} — even with a {increasePct}% increase, you're getting a competitive deal.</>
+                            isCompDeficient
+                              ? <>At ${fmt(newRent)}/mo with a {increasePct}% increase, your rate of increase is below the {marketYoy}% area trend for {brLabel} rentals in {city}.</>
+                              : <>At ${fmt(newRent)}/mo, your rent is below the local market average for {brLabel} rentals in {city} — even with a {increasePct}% increase, you're getting a competitive deal.</>
                           ) : (
                             <>Rents in {city} moved {marketYoy}% this year. Your landlord keeping your rent at ${fmt(formData.currentRent)}/mo means you're coming out ahead.</>
                           )}
