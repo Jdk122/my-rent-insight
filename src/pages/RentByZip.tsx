@@ -275,8 +275,12 @@ const RentByZip = () => {
       <noscript>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
           <h1>{hasMarketData ? `Typical Rent in ${zip} — ${city}, ${state}` : `Fair Market Rent in ${zip} — ${city}, ${state}`}</h1>
-          <p>{`The typical rent for a 1-bedroom in ${zip} (${city}, ${state}) is ${fmt(heroRent)}/month.`}{trendYoY !== null ? ` Rents in this area have ${trendYoY >= 0 ? 'increased' : 'decreased'} ${Math.abs(trendYoY).toFixed(1)}% over the past year (${trendAttribution}).` : ''}</p>
-          <p><strong>{`The typical 1-bedroom rent in ${zip} is ${fmt(heroRent)}/month based on ${heroRentSource} data.`}{trendYoY !== null ? ` Rents changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year (${trendAttribution}).` : ''}</strong></p>
+          <p>{dataConfidence === 'limited'
+            ? `Federal rent benchmarks suggest a 1-bedroom in ${zip} is approximately ${fmt(heroRent)}/month. Limited market trend data is available for this area.`
+            : `The typical rent for a 1-bedroom in ${zip} (${city}, ${state}) is ${fmt(heroRent)}/month.${trendYoY !== null ? ` Rents in this area have ${trendYoY >= 0 ? 'increased' : 'decreased'} ${Math.abs(trendYoY).toFixed(1)}% over the past year (${trendAttribution}).` : ''}`
+          }</p>
+          {dataConfidence === 'high' && <p><small>{`Based on ${dataSourceCount} independent data sources including local market trends and nearby listings.`}</small></p>}
+          {dataConfidence === 'moderate' && <p><small>{`Based on federal benchmarks and ${dataSourceCount - 1} additional market source${dataSourceCount - 1 !== 1 ? 's' : ''}.`}</small></p>}
           <p>{`Last updated: ${freshestFormatted}`}</p>
           <h2>{`HUD Fair Market Rent for ${zip}`}</h2>
           <table style={{ borderCollapse: 'collapse', width: '100%' }}>
@@ -290,7 +294,10 @@ const RentByZip = () => {
           <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY{hudFY}</small></p>
           {nearby.length > 0 && (<><h2>Nearby Areas</h2><ul>{nearby.map(({ zip: nZip, raw: nRaw }) => (<li key={nZip}><a href={`https://www.renewalreply.com/rent/${nZip}`}>{nZip} — {nRaw.c || 'Unknown'}, {nRaw.s} — 1-BR: {fmt(nRaw.f[1])}</a></li>))}</ul></>)}
           <p><a href={`https://www.renewalreply.com/rent-data/${stateSlug}/${citySlug}`}>{`← ${city}, ${state} rent data`}</a></p>
-          <p><a href="https://www.renewalreply.com/">Check if your rent increase is fair →</a></p>
+          {dataConfidence === 'limited'
+            ? <p><a href={`https://www.renewalreply.com/what-should-i-pay?zip=${zip}`}>{`Check what rent should cost in ${zip} →`}</a></p>
+            : <p><a href="https://www.renewalreply.com/">Check if your rent increase is fair →</a></p>
+          }
         </div>
       </noscript>
 
