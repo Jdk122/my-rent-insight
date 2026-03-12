@@ -16,6 +16,8 @@ interface FairnessScoreGaugeProps {
   dynamicMessage: React.ReactNode;
   componentSources?: ComponentSourceInfo;
   contextNotes?: React.ReactNode;
+  /** Rendered at the top of the collapsible, before breakdown bars */
+  topNote?: React.ReactNode;
 }
 
 const W = 200;
@@ -46,7 +48,7 @@ function markerPath(s: number): string {
   return `M ${tip.x} ${tip.y} L ${left.x} ${left.y} L ${right.x} ${right.y} Z`;
 }
 
-const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNotes }: FairnessScoreGaugeProps) => {
+const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNotes, topNote }: FairnessScoreGaugeProps) => {
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [expandedComponent, setExpandedComponent] = useState<string | null>(null);
 
@@ -168,6 +170,11 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
           </CollapsibleTrigger>
           <CollapsibleContent>
             <div className="mt-2 space-y-3 px-2">
+              {topNote && (
+                <div className="mb-3">
+                  {topNote}
+                </div>
+              )}
               {score.components.map((comp) => {
                 const source = componentSources?.[comp.id];
                 const isExpanded = expandedComponent === comp.id;

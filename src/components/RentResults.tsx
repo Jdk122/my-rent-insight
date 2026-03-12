@@ -621,6 +621,19 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
                 return (
                   <FairnessScoreGauge
+                    topNote={isBelowFmrHighIncrease ? (
+                      <div className="rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900/50 dark:bg-blue-950/20 p-3">
+                        <div className="flex gap-2.5">
+                          <Info className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
+                          <div>
+                            <p className="text-[12px] font-medium text-foreground mb-0.5">Important context about your rent</p>
+                            <p className="text-[11px] text-muted-foreground leading-relaxed">
+                              Your rent is currently below the area median for similar units. However, area medians include units of all conditions and amenity levels — including renovated units and buildings with more amenities. A lower rent may already reflect fair value for your specific unit. Regardless, a {increasePct}% increase is significantly above the local rent trend of {marketYoy}%, which gives you room to negotiate the rate of increase.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ) : undefined}
                     score={fairnessScore}
                     componentSources={sources}
                     contextNotes={
@@ -664,11 +677,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         {isAboveMarket && hasIncrease && brokerFee.brokerFeeCity === 'NYC' && !brokerFee.brokerFeeMarket && (
                           <p className="text-[11px] text-muted-foreground">
                             NYC's FARE Act eliminated most tenant-paid broker fees in 2025. If your landlord won't negotiate, moving is more affordable than it used to be.
-                          </p>
-                        )}
-                        {isBelowFmrHighIncrease && (
-                          <p className="text-[11px] text-muted-foreground/70 leading-relaxed">
-                            <strong>Note:</strong> Your rent is below the area median, but this comparison includes all unit types and conditions in your ZIP code. Units with fewer amenities or older finishes typically rent below the median even at fair market value.
                           </p>
                         )}
                       </>
@@ -743,49 +751,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 );
               })()}
 
-              {/* Action Insight — ungated, below verdict */}
-              {hasIncrease && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.18, duration: 0.4 }}
-                  className={`mt-4 w-full max-w-[540px] border-l-4 pl-4 py-2 rounded-r-md ${
-                    isAboveMarket
-                      ? 'border-destructive/60 bg-destructive/5'
-                      : isBelowMarket
-                      ? 'border-verdict-good/60 bg-verdict-good/5'
-                      : 'border-blue-400/60 bg-blue-50/50 dark:bg-blue-950/20'
-                  }`}
-                >
-                  <p className="text-base font-medium text-foreground leading-relaxed">
-                    {isAboveMarket
-                      ? 'Your increase exceeds what the local market supports. Your counteroffer is ready.'
-                      : isBelowMarket
-                      ? "Your rent is below market — but you can still negotiate for value. Longer lease terms, unit improvements, or maintenance requests are all on the table. See your options."
-                      : 'Your increase tracks the market — but renters who negotiate with data save an average of $1,200/year. Your full report is ready.'
-                    }
-                  </p>
-                </motion.div>
-              )}
-
-              {isBelowFmrHighIncrease && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4, duration: 0.5 }}
-                  className="mt-4 w-full max-w-[540px] rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900/50 dark:bg-blue-950/20 p-4"
-                >
-                  <div className="flex gap-3">
-                    <Info className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
-                    <div>
-                      <p className="text-sm font-medium text-foreground mb-1">Important context about your rent</p>
-                      <p className="text-[13px] text-muted-foreground leading-relaxed">
-                        Your rent is currently below the area median for similar units. However, area medians include units of all conditions and amenity levels — including renovated units and buildings with more amenities. A lower rent may already reflect fair value for your specific unit. Regardless, a {increasePct}% increase is significantly above the local rent trend of {marketYoy}%, which gives you room to negotiate the rate of increase.
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
 
               {/* ── Stat dashboard strip ── */}
               <motion.div
@@ -827,8 +792,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 >
                   <span className="inline-block border border-border/60 rounded-full px-4 py-1.5 text-sm font-semibold text-foreground/70">
                     {bldg.hasBuildingData && bldg.buildingComps.length >= 2
-                      ? `We found ${compsWithRent.length} matched comps near you, including ${bldg.buildingComps.length} in your building.`
-                      : `We found ${compsWithRent.length} matched comps near you.`
+                      ? `We found ${compsWithRent.length} matched comps supporting your result, including ${bldg.buildingComps.length} in your building.`
+                      : `We found ${compsWithRent.length} matched comps supporting your result.`
                     }
                   </span>
                 </motion.div>
@@ -908,8 +873,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 >
                   <span className="inline-block border border-border/60 rounded-full px-4 py-1.5 text-sm font-semibold text-foreground/70">
                     {bldg.hasBuildingData && bldg.buildingComps.length >= 2
-                      ? `We found ${compsWithRent.length} matched comps near you, including ${bldg.buildingComps.length} in your building.`
-                      : `We found ${compsWithRent.length} matched comps near you.`
+                      ? `We found ${compsWithRent.length} matched comps supporting your result, including ${bldg.buildingComps.length} in your building.`
+                      : `We found ${compsWithRent.length} matched comps supporting your result.`
                     }
                   </span>
                 </motion.div>
@@ -955,6 +920,31 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         <div className="max-w-[620px] mx-auto px-5 sm:px-6">
         {capturedEmail && (
           <>
+            {/* Action Insight — shown post-gate as context for comps/letter */}
+            {hasIncrease && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05, duration: 0.4 }}
+                className={`mt-8 w-full max-w-[540px] mx-auto border-l-4 pl-4 py-2 rounded-r-md ${
+                  isAboveMarket
+                    ? 'border-destructive/60 bg-destructive/5'
+                    : isBelowMarket
+                    ? 'border-verdict-good/60 bg-verdict-good/5'
+                    : 'border-blue-400/60 bg-blue-50/50 dark:bg-blue-950/20'
+                }`}
+              >
+                <p className="text-base font-medium text-foreground leading-relaxed">
+                  {isAboveMarket
+                    ? 'Your increase exceeds what the local market supports. Your counteroffer is ready.'
+                    : isBelowMarket
+                    ? "Your rent is below market — but you can still negotiate for value. Longer lease terms, unit improvements, or maintenance requests are all on the table. See your options."
+                    : 'Your increase tracks the market — but renters who negotiate with data save an average of $1,200/year. Your full report is ready.'
+                  }
+                </p>
+              </motion.div>
+            )}
+
             {/* ━━━ EVIDENCE SECTION ━━━ */}
             <section id="section-evidence" className="pt-10 pb-8">
               <motion.h2 {...fade(0.05)} className="results-section-header mb-6">
