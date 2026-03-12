@@ -563,21 +563,12 @@ const WsipResults = ({
               </div>
             </div>
 
-            {/* Confidence badge */}
-            <div className="mt-4">
-              <DataConfidenceBadge level={confidence.level} note={confidence.note} />
-              <p className="text-[11px] text-muted-foreground/60 mt-2 text-center leading-relaxed">
-                This analysis is for informational purposes only.{' '}
-                <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
-              </p>
-            </div>
-
             {/* ── Sample comp(s) — tangible proof ── */}
             {sampleComps.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.4 }}
+                transition={{ delay: 0.25, duration: 0.4 }}
                 className="mt-6 w-full max-w-[540px]"
               >
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
@@ -603,15 +594,14 @@ const WsipResults = ({
               </motion.div>
             )}
 
-            {/* "Why this result" line */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.35, duration: 0.4 }}
-              className="mt-4 text-[12px] text-muted-foreground/60 text-center max-w-[480px] leading-relaxed"
-            >
-              Based on {compsWithRent.length > 0 ? `${compsWithRent.length} comparable listing${compsWithRent.length !== 1 ? 's' : ''}, ` : ''}HUD Fair Market Rent data, and Zillow rent trends for {city}.
-            </motion.p>
+            {/* Confidence badge + disclaimer */}
+            <div className="mt-4">
+              <DataConfidenceBadge level={confidence.level} note={confidence.note} />
+              <p className="text-[11px] text-muted-foreground/60 mt-2 text-center leading-relaxed">
+                This analysis is for informational purposes only.{' '}
+                <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
+              </p>
+            </div>
 
             {/* CTA */}
             <div className="mt-4 flex flex-col items-center gap-2">
