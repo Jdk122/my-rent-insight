@@ -335,6 +335,13 @@ const RentByZip = () => {
           </ol>
         </nav>
 
+        {/* Parent city page link */}
+        <p className="mb-6 text-sm text-muted-foreground">
+          <Link to={`/rent-data/${stateSlug}/${citySlug}`} className="hover:text-foreground transition-colors">
+            See all rent data for {city}, {state} →
+          </Link>
+        </p>
+
         {/* ═══ Section A: Hero — Verdict First ═══ */}
         <section className="mb-12">
           <div className="flex items-start justify-between gap-4">
