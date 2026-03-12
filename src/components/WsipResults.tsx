@@ -189,12 +189,6 @@ const WsipResults = ({
   // ━━━ High pain detection for gate aggressiveness ━━━
   const isHighPain = verdict === 'above';
 
-  // ━━━ Sample comp(s) for Phase 1 ━━━
-  const sampleComps = useMemo(() => {
-    const sorted = [...compsWithRent].sort((a, b) => (a.distance ?? 99) - (b.distance ?? 99));
-    const count = isHighPain ? 1 : 2;
-    return sorted.slice(0, count);
-  }, [compsWithRent, isHighPain]);
 
   // ━━━ Data confidence ━━━
   const compRadius = useMemo(() => {
