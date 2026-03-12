@@ -176,6 +176,15 @@ const RentByZip = () => {
   const hasHud50 = hud50 !== null && hud50.f50 !== undefined && hud50.f50[1] > 0;
   const isThinPage = !hasMarketData && !hasHud50;
 
+  // Detect near-duplicate single-ZIP city pages
+  const isNearDuplicateSingleZipPage = totalCityZips === 1 && !hasMarketData;
+  const shouldNoindex = isThinPage || isNearDuplicateSingleZipPage;
+
+  // Canonical: single-ZIP cities canonicalize to the city page
+  const canonicalPath = totalCityZips === 1
+    ? `/rent-data/${stateSlug}/${citySlug}`
+    : `/rent/${zip}`;
+
   // Data confidence level for display differentiation
   const dataConfidence = (() => {
     const hasCensusIncome = raw.i != null && raw.i >= 10000;
@@ -202,8 +211,8 @@ const RentByZip = () => {
 
   // ─── OG-optimized meta ───
   const metaTitle = hasMarketData
-    ? `Average Rent in ${zip} (${city}, ${state}) — ${dataYear} Data | RenewalReply`
-    : `Fair Market Rent in ${zip} (${city}, ${state}) — FY${hudFY} | RenewalReply`;
+    ? `Rent in ${zip} — ${city}, ${state} | ${fmt(heroRent)}/mo 1-BR (${dataYear})`
+    : `HUD Fair Market Rent in ${zip} — ${city}, ${state} | FY${hudFY} Rental Data`;
   const ogTitle = `Average Rent in ${zip} — ${fmt(heroRent)}/mo (${dataYear})`;
   const metaDesc = `1-BR rents in ${zip} are ${fmt(heroRent)}/mo${trendYoY !== null ? `, ${trendYoY > 0 ? 'up' : 'down'} ${Math.abs(trendYoY).toFixed(1)}% year-over-year` : ''}. See federal benchmarks, trends, and nearby data for ${city}, ${state}.`;
 
