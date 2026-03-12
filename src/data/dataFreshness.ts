@@ -51,6 +51,13 @@ export function formatFreshnessDate(dateStr: string): string {
   return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 }
 
+/** Check if the freshest date is more than 4 months old */
+export function isFreshnessStale(dateStr: string): boolean {
+  const now = new Date();
+  const fourMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 4, now.getDate());
+  return new Date(dateStr + 'T00:00:00') < fourMonthsAgo;
+}
+
 /** HUD fiscal year: calendar year of SAFMR date + 1 if Oct or later */
 export function getHudFiscalYear(freshness: DataFreshness): string {
   const date = new Date(freshness.hud_safmr + 'T00:00:00');
