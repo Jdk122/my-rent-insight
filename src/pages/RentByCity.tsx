@@ -128,6 +128,8 @@ const RentByCity = () => {
     return { fmrVaries: fmrVar, hasZipLevelYoY: hasYoY, displayedZips: displayed, hasMoreZips: more };
   }, [data, alData, zipSearch]);
 
+  usePrerenderReady(!loading && !notFound && !!data);
+
   if (loading) return <LoadingSkeleton stateSlug={stateSlug} citySlug={citySlug} />;
   if (notFound || !data) return <NotFoundPage />;
 

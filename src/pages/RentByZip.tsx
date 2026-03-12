@@ -138,6 +138,8 @@ const RentByZip = () => {
     return () => { cancelled = true; };
   }, [zip]);
 
+  usePrerenderReady(!loading && !notFound && !!data);
+
   if (loading) return <LoadingSkeleton zip={zip} />;
   if (notFound || !data || !zip) return <NotFoundPage zip={zip} />;
 

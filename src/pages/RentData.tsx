@@ -96,6 +96,8 @@ const RentData = () => {
     return Object.values(stateStats).reduce((a, b) => a + b.zips, 0);
   }, [stateStats]);
 
+  usePrerenderReady(!loading && !!allData);
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEO

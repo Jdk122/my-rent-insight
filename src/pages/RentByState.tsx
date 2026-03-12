@@ -81,6 +81,8 @@ const RentByState = () => {
   const dataYear = freshness ? getDataYear(freshness) : '2026';
   const hudFY = freshness ? getHudFiscalYear(freshness) : '2026';
 
+  usePrerenderReady(!loading && !notFound && !!data);
+
   if (loading) return <LoadingSkeleton stateSlug={stateSlug} />;
   if (notFound || !data) return <NotFoundPage />;
 

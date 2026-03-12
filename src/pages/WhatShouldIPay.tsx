@@ -42,6 +42,8 @@ const WhatShouldIPay = () => {
   const topRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
+  usePrerenderReady(!isLoading);
+
   // Demo mode: ?demo=overpriced|fair|deal
   useEffect(() => {
     const demo = searchParams.get('demo');

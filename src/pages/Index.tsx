@@ -62,6 +62,8 @@ const Index = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, [results]);
 
+  usePrerenderReady(!isLoading);
+
   const [isAboveMarket, setIsAboveMarket] = useState(false);
 
   const hasIncrease = !!(results && results.formData.rentIncrease && results.formData.rentIncrease > 0);
