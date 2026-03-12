@@ -85,7 +85,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   // calc is computed later, after bldg and medianCompRent are available
 
   const newRent = formData.currentRent + increaseAmount;
-  const annualExtra = increaseAmount * 12;
   const compositeTrendResult = useMemo(() => calculateCompositeTrend({
     alYoY: rentData.alYoY,
     zoriYoY: rentData.zoriYoY,
@@ -98,8 +97,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const excessAnnual = hasIncrease
     ? Math.round(formData.currentRent * ((increasePct - marketYoy) / 100) * 12)
     : 0;
-  const fmrUpperBound = rentData.fmr * 1.15;
-
   // ━━━ Path 1 vs Path 2 detection ━━━
   const hasSaleData = !!(propertyData?.lastSalePrice && propertyData?.lastSaleDate);
   const bedroomNum = formData.bedrooms === 'studio' ? 0 : formData.bedrooms === 'oneBr' ? 1 : formData.bedrooms === 'twoBr' ? 2 : formData.bedrooms === 'threeBr' ? 3 : 4;
@@ -117,7 +114,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   }, [formData.fullAddress, propertyData, bedroomNum]);
 
   const isPath1 = hasSaleData && !forceMarketOnly;
-  const marketMultiple = marketYoy > 0 ? Math.round((increasePct / marketYoy) * 10) / 10 : 0;
 
   const rentcastRaw = useRentcast(rentData.zip, formData.bedrooms, formData.fullAddress, !isDemo);
   const rentcast = isDemo ? { data: demoRentcast, loading: false, error: null } : rentcastRaw;
@@ -196,8 +192,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const counterExceedsProposed = counterOffer
     ? counterOffer.counterLow >= newRent
     : false;
-
-  const multiplier = calc?.increaseRatio ?? 0;
 
   // ━━━ Data confidence ━━━
   const compRadius = useMemo(() => {
@@ -571,7 +565,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     increaseType: 'percent' as const,
     reportData: {
       city: rentData.city, state: rentData.state, newRent, increasePct, marketYoy,
-      fmr: rentData.fmr, verdict: calc?.verdict || '',
+      fmr: rentData.fmr, verdict: effectiveVerdict ?? '',
       counterLow: counterOffer?.counterLow ?? null, counterHigh: counterOffer?.counterHigh ?? null,
       censusMedianRent: rentData.censusMedianRent, medianIncome: rentData.medianIncome,
       bedroomLabel: bedroomLabels[formData.bedrooms],
@@ -758,7 +752,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                                 <>Other units in your building rent for ${fmt(bldg.buildingLow)}{bldg.buildingLow !== bldg.buildingHigh ? `–$${fmt(bldg.buildingHigh)}` : ''}/month. At ${fmt(newRent)}/mo, your rent is {newRent > bldg.buildingHigh ? 'above' : 'at the top of'} this range.</>
                               ) : <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. That's ${fmt(increaseAmount * 12)} more per year.</>
                           ) : isFair ? (
-                            isNuancedAtMarket || increasePct > marketYoy + 1.5 ? (
+                            isCompDeficient ? (
+                              <>At ${fmt(newRent)}/mo with a {increasePct}% increase, your rate of increase tracks the {marketYoy}% area trend for {brLabel} rentals in {city}.</>
+                            ) : isNuancedAtMarket || increasePct > marketYoy + 1.5 ? (
                               medianCompRent ? (
                                 <>Your {increasePct}% increase is above the {marketYoy}% area trend — but at ${fmt(newRent)}/mo, you're {newRent <= medianCompRent ? `still below the $${fmt(medianCompRent)} local median` : `within range for ${brLabel} rentals in ${city}`}.</>
                               ) : (
@@ -768,7 +764,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                               <>At ${fmt(newRent)}/mo, your {increasePct}% increase tracks the {marketYoy}% area trend for {brLabel} rentals in {city}.</>
                             )
                           ) : increasePct > 0 ? (
-                            <>At ${fmt(newRent)}/mo, your rent is below the local market average for {brLabel} rentals in {city} — even with a {increasePct}% increase, you're getting a competitive deal.</>
+                            isCompDeficient
+                              ? <>At ${fmt(newRent)}/mo with a {increasePct}% increase, your rate of increase is below the {marketYoy}% area trend for {brLabel} rentals in {city}.</>
+                              : <>At ${fmt(newRent)}/mo, your rent is below the local market average for {brLabel} rentals in {city} — even with a {increasePct}% increase, you're getting a competitive deal.</>
                           ) : (
                             <>Rents in {city} moved {marketYoy}% this year. Your landlord keeping your rent at ${fmt(formData.currentRent)}/mo means you're coming out ahead.</>
                           )}
