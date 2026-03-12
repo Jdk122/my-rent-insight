@@ -874,6 +874,20 @@ const WsipResults = ({
               />
             </section>
 
+            {/* ━━━ Data Confidence + Disclaimer ━━━ */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+              className="pt-4 pb-2"
+            >
+              <DataConfidenceBadge level={confidence.level} note={confidence.note} />
+              <p className="text-[11px] text-muted-foreground/60 mt-2 text-center leading-relaxed">
+                This analysis is for informational purposes only.{' '}
+                <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
+              </p>
+            </motion.div>
+
             {/* ━━━ SHARE + CROSS-LINK ━━━ */}
             <motion.section id="section-share" {...fade(0.23)} className="pt-4 pb-10">
               <h2 className="results-section-header mb-6">Share This Analysis</h2>
