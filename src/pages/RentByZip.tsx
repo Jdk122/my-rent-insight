@@ -518,7 +518,7 @@ const RentByZip = () => {
         </section>
 
         {/* ═══ Renter Tools CTA ═══ */}
-        <RenterToolsCTA zip={zip} />
+        <RenterToolsCTA zip={zip} pageType="zip" />
 
         {/* ═══ Similar Rents in Other Areas ═══ */}
         {similarRentZips.length > 0 && (

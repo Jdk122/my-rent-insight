@@ -411,7 +411,7 @@ const RentByCity = () => {
         {/* RenterToolsCTA moved below FAQ */}
 
         {/* ═══ Section F: Rent Data by Zip Code ═══ */}
-        <section className="mb-12">
+        <section id="section-zipcodes" className="mb-12">
           <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Zip Codes in {city}</h2>
           <p className="text-sm text-muted-foreground mb-3">
             Click any zip code for detailed rent data including zip-specific SAFMR rates, nearby comparables, and a free rent increase check.
@@ -545,7 +545,7 @@ const RentByCity = () => {
         </section>
 
         {/* ═══ Renter Tools CTA ═══ */}
-        <RenterToolsCTA zip={zips[0]?.zip} />
+        <RenterToolsCTA zip={zips[0]?.zip} city={city} pageType="city" />
 
         {/* Internal links */}
         <div className="mb-12 flex flex-col gap-2 text-sm">

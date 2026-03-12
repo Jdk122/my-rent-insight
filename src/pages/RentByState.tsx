@@ -259,7 +259,7 @@ const RentByState = () => {
         </div>
 
         {/* Cities Table */}
-        <section className="mb-12">
+        <section id="section-cities" className="mb-12">
           <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Rent by City in {stateName}</h2>
           <div className="rounded-lg border border-border overflow-hidden">
             <Table>
@@ -321,7 +321,7 @@ const RentByState = () => {
         </section>
 
         {/* ═══ Renter Tools CTA ═══ */}
-        <RenterToolsCTA zip={cities[0]?.zips[0]?.zip} />
+        <RenterToolsCTA zip={cities[0]?.zips[0]?.zip} stateName={stateName} pageType="state" />
 
         {/* Internal links */}
         <div className="mb-12 flex flex-col gap-2 text-sm">
