@@ -44,6 +44,7 @@ interface ZipPageData {
   sameMetro: { zip: string; raw: RentZipRaw }[];
   metroAvgFmr1br: number;
   similarRentZips: { zip: string; raw: RentZipRaw }[];
+  totalCityZips: number; // authoritative count of all ZIPs in the same city
 }
 
 const RentByZip = () => {
@@ -96,9 +97,14 @@ const RentByZip = () => {
       // Compute metro average for FAQ context
       let metroSum = 0;
       let metroCount = 0;
+      let totalCityZips = 1; // count the current ZIP itself
 
       for (const [z, r] of Object.entries(allData)) {
         if (z === zip) continue;
+        // Count ALL zips in same city (authoritative total)
+        if (r.c?.toLowerCase() === thisCity && r.s?.toLowerCase() === thisState) {
+          totalCityZips++;
+        }
         if (r.m?.toLowerCase() === thisMetro) {
           metroSum += r.f[1];
           metroCount++;
@@ -133,7 +139,7 @@ const RentByZip = () => {
         }
       }
 
-      setData({ raw, al, hud50, freshness, nearby, sameCity, sameMetro, metroAvgFmr1br, similarRentZips });
+      setData({ raw, al, hud50, freshness, nearby, sameCity, sameMetro, metroAvgFmr1br, similarRentZips, totalCityZips });
       setLoading(false);
     })();
     return () => { cancelled = true; };
@@ -144,7 +150,7 @@ const RentByZip = () => {
   if (loading) return <LoadingSkeleton zip={zip} />;
   if (notFound || !data || !zip) return <><NoIndexMeta /><NotFoundPage zip={zip} /></>;
 
-  const { raw, al, hud50, freshness, nearby, sameCity, sameMetro, metroAvgFmr1br, similarRentZips } = data;
+  const { raw, al, hud50, freshness, nearby, sameCity, sameMetro, metroAvgFmr1br, similarRentZips, totalCityZips } = data;
   const city = raw.c || 'Unknown';
   const state = raw.s || '';
   const fmr1br = raw.f[1];
@@ -169,6 +175,15 @@ const RentByZip = () => {
   const hasMarketData = hasZillow || hasAL;
   const hasHud50 = hud50 !== null && hud50.f50 !== undefined && hud50.f50[1] > 0;
   const isThinPage = !hasMarketData && !hasHud50;
+
+  // Detect near-duplicate single-ZIP city pages
+  const isNearDuplicateSingleZipPage = totalCityZips === 1 && !hasMarketData;
+  const shouldNoindex = isThinPage || isNearDuplicateSingleZipPage;
+
+  // Canonical: single-ZIP cities canonicalize to the city page
+  const canonicalPath = totalCityZips === 1
+    ? `/rent-data/${stateSlug}/${citySlug}`
+    : `/rent/${zip}`;
 
   // Data confidence level for display differentiation
   const dataConfidence = (() => {
@@ -196,20 +211,20 @@ const RentByZip = () => {
 
   // ─── OG-optimized meta ───
   const metaTitle = hasMarketData
-    ? `Average Rent in ${zip} (${city}, ${state}) — ${dataYear} Data | RenewalReply`
-    : `Fair Market Rent in ${zip} (${city}, ${state}) — FY${hudFY} | RenewalReply`;
+    ? `Rent in ${zip} — ${city}, ${state} | ${fmt(heroRent)}/mo 1-BR (${dataYear})`
+    : `HUD Fair Market Rent in ${zip} — ${city}, ${state} | FY${hudFY} Rental Data`;
   const ogTitle = `Average Rent in ${zip} — ${fmt(heroRent)}/mo (${dataYear})`;
   const metaDesc = `1-BR rents in ${zip} are ${fmt(heroRent)}/mo${trendYoY !== null ? `, ${trendYoY > 0 ? 'up' : 'down'} ${Math.abs(trendYoY).toFixed(1)}% year-over-year` : ''}. See federal benchmarks, trends, and nearby data for ${city}, ${state}.`;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {isThinPage && <NoIndexMeta />}
+      {shouldNoindex && <NoIndexMeta />}
       <SEO
         title={metaTitle}
         description={metaDesc}
-        canonical={`/rent/${zip}`}
+        canonical={canonicalPath}
         ogImage="/og-image.png"
-        noindex={isThinPage}
+        noindex={shouldNoindex}
         jsonLd={[
           {
             '@context': 'https://schema.org',
@@ -319,6 +334,13 @@ const RentByZip = () => {
             <li className="before:content-['›'] before:mx-1"><span aria-current="page">{zip}</span></li>
           </ol>
         </nav>
+
+        {/* Parent city page link */}
+        <p className="mb-6 text-sm text-muted-foreground">
+          <Link to={`/rent-data/${stateSlug}/${citySlug}`} className="hover:text-foreground transition-colors">
+            See all rent data for {city}, {state} →
+          </Link>
+        </p>
 
         {/* ═══ Section A: Hero — Verdict First ═══ */}
         <section className="mb-12">
