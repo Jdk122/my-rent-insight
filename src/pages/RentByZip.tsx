@@ -281,7 +281,7 @@ const RentByZip = () => {
           }</p>
           {dataConfidence === 'high' && <p><small>{`Based on ${dataSourceCount} independent data sources including local market trends and nearby listings.`}</small></p>}
           {dataConfidence === 'moderate' && <p><small>{`Based on federal benchmarks and ${dataSourceCount - 1} additional market source${dataSourceCount - 1 !== 1 ? 's' : ''}.`}</small></p>}
-          <p>{`Last updated: ${freshestFormatted}`}</p>
+          <p>{`Data through: ${freshestFormatted}`}</p>
           <h2>{`HUD Fair Market Rent for ${zip}`}</h2>
           <table style={{ borderCollapse: 'collapse', width: '100%' }}>
             <thead><tr><th style={{ textAlign: 'left', borderBottom: '1px solid #ccc', padding: 8 }}>Bedroom</th><th style={{ textAlign: 'right', borderBottom: '1px solid #ccc', padding: 8 }}>Fair Market Rent</th></tr></thead>
@@ -368,7 +368,7 @@ const RentByZip = () => {
           {/* Last updated */}
           <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full">
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent" />
-            Last updated <time dateTime={freshest.date}>{freshestFormatted}</time>
+            Data through <time dateTime={freshest.date}>{freshestFormatted}</time>
           </p>
 
           {/* Data confidence indicator */}
