@@ -565,7 +565,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     increaseType: 'percent' as const,
     reportData: {
       city: rentData.city, state: rentData.state, newRent, increasePct, marketYoy,
-      fmr: rentData.fmr, verdict: calc?.verdict || '',
+      fmr: rentData.fmr, verdict: effectiveVerdict ?? '',
       counterLow: counterOffer?.counterLow ?? null, counterHigh: counterOffer?.counterHigh ?? null,
       censusMedianRent: rentData.censusMedianRent, medianIncome: rentData.medianIncome,
       bedroomLabel: bedroomLabels[formData.bedrooms],
