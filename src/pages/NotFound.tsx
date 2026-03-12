@@ -1,5 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
+import { NoIndexMeta } from '@/components/NoIndexMeta';
 import SEO from "@/components/SEO";
 import SEOFooter from "@/components/SEOFooter";
 import PageNav from "@/components/PageNav";
