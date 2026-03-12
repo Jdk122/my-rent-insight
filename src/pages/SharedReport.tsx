@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { bedroomLabels, BedroomType } from '@/data/rentData';
 import { trackEvent } from '@/lib/analytics';
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import PageNav from '@/components/PageNav';
