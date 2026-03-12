@@ -13,8 +13,8 @@ const steps = [
   },
   {
     number: '03',
-    title: 'Download Your Letter',
-    description: 'If your increase is above market, get a free negotiation letter backed by real data.',
+    title: 'Get Your Negotiation Package',
+    description: 'Negotiation letter delivered to your inbox in friendly or firm tone.',
   },
 ];
 
