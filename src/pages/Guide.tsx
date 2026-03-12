@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import type { Components } from 'react-markdown';
 import { getGuideBySlug, guides } from '@/data/guides';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
