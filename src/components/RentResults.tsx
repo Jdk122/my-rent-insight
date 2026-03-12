@@ -1078,6 +1078,30 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     alVacancy={rentData.alVacancy}
                   />
                 )}
+
+                {/* Counteroffer CTA — end of evidence */}
+                {hasIncrease && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.4 }}
+                    className={`mt-6 w-full border-l-4 pl-4 py-3 rounded-r-md ${
+                      isAboveMarket
+                        ? 'border-destructive/60 bg-destructive/5'
+                        : isBelowMarket
+                        ? 'border-verdict-good/60 bg-verdict-good/5'
+                        : 'border-blue-400/60 bg-blue-50/50 dark:bg-blue-950/20'
+                    }`}
+                  >
+                    <p className="text-base font-medium text-foreground leading-relaxed">
+                      {isAboveMarket
+                        ? 'Your counteroffer is ready — scroll down for your negotiation letter.'
+                        : isBelowMarket
+                        ? "Your rent is below market — but you can still negotiate for value. See your options below."
+                        : 'Renters who negotiate with data save an average of $1,200/year. Your letter is ready below.'}
+                    </p>
+                  </motion.div>
+                )}
               </div>
             </section>
 
