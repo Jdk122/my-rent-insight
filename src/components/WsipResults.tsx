@@ -472,6 +472,31 @@ const WsipResults = ({
               )}
             </p>
 
+            {/* Action Insight */}
+            {askingRent && verdict && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.18, duration: 0.4 }}
+                className={`mt-2 mb-4 w-full max-w-[480px] border-l-4 pl-4 py-2 rounded-r-md ${
+                  verdict === 'above'
+                    ? 'border-destructive/60 bg-destructive/5'
+                    : verdict === 'below'
+                    ? 'border-verdict-good/60 bg-verdict-good/5'
+                    : 'border-blue-400/60 bg-blue-50/50 dark:bg-blue-950/20'
+                }`}
+              >
+                <p className="text-base font-medium text-foreground leading-relaxed">
+                  {verdict === 'above'
+                    ? 'This listing is priced above comparable units in the area. You have strong data to negotiate a lower price or walk away. Your market report is ready below.'
+                    : verdict === 'below'
+                    ? 'This listing is priced below comparable units — a strong deal. Lock it in before it\'s gone. Get the full comp report to confirm below.'
+                    : 'This listing is priced within the fair range — but that doesn\'t mean the price is final. Renters who negotiate before signing save an average of $100/month. See how to approach it below.'
+                  }
+                </p>
+              </motion.div>
+            )}
+
             {/* Rent control note (WSIP) — building-aware */}
             {rentControlCap && rentControlCap.maxIncreaseFormula && buildingEligibility !== 'ineligible' && (
               <p className="text-xs text-muted-foreground mb-4 max-w-[480px]">
