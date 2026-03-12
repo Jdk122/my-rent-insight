@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { useSearchParams, Link } from 'react-router-dom';
 import { lookupRentData, loadFredTrend, RentLookupResult, BedroomType } from '@/data/rentData';
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
