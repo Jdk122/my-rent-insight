@@ -90,7 +90,7 @@ function getGateCopy(
         return {
           heading: 'You\'re below market. Protect your position.',
           bulletA: 'See why your rent is favorable vs. nearby units',
-          bulletB: 'Get a smart renewal response to help keep it that way',
+          bulletB: 'Get a renewal response to lock in your rate — or ask for extras like repairs or a longer lease',
           cta: 'Email me my renewal strategy →',
         };
       default: // 'none' or fallback
