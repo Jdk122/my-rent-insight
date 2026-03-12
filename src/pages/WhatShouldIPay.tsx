@@ -255,7 +255,7 @@ const WhatShouldIPay = () => {
               <p>
                 RenewalReply helps you check if a rental listing is fairly priced before you sign.
                 Enter an address and bedroom count to see the fair rent range based on HUD Fair Market Rent,
-                Zillow rent trends, and real comparable listings. Coverage for 38,000+ US zip codes.
+                Zillow rent trends, and real comparable listings. Coverage for 38,600+ US zip codes.
               </p>
             </div>
           </noscript>

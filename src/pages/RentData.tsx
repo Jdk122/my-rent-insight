@@ -169,7 +169,7 @@ const RentData = () => {
             <ShareDataButton />
           </div>
           <p className="mt-3 text-muted-foreground leading-relaxed" style={{ fontSize: '1.05rem' }}>
-            Free fair market rent data for over {totalZips > 0 ? totalZips.toLocaleString() : '40,000'} U.S. zip codes, sourced from HUD, Apartment List, and Zillow. Look up rent benchmarks, median rents, and year-over-year trends for any location.
+            Free fair market rent data for over {totalZips > 0 ? totalZips.toLocaleString() : '38,600'} U.S. zip codes, sourced from HUD, Apartment List, and Zillow. Look up rent benchmarks, median rents, and year-over-year trends for any location.
           </p>
 
           {/* Search */}

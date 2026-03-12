@@ -90,7 +90,7 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
     {/* Disclaimer */}
     <div className="border-t border-border/50 px-5 sm:px-6 py-3 sm:py-4">
       <p className="max-w-3xl mx-auto text-[10px] sm:text-[11px] text-muted-foreground/40 leading-relaxed text-center">
-        Data: HUD SAFMR FY2026 · Zillow ZORI · Live Market Comps · NY DHCR. For informational purposes only — not legal or financial advice.
+        Data: HUD SAFMR FY2026 · Apartment List · Zillow ZORI · Live Market Comps · NY DHCR. For informational purposes only — not legal or financial advice.
       </p>
     </div>
   </footer>

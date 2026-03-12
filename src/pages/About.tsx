@@ -26,7 +26,7 @@ const About = () => {
           <h2>What Makes RenewalReply Different</h2>
           <ul>
             <li>Multiple independent data sources cross-referenced for accuracy</li>
-            <li>Coverage for 38,000+ zip codes across all 50 states</li>
+            <li>Coverage for 38,600+ zip codes across all 50 states</li>
             <li>Real-time comparable listings from MLS and public records</li>
             <li>Free negotiation letter backed by specific market evidence</li>
           </ul>
