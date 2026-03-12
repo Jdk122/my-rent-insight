@@ -190,7 +190,7 @@ Before you reply to your landlord, [check your address in RenewalReply](/). In a
     author: 'RenewalReply',
     readingTime: '12 min read',
     category: 'Tenant Rights',
-    relatedSlugs: ['how-to-negotiate-rent-increase'],
+    relatedSlugs: ['how-to-negotiate-rent-increase', 'what-should-i-pay-for-rent'],
     content: `Your landlord just told you rent is going up. Your first question: is that even legal?
 
 The answer depends entirely on where you live. Three states cap how much your rent can increase. A handful of others have cities or counties with local rent control. The rest have no limits at all — but they do have notice requirements and rules your landlord has to follow.
