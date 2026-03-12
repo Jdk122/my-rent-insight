@@ -32,8 +32,11 @@ const sections = [
   },
 ];
 
-const DemoIndex = () => (
+const DemoIndex = () => {
+  usePrerenderReady(true);
+  return (
   <div className="min-h-screen bg-background">
+    <NoIndexMeta />
     <SEO title="Demo Scenarios | RenewalReply" description="Internal demo scenario index" canonical="/demos" />
     <div className="max-w-xl mx-auto px-5 pt-20 pb-16">
       <h1 className="text-2xl font-bold text-foreground mb-2">Demo Scenarios</h1>
