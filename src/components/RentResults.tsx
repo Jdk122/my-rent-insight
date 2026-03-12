@@ -928,7 +928,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.05, duration: 0.4 }}
-                className={`mt-6 w-full max-w-[540px] mx-auto border-l-4 pl-4 py-2 rounded-r-md ${
+                className={`mt-10 w-full max-w-[540px] mx-auto border-l-4 pl-4 py-2 rounded-r-md ${
                   isAboveMarket
                     ? 'border-destructive/60 bg-destructive/5'
                     : isBelowMarket
