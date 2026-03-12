@@ -53,7 +53,7 @@ function getGateCopy(
         if (monthlyOverpayment && monthlyOverpayment > 0) {
           return {
             heading: `You're overpaying by ~$${fmt(monthlyOverpayment)}/month`,
-            bulletA: 'See the comps behind that number',
+            bulletA: compsCount > 0 ? `See the ${compsCount} comps behind that number` : 'See the comps behind that number',
             bulletB: 'Copy a send-ready email with your exact counter-offer',
             cta: 'Email me my counter-offer →',
           };
