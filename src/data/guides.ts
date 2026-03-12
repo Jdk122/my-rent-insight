@@ -240,7 +240,7 @@ This guide covers every state: whether there's a cap, how much notice your landl
 | North Dakota | No cap | 30 days (90 for mobile homes) | No |
 | Ohio | No cap | No specific statewide statute; check lease and local law | No — banned |
 | Oklahoma | No cap | No specific statewide statute; check lease and local law | No — banned |
-| Oregon | 7% + CPI or 10%, whichever is less (9.5% for 2026) | 90 days | No — state law preempts local controls |
+| [Oregon](#oregon) | 7% + CPI or 10%, whichever is less (9.5% for 2026) | 90 days | No — state law preempts local controls |
 | Pennsylvania | No cap | No specific statewide statute; check lease and local law | Yes — but none currently active |
 | Rhode Island | No cap | 60 days (120 for tenants over 62) | Yes — but none exist |
 | South Carolina | No cap | No specific statewide statute; check lease and local law | No — banned |
