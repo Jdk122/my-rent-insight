@@ -63,6 +63,7 @@ const DemoIndex = () => {
       <Link to="/" className="inline-block mt-8 text-sm text-primary hover:underline">← Back to home</Link>
     </div>
   </div>
-);
+  );
+};
 
 export default DemoIndex;
