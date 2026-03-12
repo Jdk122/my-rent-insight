@@ -128,8 +128,10 @@ function processComps(
     const baseCorrelation = comp.correlation ?? 0.5;
     // Tiered relevance: unit line > building > nearby
     const buildingBoost = isSameUnitLine ? 0.35 : isSameBuilding ? 0.25 : 0;
+    const bedroomBonus = (requestedBedrooms !== null && comp.bedrooms !== null && comp.bedrooms === requestedBedrooms) ? 0.15 : 0;
+    const isBedroomFallback = requestedBedrooms !== null && comp.bedrooms !== null && comp.bedrooms !== requestedBedrooms;
     const relevanceScore =
-      baseCorrelation * 0.45 + freshnessScore * 0.2 + buildingBoost;
+      baseCorrelation * 0.45 + freshnessScore * 0.2 + buildingBoost + bedroomBonus;
 
     return {
       ...comp,
