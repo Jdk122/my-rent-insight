@@ -27,6 +27,7 @@ const AdminMarketIntelligence = lazy(() => import("./pages/AdminMarketIntelligen
 const WhatShouldIPay = lazy(() => import("./pages/WhatShouldIPay"));
 const Guides = lazy(() => import("./pages/Guides"));
 const Guide = lazy(() => import("./pages/Guide"));
+const DemoIndex = lazy(() => import("./pages/DemoIndex"));
 
 const queryClient = new QueryClient();
 
