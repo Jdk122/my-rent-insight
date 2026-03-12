@@ -1335,7 +1335,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               page="renewal_results"
               verdictSnapshot={verdictLabel}
               scoreSnapshot={fairnessScore?.total ?? null}
-              confidenceSnapshot={confidence.level}
+              confidenceSnapshot={effectiveConfidence.level}
             />
 
             {/* ━━━ Data Confidence + Disclaimer ━━━ */}
