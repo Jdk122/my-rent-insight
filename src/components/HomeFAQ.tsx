@@ -25,7 +25,7 @@ const faqs: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: 'Is RenewalReply really free?',
-    a: 'Yes, completely free. You get your Fairness Score, detailed component breakdown, comparable rent analysis, local market snapshot, and a data-backed negotiation letter \u2014 no credit card, no hidden fees, no trial.',
+    a: 'Yes, RenewalReply is free to use. Enter your email only if you want your full report and negotiation package delivered instantly.',
   },
   {
     q: 'What should I do if my rent increase is unfair?',
