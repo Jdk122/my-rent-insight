@@ -78,9 +78,12 @@ const PostConversionFlow = ({ email, leadContext, verdictLabel, zip }: PostConve
   return (
     <div className="mt-6 rounded-lg border border-border bg-card p-4 sm:p-5 space-y-4">
       <div className="space-y-1.5">
-        <p className="text-sm font-semibold text-foreground">Never get caught off guard by a rent increase again.</p>
+        <div className="flex items-center gap-2">
+          <CalendarDays className="w-4 h-4 text-primary shrink-0" />
+          <p className="text-sm font-semibold text-foreground">Get ahead of your next lease renewal.</p>
+        </div>
         <p className="text-[13px] text-muted-foreground leading-relaxed">
-          Tell us when your lease renews and we'll send you a free updated market analysis 90 days before — so you're ready to negotiate before your landlord even sends the notice.
+          Enter your renewal month and year, and we'll send you one personalized market report 90 days before your lease ends — with fresh comps, trend data, and a ready-to-send negotiation letter.
         </p>
       </div>
       <div className="flex gap-2 max-w-[360px]">
