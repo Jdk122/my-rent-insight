@@ -822,89 +822,46 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 ))}
               </motion.div>
 
-              {/* ── Sample comp(s) — tangible proof ── */}
-              {sampleComps.length > 0 && (
+              {/* ── Comp teaser line ── */}
+              {compsWithRent.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.25, duration: 0.4 }}
-                  className="mt-6 w-full max-w-[540px]"
+                  className="mt-5 w-full max-w-[540px]"
                 >
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-                    Sample comparable{sampleComps.length > 1 ? 's' : ''}:
+                  <p className="text-sm text-muted-foreground text-center font-medium">
+                    {bldg.hasBuildingData && bldg.buildingComps.length >= 2
+                      ? `We found ${compsWithRent.length} matched comps near you, including ${bldg.buildingComps.length} in your building.`
+                      : `We found ${compsWithRent.length} matched comps near you.`
+                    }
                   </p>
-                  <div className="space-y-2">
-                    {sampleComps.map((comp, i) => (
-                      <div key={i} className="flex items-start justify-between gap-4 px-4 py-3 rounded-lg border border-border/80 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-foreground truncate">{comp.formattedAddress}</p>
-                          <p className="text-xs text-muted-foreground mt-0.5">
-                            {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
-                            {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
-                            {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
-                          </p>
-                        </div>
-                        {comp.rent !== null && (
-                          <span className="text-sm font-semibold text-foreground whitespace-nowrap">${fmt(comp.rent)}/mo</span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
                 </motion.div>
               )}
 
-
-              {isAboveMarket && hasIncrease && (
-                <p className="text-xs text-muted-foreground/70 mt-3 text-center">
-                  {brokerFee.brokerFeeCity === 'NYC' ? (
-                    <>
-                      With NYC broker fees gone, moving is more affordable than ever.{' '}
-                      <Link
-                        to={`/what-should-i-pay?zip=${rentData.zip}&bedrooms=${bedroomNum}`}
-                        className="underline text-primary hover:text-primary/80 transition-colors"
-                      >
-                        Check if any listing is fairly priced →
-                      </Link>
-                    </>
-                  ) : (
-                    <>
-                      Browsing listings?{' '}
-                      <Link
-                        to={`/what-should-i-pay?zip=${rentData.zip}&bedrooms=${bedroomNum}`}
-                        className="underline text-primary hover:text-primary/80 transition-colors"
-                      >
-                        Check if any asking price is fair before you sign →
-                      </Link>
-                    </>
-                  )}
-                </p>
+              {/* ── Email gate (moved from Phase 2) ── */}
+              {!capturedEmail && (
+                <section id="section-gate" className="py-8">
+                  <ReportGate
+                    toolType="renewal"
+                    compsCount={compsWithRent.length}
+                    verdictLabel={verdictLabel}
+                    isHighPain={isHighPain}
+                    verdict={isAboveMarket ? 'above' : isFair ? 'at-market' : isBelowMarket ? 'below' : 'none'}
+                    leadContext={leadContext}
+                    analysisId={analysisId}
+                    zip={rentData.zip}
+                    city={city}
+                    onEmailCaptured={setCapturedEmail}
+                    prefilledEmail={capturedEmail}
+                    shareReportPayload={shareReportPayload}
+                    onReportGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
+                    marketYoy={marketYoy}
+                  />
+                </section>
               )}
 
-              {/* Data Confidence Badge + Disclaimer */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.4 }}
-                className="mt-4"
-              >
-                <DataConfidenceBadge level={confidence.level} note={confidence.note} />
-                <p className="text-[11px] text-muted-foreground/60 mt-2 text-center leading-relaxed">
-                  This analysis is for informational purposes only and does not constitute legal, financial, or real estate advice.{' '}
-                  <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
-                </p>
-              </motion.div>
-
-
-
-
-              {/* See evidence + reset */}
               <div className="mt-4 flex flex-col items-center gap-2">
-                <button
-                  onClick={() => document.getElementById(capturedEmail ? 'section-comps' : 'section-gate')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="text-base font-semibold text-primary hover:text-primary/80 transition-colors duration-150"
-                >
-                  {capturedEmail ? 'See full report ↓' : 'Get the full report ↓'}
-                </button>
                 <button onClick={onReset} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                   ← Check a different address
                 </button>
