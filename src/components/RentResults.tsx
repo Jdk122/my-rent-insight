@@ -737,6 +737,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             </button>.
                           </p>
                         )}
+                        {rentcast.data?.detectedBedrooms != null && rentcast.data.detectedBedrooms !== bedroomNum && (
+                          <p className="text-[11px] text-muted-foreground/60 mt-2 italic">
+                            Our data suggests this may be a {rentcast.data.detectedBedrooms === 0 ? 'studio' : `${rentcast.data.detectedBedrooms}-bedroom`} unit. Results are based on your selection.
+                          </p>
+                        )}
                       </div>
                     }
                   />
