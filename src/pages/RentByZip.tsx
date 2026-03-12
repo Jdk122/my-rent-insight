@@ -265,6 +265,7 @@ const RentByZip = () => {
       <noscript>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
           <h1>{hasMarketData ? `Typical Rent in ${zip} — ${city}, ${state}` : `Fair Market Rent in ${zip} — ${city}, ${state}`}</h1>
+          <p>{`The typical rent for a 1-bedroom in ${zip} (${city}, ${state}) is ${fmt(heroRent)}/month.`}{trendYoY !== null ? ` Rents in this area have ${trendYoY >= 0 ? 'increased' : 'decreased'} ${Math.abs(trendYoY).toFixed(1)}% over the past year (${trendAttribution}).` : ''}</p>
           <p><strong>{`The typical 1-bedroom rent in ${zip} is ${fmt(heroRent)}/month based on ${heroRentSource} data.`}{trendYoY !== null ? ` Rents changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year (${trendAttribution}).` : ''}</strong></p>
           <p>{`Last updated: ${freshestFormatted}`}</p>
           <h2>{`HUD Fair Market Rent for ${zip}`}</h2>
@@ -305,6 +306,14 @@ const RentByZip = () => {
             </h1>
             <ShareDataButton />
           </div>
+
+          {/* Quick summary — optimized for Google featured snippet extraction */}
+          <p className="mt-4 text-base text-foreground/80 leading-relaxed">
+            The typical rent for a 1-bedroom in {zip} ({city}, {state}) is {fmt(heroRent)}/month.
+            {trendYoY !== null
+              ? ` Rents in this area have ${trendYoY >= 0 ? 'increased' : 'decreased'} ${Math.abs(trendYoY).toFixed(1)}% over the past year (${trendAttribution}).`
+              : ''}
+          </p>
 
           {/* Change 3: Verdict sentence first */}
           <p className="mt-6 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
@@ -372,8 +381,7 @@ const RentByZip = () => {
         {/* ═══ DHCR ═══ */}
         <DhcrAlertSection zip={zip} city={city} />
 
-        {/* ═══ Renter Tools CTA ═══ */}
-        <RenterToolsCTA zip={zip} />
+        {/* RenterToolsCTA moved below FAQ */}
 
         {/* ═══ Change 3: Collapsible full market data — native <details> for SEO ═══ */}
         <section className="mb-12">
@@ -508,6 +516,9 @@ const RentByZip = () => {
             </AccordionItem>
           </Accordion>
         </section>
+
+        {/* ═══ Renter Tools CTA ═══ */}
+        <RenterToolsCTA zip={zip} />
 
         {/* ═══ Similar Rents in Other Areas ═══ */}
         {similarRentZips.length > 0 && (
