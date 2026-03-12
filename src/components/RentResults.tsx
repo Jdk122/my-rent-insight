@@ -900,12 +900,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   transition={{ delay: 0.25, duration: 0.4 }}
                   className="mt-5 w-full max-w-[540px]"
                 >
-                  <p className="text-sm text-muted-foreground text-center font-medium">
+                  <span className="inline-block border border-border/60 rounded-full px-4 py-1.5 text-sm font-semibold text-foreground/70">
                     {bldg.hasBuildingData && bldg.buildingComps.length >= 2
                       ? `We found ${compsWithRent.length} matched comps near you, including ${bldg.buildingComps.length} in your building.`
                       : `We found ${compsWithRent.length} matched comps near you.`
                     }
-                  </p>
+                  </span>
                 </motion.div>
               )}
 
