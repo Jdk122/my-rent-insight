@@ -24,15 +24,14 @@ interface PostConversionFlowProps {
 const PostConversionFlow = ({ email, leadContext, verdictLabel, zip }: PostConversionFlowProps) => {
   const [leaseMonth, setLeaseMonth] = useState('');
   const [leaseYear, setLeaseYear] = useState('');
-  const [partnerOptIn, setPartnerOptIn] = useState(false);
   const [saved, setSaved] = useState(false);
 
   const handleSave = async () => {
     const leaseMonthNum = leaseMonth ? months.indexOf(leaseMonth) + 1 : null;
     const leaseYearNum = leaseYear ? parseInt(leaseYear, 10) : null;
 
-    if (!leaseMonthNum && !leaseYearNum && !partnerOptIn) {
-      toast('Nothing to save');
+    if (!leaseMonthNum && !leaseYearNum) {
+      toast('Please select a month and year');
       return;
     }
 
@@ -45,7 +44,7 @@ const PostConversionFlow = ({ email, leadContext, verdictLabel, zip }: PostConve
         p_capture_source: 'post_conversion_lease',
         p_lease_expiration_month: leaseMonthNum,
         p_lease_expiration_year: leaseYearNum,
-        p_partner_opt_in: partnerOptIn,
+        p_partner_opt_in: false,
         p_verdict: verdictLabel || null,
         p_utm_source: utm.utm_source || null,
         p_utm_medium: utm.utm_medium || null,
@@ -69,7 +68,7 @@ const PostConversionFlow = ({ email, leadContext, verdictLabel, zip }: PostConve
         <Check className="w-4 h-4 text-verdict-good" />
         <span className="text-sm text-muted-foreground">
           {leaseMonth && leaseYear
-            ? `We'll remind you 60 days before ${leaseMonth} ${leaseYear}.`
+            ? `We'll send you a free market analysis 90 days before ${leaseMonth} ${leaseYear}.`
             : "You're all set."}
         </span>
       </div>
@@ -77,8 +76,13 @@ const PostConversionFlow = ({ email, leadContext, verdictLabel, zip }: PostConve
   }
 
   return (
-    <div className="mt-6 rounded-lg border border-border bg-card p-4 sm:p-5 space-y-3">
-      <p className="text-sm font-semibold text-foreground">One more thing — when does your lease renew?</p>
+    <div className="mt-6 rounded-lg border border-border bg-card p-4 sm:p-5 space-y-4">
+      <div className="space-y-1.5">
+        <p className="text-sm font-semibold text-foreground">Never get caught off guard by a rent increase again.</p>
+        <p className="text-[13px] text-muted-foreground leading-relaxed">
+          Tell us when your lease renews and we'll send you a free updated market analysis 90 days before — so you're ready to negotiate before your landlord even sends the notice.
+        </p>
+      </div>
       <div className="flex gap-2 max-w-[360px]">
         <select
           value={leaseMonth}
@@ -107,12 +111,9 @@ const PostConversionFlow = ({ email, leadContext, verdictLabel, zip }: PostConve
           Save
         </button>
       </div>
-      <label className="flex items-start gap-2 cursor-pointer select-none">
-        <input type="checkbox" checked={partnerOptIn} onChange={(e) => setPartnerOptIn(e.target.checked)} className="mt-[3px] accent-primary" />
-        <span className="text-xs text-muted-foreground leading-snug">
-          I'm open to hearing from trusted partners about housing-related services.
-        </span>
-      </label>
+      <p className="text-[11px] text-muted-foreground/50">
+        We'll only email you once, 90 days before your renewal. No spam.
+      </p>
     </div>
   );
 };
