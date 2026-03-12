@@ -115,7 +115,7 @@ const PostConversionFlow = ({ email, leadContext, verdictLabel, zip }: PostConve
         </button>
       </div>
       <p className="text-[11px] text-muted-foreground/50">
-        We'll only email you once, 90 days before your renewal. No spam.
+        We'll send your renewal reminder report 90 days before your lease ends.
       </p>
     </div>
   );
