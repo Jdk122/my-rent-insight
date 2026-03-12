@@ -797,33 +797,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 ))}
               </motion.div>
 
-              {/* WSIP cross-link — below stat cards */}
-              {isAboveMarket && hasIncrease && (
-                <p className="text-xs text-muted-foreground/70 mt-3 text-center">
-                  {brokerFee.brokerFeeCity === 'NYC' ? (
-                    <>
-                      With NYC broker fees gone, moving is more affordable than ever.{' '}
-                      <Link
-                        to={`/what-should-i-pay?zip=${rentData.zip}&bedrooms=${bedroomNum}`}
-                        className="underline text-primary hover:text-primary/80 transition-colors"
-                      >
-                        Check if any listing is fairly priced →
-                      </Link>
-                    </>
-                  ) : (
-                    <>
-                      Browsing listings?{' '}
-                      <Link
-                        to={`/what-should-i-pay?zip=${rentData.zip}&bedrooms=${bedroomNum}`}
-                        className="underline text-primary hover:text-primary/80 transition-colors"
-                      >
-                        Check if any asking price is fair before you sign →
-                      </Link>
-                    </>
-                  )}
-                </p>
-              )}
-
               {/* ── Sample comp(s) — tangible proof ── */}
               {sampleComps.length > 0 && (
                 <motion.div
@@ -853,6 +826,33 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     ))}
                   </div>
                 </motion.div>
+              )}
+
+              {/* WSIP cross-link — below sample comps */}
+              {isAboveMarket && hasIncrease && (
+                <p className="text-xs text-muted-foreground/70 mt-3 text-center">
+                  {brokerFee.brokerFeeCity === 'NYC' ? (
+                    <>
+                      With NYC broker fees gone, moving is more affordable than ever.{' '}
+                      <Link
+                        to={`/what-should-i-pay?zip=${rentData.zip}&bedrooms=${bedroomNum}`}
+                        className="underline text-primary hover:text-primary/80 transition-colors"
+                      >
+                        Check if any listing is fairly priced →
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      Browsing listings?{' '}
+                      <Link
+                        to={`/what-should-i-pay?zip=${rentData.zip}&bedrooms=${bedroomNum}`}
+                        className="underline text-primary hover:text-primary/80 transition-colors"
+                      >
+                        Check if any asking price is fair before you sign →
+                      </Link>
+                    </>
+                  )}
+                </p>
               )}
 
               {/* Data Confidence Badge + Disclaimer */}
