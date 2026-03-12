@@ -150,7 +150,7 @@ const RentByZip = () => {
   if (loading) return <LoadingSkeleton zip={zip} />;
   if (notFound || !data || !zip) return <><NoIndexMeta /><NotFoundPage zip={zip} /></>;
 
-  const { raw, al, hud50, freshness, nearby, sameCity, sameMetro, metroAvgFmr1br, similarRentZips } = data;
+  const { raw, al, hud50, freshness, nearby, sameCity, sameMetro, metroAvgFmr1br, similarRentZips, totalCityZips } = data;
   const city = raw.c || 'Unknown';
   const state = raw.s || '';
   const fmr1br = raw.f[1];
