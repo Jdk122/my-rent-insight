@@ -8,6 +8,7 @@ import PageNav from '@/components/PageNav';
 
 const About = () => {
   const [contactOpen, setContactOpen] = useState(false);
+  usePrerenderReady(true);
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <SEO
