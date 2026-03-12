@@ -264,6 +264,26 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     return { overPct: Math.round(overPct * 100), dollarOver, compCount: rentBearingComps.length };
   }, [hasIncrease, medianCompRent, newRent, outlierResult]);
 
+  // ━━━ Low-comp guardrail ━━━
+  const isCompDeficient = useMemo(() => {
+    if (!hasIncrease || !fairnessScore) return false;
+    const compComponent = fairnessScore.components.find(c => c.id === 'comps');
+    if (!compComponent) return true;
+    return compComponent.max <= 10;
+  }, [hasIncrease, fairnessScore]);
+
+  // Override confidence to 'limited' when comp contribution is negligible
+  const effectiveConfidence = useMemo(() => {
+    if (isCompDeficient && confidence.level !== 'limited') {
+      return {
+        ...confidence,
+        level: 'limited' as const,
+        note: 'This analysis reflects market trend alignment. Limited comparable listings were available for direct rent comparison.',
+      };
+    }
+    return confidence;
+  }, [isCompDeficient, confidence]);
+
   // ━━━ Premium unit detection ━━━
   const isPremiumUnit = bldg.hasBuildingData &&
     bldg.buildingMedian > 0 &&
@@ -388,7 +408,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     if (formData.currentRent < 300) anomalyFlags.push('very_low_rent');
     if (formData.currentRent > 15000) anomalyFlags.push('very_high_rent');
     if (compsCount === 0) anomalyFlags.push('no_comps');
-    if (confidence.level === 'limited') anomalyFlags.push('low_confidence');
+    if (effectiveConfidence.level === 'limited') anomalyFlags.push('low_confidence');
 
     supabase.from('analyses').insert({
       id: analysisId,
@@ -419,6 +439,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       utm_medium: utm.utm_medium || null,
       utm_campaign: utm.utm_campaign || null,
       confidence_level: confidence.level ?? null,
+      effective_confidence_level: effectiveConfidence.level ?? null,
       results_shared: false,
       letter_tone: null,
       rent_stabilized: null,
@@ -438,6 +459,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             verdict_label: fairnessScore?.tierLabel ?? null,
             address: formData.fullAddress || null,
             confidence_level: confidence.level ?? null,
+            effective_confidence_level: effectiveConfidence.level ?? null,
             comp_median_rent: medianCompRent ?? null,
             hud_fmr_value: rentData.fmr ?? null,
             analysis_id: analysisId,
@@ -714,11 +736,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                           ) : isFair ? (
                             isNuancedAtMarket || (increasePct > marketYoy + 1.5 && medianCompRent && newRent <= medianCompRent) ? (
                               <>Your rent is <span className="text-verdict-fair">still at market.</span></>
+                            ) : isCompDeficient ? (
+                              <>Your increase <span className="text-verdict-fair">tracks the area trend.</span></>
                             ) : (
                               <>Your rent increase is <span className="text-verdict-fair">right at market.</span></>
                             )
                           ) : increasePct > 0 ? (
-                            <>Your rent increase is <span className="text-verdict-good">below market.</span></>
+                            <>{isCompDeficient
+                              ? <>Your increase is <span className="text-verdict-fair">in line with trends.</span></>
+                              : <>Your rent increase is <span className="text-verdict-good">below market.</span></>
+                            }</>
                           ) : (
                             <>Good news — <span className="text-verdict-good">your rent isn't going up.</span></>
                           )}
@@ -1308,7 +1335,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               page="renewal_results"
               verdictSnapshot={verdictLabel}
               scoreSnapshot={fairnessScore?.total ?? null}
-              confidenceSnapshot={confidence.level}
+              confidenceSnapshot={effectiveConfidence.level}
             />
 
             {/* ━━━ Data Confidence + Disclaimer ━━━ */}
@@ -1318,7 +1345,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               transition={{ delay: 0.2, duration: 0.4 }}
               className="pt-4 pb-2"
             >
-              <DataConfidenceBadge level={confidence.level} note={confidence.note} />
+              <DataConfidenceBadge level={effectiveConfidence.level} note={effectiveConfidence.note} />
               <p className="text-[11px] text-muted-foreground/60 mt-2 text-center leading-relaxed">
                 This analysis is for informational purposes only and does not constitute legal, financial, or real estate advice.{' '}
                 <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
