@@ -196,7 +196,7 @@ const ReportGate = ({
           disabled={loading}
           className="bg-primary text-primary-foreground px-6 py-3.5 rounded-lg text-base sm:text-lg font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap shrink-0 disabled:opacity-60"
         >
-          {loading ? 'Unlocking…' : 'Unlock my report →'}
+          {loading ? 'Unlocking…' : 'Unlock my negotiation package →'}
         </button>
       </form>
       {error && <p className="text-xs text-destructive mt-1">{error}</p>}
