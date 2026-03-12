@@ -544,6 +544,9 @@ const RentByCity = () => {
           </Accordion>
         </section>
 
+        {/* ═══ Renter Tools CTA ═══ */}
+        <RenterToolsCTA zip={zips[0]?.zip} />
+
         {/* Internal links */}
         <div className="mb-12 flex flex-col gap-2 text-sm">
           <Link to={`/rent-data/${stateSlugVal}`} className="text-primary underline hover:text-primary/80">← All cities in {stateName}</Link>
