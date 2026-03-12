@@ -30,6 +30,7 @@ import MarketSnapshot from './MarketSnapshot';
 import NextStepsSection from './NextStepsSection';
 import ExitIntentModal from './ExitIntentModal';
 import PostConversionFlow from './PostConversionFlow';
+import FeedbackWidget from './FeedbackWidget';
 import SocialProofLine from './SocialProofLine';
 import ReportGate from './ReportGate';
 import { demoRentcast } from '@/data/demoData';
@@ -1269,6 +1270,15 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 />
               </motion.section>
             )}
+
+            {/* ━━━ Feedback widget ━━━ */}
+            <FeedbackWidget
+              analysisId={analysisId}
+              page="renewal_results"
+              verdictSnapshot={verdictLabel}
+              scoreSnapshot={fairnessScore?.total ?? null}
+              confidenceSnapshot={confidence.level}
+            />
 
             {/* ━━━ Post-conversion flow ━━━ */}
             <section className="pb-4 pt-2">

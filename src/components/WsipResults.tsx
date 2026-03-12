@@ -24,6 +24,7 @@ import SocialProofLine from './SocialProofLine';
 import ShareHub from './ShareHub';
 import WsipCompsList from './WsipCompsList';
 import ReportGate from './ReportGate';
+import FeedbackWidget from './FeedbackWidget';
 import type { LeadContext } from './EmailCapture';
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -864,6 +865,15 @@ const WsipResults = ({
                 </div>
               </motion.section>
             )}
+
+            {/* ━━━ Feedback widget ━━━ */}
+            <FeedbackWidget
+              analysisId={analysisId}
+              page="wsip_results"
+              verdictSnapshot={verdictLabel}
+              scoreSnapshot={null}
+              confidenceSnapshot={confidence.level}
+            />
 
             {/* ━━━ Post-conversion flow ━━━ */}
             <section className="pb-4 pt-2">
