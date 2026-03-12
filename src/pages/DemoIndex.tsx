@@ -1,14 +1,33 @@
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 
-const demos = [
-  { label: 'Renewal: Above Market', path: '/?demo=above', desc: 'Rent increase is above market — triggers letter flow' },
-  { label: 'Renewal: Fair', path: '/?demo=fair', desc: 'Rent increase is at market — fair verdict' },
-  { label: 'Renewal: Below Market', path: '/?demo=below', desc: 'Rent increase is below market — good deal verdict' },
-  { label: 'Renewal: No Increase', path: '/?demo=none', desc: 'No rent increase entered' },
-  { label: 'WSIP: Overpriced', path: '/what-should-i-pay?demo=overpriced', desc: 'Asking rent is above market' },
-  { label: 'WSIP: Fair', path: '/what-should-i-pay?demo=fair', desc: 'Asking rent is at market' },
-  { label: 'WSIP: Deal', path: '/what-should-i-pay?demo=deal', desc: 'Asking rent is below market' },
+const sections = [
+  {
+    title: 'Renewal Tool',
+    demos: [
+      { label: 'Above Market', path: '/?demo=above', desc: 'Rent increase is above market — triggers overpaying headline & letter flow' },
+      { label: 'Fair / At Market', path: '/?demo=fair', desc: 'Rent increase is at market — fair verdict, "doesn\'t mean non-negotiable" gate copy' },
+      { label: 'Below Market', path: '/?demo=below', desc: 'Rent below market — "protect your position" gate copy' },
+      { label: 'No Increase', path: '/?demo=none', desc: 'No rent increase entered — "your landlord kept it flat" gate copy' },
+    ],
+  },
+  {
+    title: 'Edge Cases',
+    demos: [
+      { label: 'Moderate (Borderline)', path: '/?demo=moderate', desc: 'Score ~60-65 — at-market but close to above. Tests gate copy boundary.' },
+      { label: 'Below FMR + High Increase', path: '/?demo=below-fmr-high-increase', desc: 'Rent below market but aggressive increase rate — special gate copy & blue info card' },
+      { label: 'Limited Data (HUD-Only)', path: '/?demo=limited', desc: 'Rural ZIP, no comps, HUD-only data — tests limited confidence state' },
+      { label: 'Premium Unit', path: '/?demo=premium', desc: 'High-rent unit well above FMR — scoring shifts to increase-rate weight' },
+    ],
+  },
+  {
+    title: 'WSIP Tool',
+    demos: [
+      { label: 'Overpriced', path: '/what-should-i-pay?demo=overpriced', desc: 'Asking rent is above market — dollar savings headline' },
+      { label: 'Fair', path: '/what-should-i-pay?demo=fair', desc: 'Asking rent is at market — "fair price confirmed" gate copy' },
+      { label: 'Deal', path: '/what-should-i-pay?demo=deal', desc: 'Asking rent is below market — "good deal" gate copy' },
+    ],
+  },
 ];
 
 const DemoIndex = () => (
