@@ -110,7 +110,7 @@ const RentData = () => {
             '@context': 'https://schema.org',
             '@type': 'WebPage',
             name: 'U.S. Rent Data by Location',
-            description: `Free fair market rent data for over ${totalZips > 0 ? totalZips.toLocaleString() : '40,000'} U.S. zip codes from HUD, Apartment List, and Zillow.`,
+            description: `Free fair market rent data for over ${totalZips > 0 ? totalZips.toLocaleString() : '38,600'} U.S. zip codes from HUD, Apartment List, and Zillow.`,
             url: 'https://www.renewalreply.com/rent-data',
             publisher: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
           },
