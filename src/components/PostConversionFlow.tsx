@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { trackEvent } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import { toast } from 'sonner';
-import { Check } from 'lucide-react';
+import { Check, CalendarDays } from 'lucide-react';
 import type { LeadContext } from './EmailCapture';
 
 const months = [
