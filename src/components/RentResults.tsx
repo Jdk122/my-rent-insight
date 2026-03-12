@@ -349,6 +349,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   // ━━━ Anonymous analysis logging ━━━
   useEffect(() => {
     if (analysisLogged.current) return;
+    if (isDemo) { analysisLogged.current = true; return; }
     if (hasIncrease && fairnessScore === null) return;
     if (rentcast.loading) return;
     analysisLogged.current = true;
