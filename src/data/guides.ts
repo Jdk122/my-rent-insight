@@ -372,6 +372,150 @@ Not sure what rent you should be paying in the first place? Check what similar u
       { q: 'Are there any new rent control laws coming?', a: 'Massachusetts has a 2026 rent-control initiative petition in progress, but current Massachusetts law still generally prohibits rent control. Because state legislatures, city councils, and ballot measures can change these rules quickly, tenants should confirm the current law before relying on any statewide summary.' },
     ],
   },
+  {
+    slug: 'what-should-i-pay-for-rent',
+    title: 'What Should I Pay for Rent? How to Know If You\'re Getting a Fair Deal',
+    metaTitle: 'What Should I Pay for Rent? How to Compare Rent Prices (2026)',
+    metaDescription: 'Not sure if your rent is fair? Learn how to compare rent prices using local listings, HUD data, and market trends before you sign — or before you renew.',
+    publishedDate: '2026-03-11',
+    author: 'RenewalReply',
+    readingTime: '9 min read',
+    category: 'Rent Comparison',
+    relatedSlugs: ['how-to-negotiate-rent-increase', 'rent-increase-laws-by-state'],
+    content: `You found a place you like. The landlord wants $2,200 a month.
+
+Is that a fair price — or are you about to lock yourself into a bad deal?
+
+Many renters never check. They look at a few listings, guess, and sign. That's a mistake. Rent is not "fair" because a landlord says it is. It's fair only if the asking price lines up with what comparable units, local benchmarks, and current market conditions actually support.
+
+This guide shows you how to figure out what rent you should actually be paying, whether you're apartment hunting or evaluating a renewal.
+
+Not sure if your rent is in line with the market? RenewalReply's [What Should I Pay tool](/what-should-i-pay) compares your rent against local listings, HUD benchmarks, and market trends in under a minute. It's free.
+
+## Why Checking Your Rent Against the Market Matters
+
+Overpaying by even $100/month costs you $1,200/year. Over a two-year lease, that's $2,400 — money that went to your landlord instead of staying in your account.
+
+The problem is that comparing rent prices on your own is harder than it looks. You can browse Zillow or Apartments.com, but comparing listings is messy — different buildings, different conditions, different amenities. A $2,200 one-bedroom in a doorman building with laundry isn't the same as a $2,200 one-bedroom in a walkup with no dishwasher.
+
+That's why you need to look beyond individual listings and understand the market range for your area, bedroom count, and unit type.
+
+## The Three Data Points That Tell You If Your Rent Is Fair
+
+Not all data is equally useful. Comparable listings nearby are your strongest signal — they show what the market is actually charging right now for units like yours. Local rent trends tell you whether the market is moving up or down, which affects whether today's price will look good or bad in six months. Government benchmarks like HUD Fair Market Rents provide broad context but are the least precise for evaluating a specific apartment.
+
+### 1. Comparable listings nearby
+
+This is your strongest reference. Look at what similar units — same bedroom count, similar building type, same neighborhood — are currently renting for. Not what they rented for six months ago, but what's on the market right now.
+
+Focus on current listings rather than stale data from months past. Markets move, and outdated comps can mislead you in either direction.
+
+If the median asking rent for comparable 1-bedrooms in your neighborhood is $2,050 and your landlord wants $2,200, you're looking at a $150/month premium. That doesn't necessarily mean it's unfair — your unit might have features that justify it — but it gives you a specific data point to evaluate against.
+
+The hard part is not finding a number — it's comparing the right numbers. A fair rent analysis should separate same-building comps from broad neighborhood averages, account for current market direction, and avoid overreacting to one or two cherry-picked listings. Renters get misled by mixed building classes, stale listings, wrong search radius, and metro-level averages that flatten neighborhood reality. That's exactly where most people get bad answers when they try to do this manually.
+
+Gathering comps manually across multiple listing sites takes time and is easy to get wrong. RenewalReply's [What Should I Pay tool](/what-should-i-pay) pulls live listing data for your area automatically, filters by bedroom count and proximity, and shows you the actual range in seconds.
+
+### 2. Local rent trends
+
+Is the market going up, going down, or holding flat? This matters because a rent that was fair six months ago might be above market today if the local trend has shifted.
+
+Rent trends vary dramatically by city and even by neighborhood. National averages are nearly useless for evaluating your specific situation. What matters is what's happening in your ZIP code or metro area right now.
+
+If rents in your area have been flat or declining and a landlord is asking top-of-market pricing, you have more negotiating room. If rents are rising sharply, a price that seems high might actually be in line with where the market is headed.
+
+### 3. Government rent benchmarks
+
+HUD publishes Fair Market Rent benchmarks each year — standard FMRs at the metro or county level, and Small Area Fair Market Rents (SAFMRs) at the ZIP level in metropolitan areas. These represent roughly the 40th percentile of gross rents for standard-quality units. Because these are gross-rent benchmarks, utility responsibility can affect the comparison — two units with the same base rent may not have the same total monthly housing cost.
+
+Government benchmarks are useful as broad context, but they are the least precise tool for evaluating a specific apartment. They don't capture unit condition, amenities, concessions, or building quality. Treat them as a sanity check — if your rent is dramatically above or below the benchmark, that's worth investigating. But comparable listings and local trends will give you a much clearer picture of whether your specific rent is fair.
+
+## Watch for concessions and effective rent
+
+Not every $2,200 apartment is really a $2,200 apartment. Some landlords offer one or two months free, waived application or move-in fees, free parking, or reduced broker costs. Those concessions lower the real economic cost of the lease — often called the "effective rent."
+
+When comparing listings, look at the effective monthly cost, not just the headline number. A $2,400/month apartment with two months free on a 14-month lease has an effective rent of roughly $2,057. If you're comparing that against a $2,200/month apartment with no concessions, the more expensive-looking unit is actually the better deal.
+
+In some markets — particularly during periods of rising vacancy — concessions are common and can significantly distort headline rent comparisons. Don't compare sticker rent to sticker rent alone.
+
+## How to Evaluate Rent When You're Apartment Hunting
+
+If you're looking at a new apartment and trying to decide whether the asking rent is fair, here's the process:
+
+**Step 1: Get the market range.** Look up comparable listings nearby for your bedroom count. Note the median and the range (low to high). This tells you where the asking price falls relative to the local market.
+
+**Step 2: Check the trend.** Is the local market heating up or cooling off? If rents have been dropping in the area, a landlord asking last year's prices may be willing to negotiate.
+
+**Step 3: Check government benchmarks.** Look up the HUD Fair Market Rent for the area. If the asking price is dramatically above the benchmark, that's worth investigating — but remember that HUD benchmarks are broad and don't reflect unit-specific quality.
+
+**Step 4: Consider the unit itself.** A fair price depends on what you're actually getting. Floor level, natural light, laundry access, noise, building condition, superintendent responsiveness — these all affect value in ways that raw numbers don't capture. Two apartments at the same price in the same ZIP can be wildly different values.
+
+**Step 5: Decide whether to negotiate.** If the data suggests the asking price is above the local range, you have a reasonable basis to counter-offer. Landlords — especially in softer markets or buildings with vacancies — often prefer a reliable tenant at a slightly lower rent over an empty unit.
+
+## How to Evaluate Rent When You're Already in a Lease
+
+If you're not moving but want to know whether what you're currently paying is fair — maybe because your renewal is coming up, or you just want to understand your position — the same data points apply.
+
+Check your current rent against comparable listings, local trends, and HUD benchmarks. If your rent is below the median for similar units, you're in a strong position and your landlord likely knows it. If you're above the median, you have leverage at renewal to push for a flat rate or a smaller increase.
+
+This is also where the rent increase analysis tool becomes useful. If your landlord has proposed an increase, checking whether your post-increase rent is still within the market range — or above it — is the first step to deciding whether to accept, negotiate, or move.
+
+Already dealing with a rent increase? See our [guide on how to negotiate a rent increase](/guides/how-to-negotiate-rent-increase) for the full process, including a sample email template and landlord objection scripts.
+
+## The Affordability Check: Can You Actually Afford It?
+
+Knowing whether a price is fair is different from knowing whether you can afford it. Both matter.
+
+The standard benchmark is the 30% rule: your monthly rent should be no more than 30% of your gross monthly income. So if you earn $60,000/year ($5,000/month), your target rent ceiling is $1,500.
+
+The 30% rule is a useful benchmark, not a perfect rule for every household. It originated as a federal policy threshold for defining housing-cost burden, and it doesn't account for individual factors like debt levels, savings goals, or local cost of living.
+
+In high-cost cities like New York, San Francisco, or Boston, many renters spend 35-40% of income on rent out of necessity. But once you're above 30% of income on housing, you're generally considered cost-burdened under the standard housing affordability benchmark, and it limits your ability to save, invest, or absorb unexpected expenses.
+
+If the fair market rent in your area is $2,200 but you can only comfortably afford $1,800, the answer isn't to overspend — it's to look at adjacent neighborhoods, different bedroom counts, or different building types where the market range fits your budget.
+
+## What If the Data Says You're Overpaying?
+
+If comparable listings, trend data, and benchmarks all suggest your rent is above market, you have options:
+
+**If you're apartment hunting:** Counter-offer. Show the landlord or broker the comparable data and propose a lower number. In a market with rising vacancies or long days on market, landlords would rather negotiate than lose you.
+
+**If you're in a lease and renewal is coming up:** Use the data to negotiate your renewal terms. A rent that was market-rate when you signed might be above market now. Present the evidence and propose a flat renewal or a smaller increase. See our [negotiation guide](/guides/how-to-negotiate-rent-increase) for exactly how to do this.
+
+**If you're mid-lease:** You generally can't renegotiate a fixed-term lease. But you can prepare for renewal by documenting the market data now, so you're ready when the conversation happens.
+
+**If you're in a rent-controlled unit:** Check your [state's rent increase laws](/guides/rent-increase-laws-by-state) to make sure your landlord isn't exceeding the legal cap.
+
+## Frequently Asked Questions
+
+**How do I know if my rent is fair?** Compare your rent to three benchmarks: comparable listings nearby (same bedroom count, similar area), the local year-over-year rent trend, and HUD Fair Market Rent for your area. Comparable listings are the strongest signal. If your rent is at or below the median for similar units and in line with the trend, it's likely fair.
+
+**What is fair market rent?** Fair Market Rent (FMR) is published annually by HUD. Standard FMRs cover metro areas and counties, while Small Area FMRs provide ZIP-level benchmarks. They represent roughly the 40th percentile of gross rents for standard-quality units. Useful as a baseline, but they don't account for unit-specific factors like condition, amenities, or concessions.
+
+**How much of my income should go to rent?** The standard guideline is no more than 30% of gross monthly income. In high-cost cities, many renters exceed this, but staying at or below 30% provides more financial flexibility.
+
+**Should I negotiate rent on a new apartment?** Yes, especially if comparable listings nearby are lower, the unit has been on the market for more than 30 days, or you're signing during a slower season (winter months). Landlords often prefer a slightly lower rent with a reliable tenant over continued vacancy.
+
+**What if my rent is below market — should I still negotiate at renewal?** If your rent is below market, your leverage shifts. Instead of arguing for a lower price, you can negotiate for non-monetary value: a longer lease at the current rate, unit improvements, or maintenance requests. See our [negotiation guide](/guides/how-to-negotiate-rent-increase) for strategies when your rent is at or below market.
+
+**Can I check what my neighbors pay?** In some cities with rent disclosure requirements or rent-stabilized units, rent data is publicly available. For market-rate units, you can estimate what similar units rent for by checking active listings in your building or nearby. Tools like RenewalReply's [What Should I Pay](/what-should-i-pay) pull live listing data to give you this comparison automatically.
+
+## The Bottom Line
+
+Many renters sign a lease or renew without systematically checking whether their rent is in line with the local market. That's a missed opportunity — not just to save money, but to negotiate from a position of knowledge instead of guesswork.
+
+Check what you should actually be paying. Use RenewalReply's [What Should I Pay tool](/what-should-i-pay) to compare your rent against local listings, HUD benchmarks, and market trends in under a minute. If the price is too high, you'll know before you sign. If it's fair, you can move forward with confidence. It's free.
+
+*This guide is for informational purposes only and does not constitute financial or legal advice. Rent prices vary based on unit condition, amenities, location, and market timing. Always evaluate your specific situation before making housing decisions.*`,
+    faqItems: [
+      { q: 'How do I know if my rent is fair?', a: 'Compare your rent to three benchmarks: comparable listings nearby (same bedroom count, similar area), the local year-over-year rent trend, and HUD Fair Market Rent for your area. Comparable listings are the strongest signal. If your rent is at or below the median for similar units and in line with the trend, it\'s likely fair.' },
+      { q: 'What is fair market rent?', a: 'Fair Market Rent (FMR) is published annually by HUD. Standard FMRs cover metro areas and counties, while Small Area FMRs provide ZIP-level benchmarks. They represent roughly the 40th percentile of gross rents for standard-quality units. Useful as a baseline, but they don\'t account for unit-specific factors like condition, amenities, or concessions.' },
+      { q: 'How much of my income should go to rent?', a: 'The standard guideline is no more than 30% of gross monthly income. In high-cost cities, many renters exceed this, but staying at or below 30% provides more financial flexibility.' },
+      { q: 'Should I negotiate rent on a new apartment?', a: 'Yes, especially if comparable listings nearby are lower, the unit has been on the market for more than 30 days, or you\'re signing during a slower season (winter months). Landlords often prefer a slightly lower rent with a reliable tenant over continued vacancy.' },
+      { q: 'What if my rent is below market — should I still negotiate at renewal?', a: 'If your rent is below market, your leverage shifts. Instead of arguing for a lower price, you can negotiate for non-monetary value: a longer lease at the current rate, unit improvements, or maintenance requests.' },
+      { q: 'Can I check what my neighbors pay?', a: 'In some cities with rent disclosure requirements or rent-stabilized units, rent data is publicly available. For market-rate units, you can estimate what similar units rent for by checking active listings in your building or nearby.' },
+    ],
+  },
 ];
 
 export function getGuideBySlug(slug: string): GuideArticle | undefined {
