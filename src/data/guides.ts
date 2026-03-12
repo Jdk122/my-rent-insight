@@ -207,11 +207,11 @@ This guide covers every state: whether there's a cap, how much notice your landl
 | Alaska | No cap | 30 days | Yes — but none exist |
 | Arizona | No cap | 30 days | No — banned |
 | Arkansas | No cap | 1 month | No — banned |
-| California | 5% + CPI or 10%, whichever is less | 30 days (under 10%); 90 days (over 10%) | Yes — many cities have local controls |
+| [California](#california) | 5% + CPI or 10%, whichever is less | 30 days (under 10%); 90 days (over 10%) | Yes — many cities have local controls |
 | Colorado | No cap (max once/year) | 60 days (mobile homes / no written lease) | No — banned |
 | Connecticut | No statewide cap (Fair Rent Commissions in larger cities) | 45 days | No — banned (but FRCs can block excessive increases) |
 | Delaware | No cap | 60 days (90-120 for mobile homes) | Yes — but none exist |
-| D.C. | CPI + 2% (rent-controlled units) | Minimum 60 days | Yes — extensive local rent control |
+| [D.C.](#washington-dc) | CPI + 2% (rent-controlled units) | Minimum 60 days | Yes — extensive local rent control |
 | Florida | No cap | No specific statewide statute; check lease and local law | No — banned |
 | Georgia | No cap | 60 days | No — banned |
 | Hawaii | No cap | 45 days | Yes — but none exist |
@@ -222,25 +222,25 @@ This guide covers every state: whether there's a cap, how much notice your landl
 | Kansas | No cap | 30 days (60 for mobile homes) | No — banned |
 | Kentucky | No cap | No specific statewide statute; check lease and local law | No — banned |
 | Louisiana | No cap | No specific statewide statute; check lease and local law | No |
-| Maine | No cap statewide (local controls exist) | 45 days (75 days if 10%+ in past year) | Yes — Portland has rent control |
-| Maryland | No statewide cap (local controls exist) | 90 days (term over one month) | Yes — Montgomery County, Takoma Park, others |
+| [Maine](#maine) | No cap statewide (local controls exist) | 45 days (75 days if 10%+ in past year) | Yes — Portland has rent control |
+| [Maryland](#maryland) | No statewide cap (local controls exist) | 90 days (term over one month) | Yes — Montgomery County, Takoma Park, others |
 | Massachusetts | No cap (statewide prohibition in effect; 2026 ballot initiative pending) | Varies by tenancy and lease structure; check lease and local law | No — currently prohibited statewide (Rent Control Prohibition Act, Ch. 40P); 2026 ballot initiative could change this |
 | Michigan | No cap | 30 days (for certain mid-lease increases) | No — banned |
-| Minnesota | No statewide cap (local controls exist) | 60 days (mobile homes) | Yes — St. Paul has 3% cap |
+| [Minnesota](#minnesota) | No statewide cap (local controls exist) | 60 days (mobile homes) | Yes — St. Paul has 3% cap |
 | Mississippi | No cap | 30 days | No |
 | Missouri | No cap | 60 days (mobile homes) | No |
 | Montana | No cap | 30 days | No — banned |
 | Nebraska | No cap | 30 days (60 for mobile homes) | No — banned (preemption passed 2025) |
 | Nevada | No cap | 60 days | No — banned |
 | New Hampshire | No cap | 30 days (60 for mobile homes) | No — banned |
-| New Jersey | No statewide cap (many local controls) | At least 30 days written notice; lease or local ordinance may require more | Yes — numerous municipalities have caps |
+| [New Jersey](#new-jersey) | No statewide cap (many local controls) | At least 30 days written notice; lease or local ordinance may require more | Yes — numerous municipalities have caps |
 | New Mexico | No cap | 30 days | No |
-| New York | No traditional statewide cap; Good Cause Eviction law creates soft cap (inflation + 5%, max 10%) on many market-rate units | 30-90 days (based on tenancy length; applies when increase exceeds 5% or landlord does not intend to renew) | Yes — NYC rent stabilization covers ~1M units; Good Cause applies more broadly |
+| [New York](#new-york) | No traditional statewide cap; Good Cause Eviction law creates soft cap (inflation + 5%, max 10%) on many market-rate units | 30-90 days (based on tenancy length; applies when increase exceeds 5% or landlord does not intend to renew) | Yes — NYC rent stabilization covers ~1M units; Good Cause applies more broadly |
 | North Carolina | No cap | No specific statewide statute; check lease and local law | No — banned |
 | North Dakota | No cap | 30 days (90 for mobile homes) | No |
 | Ohio | No cap | No specific statewide statute; check lease and local law | No — banned |
 | Oklahoma | No cap | No specific statewide statute; check lease and local law | No — banned |
-| Oregon | 7% + CPI or 10%, whichever is less (9.5% for 2026) | 90 days | No — state law preempts local controls |
+| [Oregon](#oregon) | 7% + CPI or 10%, whichever is less (9.5% for 2026) | 90 days | No — state law preempts local controls |
 | Pennsylvania | No cap | No specific statewide statute; check lease and local law | Yes — but none currently active |
 | Rhode Island | No cap | 60 days (120 for tenants over 62) | Yes — but none exist |
 | South Carolina | No cap | No specific statewide statute; check lease and local law | No — banned |
@@ -250,7 +250,7 @@ This guide covers every state: whether there's a cap, how much notice your landl
 | Utah | No cap | No specific statewide statute; check lease and local law | No — banned |
 | Vermont | No cap | 60 days | Yes — but none exist |
 | Virginia | No cap | 30–60 days | No |
-| Washington | 7% + CPI or 10%, whichever is less (9.683% for 2026) | 90 days | No — state law preempts local controls |
+| [Washington](#washington) | 7% + CPI or 10%, whichever is less (9.683% for 2026) | 90 days | No — state law preempts local controls |
 | West Virginia | No cap | No specific statewide statute; check lease and local law | No |
 | Wisconsin | No cap | No specific statewide statute; check lease and local law | No — banned |
 | Wyoming | No cap | No specific statewide statute; check lease and local law | No |
@@ -285,7 +285,7 @@ Landlords generally cannot raise rent during the first 12 months of a tenancy an
 
 **Notice required:** 90 days.
 
-### Washington, D.C.
+### Washington, DC
 
 Washington, D.C. has its own rent-stabilization system. For most covered units, annual increases are tied to CPI-W plus 2%, subject to a 10% ceiling. For registered elderly or disabled tenants, the allowable increase is generally the lesser of CPI, Social Security COLA, or 5%. Covered units must receive at least 60 calendar days' notice of any increase. Common exemptions include units built after 1975 and certain units owned by natural persons with no more than four rental units in the District.
 

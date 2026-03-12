@@ -1,11 +1,31 @@
 import { useParams, Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import type { Components } from 'react-markdown';
 import { getGuideBySlug, guides } from '@/data/guides';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import PageNav from '@/components/PageNav';
 import { Badge } from '@/components/ui/badge';
+
+const slugify = (text: string) =>
+  text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+const markdownComponents: Components = {
+  h2: ({ children, ...props }) => {
+    const id = slugify(String(children));
+    return <h2 id={id} {...props}>{children}</h2>;
+  },
+  h3: ({ children, ...props }) => {
+    const id = slugify(String(children));
+    return <h3 id={id} {...props}>{children}</h3>;
+  },
+  table: ({ children, ...props }) => (
+    <div className="overflow-x-auto -mx-5 px-5 sm:mx-0 sm:px-0">
+      <table {...props}>{children}</table>
+    </div>
+  ),
+};
 
 const Guide = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -100,7 +120,10 @@ const Guide = () => {
 
           {/* Content */}
           <div className="prose-rr">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={markdownComponents}
+            >
               {article.content}
             </ReactMarkdown>
           </div>
