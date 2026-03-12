@@ -649,6 +649,7 @@ const WsipResults = ({
               prefilledEmail={capturedEmail}
               shareReportPayload={shareReportPayload}
               onReportGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
+              marketYoy={marketYoy}
             />
           </section>
         )}
