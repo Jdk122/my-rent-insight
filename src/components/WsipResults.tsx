@@ -24,6 +24,7 @@ import SocialProofLine from './SocialProofLine';
 import ShareHub from './ShareHub';
 import WsipCompsList from './WsipCompsList';
 import ReportGate from './ReportGate';
+import FeedbackWidget from './FeedbackWidget';
 import type { LeadContext } from './EmailCapture';
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
