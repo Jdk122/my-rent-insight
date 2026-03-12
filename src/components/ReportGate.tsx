@@ -156,7 +156,7 @@ const ReportGate = ({
     })();
   };
 
-  const heading = "You're 60 seconds from being ready to negotiate.";
+  const heading = "Your negotiation package is ready.";
 
   const trendSign = (marketYoy ?? 0) > 0 ? '+' : '';
   const trendStr = marketYoy != null ? `${trendSign}${marketYoy}%` : '';
