@@ -736,11 +736,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                           ) : isFair ? (
                             isNuancedAtMarket || (increasePct > marketYoy + 1.5 && medianCompRent && newRent <= medianCompRent) ? (
                               <>Your rent is <span className="text-verdict-fair">still at market.</span></>
+                            ) : isCompDeficient ? (
+                              <>Your increase <span className="text-verdict-fair">tracks the area trend.</span></>
                             ) : (
                               <>Your rent increase is <span className="text-verdict-fair">right at market.</span></>
                             )
                           ) : increasePct > 0 ? (
-                            <>Your rent increase is <span className="text-verdict-good">below market.</span></>
+                            <>{isCompDeficient
+                              ? <>Your increase is <span className="text-verdict-fair">in line with trends.</span></>
+                              : <>Your rent increase is <span className="text-verdict-good">below market.</span></>
+                            }</>
                           ) : (
                             <>Good news — <span className="text-verdict-good">your rent isn't going up.</span></>
                           )}
