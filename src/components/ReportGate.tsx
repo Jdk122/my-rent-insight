@@ -7,6 +7,8 @@ import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
 import { generateSharedReport, SharedReportPayload } from '@/lib/generateSharedReport';
 import type { LeadContext } from './EmailCapture';
 
+const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+
 interface ReportGateProps {
   /** 'renewal' or 'wsip' */
   toolType: 'renewal' | 'wsip';
@@ -31,40 +33,55 @@ interface ReportGateProps {
   onReportGenerated?: (url: string) => void;
   /** Local market YoY trend percentage */
   marketYoy?: number;
+  /** Renewal tool: monthly $ the user is overpaying (newRent - counterOffer.counterLow). Only passed when evidence is solid. */
+  monthlyOverpayment?: number | null;
+  /** WSIP tool: monthly $ savings opportunity (askingRent - fairRangeHigh). Only passed when verdict is 'above'. */
+  monthlySavings?: number | null;
 }
 
-function getGateCopy(toolType: 'renewal' | 'wsip', verdict: string | undefined, verdictLabel: string, compsCount: number) {
-  const hasComps = compsCount > 0;
-  const compRef = hasComps ? `${compsCount}` : '';
-
+function getGateCopy(
+  toolType: 'renewal' | 'wsip',
+  verdict: string | undefined,
+  verdictLabel: string,
+  monthlyOverpayment?: number | null,
+  monthlySavings?: number | null,
+) {
   if (toolType === 'renewal') {
     switch (verdict) {
       case 'above':
+        if (monthlyOverpayment && monthlyOverpayment > 0) {
+          return {
+            heading: `You're overpaying by ~$${fmt(monthlyOverpayment)}/month`,
+            bulletA: 'See the comps behind that number',
+            bulletB: 'Copy a send-ready email with your exact counter-offer',
+            cta: 'Email me my counter-offer →',
+          };
+        }
         return {
-          heading: 'Your counteroffer is ready',
-          bulletA: hasComps ? `See the ${compRef} matched comps proving your case` : 'See the local market data backing your result',
-          bulletB: 'Get a send-ready negotiation email with your exact counter-offer',
-          cta: 'Email me my counteroffer →',
+          heading: 'Your increase exceeds the local market. Here\'s your plan.',
+          bulletA: 'See the comps behind your analysis',
+          bulletB: 'Get a landlord-ready response you can send this week',
+          cta: 'Email me my negotiation plan →',
         };
       case 'at-market':
         return {
-          heading: 'See the comps and your best next move',
-          bulletA: hasComps ? `See how your unit compares to ${compRef} nearby rentals` : 'See the local market data backing your result',
-          bulletB: 'Get a landlord-ready response with your best strategy',
+          heading: 'At-market doesn\'t mean non-negotiable. See the comps.',
+          bulletA: 'See how your rent compares to nearby units',
+          bulletB: 'Get a ready-to-send response before you reply',
           cta: 'Email me my full report →',
         };
       case 'below':
         return {
-          heading: 'Protect your below-market deal',
-          bulletA: hasComps ? `See why your rent is favorable vs. ${compRef} nearby units` : 'See the local market data backing your result',
-          bulletB: 'Get a smart renewal response to lock in your rate',
+          heading: 'You\'re below market. Protect your position.',
+          bulletA: 'See why your rent is favorable vs. nearby units',
+          bulletB: 'Get a smart renewal response to help keep it that way',
           cta: 'Email me my renewal strategy →',
         };
       default: // 'none' or fallback
         return {
-          heading: 'See the full market breakdown',
-          bulletA: hasComps ? `View ${compRef} comparable rentals near you` : 'See the local market data backing your result',
-          bulletB: 'Get a market report for your next lease conversation',
+          heading: 'Your landlord kept your rent flat. Here\'s what that\'s worth.',
+          bulletA: 'See how your rent compares to nearby listings',
+          bulletB: 'A market report to use at your next renewal',
           cta: 'Email me my market report →',
         };
     }
@@ -73,31 +90,39 @@ function getGateCopy(toolType: 'renewal' | 'wsip', verdict: string | undefined, 
   // WSIP tool
   switch (verdictLabel) {
     case 'above':
+      if (monthlySavings && monthlySavings > 0) {
+        return {
+          heading: `This unit looks overpriced by ~$${fmt(monthlySavings)}/month`,
+          bulletA: 'See the comps behind that estimate',
+          bulletB: 'Get a data-backed plan before you negotiate',
+          cta: 'Email me my negotiation plan →',
+        };
+      }
       return {
-        heading: 'See the proof and your negotiation plan',
-        bulletA: hasComps ? `View the ${compRef} comps showing this unit is overpriced` : 'See the local market data backing your result',
-        bulletB: 'Get a data-backed plan to negotiate a better price',
+        heading: 'This asking rent is above market. Here\'s the proof.',
+        bulletA: 'See the comps showing fair market rent',
+        bulletB: 'Get a negotiation plan to get a better price',
         cta: 'Email me my negotiation plan →',
       };
     case 'fair':
       return {
-        heading: 'See the full market breakdown',
-        bulletA: hasComps ? `View the ${compRef} comps confirming fair market rent` : 'See the local market data backing your result',
-        bulletB: 'Get the full comps and market breakdown before you decide',
-        cta: 'Email me my market report →',
+        heading: 'Fair price confirmed. Get the full breakdown before you sign.',
+        bulletA: 'See the nearby comps behind this result',
+        bulletB: 'Get the full market context before you decide',
+        cta: 'Email me the full breakdown →',
       };
     case 'below':
       return {
-        heading: 'See why this rent is a great deal',
-        bulletA: hasComps ? `View the ${compRef} comps showing your rent advantage` : 'See the local market data backing your result',
-        bulletB: 'Get a renewal strategy to protect your rate',
-        cta: 'Email me my renewal strategy →',
+        heading: 'This looks like a good deal. See why before you move fast.',
+        bulletA: 'See the comps showing your rent advantage',
+        bulletB: 'Get the full market breakdown before you sign',
+        cta: 'Email me the full breakdown →',
       };
     default: // 'none' or fallback
       return {
-        heading: 'See your full market report',
-        bulletA: hasComps ? `View ${compRef} comparable rentals near you` : 'See the local market data backing your result',
-        bulletB: 'Get a fair price range to negotiate with confidence',
+        heading: 'Your fair rent range is ready',
+        bulletA: 'Comparable rentals near you',
+        bulletB: 'A fair price range to negotiate with confidence',
         cta: 'Email me my market report →',
       };
   }
@@ -118,6 +143,8 @@ const ReportGate = ({
   shareReportPayload,
   onReportGenerated,
   marketYoy,
+  monthlyOverpayment,
+  monthlySavings,
 }: ReportGateProps) => {
   const [email, setEmail] = useState(prefilledEmail || '');
   const [error, setError] = useState('');
@@ -229,7 +256,7 @@ const ReportGate = ({
     })();
   };
 
-  const copy = getGateCopy(toolType, verdict, verdictLabel, compsCount);
+  const copy = getGateCopy(toolType, verdict, verdictLabel, monthlyOverpayment, monthlySavings);
 
   return (
     <div ref={gateRef} className="rounded-xl border border-primary/20 px-5 sm:px-8 py-7 sm:py-9 text-center" style={{ background: 'hsl(var(--primary) / 0.04)' }}>
@@ -265,7 +292,7 @@ const ReportGate = ({
       </form>
       {error && <p className="text-xs text-destructive mt-1">{error}</p>}
       <p className="text-sm text-muted-foreground mt-3 font-medium">
-        Free forever · No spam · Instant delivery
+        Free report · No spam · Instant delivery
       </p>
       <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
         Unsubscribe anytime. See our{' '}
