@@ -251,8 +251,7 @@ const RentByState = () => {
           </p>
         </section>
 
-        {/* Renter Tools CTA */}
-        <RenterToolsCTA zip={cities[0]?.zips[0]?.zip} />
+        {/* RenterToolsCTA moved below FAQ */}
 
         {/* Search */}
         <div className="mb-6">
