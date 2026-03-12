@@ -134,7 +134,7 @@ const Index = () => {
             "@type": "WebApplication",
             "name": "RenewalReply Rent Increase Tool",
             "url": "https://www.renewalreply.com",
-            "description": "Free tool to check if your rent increase is fair using HUD Fair Market Rents, Zillow rent trends, and real nearby listings for 38,000+ US zip codes.",
+            "description": "Free tool to check if your rent increase is fair using HUD Fair Market Rents, Zillow rent trends, and real nearby listings for 38,600+ US zip codes.",
             "applicationCategory": "FinanceApplication",
             "operatingSystem": "Web",
             "browserRequirements": "Requires JavaScript",
