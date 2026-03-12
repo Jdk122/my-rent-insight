@@ -274,7 +274,7 @@ const ReportGate = ({
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-[480px] mx-auto">
         <input
           type="email"
-          placeholder="Enter your email for the full report"
+          placeholder="Your email"
           value={email}
           onChange={(e) => { setEmail(e.target.value); if (error) setError(''); }}
           autoComplete="email"
