@@ -18,7 +18,7 @@ export const demoRentcast: RentcastResult = {
   propertyType: 'Apartment',
   comparables: mockComps,
 };
-type DemoScenario = 'above' | 'fair' | 'below' | 'none';
+type DemoScenario = 'above' | 'fair' | 'below' | 'none' | 'moderate' | 'below-fmr-high-increase' | 'limited' | 'premium';
 
 const baseRentData: RentLookupResult = {
   zip: '10001',
