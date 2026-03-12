@@ -1,5 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
+import { NoIndexMeta } from '@/components/NoIndexMeta';
 import SEO from "@/components/SEO";
 import SEOFooter from "@/components/SEOFooter";
 import PageNav from "@/components/PageNav";
@@ -7,6 +9,7 @@ import { trackEvent } from "@/lib/analytics";
 
 const NotFound = () => {
   const location = useLocation();
+  usePrerenderReady(true);
 
   useEffect(() => {
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
@@ -18,6 +21,7 @@ const NotFound = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <NoIndexMeta />
       <SEO title="Page Not Found — RenewalReply" noindex />
       <PageNav hideCta />
       <main className="flex-1 flex flex-col items-center justify-center">

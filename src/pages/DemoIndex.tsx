@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
+import { NoIndexMeta } from '@/components/NoIndexMeta';
 import SEO from '@/components/SEO';
 
 const sections = [
@@ -30,8 +32,11 @@ const sections = [
   },
 ];
 
-const DemoIndex = () => (
+const DemoIndex = () => {
+  usePrerenderReady(true);
+  return (
   <div className="min-h-screen bg-background">
+    <NoIndexMeta />
     <SEO title="Demo Scenarios | RenewalReply" description="Internal demo scenario index" canonical="/demos" />
     <div className="max-w-xl mx-auto px-5 pt-20 pb-16">
       <h1 className="text-2xl font-bold text-foreground mb-2">Demo Scenarios</h1>
@@ -58,6 +63,7 @@ const DemoIndex = () => (
       <Link to="/" className="inline-block mt-8 text-sm text-primary hover:underline">← Back to home</Link>
     </div>
   </div>
-);
+  );
+};
 
 export default DemoIndex;

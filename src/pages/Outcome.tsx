@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent } from '@/lib/analytics';
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import { Check } from 'lucide-react';
@@ -10,6 +11,7 @@ type Result = 'agreed' | 'countered' | 'no_response' | 'moving' | 'unsubscribe';
 
 const Outcome = () => {
   const [params] = useSearchParams();
+  usePrerenderReady(true);
   const leadId = params.get('id');
   const result = (params.get('result') || params.get('outcome')) as Result | null;
 

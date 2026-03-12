@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
+import { NoIndexMeta } from '@/components/NoIndexMeta';
 import { getCityData, getNearbyCities, fmt, slugify, stateNameFromAbbr, type CityData } from '@/data/cityStateUtils';
 import { getApartmentListData, getHud50Data, type ApartmentListZipRaw, type Hud50ZipRaw } from '@/data/dataLoader';
 import { getDataFreshness, getFreshestDate, formatFreshnessDate, getHudFiscalYear, getDataYear, type DataFreshness } from '@/data/dataFreshness';
@@ -128,10 +129,10 @@ const RentByCity = () => {
     return { fmrVaries: fmrVar, hasZipLevelYoY: hasYoY, displayedZips: displayed, hasMoreZips: more };
   }, [data, alData, zipSearch]);
 
-  usePrerenderReady(!loading && !notFound && !!data);
+  usePrerenderReady(!loading);
 
   if (loading) return <LoadingSkeleton stateSlug={stateSlug} citySlug={citySlug} />;
-  if (notFound || !data) return <NotFoundPage />;
+  if (notFound || !data) return <><NoIndexMeta /><NotFoundPage /></>;
 
   const { city, state, zips, avgFmr, censusMedianRent, yoyChange, cheapestZip } = data;
   const stateName = stateNameFromAbbr(state);

@@ -3,6 +3,8 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { Components } from 'react-markdown';
 import { getGuideBySlug, guides } from '@/data/guides';
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
+import { NoIndexMeta } from '@/components/NoIndexMeta';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import PageNav from '@/components/PageNav';
@@ -30,9 +32,12 @@ const markdownComponents: Components = {
 const Guide = () => {
   const { slug } = useParams<{ slug: string }>();
   const article = slug ? getGuideBySlug(slug) : undefined;
+  usePrerenderReady(true);
 
   if (!article) {
     return (
+      <>
+      <NoIndexMeta />
       <div className="min-h-screen bg-background flex flex-col">
         <SEO title="Guide Not Found | RenewalReply" noindex />
         <PageNav />
@@ -45,6 +50,7 @@ const Guide = () => {
         </main>
         <SEOFooter />
       </div>
+      </>
     );
   }
 

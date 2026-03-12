@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
+import { NoIndexMeta } from '@/components/NoIndexMeta';
 import { getStateData, fmt, slugify, type StateData } from '@/data/cityStateUtils';
 import { getApartmentListData, type ApartmentListZipRaw } from '@/data/dataLoader';
 import { getDataFreshness, getFreshestDate, formatFreshnessDate, getHudFiscalYear, getDataYear, type DataFreshness } from '@/data/dataFreshness';
@@ -81,10 +82,10 @@ const RentByState = () => {
   const dataYear = freshness ? getDataYear(freshness) : '2026';
   const hudFY = freshness ? getHudFiscalYear(freshness) : '2026';
 
-  usePrerenderReady(!loading && !notFound && !!data);
+  usePrerenderReady(!loading);
 
   if (loading) return <LoadingSkeleton stateSlug={stateSlug} />;
-  if (notFound || !data) return <NotFoundPage />;
+  if (notFound || !data) return <><NoIndexMeta /><NotFoundPage /></>;
 
   const { stateName, stateAbbr, cities, avgFmr1br, totalZips } = data;
 

@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
+import { NoIndexMeta } from '@/components/NoIndexMeta';
 import { Input } from '@/components/ui/input';
 import { getRentData, getApartmentListData, getHud50Data, getNationalAvgYoY, type RentZipRaw, type ApartmentListZipRaw, type Hud50ZipRaw } from '@/data/dataLoader';
 import { slugify, stateNameFromAbbr } from '@/data/cityStateUtils';
@@ -138,10 +139,10 @@ const RentByZip = () => {
     return () => { cancelled = true; };
   }, [zip]);
 
-  usePrerenderReady(!loading && !notFound && !!data);
+  usePrerenderReady(!loading);
 
   if (loading) return <LoadingSkeleton zip={zip} />;
-  if (notFound || !data || !zip) return <NotFoundPage zip={zip} />;
+  if (notFound || !data || !zip) return <><NoIndexMeta /><NotFoundPage zip={zip} /></>;
 
   const { raw, al, hud50, freshness, nearby, sameCity, sameMetro, metroAvgFmr1br, similarRentZips } = data;
   const city = raw.c || 'Unknown';
@@ -202,6 +203,7 @@ const RentByZip = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      {isThinPage && <NoIndexMeta />}
       <SEO
         title={metaTitle}
         description={metaDesc}

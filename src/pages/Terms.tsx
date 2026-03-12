@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
@@ -7,6 +8,7 @@ import PageNav from '@/components/PageNav';
 
 const Terms = () => {
   const [contactOpen, setContactOpen] = useState(false);
+  usePrerenderReady(true);
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <SEO

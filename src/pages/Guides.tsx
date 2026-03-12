@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { guides } from '@/data/guides';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
@@ -6,6 +7,7 @@ import PageNav from '@/components/PageNav';
 import { Badge } from '@/components/ui/badge';
 
 const Guides = () => {
+  usePrerenderReady(true);
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEO
