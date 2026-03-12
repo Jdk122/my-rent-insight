@@ -203,7 +203,7 @@ const RentByZip = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <SEO
+      {isThinPage && <NoIndexMeta />}
         title={metaTitle}
         description={metaDesc}
         canonical={`/rent/${zip}`}
