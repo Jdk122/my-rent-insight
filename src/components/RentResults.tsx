@@ -253,6 +253,17 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     });
   }, [hasIncrease, asyncDataReady, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings, compositeTrendResult, bldg, sameLineMedian, allSameBuilding]);
 
+  // ━━━ Comp-overpayment detection ━━━
+  const compOverpayment = useMemo(() => {
+    if (!hasIncrease || !medianCompRent || medianCompRent <= 0) return null;
+    const rentBearingComps = (outlierResult?.filtered ?? []).filter(c => c.rent != null && c.rent > 0);
+    if (rentBearingComps.length < 5) return null;
+    const overPct = (newRent - medianCompRent) / medianCompRent;
+    if (overPct < 0.15) return null;
+    const dollarOver = Math.round(newRent - medianCompRent);
+    return { overPct: Math.round(overPct * 100), dollarOver, compCount: rentBearingComps.length };
+  }, [hasIncrease, medianCompRent, newRent, outlierResult]);
+
   // ━━━ Premium unit detection ━━━
   const isPremiumUnit = bldg.hasBuildingData &&
     bldg.buildingMedian > 0 &&
@@ -639,6 +650,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     componentSources={sources}
                     contextNotes={
                       <>
+                        {compOverpayment && fairnessScore && fairnessScore.total >= 60 && (
+                          <div className="rounded-lg border border-amber-200 bg-amber-50/50 dark:border-amber-900/50 dark:bg-amber-950/20 p-3">
+                            <div className="flex gap-2.5">
+                              <Info className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+                              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                                <span className="font-medium text-foreground">Your increase tracks the {marketYoy > 0 ? '+' : ''}{marketYoy}% area trend</span>, but your proposed rent of ${fmt(newRent)} is ${fmt(compOverpayment.dollarOver)}/mo above the median for similar {bedroomLabels[formData.bedrooms].toLowerCase()}s nearby (${fmt(medianCompRent!)} based on {compOverpayment.compCount} comparable listings). Your unit may justify a premium — but it's worth knowing where you stand.
+                              </p>
+                            </div>
+                          </div>
+                        )}
                         {rentControlCap && hasIncrease && rentControlCap.maxIncreaseFormula && buildingEligibility !== 'ineligible' && (
                           (() => {
                             const approxPrefix = rentControlCap.isFormulaCap ? 'approximately ' : '';
