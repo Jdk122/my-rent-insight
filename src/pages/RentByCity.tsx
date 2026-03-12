@@ -545,7 +545,7 @@ const RentByCity = () => {
         </section>
 
         {/* ═══ Renter Tools CTA ═══ */}
-        <RenterToolsCTA zip={zips[0]?.zip} />
+        <RenterToolsCTA zip={zips[0]?.zip} city={city} pageType="city" />
 
         {/* Internal links */}
         <div className="mb-12 flex flex-col gap-2 text-sm">

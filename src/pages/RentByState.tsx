@@ -321,7 +321,7 @@ const RentByState = () => {
         </section>
 
         {/* ═══ Renter Tools CTA ═══ */}
-        <RenterToolsCTA zip={cities[0]?.zips[0]?.zip} />
+        <RenterToolsCTA zip={cities[0]?.zips[0]?.zip} stateName={stateName} pageType="state" />
 
         {/* Internal links */}
         <div className="mb-12 flex flex-col gap-2 text-sm">
