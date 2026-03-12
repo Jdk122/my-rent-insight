@@ -869,15 +869,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </p>
               </motion.div>
 
-              {/* ── "Why this result" line ── */}
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.35, duration: 0.4 }}
-                className="mt-4 text-[12px] text-muted-foreground/60 text-center max-w-[480px] leading-relaxed"
-              >
-                Based on {compsWithRent.length > 0 ? `${compsWithRent.length} comparable listing${compsWithRent.length !== 1 ? 's' : ''}, ` : ''}HUD Fair Market Rent data, and Zillow rent trends for {city}.
-              </motion.p>
+
+
 
               {/* See evidence + reset */}
               <div className="mt-4 flex flex-col items-center gap-2">
