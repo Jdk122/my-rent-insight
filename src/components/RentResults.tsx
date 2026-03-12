@@ -253,6 +253,17 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     });
   }, [hasIncrease, asyncDataReady, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings, compositeTrendResult, bldg, sameLineMedian, allSameBuilding]);
 
+  // ━━━ Comp-overpayment detection ━━━
+  const compOverpayment = useMemo(() => {
+    if (!hasIncrease || !medianCompRent || medianCompRent <= 0) return null;
+    const rentBearingComps = (outlierResult?.filtered ?? []).filter(c => c.rent != null && c.rent > 0);
+    if (rentBearingComps.length < 5) return null;
+    const overPct = (newRent - medianCompRent) / medianCompRent;
+    if (overPct < 0.15) return null;
+    const dollarOver = Math.round(newRent - medianCompRent);
+    return { overPct: Math.round(overPct * 100), dollarOver, compCount: rentBearingComps.length };
+  }, [hasIncrease, medianCompRent, newRent, outlierResult]);
+
   // ━━━ Premium unit detection ━━━
   const isPremiumUnit = bldg.hasBuildingData &&
     bldg.buildingMedian > 0 &&
