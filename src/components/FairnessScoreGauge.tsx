@@ -114,7 +114,7 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
           className="absolute text-[11px] font-semibold text-foreground/60 tracking-wide"
           style={{ left: arcR.x, top: CY + 8, transform: 'translateX(-50%)' }}
         >
-          Good deal
+          Fair
         </span>
 
         {/* Score + /100 + tier — centered inside arc */}
