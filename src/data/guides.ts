@@ -250,7 +250,7 @@ This guide covers every state: whether there's a cap, how much notice your landl
 | Utah | No cap | No specific statewide statute; check lease and local law | No — banned |
 | Vermont | No cap | 60 days | Yes — but none exist |
 | Virginia | No cap | 30–60 days | No |
-| Washington | 7% + CPI or 10%, whichever is less (9.683% for 2026) | 90 days | No — state law preempts local controls |
+| [Washington](#washington) | 7% + CPI or 10%, whichever is less (9.683% for 2026) | 90 days | No — state law preempts local controls |
 | West Virginia | No cap | No specific statewide statute; check lease and local law | No |
 | Wisconsin | No cap | No specific statewide statute; check lease and local law | No — banned |
 | Wyoming | No cap | No specific statewide statute; check lease and local law | No |
