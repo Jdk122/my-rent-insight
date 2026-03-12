@@ -3,6 +3,8 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { Components } from 'react-markdown';
 import { getGuideBySlug, guides } from '@/data/guides';
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
+import { NoIndexMeta } from '@/components/NoIndexMeta';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import PageNav from '@/components/PageNav';
