@@ -50,8 +50,19 @@ function getGateCopy(
   compsCount: number,
   monthlyOverpayment?: number | null,
   monthlySavings?: number | null,
+  belowFmrHighIncrease?: boolean,
+  increasePct?: number,
 ) {
   if (toolType === 'renewal') {
+    // Priority 1: belowFmrHighIncrease overrides normal verdict branching
+    if (belowFmrHighIncrease) {
+      return {
+        heading: `Your rent is below market — but a ${increasePct ?? 0}% increase is still too aggressive.`,
+        bulletA: 'See the comps showing where your rent falls',
+        bulletB: 'Get a landlord-ready email to push back on the rate of increase',
+        cta: 'Email me my negotiation plan →',
+      };
+    }
     switch (verdict) {
       case 'above':
         if (monthlyOverpayment && monthlyOverpayment > 0) {
