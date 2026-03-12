@@ -822,6 +822,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         ? Math.max(0, Math.round(newRent - counterOffer.counterLow))
                         : null
                     }
+                    belowFmrHighIncrease={isBelowFmrHighIncrease}
+                    increasePct={increasePct}
                   />
                 </section>
               )}
