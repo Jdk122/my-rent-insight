@@ -920,6 +920,31 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         <div className="max-w-[620px] mx-auto px-5 sm:px-6">
         {capturedEmail && (
           <>
+            {/* Action Insight — shown post-gate as context for comps/letter */}
+            {hasIncrease && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05, duration: 0.4 }}
+                className={`mt-8 w-full max-w-[540px] mx-auto border-l-4 pl-4 py-2 rounded-r-md ${
+                  isAboveMarket
+                    ? 'border-destructive/60 bg-destructive/5'
+                    : isBelowMarket
+                    ? 'border-verdict-good/60 bg-verdict-good/5'
+                    : 'border-blue-400/60 bg-blue-50/50 dark:bg-blue-950/20'
+                }`}
+              >
+                <p className="text-base font-medium text-foreground leading-relaxed">
+                  {isAboveMarket
+                    ? 'Your increase exceeds what the local market supports. Your counteroffer is ready.'
+                    : isBelowMarket
+                    ? "Your rent is below market — but you can still negotiate for value. Longer lease terms, unit improvements, or maintenance requests are all on the table. See your options."
+                    : 'Your increase tracks the market — but renters who negotiate with data save an average of $1,200/year. Your full report is ready.'
+                  }
+                </p>
+              </motion.div>
+            )}
+
             {/* ━━━ EVIDENCE SECTION ━━━ */}
             <section id="section-evidence" className="pt-10 pb-8">
               <motion.h2 {...fade(0.05)} className="results-section-header mb-6">

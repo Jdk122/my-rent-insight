@@ -170,6 +170,11 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
           </CollapsibleTrigger>
           <CollapsibleContent>
             <div className="mt-2 space-y-3 px-2">
+              {topNote && (
+                <div className="mb-3">
+                  {topNote}
+                </div>
+              )}
               {score.components.map((comp) => {
                 const source = componentSources?.[comp.id];
                 const isExpanded = expandedComponent === comp.id;
