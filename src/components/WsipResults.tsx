@@ -455,19 +455,8 @@ const WsipResults = ({
               </p>
             )}
 
-            {/* Building context line */}
-            {bldg.hasBuildingData && (
-              <p className="text-[13px] sm:text-[15px] font-medium text-verdict-good mb-1">
-                Other {bldg.bedroomFilterLabel ? `${bldg.bedroomFilterLabel} ` : ''}units in this building rent for ${fmt(bldg.buildingLow)}
-                {bldg.buildingLow !== bldg.buildingHigh && ` – $${fmt(bldg.buildingHigh)}`}/month
-              </p>
-            )}
-            {bldg.hasBuildingData && bldg.buildingHigh > fairRangeHigh * 1.15 && (
-              <p className="text-[11px] text-muted-foreground mb-2">This building rents above the area average.</p>
-            )}
-            {bldg.hasBuildingData && bldg.buildingHigh < fairRangeHigh * 0.85 && (
-              <p className="text-[11px] text-muted-foreground mb-2">This building rents below the area average — good value for the area.</p>
-            )}
+
+
 
             <p className="text-[14px] sm:text-base text-muted-foreground leading-relaxed max-w-[480px] mb-4">
               {verdictSubtitle ? (
