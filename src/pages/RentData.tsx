@@ -126,7 +126,7 @@ const RentData = () => {
             '@context': 'https://schema.org',
             '@type': 'Dataset',
             name: 'U.S. Fair Market Rent Data',
-            description: `HUD Fair Market Rent benchmarks and market rent trends for ${totalZips > 0 ? totalZips.toLocaleString() : '40,000'}+ U.S. zip codes, updated for FY${freshness ? getHudFiscalYear(freshness) : '2026'}.`,
+            description: `HUD Fair Market Rent benchmarks and market rent trends for ${totalZips > 0 ? totalZips.toLocaleString() : '38,600'}+ U.S. zip codes, updated for FY${freshness ? getHudFiscalYear(freshness) : '2026'}.`,
             url: 'https://www.renewalreply.com/rent-data',
             creator: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
             license: 'https://creativecommons.org/licenses/by/4.0/',
