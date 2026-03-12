@@ -41,7 +41,7 @@ function getGateCopy(toolType: 'renewal' | 'wsip', verdict: string | undefined, 
     switch (verdict) {
       case 'above':
         return {
-          heading: 'Your landlord-ready counteroffer is ready',
+          heading: 'Your counteroffer is ready',
           bulletA: hasComps ? `See the ${compRef} matched comps proving your case` : 'See the local market data backing your result',
           bulletB: 'Get a send-ready negotiation email with your exact counter-offer',
           cta: 'Email me my counteroffer →',
