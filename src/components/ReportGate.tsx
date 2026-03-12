@@ -37,6 +37,10 @@ interface ReportGateProps {
   monthlyOverpayment?: number | null;
   /** WSIP tool: monthly $ savings opportunity (askingRent - fairRangeHigh). Only passed when verdict is 'above'. */
   monthlySavings?: number | null;
+  /** Renewal tool: true when rent is below FMR but increase rate is aggressively above trend */
+  belowFmrHighIncrease?: boolean;
+  /** Increase percentage for belowFmrHighIncrease copy */
+  increasePct?: number;
 }
 
 function getGateCopy(
@@ -46,8 +50,19 @@ function getGateCopy(
   compsCount: number,
   monthlyOverpayment?: number | null,
   monthlySavings?: number | null,
+  belowFmrHighIncrease?: boolean,
+  increasePct?: number,
 ) {
   if (toolType === 'renewal') {
+    // Priority 1: belowFmrHighIncrease overrides normal verdict branching
+    if (belowFmrHighIncrease) {
+      return {
+        heading: `Your rent is below market — but a ${increasePct ?? 0}% increase is still too aggressive.`,
+        bulletA: 'See the comps showing where your rent falls',
+        bulletB: 'Get a landlord-ready email to push back on the rate of increase',
+        cta: 'Email me my negotiation plan →',
+      };
+    }
     switch (verdict) {
       case 'above':
         if (monthlyOverpayment && monthlyOverpayment > 0) {
@@ -146,6 +161,8 @@ const ReportGate = ({
   marketYoy,
   monthlyOverpayment,
   monthlySavings,
+  belowFmrHighIncrease,
+  increasePct,
 }: ReportGateProps) => {
   const [email, setEmail] = useState(prefilledEmail || '');
   const [error, setError] = useState('');
@@ -257,7 +274,7 @@ const ReportGate = ({
     })();
   };
 
-  const copy = getGateCopy(toolType, verdict, verdictLabel, compsCount, monthlyOverpayment, monthlySavings);
+  const copy = getGateCopy(toolType, verdict, verdictLabel, compsCount, monthlyOverpayment, monthlySavings, belowFmrHighIncrease, increasePct);
 
   return (
     <div ref={gateRef} className="rounded-xl border border-primary/20 px-5 sm:px-8 py-7 sm:py-9 text-center" style={{ background: 'hsl(var(--primary) / 0.04)' }}>
