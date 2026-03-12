@@ -44,6 +44,7 @@ interface ZipPageData {
   sameMetro: { zip: string; raw: RentZipRaw }[];
   metroAvgFmr1br: number;
   similarRentZips: { zip: string; raw: RentZipRaw }[];
+  totalCityZips: number; // authoritative count of all ZIPs in the same city
 }
 
 const RentByZip = () => {
