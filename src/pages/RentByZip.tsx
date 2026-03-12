@@ -218,13 +218,13 @@ const RentByZip = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {isThinPage && <NoIndexMeta />}
+      {shouldNoindex && <NoIndexMeta />}
       <SEO
         title={metaTitle}
         description={metaDesc}
-        canonical={`/rent/${zip}`}
+        canonical={canonicalPath}
         ogImage="/og-image.png"
-        noindex={isThinPage}
+        noindex={shouldNoindex}
         jsonLd={[
           {
             '@context': 'https://schema.org',
