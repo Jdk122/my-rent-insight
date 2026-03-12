@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
