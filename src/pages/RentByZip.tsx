@@ -306,6 +306,14 @@ const RentByZip = () => {
             <ShareDataButton />
           </div>
 
+          {/* Quick summary — optimized for Google featured snippet extraction */}
+          <p className="mt-4 text-base text-foreground/80 leading-relaxed">
+            The typical rent for a 1-bedroom in {zip} ({city}, {state}) is {fmt(heroRent)}/month.
+            {trendYoY !== null
+              ? ` Rents in this area have ${trendYoY >= 0 ? 'increased' : 'decreased'} ${Math.abs(trendYoY).toFixed(1)}% over the past year (${trendAttribution}).`
+              : ''}
+          </p>
+
           {/* Change 3: Verdict sentence first */}
           <p className="mt-6 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
             {trendsDiverge
