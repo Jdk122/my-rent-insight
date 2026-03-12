@@ -207,7 +207,7 @@ This guide covers every state: whether there's a cap, how much notice your landl
 | Alaska | No cap | 30 days | Yes — but none exist |
 | Arizona | No cap | 30 days | No — banned |
 | Arkansas | No cap | 1 month | No — banned |
-| California | 5% + CPI or 10%, whichever is less | 30 days (under 10%); 90 days (over 10%) | Yes — many cities have local controls |
+| [California](#california) | 5% + CPI or 10%, whichever is less | 30 days (under 10%); 90 days (over 10%) | Yes — many cities have local controls |
 | Colorado | No cap (max once/year) | 60 days (mobile homes / no written lease) | No — banned |
 | Connecticut | No statewide cap (Fair Rent Commissions in larger cities) | 45 days | No — banned (but FRCs can block excessive increases) |
 | Delaware | No cap | 60 days (90-120 for mobile homes) | Yes — but none exist |
