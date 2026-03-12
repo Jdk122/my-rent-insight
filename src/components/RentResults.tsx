@@ -193,8 +193,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     ? counterOffer.counterLow >= newRent
     : false;
 
-  const multiplier = calc?.increaseRatio ?? 0;
-
   // ━━━ Data confidence ━━━
   const compRadius = useMemo(() => {
     if (!rentcast.data?.comparables) return { maxDistance: null, label: '' };
