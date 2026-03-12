@@ -23,7 +23,7 @@ export const guides: GuideArticle[] = [
     author: 'RenewalReply',
     readingTime: '10 min read',
     category: 'Rent Negotiation',
-    relatedSlugs: ['rent-increase-laws-by-state'],
+    relatedSlugs: ['rent-increase-laws-by-state', 'what-should-i-pay-for-rent'],
     content: `You just got the renewal notice. Your landlord wants more — maybe 5%, maybe 15%. Do not reply emotionally. In many cases, a rent increase is negotiable if you come back with the right data and a clear counteroffer.
 
 Tenants who negotiate with specific market evidence usually get a better outcome than tenants who respond emotionally or without a clear counteroffer.
