@@ -157,25 +157,39 @@ const ReportGate = ({
     })();
   };
 
-  // Adaptive copy based on pain level and tool type
-  const heading = isHighPain
-    ? toolType === 'renewal'
-      ? 'Unlock your Evidence & Action Kit'
-      : 'Unlock your Full Market Report'
-    : 'Save your analysis — get the full report emailed to you';
+  const heading = "You're 60 seconds from being ready to negotiate.";
 
-  const bullets = toolType === 'renewal'
-    ? `Includes: ${compsCount} comparable listings with real addresses, full market analysis, your personalized negotiation letter, and recommended next steps.`
-    : `Includes: ${compsCount} comparable listings with real addresses, full market analysis, negotiation playbook with copy-paste email template, and recommended next steps.`;
+  const trendSign = (marketYoy ?? 0) > 0 ? '+' : '';
+  const trendStr = marketYoy != null ? `${trendSign}${marketYoy}%` : '';
+
+  const bulletItems = toolType === 'renewal'
+    ? [
+        `${compsCount} comparable listings with real addresses and rents`,
+        trendStr ? `Your rent vs. the ${trendStr} local trend — the strongest argument you have` : 'Your rent vs. the local market trend — the strongest argument you have',
+        'A negotiation letter you can copy and send tonight',
+        'A recommended counter-offer based on your actual market',
+      ]
+    : [
+        `${compsCount} comparable listings with real addresses and rents`,
+        trendStr ? `Your rent vs. the ${trendStr} local trend — the strongest argument you have` : 'Your rent vs. the local market trend — the strongest argument you have',
+        'A negotiation playbook with a copy-paste email template',
+        'A recommended price range based on your actual market',
+      ];
 
   return (
     <div ref={gateRef} className="rounded-xl border border-primary/20 px-5 sm:px-8 py-6 sm:py-8 text-center" style={{ background: 'hsl(var(--primary) / 0.04)' }}>
-      <h2 className="font-display text-xl sm:text-2xl font-semibold text-foreground mb-2" style={{ letterSpacing: '-0.01em' }}>
+      <p className="text-sm font-medium text-primary mb-2 tracking-wide">Your personalized report is built.</p>
+      <h2 className="font-display text-xl sm:text-2xl font-semibold text-foreground mb-4" style={{ letterSpacing: '-0.01em' }}>
         {heading}
       </h2>
-      <p className="text-sm text-muted-foreground mb-5 max-w-[440px] mx-auto leading-relaxed">
-        {bullets}
-      </p>
+      <div className="text-sm text-muted-foreground mb-6 max-w-[440px] mx-auto text-left space-y-1.5">
+        {bulletItems.map((item, i) => (
+          <div key={i} className="flex items-start gap-2">
+            <span className="text-primary shrink-0 mt-0.5">✓</span>
+            <span className="leading-relaxed">{item}</span>
+          </div>
+        ))}
+      </div>
       <form onSubmit={handleSubmit} className="flex gap-2 max-w-[440px] mx-auto">
         <input
           type="email"
@@ -192,15 +206,15 @@ const ReportGate = ({
           disabled={loading}
           className="bg-primary text-primary-foreground px-5 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap shrink-0 disabled:opacity-60"
         >
-          {loading ? 'Unlocking…' : 'Unlock my report →'}
+          {loading ? 'Unlocking…' : 'Unlock my negotiation package →'}
         </button>
       </form>
       {error && <p className="text-xs text-destructive mt-1">{error}</p>}
-      <div className="mt-3">
-        <SocialProofLine />
-      </div>
-      <p className="text-[11px] text-muted-foreground/60 text-center mt-3">
-        No spam. Unsubscribe anytime. See our{' '}
+      <p className="text-sm text-muted-foreground mt-3 font-medium">
+        100% free. No account needed. No spam ever.
+      </p>
+      <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
+        Unsubscribe anytime. See our{' '}
         <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
       </p>
     </div>
