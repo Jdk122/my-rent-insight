@@ -26,7 +26,7 @@ const About = () => {
           <h2>What Makes RenewalReply Different</h2>
           <ul>
             <li>Multiple independent data sources cross-referenced for accuracy</li>
-            <li>Coverage for 38,000+ zip codes across all 50 states</li>
+            <li>Coverage for 38,600+ zip codes across all 50 states</li>
             <li>Real-time comparable listings from MLS and public records</li>
             <li>Free negotiation letter backed by specific market evidence</li>
           </ul>
@@ -73,7 +73,7 @@ const About = () => {
         <div className="mt-8 pt-6 border-t border-border/50">
           <h2 className="text-lg font-semibold text-foreground mb-4">Coverage & Data</h2>
           <ul className="space-y-2 text-[15px] text-muted-foreground">
-            <li className="flex gap-2"><span className="text-primary">•</span> 38,000+ zip codes across all 50 states and DC</li>
+            <li className="flex gap-2"><span className="text-primary">•</span> 38,600+ zip codes across all 50 states and DC</li>
             <li className="flex gap-2"><span className="text-primary">•</span> HUD SAFMR and 50th Percentile data updated annually (currently FY2026)</li>
             <li className="flex gap-2"><span className="text-primary">•</span> Apartment List and Zillow trends updated monthly</li>
             <li className="flex gap-2"><span className="text-primary">•</span> Real-time comparable listings updated daily</li>

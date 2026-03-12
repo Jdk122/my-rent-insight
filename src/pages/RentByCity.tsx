@@ -192,7 +192,7 @@ const RentByCity = () => {
     },
     {
       q: `Can I afford to rent in ${city}?`,
-      a: `Using the 30% affordability rule, a household needs to earn at least ${fmt(affordableIncome)}/year to afford the average 1-bedroom rent of ${fmt(avgFmr[1])}/month without being cost-burdened.${censusMedianRent ? ` The Census median gross rent in ${city} is ${fmt(censusMedianRent)}/mo.` : ''}`,
+      a: `Using the 30% affordability rule, a household needs to earn at least ${fmt(affordableIncome)}/year to afford the average 1-bedroom rent of ${fmt(avgFmr[1])}/month without being cost-burdened.${censusMedianRent ? ` The estimated median rent in ${city} is ${fmt(censusMedianRent)}/mo.` : ''}`,
     },
     {
       q: `How much has rent changed in ${city}?`,

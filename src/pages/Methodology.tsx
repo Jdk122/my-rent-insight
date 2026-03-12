@@ -30,7 +30,7 @@ const Methodology = () => {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <SEO
         title="How RenewalReply Works — Methodology & Data Sources"
-        description="Learn how RenewalReply's Fairness Score analyzes rent increases using HUD rents, Apartment List trends, Zillow ZORI, live market comps, and Census data."
+        description="Learn how RenewalReply's Fairness Score analyzes rent increases using HUD rents, Apartment List trends, Zillow ZORI, and live market comps."
         canonical="/methodology"
       />
 

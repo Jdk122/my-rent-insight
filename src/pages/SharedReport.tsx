@@ -172,7 +172,7 @@ const SharedReport = () => {
               <Row label={`Typical ${report.bedroomLabel.toLowerCase()} range`} value={`$${fmt(report.typicalRangeLow)} – $${fmt(report.typicalRangeHigh)}`} />
             )}
             {report.censusMedianRent !== null && (
-              <Row label="Census median rent" value={`$${fmt(report.censusMedianRent)}/mo`} />
+              <Row label="Estimated median rent" value={`$${fmt(report.censusMedianRent)}/mo`} />
             )}
             {report.medianIncome !== null && (
               <Row label="Area median household income" value={`$${fmt(report.medianIncome)}/yr`} />
