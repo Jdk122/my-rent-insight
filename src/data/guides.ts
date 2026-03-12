@@ -285,7 +285,7 @@ Landlords generally cannot raise rent during the first 12 months of a tenancy an
 
 **Notice required:** 90 days.
 
-### Washington, D.C.
+### Washington, DC
 
 Washington, D.C. has its own rent-stabilization system. For most covered units, annual increases are tied to CPI-W plus 2%, subject to a 10% ceiling. For registered elderly or disabled tenants, the allowable increase is generally the lesser of CPI, Social Security COLA, or 5%. Covered units must receive at least 60 calendar days' notice of any increase. Common exemptions include units built after 1975 and certain units owned by natural persons with no more than four rental units in the District.
 
