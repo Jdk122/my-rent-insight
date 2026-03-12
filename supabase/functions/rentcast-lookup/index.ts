@@ -137,6 +137,7 @@ function processComps(
       ...comp,
       isSameBuilding,
       isSameUnitLine,
+      isBedroomFallback,
       relevanceScore,
       // Correlation boost: unit line (×1.8) > building (×1.5) > none
       correlation: isSameUnitLine
