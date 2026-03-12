@@ -720,7 +720,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             Area rents moved {marketYoy}% this year.
                           </p>
                         )}
-                        {isNycZip(rentData.zip) && hasIncrease && (
+                        {capturedEmail && isNycZip(rentData.zip) && hasIncrease && (
                           <p className="text-xs text-muted-foreground/70 mt-2">
                             Live in a rent-stabilized apartment? Your increase may be legally capped —{' '}
                             <button
