@@ -128,13 +128,16 @@ function processComps(
     const baseCorrelation = comp.correlation ?? 0.5;
     // Tiered relevance: unit line > building > nearby
     const buildingBoost = isSameUnitLine ? 0.35 : isSameBuilding ? 0.25 : 0;
+    const bedroomBonus = (requestedBedrooms !== null && comp.bedrooms !== null && comp.bedrooms === requestedBedrooms) ? 0.15 : 0;
+    const isBedroomFallback = requestedBedrooms !== null && comp.bedrooms !== null && comp.bedrooms !== requestedBedrooms;
     const relevanceScore =
-      baseCorrelation * 0.45 + freshnessScore * 0.2 + buildingBoost;
+      baseCorrelation * 0.45 + freshnessScore * 0.2 + buildingBoost + bedroomBonus;
 
     return {
       ...comp,
       isSameBuilding,
       isSameUnitLine,
+      isBedroomFallback,
       relevanceScore,
       // Correlation boost: unit line (×1.8) > building (×1.5) > none
       correlation: isSameUnitLine
@@ -145,18 +148,25 @@ function processComps(
     };
   });
 
-  // Validate
-  const valid = enriched.filter((comp: any) => {
+  // Validate: two-pass — prefer exact bedroom match, fall back to ±1 only if thin
+  const exactMatch = enriched.filter((comp: any) => {
     if (comp.rent == null || comp.rent < 200 || comp.rent > 25000) return false;
-    if (
-      requestedBedrooms !== null &&
-      comp.bedrooms != null &&
-      Math.abs(comp.bedrooms - requestedBedrooms) > 1
-    )
-      return false;
     if (comp.distance != null && comp.distance > 10) return false;
+    if (requestedBedrooms !== null && comp.bedrooms != null && comp.bedrooms !== requestedBedrooms) return false;
     return true;
   });
+
+  let valid;
+  if (exactMatch.length >= 3) {
+    valid = exactMatch;
+  } else {
+    valid = enriched.filter((comp: any) => {
+      if (comp.rent == null || comp.rent < 200 || comp.rent > 25000) return false;
+      if (comp.distance != null && comp.distance > 10) return false;
+      if (requestedBedrooms !== null && comp.bedrooms != null && Math.abs(comp.bedrooms - requestedBedrooms) > 1) return false;
+      return true;
+    });
+  }
 
   // Sort by composite relevance
   valid.sort((a: any, b: any) => b.relevanceScore - a.relevanceScore);
