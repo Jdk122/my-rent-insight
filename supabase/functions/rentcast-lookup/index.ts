@@ -381,6 +381,9 @@ serve(async (req) => {
       }
     }
 
+    // Extract detected bedroom count from Rentcast subject attributes
+    const detectedBedrooms: number | null = data.bedrooms ?? null;
+
     const result = {
       rentEstimate: prioritised.length > 0 ? (data.rent ?? data.rentRangeLow ?? null) : null,
       rentRangeLow: data.rentRangeLow ?? null,
@@ -388,6 +391,7 @@ serve(async (req) => {
       propertyType,
       comparables: prioritised,
       retried,
+      detectedBedrooms,
     };
 
     // Upsert to cache

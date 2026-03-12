@@ -443,8 +443,12 @@ const WsipResults = ({
                 {propertyData.squareFootage && ` · ${propertyData.squareFootage.toLocaleString()} sqft`}
               </p>
             )}
+            {rentcast.data?.detectedBedrooms != null && rentcast.data.detectedBedrooms !== bedroomNum && (
+              <p className="text-[11px] text-muted-foreground/60 mb-2 italic">
+                Our data suggests this may be a {rentcast.data.detectedBedrooms === 0 ? 'studio' : `${rentcast.data.detectedBedrooms}-bedroom`} unit. Results are based on your selection.
+              </p>
+            )}
 
-            {/* Summary line */}
             {askingRent && savings !== null && savings > 0 && (
               <p className="text-base sm:text-lg font-medium text-destructive mb-2">
                 ${fmt(savings)}/month above market
