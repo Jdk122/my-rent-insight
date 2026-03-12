@@ -948,38 +948,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         </div>
       </div>
 
-      {/* ━━━ Transition edge ━━━ */}
-      <div className="w-full h-px" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} />
-
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           PHASE 2: EMAIL GATE (if not captured)
+           PHASE 3: EVERYTHING UNLOCKED (after email)
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <div className="w-full bg-card">
         <div className="max-w-[620px] mx-auto px-5 sm:px-6">
-
-        {!capturedEmail && (
-          <section id="section-gate" className="py-10">
-            <ReportGate
-              toolType="renewal"
-              compsCount={compsWithRent.length}
-              verdictLabel={verdictLabel}
-              isHighPain={isHighPain}
-              leadContext={leadContext}
-              analysisId={analysisId}
-              zip={rentData.zip}
-              city={city}
-              onEmailCaptured={setCapturedEmail}
-              prefilledEmail={capturedEmail}
-              shareReportPayload={shareReportPayload}
-              onReportGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
-              marketYoy={marketYoy}
-            />
-          </section>
-        )}
-
-        {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-             PHASE 3: EVERYTHING UNLOCKED (after email)
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         {capturedEmail && (
           <>
             {/* ━━━ EVIDENCE SECTION ━━━ */}
