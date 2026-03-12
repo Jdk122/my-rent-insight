@@ -139,7 +139,7 @@ const RentByZip = () => {
         }
       }
 
-      setData({ raw, al, hud50, freshness, nearby, sameCity, sameMetro, metroAvgFmr1br, similarRentZips });
+      setData({ raw, al, hud50, freshness, nearby, sameCity, sameMetro, metroAvgFmr1br, similarRentZips, totalCityZips });
       setLoading(false);
     })();
     return () => { cancelled = true; };
