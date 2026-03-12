@@ -973,28 +973,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 {hasIncrease ? 'The Evidence' : 'What the Market Says'}
               </motion.h2>
 
-              {/* Action Insight */}
-              {hasIncrease && (
-                <motion.div
-                  {...fade(0.06)}
-                  className={`mb-8 border-l-4 pl-4 py-2 rounded-r-md ${
-                    isAboveMarket
-                      ? 'border-destructive/60 bg-destructive/5'
-                      : isBelowMarket
-                      ? 'border-verdict-good/60 bg-verdict-good/5'
-                      : 'border-blue-400/60 bg-blue-50/50 dark:bg-blue-950/20'
-                  }`}
-                >
-                  <p className="text-base font-medium text-foreground leading-relaxed">
-                    {isAboveMarket
-                      ? 'Your increase exceeds what the local market supports. You have strong grounds to negotiate a lower number.'
-                      : isBelowMarket
-                      ? "Your rent is below market — your leverage isn't on price. Ask for a longer lease at the current rate, unit improvements, or maintenance you've been waiting on."
-                      : `Your increase tracks the market — but that doesn't mean you can't negotiate. Landlords expect it. A flat renewal or smaller increase saves you $${fmt(increaseAmount * 12)}/year without changing apartments.`
-                    }
-                  </p>
-                </motion.div>
-              )}
+
+
 
               <div className="space-y-6">
                 {/* Property Profile Card */}
