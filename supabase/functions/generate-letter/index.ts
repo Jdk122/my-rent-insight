@@ -79,7 +79,7 @@ serve(async (req) => {
     // --- Origin check ---
     const origin = req.headers.get('origin') || '';
     const referer = req.headers.get('referer') || '';
-    if (!origin.includes('renewalreply.com') && !referer.includes('renewalreply.com') && !origin.includes('lovable.app') && !referer.includes('lovable.app') && !origin.includes('localhost')) {
+    if (!origin.includes('renewalreply.com') && !referer.includes('renewalreply.com') && !origin.includes('lovable.app') && !referer.includes('lovable.app') && !origin.includes('lovableproject.com') && !referer.includes('lovableproject.com') && !origin.includes('localhost')) {
       return new Response(
         JSON.stringify({ error: 'Forbidden' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
