@@ -88,7 +88,7 @@ const WhatShouldIPay = () => {
 
   const handleSubmit = async (data: WsipFormData) => {
     setIsLoading(true);
-    setCapturedEmail('');
+    setCapturedEmailRaw(getRememberedEmail());
 
     try {
       const lookupZip = data.zip;

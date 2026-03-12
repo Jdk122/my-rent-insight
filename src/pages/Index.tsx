@@ -327,11 +327,11 @@ const Index = () => {
             propertyData={propertyLookup.data}
             propertyLoading={propertyLookup.loading}
             propertyError={propertyLookup.error}
-            onReset={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmail(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            onReset={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             onScrollToTop={() => {
               setResults(null);
               setFormKey(k => k + 1);
-              setCapturedEmail('');
+              setCapturedEmailRaw(getRememberedEmail());
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             capturedEmail={capturedEmail}
