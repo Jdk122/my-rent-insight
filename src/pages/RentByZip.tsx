@@ -166,6 +166,16 @@ const RentByZip = () => {
   const hasHud50 = hud50 !== null && hud50.f50 !== undefined && hud50.f50[1] > 0;
   const isThinPage = !hasMarketData && !hasHud50;
 
+  // Data confidence level for display differentiation
+  const dataConfidence = (() => {
+    const hasCensusIncome = raw.i != null && raw.i >= 10000;
+    const sources = [hasZillow, hasAL, hasCensusIncome, hasHud50].filter(Boolean).length;
+    if (sources >= 3) return 'high';
+    if (sources >= 1) return 'moderate';
+    return 'limited';
+  })();
+  const dataSourceCount = [hasZillow, hasAL, raw.i != null && raw.i >= 10000, hasHud50].filter(Boolean).length + 1; // +1 for base HUD FMR
+
   const freshest = getFreshestDate(freshness, hasZillow, hasAL);
   const freshestFormatted = formatFreshnessDate(freshest.date);
   const dataYear = getDataYear(freshness);
