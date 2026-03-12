@@ -319,20 +319,27 @@ const RentByZip = () => {
 
           {/* Quick summary — optimized for Google featured snippet extraction */}
           <p className="mt-4 text-base text-foreground/80 leading-relaxed">
-            The typical rent for a 1-bedroom in {zip} ({city}, {state}) is {fmt(heroRent)}/month.
-            {trendYoY !== null
-              ? ` Rents in this area have ${trendYoY >= 0 ? 'increased' : 'decreased'} ${Math.abs(trendYoY).toFixed(1)}% over the past year (${trendAttribution}).`
-              : ''}
+            {dataConfidence === 'limited'
+              ? `Federal rent benchmarks suggest a 1-bedroom in ${zip} is approximately ${fmt(heroRent)}/month. Limited market trend data is available for this area.`
+              : <>
+                  The typical rent for a 1-bedroom in {zip} ({city}, {state}) is {fmt(heroRent)}/month.
+                  {trendYoY !== null
+                    ? ` Rents in this area have ${trendYoY >= 0 ? 'increased' : 'decreased'} ${Math.abs(trendYoY).toFixed(1)}% over the past year (${trendAttribution}).`
+                    : ''}
+                </>
+            }
           </p>
 
-          {/* Change 3: Verdict sentence first */}
-          <p className="mt-6 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
-            {trendsDiverge
-              ? `Rents in ${city} have changed approximately ${trendLow! > 0 ? '+' : ''}${trendLow!.toFixed(1)}% – ${trendHigh! > 0 ? '+' : ''}${trendHigh!.toFixed(1)}% over the past year based on local market data. ${trendHigh! < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendHigh!.toFixed(1)}% is above the local market trend.`}`
-              : trendYoY !== null
-                ? `Rents in ${city} have ${trendYoY >= 0 ? 'grown' : 'declined'} approximately ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}%${isHudOnlyTrend ? ' (HUD estimate)' : ''} over the past year based on ${trendAttribution}. ${trendYoY < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendYoY.toFixed(1)}% is above the local market trend.`}`
-                : `The national average rent increase is approximately ${NATIONAL_AVG_YOY}% year-over-year. A rent increase above ${NATIONAL_AVG_YOY}% is above the national market trend.`}
-          </p>
+          {/* Verdict sentence — hidden on limited pages */}
+          {dataConfidence !== 'limited' && (
+            <p className="mt-6 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
+              {trendsDiverge
+                ? `Rents in ${city} have changed approximately ${trendLow! > 0 ? '+' : ''}${trendLow!.toFixed(1)}% – ${trendHigh! > 0 ? '+' : ''}${trendHigh!.toFixed(1)}% over the past year based on local market data. ${trendHigh! < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendHigh!.toFixed(1)}% is above the local market trend.`}`
+                : trendYoY !== null
+                  ? `Rents in ${city} have ${trendYoY >= 0 ? 'grown' : 'declined'} approximately ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}%${isHudOnlyTrend ? ' (HUD estimate)' : ''} over the past year based on ${trendAttribution}. ${trendYoY < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendYoY.toFixed(1)}% is above the local market trend.`}`
+                  : `The national average rent increase is approximately ${NATIONAL_AVG_YOY}% year-over-year. A rent increase above ${NATIONAL_AVG_YOY}% is above the national market trend.`}
+            </p>
+          )}
 
           {/* Primary figure: Typical rent */}
           <div className="mt-5">
@@ -341,22 +348,9 @@ const RentByZip = () => {
             <p className="text-xs text-muted-foreground/70 mt-2">Source: {heroRentSource}</p>
           </div>
 
-          {/* Last updated */}
-          <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent" />
-            Last updated <time dateTime={freshest.date}>{freshestFormatted}</time>
-          </p>
-
-          {/* HUD-only note */}
-          {!hasMarketData && (
-            <p className="mt-3 text-sm text-muted-foreground bg-muted/40 border border-border rounded-lg px-4 py-3">
-              📊 Market trend data is limited for this area. The analysis below uses federal rent benchmarks.
-            </p>
-          )}
-
-          {/* Thin page note */}
-          {isThinPage && (
-            <p className="mt-2 text-sm text-muted-foreground bg-muted/40 border border-border rounded-lg px-4 py-3">
+          {/* Thin page note — prominent for limited data */}
+          {dataConfidence === 'limited' && (
+            <p className="mt-4 text-base text-muted-foreground bg-muted/40 border border-border rounded-lg px-4 py-3 leading-relaxed">
               This area has limited data coverage. For more detailed rent data, see the{' '}
               <Link to={`/rent-data/${stateSlug}/${citySlug}`} className="text-primary underline hover:no-underline">
                 city-level analysis for {city}
@@ -364,12 +358,45 @@ const RentByZip = () => {
             </p>
           )}
 
-          {/* CTA */}
+          {/* Last updated */}
+          <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent" />
+            Last updated <time dateTime={freshest.date}>{freshestFormatted}</time>
+          </p>
+
+          {/* Data confidence indicator */}
+          {dataConfidence === 'moderate' && (
+            <p className="mt-3 text-sm text-muted-foreground">
+              Based on federal benchmarks and {dataSourceCount - 1} additional market source{dataSourceCount - 1 !== 1 ? 's' : ''}.
+            </p>
+          )}
+          {dataConfidence === 'high' && (
+            <p className="mt-3 text-sm text-muted-foreground">
+              Based on {dataSourceCount} independent data sources including local market trends and nearby listings.
+            </p>
+          )}
+
+          {/* HUD-only note (moderate pages without market trends) */}
+          {dataConfidence === 'moderate' && !hasMarketData && (
+            <p className="mt-3 text-sm text-muted-foreground bg-muted/40 border border-border rounded-lg px-4 py-3">
+              📊 Market trend data is limited for this area. The analysis below uses federal rent benchmarks.
+            </p>
+          )}
+
+          {/* CTA — adapt based on confidence */}
           <div className="mt-6 flex flex-wrap items-center gap-3">
-            <Link to={`/?zip=${zip}`} className="inline-flex items-center bg-primary text-primary-foreground px-6 h-11 rounded-lg font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
-              Check Your Rent Increase →
-            </Link>
-            <span className="text-muted-foreground text-sm hidden sm:inline">or</span>
+            {dataConfidence === 'limited' ? (
+              <Link to={`/what-should-i-pay?zip=${zip}`} className="inline-flex items-center bg-primary text-primary-foreground px-6 h-11 rounded-lg font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
+                Check what rent should cost in {zip} →
+              </Link>
+            ) : (
+              <>
+                <Link to={`/?zip=${zip}`} className="inline-flex items-center bg-primary text-primary-foreground px-6 h-11 rounded-lg font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
+                  Check Your Rent Increase →
+                </Link>
+                <span className="text-muted-foreground text-sm hidden sm:inline">or</span>
+              </>
+            )}
             <form onSubmit={(e) => { e.preventDefault(); const t = searchZip.trim(); if (t.length === 5 && /^\d{5}$/.test(t)) { navigate(`/rent/${t}`); setSearchZip(''); } }} className="flex items-center gap-2">
               <Input type="text" inputMode="numeric" pattern="\d{5}" maxLength={5} placeholder="Other zip…" value={searchZip} onChange={(e) => setSearchZip(e.target.value.replace(/\D/g, '').slice(0, 5))} className="h-11 w-28" />
               <button type="submit" disabled={!/^\d{5}$/.test(searchZip)} className="bg-muted text-foreground px-4 h-11 rounded-lg text-sm font-semibold hover:bg-muted/80 transition-all duration-150 disabled:opacity-40">Go</button>
