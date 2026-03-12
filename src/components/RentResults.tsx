@@ -85,7 +85,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   // calc is computed later, after bldg and medianCompRent are available
 
   const newRent = formData.currentRent + increaseAmount;
-  const annualExtra = increaseAmount * 12;
   const compositeTrendResult = useMemo(() => calculateCompositeTrend({
     alYoY: rentData.alYoY,
     zoriYoY: rentData.zoriYoY,
