@@ -5,7 +5,6 @@ import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
 import { generateSharedReport, SharedReportPayload } from '@/lib/generateSharedReport';
-import SocialProofLine from './SocialProofLine';
 import type { LeadContext } from './EmailCapture';
 
 interface ReportGateProps {
