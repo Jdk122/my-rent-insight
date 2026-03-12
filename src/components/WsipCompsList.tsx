@@ -29,6 +29,11 @@ const CompRow = ({ comp, idx, offset }: { comp: RentcastComparable; idx: number;
           <p className="text-sm font-medium text-foreground truncate">
             {comp.formattedAddress}
           </p>
+          {comp.isBedroomFallback && (
+            <span className="shrink-0 text-[10px] font-medium tracking-wider px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border">
+              Different BR count
+            </span>
+          )}
           {comp.isSameUnitLine && (
             <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
               Same line

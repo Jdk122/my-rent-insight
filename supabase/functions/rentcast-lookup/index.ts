@@ -148,18 +148,25 @@ function processComps(
     };
   });
 
-  // Validate
-  const valid = enriched.filter((comp: any) => {
+  // Validate: two-pass — prefer exact bedroom match, fall back to ±1 only if thin
+  const exactMatch = enriched.filter((comp: any) => {
     if (comp.rent == null || comp.rent < 200 || comp.rent > 25000) return false;
-    if (
-      requestedBedrooms !== null &&
-      comp.bedrooms != null &&
-      Math.abs(comp.bedrooms - requestedBedrooms) > 1
-    )
-      return false;
     if (comp.distance != null && comp.distance > 10) return false;
+    if (requestedBedrooms !== null && comp.bedrooms != null && comp.bedrooms !== requestedBedrooms) return false;
     return true;
   });
+
+  let valid;
+  if (exactMatch.length >= 3) {
+    valid = exactMatch;
+  } else {
+    valid = enriched.filter((comp: any) => {
+      if (comp.rent == null || comp.rent < 200 || comp.rent > 25000) return false;
+      if (comp.distance != null && comp.distance > 10) return false;
+      if (requestedBedrooms !== null && comp.bedrooms != null && Math.abs(comp.bedrooms - requestedBedrooms) > 1) return false;
+      return true;
+    });
+  }
 
   // Sort by composite relevance
   valid.sort((a: any, b: any) => b.relevanceScore - a.relevanceScore);

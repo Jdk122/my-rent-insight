@@ -22,6 +22,8 @@ export interface RentcastComparable {
   seasonalRent?: number | null;
   /** Whether this comp's rent was seasonally adjusted */
   seasonallyAdjusted?: boolean;
+  /** True when comp bedroom count differs from requested (±1 fallback) */
+  isBedroomFallback?: boolean;
 }
 
 export interface RentcastResult {
