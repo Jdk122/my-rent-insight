@@ -37,6 +37,10 @@ interface ReportGateProps {
   monthlyOverpayment?: number | null;
   /** WSIP tool: monthly $ savings opportunity (askingRent - fairRangeHigh). Only passed when verdict is 'above'. */
   monthlySavings?: number | null;
+  /** Renewal tool: true when rent is below FMR but increase rate is aggressively above trend */
+  belowFmrHighIncrease?: boolean;
+  /** Increase percentage for belowFmrHighIncrease copy */
+  increasePct?: number;
 }
 
 function getGateCopy(
