@@ -824,26 +824,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </p>
               )}
 
-              {/* Data Confidence Badge */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.25, duration: 0.4 }}
-                className="mt-4"
-              >
-                <DataConfidenceBadge level={confidence.level} note={confidence.note} />
-                <p className="text-[11px] text-muted-foreground/60 mt-2 text-center leading-relaxed">
-                  This analysis is for informational purposes only and does not constitute legal, financial, or real estate advice.{' '}
-                  <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
-                </p>
-              </motion.div>
-
               {/* ── Sample comp(s) — tangible proof ── */}
               {sampleComps.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.4 }}
+                  transition={{ delay: 0.25, duration: 0.4 }}
                   className="mt-6 w-full max-w-[540px]"
                 >
                   <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
@@ -868,6 +854,20 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   </div>
                 </motion.div>
               )}
+
+              {/* Data Confidence Badge + Disclaimer */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3, duration: 0.4 }}
+                className="mt-4"
+              >
+                <DataConfidenceBadge level={confidence.level} note={confidence.note} />
+                <p className="text-[11px] text-muted-foreground/60 mt-2 text-center leading-relaxed">
+                  This analysis is for informational purposes only and does not constitute legal, financial, or real estate advice.{' '}
+                  <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
+                </p>
+              </motion.div>
 
               {/* ── "Why this result" line ── */}
               <motion.p
