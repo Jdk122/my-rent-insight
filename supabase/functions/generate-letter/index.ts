@@ -76,6 +76,50 @@ serve(async (req) => {
   }
 
   try {
+    // --- Origin check ---
+    const origin = req.headers.get('origin') || '';
+    const referer = req.headers.get('referer') || '';
+    if (!origin.includes('renewalreply.com') && !referer.includes('renewalreply.com') && !origin.includes('lovable.app') && !referer.includes('lovable.app') && !origin.includes('localhost')) {
+      return new Response(
+        JSON.stringify({ error: 'Forbidden' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
+    // --- Rate limiting (5/hour) ---
+    const clientIP =
+      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    const windowStart = new Date();
+    windowStart.setMinutes(0, 0, 0);
+    const windowKey = windowStart.toISOString();
+    const rlSb = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    );
+    const { data: rlRow } = await rlSb
+      .from('rate_limits')
+      .select('request_count')
+      .eq('ip_address', clientIP)
+      .eq('endpoint', 'generate-letter')
+      .eq('window_start', windowKey)
+      .maybeSingle();
+    if (rlRow && rlRow.request_count >= 5) {
+      return new Response(
+        JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+    await rlSb.from('rate_limits').upsert(
+      {
+        ip_address: clientIP,
+        endpoint: 'generate-letter',
+        window_start: windowKey,
+        request_count: (rlRow?.request_count ?? 0) + 1,
+      },
+      { onConflict: 'ip_address,endpoint,window_start' },
+    );
+    // --- End rate limiting ---
+
     const requestBody = await req.json();
     const { letterTone, ...analysisData } = requestBody;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
