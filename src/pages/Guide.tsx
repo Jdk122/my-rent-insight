@@ -32,9 +32,12 @@ const markdownComponents: Components = {
 const Guide = () => {
   const { slug } = useParams<{ slug: string }>();
   const article = slug ? getGuideBySlug(slug) : undefined;
+  usePrerenderReady(true);
 
   if (!article) {
     return (
+      <>
+      <NoIndexMeta />
       <div className="min-h-screen bg-background flex flex-col">
         <SEO title="Guide Not Found | RenewalReply" noindex />
         <PageNav />
