@@ -58,7 +58,7 @@ Certain conditions tilt the negotiation further in your favor:
 
 **Winter timing.** Leases expiring November through February give you natural leverage. Fewer people move in winter, which means fewer potential replacement tenants.
 
-**Rent stabilization.** In some cities — New York, Los Angeles, San Francisco, and others — your rent increase may be legally capped. If you're not sure whether your unit qualifies, check your city's rent board.
+**Rent stabilization.** In some cities — New York, Los Angeles, San Francisco, and others — your rent increase may be legally capped. If you're not sure whether your unit qualifies, check your city's rent board or [check your state's rules in our rent increase laws by state guide](/guides/rent-increase-laws-by-state).
 
 Notice requirements for rent increases vary by state and city, so check your local rules before assuming the proposed timeline or increase is valid.
 
