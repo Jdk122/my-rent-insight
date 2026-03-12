@@ -764,10 +764,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 >
                   <p className="text-base font-medium text-foreground leading-relaxed">
                     {isAboveMarket
-                      ? 'Your increase exceeds what the local market supports. You have strong grounds to negotiate a lower number.'
+                      ? 'Your increase exceeds what the local market supports. Renters in your position have strong grounds to negotiate — your negotiation package is ready below.'
                       : isBelowMarket
-                      ? "Your rent is below market — your leverage isn't on price. Ask for a longer lease at the current rate, unit improvements, or maintenance you've been waiting on."
-                      : `Your increase tracks the market — but that doesn't mean you can't negotiate. Landlords expect it. A flat renewal or smaller increase saves you $${fmt(increaseAmount * 12)}/year without changing apartments.`
+                      ? "Your rent is below market — but you can still negotiate for value. Longer lease terms, unit improvements, or maintenance requests are all on the table. See your options below."
+                      : 'Your increase tracks the market — but renters who negotiate with data save an average of $1,200/year. Your negotiation package is ready below.'
                     }
                   </p>
                 </motion.div>
