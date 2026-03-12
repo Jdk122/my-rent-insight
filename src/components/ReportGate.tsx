@@ -28,6 +28,8 @@ interface ReportGateProps {
   shareReportPayload?: SharedReportPayload;
   /** Callback when report link is generated */
   onReportGenerated?: (url: string) => void;
+  /** Local market YoY trend percentage */
+  marketYoy?: number;
 }
 
 const ReportGate = ({
