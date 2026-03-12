@@ -235,7 +235,7 @@ This guide covers every state: whether there's a cap, how much notice your landl
 | New Hampshire | No cap | 30 days (60 for mobile homes) | No — banned |
 | [New Jersey](#new-jersey) | No statewide cap (many local controls) | At least 30 days written notice; lease or local ordinance may require more | Yes — numerous municipalities have caps |
 | New Mexico | No cap | 30 days | No |
-| New York | No traditional statewide cap; Good Cause Eviction law creates soft cap (inflation + 5%, max 10%) on many market-rate units | 30-90 days (based on tenancy length; applies when increase exceeds 5% or landlord does not intend to renew) | Yes — NYC rent stabilization covers ~1M units; Good Cause applies more broadly |
+| [New York](#new-york) | No traditional statewide cap; Good Cause Eviction law creates soft cap (inflation + 5%, max 10%) on many market-rate units | 30-90 days (based on tenancy length; applies when increase exceeds 5% or landlord does not intend to renew) | Yes — NYC rent stabilization covers ~1M units; Good Cause applies more broadly |
 | North Carolina | No cap | No specific statewide statute; check lease and local law | No — banned |
 | North Dakota | No cap | 30 days (90 for mobile homes) | No |
 | Ohio | No cap | No specific statewide statute; check lease and local law | No — banned |
