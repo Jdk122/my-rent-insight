@@ -94,9 +94,9 @@ function getGateCopy(
         };
       case 'at-market':
         return {
-          heading: 'At-market doesn\'t mean non-negotiable. See the comps.',
-          bulletA: 'See how your rent compares to nearby units',
-          bulletB: 'Get a ready-to-send response before you reply',
+          heading: 'Your rent is fair — but you still have leverage. Here\'s the proof.',
+          bulletA: compsCount > 0 ? `${compsCount} comparable units — see exactly where you stand` : 'Comparable units — see exactly where you stand',
+          bulletB: 'A ready-to-send renewal response that protects your position',
           cta: 'Email me my full report →',
         };
       case 'below':
