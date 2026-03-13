@@ -5,6 +5,7 @@ import { getRentData, getApartmentListData, type RentZipRaw, type ApartmentListZ
 import { slugify, STATE_NAMES } from '@/data/cityStateUtils';
 import { getDataFreshness, formatFreshnessDate, getHudFiscalYear, getDataYear, type DataFreshness } from '@/data/dataFreshness';
 import { Input } from '@/components/ui/input';
+import LocationSearch from '@/components/LocationSearch';
 import ShareDataButton from '@/components/ShareDataButton';
 import DataPageFreshness from '@/components/DataPageFreshness';
 import SEO from '@/components/SEO';
