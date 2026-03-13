@@ -1410,6 +1410,21 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </div>
             </motion.section>
 
+            {/* ━━━ Related Guides ━━━ */}
+            <motion.section {...fade(0.24)} className="pt-2 pb-6">
+              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 text-center">Related Guides</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <Link to="/guides/how-to-negotiate-rent-increase" className="rounded-lg border border-border bg-card p-4 hover:border-primary/30 transition-colors">
+                  <p className="text-[13px] font-semibold text-foreground">How to Negotiate a Rent Increase</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">Counter-offer math, email template, and scripts</p>
+                </Link>
+                <Link to="/guides/rent-increase-laws-by-state" className="rounded-lg border border-border bg-card p-4 hover:border-primary/30 transition-colors">
+                  <p className="text-[13px] font-semibold text-foreground">Rent Increase Laws by State</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">Caps, notice periods, and your rights</p>
+                </Link>
+              </div>
+            </motion.section>
+
             {/* Cross-link to WSIP */}
             {isAboveMarket && (
               <motion.div {...fade(0.25)} className="pb-6 text-center">
