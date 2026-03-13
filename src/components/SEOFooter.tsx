@@ -80,9 +80,9 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
           </ul>
         </div>
 
-        {/* Legal */}
+        {/* Company */}
         <div>
-          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/70 mb-3">Legal</h3>
+          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/70 mb-3">Company</h3>
           <ul className="space-y-2">
             <li><Link to="/privacy" className={linkClass}>Privacy</Link></li>
             <li><Link to="/terms" className={linkClass}>Terms</Link></li>
