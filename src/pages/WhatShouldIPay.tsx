@@ -262,9 +262,6 @@ const WhatShouldIPay = () => {
           <Suspense fallback={null}>
             <WsipHowItWorks />
           </Suspense>
-          <Suspense fallback={null}>
-            <WsipFAQ />
-          </Suspense>
 
           {/* ━━━ Renter Guides (educate) ━━━ */}
           <section className="max-w-[820px] mx-auto px-5 sm:px-6 pt-10 pb-14 sm:pb-16 border-t border-border/40">
@@ -302,6 +299,10 @@ const WhatShouldIPay = () => {
               <Link to="/rent-data" className="text-primary hover:underline font-medium">Browse rent data by city →</Link>
             </div>
           </section>
+
+          <Suspense fallback={null}>
+            <WsipFAQ />
+          </Suspense>
 
           {/* ━━━ Explore Rent Data (discover) ━━━ */}
           <section className="max-w-[820px] mx-auto px-5 sm:px-6 pt-10 pb-14 sm:pb-16 border-t border-border/40">
