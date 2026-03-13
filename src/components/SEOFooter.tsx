@@ -105,9 +105,10 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
         </div>
       </nav>
     </div>
+    </div>
 
     {/* Data attribution bar */}
-    <div className="px-5 sm:px-6 py-3" style={{ backgroundColor: 'hsl(200 10% 90%)' }}>
+    <div className="px-5 sm:px-6 py-3" style={{ backgroundColor: 'hsl(210 15% 84%)' }}>
       <p className="max-w-5xl mx-auto text-[10px] sm:text-[11px] text-muted-foreground/60 leading-snug text-center">
         Data: HUD SAFMR FY2026 · Apartment List · Zillow ZORI · Live Market Comps · NY DHCR. For informational purposes only — not legal or financial advice.
       </p>
