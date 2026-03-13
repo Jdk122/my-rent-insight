@@ -59,10 +59,24 @@ function getGateCopy(
   if (toolType === 'renewal') {
     // Priority 1: belowFmrHighIncrease overrides normal verdict branching
     if (belowFmrHighIncrease) {
+      const hasValidIncrease = typeof increasePct === 'number' && increasePct > 0;
+      const rawMultiple =
+        typeof marketYoy === 'number' && marketYoy > 0 && hasValidIncrease
+          ? increasePct / marketYoy
+          : null;
+      const trendMultiple = rawMultiple ? Math.round(rawMultiple) : null;
+
+      const heading =
+        hasValidIncrease && rawMultiple && rawMultiple >= 2
+          ? `Your rent is below market — but a ${Math.round(increasePct)}% increase is ${trendMultiple}x the area trend.`
+          : hasValidIncrease
+            ? `Your rent is below market — but a ${Math.round(increasePct)}% increase is still too aggressive.`
+            : `Your rent is below market — but the increase is still too aggressive.`;
+
       return {
-        heading: `Your rent is below market — but a ${increasePct ?? 0}% increase is still too aggressive.`,
-        bulletA: 'See the comps showing where your rent falls',
-        bulletB: 'Get a landlord-ready email to push back on the rate of increase',
+        heading,
+        bulletA: 'See the comps showing your rent is already fair — and why the increase isn\'t',
+        bulletB: 'Get a landlord-ready letter that says yes to renewing — but no to the increase',
         cta: 'Email me my negotiation plan →',
       };
     }
@@ -70,9 +84,9 @@ function getGateCopy(
       case 'above':
         if (monthlyOverpayment && monthlyOverpayment > 0) {
           return {
-            heading: `You're overpaying by ~$${fmt(monthlyOverpayment)}/month`,
-            bulletA: compsCount > 0 ? `See the ${compsCount} comps behind that number` : 'See the comps behind that number',
-            bulletB: 'Copy a send-ready email with your exact counter-offer',
+            heading: `You're overpaying by ~$${fmt(monthlyOverpayment)}/month. Here's the evidence.`,
+            bulletA: compsCount > 0 ? `${compsCount} comparable units showing your landlord is charging above market` : 'Comparable units showing your landlord is charging above market',
+            bulletB: 'A send-ready negotiation letter with your exact counter-offer built in',
             cta: 'Email me my counter-offer →',
           };
         }
