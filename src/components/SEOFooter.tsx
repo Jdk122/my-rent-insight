@@ -60,7 +60,7 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
       </div>
 
       {/* Link columns */}
-      <nav aria-label="Footer navigation" className="max-w-xl mx-auto grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-8">
+      <nav aria-label="Footer navigation" className="grid grid-cols-3 gap-x-6 sm:gap-x-8 gap-y-8 sm:max-w-xl sm:mx-auto">
         {/* Tools */}
         <div>
           <h3 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/70 mb-3">Tools</h3>
