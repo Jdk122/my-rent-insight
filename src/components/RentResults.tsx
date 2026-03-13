@@ -35,6 +35,7 @@ import PostConversionFlow from './PostConversionFlow';
 import FeedbackWidget from './FeedbackWidget';
 import SocialProofLine from './SocialProofLine';
 import ReportGate from './ReportGate';
+import PreGateCompPreview from './PreGateCompPreview';
 import { demoRentcast } from '@/data/demoData';
 
 interface RentResultsProps {
