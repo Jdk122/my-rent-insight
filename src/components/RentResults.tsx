@@ -854,6 +854,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </motion.div>
               )}
 
+              <PreGateCompPreview compsWithRent={compsWithRent} capturedEmail={capturedEmail} fmt={fmt} />
+
               {/* ── Email gate (moved from Phase 2) ── */}
               {!capturedEmail && (
                 <section id="section-gate" className="py-8">
