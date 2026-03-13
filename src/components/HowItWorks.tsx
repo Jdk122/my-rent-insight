@@ -59,8 +59,8 @@ const HowItWorks = () => (
 
       {/* Mobile/Tablet: vertical stacked with connecting line */}
       <div className="lg:hidden relative">
-        {/* Vertical connecting line */}
-        <div className="absolute left-[22px] top-[32px] bottom-[32px] w-px border-l-2 border-dashed border-primary/15 z-0" />
+
+
 
         <div className="space-y-2">
           {steps.map((step) => (
