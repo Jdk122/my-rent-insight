@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { MapPin, BarChart3, Mail } from 'lucide-react';
+import { MapPin, BarChart3, Mail, ArrowRight } from 'lucide-react';
 
 const steps = [
   {
