@@ -60,7 +60,7 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
     )}
 
     {/* Main footer */}
-    <div className="max-w-4xl mx-auto px-5 sm:px-6 py-6 sm:py-8 flex flex-col items-center gap-4 sm:gap-6">
+    <div className="max-w-4xl mx-auto px-5 sm:px-6 py-5 sm:py-6 flex flex-col items-center gap-3 sm:gap-4">
       {/* Brand */}
       <Link to="/" className="shrink-0">
         <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-5 sm:h-6 w-auto object-contain" />
@@ -88,8 +88,8 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
     </div>
 
     {/* Disclaimer */}
-    <div className="border-t border-border/50 px-5 sm:px-6 py-3 sm:py-4">
-      <p className="max-w-3xl mx-auto text-[10px] sm:text-[11px] text-muted-foreground/40 leading-relaxed text-center">
+    <div className="border-t border-border/50 px-5 sm:px-6 py-2.5 sm:py-3">
+      <p className="max-w-3xl mx-auto text-[10px] sm:text-[11px] text-muted-foreground/55 leading-snug text-center">
         Data: HUD SAFMR FY2026 · Apartment List · Zillow ZORI · Live Market Comps · NY DHCR. For informational purposes only — not legal or financial advice.
       </p>
     </div>
