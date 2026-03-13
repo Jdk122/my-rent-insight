@@ -340,7 +340,7 @@ const ReportGate = ({
       </form>
       {error && <p className="text-xs text-destructive mt-1">{error}</p>}
       <p className="text-sm text-muted-foreground mt-3 font-medium">
-        Free report · No spam · Instant delivery
+        Free · Instant delivery · Unsubscribe anytime
       </p>
       <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
         Unsubscribe anytime. See our{' '}
