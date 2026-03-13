@@ -260,7 +260,14 @@ const WhatShouldIPay = () => {
             </Suspense>
           </section>
           <Suspense fallback={null}>
-            <WsipHowItWorks />
+            <HowItWorks
+              steps={[
+                { number: '01', title: 'Enter the Listing Details', description: "Enter the listing address, bedroom count, and the rent they're asking." },
+                { number: '02', title: 'We Compare It to Real Data', description: 'We compare the asking price against HUD data, Zillow trends, and real-time comps within 1 mile.' },
+                { number: '03', title: 'Get Your Verdict', description: 'Get your verdict — with comparable listings and negotiation tips if the price is too high.' },
+              ]}
+              subtitle="Three steps. No account required. Free forever."
+            />
           </Suspense>
 
           {/* ━━━ Renter Guides (educate) ━━━ */}
