@@ -8,6 +8,7 @@ const sections = [
     title: 'Renewal Tool',
     demos: [
       { label: 'Above Market', path: '/?demo=above', desc: 'Rent increase is above market — triggers overpaying headline & letter flow' },
+      { label: 'Above (No Overpayment)', path: '/?demo=above-no-overpayment', desc: 'Above market but no usable counter-offer — tests "X% vs Y%" fallback headline' },
       { label: 'Fair / At Market', path: '/?demo=fair', desc: 'Rent increase is at market — fair verdict, "doesn\'t mean non-negotiable" gate copy' },
       { label: 'Below Market', path: '/?demo=below', desc: 'Rent below market — "protect your position" gate copy' },
       { label: 'No Increase', path: '/?demo=none', desc: 'No rent increase entered — "your landlord kept it flat" gate copy' },
@@ -25,7 +26,9 @@ const sections = [
   {
     title: 'WSIP Tool',
     demos: [
-      { label: 'Overpriced', path: '/what-should-i-pay?demo=overpriced', desc: 'Asking rent is above market — dollar savings headline' },
+      { label: 'Overpriced (Extreme)', path: '/what-should-i-pay?demo=overpriced', desc: 'Extreme edge case — $7,200 asking vs ~$5,800 median. Tests high-dollar savings headline' },
+      { label: 'Overpriced (Realistic)', path: '/what-should-i-pay?demo=overpriced-realistic', desc: 'Modest overpayment (~$350-400/mo) — credible "above market" scenario' },
+      { label: 'Overpriced (Premium)', path: '/what-should-i-pay?demo=overpriced-premium', desc: 'Luxury 2-bed at $7,200 with high FMR — tests gate copy when fair range is also high' },
       { label: 'Fair', path: '/what-should-i-pay?demo=fair', desc: 'Asking rent is at market — "fair price confirmed" gate copy' },
       { label: 'Deal', path: '/what-should-i-pay?demo=deal', desc: 'Asking rent is below market — "good deal" gate copy' },
     ],
