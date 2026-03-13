@@ -644,7 +644,8 @@ function DashboardContent() {
                       </td>
                     </tr>
                   );
-                })}
+                });
+                })()}
                 {rows.length === 0 && (
                   <tr><td colSpan={19} className="px-4 py-8 text-center text-muted-foreground">No results found</td></tr>
                 )}
