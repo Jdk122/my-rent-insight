@@ -48,10 +48,9 @@ const TOP_CITIES: { city: string; state: string; zip: string }[] = [
 ];
 
 const RentData = () => {
-  const navigate = useNavigate();
   const [allData, setAllData] = useState<Record<string, RentZipRaw> | null>(null);
   const [loading, setLoading] = useState(true);
-  const [searchZip, setSearchZip] = useState('');
+  const [contactOpen, setContactOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const [freshness, setFreshness] = useState<DataFreshness | null>(null);
 
