@@ -360,10 +360,7 @@ const ReportGate = ({
         </button>
       </form>
       {error && <p className="text-xs text-destructive mt-1">{error}</p>}
-      <p className="text-[13px] text-muted-foreground/70 mt-3 italic">
-        See the market data behind your result.
-      </p>
-      <p className="text-sm text-muted-foreground mt-1.5 font-medium">
+      <p className="text-sm text-muted-foreground mt-3 font-medium">
         Free · Instant delivery · Unsubscribe anytime
       </p>
       <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
