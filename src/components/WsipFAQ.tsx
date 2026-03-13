@@ -21,7 +21,7 @@ const faqs: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: 'What areas do you cover?',
-    a: 'We cover 38,000+ US zip codes using federal housing data and real-time market listings.',
+    a: 'We cover 38,600+ US zip codes using HUD Fair Market Rent data, Zillow and Apartment List rent trends, and real-time comparable listings.',
   },
   {
     q: 'How is this different from Zillow or Apartments.com?',
