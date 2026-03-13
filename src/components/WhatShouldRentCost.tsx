@@ -18,7 +18,7 @@ const WhatShouldRentCost = ({ location, fmr, hud50, censusMedianRent }: WhatShou
     <section className="mb-12">
       <h2 className="font-display text-2xl text-foreground mb-2 tracking-tight">What Should Rent Cost in {location}?</h2>
       <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
-        Typical rent ranges based on HUD benchmarks and market data. The floor is the HUD Fair Market Rent and the ceiling is the HUD Estimated Rent or market median where available.
+        Typical rent ranges based on HUD benchmarks and market data. In areas with limited listing data, ranges reflect federal benchmarks and may be wider than actual market conditions.
       </p>
       <div className="space-y-3">
         {BEDROOM_LABELS.map((label, i) => {
