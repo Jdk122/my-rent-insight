@@ -98,6 +98,7 @@ export type Database = {
           rent_stabilized: boolean | null
           results_shared: boolean | null
           sale_data_found: boolean | null
+          session_id: string | null
           state: string | null
           tool_type: string
           utm_campaign: string | null
@@ -135,6 +136,7 @@ export type Database = {
           rent_stabilized?: boolean | null
           results_shared?: boolean | null
           sale_data_found?: boolean | null
+          session_id?: string | null
           state?: string | null
           tool_type?: string
           utm_campaign?: string | null
@@ -172,6 +174,7 @@ export type Database = {
           rent_stabilized?: boolean | null
           results_shared?: boolean | null
           sale_data_found?: boolean | null
+          session_id?: string | null
           state?: string | null
           tool_type?: string
           utm_campaign?: string | null
