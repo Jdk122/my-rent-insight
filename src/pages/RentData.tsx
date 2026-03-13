@@ -51,7 +51,6 @@ const RentData = () => {
   const [allData, setAllData] = useState<Record<string, RentZipRaw> | null>(null);
   const [loading, setLoading] = useState(true);
   const [contactOpen, setContactOpen] = useState(false);
-  const [contactOpen, setContactOpen] = useState(false);
   const [freshness, setFreshness] = useState<DataFreshness | null>(null);
 
   useEffect(() => {
