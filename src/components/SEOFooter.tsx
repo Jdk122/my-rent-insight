@@ -60,28 +60,28 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
     )}
 
     {/* Main footer */}
-    <div className="max-w-4xl mx-auto px-5 sm:px-6 py-6 sm:py-8 flex flex-col sm:flex-row items-center sm:items-center justify-between gap-4 sm:gap-6">
+    <div className="max-w-4xl mx-auto px-5 sm:px-6 py-6 sm:py-8 flex flex-col items-center gap-4 sm:gap-6">
       {/* Brand */}
-      <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6">
-        <Link to="/" className="shrink-0">
-          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-5 sm:h-6 w-auto object-contain" />
-        </Link>
-        <nav className="grid grid-cols-2 gap-x-6 gap-y-2 sm:flex sm:items-center sm:justify-center sm:gap-4 text-[12px] sm:text-[13px] text-muted-foreground">
-          <Link to="/" className="hover:text-foreground transition-colors">Check My Increase</Link>
-          <Link to="/what-should-i-pay" className="hover:text-foreground transition-colors">Check Asking Price</Link>
-          <Link to="/rent-data" className="hover:text-foreground transition-colors">Rent Data</Link>
-          <Link to="/about" className="hover:text-foreground transition-colors">About</Link>
-          <Link to="/methodology" className="hover:text-foreground transition-colors">Methodology</Link>
-          <Link to="/guides" className="hover:text-foreground transition-colors">Guides</Link>
-          <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
-          <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
-          {onContactClick ? (
-            <button onClick={onContactClick} className="hover:text-foreground transition-colors">Contact</button>
-          ) : (
-            <Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link>
-          )}
-        </nav>
-      </div>
+      <Link to="/" className="shrink-0">
+        <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-5 sm:h-6 w-auto object-contain" />
+      </Link>
+
+      {/* Nav links: 2-col grid on mobile, inline flex on md+ */}
+      <nav className="grid grid-cols-2 gap-x-8 gap-y-2.5 text-center md:flex md:flex-wrap md:items-center md:justify-center md:gap-x-4 md:gap-y-1.5 text-[12px] sm:text-[13px] text-muted-foreground">
+        <Link to="/" className="hover:text-foreground transition-colors">Check My Increase</Link>
+        <Link to="/what-should-i-pay" className="hover:text-foreground transition-colors">Check Asking Price</Link>
+        <Link to="/rent-data" className="hover:text-foreground transition-colors">Rent Data</Link>
+        <Link to="/about" className="hover:text-foreground transition-colors">About</Link>
+        <Link to="/methodology" className="hover:text-foreground transition-colors">Methodology</Link>
+        <Link to="/guides" className="hover:text-foreground transition-colors">Guides</Link>
+        <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
+        <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
+        {onContactClick ? (
+          <button onClick={onContactClick} className="hover:text-foreground transition-colors">Contact</button>
+        ) : (
+          <Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link>
+        )}
+      </nav>
 
       {/* Copyright */}
       <p className="text-[11px] sm:text-xs text-muted-foreground/50 shrink-0">© 2026 RenewalReply</p>
