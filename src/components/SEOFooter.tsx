@@ -66,7 +66,7 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
         <Link to="/" className="shrink-0">
           <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-5 sm:h-6 w-auto object-contain" />
         </Link>
-        <nav className="flex items-center justify-center gap-3 sm:gap-4 text-[12px] sm:text-[13px] text-muted-foreground flex-wrap">
+        <nav className="grid grid-cols-2 gap-x-6 gap-y-2 sm:flex sm:items-center sm:justify-center sm:gap-4 text-[12px] sm:text-[13px] text-muted-foreground">
           <Link to="/" className="hover:text-foreground transition-colors">Check My Increase</Link>
           <Link to="/what-should-i-pay" className="hover:text-foreground transition-colors">Check Asking Price</Link>
           <Link to="/rent-data" className="hover:text-foreground transition-colors">Rent Data</Link>

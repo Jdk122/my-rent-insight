@@ -231,7 +231,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-2">
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <input
                       type="email"
                       placeholder="you@email.com"
@@ -245,7 +245,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
                     <button
                       type="submit"
                       disabled={loading}
-                      className="bg-primary text-primary-foreground px-4 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap shrink-0 disabled:opacity-60 flex items-center gap-2"
+                      className="w-full sm:w-auto bg-primary text-primary-foreground px-4 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap shrink-0 disabled:opacity-60 flex items-center justify-center gap-2"
                     >
                       {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</> : 'Unlock my letter →'}
                     </button>
