@@ -592,7 +592,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         city={city}
         onEmailCaptured={setCapturedEmail}
         shareReportPayload={shareReportPayload}
-        onReportGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
+        onReportGenerated={(url) => { setReportUrl(url); }}
       />
 
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
