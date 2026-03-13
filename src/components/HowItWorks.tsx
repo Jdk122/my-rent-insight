@@ -73,15 +73,13 @@ const HowItWorks = () => (
         <div className="absolute left-[29px] top-[40px] bottom-[40px] w-px border-l-2 border-dashed border-primary/15 z-0" />
 
         <div className="space-y-2">
-          {steps.map((step) => {
-            const Icon = step.icon;
-            return (
+          {steps.map((step, i) => (
               <div
                 key={step.number}
-                className="relative z-10 group flex items-start gap-5 py-4 px-3 rounded-xl transition-all duration-200 hover:bg-muted/40 hover:shadow-sm"
+                className="relative z-10 group flex items-start gap-4 py-4 px-3 rounded-xl transition-all duration-200 hover:bg-muted/40 hover:shadow-sm"
               >
-                <div className="w-[46px] h-[46px] rounded-xl bg-primary/[0.07] flex items-center justify-center shrink-0 group-hover:bg-primary/[0.12] transition-colors duration-200">
-                  <Icon className="text-primary" size={22} strokeWidth={1.8} />
+                <div className="w-[28px] h-[28px] flex items-center justify-center shrink-0 mt-1 text-primary/30">
+                  {shapes[i]}
                 </div>
                 <div className="pt-0.5">
                   <div className="flex items-center gap-2.5 mb-1">
@@ -95,8 +93,7 @@ const HowItWorks = () => (
                   </p>
                 </div>
               </div>
-            );
-          })}
+            ))}
         </div>
       </div>
 
