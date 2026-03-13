@@ -238,7 +238,7 @@ const wsipScenarios: Record<WsipDemoScenario, WsipDemoResult> = {
     zip: '10001',
     fullAddress: '220 W 26th St, New York, NY 10001',
     bedrooms: 'oneBr',
-    askingRent: 2800,
+    askingRent: 6200,
     rentData: { ...baseRentData },
   },
   'overpriced-premium': {
