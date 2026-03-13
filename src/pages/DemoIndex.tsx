@@ -26,7 +26,9 @@ const sections = [
   {
     title: 'WSIP Tool',
     demos: [
-      { label: 'Overpriced', path: '/what-should-i-pay?demo=overpriced', desc: 'Asking rent is above market — dollar savings headline' },
+      { label: 'Overpriced (Extreme)', path: '/what-should-i-pay?demo=overpriced', desc: 'Extreme edge case — $7,200 asking vs ~$5,800 median. Tests high-dollar savings headline' },
+      { label: 'Overpriced (Realistic)', path: '/what-should-i-pay?demo=overpriced-realistic', desc: 'Modest overpayment (~$350-400/mo) — credible "above market" scenario' },
+      { label: 'Overpriced (Premium)', path: '/what-should-i-pay?demo=overpriced-premium', desc: 'Luxury 2-bed at $7,200 with high FMR — tests gate copy when fair range is also high' },
       { label: 'Fair', path: '/what-should-i-pay?demo=fair', desc: 'Asking rent is at market — "fair price confirmed" gate copy' },
       { label: 'Deal', path: '/what-should-i-pay?demo=deal', desc: 'Asking rent is below market — "good deal" gate copy' },
     ],
