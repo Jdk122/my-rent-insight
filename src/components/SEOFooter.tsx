@@ -59,7 +59,7 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
       </div>
 
       {/* Link columns */}
-      <nav aria-label="Footer navigation" className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-8">
+      <nav aria-label="Footer navigation" className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-8">
         {/* Tools */}
         <div>
           <h3 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/70 mb-3">Tools</h3>
@@ -86,13 +86,6 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
           <ul className="space-y-2">
             <li><Link to="/privacy" className={linkClass}>Privacy</Link></li>
             <li><Link to="/terms" className={linkClass}>Terms</Link></li>
-          </ul>
-        </div>
-
-        {/* Contact */}
-        <div>
-          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/70 mb-3">Contact</h3>
-          <ul className="space-y-2">
             <li>
               {onContactClick ? (
                 <button onClick={onContactClick} className={linkClass}>Contact</button>
