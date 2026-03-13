@@ -24,11 +24,14 @@ const WhatShouldRentCost = ({ location, fmr, hud50, censusMedianRent }: WhatShou
         {BEDROOM_LABELS.map((label, i) => {
           if (fmr[i] === 0) return null;
           const floor = fmr[i];
-          const ceiling = hud50?.[i] && hud50[i] > floor
+          const rawCeiling = hud50?.[i] && hud50[i] > floor
             ? hud50[i]
             : (i === 1 && censusMedianRent && censusMedianRent > floor)
               ? censusMedianRent
               : Math.round(floor * 1.15);
+          // Enforce minimum 8% spread so ranges never look absurdly narrow
+          const minCeiling = Math.round(floor * 1.08);
+          const ceiling = Math.max(rawCeiling, minCeiling);
           const top25 = Math.round(ceiling * 1.15);
           return (
             <div key={label} className="rounded-lg border border-border p-4 bg-card">
