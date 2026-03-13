@@ -50,7 +50,7 @@ const HowItWorks = () => (
             </div>
               {i < steps.length - 1 && (
                 <div key={`arrow-${i}`} className="flex items-center justify-center pt-[22px]">
-                  <ArrowRight className="text-primary/25" size={20} strokeWidth={1.5} />
+                  <ArrowRight className="text-primary/50" size={20} strokeWidth={1.8} />
                 </div>
               )}
           </>
