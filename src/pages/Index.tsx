@@ -354,27 +354,18 @@ const Index = () => {
               <p className="text-[15px] text-muted-foreground text-center max-w-[440px] mx-auto mb-8 leading-relaxed">
                 Free guides built on real market data — not generic advice.
               </p>
-              <div className="flex flex-col divide-y divide-border/60">
-                <Link to="/guides/how-to-negotiate-rent-increase" className="group flex items-start gap-4 py-4 first:pt-0 last:pb-0 hover:bg-muted/30 -mx-3 px-3 rounded-lg transition-colors">
-                  <span className="font-display text-[28px] text-primary/30 leading-none mt-0.5 group-hover:text-primary transition-colors select-none">01</span>
-                  <div>
-                    <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">How to Negotiate a Rent Increase</h3>
-                    <p className="text-[13px] text-muted-foreground leading-relaxed mt-0.5">Counter-offer math, email templates, and step-by-step scripts</p>
-                  </div>
+              <div className="space-y-3">
+                <Link to="/guides/how-to-negotiate-rent-increase" className="group block rounded-xl border border-border/60 bg-card px-5 py-4 hover:border-primary/40 hover:shadow-sm transition-all duration-200">
+                  <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">How to Negotiate a Rent Increase</h3>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed mt-1">Counter-offer math, email templates, and step-by-step scripts</p>
                 </Link>
-                <Link to="/guides/what-should-i-pay-for-rent" className="group flex items-start gap-4 py-4 hover:bg-muted/30 -mx-3 px-3 rounded-lg transition-colors">
-                  <span className="font-display text-[28px] text-primary/30 leading-none mt-0.5 group-hover:text-primary transition-colors select-none">02</span>
-                  <div>
-                    <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">What Should I Pay for Rent?</h3>
-                    <p className="text-[13px] text-muted-foreground leading-relaxed mt-0.5">How to evaluate any asking price using real market benchmarks</p>
-                  </div>
+                <Link to="/guides/what-should-i-pay-for-rent" className="group block rounded-xl border border-border/60 bg-card px-5 py-4 hover:border-primary/40 hover:shadow-sm transition-all duration-200">
+                  <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">What Should I Pay for Rent?</h3>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed mt-1">How to evaluate any asking price using real market benchmarks</p>
                 </Link>
-                <Link to="/guides/rent-increase-laws-by-state" className="group flex items-start gap-4 py-4 last:pb-0 hover:bg-muted/30 -mx-3 px-3 rounded-lg transition-colors">
-                  <span className="font-display text-[28px] text-primary/30 leading-none mt-0.5 group-hover:text-primary transition-colors select-none">03</span>
-                  <div>
-                    <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">Rent Increase Laws by State</h3>
-                    <p className="text-[13px] text-muted-foreground leading-relaxed mt-0.5">Caps, notice periods, and your rights in all 50 states</p>
-                  </div>
+                <Link to="/guides/rent-increase-laws-by-state" className="group block rounded-xl border border-border/60 bg-card px-5 py-4 hover:border-primary/40 hover:shadow-sm transition-all duration-200">
+                  <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">Rent Increase Laws by State</h3>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed mt-1">Caps, notice periods, and your rights in all 50 states</p>
                 </Link>
               </div>
               <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 text-sm">
