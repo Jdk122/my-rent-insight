@@ -125,6 +125,7 @@ export default function LeadDetailPanel({ analysis, onClose }: LeadDetailPanelPr
           </Section>
 
           <Section title="Attribution">
+            <Row label="Session ID" value={analysis.session_id ? analysis.session_id.slice(0, 8) + '…' : '—'} />
             <Row label="UTM Source" value={analysis.utm_source ?? 'Direct'} />
             <Row label="UTM Medium" value={analysis.utm_medium ?? '—'} />
             <Row label="UTM Campaign" value={analysis.utm_campaign ?? '—'} />
