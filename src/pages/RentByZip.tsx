@@ -433,7 +433,7 @@ const RentByZip = () => {
               </Link>
             ) : (
               <>
-                <Link to={`/?zip=${zip}`} className="inline-flex items-center bg-primary text-primary-foreground px-6 h-11 rounded-lg font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
+                <Link to="/" className="inline-flex items-center bg-primary text-primary-foreground px-6 h-11 rounded-lg font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
                   Check Your Rent Increase →
                 </Link>
                 <span className="text-muted-foreground text-sm hidden sm:inline">or</span>
