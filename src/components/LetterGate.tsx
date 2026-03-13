@@ -4,6 +4,7 @@ import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
 import { generateSharedReport, SharedReportPayload } from '@/lib/generateSharedReport';
+import { notifySubmission } from '@/lib/notifySubmission';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import { Check, Copy, Loader2 } from 'lucide-react';
@@ -158,24 +159,22 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
         reportUrl,
       });
       // Re-notify with captured email
-      supabase.functions.invoke('notify-submission', {
-        body: {
-          email: email.trim(),
-          zip: leadContext?.zip || null,
-          city: leadContext?.city || null,
-          state: leadContext?.state || null,
-          bedrooms: leadContext?.bedrooms ?? null,
-          current_rent: leadContext?.currentRent ?? null,
-          proposed_rent: leadContext?.proposedRent ?? null,
-          increase_pct: leadContext?.increasePct ?? null,
-          fairness_score: leadContext?.fairnessScore ?? null,
-          verdict_label: verdict || null,
-          address: leadContext?.address || null,
-          comp_median_rent: leadContext?.compMedianRent ?? null,
-          hud_fmr_value: leadContext?.hudFmrValue ?? null,
-          analysis_id: leadContext?.analysisId || null,
-        },
-      }).catch(() => {});
+      await notifySubmission({
+        email: email.trim(),
+        zip: leadContext?.zip || null,
+        city: leadContext?.city || null,
+        state: leadContext?.state || null,
+        bedrooms: leadContext?.bedrooms ?? null,
+        current_rent: leadContext?.currentRent ?? null,
+        proposed_rent: leadContext?.proposedRent ?? null,
+        increase_pct: leadContext?.increasePct ?? null,
+        fairness_score: leadContext?.fairnessScore ?? null,
+        verdict_label: verdict || null,
+        address: leadContext?.address || null,
+        comp_median_rent: leadContext?.compMedianRent ?? null,
+        hud_fmr_value: leadContext?.hudFmrValue ?? null,
+        analysis_id: leadContext?.analysisId || null,
+      }, 'letter_gate_email_capture');
     })();
   };
 
