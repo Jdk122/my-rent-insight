@@ -75,11 +75,22 @@ function getGateCopy(
             cta: 'Email me my counter-offer →',
           };
         }
+        // Only use the specific % headline if both values are valid numbers
+        if (typeof increasePct === 'number' && typeof marketYoy === 'number' && increasePct > 0) {
+          const increaseText = increasePct >= 10 ? Math.round(increasePct).toString() : increasePct.toFixed(1);
+          const marketText = Math.abs(marketYoy) < 1 ? marketYoy.toFixed(1) : Math.round(marketYoy).toString();
+          return {
+            heading: `Your landlord wants ${increaseText}% — the market moved ${marketText}%. Here's what to send them.`,
+            bulletA: compsCount > 0 ? `${compsCount} comparable units showing what your neighbors actually pay` : 'Comparable units showing what your neighbors actually pay',
+            bulletB: 'A landlord-ready negotiation letter you can send this week',
+            cta: 'Email me my counter-offer →',
+          };
+        }
         return {
-          heading: 'Your increase exceeds the local market. Here\'s your plan.',
-          bulletA: 'See the comps behind your analysis',
-          bulletB: 'Get a landlord-ready response you can send this week',
-          cta: 'Email me my negotiation plan →',
+          heading: 'Your increase exceeds the local market. Here\'s what to send your landlord.',
+          bulletA: compsCount > 0 ? `${compsCount} comparable units showing what your neighbors actually pay` : 'Comparable units showing what your neighbors actually pay',
+          bulletB: 'A landlord-ready negotiation letter you can send this week',
+          cta: 'Email me my counter-offer →',
         };
       case 'at-market':
         return {
