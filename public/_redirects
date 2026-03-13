@@ -1,2 +1,5 @@
+# 301 redirect parameterized homepage duplicates to canonical ZIP pages
+/?zip=:zip    /rent/:zip    301
+
 /admin/*   /index.html   200
 /*         /index.html   200
