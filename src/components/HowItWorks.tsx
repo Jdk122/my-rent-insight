@@ -35,27 +35,33 @@ const HowItWorks = () => (
         Three steps. No account required.
       </p>
 
-      {/* Desktop: horizontal 3-col with connecting lines */}
-      <div className="hidden lg:grid lg:grid-cols-3 lg:gap-0 relative">
-
-        {steps.map((step) => {
+      {/* Desktop: horizontal 3-col with flow arrows */}
+      <div className="hidden lg:grid lg:grid-cols-[1fr_auto_1fr_auto_1fr] lg:items-start relative">
+        {steps.map((step, i) => {
           const Icon = step.icon;
           return (
-            <div
-              key={step.number}
-              className="relative z-10 group flex flex-col items-center text-center px-5 py-6 rounded-xl transition-all duration-200 hover:bg-muted/40 hover:shadow-sm cursor-default"
-            >
-              <div className="w-[56px] h-[56px] rounded-xl bg-primary/[0.07] flex items-center justify-center mb-3 group-hover:bg-primary/[0.12] transition-colors duration-200">
-                <Icon className="text-primary" size={22} strokeWidth={1.8} />
+            <>
+              <div
+                key={step.number}
+                className="relative z-10 group flex flex-col items-center text-center px-5 py-6 rounded-xl transition-all duration-200 hover:bg-muted/40 hover:shadow-sm cursor-default"
+              >
+                <div className="w-[56px] h-[56px] rounded-xl bg-primary/[0.07] flex items-center justify-center mb-3 group-hover:bg-primary/[0.12] transition-colors duration-200">
+                  <Icon className="text-primary" size={22} strokeWidth={1.8} />
+                </div>
+                <span className="text-[15px] font-mono font-bold text-primary mb-2 tabular-nums tracking-wide">
+                  {step.number}
+                </span>
+                <h3 className="text-[15px] font-semibold text-foreground mb-1.5">{step.title}</h3>
+                <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[220px]">
+                  {step.description}
+                </p>
               </div>
-              <span className="text-[15px] font-mono font-bold text-primary mb-2 tabular-nums tracking-wide">
-                {step.number}
-              </span>
-              <h3 className="text-[15px] font-semibold text-foreground mb-1.5">{step.title}</h3>
-              <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[220px]">
-                {step.description}
-              </p>
-            </div>
+              {i < steps.length - 1 && (
+                <div key={`arrow-${i}`} className="flex items-center justify-center pt-[34px]">
+                  <ArrowRight className="text-primary/25" size={20} strokeWidth={1.5} />
+                </div>
+              )}
+            </>
           );
         })}
       </div>
