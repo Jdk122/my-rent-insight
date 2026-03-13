@@ -137,10 +137,11 @@ function getGateCopy(
     case 'above':
       if (monthlySavings && monthlySavings > 0) {
         return {
-          heading: `This unit looks overpriced by ~$${fmt(monthlySavings)}/month`,
+      heading: `This unit looks overpriced by ~$${fmt(monthlySavings)}/month`,
           bulletA: 'See the comps behind that estimate',
           bulletB: 'Get a data-backed plan before you negotiate',
           cta: 'Email me my negotiation plan →',
+          valueAnchor: `This report could help you avoid paying ~$${fmt(monthlySavings * 12)}/year more than this unit is worth.`,
         };
       }
       return {
