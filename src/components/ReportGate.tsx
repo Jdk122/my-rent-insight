@@ -108,9 +108,9 @@ function getGateCopy(
         };
       default: // 'none' or fallback
         return {
-          heading: 'Your landlord kept your rent flat. Here\'s what that\'s worth.',
-          bulletA: 'See how your rent compares to nearby listings',
-          bulletB: 'A market report to use at your next renewal',
+          heading: 'Your rent isn\'t going up — do you know what you\'d pay if you moved?',
+          bulletA: compsCount > 0 ? `See how your current rent stacks up against ${compsCount} nearby listings` : 'See how your current rent stacks up against nearby listings',
+          bulletB: 'A market snapshot to keep in your back pocket for next year\'s renewal',
           cta: 'Email me my market report →',
         };
     }
