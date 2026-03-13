@@ -1,10 +1,11 @@
 import { useEffect, useState, useMemo } from 'react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getRentData, getApartmentListData, type RentZipRaw, type ApartmentListZipRaw } from '@/data/dataLoader';
 import { slugify, STATE_NAMES } from '@/data/cityStateUtils';
 import { getDataFreshness, formatFreshnessDate, getHudFiscalYear, getDataYear, type DataFreshness } from '@/data/dataFreshness';
-import { Input } from '@/components/ui/input';
+
+import LocationSearch from '@/components/LocationSearch';
 import ShareDataButton from '@/components/ShareDataButton';
 import DataPageFreshness from '@/components/DataPageFreshness';
 import SEO from '@/components/SEO';
@@ -47,10 +48,8 @@ const TOP_CITIES: { city: string; state: string; zip: string }[] = [
 ];
 
 const RentData = () => {
-  const navigate = useNavigate();
   const [allData, setAllData] = useState<Record<string, RentZipRaw> | null>(null);
   const [loading, setLoading] = useState(true);
-  const [searchZip, setSearchZip] = useState('');
   const [contactOpen, setContactOpen] = useState(false);
   const [freshness, setFreshness] = useState<DataFreshness | null>(null);
 
@@ -173,34 +172,9 @@ const RentData = () => {
           </p>
 
           {/* Search */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const trimmed = searchZip.trim();
-              if (trimmed.length === 5 && /^\d{5}$/.test(trimmed)) {
-                navigate(`/rent/${trimmed}`);
-              }
-            }}
-            className="mt-6 flex items-center gap-2"
-          >
-            <Input
-              type="text"
-              inputMode="numeric"
-              pattern="\d{5}"
-              maxLength={5}
-              placeholder="Enter zip code…"
-              value={searchZip}
-              onChange={(e) => setSearchZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
-              className="h-11 w-40"
-            />
-            <button
-              type="submit"
-              disabled={!/^\d{5}$/.test(searchZip)}
-              className="bg-primary text-primary-foreground px-5 h-11 rounded-lg text-sm font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 disabled:opacity-40"
-            >
-              Look up →
-            </button>
-          </form>
+          <div className="mt-6">
+            <LocationSearch />
+          </div>
         </section>
 
         {loading ? (
