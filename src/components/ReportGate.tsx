@@ -88,7 +88,7 @@ function getGateCopy(
             bulletA: compsCount > 0 ? `${compsCount} comparable units showing your landlord is charging above market` : 'Comparable units showing your landlord is charging above market',
             bulletB: 'A send-ready negotiation letter with your exact counter-offer built in',
             cta: 'Email me my counter-offer →',
-            valueAnchor: `This report could help you avoid paying ~$${fmt(monthlyOverpayment * 12)}/year more than the market supports.`,
+            valueAnchor: `This could help you save ~$${fmt(monthlyOverpayment * 12)}/year.`,
           };
         }
         // Only use the specific % headline if both values are valid numbers
