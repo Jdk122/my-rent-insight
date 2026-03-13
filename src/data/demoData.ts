@@ -202,7 +202,7 @@ export function getDemoData(scenario: string | null): { formData: RentFormData; 
 
 /* ── WSIP demo scenarios ── */
 
-type WsipDemoScenario = 'overpriced' | 'fair' | 'deal';
+type WsipDemoScenario = 'overpriced' | 'fair' | 'deal' | 'overpriced-realistic' | 'overpriced-premium';
 
 interface WsipDemoResult {
   zip: string;
