@@ -77,8 +77,9 @@ Deno.serve(async (req) => {
       ? `<p style="margin-top:12px;font-size:12px;color:#666">Total leads in database: <strong>${totalLeads}</strong></p>`
       : "";
 
+    const isEmailCapture = !!directEmail;
     const subject = leadEmail
-      ? `🏠 New submission: ${zip || "unknown"} — ${verdict_label || "N/A"} (Score ${fairness_score ?? "?"}) ✉️ EMAIL CAPTURED`
+      ? `🏠 ${isEmailCapture ? '✉️ EMAIL CAPTURED' : 'New submission'}: ${zip || "unknown"} — ${verdict_label || "N/A"} (Score ${fairness_score ?? "?"}) ✉️ ${leadEmail}`
       : `🏠 New submission: ${zip || "unknown"} — ${verdict_label || "N/A"} (Score ${fairness_score ?? "?"})`;
 
     const html = `
