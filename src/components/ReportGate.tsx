@@ -304,7 +304,7 @@ const ReportGate = ({
     })();
   };
 
-  const copy = getGateCopy(toolType, verdict, verdictLabel, compsCount, monthlyOverpayment, monthlySavings, belowFmrHighIncrease, increasePct);
+  const copy = getGateCopy(toolType, verdict, verdictLabel, compsCount, monthlyOverpayment, monthlySavings, belowFmrHighIncrease, increasePct, marketYoy);
 
   return (
     <div ref={gateRef} className="rounded-xl border border-primary/20 px-5 sm:px-8 py-7 sm:py-9 text-center" style={{ background: 'hsl(var(--primary) / 0.04)' }}>
