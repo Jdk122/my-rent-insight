@@ -68,7 +68,7 @@ const HowItWorks = () => (
                 key={step.number}
                 className="relative z-10 group flex items-start gap-4 py-4 px-3 rounded-xl transition-all duration-200 hover:bg-muted/40 hover:shadow-sm"
               >
-                <span className="font-display text-[26px] text-primary/20 leading-none shrink-0 w-[38px] text-center mt-0.5" style={{ letterSpacing: '-0.03em' }}>
+                <span className="font-display text-[30px] text-primary/30 leading-none shrink-0 w-[38px] text-center mt-0.5" style={{ letterSpacing: '-0.03em' }}>
                   {step.number}
                 </span>
                 <div className="pt-0.5">
