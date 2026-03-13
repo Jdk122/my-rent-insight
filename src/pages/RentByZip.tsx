@@ -315,7 +315,7 @@ const RentByZip = () => {
           {nearby.length > 0 && (<><h2>Nearby Areas</h2><ul>{nearby.map(({ zip: nZip, raw: nRaw }) => (<li key={nZip}><a href={`https://www.renewalreply.com/rent/${nZip}`}>{nZip} — {nRaw.c || 'Unknown'}, {nRaw.s} — 1-BR: {fmt(nRaw.f[1])}</a></li>))}</ul></>)}
           <p><a href={`https://www.renewalreply.com/rent-data/${stateSlug}/${citySlug}`}>{`← ${city}, ${state} rent data`}</a></p>
           {dataConfidence === 'limited'
-            ? <p><a href={`https://www.renewalreply.com/what-should-i-pay?zip=${zip}`}>{`Check what rent should cost in ${zip} →`}</a></p>
+            ? <p><a href="https://www.renewalreply.com/what-should-i-pay">{`Check what rent should cost in ${zip} →`}</a></p>
             : <p><a href="https://www.renewalreply.com/">Check if your rent increase is fair →</a></p>
           }
         </div>
@@ -428,7 +428,7 @@ const RentByZip = () => {
           {/* CTA — adapt based on confidence */}
           <div className="mt-6 flex flex-wrap items-center gap-3">
             {dataConfidence === 'limited' ? (
-              <Link to={`/what-should-i-pay?zip=${zip}`} className="inline-flex items-center bg-primary text-primary-foreground px-6 h-11 rounded-lg font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
+              <Link to="/what-should-i-pay" className="inline-flex items-center bg-primary text-primary-foreground px-6 h-11 rounded-lg font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
                 Check what rent should cost in {zip} →
               </Link>
             ) : (
