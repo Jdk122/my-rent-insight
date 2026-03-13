@@ -16,9 +16,9 @@ export interface GuideArticle {
 export const guides: GuideArticle[] = [
   {
     slug: 'how-to-negotiate-rent-increase',
-    title: 'How to Negotiate a Rent Increase: A Data-Driven Guide + Free Email Template',
-    metaTitle: 'How to Negotiate a Rent Increase: A Data-Driven Guide + Free Email Template',
-    metaDescription: 'Learn how to negotiate a rent increase using local rent trends, comparable listings, and a smart counteroffer. Includes a sample email template, worked examples, and practical scripts.',
+    title: 'How to Negotiate a Rent Increase: A Data-Driven Guide (+ Free Email Template)',
+    metaTitle: 'How to Negotiate a Rent Increase: Data-Driven Guide + Email Template (2026)',
+    metaDescription: 'Learn exactly how to negotiate a rent increase with market data, a worked counter-offer example, a sample email template, and insider knowledge of how landlords think about renewals.',
     publishedDate: '2026-03-11',
     author: 'RenewalReply',
     readingTime: '10 min read',
