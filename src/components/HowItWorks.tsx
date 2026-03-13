@@ -63,9 +63,8 @@ const HowItWorks = () => (
                   <ArrowRight className="text-primary/25" size={20} strokeWidth={1.5} />
                 </div>
               )}
-            </>
-          );
-        })}
+          </>
+        ))}
       </div>
 
       {/* Mobile/Tablet: vertical stacked with connecting line */}
