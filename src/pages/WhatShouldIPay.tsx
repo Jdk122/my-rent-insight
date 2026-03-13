@@ -16,7 +16,7 @@ const WsipResults = lazy(() => import('@/components/WsipResults'));
 const SocialProofCounter = lazy(() => import('@/components/SocialProofCounter'));
 const ContactModal = lazy(() => import('@/components/ContactModal'));
 const WsipFAQ = lazy(() => import('@/components/WsipFAQ'));
-const WsipHowItWorks = lazy(() => import('@/components/WsipHowItWorks'));
+const HowItWorks = lazy(() => import('@/components/HowItWorks'));
 const SEOFooter = lazy(() => import('@/components/SEOFooter'));
 const LocationSearch = lazy(() => import('@/components/LocationSearch'));
 
