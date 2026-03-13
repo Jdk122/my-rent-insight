@@ -353,7 +353,7 @@ const Index = () => {
                 Renter Guides
               </h2>
               <p className="text-[15px] text-muted-foreground text-center max-w-[440px] mx-auto mb-8 leading-relaxed">
-                Free guides built on real market data — not generic advice.
+                Learn how to save money on your next lease.
               </p>
               <div className="space-y-3">
                 <Link to="/guides/how-to-negotiate-rent-increase" className="group flex items-center gap-4 rounded-xl border border-border/60 border-l-[3px] border-l-primary bg-card px-5 py-4 hover:bg-primary/[0.03] hover:shadow-md hover:shadow-primary/[0.06] transition-all duration-200">

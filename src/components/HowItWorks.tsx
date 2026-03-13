@@ -37,8 +37,6 @@ const HowItWorks = () => (
 
       {/* Desktop: horizontal 3-col with connecting lines */}
       <div className="hidden lg:grid lg:grid-cols-3 lg:gap-0 relative">
-        {/* Connecting line behind cards */}
-        <div className="absolute top-[52px] left-[16.67%] right-[16.67%] h-px border-t-2 border-dashed border-primary/20 z-0" />
 
         {steps.map((step) => {
           const Icon = step.icon;
