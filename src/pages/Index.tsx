@@ -346,7 +346,6 @@ const Index = () => {
       {!results && !isLoading && (
         <Suspense fallback={null}>
           <HowItWorks />
-          <HomeFAQ />
             {/* ━━━ Internal links for SEO + discovery ━━━ */}
             <section className="max-w-[620px] mx-auto px-5 sm:px-6 pt-10 pb-14 sm:pb-20 border-t border-border/40">
               <h2 className="font-display text-[22px] sm:text-[26px] text-foreground tracking-tight text-center mb-2" style={{ letterSpacing: '-0.02em' }}>
@@ -383,6 +382,7 @@ const Index = () => {
                 <Link to="/rent-data" className="text-primary hover:underline font-medium">Browse rent data by city →</Link>
               </div>
             </section>
+          <HomeFAQ />
         </Suspense>
       )}
 
