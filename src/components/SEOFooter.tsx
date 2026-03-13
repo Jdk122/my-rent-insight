@@ -50,7 +50,7 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
     )}
 
     {/* Brand + copyright row */}
-    <div style={{ backgroundColor: 'hsl(210 15% 88%)' }}>
+    <div style={{ backgroundColor: 'hsl(210 12% 92%)' }}>
     <div className="max-w-5xl mx-auto px-5 sm:px-6 pt-8 sm:pt-10 pb-6">
       <div className="flex items-center justify-between mb-8">
         <Link to="/" className="shrink-0">
