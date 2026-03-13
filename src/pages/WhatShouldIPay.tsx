@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
+import { ChevronRight } from 'lucide-react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { useSearchParams, Link } from 'react-router-dom';
 import { lookupRentData, loadFredTrend, RentLookupResult, BedroomType } from '@/data/rentData';
@@ -17,6 +18,18 @@ const ContactModal = lazy(() => import('@/components/ContactModal'));
 const WsipFAQ = lazy(() => import('@/components/WsipFAQ'));
 const WsipHowItWorks = lazy(() => import('@/components/WsipHowItWorks'));
 const SEOFooter = lazy(() => import('@/components/SEOFooter'));
+const LocationSearch = lazy(() => import('@/components/LocationSearch'));
+
+const POPULAR_CITIES = [
+  { city: 'New York', stateSlug: 'new-york', citySlug: 'new-york' },
+  { city: 'Los Angeles', stateSlug: 'california', citySlug: 'los-angeles' },
+  { city: 'Chicago', stateSlug: 'illinois', citySlug: 'chicago' },
+  { city: 'Houston', stateSlug: 'texas', citySlug: 'houston' },
+  { city: 'Phoenix', stateSlug: 'arizona', citySlug: 'phoenix' },
+  { city: 'Philadelphia', stateSlug: 'pennsylvania', citySlug: 'philadelphia' },
+  { city: 'San Diego', stateSlug: 'california', citySlug: 'san-diego' },
+  { city: 'Dallas', stateSlug: 'texas', citySlug: 'dallas' },
+];
 
 interface WsipResultsState {
   zip: string;
@@ -252,6 +265,70 @@ const WhatShouldIPay = () => {
           <Suspense fallback={null}>
             <WsipFAQ />
           </Suspense>
+
+          {/* ━━━ Renter Guides (educate) ━━━ */}
+          <section className="max-w-[820px] mx-auto px-5 sm:px-6 pt-10 pb-14 sm:pb-16 border-t border-border/40">
+            <h2 className="font-display text-[22px] sm:text-[26px] text-foreground tracking-tight text-center mb-2" style={{ letterSpacing: '-0.02em' }}>
+              Renter Guides
+            </h2>
+            <p className="text-[15px] text-muted-foreground text-center max-w-[440px] mx-auto mb-8 leading-relaxed">
+              Learn how to save money on your next lease.
+            </p>
+            <div className="space-y-3">
+              <Link to="/guides/how-to-negotiate-rent-increase" className="group flex items-center gap-4 rounded-xl border border-border/60 border-l-[3px] border-l-primary bg-card px-5 py-4 hover:bg-primary/[0.03] hover:shadow-md hover:shadow-primary/[0.06] transition-all duration-200">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">How to Negotiate a Rent Increase</h3>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed mt-1">Counter-offer math, email templates, and step-by-step scripts</p>
+                </div>
+                <ChevronRight className="text-primary/50 group-hover:text-primary shrink-0 transition-all duration-200 group-hover:translate-x-0.5" size={18} />
+              </Link>
+              <Link to="/guides/what-should-i-pay-for-rent" className="group flex items-center gap-4 rounded-xl border border-border/60 border-l-[3px] border-l-primary bg-card px-5 py-4 hover:bg-primary/[0.03] hover:shadow-md hover:shadow-primary/[0.06] transition-all duration-200">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">What Should I Pay for Rent?</h3>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed mt-1">How to evaluate any asking price using real market benchmarks</p>
+                </div>
+                <ChevronRight className="text-primary/50 group-hover:text-primary shrink-0 transition-all duration-200 group-hover:translate-x-0.5" size={18} />
+              </Link>
+              <Link to="/guides/rent-increase-laws-by-state" className="group flex items-center gap-4 rounded-xl border border-border/60 border-l-[3px] border-l-primary bg-card px-5 py-4 hover:bg-primary/[0.03] hover:shadow-md hover:shadow-primary/[0.06] transition-all duration-200">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">Rent Increase Laws by State</h3>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed mt-1">Caps, notice periods, and your rights in all 50 states</p>
+                </div>
+                <ChevronRight className="text-primary/50 group-hover:text-primary shrink-0 transition-all duration-200 group-hover:translate-x-0.5" size={18} />
+              </Link>
+            </div>
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 text-sm">
+              <Link to="/" className="text-primary hover:underline font-medium">Check your rent increase →</Link>
+              <Link to="/rent-data" className="text-primary hover:underline font-medium">Browse rent data by city →</Link>
+            </div>
+          </section>
+
+          {/* ━━━ Explore Rent Data (discover) ━━━ */}
+          <section className="max-w-[820px] mx-auto px-5 sm:px-6 pt-10 pb-14 sm:pb-16 border-t border-border/40">
+            <h2 className="font-display text-[22px] sm:text-[26px] text-foreground tracking-tight text-center mb-2" style={{ letterSpacing: '-0.02em' }}>
+              Explore Rent Data
+            </h2>
+            <p className="text-[15px] text-muted-foreground text-center max-w-[480px] mx-auto mb-6 leading-relaxed">
+              Search rent data for any city, state, or zip code in the U.S.
+            </p>
+            <Suspense fallback={null}>
+              <LocationSearch className="max-w-lg mx-auto" />
+            </Suspense>
+            <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {POPULAR_CITIES.map(pc => (
+                <Link
+                  key={pc.city}
+                  to={`/rent-data/${pc.stateSlug}/${pc.citySlug}`}
+                  className="text-center rounded-lg border border-border/60 bg-card px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted/50 transition-colors"
+                >
+                  {pc.city}
+                </Link>
+              ))}
+            </div>
+            <div className="mt-5 text-center">
+              <Link to="/rent-data" className="text-sm text-primary hover:underline font-medium">View all states →</Link>
+            </div>
+          </section>
 
           {/* Noscript fallback for WSIP */}
           <noscript>
