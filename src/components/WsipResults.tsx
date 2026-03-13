@@ -604,7 +604,7 @@ const WsipResults = ({
                   onEmailCaptured={onEmailCaptured}
                   prefilledEmail={capturedEmail}
                   shareReportPayload={shareReportPayload}
-                  onReportGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
+                  onReportGenerated={(url) => { setReportUrl(url); }}
                   marketYoy={marketYoy}
                   monthlySavings={savings}
                 />

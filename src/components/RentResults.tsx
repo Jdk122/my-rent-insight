@@ -945,7 +945,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     onEmailCaptured={setCapturedEmail}
                     prefilledEmail={capturedEmail}
                     shareReportPayload={shareReportPayload}
-                    onReportGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
+                    onReportGenerated={(url) => { setReportUrl(url); }}
                     marketYoy={marketYoy}
                   />
                 </section>
