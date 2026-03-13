@@ -1,22 +1,28 @@
 import { Link } from 'react-router-dom';
-import { MapPin, BarChart3, Mail, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+
+const shapes = [
+  // Circle
+  <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5" /></svg>,
+  // Diamond
+  <svg width="11" height="11" viewBox="0 0 11 11" fill="currentColor"><rect x="5.5" y="0" width="7.07" height="7.07" rx="1.2" transform="rotate(45 5.5 0)" /></svg>,
+  // Rounded square
+  <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><rect width="10" height="10" rx="2.5" /></svg>,
+];
 
 const steps = [
   {
     number: '01',
-    icon: MapPin,
     title: 'Enter Your Details',
     description: 'Your address, current rent, and proposed increase. Takes 30 seconds.',
   },
   {
     number: '02',
-    icon: BarChart3,
     title: 'See If Your Increase Is Fair',
     description: 'We cross-reference six data sources to score your increase and show your fair rent range — instantly.',
   },
   {
     number: '03',
-    icon: Mail,
     title: 'Unlock Your Full Report',
     description: 'Get detailed comps, market conditions, and a negotiation letter delivered to your inbox.',
   },
