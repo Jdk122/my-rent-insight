@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { getUtmParams } from '@/lib/utm';
 import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
 import { generateSharedReport, SharedReportPayload } from '@/lib/generateSharedReport';
+import { notifySubmission } from '@/lib/notifySubmission';
 import SocialProofLine from './SocialProofLine';
 import PostConversionFlow from './PostConversionFlow';
 
