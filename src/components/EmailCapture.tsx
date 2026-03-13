@@ -139,24 +139,22 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
         reportUrl,
       });
       // Re-notify with captured email
-      supabase.functions.invoke('notify-submission', {
-        body: {
-          email,
-          zip: leadContext?.zip || null,
-          city: leadContext?.city || city,
-          state: leadContext?.state || null,
-          bedrooms: leadContext?.bedrooms ?? null,
-          current_rent: leadContext?.currentRent ?? null,
-          proposed_rent: leadContext?.proposedRent ?? null,
-          increase_pct: leadContext?.increasePct ?? null,
-          fairness_score: leadContext?.fairnessScore ?? null,
-          verdict_label: verdict || null,
-          address: leadContext?.address || null,
-          comp_median_rent: leadContext?.compMedianRent ?? null,
-          hud_fmr_value: leadContext?.hudFmrValue ?? null,
-          analysis_id: leadContext?.analysisId || null,
-        },
-      }).catch(() => {});
+      await notifySubmission({
+        email,
+        zip: leadContext?.zip || null,
+        city: leadContext?.city || city,
+        state: leadContext?.state || null,
+        bedrooms: leadContext?.bedrooms ?? null,
+        current_rent: leadContext?.currentRent ?? null,
+        proposed_rent: leadContext?.proposedRent ?? null,
+        increase_pct: leadContext?.increasePct ?? null,
+        fairness_score: leadContext?.fairnessScore ?? null,
+        verdict_label: verdict || null,
+        address: leadContext?.address || null,
+        comp_median_rent: leadContext?.compMedianRent ?? null,
+        hud_fmr_value: leadContext?.hudFmrValue ?? null,
+        analysis_id: leadContext?.analysisId || null,
+      }, 'email_capture_submit');
     })();
   };
 
