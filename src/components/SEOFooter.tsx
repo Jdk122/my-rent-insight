@@ -15,27 +15,15 @@ const TOP_CITIES = [
   { city: 'Philadelphia', state: 'PA', stateSlug: 'pennsylvania', citySlug: 'philadelphia' },
   { city: 'San Antonio', state: 'TX', stateSlug: 'texas', citySlug: 'san-antonio' },
   { city: 'San Diego', state: 'CA', stateSlug: 'california', citySlug: 'san-diego' },
-  { city: 'Dallas', state: 'TX', stateSlug: 'texas', citySlug: 'dallas' },
-  { city: 'San Jose', state: 'CA', stateSlug: 'california', citySlug: 'san-jose' },
-  { city: 'Orlando', state: 'FL', stateSlug: 'florida', citySlug: 'orlando' },
-  { city: 'Atlanta', state: 'GA', stateSlug: 'georgia', citySlug: 'atlanta' },
-  { city: 'Boston', state: 'MA', stateSlug: 'massachusetts', citySlug: 'boston' },
-  { city: 'Seattle', state: 'WA', stateSlug: 'washington', citySlug: 'seattle' },
-  { city: 'Denver', state: 'CO', stateSlug: 'colorado', citySlug: 'denver' },
-  { city: 'Washington', state: 'DC', stateSlug: 'district-of-columbia', citySlug: 'washington' },
-  { city: 'Nashville', state: 'TN', stateSlug: 'tennessee', citySlug: 'nashville' },
-  { city: 'Austin', state: 'TX', stateSlug: 'texas', citySlug: 'austin' },
-  { city: 'Miami', state: 'FL', stateSlug: 'florida', citySlug: 'miami' },
-  { city: 'Minneapolis', state: 'MN', stateSlug: 'minnesota', citySlug: 'minneapolis' },
 ];
 
 const linkClass = 'text-[13px] text-muted-foreground hover:text-foreground hover:underline transition-colors';
 
 const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClick, showCityDirectory = false }, ref) => (
-  <footer ref={ref} className="mt-auto border-t border-border" style={{ backgroundColor: 'hsl(200 10% 94%)' }}>
-    {/* City directory */}
+  <footer ref={ref} className="mt-auto border-t border-border">
+    {/* City directory — page background */}
     {showCityDirectory && (
-      <div className="border-b border-border/50">
+      <div className="border-b border-border/50 bg-background">
         <nav aria-label="Popular cities" className="max-w-5xl mx-auto px-5 sm:px-6 py-6 sm:py-8">
           <h2 className="text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-muted-foreground/60 mb-4">
             Explore Rent Data by City
@@ -62,6 +50,7 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
     )}
 
     {/* Brand + copyright row */}
+    <div style={{ backgroundColor: 'hsl(210 15% 88%)' }}>
     <div className="max-w-5xl mx-auto px-5 sm:px-6 pt-8 sm:pt-10 pb-6">
       <div className="flex items-center justify-between mb-8">
         <Link to="/" className="shrink-0">
@@ -116,9 +105,10 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
         </div>
       </nav>
     </div>
+    </div>
 
     {/* Data attribution bar */}
-    <div className="px-5 sm:px-6 py-3" style={{ backgroundColor: 'hsl(200 10% 90%)' }}>
+    <div className="px-5 sm:px-6 py-3" style={{ backgroundColor: 'hsl(210 15% 84%)' }}>
       <p className="max-w-5xl mx-auto text-[10px] sm:text-[11px] text-muted-foreground/60 leading-snug text-center">
         Data: HUD SAFMR FY2026 · Apartment List · Zillow ZORI · Live Market Comps · NY DHCR. For informational purposes only — not legal or financial advice.
       </p>
