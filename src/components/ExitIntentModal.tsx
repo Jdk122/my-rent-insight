@@ -119,7 +119,7 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
     setOpen(false);
     toast.success('Sent to your email!');
 
-    // Generate report + send email in parallel (non-blocking)
+    // Generate report + send email + re-notify in parallel (non-blocking)
     (async () => {
       let reportUrl: string | null = null;
       if (shareReportPayload) {
@@ -137,6 +137,25 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
         verdictLabel,
         reportUrl,
       });
+      // Re-notify with captured email
+      supabase.functions.invoke('notify-submission', {
+        body: {
+          email: email.trim(),
+          zip: leadContext?.zip || zip,
+          city: leadContext?.city || city,
+          state: leadContext?.state || null,
+          bedrooms: leadContext?.bedrooms ?? null,
+          current_rent: leadContext?.currentRent ?? null,
+          proposed_rent: leadContext?.proposedRent ?? null,
+          increase_pct: leadContext?.increasePct ?? null,
+          fairness_score: leadContext?.fairnessScore ?? null,
+          verdict_label: verdictLabel || null,
+          address: leadContext?.address || null,
+          comp_median_rent: leadContext?.compMedianRent ?? null,
+          hud_fmr_value: leadContext?.hudFmrValue ?? null,
+          analysis_id: leadContext?.analysisId || null,
+        },
+      }).catch(() => {});
     })();
   };
 
