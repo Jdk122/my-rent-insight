@@ -1,15 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
-const shapes = [
-  // Circle
-  <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5" /></svg>,
-  // Diamond
-  <svg width="11" height="11" viewBox="0 0 11 11" fill="currentColor"><rect x="5.5" y="0" width="7.07" height="7.07" rx="1.2" transform="rotate(45 5.5 0)" /></svg>,
-  // Rounded square
-  <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><rect width="10" height="10" rx="2.5" /></svg>,
-];
-
 const steps = [
   {
     number: '01',
@@ -49,8 +40,7 @@ const HowItWorks = () => (
               key={step.number}
               className="relative z-10 group flex flex-col items-center text-center px-5 py-6 rounded-xl transition-all duration-200 hover:bg-muted/40 hover:shadow-sm cursor-default"
             >
-              <div className="text-primary/30 mb-3">{shapes[i]}</div>
-              <span className="text-[15px] font-mono font-bold text-primary mb-2 tabular-nums tracking-wide">
+              <span className="font-display text-[32px] text-primary/20 leading-none mb-3" style={{ letterSpacing: '-0.03em' }}>
                 {step.number}
               </span>
               <h3 className="text-[15px] font-semibold text-foreground mb-1.5">{step.title}</h3>
@@ -59,7 +49,7 @@ const HowItWorks = () => (
               </p>
             </div>
               {i < steps.length - 1 && (
-                <div key={`arrow-${i}`} className="flex items-center justify-center pt-[34px]">
+                <div key={`arrow-${i}`} className="flex items-center justify-center pt-[22px]">
                   <ArrowRight className="text-primary/25" size={20} strokeWidth={1.5} />
                 </div>
               )}
@@ -70,24 +60,19 @@ const HowItWorks = () => (
       {/* Mobile/Tablet: vertical stacked with connecting line */}
       <div className="lg:hidden relative">
         {/* Vertical connecting line */}
-        <div className="absolute left-[29px] top-[40px] bottom-[40px] w-px border-l-2 border-dashed border-primary/15 z-0" />
+        <div className="absolute left-[22px] top-[32px] bottom-[32px] w-px border-l-2 border-dashed border-primary/15 z-0" />
 
         <div className="space-y-2">
-          {steps.map((step, i) => (
+          {steps.map((step) => (
               <div
                 key={step.number}
                 className="relative z-10 group flex items-start gap-4 py-4 px-3 rounded-xl transition-all duration-200 hover:bg-muted/40 hover:shadow-sm"
               >
-                <div className="w-[28px] h-[28px] flex items-center justify-center shrink-0 mt-1 text-primary/30">
-                  {shapes[i]}
-                </div>
+                <span className="font-display text-[26px] text-primary/20 leading-none shrink-0 w-[38px] text-center mt-0.5" style={{ letterSpacing: '-0.03em' }}>
+                  {step.number}
+                </span>
                 <div className="pt-0.5">
-                  <div className="flex items-center gap-2.5 mb-1">
-                    <span className="text-[14px] font-mono font-bold text-primary tabular-nums tracking-wide">
-                      {step.number}
-                    </span>
-                    <h3 className="text-[15px] font-semibold text-foreground">{step.title}</h3>
-                  </div>
+                  <h3 className="text-[15px] font-semibold text-foreground mb-1">{step.title}</h3>
                   <p className="text-[14px] text-muted-foreground leading-relaxed">
                     {step.description}
                   </p>
