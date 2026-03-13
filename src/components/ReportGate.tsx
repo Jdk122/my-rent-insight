@@ -66,11 +66,13 @@ function getGateCopy(
           : null;
       const trendMultiple = rawMultiple ? Math.round(rawMultiple) : null;
 
+      const displayIncreasePct = hasValidIncrease ? Number(increasePct!.toFixed(1)) : null;
+
       const heading =
         hasValidIncrease && rawMultiple && rawMultiple >= 2
-          ? `Your rent is below market — but a ${Math.round(increasePct)}% increase is ${trendMultiple}x the area trend.`
+          ? `Your rent is below market — but a ${displayIncreasePct}% increase is ${trendMultiple}x the area trend.`
           : hasValidIncrease
-            ? `Your rent is below market — but a ${Math.round(increasePct)}% increase is still too aggressive.`
+            ? `Your rent is below market — but a ${displayIncreasePct}% increase is still too aggressive.`
             : `Your rent is below market — but the increase is still too aggressive.`;
 
       return {
