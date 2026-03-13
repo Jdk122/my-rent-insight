@@ -40,7 +40,7 @@ const HowItWorks = () => (
               key={step.number}
               className="relative z-10 group flex flex-col items-center text-center px-5 py-6 rounded-xl transition-all duration-200 hover:bg-muted/40 hover:shadow-sm cursor-default"
             >
-              <span className="font-display text-[32px] text-primary/20 leading-none mb-3" style={{ letterSpacing: '-0.03em' }}>
+              <span className="font-display text-[40px] text-primary/30 leading-none mb-3" style={{ letterSpacing: '-0.03em' }}>
                 {step.number}
               </span>
               <h3 className="text-[15px] font-semibold text-foreground mb-1.5">{step.title}</h3>
