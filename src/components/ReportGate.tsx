@@ -273,24 +273,22 @@ const ReportGate = ({
         reportUrl,
       });
       // Re-notify with captured email so admin notification shows it
-      supabase.functions.invoke('notify-submission', {
-        body: {
-          email: trimmed,
-          zip: leadContext?.zip || zip,
-          city: leadContext?.city || city,
-          state: leadContext?.state || null,
-          bedrooms: leadContext?.bedrooms ?? null,
-          current_rent: leadContext?.currentRent ?? null,
-          proposed_rent: leadContext?.proposedRent ?? null,
-          increase_pct: leadContext?.increasePct ?? null,
-          fairness_score: leadContext?.fairnessScore ?? null,
-          verdict_label: verdictLabel || null,
-          address: leadContext?.address || null,
-          comp_median_rent: leadContext?.compMedianRent ?? null,
-          hud_fmr_value: leadContext?.hudFmrValue ?? null,
-          analysis_id: analysisId,
-        },
-      }).catch(() => {});
+      await notifySubmission({
+        email: trimmed,
+        zip: leadContext?.zip || zip,
+        city: leadContext?.city || city,
+        state: leadContext?.state || null,
+        bedrooms: leadContext?.bedrooms ?? null,
+        current_rent: leadContext?.currentRent ?? null,
+        proposed_rent: leadContext?.proposedRent ?? null,
+        increase_pct: leadContext?.increasePct ?? null,
+        fairness_score: leadContext?.fairnessScore ?? null,
+        verdict_label: verdictLabel || null,
+        address: leadContext?.address || null,
+        comp_median_rent: leadContext?.compMedianRent ?? null,
+        hud_fmr_value: leadContext?.hudFmrValue ?? null,
+        analysis_id: analysisId,
+      }, 'report_gate_email_capture');
     })();
   };
 
