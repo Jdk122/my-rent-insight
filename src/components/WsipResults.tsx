@@ -940,6 +940,21 @@ const WsipResults = ({
               </div>
             </motion.section>
 
+            {/* ━━━ Related Guides ━━━ */}
+            <motion.section {...fade(0.24)} className="pt-2 pb-6">
+              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 text-center">Related Guides</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <Link to="/guides/what-should-i-pay-for-rent" className="rounded-lg border border-border bg-card p-4 hover:border-primary/30 transition-colors">
+                  <p className="text-[13px] font-semibold text-foreground">Is This Apartment Overpriced?</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">How to evaluate any asking price with data</p>
+                </Link>
+                <Link to="/guides/how-to-negotiate-rent-increase" className="rounded-lg border border-border bg-card p-4 hover:border-primary/30 transition-colors">
+                  <p className="text-[13px] font-semibold text-foreground">How to Negotiate a Rent Increase</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">Counter-offer math, email template, and scripts</p>
+                </Link>
+              </div>
+            </motion.section>
+
             {/* Cross-link */}
             <motion.div {...fade(0.25)} className="pb-8 text-center">
               <p className="text-sm text-muted-foreground mb-1">Already have a lease?</p>
