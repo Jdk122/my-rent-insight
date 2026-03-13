@@ -66,9 +66,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     setInternalEmail(email);
     externalOnEmail?.(email);
   };
-  const [analysisId] = useState<string>(() => crypto.randomUUID());
+  const [{ analysisId, isDuplicateAnalysis }] = useState(() => {
+    const brNum = formData.bedrooms === 'studio' ? 0 : formData.bedrooms === 'oneBr' ? 1 : formData.bedrooms === 'twoBr' ? 2 : formData.bedrooms === 'threeBr' ? 3 : 4;
+    const result = checkAnalysisDedup(formData.fullAddress || null, rentData.zip, brNum, formData.currentRent, 'renewal');
+    return { analysisId: result.analysisId, isDuplicateAnalysis: result.isDuplicate };
+  });
   const [reportUrl, setReportUrl] = useState<string | null>(null);
-  const analysisLogged = useRef(false);
+  const analysisLogged = useRef(isDuplicateAnalysis);
 
   const increaseAmount = formData.rentIncrease
     ? formData.increaseIsPercent
