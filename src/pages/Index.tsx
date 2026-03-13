@@ -362,35 +362,8 @@ const Index = () => {
         <Suspense fallback={null}>
           <HowItWorks />
 
-            {/* ━━━ Explore Rent Data search section ━━━ */}
+            {/* ━━━ Renter Guides (educate) ━━━ */}
             <section className="max-w-[820px] mx-auto px-5 sm:px-6 pt-10 pb-14 sm:pb-16 border-t border-border/40">
-              <h2 className="font-display text-[22px] sm:text-[26px] text-foreground tracking-tight text-center mb-2" style={{ letterSpacing: '-0.02em' }}>
-                Explore Rent Data
-              </h2>
-              <p className="text-[15px] text-muted-foreground text-center max-w-[480px] mx-auto mb-6 leading-relaxed">
-                Search rent data for any city, state, or zip code in the U.S.
-              </p>
-              <Suspense fallback={null}>
-                <LocationSearch className="max-w-lg mx-auto" />
-              </Suspense>
-              <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {POPULAR_CITIES.map(pc => (
-                  <Link
-                    key={pc.city}
-                    to={`/rent-data/${pc.stateSlug}/${pc.citySlug}`}
-                    className="text-center rounded-lg border border-border/60 bg-card px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted/50 transition-colors"
-                  >
-                    {pc.city}
-                  </Link>
-                ))}
-              </div>
-              <div className="mt-5 text-center">
-                <Link to="/rent-data" className="text-sm text-primary hover:underline font-medium">View all states →</Link>
-              </div>
-            </section>
-
-            {/* ━━━ Internal links for SEO + discovery ━━━ */}
-            <section className="max-w-[820px] mx-auto px-5 sm:px-6 pt-10 pb-14 sm:pb-20 border-t border-border/40">
               <h2 className="font-display text-[22px] sm:text-[26px] text-foreground tracking-tight text-center mb-2" style={{ letterSpacing: '-0.02em' }}>
                 Renter Guides
               </h2>
@@ -425,6 +398,34 @@ const Index = () => {
                 <Link to="/rent-data" className="text-primary hover:underline font-medium">Browse rent data by city →</Link>
               </div>
             </section>
+
+            {/* ━━━ Explore Rent Data (discover) ━━━ */}
+            <section className="max-w-[820px] mx-auto px-5 sm:px-6 pt-10 pb-14 sm:pb-16 border-t border-border/40">
+              <h2 className="font-display text-[22px] sm:text-[26px] text-foreground tracking-tight text-center mb-2" style={{ letterSpacing: '-0.02em' }}>
+                Explore Rent Data
+              </h2>
+              <p className="text-[15px] text-muted-foreground text-center max-w-[480px] mx-auto mb-6 leading-relaxed">
+                Search rent data for any city, state, or zip code in the U.S.
+              </p>
+              <Suspense fallback={null}>
+                <LocationSearch className="max-w-lg mx-auto" />
+              </Suspense>
+              <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {POPULAR_CITIES.map(pc => (
+                  <Link
+                    key={pc.city}
+                    to={`/rent-data/${pc.stateSlug}/${pc.citySlug}`}
+                    className="text-center rounded-lg border border-border/60 bg-card px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted/50 transition-colors"
+                  >
+                    {pc.city}
+                  </Link>
+                ))}
+              </div>
+              <div className="mt-5 text-center">
+                <Link to="/rent-data" className="text-sm text-primary hover:underline font-medium">View all states →</Link>
+              </div>
+            </section>
+
           <HomeFAQ />
         </Suspense>
       )}
