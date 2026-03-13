@@ -40,10 +40,10 @@ const HowItWorks = () => (
               key={step.number}
               className="relative z-10 group flex flex-col items-center text-center px-5 py-6 rounded-xl transition-all duration-200 hover:bg-muted/40 hover:shadow-sm cursor-default"
             >
-              <span className="font-display text-[40px] text-primary/30 leading-none mb-3" style={{ letterSpacing: '-0.03em' }}>
+              <span className="font-display text-[40px] text-primary/50 leading-none mb-3" style={{ letterSpacing: '-0.03em' }}>
                 {step.number}
               </span>
-              <h3 className="text-[15px] font-semibold text-foreground mb-1.5">{step.title}</h3>
+              <h3 className="text-[16px] font-semibold text-foreground mb-1.5">{step.title}</h3>
               <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[220px]">
                 {step.description}
               </p>
@@ -59,8 +59,8 @@ const HowItWorks = () => (
 
       {/* Mobile/Tablet: vertical stacked with connecting line */}
       <div className="lg:hidden relative">
-        {/* Vertical connecting line */}
-        <div className="absolute left-[22px] top-[32px] bottom-[32px] w-px border-l-2 border-dashed border-primary/15 z-0" />
+
+
 
         <div className="space-y-2">
           {steps.map((step) => (
@@ -68,11 +68,11 @@ const HowItWorks = () => (
                 key={step.number}
                 className="relative z-10 group flex items-start gap-4 py-4 px-3 rounded-xl transition-all duration-200 hover:bg-muted/40 hover:shadow-sm"
               >
-                <span className="font-display text-[30px] text-primary/30 leading-none shrink-0 w-[38px] text-center mt-0.5" style={{ letterSpacing: '-0.03em' }}>
+                <span className="font-display text-[30px] text-primary/50 leading-none shrink-0 w-[38px] text-center mt-0.5" style={{ letterSpacing: '-0.03em' }}>
                   {step.number}
                 </span>
                 <div className="pt-0.5">
-                  <h3 className="text-[15px] font-semibold text-foreground mb-1">{step.title}</h3>
+                  <h3 className="text-[16px] font-semibold text-foreground mb-1">{step.title}</h3>
                   <p className="text-[14px] text-muted-foreground leading-relaxed">
                     {step.description}
                   </p>
