@@ -35,6 +35,7 @@ import PostConversionFlow from './PostConversionFlow';
 import FeedbackWidget from './FeedbackWidget';
 import SocialProofLine from './SocialProofLine';
 import ReportGate from './ReportGate';
+import PreGateCompPreview from './PreGateCompPreview';
 import { demoRentcast } from '@/data/demoData';
 
 interface RentResultsProps {
@@ -853,6 +854,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </motion.div>
               )}
 
+              <PreGateCompPreview compsWithRent={compsWithRent} capturedEmail={capturedEmail} fmt={fmt} />
+
               {/* ── Email gate (moved from Phase 2) ── */}
               {!capturedEmail && (
                 <section id="section-gate" className="py-8">
@@ -935,6 +938,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   </span>
                 </motion.div>
               )}
+
+              <PreGateCompPreview compsWithRent={compsWithRent} capturedEmail={capturedEmail} fmt={fmt} />
 
               {/* ── Email gate (no-increase path) ── */}
               {!capturedEmail && (

@@ -6,6 +6,7 @@ import { getUtmParams } from '@/lib/utm';
 import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
 import { generateSharedReport, SharedReportPayload } from '@/lib/generateSharedReport';
 import { notifySubmission } from '@/lib/notifySubmission';
+import SocialProofCounter from './SocialProofCounter';
 import type { LeadContext } from './EmailCapture';
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -53,6 +54,7 @@ function getGateCopy(
   monthlySavings?: number | null,
   belowFmrHighIncrease?: boolean,
   increasePct?: number,
+  marketYoy?: number,
 ) {
   if (toolType === 'renewal') {
     // Priority 1: belowFmrHighIncrease overrides normal verdict branching
@@ -74,17 +76,28 @@ function getGateCopy(
             cta: 'Email me my counter-offer →',
           };
         }
+        // Only use the specific % headline if both values are valid numbers
+        if (typeof increasePct === 'number' && typeof marketYoy === 'number' && increasePct > 0) {
+          const increaseText = increasePct >= 10 ? Math.round(increasePct).toString() : increasePct.toFixed(1);
+          const marketText = Math.abs(marketYoy) < 1 ? marketYoy.toFixed(1) : Math.round(marketYoy).toString();
+          return {
+            heading: `Your landlord wants ${increaseText}% — the market moved ${marketText}%. Here's what to send them.`,
+            bulletA: compsCount > 0 ? `${compsCount} comparable units showing what your neighbors actually pay` : 'Comparable units showing what your neighbors actually pay',
+            bulletB: 'A landlord-ready negotiation letter you can send this week',
+            cta: 'Email me my counter-offer →',
+          };
+        }
         return {
-          heading: 'Your increase exceeds the local market. Here\'s your plan.',
-          bulletA: 'See the comps behind your analysis',
-          bulletB: 'Get a landlord-ready response you can send this week',
-          cta: 'Email me my negotiation plan →',
+          heading: 'Your increase exceeds the local market. Here\'s what to send your landlord.',
+          bulletA: compsCount > 0 ? `${compsCount} comparable units showing what your neighbors actually pay` : 'Comparable units showing what your neighbors actually pay',
+          bulletB: 'A landlord-ready negotiation letter you can send this week',
+          cta: 'Email me my counter-offer →',
         };
       case 'at-market':
         return {
-          heading: 'At-market doesn\'t mean non-negotiable. See the comps.',
-          bulletA: 'See how your rent compares to nearby units',
-          bulletB: 'Get a ready-to-send response before you reply',
+          heading: 'Your rent is fair — but you still have leverage. Here\'s the proof.',
+          bulletA: compsCount > 0 ? `${compsCount} comparable units — see exactly where you stand` : 'Comparable units — see exactly where you stand',
+          bulletB: 'A ready-to-send renewal response that protects your position',
           cta: 'Email me my full report →',
         };
       case 'below':
@@ -96,9 +109,9 @@ function getGateCopy(
         };
       default: // 'none' or fallback
         return {
-          heading: 'Your landlord kept your rent flat. Here\'s what that\'s worth.',
-          bulletA: 'See how your rent compares to nearby listings',
-          bulletB: 'A market report to use at your next renewal',
+          heading: 'Your rent isn\'t going up — do you know what you\'d pay if you moved?',
+          bulletA: compsCount > 0 ? `See how your current rent stacks up against ${compsCount} nearby listings` : 'See how your current rent stacks up against nearby listings',
+          bulletB: 'A market snapshot to keep in your back pocket for next year\'s renewal',
           cta: 'Email me my market report →',
         };
     }
@@ -292,10 +305,11 @@ const ReportGate = ({
     })();
   };
 
-  const copy = getGateCopy(toolType, verdict, verdictLabel, compsCount, monthlyOverpayment, monthlySavings, belowFmrHighIncrease, increasePct);
+  const copy = getGateCopy(toolType, verdict, verdictLabel, compsCount, monthlyOverpayment, monthlySavings, belowFmrHighIncrease, increasePct, marketYoy);
 
   return (
     <div ref={gateRef} className="rounded-xl border border-primary/20 px-5 sm:px-8 py-7 sm:py-9 text-center" style={{ background: 'hsl(var(--primary) / 0.04)' }}>
+      {toolType === 'renewal' && <SocialProofCounter />}
       <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-3" style={{ letterSpacing: '-0.015em' }}>
         {copy.heading}
       </h2>
@@ -328,7 +342,7 @@ const ReportGate = ({
       </form>
       {error && <p className="text-xs text-destructive mt-1">{error}</p>}
       <p className="text-sm text-muted-foreground mt-3 font-medium">
-        Free report · No spam · Instant delivery
+        Free · Instant delivery · Unsubscribe anytime
       </p>
       <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
         Unsubscribe anytime. See our{' '}
