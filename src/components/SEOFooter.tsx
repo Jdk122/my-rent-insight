@@ -29,12 +29,14 @@ const TOP_CITIES = [
   { city: 'Minneapolis', state: 'MN', stateSlug: 'minnesota', citySlug: 'minneapolis' },
 ];
 
+const linkClass = 'text-[13px] text-muted-foreground hover:text-foreground hover:underline transition-colors';
+
 const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClick, showCityDirectory = false }, ref) => (
-  <footer ref={ref} className="mt-auto border-t border-border bg-card">
-    {/* City directory — integrated into footer like Zillow/Redfin */}
+  <footer ref={ref} className="mt-auto border-t border-border" style={{ backgroundColor: 'hsl(200 10% 94%)' }}>
+    {/* City directory */}
     {showCityDirectory && (
       <div className="border-b border-border/50">
-        <nav aria-label="Popular cities" className="max-w-4xl mx-auto px-5 sm:px-6 py-6 sm:py-8">
+        <nav aria-label="Popular cities" className="max-w-5xl mx-auto px-5 sm:px-6 py-6 sm:py-8">
           <h2 className="text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-muted-foreground/60 mb-4">
             Explore Rent Data by City
           </h2>
@@ -59,37 +61,65 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
       </div>
     )}
 
-    {/* Main footer */}
-    <div className="max-w-4xl mx-auto px-5 sm:px-6 py-5 sm:py-6 flex flex-col items-center gap-3 sm:gap-4">
-      {/* Brand */}
-      <Link to="/" className="shrink-0">
-        <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-5 sm:h-6 w-auto object-contain" />
-      </Link>
+    {/* Brand + copyright row */}
+    <div className="max-w-5xl mx-auto px-5 sm:px-6 pt-8 sm:pt-10 pb-6">
+      <div className="flex items-center justify-between mb-8">
+        <Link to="/" className="shrink-0">
+          <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-5 sm:h-6 w-auto object-contain" />
+        </Link>
+        <p className="text-[12px] text-muted-foreground/50">© 2026 RenewalReply</p>
+      </div>
 
-      {/* Nav links: 2-col grid on mobile, inline flex on md+ */}
-      <nav className="grid grid-cols-2 gap-x-8 gap-y-2.5 text-center md:flex md:flex-wrap md:items-center md:justify-center md:gap-x-4 md:gap-y-1.5 text-[12px] sm:text-[13px] text-muted-foreground">
-        <Link to="/" className="hover:text-foreground transition-colors">Check My Increase</Link>
-        <Link to="/what-should-i-pay" className="hover:text-foreground transition-colors">Check Asking Price</Link>
-        <Link to="/rent-data" className="hover:text-foreground transition-colors">Rent Data</Link>
-        <Link to="/about" className="hover:text-foreground transition-colors">About</Link>
-        <Link to="/methodology" className="hover:text-foreground transition-colors">Methodology</Link>
-        <Link to="/guides" className="hover:text-foreground transition-colors">Guides</Link>
-        <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
-        <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
-        {onContactClick ? (
-          <button onClick={onContactClick} className="hover:text-foreground transition-colors">Contact</button>
-        ) : (
-          <Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link>
-        )}
+      {/* Link columns */}
+      <nav aria-label="Footer navigation" className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-8">
+        {/* Tools */}
+        <div>
+          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/70 mb-3">Tools</h3>
+          <ul className="space-y-2">
+            <li><Link to="/" className={linkClass}>Check My Increase</Link></li>
+            <li><Link to="/what-should-i-pay" className={linkClass}>Check Asking Price</Link></li>
+          </ul>
+        </div>
+
+        {/* Resources */}
+        <div>
+          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/70 mb-3">Resources</h3>
+          <ul className="space-y-2">
+            <li><Link to="/rent-data" className={linkClass}>Rent Data</Link></li>
+            <li><Link to="/guides" className={linkClass}>Guides</Link></li>
+            <li><Link to="/methodology" className={linkClass}>Methodology</Link></li>
+            <li><Link to="/about" className={linkClass}>About</Link></li>
+          </ul>
+        </div>
+
+        {/* Legal */}
+        <div>
+          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/70 mb-3">Legal</h3>
+          <ul className="space-y-2">
+            <li><Link to="/privacy" className={linkClass}>Privacy</Link></li>
+            <li><Link to="/terms" className={linkClass}>Terms</Link></li>
+          </ul>
+        </div>
+
+        {/* Contact */}
+        <div>
+          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/70 mb-3">Contact</h3>
+          <ul className="space-y-2">
+            <li>
+              {onContactClick ? (
+                <button onClick={onContactClick} className={linkClass}>Contact</button>
+              ) : (
+                <Link to="/contact" className={linkClass}>Contact</Link>
+              )}
+            </li>
+          </ul>
+        </div>
       </nav>
-
-      {/* Copyright */}
-      <p className="text-[11px] sm:text-xs text-muted-foreground/50 shrink-0">© 2026 RenewalReply</p>
     </div>
 
-    {/* Disclaimer */}
-    <div className="border-t border-border/50 px-5 sm:px-6 py-2.5 sm:py-3">
-      <p className="max-w-3xl mx-auto text-[10px] sm:text-[11px] text-muted-foreground/55 leading-snug text-center">
+    {/* Data attribution bar */}
+    <div className="px-5 sm:px-6 py-3" style={{ backgroundColor: 'hsl(200 10% 90%)' }}>
+      <p className="max-w-5xl mx-auto text-[10px] sm:text-[11px] text-muted-foreground/60 leading-snug text-center">
         Data: HUD SAFMR FY2026 · Apartment List · Zillow ZORI · Live Market Comps · NY DHCR. For informational purposes only — not legal or financial advice.
       </p>
     </div>
