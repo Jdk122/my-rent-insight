@@ -179,6 +179,19 @@ const scenarios: Record<DemoScenario, { formData: RentFormData; rentData: RentLo
     },
     rentData: { ...baseRentData, fmr: 2600, fmrPrior: 2500, f50: [1800, 2100, 2600, 3400, 4000] },
   },
+  // Above market but counter-offer exceeds proposed rent (no usable overpayment)
+  'above-no-overpayment': {
+    formData: {
+      zip: '10001',
+      fullAddress: '400 W 33rd St, New York, NY 10001',
+      bedrooms: 'oneBr',
+      currentRent: 2000,
+      rentIncrease: 300,
+      increaseIsPercent: false,
+      movingCosts: 5000,
+    },
+    rentData: { ...baseRentData, fmr: 2400, fmrPrior: 2300 },
+  },
 };
 
 export function getDemoData(scenario: string | null): { formData: RentFormData; rentData: RentLookupResult } | null {
