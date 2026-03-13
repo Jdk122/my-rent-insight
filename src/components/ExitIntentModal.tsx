@@ -4,6 +4,7 @@ import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
 import { generateSharedReport, SharedReportPayload } from '@/lib/generateSharedReport';
+import { notifySubmission } from '@/lib/notifySubmission';
 import { toast } from 'sonner';
 import { X, MessageCircle, Mail, Link2 } from 'lucide-react';
 import type { LeadContext } from './EmailCapture';
