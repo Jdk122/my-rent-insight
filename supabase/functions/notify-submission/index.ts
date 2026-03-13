@@ -29,18 +29,18 @@ Deno.serve(async (req) => {
       zip, city, state, bedrooms, current_rent, proposed_rent,
       increase_pct, fairness_score, verdict_label, address,
       confidence_level, comp_median_rent, hud_fmr_value,
-      analysis_id,
+      analysis_id, email: directEmail,
     } = body;
 
-    // Check if we have a lead email for this analysis or a recent lead matching this zip
-    let leadEmail: string | null = null;
+    // Use directly provided email first, then look up by analysis_id or zip
+    let leadEmail: string | null = directEmail || null;
     let totalLeads: number | null = null;
     try {
       const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
       const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
       const sb = createClient(supabaseUrl, supabaseKey);
 
-      if (analysis_id) {
+      if (!leadEmail && analysis_id) {
         const { data: leadRow } = await sb
           .from("leads")
           .select("email")

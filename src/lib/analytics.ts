@@ -70,10 +70,8 @@ export function trackAdsConversion(
       });
     }
 
-    // Tool-specific conversion action
-    const conversionLabel = toolType === 'wsip'
-      ? 'AW-17990530610/WSIP_CONVERSION_LABEL'
-      : 'AW-17990530610/H5tjCKStoIIcELLsxoJD';
+    // Tool-specific conversion action (both tools use same conversion label)
+    const conversionLabel = 'AW-17990530610/H5tjCKStoIIcELLsxoJD';
 
     window.gtag?.('event', 'conversion', {
       send_to: conversionLabel,
