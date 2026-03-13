@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
+import { ChevronRight } from 'lucide-react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { useSearchParams, Link } from 'react-router-dom';
 import RentForm, { RentFormData, RentFormPrefill } from '@/components/RentForm';
@@ -355,17 +356,26 @@ const Index = () => {
                 Free guides built on real market data — not generic advice.
               </p>
               <div className="space-y-3">
-                <Link to="/guides/how-to-negotiate-rent-increase" className="group block rounded-xl border border-border/60 bg-card px-5 py-4 hover:border-primary/40 hover:shadow-sm transition-all duration-200">
-                  <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">How to Negotiate a Rent Increase</h3>
-                  <p className="text-[13px] text-muted-foreground leading-relaxed mt-1">Counter-offer math, email templates, and step-by-step scripts</p>
+                <Link to="/guides/how-to-negotiate-rent-increase" className="group flex items-center gap-4 rounded-xl border border-border/60 border-l-[3px] border-l-primary/40 bg-card px-5 py-4 hover:border-l-primary hover:bg-primary/[0.03] hover:shadow-md hover:shadow-primary/[0.06] transition-all duration-200">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">How to Negotiate a Rent Increase</h3>
+                    <p className="text-[13px] text-muted-foreground leading-relaxed mt-1">Counter-offer math, email templates, and step-by-step scripts</p>
+                  </div>
+                  <ChevronRight className="text-muted-foreground/40 group-hover:text-primary shrink-0 transition-all duration-200 group-hover:translate-x-0.5" size={18} />
                 </Link>
-                <Link to="/guides/what-should-i-pay-for-rent" className="group block rounded-xl border border-border/60 bg-card px-5 py-4 hover:border-primary/40 hover:shadow-sm transition-all duration-200">
-                  <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">What Should I Pay for Rent?</h3>
-                  <p className="text-[13px] text-muted-foreground leading-relaxed mt-1">How to evaluate any asking price using real market benchmarks</p>
+                <Link to="/guides/what-should-i-pay-for-rent" className="group flex items-center gap-4 rounded-xl border border-border/60 border-l-[3px] border-l-primary/40 bg-card px-5 py-4 hover:border-l-primary hover:bg-primary/[0.03] hover:shadow-md hover:shadow-primary/[0.06] transition-all duration-200">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">What Should I Pay for Rent?</h3>
+                    <p className="text-[13px] text-muted-foreground leading-relaxed mt-1">How to evaluate any asking price using real market benchmarks</p>
+                  </div>
+                  <ChevronRight className="text-muted-foreground/40 group-hover:text-primary shrink-0 transition-all duration-200 group-hover:translate-x-0.5" size={18} />
                 </Link>
-                <Link to="/guides/rent-increase-laws-by-state" className="group block rounded-xl border border-border/60 bg-card px-5 py-4 hover:border-primary/40 hover:shadow-sm transition-all duration-200">
-                  <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">Rent Increase Laws by State</h3>
-                  <p className="text-[13px] text-muted-foreground leading-relaxed mt-1">Caps, notice periods, and your rights in all 50 states</p>
+                <Link to="/guides/rent-increase-laws-by-state" className="group flex items-center gap-4 rounded-xl border border-border/60 border-l-[3px] border-l-primary/40 bg-card px-5 py-4 hover:border-l-primary hover:bg-primary/[0.03] hover:shadow-md hover:shadow-primary/[0.06] transition-all duration-200">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">Rent Increase Laws by State</h3>
+                    <p className="text-[13px] text-muted-foreground leading-relaxed mt-1">Caps, notice periods, and your rights in all 50 states</p>
+                  </div>
+                  <ChevronRight className="text-muted-foreground/40 group-hover:text-primary shrink-0 transition-all duration-200 group-hover:translate-x-0.5" size={18} />
                 </Link>
               </div>
               <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 text-sm">
