@@ -399,6 +399,8 @@ const Index = () => {
               </div>
             </section>
 
+          <HomeFAQ />
+
             {/* ━━━ Explore Rent Data (discover) ━━━ */}
             <section className="max-w-[820px] mx-auto px-5 sm:px-6 pt-10 pb-14 sm:pb-16 border-t border-border/40">
               <h2 className="font-display text-[22px] sm:text-[26px] text-foreground tracking-tight text-center mb-2" style={{ letterSpacing: '-0.02em' }}>
@@ -425,8 +427,6 @@ const Index = () => {
                 <Link to="/rent-data" className="text-sm text-primary hover:underline font-medium">View all states →</Link>
               </div>
             </section>
-
-          <HomeFAQ />
         </Suspense>
       )}
 
