@@ -29,18 +29,18 @@ Deno.serve(async (req) => {
       zip, city, state, bedrooms, current_rent, proposed_rent,
       increase_pct, fairness_score, verdict_label, address,
       confidence_level, comp_median_rent, hud_fmr_value,
-      analysis_id,
+      analysis_id, email: directEmail,
     } = body;
 
-    // Check if we have a lead email for this analysis or a recent lead matching this zip
-    let leadEmail: string | null = null;
+    // Use directly provided email first, then look up by analysis_id or zip
+    let leadEmail: string | null = directEmail || null;
     let totalLeads: number | null = null;
     try {
       const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
       const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
       const sb = createClient(supabaseUrl, supabaseKey);
 
-      if (analysis_id) {
+      if (!leadEmail && analysis_id) {
         const { data: leadRow } = await sb
           .from("leads")
           .select("email")
@@ -77,8 +77,9 @@ Deno.serve(async (req) => {
       ? `<p style="margin-top:12px;font-size:12px;color:#666">Total leads in database: <strong>${totalLeads}</strong></p>`
       : "";
 
+    const isEmailCapture = !!directEmail;
     const subject = leadEmail
-      ? `🏠 New submission: ${zip || "unknown"} — ${verdict_label || "N/A"} (Score ${fairness_score ?? "?"}) ✉️ EMAIL CAPTURED`
+      ? `🏠 ${isEmailCapture ? '✉️ EMAIL CAPTURED' : 'New submission'}: ${zip || "unknown"} — ${verdict_label || "N/A"} (Score ${fairness_score ?? "?"}) ✉️ ${leadEmail}`
       : `🏠 New submission: ${zip || "unknown"} — ${verdict_label || "N/A"} (Score ${fairness_score ?? "?"})`;
 
     const html = `
