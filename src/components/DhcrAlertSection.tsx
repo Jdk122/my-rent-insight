@@ -43,7 +43,7 @@ export default function DhcrAlertSection({ zip, city }: { zip: string; city: str
             </p>
             <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
               Not sure if your unit is stabilized?{' '}
-              <Link to={`/?zip=${zip}`} className="text-primary underline hover:text-primary/80 font-medium">
+              <Link to="/" className="text-primary underline hover:text-primary/80 font-medium">
                 Check your address on our homepage
               </Link>{' '}
               or verify at{' '}
