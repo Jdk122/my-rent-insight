@@ -10,6 +10,7 @@ import { PropertyLookupResult } from '@/hooks/usePropertyLookup';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
+import { getSessionId } from '@/lib/sessionId';
 import { assessConfidence, detectOutliers, getCompRadius, filterFurnished, deduplicateComps, applySeasonalAdjustment } from '@/lib/dataQuality';
 import { calculateCompositeTrend } from '@/lib/compositeTrend';
 import { getRentControlByStateCity, getApplicableCap, checkBuildingEligibility } from '@/data/rentControlData';

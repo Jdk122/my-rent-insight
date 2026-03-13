@@ -20,6 +20,7 @@ import { supabase } from '@/integrations/supabase/client';
 import SectionNav from './SectionNav';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
+import { getSessionId } from '@/lib/sessionId';
 import DataConfidenceBadge from './DataConfidenceBadge';
 import { assessConfidence, detectOutliers, checkCrossSourceConsistency, getCompRadius, filterFurnished, deduplicateComps, applySeasonalAdjustment } from '@/lib/dataQuality';
 import { calculateFairnessScore, scoreToVerdict, FairnessScoreResult } from '@/lib/fairnessScore';
