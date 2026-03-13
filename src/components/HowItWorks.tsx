@@ -47,8 +47,8 @@ const HowItWorks = () => (
               key={step.number}
               className="relative z-10 group flex flex-col items-center text-center px-5 py-6 rounded-xl transition-all duration-200 hover:bg-muted/40 hover:shadow-sm cursor-default"
             >
-              <div className="w-[72px] h-[72px] rounded-2xl bg-primary/[0.07] flex items-center justify-center mb-4 group-hover:bg-primary/[0.12] transition-colors duration-200">
-                <Icon className="text-primary" size={28} strokeWidth={1.8} />
+              <div className="w-[56px] h-[56px] rounded-xl bg-primary/[0.07] flex items-center justify-center mb-3 group-hover:bg-primary/[0.12] transition-colors duration-200">
+                <Icon className="text-primary" size={22} strokeWidth={1.8} />
               </div>
               <span className="text-[13px] font-mono font-semibold text-primary/60 mb-2 tabular-nums tracking-wide">
                 {step.number}
