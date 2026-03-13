@@ -43,7 +43,7 @@ const HowItWorks = () => (
               <span className="font-display text-[40px] text-primary/50 leading-none mb-3" style={{ letterSpacing: '-0.03em' }}>
                 {step.number}
               </span>
-              <h3 className="text-[15px] font-semibold text-foreground mb-1.5">{step.title}</h3>
+              <h3 className="text-[16px] font-semibold text-foreground mb-1.5">{step.title}</h3>
               <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[220px]">
                 {step.description}
               </p>
