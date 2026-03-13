@@ -84,10 +84,11 @@ function getGateCopy(
       case 'above':
         if (monthlyOverpayment && monthlyOverpayment > 0) {
           return {
-            heading: `Your landlord is asking ~$${fmt(monthlyOverpayment)}/month above market. Here's the evidence.`,
+    heading: `Your landlord is asking ~$${fmt(monthlyOverpayment)}/month above market. Here's the evidence.`,
             bulletA: compsCount > 0 ? `${compsCount} comparable units showing your landlord is charging above market` : 'Comparable units showing your landlord is charging above market',
             bulletB: 'A send-ready negotiation letter with your exact counter-offer built in',
             cta: 'Email me my counter-offer →',
+            valueAnchor: `This report could help you avoid paying ~$${fmt(monthlyOverpayment * 12)}/year more than the market supports.`,
           };
         }
         // Only use the specific % headline if both values are valid numbers
@@ -136,10 +137,11 @@ function getGateCopy(
     case 'above':
       if (monthlySavings && monthlySavings > 0) {
         return {
-          heading: `This unit looks overpriced by ~$${fmt(monthlySavings)}/month`,
+      heading: `This unit looks overpriced by ~$${fmt(monthlySavings)}/month`,
           bulletA: 'See the comps behind that estimate',
           bulletB: 'Get a data-backed plan before you negotiate',
           cta: 'Email me my negotiation plan →',
+          valueAnchor: `This report could help you avoid paying ~$${fmt(monthlySavings * 12)}/year more than this unit is worth.`,
         };
       }
       return {
@@ -335,6 +337,9 @@ const ReportGate = ({
           </div>
         ))}
       </div>
+      <p className="text-[13px] text-muted-foreground/70 mb-4 italic">
+        {copy.valueAnchor ?? 'See the market data behind your result.'}
+      </p>
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-[480px] mx-auto">
         <input
           type="email"
@@ -355,10 +360,7 @@ const ReportGate = ({
         </button>
       </form>
       {error && <p className="text-xs text-destructive mt-1">{error}</p>}
-      <p className="text-[13px] text-muted-foreground/70 mt-3 italic">
-        See the market data behind your result.
-      </p>
-      <p className="text-sm text-muted-foreground mt-1.5 font-medium">
+      <p className="text-sm text-muted-foreground mt-3 font-medium">
         Free · Instant delivery · Unsubscribe anytime
       </p>
       <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
