@@ -141,7 +141,7 @@ function getGateCopy(
           bulletA: 'See the comps behind that estimate',
           bulletB: 'Get a data-backed plan before you negotiate',
           cta: 'Email me my negotiation plan →',
-          valueAnchor: `This report could help you avoid paying ~$${fmt(monthlySavings * 12)}/year more than this unit is worth.`,
+          valueAnchor: `This could help you save ~$${fmt(monthlySavings * 12)}/year.`,
         };
       }
       return {
