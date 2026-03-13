@@ -428,7 +428,7 @@ const RentByZip = () => {
           {/* CTA — adapt based on confidence */}
           <div className="mt-6 flex flex-wrap items-center gap-3">
             {dataConfidence === 'limited' ? (
-              <Link to={`/what-should-i-pay?zip=${zip}`} className="inline-flex items-center bg-primary text-primary-foreground px-6 h-11 rounded-lg font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
+              <Link to="/what-should-i-pay" className="inline-flex items-center bg-primary text-primary-foreground px-6 h-11 rounded-lg font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20">
                 Check what rent should cost in {zip} →
               </Link>
             ) : (

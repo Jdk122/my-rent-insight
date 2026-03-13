@@ -59,7 +59,7 @@ function buildRenewalHtml(data: any) {
 function buildWsipHtml(data: any) {
   const { city, state, zip, bedrooms, report_url } = data;
   const cityLabel = city && state ? `${city}, ${state}` : zip ? `ZIP ${zip}` : "your area";
-  const reportUrl = report_url || `${BASE_URL}/what-should-i-pay?zip=${zip || ""}&bedrooms=${bedrooms || ""}`;
+  const reportUrl = report_url || `${BASE_URL}/what-should-i-pay`;
   const renewalUrl = BASE_URL;
   const unsubUrl = `${BASE_URL}/outcome?result=unsubscribe&id=`;
 

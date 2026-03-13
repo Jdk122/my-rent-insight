@@ -12,7 +12,7 @@ interface RenterToolsCTAProps {
 const RenterToolsCTA = ({ zip, city, stateName, pageType = 'tool' }: RenterToolsCTAProps) => {
   const [reminderOpen, setReminderOpen] = useState(false);
   const renewalLink = '/';
-  const wsipLink = zip ? `/what-should-i-pay?zip=${zip}` : '/what-should-i-pay';
+  const wsipLink = '/what-should-i-pay';
 
   type CardDef = { title: string; sub: string; cta: string; to?: string; scroll?: string; action?: 'reminder' };
 
