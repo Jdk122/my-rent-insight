@@ -234,6 +234,20 @@ const wsipScenarios: Record<WsipDemoScenario, WsipDemoResult> = {
     askingRent: 3500,
     rentData: { ...baseRentData, fmr: 2100, fmrPrior: 2000 },
   },
+  'overpriced-realistic': {
+    zip: '10001',
+    fullAddress: '220 W 26th St, New York, NY 10001',
+    bedrooms: 'oneBr',
+    askingRent: 2800,
+    rentData: { ...baseRentData },
+  },
+  'overpriced-premium': {
+    zip: '10001',
+    fullAddress: '100 W 25th St, PH-B, New York, NY 10001',
+    bedrooms: 'twoBr',
+    askingRent: 7200,
+    rentData: { ...baseRentData, fmr: 3500, fmrPrior: 3300, f50: [2800, 3500, 4500, 5800, 7000] },
+  },
 };
 
 export function getWsipDemoData(scenario: string | null): WsipDemoResult | null {
