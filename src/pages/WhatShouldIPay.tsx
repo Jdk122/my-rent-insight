@@ -50,7 +50,7 @@ const WhatShouldIPay = () => {
   const [contactOpen, setContactOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [navScrolled, setNavScrolled] = useState(false);
-  const [capturedEmail, setCapturedEmailRaw] = useState(() => getRememberedEmail());
+  const [capturedEmail, setCapturedEmailRaw] = useState(() => searchParams.get('demo') ? '' : getRememberedEmail());
   const setCapturedEmail = (email: string) => {
     setCapturedEmailRaw(email);
     if (email) rememberEmail(email);
