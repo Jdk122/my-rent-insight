@@ -48,7 +48,7 @@ const HowItWorks = () => (
               <div className="w-[56px] h-[56px] rounded-xl bg-primary/[0.07] flex items-center justify-center mb-3 group-hover:bg-primary/[0.12] transition-colors duration-200">
                 <Icon className="text-primary" size={22} strokeWidth={1.8} />
               </div>
-              <span className="text-[13px] font-mono font-semibold text-primary/60 mb-2 tabular-nums tracking-wide">
+              <span className="text-[15px] font-mono font-bold text-primary mb-2 tabular-nums tracking-wide">
                 {step.number}
               </span>
               <h3 className="text-[15px] font-semibold text-foreground mb-1.5">{step.title}</h3>
@@ -78,7 +78,7 @@ const HowItWorks = () => (
                 </div>
                 <div className="pt-0.5">
                   <div className="flex items-center gap-2.5 mb-1">
-                    <span className="text-[12px] font-mono font-semibold text-primary/60 tabular-nums tracking-wide">
+                    <span className="text-[14px] font-mono font-bold text-primary tabular-nums tracking-wide">
                       {step.number}
                     </span>
                     <h3 className="text-[15px] font-semibold text-foreground">{step.title}</h3>
