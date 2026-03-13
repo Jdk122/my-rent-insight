@@ -11,6 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import { getSessionId } from '@/lib/sessionId';
+import { checkAnalysisDedup } from '@/lib/analysisDedup';
 import { assessConfidence, detectOutliers, getCompRadius, filterFurnished, deduplicateComps, applySeasonalAdjustment } from '@/lib/dataQuality';
 import { calculateCompositeTrend } from '@/lib/compositeTrend';
 import { getRentControlByStateCity, getApplicableCap, checkBuildingEligibility } from '@/data/rentControlData';
@@ -59,9 +60,13 @@ const WsipResults = ({
   onEmailCaptured,
   onReset,
 }: WsipResultsProps) => {
-  const [analysisId] = useState(() => crypto.randomUUID());
+  const [{ analysisId, isDuplicateAnalysis }] = useState(() => {
+    const brNum = bedrooms === 'studio' ? 0 : bedrooms === 'oneBr' ? 1 : bedrooms === 'twoBr' ? 2 : bedrooms === 'threeBr' ? 3 : 4;
+    const result = checkAnalysisDedup(fullAddress, zip, brNum, askingRent ?? rentData.fmr, 'wsip');
+    return { analysisId: result.analysisId, isDuplicateAnalysis: result.isDuplicate };
+  });
   const [reportUrl, setReportUrl] = useState<string | null>(null);
-  const analysisLogged = useRef(false);
+  const analysisLogged = useRef(isDuplicateAnalysis);
   const [templateCopied, setTemplateCopied] = useState(false);
 
   const city = rentData.city;
