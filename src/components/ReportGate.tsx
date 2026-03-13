@@ -337,7 +337,7 @@ const ReportGate = ({
           </div>
         ))}
       </div>
-      <p className="text-[13px] text-muted-foreground/70 mb-4 italic">
+      <p className="text-sm text-muted-foreground mb-4">
         {copy.valueAnchor ?? 'See the market data behind your result.'}
       </p>
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-[480px] mx-auto">
