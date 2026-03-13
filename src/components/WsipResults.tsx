@@ -883,6 +883,13 @@ const WsipResults = ({
               />
             </section>
 
+            <p className="text-[11px] text-muted-foreground/60 text-center mb-2">
+              See something that doesn't look right?{' '}
+              <a href="mailto:james@renewalreply.com?subject=Data%20issue%20report&body=Address%3A%20%0AZip%3A%20%0AWhat%20looks%20wrong%3A%20" className="underline hover:text-muted-foreground transition-colors">
+                Report a data issue
+              </a>
+            </p>
+
             {/* ━━━ Feedback widget ━━━ */}
             <FeedbackWidget
               analysisId={analysisId}
