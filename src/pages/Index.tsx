@@ -347,6 +347,33 @@ const Index = () => {
         <Suspense fallback={null}>
           <HowItWorks />
           <HomeFAQ />
+          {/* ━━━ Internal links for SEO + discovery ━━━ */}
+          <section className="max-w-[620px] mx-auto px-5 sm:px-6 pt-10 pb-14 sm:pb-20 border-t border-border/40">
+            <h2 className="font-display text-[22px] sm:text-[26px] text-foreground tracking-tight text-center mb-2" style={{ letterSpacing: '-0.02em' }}>
+              Renter Guides
+            </h2>
+            <p className="text-[15px] text-muted-foreground text-center max-w-[440px] mx-auto mb-8 leading-relaxed">
+              Free guides built on real market data — not generic advice.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <Link to="/guides/how-to-negotiate-rent-increase" className="rounded-xl border border-border bg-card p-5 hover:border-primary/30 transition-colors">
+                <h3 className="font-semibold text-foreground text-[14px] mb-1">How to Negotiate a Rent Increase</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">Data-driven process + email template</p>
+              </Link>
+              <Link to="/guides/what-should-i-pay-for-rent" className="rounded-xl border border-border bg-card p-5 hover:border-primary/30 transition-colors">
+                <h3 className="font-semibold text-foreground text-[14px] mb-1">What Should I Pay for Rent?</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">How to evaluate any asking price</p>
+              </Link>
+              <Link to="/guides/rent-increase-laws-by-state" className="rounded-xl border border-border bg-card p-5 hover:border-primary/30 transition-colors">
+                <h3 className="font-semibold text-foreground text-[14px] mb-1">Rent Increase Laws by State</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">Caps, notice rules, and your rights</p>
+              </Link>
+            </div>
+            <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4 text-sm">
+              <Link to="/what-should-i-pay" className="text-primary hover:underline font-medium">Check what rent should cost →</Link>
+              <Link to="/rent-data" className="text-primary hover:underline font-medium">Browse rent data by city →</Link>
+            </div>
+          </section>
         </Suspense>
       )}
 
