@@ -54,6 +54,7 @@ function getGateCopy(
   monthlySavings?: number | null,
   belowFmrHighIncrease?: boolean,
   increasePct?: number,
+  marketYoy?: number,
 ) {
   if (toolType === 'renewal') {
     // Priority 1: belowFmrHighIncrease overrides normal verdict branching
