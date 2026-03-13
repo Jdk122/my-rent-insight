@@ -580,16 +580,26 @@ function DashboardContent() {
                 </tr>
               </thead>
               <tbody>
-                {rows.map((r: any) => {
+                {(() => {
+                  // Build session counts for repeat detection
+                  const sessionCounts: Record<string, number> = {};
+                  rows.forEach((r: any) => {
+                    if (r.session_id) sessionCounts[r.session_id] = (sessionCounts[r.session_id] || 0) + 1;
+                  });
+                  return rows.map((r: any) => {
                   const lead = r.leads?.[0];
                   const tag = getLeadQualityTag(r);
+                  const isRepeat = r.session_id && sessionCounts[r.session_id] > 1;
                   return (
                     <tr
                       key={r.id}
-                      className="border-b border-border/50 hover:bg-muted/30 cursor-pointer transition-colors"
+                      className={`border-b border-border/50 hover:bg-muted/30 cursor-pointer transition-colors ${isRepeat ? 'opacity-60' : ''}`}
                       onClick={() => setSelectedRow(r)}
                     >
-                      <td className="px-2 py-2 whitespace-nowrap text-xs">{new Date(r.created_at).toLocaleDateString()}</td>
+                      <td className="px-2 py-2 whitespace-nowrap text-xs">
+                        {new Date(r.created_at).toLocaleDateString()}
+                        {isRepeat && <span className="ml-1 text-[10px] text-amber-500" title={`Session: ${r.session_id?.slice(0, 8)}`}>♻️</span>}
+                      </td>
                       <td className="px-2 py-2 max-w-[120px] truncate" title={r.address || ''}>{r.address || '—'}</td>
                       <td className="px-2 py-2 whitespace-nowrap">{r.zip || '—'}</td>
                       <td className="px-2 py-2 whitespace-nowrap">{r.city || '—'}</td>
