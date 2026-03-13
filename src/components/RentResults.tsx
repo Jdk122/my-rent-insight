@@ -592,7 +592,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         city={city}
         onEmailCaptured={setCapturedEmail}
         shareReportPayload={shareReportPayload}
-        onReportGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
+        onReportGenerated={(url) => { setReportUrl(url); }}
       />
 
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -862,7 +862,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     onEmailCaptured={setCapturedEmail}
                     prefilledEmail={capturedEmail}
                     shareReportPayload={shareReportPayload}
-                    onReportGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
+                    onReportGenerated={(url) => { setReportUrl(url); }}
                     marketYoy={marketYoy}
                     monthlyOverpayment={
                       isAboveMarket && counterOffer && !counterExceedsProposed
@@ -945,7 +945,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     onEmailCaptured={setCapturedEmail}
                     prefilledEmail={capturedEmail}
                     shareReportPayload={shareReportPayload}
-                    onReportGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
+                    onReportGenerated={(url) => { setReportUrl(url); }}
                     marketYoy={marketYoy}
                   />
                 </section>
