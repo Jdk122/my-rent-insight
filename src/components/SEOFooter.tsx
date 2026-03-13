@@ -56,7 +56,6 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
         <Link to="/" className="shrink-0">
           <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-5 sm:h-6 w-auto object-contain" />
         </Link>
-        <p className="text-[12px] text-muted-foreground/50">© 2026 RenewalReply</p>
       </div>
 
       {/* Link columns */}
