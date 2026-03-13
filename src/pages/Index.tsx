@@ -348,7 +348,7 @@ const Index = () => {
         <Suspense fallback={null}>
           <HowItWorks />
             {/* ━━━ Internal links for SEO + discovery ━━━ */}
-            <section className="max-w-[620px] mx-auto px-5 sm:px-6 pt-10 pb-14 sm:pb-20 border-t border-border/40">
+            <section className="max-w-[820px] mx-auto px-5 sm:px-6 pt-10 pb-14 sm:pb-20 border-t border-border/40">
               <h2 className="font-display text-[22px] sm:text-[26px] text-foreground tracking-tight text-center mb-2" style={{ letterSpacing: '-0.02em' }}>
                 Renter Guides
               </h2>
