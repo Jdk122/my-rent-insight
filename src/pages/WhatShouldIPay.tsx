@@ -284,7 +284,7 @@ const WhatShouldIPay = () => {
       )}
 
       <Suspense fallback={null}>
-        <SEOFooter onContactClick={() => setContactOpen(true)} showCityDirectory />
+        <SEOFooter onContactClick={() => setContactOpen(true)} />
       </Suspense>
 
       {contactOpen && (

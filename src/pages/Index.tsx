@@ -430,7 +430,7 @@ const Index = () => {
       )}
 
       <Suspense fallback={null}>
-        <SEOFooter onContactClick={() => setContactOpen(true)} showCityDirectory={!results && !isLoading} />
+        <SEOFooter onContactClick={() => setContactOpen(true)} />
       </Suspense>
 
       {contactOpen && (
