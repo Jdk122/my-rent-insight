@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getRentData, getApartmentListData, type RentZipRaw, type ApartmentListZipRaw } from '@/data/dataLoader';
 import { slugify, STATE_NAMES } from '@/data/cityStateUtils';
 import { getDataFreshness, formatFreshnessDate, getHudFiscalYear, getDataYear, type DataFreshness } from '@/data/dataFreshness';
