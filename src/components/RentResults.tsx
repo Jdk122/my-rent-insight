@@ -407,6 +407,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
     supabase.from('analyses').insert({
       id: analysisId,
+      session_id: getSessionId(),
       address: formData.fullAddress || null,
       city: rentData.city,
       state: rentData.state,

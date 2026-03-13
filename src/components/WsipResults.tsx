@@ -279,6 +279,7 @@ const WsipResults = ({
     const utm = getUtmParams();
     supabase.from('analyses' as any).insert({
       id: analysisId,
+      session_id: getSessionId(),
       zip,
       address: fullAddress,
       city: rentData.city,
