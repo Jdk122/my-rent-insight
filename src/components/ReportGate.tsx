@@ -6,6 +6,7 @@ import { getUtmParams } from '@/lib/utm';
 import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
 import { generateSharedReport, SharedReportPayload } from '@/lib/generateSharedReport';
 import { notifySubmission } from '@/lib/notifySubmission';
+import SocialProofCounter from './SocialProofCounter';
 import type { LeadContext } from './EmailCapture';
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
