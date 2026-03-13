@@ -18,17 +18,20 @@ const WhatShouldRentCost = ({ location, fmr, hud50, censusMedianRent }: WhatShou
     <section className="mb-12">
       <h2 className="font-display text-2xl text-foreground mb-2 tracking-tight">What Should Rent Cost in {location}?</h2>
       <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
-        Typical rent ranges based on HUD benchmarks and market data. The floor is the HUD Fair Market Rent and the ceiling is the HUD Estimated Rent or market median where available.
+        Typical rent ranges based on HUD benchmarks and market data. In areas with limited listing data, ranges reflect federal benchmarks and may be wider than actual market conditions.
       </p>
       <div className="space-y-3">
         {BEDROOM_LABELS.map((label, i) => {
           if (fmr[i] === 0) return null;
           const floor = fmr[i];
-          const ceiling = hud50?.[i] && hud50[i] > floor
+          const rawCeiling = hud50?.[i] && hud50[i] > floor
             ? hud50[i]
             : (i === 1 && censusMedianRent && censusMedianRent > floor)
               ? censusMedianRent
               : Math.round(floor * 1.15);
+          // Enforce minimum 8% spread so ranges never look absurdly narrow
+          const minCeiling = Math.round(floor * 1.08);
+          const ceiling = Math.max(rawCeiling, minCeiling);
           const top25 = Math.round(ceiling * 1.15);
           return (
             <div key={label} className="rounded-lg border border-border p-4 bg-card">
