@@ -32,7 +32,7 @@ const defaultSteps: HowItWorksStep[] = [
 ];
 
 const HowItWorks = React.forwardRef<HTMLElement, HowItWorksProps>(
-  ({ steps = defaultSteps, subtitle = 'Three steps. No account required. Free forever.' }, ref) => (
+  ({ steps = defaultSteps, subtitle = 'Three steps. No account required.' }, ref) => (
     <section ref={ref} className="w-full border-t border-border/60" aria-label="How it works">
       <div className="max-w-[820px] mx-auto px-5 sm:px-6 py-14 sm:py-20">
         <h2
