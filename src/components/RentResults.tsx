@@ -328,8 +328,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     const effectiveUpper = Math.max(upper, rentData.fmr);
     const rentBelowUpper = newRent <= effectiveUpper;
     const increaseWellAboveTrend = increasePct > marketYoy * 1.5 && increasePct - marketYoy >= 3;
-    return rentBelowUpper && increaseWellAboveTrend;
-  }, [hasIncrease, fairnessScore, formData.bedrooms, rentData, rcMarket, newRent, increasePct, marketYoy]);
+    return rentBelowUpper && increaseWellAboveTrend && effectiveVerdict !== 'above';
+  }, [hasIncrease, fairnessScore, formData.bedrooms, rentData, rcMarket, newRent, increasePct, marketYoy, effectiveVerdict]);
 
   const verdictColor = isAboveMarket ? 'text-destructive' : isFair ? 'text-verdict-fair' : 'text-verdict-good';
   const verdictLabel = !hasIncrease
