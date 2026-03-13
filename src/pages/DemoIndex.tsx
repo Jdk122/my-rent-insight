@@ -8,6 +8,7 @@ const sections = [
     title: 'Renewal Tool',
     demos: [
       { label: 'Above Market', path: '/?demo=above', desc: 'Rent increase is above market — triggers overpaying headline & letter flow' },
+      { label: 'Above (No Overpayment)', path: '/?demo=above-no-overpayment', desc: 'Above market but no usable counter-offer — tests "X% vs Y%" fallback headline' },
       { label: 'Fair / At Market', path: '/?demo=fair', desc: 'Rent increase is at market — fair verdict, "doesn\'t mean non-negotiable" gate copy' },
       { label: 'Below Market', path: '/?demo=below', desc: 'Rent below market — "protect your position" gate copy' },
       { label: 'No Increase', path: '/?demo=none', desc: 'No rent increase entered — "your landlord kept it flat" gate copy' },
