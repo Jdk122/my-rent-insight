@@ -84,9 +84,9 @@ function getGateCopy(
       case 'above':
         if (monthlyOverpayment && monthlyOverpayment > 0) {
           return {
-            heading: `You're overpaying by ~$${fmt(monthlyOverpayment)}/month`,
-            bulletA: compsCount > 0 ? `See the ${compsCount} comps behind that number` : 'See the comps behind that number',
-            bulletB: 'Copy a send-ready email with your exact counter-offer',
+            heading: `You're overpaying by ~$${fmt(monthlyOverpayment)}/month. Here's the evidence.`,
+            bulletA: compsCount > 0 ? `${compsCount} comparable units showing your landlord is charging above market` : 'Comparable units showing your landlord is charging above market',
+            bulletB: 'A send-ready negotiation letter with your exact counter-offer built in',
             cta: 'Email me my counter-offer →',
           };
         }
