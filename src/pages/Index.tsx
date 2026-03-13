@@ -355,28 +355,29 @@ const Index = () => {
               <p className="text-[15px] text-muted-foreground text-center max-w-[440px] mx-auto mb-8 leading-relaxed">
                 Learn how to save money on your next lease.
               </p>
-              <div className="space-y-3">
-                <Link to="/guides/how-to-negotiate-rent-increase" className="group flex items-center gap-4 rounded-xl border border-border/60 border-l-[3px] border-l-primary bg-card px-5 py-4 hover:bg-primary/[0.03] hover:shadow-md hover:shadow-primary/[0.06] transition-all duration-200">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">How to Negotiate a Rent Increase</h3>
-                    <p className="text-[13px] text-muted-foreground leading-relaxed mt-1">Counter-offer math, email templates, and step-by-step scripts</p>
-                  </div>
-                  <ChevronRight className="text-primary/50 group-hover:text-primary shrink-0 transition-all duration-200 group-hover:translate-x-0.5" size={18} />
-                </Link>
-                <Link to="/guides/what-should-i-pay-for-rent" className="group flex items-center gap-4 rounded-xl border border-border/60 border-l-[3px] border-l-primary bg-card px-5 py-4 hover:bg-primary/[0.03] hover:shadow-md hover:shadow-primary/[0.06] transition-all duration-200">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">What Should I Pay for Rent?</h3>
-                    <p className="text-[13px] text-muted-foreground leading-relaxed mt-1">How to evaluate any asking price using real market benchmarks</p>
-                  </div>
-                  <ChevronRight className="text-primary/50 group-hover:text-primary shrink-0 transition-all duration-200 group-hover:translate-x-0.5" size={18} />
-                </Link>
-                <Link to="/guides/rent-increase-laws-by-state" className="group flex items-center gap-4 rounded-xl border border-border/60 border-l-[3px] border-l-primary bg-card px-5 py-4 hover:bg-primary/[0.03] hover:shadow-md hover:shadow-primary/[0.06] transition-all duration-200">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">Rent Increase Laws by State</h3>
-                    <p className="text-[13px] text-muted-foreground leading-relaxed mt-1">Caps, notice periods, and your rights in all 50 states</p>
-                  </div>
-                  <ChevronRight className="text-primary/50 group-hover:text-primary shrink-0 transition-all duration-200 group-hover:translate-x-0.5" size={18} />
-                </Link>
+              <div className="space-y-0 divide-y divide-border/50">
+                {[
+                  { to: '/guides/how-to-negotiate-rent-increase', icon: MessageSquareText, label: 'Guide', title: 'How to Negotiate a Rent Increase', desc: 'Counter-offer math, email templates, and step-by-step scripts' },
+                  { to: '/guides/what-should-i-pay-for-rent', icon: Calculator, label: 'Tool', title: 'What Should I Pay for Rent?', desc: 'How to evaluate any asking price using real market benchmarks' },
+                  { to: '/guides/rent-increase-laws-by-state', icon: Scale, label: 'Reference', title: 'Rent Increase Laws by State', desc: 'Caps, notice periods, and your rights in all 50 states' },
+                ].map((g) => {
+                  const Icon = g.icon;
+                  return (
+                    <Link key={g.to} to={g.to} className="group flex items-center gap-4 py-5 px-2 sm:px-3 hover:bg-primary/[0.02] transition-all duration-200">
+                      <div className="w-10 h-10 rounded-lg bg-primary/[0.07] flex items-center justify-center shrink-0 group-hover:bg-primary/[0.12] transition-colors">
+                        <Icon className="text-primary" size={18} strokeWidth={1.8} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold text-foreground text-[15px] group-hover:text-primary transition-colors">{g.title}</h3>
+                          <span className="text-[10px] uppercase tracking-widest font-medium text-primary/40 hidden sm:inline">{g.label}</span>
+                        </div>
+                        <p className="text-[13px] text-muted-foreground leading-relaxed mt-0.5">{g.desc}</p>
+                      </div>
+                      <ChevronRight className="text-primary/30 group-hover:text-primary shrink-0 transition-all duration-200 group-hover:translate-x-0.5" size={16} />
+                    </Link>
+                  );
+                })}
               </div>
               <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 text-sm">
                 <Link to="/what-should-i-pay" className="text-primary hover:underline font-medium">Check what rent should cost →</Link>
