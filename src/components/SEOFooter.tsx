@@ -5,16 +5,6 @@ interface SEOFooterProps {
   onContactClick?: () => void;
 }
 
-const TOP_CITIES = [
-  { city: 'New York', state: 'NY', stateSlug: 'new-york', citySlug: 'new-york' },
-  { city: 'Los Angeles', state: 'CA', stateSlug: 'california', citySlug: 'los-angeles' },
-  { city: 'Chicago', state: 'IL', stateSlug: 'illinois', citySlug: 'chicago' },
-  { city: 'Houston', state: 'TX', stateSlug: 'texas', citySlug: 'houston' },
-  { city: 'Phoenix', state: 'AZ', stateSlug: 'arizona', citySlug: 'phoenix' },
-  { city: 'Philadelphia', state: 'PA', stateSlug: 'pennsylvania', citySlug: 'philadelphia' },
-  { city: 'San Antonio', state: 'TX', stateSlug: 'texas', citySlug: 'san-antonio' },
-  { city: 'San Diego', state: 'CA', stateSlug: 'california', citySlug: 'san-diego' },
-];
 
 const linkClass = 'text-[13px] text-muted-foreground hover:text-foreground hover:underline transition-colors';
 
