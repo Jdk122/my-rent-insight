@@ -28,7 +28,7 @@ function emailFooter(cityLabel: string, unsubUrl: string) {
 function buildRenewalHtml(data: any) {
   const { city, state, zip, bedrooms, fairness_score, verdict_label, report_url } = data;
   const cityLabel = city && state ? `${city}, ${state}` : zip ? `ZIP ${zip}` : "your area";
-  const reportUrl = report_url || `${BASE_URL}/?zip=${zip || ""}&bedrooms=${bedrooms || ""}`;
+  const reportUrl = report_url || `${BASE_URL}/rent/${zip || ""}`;
   const unsubUrl = `${BASE_URL}/outcome?result=unsubscribe&id=`;
 
   const scoreLine = fairness_score != null
