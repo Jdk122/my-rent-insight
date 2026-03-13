@@ -72,7 +72,7 @@ const HowItWorks = () => (
                   {step.number}
                 </span>
                 <div className="pt-0.5">
-                  <h3 className="text-[15px] font-semibold text-foreground mb-1">{step.title}</h3>
+                  <h3 className="text-[16px] font-semibold text-foreground mb-1">{step.title}</h3>
                   <p className="text-[14px] text-muted-foreground leading-relaxed">
                     {step.description}
                   </p>
