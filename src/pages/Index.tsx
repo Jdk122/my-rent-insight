@@ -2,6 +2,20 @@ import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
 import { ChevronRight, MessageSquareText, Calculator, Scale } from 'lucide-react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { useSearchParams, Link } from 'react-router-dom';
+import { slugify, STATE_NAMES } from '@/data/cityStateUtils';
+
+const LocationSearch = lazy(() => import('@/components/LocationSearch'));
+
+const POPULAR_CITIES = [
+  { city: 'New York', stateSlug: 'new-york', citySlug: 'new-york' },
+  { city: 'Los Angeles', stateSlug: 'california', citySlug: 'los-angeles' },
+  { city: 'Chicago', stateSlug: 'illinois', citySlug: 'chicago' },
+  { city: 'Houston', stateSlug: 'texas', citySlug: 'houston' },
+  { city: 'Phoenix', stateSlug: 'arizona', citySlug: 'phoenix' },
+  { city: 'Philadelphia', stateSlug: 'pennsylvania', citySlug: 'philadelphia' },
+  { city: 'San Diego', stateSlug: 'california', citySlug: 'san-diego' },
+  { city: 'Dallas', stateSlug: 'texas', citySlug: 'dallas' },
+];
 import RentForm, { RentFormData, RentFormPrefill } from '@/components/RentForm';
 import { lookupRentData, loadFredTrend, RentLookupResult } from '@/data/rentData';
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
