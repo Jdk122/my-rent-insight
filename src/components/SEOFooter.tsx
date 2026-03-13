@@ -8,36 +8,8 @@ interface SEOFooterProps {
 
 const linkClass = 'text-[13px] text-muted-foreground hover:text-foreground hover:underline transition-colors';
 
-const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClick, showCityDirectory = false }, ref) => (
+const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClick }, ref) => (
   <footer ref={ref} className="mt-auto border-t border-border">
-    {/* City directory — page background */}
-    {showCityDirectory && (
-      <div className="border-b border-border/50 bg-background">
-        <nav aria-label="Popular cities" className="max-w-5xl mx-auto px-5 sm:px-6 py-6 sm:py-8">
-          <h2 className="text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-muted-foreground/60 mb-4">
-            Explore Rent Data by City
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-1.5">
-            {TOP_CITIES.map(({ city, state, stateSlug, citySlug }) => (
-              <Link
-                key={`${stateSlug}/${citySlug}`}
-                to={`/rent-data/${stateSlug}/${citySlug}`}
-                className="text-[12px] sm:text-[13px] text-muted-foreground hover:text-foreground transition-colors truncate"
-              >
-                {city}, {state}
-              </Link>
-            ))}
-          </div>
-          <Link
-            to="/rent-data"
-            className="inline-block mt-3 text-[12px] sm:text-[13px] text-primary hover:text-primary/80 transition-colors font-medium"
-          >
-            View all states →
-          </Link>
-        </nav>
-      </div>
-    )}
-
     {/* Brand + copyright row */}
     <div style={{ backgroundColor: 'hsl(210 12% 92%)' }}>
     <div className="max-w-5xl mx-auto px-5 sm:px-6 pt-8 sm:pt-10 pb-6">
