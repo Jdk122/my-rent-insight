@@ -398,7 +398,7 @@ const WsipResults = ({
         onEmailCaptured={onEmailCaptured}
         toolType="wsip"
         shareReportPayload={shareReportPayload}
-        onReportGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
+        onReportGenerated={(url) => { setReportUrl(url); }}
       />
 
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
