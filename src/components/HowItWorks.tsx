@@ -78,7 +78,7 @@ const HowItWorks = () => (
                 </div>
                 <div className="pt-0.5">
                   <div className="flex items-center gap-2.5 mb-1">
-                    <span className="text-[12px] font-mono font-semibold text-primary/60 tabular-nums tracking-wide">
+                    <span className="text-[14px] font-mono font-bold text-primary tabular-nums tracking-wide">
                       {step.number}
                     </span>
                     <h3 className="text-[15px] font-semibold text-foreground">{step.title}</h3>
