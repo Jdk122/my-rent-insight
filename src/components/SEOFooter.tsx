@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 
 interface SEOFooterProps {
   onContactClick?: () => void;
-  showCityDirectory?: boolean;
 }
 
 const TOP_CITIES = [
