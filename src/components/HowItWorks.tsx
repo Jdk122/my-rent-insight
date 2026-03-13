@@ -1,22 +1,28 @@
 import { Link } from 'react-router-dom';
-import { MapPin, BarChart3, Mail, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+
+const shapes = [
+  // Circle
+  <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5" /></svg>,
+  // Diamond
+  <svg width="11" height="11" viewBox="0 0 11 11" fill="currentColor"><rect x="5.5" y="0" width="7.07" height="7.07" rx="1.2" transform="rotate(45 5.5 0)" /></svg>,
+  // Rounded square
+  <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><rect width="10" height="10" rx="2.5" /></svg>,
+];
 
 const steps = [
   {
     number: '01',
-    icon: MapPin,
     title: 'Enter Your Details',
     description: 'Your address, current rent, and proposed increase. Takes 30 seconds.',
   },
   {
     number: '02',
-    icon: BarChart3,
     title: 'See If Your Increase Is Fair',
     description: 'We cross-reference six data sources to score your increase and show your fair rent range — instantly.',
   },
   {
     number: '03',
-    icon: Mail,
     title: 'Unlock Your Full Report',
     description: 'Get detailed comps, market conditions, and a negotiation letter delivered to your inbox.',
   },
@@ -37,33 +43,28 @@ const HowItWorks = () => (
 
       {/* Desktop: horizontal 3-col with flow arrows */}
       <div className="hidden lg:grid lg:grid-cols-[1fr_auto_1fr_auto_1fr] lg:items-start relative">
-        {steps.map((step, i) => {
-          const Icon = step.icon;
-          return (
-            <>
-              <div
-                key={step.number}
-                className="relative z-10 group flex flex-col items-center text-center px-5 py-6 rounded-xl transition-all duration-200 hover:bg-muted/40 hover:shadow-sm cursor-default"
-              >
-                <div className="w-[56px] h-[56px] rounded-xl bg-primary/[0.07] flex items-center justify-center mb-3 group-hover:bg-primary/[0.12] transition-colors duration-200">
-                  <Icon className="text-primary" size={22} strokeWidth={1.8} />
-                </div>
-                <span className="text-[15px] font-mono font-bold text-primary mb-2 tabular-nums tracking-wide">
-                  {step.number}
-                </span>
-                <h3 className="text-[15px] font-semibold text-foreground mb-1.5">{step.title}</h3>
-                <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[220px]">
-                  {step.description}
-                </p>
-              </div>
+        {steps.map((step, i) => (
+          <>
+            <div
+              key={step.number}
+              className="relative z-10 group flex flex-col items-center text-center px-5 py-6 rounded-xl transition-all duration-200 hover:bg-muted/40 hover:shadow-sm cursor-default"
+            >
+              <div className="text-primary/30 mb-3">{shapes[i]}</div>
+              <span className="text-[15px] font-mono font-bold text-primary mb-2 tabular-nums tracking-wide">
+                {step.number}
+              </span>
+              <h3 className="text-[15px] font-semibold text-foreground mb-1.5">{step.title}</h3>
+              <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[220px]">
+                {step.description}
+              </p>
+            </div>
               {i < steps.length - 1 && (
                 <div key={`arrow-${i}`} className="flex items-center justify-center pt-[34px]">
                   <ArrowRight className="text-primary/25" size={20} strokeWidth={1.5} />
                 </div>
               )}
-            </>
-          );
-        })}
+          </>
+        ))}
       </div>
 
       {/* Mobile/Tablet: vertical stacked with connecting line */}
@@ -72,15 +73,13 @@ const HowItWorks = () => (
         <div className="absolute left-[29px] top-[40px] bottom-[40px] w-px border-l-2 border-dashed border-primary/15 z-0" />
 
         <div className="space-y-2">
-          {steps.map((step) => {
-            const Icon = step.icon;
-            return (
+          {steps.map((step, i) => (
               <div
                 key={step.number}
-                className="relative z-10 group flex items-start gap-5 py-4 px-3 rounded-xl transition-all duration-200 hover:bg-muted/40 hover:shadow-sm"
+                className="relative z-10 group flex items-start gap-4 py-4 px-3 rounded-xl transition-all duration-200 hover:bg-muted/40 hover:shadow-sm"
               >
-                <div className="w-[46px] h-[46px] rounded-xl bg-primary/[0.07] flex items-center justify-center shrink-0 group-hover:bg-primary/[0.12] transition-colors duration-200">
-                  <Icon className="text-primary" size={22} strokeWidth={1.8} />
+                <div className="w-[28px] h-[28px] flex items-center justify-center shrink-0 mt-1 text-primary/30">
+                  {shapes[i]}
                 </div>
                 <div className="pt-0.5">
                   <div className="flex items-center gap-2.5 mb-1">
@@ -94,8 +93,7 @@ const HowItWorks = () => (
                   </p>
                 </div>
               </div>
-            );
-          })}
+            ))}
         </div>
       </div>
 
