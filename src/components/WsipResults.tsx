@@ -60,9 +60,13 @@ const WsipResults = ({
   onEmailCaptured,
   onReset,
 }: WsipResultsProps) => {
-  const [analysisId] = useState(() => crypto.randomUUID());
+  const [{ analysisId, isDuplicateAnalysis }] = useState(() => {
+    const brNum = bedrooms === 'studio' ? 0 : bedrooms === 'oneBr' ? 1 : bedrooms === 'twoBr' ? 2 : bedrooms === 'threeBr' ? 3 : 4;
+    const result = checkAnalysisDedup(fullAddress, zip, brNum, askingRent ?? rentData.fmr, 'wsip');
+    return { analysisId: result.analysisId, isDuplicateAnalysis: result.isDuplicate };
+  });
   const [reportUrl, setReportUrl] = useState<string | null>(null);
-  const analysisLogged = useRef(false);
+  const analysisLogged = useRef(isDuplicateAnalysis);
   const [templateCopied, setTemplateCopied] = useState(false);
 
   const city = rentData.city;
