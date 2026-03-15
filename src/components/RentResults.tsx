@@ -31,6 +31,7 @@ import FairnessScoreGauge, { ComponentSourceInfo } from './FairnessScoreGauge';
 import MarketSnapshot from './MarketSnapshot';
 import NextStepsSection from './NextStepsSection';
 import ExitIntentModal from './ExitIntentModal';
+import MobileScrollPrompt from './MobileScrollPrompt';
 import PostConversionFlow from './PostConversionFlow';
 import FeedbackWidget from './FeedbackWidget';
 import SocialProofLine from './SocialProofLine';
@@ -602,6 +603,19 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         onReportGenerated={(url) => { setReportUrl(url); }}
       />
 
+      {/* Mobile Scroll Prompt (mobile only) — re-engagement */}
+      <MobileScrollPrompt
+        capturedEmail={capturedEmail}
+        leadContext={leadContext}
+        verdictLabel={verdictLabel}
+        zip={rentData.zip}
+        city={city}
+        onEmailCaptured={setCapturedEmail}
+        toolType="renewal"
+        shareReportPayload={shareReportPayload}
+        onReportGenerated={(url) => { setReportUrl(url); }}
+      />
+
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            PHASE 1: FREE CREDIBILITY LAYER
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
@@ -613,7 +627,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           <motion.section
             id="section-verdict"
             {...fade(0)}
-            className="min-h-[45vh] sm:min-h-[50vh] flex flex-col items-center justify-center text-center py-8 sm:py-12"
+            className="min-h-[30vh] sm:min-h-[50vh] flex flex-col items-center justify-center text-center py-6 sm:py-12"
           >
           {hasIncrease && !asyncDataReady ? (
               <div className="flex flex-col items-center gap-4">

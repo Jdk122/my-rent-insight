@@ -22,6 +22,7 @@ import { getBuildingRange } from '@/lib/buildingRange';
 import DataConfidenceBadge from './DataConfidenceBadge';
 import SectionNav from './SectionNav';
 import ExitIntentModal from './ExitIntentModal';
+import MobileScrollPrompt from './MobileScrollPrompt';
 import SocialProofLine from './SocialProofLine';
 import ShareHub from './ShareHub';
 import WsipCompsList from './WsipCompsList';
@@ -404,6 +405,19 @@ const WsipResults = ({
       <SectionNav sections={navSections} />
 
       <ExitIntentModal
+        capturedEmail={capturedEmail}
+        leadContext={leadContext}
+        verdictLabel={verdictLabel}
+        zip={zip}
+        city={city}
+        onEmailCaptured={onEmailCaptured}
+        toolType="wsip"
+        shareReportPayload={shareReportPayload}
+        onReportGenerated={(url) => { setReportUrl(url); }}
+      />
+
+      {/* Mobile Scroll Prompt (mobile only) — re-engagement */}
+      <MobileScrollPrompt
         capturedEmail={capturedEmail}
         leadContext={leadContext}
         verdictLabel={verdictLabel}

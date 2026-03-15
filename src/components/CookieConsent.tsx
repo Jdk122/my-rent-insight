@@ -18,7 +18,20 @@ const CookieConsent = () => {
     } else {
       // Small delay so it doesn't flash on initial paint
       const t = setTimeout(() => setVisible(true), 1200);
-      return () => clearTimeout(t);
+      // Auto-dismiss on mobile after 5 seconds of being visible
+      const autoDismiss = setTimeout(() => {
+        if (window.innerWidth < 768) {
+          window.gtag?.('consent', 'update', {
+            'analytics_storage': 'granted',
+            'ad_storage': 'granted',
+            'ad_user_data': 'granted',
+            'ad_personalization': 'granted',
+          });
+          localStorage.setItem(STORAGE_KEY, '1');
+          setVisible(false);
+        }
+      }, 6200); // 1200ms delay + 5000ms visible = 6200ms total
+      return () => { clearTimeout(t); clearTimeout(autoDismiss); };
     }
   }, []);
 
