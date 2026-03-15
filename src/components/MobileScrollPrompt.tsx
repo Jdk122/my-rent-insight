@@ -35,12 +35,20 @@ const MobileScrollPrompt = ({
   onReportGenerated,
 }: MobileScrollPromptProps) => {
   const [open, setOpen] = useState(false);
+  const [cookieVisible, setCookieVisible] = useState(!localStorage.getItem('rr_cookie_consent'));
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const mountTimeRef = useRef(Date.now());
   const maxScrollRef = useRef(0);
   const firedRef = useRef(false);
+
+  // Listen for cookie consent dismissal
+  useEffect(() => {
+    const handler = () => setCookieVisible(false);
+    window.addEventListener('rr_cookie_dismissed', handler);
+    return () => window.removeEventListener('rr_cookie_dismissed', handler);
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -218,7 +226,7 @@ const MobileScrollPrompt = ({
     setOpen(false);
   };
 
-  if (!open) return null;
+  if (!open || cookieVisible) return null;
 
   return (
     <>

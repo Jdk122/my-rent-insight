@@ -262,6 +262,10 @@ const Index = () => {
             </button>
           )}
           {results && !(hasIncrease && isAboveMarket) && !capturedEmail && (
+            document.getElementById('section-letter')
+              || document.getElementById('section-email-capture')
+              || document.querySelector('[id^="section-share"]')
+          ) && (
             <button
               onClick={() => {
                 const target = document.getElementById('section-letter')
@@ -269,8 +273,6 @@ const Index = () => {
                   || document.querySelector('[id^="section-share"]');
                 if (target) {
                   target.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
                 }
               }}
               className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap"
@@ -291,6 +293,12 @@ const Index = () => {
             </button>
           )}
           <Link
+            to="/guides"
+            className="text-muted-foreground hover:text-foreground text-[12px] sm:text-[13px] font-medium transition-colors whitespace-nowrap"
+          >
+            Guides
+          </Link>
+          <Link
             to="/what-should-i-pay"
             className="text-muted-foreground hover:text-foreground text-[12px] sm:text-[13px] font-medium transition-colors whitespace-nowrap hidden lg:inline-block"
           >
@@ -300,7 +308,7 @@ const Index = () => {
       </nav>
 
       {/* Spacer for fixed nav */}
-      <div className="h-[52px] sm:h-[56px]" />
+      <div className="h-[48px] sm:h-[56px]" />
 
       {isLoading ? (
         <LoadingAnalysis />
@@ -342,7 +350,7 @@ const Index = () => {
               {/* Data source bar — desktop only */}
               <div className="hidden lg:block mt-6">
                 <div className="border-t border-border/50 pt-4 pb-2 text-center">
-                  <p className="text-[13px] text-muted-foreground/60 tracking-wide whitespace-nowrap">
+                  <p className="text-[13px] text-muted-foreground/80 tracking-wide whitespace-nowrap">
                     Powered by: HUD FMR · Zillow ZORI · Apartment List · Live Comps · DHCR
                   </p>
                 </div>
@@ -357,7 +365,7 @@ const Index = () => {
               {/* Data source bar — mobile/tablet only */}
               <div className="mt-4 max-w-[540px] mx-auto lg:hidden">
                 <div className="border-t border-border/40 pt-3 pb-2 px-1 text-center">
-                  <p className="text-[11px] text-muted-foreground/50 tracking-wide">
+                  <p className="text-[11px] text-muted-foreground/70 tracking-wide">
                     HUD Fair Market Rent · Zillow ZORI · Apartment List · Live Comps · DHCR
                   </p>
                 </div>

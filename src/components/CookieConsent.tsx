@@ -29,6 +29,7 @@ const CookieConsent = () => {
           });
           localStorage.setItem(STORAGE_KEY, '1');
           setVisible(false);
+          window.dispatchEvent(new Event('rr_cookie_dismissed'));
         }
       }, 6200); // 1200ms delay + 5000ms visible = 6200ms total
       return () => { clearTimeout(t); clearTimeout(autoDismiss); };
@@ -44,12 +45,13 @@ const CookieConsent = () => {
     });
     localStorage.setItem(STORAGE_KEY, '1');
     setVisible(false);
+    window.dispatchEvent(new Event('rr_cookie_dismissed'));
   };
 
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[80] px-4 pb-20 sm:pb-4 pointer-events-none">
+    <div className="fixed bottom-0 left-0 right-0 z-[110] px-4 pb-20 sm:pb-4 pointer-events-none">
       <div className="max-w-lg mx-auto bg-card border border-border rounded-xl px-5 py-4 shadow-lg pointer-events-auto flex items-center gap-3 sm:gap-4 text-sm">
         <p className="text-muted-foreground text-[13px] leading-snug flex-1">
           We use cookies to improve your experience and analyze site traffic.{' '}
