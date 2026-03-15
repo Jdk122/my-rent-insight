@@ -145,7 +145,7 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
 
       {/* Dynamic verdict message */}
       <motion.div
-        className="mt-2 max-w-[460px] text-center"
+        className="mt-1 max-w-[460px] text-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7, duration: 0.5 }}
