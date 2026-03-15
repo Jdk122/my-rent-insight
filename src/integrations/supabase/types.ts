@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           bathrooms: string | null
           bedrooms: string | null
+          budget: string | null
           created_at: string
           current_rent: number | null
           email: string
@@ -35,6 +36,7 @@ export type Database = {
         Insert: {
           bathrooms?: string | null
           bedrooms?: string | null
+          budget?: string | null
           created_at?: string
           current_rent?: number | null
           email: string
@@ -52,6 +54,7 @@ export type Database = {
         Update: {
           bathrooms?: string | null
           bedrooms?: string | null
+          budget?: string | null
           created_at?: string
           current_rent?: number | null
           email?: string
@@ -327,6 +330,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      function_request_log: {
+        Row: {
+          created_at: string
+          function_name: string
+          id: string
+          ip_address: string
+          response_status: number | null
+          success: boolean | null
+        }
+        Insert: {
+          created_at?: string
+          function_name: string
+          id?: string
+          ip_address: string
+          response_status?: number | null
+          success?: boolean | null
+        }
+        Update: {
+          created_at?: string
+          function_name?: string
+          id?: string
+          ip_address?: string
+          response_status?: number | null
+          success?: boolean | null
+        }
+        Relationships: []
       }
       lead_events: {
         Row: {
