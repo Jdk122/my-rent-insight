@@ -305,7 +305,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
             <div className="flex rounded-lg border border-border overflow-hidden">
               <button
                 type="button"
-                className={`h-12 w-11 text-sm font-mono flex items-center justify-center transition-colors ${
+                className={`h-12 md:h-10 w-11 text-sm font-mono flex items-center justify-center transition-colors ${
                   !increaseIsPercent
                     ? 'bg-foreground text-background font-bold'
                     : 'bg-background text-muted-foreground hover:bg-secondary'
@@ -316,7 +316,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
               </button>
               <button
                 type="button"
-                className={`h-12 w-11 text-sm font-mono flex items-center justify-center transition-colors ${
+                className={`h-12 md:h-10 w-11 text-sm font-mono flex items-center justify-center transition-colors ${
                   increaseIsPercent
                     ? 'bg-foreground text-background font-bold'
                     : 'bg-background text-muted-foreground hover:bg-secondary'
