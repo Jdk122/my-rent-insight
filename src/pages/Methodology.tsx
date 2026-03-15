@@ -50,11 +50,11 @@ const Methodology = () => {
 
           <h2>Score Tiers</h2>
           <ul>
-            <li>80–100: Excellent</li>
-            <li>60–79: Fair</li>
-            <li>40–59: Moderate</li>
-            <li>20–39: Unfair</li>
-            <li>0–19: Excessive</li>
+             <li>80–100: Good Deal</li>
+             <li>60–79: At Market</li>
+             <li>40–59: Above Trend</li>
+             <li>20–39: Overpaying</li>
+             <li>0–19: Overpaying</li>
           </ul>
 
           <h2>Data Sources</h2>
@@ -126,11 +126,11 @@ const Methodology = () => {
 
                 <div className="pt-3 border-t border-border/40">
                   <p className="text-[13px] font-semibold text-foreground mb-2">Score Tiers</p>
-                  <ScoreTier range="80–100" label="Excellent" color="text-verdict-good" />
-                  <ScoreTier range="60–79" label="Fair" color="text-verdict-fair" />
-                  <ScoreTier range="40–59" label="Moderate" color="text-accent-amber" />
-                  <ScoreTier range="20–39" label="Unfair" color="text-destructive" />
-                  <ScoreTier range="0–19" label="Excessive" color="text-destructive" />
+                   <ScoreTier range="80–100" label="Good Deal" color="text-verdict-good" />
+                   <ScoreTier range="60–79" label="At Market" color="text-verdict-fair" />
+                   <ScoreTier range="40–59" label="Above Trend" color="text-accent-amber" />
+                   <ScoreTier range="20–39" label="Overpaying" color="text-destructive" />
+                   <ScoreTier range="0–19" label="Overpaying" color="text-destructive" />
                 </div>
               </div>
             </AccordionContent>
