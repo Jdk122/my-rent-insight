@@ -992,6 +992,7 @@ function DashboardContent() {
                   <table className="w-full text-xs">
                     <thead><tr className="border-b border-border bg-muted/30">
                       <th className="text-left px-3 py-2 font-medium">ID</th>
+                      <th className="text-left px-3 py-2 font-medium">Address/Zip</th>
                       <th className="text-left px-3 py-2 font-medium">City</th>
                       <th className="text-left px-3 py-2 font-medium">BR</th>
                       <th className="text-left px-3 py-2 font-medium">Rent</th>
@@ -1003,6 +1004,7 @@ function DashboardContent() {
                     </tr></thead>
                     <tbody>
                       {(diagData.recent_analyses || []).map((a: any) => (
+                        <tr key={a.id} className="border-b border-border last:border-0">
                           <td className="px-3 py-2 font-mono">{(a.id || '').slice(0, 8)}</td>
                           <td className="px-3 py-2">{a.address || a.zip || '—'}</td>
                           <td className="px-3 py-2">{a.city || '—'}</td>
