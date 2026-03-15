@@ -315,17 +315,13 @@ const Index = () => {
 
           {/* Value props */}
           <div className="mt-3 sm:mt-5 flex flex-col gap-1.5 sm:gap-2 max-w-[480px]">
-            <div className="flex items-start gap-2.5">
-              <MessageSquareText size={15} className="text-primary mt-0.5 shrink-0" />
-              <p className="text-[13px] sm:text-[14px] text-muted-foreground leading-snug">
-                <span className="font-semibold text-foreground">Ready-to-send negotiation letter</span> — backed by local data
-              </p>
+            <div className="flex items-start gap-2">
+              <span className="text-primary mt-0.5 shrink-0"><MessageSquareText size={15} /></span>
+              <span className="text-[14px] text-muted-foreground"><strong className="text-foreground font-semibold">Negotiation letter</strong> backed by your local data</span>
             </div>
-            <div className="flex items-start gap-2.5">
-              <Calculator size={15} className="text-primary mt-0.5 shrink-0" />
-              <p className="text-[13px] sm:text-[14px] text-muted-foreground leading-snug">
-                <span className="font-semibold text-foreground">Your counter-offer range</span> — from real comps nearby
-              </p>
+            <div className="flex items-start gap-2">
+              <span className="text-primary mt-0.5 shrink-0"><Calculator size={15} /></span>
+              <span className="text-[14px] text-muted-foreground"><strong className="text-foreground font-semibold">Counter-offer range</strong> from real comps nearby</span>
             </div>
           </div>
 
