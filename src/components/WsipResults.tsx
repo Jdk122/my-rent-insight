@@ -22,6 +22,7 @@ import { getBuildingRange } from '@/lib/buildingRange';
 import DataConfidenceBadge from './DataConfidenceBadge';
 import SectionNav from './SectionNav';
 import ExitIntentModal from './ExitIntentModal';
+import MobileScrollPrompt from './MobileScrollPrompt';
 import SocialProofLine from './SocialProofLine';
 import ShareHub from './ShareHub';
 import WsipCompsList from './WsipCompsList';
