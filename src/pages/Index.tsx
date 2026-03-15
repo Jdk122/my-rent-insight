@@ -351,7 +351,7 @@ const Index = () => {
 
             {/* Right column: form card */}
             <section id="main-content" className="mt-3 sm:mt-6 md:mt-0" aria-label="Rent increase checker">
-              <div className="md:bg-card md:border md:border-border md:rounded-2xl md:p-6">
+              <div>
                 <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
               </div>
               {/* Data source bar — mobile only */}
