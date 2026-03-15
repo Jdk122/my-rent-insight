@@ -317,15 +317,17 @@ const Index = () => {
           </p>
           <section id="main-content" className="mt-3 sm:mt-8" aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
-            <div className="mt-6 mb-1 max-w-[540px]">
-              <div className="border-t border-b border-border/40 py-3 px-1">
-                <p className="text-[11px] text-muted-foreground/50 text-center mb-2 tracking-wide uppercase font-medium">Built on the data landlords use to set your rent — now you can see it too.</p>
-                <div className="flex flex-wrap justify-center items-center gap-x-4 sm:gap-x-6 gap-y-1 text-[11px] text-muted-foreground/40 tracking-wide">
-                  <span>HUD Fair Market Rent</span>
-                  <span>Zillow ZORI</span>
-                  <span>Apartment List</span>
-                  <span>Live Market Comps</span>
-                  <span>NY DHCR</span>
+            <div className="mt-8 max-w-[540px] mx-auto">
+              <div className="border-t border-border/40 pt-5 pb-2 px-1 text-center">
+                <p className="text-[13px] text-muted-foreground font-medium mb-3">
+                  Built on the data landlords use to price your rent.
+                </p>
+                <div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-2">
+                  <span className="text-[11px] text-muted-foreground/70 bg-muted/50 border border-border/40 rounded-full px-3 py-1">HUD Fair Market Rent</span>
+                  <span className="text-[11px] text-muted-foreground/70 bg-muted/50 border border-border/40 rounded-full px-3 py-1">Zillow ZORI</span>
+                  <span className="text-[11px] text-muted-foreground/70 bg-muted/50 border border-border/40 rounded-full px-3 py-1">Apartment List</span>
+                  <span className="text-[11px] text-muted-foreground/70 bg-muted/50 border border-border/40 rounded-full px-3 py-1">Live Market Comps</span>
+                  <span className="text-[11px] text-muted-foreground/70 bg-muted/50 border border-border/40 rounded-full px-3 py-1">NY DHCR</span>
                 </div>
               </div>
             </div>
