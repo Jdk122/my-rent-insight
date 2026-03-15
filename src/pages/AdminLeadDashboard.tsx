@@ -897,6 +897,146 @@ function DashboardContent() {
             {diagData && <span className="text-xs text-muted-foreground">Last run: {new Date().toLocaleTimeString()}</span>}
           </div>
 
+          {/* Email Lookup */}
+          <div className="border border-primary/20 rounded-lg p-4 bg-primary/5">
+            <h3 className="text-sm font-semibold text-foreground mb-3">🔍 Email Lookup</h3>
+            <form onSubmit={async (e) => { e.preventDefault(); if (!lookupEmail.trim()) return; setLookupLoading(true); const d = await adminQuery('lead_lookup', { email: lookupEmail.trim() }); if (d) setLookupData(d); setLookupLoading(false); }} className="flex gap-2 mb-3">
+              <input type="text" placeholder="Search by email..." value={lookupEmail} onChange={(e) => setLookupEmail(e.target.value)} className="flex-1 px-3 py-2 text-sm border border-border rounded-lg bg-card text-foreground outline-none focus:border-foreground transition-colors" />
+              <button type="submit" disabled={lookupLoading} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-60">
+                {lookupLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Lookup'}
+              </button>
+            </form>
+            {lookupData && (
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-xs font-semibold text-muted-foreground mb-1">Leads table matches ({lookupData.leads?.length || 0})</h4>
+                  {(!lookupData.leads || lookupData.leads.length === 0) ? (
+                    <p className="text-xs text-muted-foreground">No leads found for this email</p>
+                  ) : (
+                    <div className="border border-border rounded-lg overflow-x-auto">
+                      <table className="w-full text-xs">
+                        <thead><tr className="border-b border-border bg-muted/30">
+                          <th className="text-left px-2 py-1.5 font-medium">Email</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Source</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Tool</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Analysis</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Verdict</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Score</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Rent</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Proposed</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Zip</th>
+                          <th className="text-left px-2 py-1.5 font-medium">City</th>
+                          <th className="text-left px-2 py-1.5 font-medium">UTM</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Lease</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Partner</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Unsub</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Created</th>
+                        </tr></thead>
+                        <tbody>
+                          {lookupData.leads.map((l: any) => (
+                            <tr key={l.id} className="border-b border-border last:border-0">
+                              <td className="px-2 py-1.5" title={l.email}>{(l.email || '').slice(0, 20)}</td>
+                              <td className="px-2 py-1.5">{l.capture_source || '—'}</td>
+                              <td className="px-2 py-1.5">{l.tool_type || '—'}</td>
+                              <td className="px-2 py-1.5 font-mono">{(l.analysis_id || '').slice(0, 8)}</td>
+                              <td className="px-2 py-1.5">{l.verdict || '—'}</td>
+                              <td className="px-2 py-1.5">{l.fairness_score ?? '—'}</td>
+                              <td className="px-2 py-1.5">{l.current_rent ? fmt(l.current_rent) : '—'}</td>
+                              <td className="px-2 py-1.5">{l.proposed_rent ? fmt(l.proposed_rent) : '—'}</td>
+                              <td className="px-2 py-1.5">{l.zip || '—'}</td>
+                              <td className="px-2 py-1.5">{l.city || '—'}</td>
+                              <td className="px-2 py-1.5">{l.utm_source || '—'}</td>
+                              <td className="px-2 py-1.5">{l.lease_expiration_month && l.lease_expiration_year ? `${l.lease_expiration_month}/${l.lease_expiration_year}` : '—'}</td>
+                              <td className="px-2 py-1.5">{l.partner_opt_in ? '✓' : '—'}</td>
+                              <td className="px-2 py-1.5">{l.unsubscribed ? '✗' : '—'}</td>
+                              <td className="px-2 py-1.5">{new Date(l.created_at).toLocaleString()}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <h4 className="text-xs font-semibold text-muted-foreground mb-1">Lead events matches ({lookupData.events?.length || 0})</h4>
+                  {(!lookupData.events || lookupData.events.length === 0) ? (
+                    <p className="text-xs text-muted-foreground">No events found</p>
+                  ) : (
+                    <div className="border border-border rounded-lg overflow-x-auto">
+                      <table className="w-full text-xs">
+                        <thead><tr className="border-b border-border bg-muted/30">
+                          <th className="text-left px-2 py-1.5 font-medium">Email</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Event</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Analysis</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Zip</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Verdict</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Score</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Rent</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Created</th>
+                        </tr></thead>
+                        <tbody>
+                          {lookupData.events.map((e: any) => (
+                            <tr key={e.id} className="border-b border-border last:border-0">
+                              <td className="px-2 py-1.5" title={e.email}>{(e.email || '').slice(0, 20)}</td>
+                              <td className="px-2 py-1.5">{e.event_type}</td>
+                              <td className="px-2 py-1.5 font-mono">{(e.analysis_id || '').slice(0, 8)}</td>
+                              <td className="px-2 py-1.5">{e.zip || '—'}</td>
+                              <td className="px-2 py-1.5">{e.verdict || '—'}</td>
+                              <td className="px-2 py-1.5">{e.fairness_score ?? '—'}</td>
+                              <td className="px-2 py-1.5">{e.current_rent ? fmt(e.current_rent) : '—'}</td>
+                              <td className="px-2 py-1.5">{new Date(e.created_at).toLocaleString()}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <h4 className="text-xs font-semibold text-muted-foreground mb-1">Linked analyses ({lookupData.analyses?.length || 0})</h4>
+                  {(!lookupData.analyses || lookupData.analyses.length === 0) ? (
+                    <p className="text-xs text-muted-foreground">No linked analyses found</p>
+                  ) : (
+                    <div className="border border-border rounded-lg overflow-x-auto">
+                      <table className="w-full text-xs">
+                        <thead><tr className="border-b border-border bg-muted/30">
+                          <th className="text-left px-2 py-1.5 font-medium">ID</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Address</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Zip</th>
+                          <th className="text-left px-2 py-1.5 font-medium">City</th>
+                          <th className="text-left px-2 py-1.5 font-medium">BR</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Rent</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Proposed</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Score</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Verdict</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Tool</th>
+                          <th className="text-left px-2 py-1.5 font-medium">Created</th>
+                        </tr></thead>
+                        <tbody>
+                          {lookupData.analyses.map((a: any) => (
+                            <tr key={a.id} className="border-b border-border last:border-0">
+                              <td className="px-2 py-1.5 font-mono">{(a.id || '').slice(0, 8)}</td>
+                              <td className="px-2 py-1.5">{a.address || '—'}</td>
+                              <td className="px-2 py-1.5">{a.zip || '—'}</td>
+                              <td className="px-2 py-1.5">{a.city || '—'}</td>
+                              <td className="px-2 py-1.5">{a.bedrooms ?? '—'}</td>
+                              <td className="px-2 py-1.5">{a.current_rent ? fmt(a.current_rent) : '—'}</td>
+                              <td className="px-2 py-1.5">{a.proposed_rent ? fmt(a.proposed_rent) : '—'}</td>
+                              <td className="px-2 py-1.5">{a.fairness_score ?? '—'}</td>
+                              <td className="px-2 py-1.5">{a.verdict_label || '—'}</td>
+                              <td className="px-2 py-1.5">{a.tool_type}</td>
+                              <td className="px-2 py-1.5">{new Date(a.created_at).toLocaleString()}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
           {diagData && (
             <div className="space-y-6">
               {/* March 14 Counts */}
