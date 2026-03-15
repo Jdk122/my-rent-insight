@@ -106,7 +106,7 @@ interface LocationSearchProps {
   className?: string;
 }
 
-const LocationSearch = ({ className }: LocationSearchProps) => {
+const LocationSearch = forwardRef<HTMLDivElement, LocationSearchProps>(({ className }, ref) => {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
