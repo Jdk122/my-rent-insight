@@ -300,14 +300,8 @@ const ReportGate = ({
     onEmailCaptured(trimmed);
     setLoading(false);
     trackEvent('report_gate_converted', { verdict: verdictLabel, zip_code: zip, tool: toolType });
-    trackEvent('email_submitted', { verdict: verdictLabel, zip_code: zip, source: 'report_gate', tool_type: toolType });
+    trackEvent('email_submitted', { verdict: verdictLabel, zip_code: zip, capture_source: 'report_gate', tool_type: toolType });
     trackAdsConversion(toolType, trimmed);
-    // Report Gate-specific Google Ads conversion
-    window.gtag?.('event', 'conversion', {
-      send_to: 'AW-17990530610/3GPLCIyp14YcELLsxoJD',
-      value: 1.0,
-      currency: 'USD',
-    });
 
     // Generate report + send email in parallel (non-blocking)
     (async () => {

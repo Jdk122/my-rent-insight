@@ -138,7 +138,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
     }
 
     onEmailCaptured?.(normalizedEmail);
-    trackEvent('email_submitted', { verdict, zip_code: leadContext?.zip || '', source: 'letter_gate', tool_type: 'renewal' });
+    trackEvent('email_submitted', { verdict, zip_code: leadContext?.zip || '', capture_source: 'letter_gate', tool_type: 'renewal' });
     trackAdsConversion('renewal', normalizedEmail);
     setUnlocked(true);
     setLoading(false);
@@ -185,7 +185,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
   const handleCopy = () => {
     const text = letterRef.current?.innerText || '';
     navigator.clipboard.writeText(text);
-    trackEvent('letter_copied', { source: 'letter_gate' });
+    trackEvent('letter_copied', { capture_source: 'letter_gate' });
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
     toast.success('Copied to clipboard');

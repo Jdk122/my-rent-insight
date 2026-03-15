@@ -126,7 +126,7 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
 
     onEmailCaptured(normalizedEmail);
     trackEvent('exit_intent_converted', { verdict: verdictLabel, zip_code: zip });
-    trackEvent('email_submitted', { verdict: verdictLabel, zip_code: zip, source: 'exit_intent', tool_type: toolType });
+    trackEvent('email_submitted', { verdict: verdictLabel, zip_code: zip, capture_source: 'exit_intent', tool_type: toolType });
     trackAdsConversion(toolType, normalizedEmail);
     setLoading(false);
     setOpen(false);
@@ -185,7 +185,7 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
       navigator.clipboard.writeText(url);
       toast.success('Link copied!');
     }
-    trackEvent('share_clicked', { method, source: 'exit_intent', tool_type: toolType });
+    trackEvent('share_clicked', { method, capture_source: 'exit_intent', tool_type: toolType });
     setOpen(false);
   };
 
