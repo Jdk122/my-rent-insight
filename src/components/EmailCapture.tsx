@@ -112,9 +112,9 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
       toast.error('Something went wrong saving your info.');
     }
 
-    onEmailCaptured?.(email);
+    onEmailCaptured?.(normalizedEmail);
     trackEvent('email_submitted', { verdict: verdict || 'unknown', zip_code: leadContext?.zip || '', source: captureSource, tool_type: 'renewal' });
-    trackAdsConversion('renewal', email);
+    trackAdsConversion('renewal', normalizedEmail);
     if (captureSource === 'lease_reminder') {
       trackEvent('lease_reminder_signup');
     }
