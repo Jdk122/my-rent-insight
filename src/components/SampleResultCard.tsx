@@ -37,7 +37,7 @@ const MARKER_D = markerPath(SCORE);
 const SampleResultCard = () => (
   <div className="hidden lg:flex justify-center">
     <div
-      className="max-w-[320px] w-full bg-card rounded-lg px-5 pt-5 pb-4 border border-border/50 cursor-default"
+      className="max-w-[320px] w-full bg-card rounded-[22px] px-5 pt-4 pb-3 border border-border/50 cursor-default"
       style={{
         boxShadow:
           '0 1px 3px rgba(0,0,0,0.04), 0 6px 20px -6px rgba(0,0,0,0.08)',
@@ -111,7 +111,7 @@ const SampleResultCard = () => (
         That's $4,200 more per year.
       </p>
 
-      <p className="text-[10px] text-muted-foreground/35 text-center mt-3 pt-2.5 border-t border-border/30">
+      <p className="text-[11px] text-muted-foreground/45 text-center mt-2.5 pt-2 border-t border-border/30 tracking-wide">
         Sample result · Hoboken, NJ 07030
       </p>
     </div>
