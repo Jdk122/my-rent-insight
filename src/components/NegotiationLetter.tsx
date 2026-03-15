@@ -338,7 +338,7 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
       if (fnError) throw fnError;
       if (data?.letter) {
         setAiLetter(data.letter);
-        trackEvent('ai_letter_generated', { zip });
+        trackEvent('letter_used', { action: 'generated', zip });
         onLetterGenerated?.();
       } else {
         throw new Error('No letter returned');
