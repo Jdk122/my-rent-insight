@@ -45,6 +45,31 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Rate limiting
+    const ip = getClientIp(req);
+    const fnName = "admin-query";
+    const rlClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+
+    await rlClient.from("function_request_log").insert({ function_name: fnName, ip_address: ip });
+
+    const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const { count } = await rlClient
+      .from("function_request_log")
+      .select("*", { count: "exact", head: true })
+      .eq("function_name", fnName)
+      .eq("ip_address", ip)
+      .gte("created_at", fiveMinAgo);
+
+    if ((count ?? 0) > 20) {
+      return new Response(JSON.stringify({ error: "Too many requests" }), {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { password, query, params } = await req.json();
 
     // Validate password server-side
