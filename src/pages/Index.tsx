@@ -310,7 +310,7 @@ const Index = () => {
             Is your landlord charging above market? <span className="text-primary">Get the answer in 10 seconds.</span>
           </h1>
           <p className="mt-3 sm:mt-5 text-[15px] sm:text-lg text-muted-foreground max-w-[540px] leading-relaxed font-normal tracking-tight">
-            We compare your increase to real local comps, market trends, and federal data — then draft your negotiation letter.
+            We compare your increase to real local comps and market trends — then draft your negotiation letter.
           </p>
           <section id="main-content" className="mt-5 sm:mt-10" aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
