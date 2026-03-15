@@ -309,24 +309,47 @@ const Index = () => {
           <h1 className="font-display text-[1.6rem] sm:text-[clamp(2rem,5vw,3rem)] text-foreground leading-[1.08] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
             Is your landlord charging <span className="text-primary">above&nbsp;market?</span>
           </h1>
-          <p className="mt-2 sm:mt-4 text-[15px] sm:text-lg text-muted-foreground max-w-[540px] leading-relaxed font-normal tracking-tight">
-            Find out in 10 seconds. Get your counter-offer and a ready-to-send negotiation letter — free.
+          <p className="mt-2 sm:mt-3 text-[15px] sm:text-lg text-muted-foreground max-w-[540px] leading-relaxed font-normal tracking-tight">
+            Find out in 10 seconds — free, no account needed.
           </p>
-          <section id="main-content" className="mt-3 sm:mt-8" aria-label="Rent increase checker">
+
+          {/* Value props */}
+          <div className="mt-3 sm:mt-5 flex flex-col gap-1.5 sm:gap-2 max-w-[480px]">
+            <div className="flex items-start gap-2.5">
+              <MessageSquareText size={15} className="text-primary mt-0.5 shrink-0" />
+              <p className="text-[13px] sm:text-[14px] text-muted-foreground leading-snug">
+                <span className="font-semibold text-foreground">Ready-to-send negotiation letter</span> — backed by your local data
+              </p>
+            </div>
+            <div className="flex items-start gap-2.5">
+              <Calculator size={15} className="text-primary mt-0.5 shrink-0" />
+              <p className="text-[13px] sm:text-[14px] text-muted-foreground leading-snug">
+                <span className="font-semibold text-foreground">Your counter-offer range</span> — calculated from real comps nearby
+              </p>
+            </div>
+            <div className="flex items-start gap-2.5">
+              <Scale size={15} className="text-primary mt-0.5 shrink-0" />
+              <p className="text-[13px] sm:text-[14px] text-muted-foreground leading-snug">
+                <span className="font-semibold text-foreground">Fairness score</span> — see exactly how your rent compares to market
+              </p>
+            </div>
+          </div>
+
+          <Suspense fallback={null}>
+            <div className="mt-4 sm:mt-6">
+              <SocialProofCounter />
+            </div>
+          </Suspense>
+
+          <section id="main-content" className="mt-3 sm:mt-6" aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
             <div className="mt-4 max-w-[540px] mx-auto">
-              <div className="border-t border-border/40 pt-4 pb-2 px-1 text-center">
-                <p className="text-[12px] text-muted-foreground/60 font-medium mb-1.5">
-                  Built on the data landlords use to price your rent.
-                </p>
-                <p className="text-[11px] text-muted-foreground/40 tracking-wide">
-                  HUD Fair Market Rent · Zillow ZORI · Apartment List · Live Market Comps · NY DHCR
+              <div className="border-t border-border/40 pt-3 pb-2 px-1 text-center">
+                <p className="text-[11px] text-muted-foreground/50 tracking-wide">
+                  HUD Fair Market Rent · Zillow ZORI · Apartment List · Live Comps · DHCR
                 </p>
               </div>
             </div>
-            <Suspense fallback={null}>
-              <SocialProofCounter />
-            </Suspense>
           </section>
         </main>
       ) : (
