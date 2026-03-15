@@ -176,7 +176,7 @@ const NextStepsSection = ({
                 actionLabel="Get Matched Free"
                 onAction={() => {
                   setModalOpen(true);
-                  trackEvent('agent_card_clicked', { zip });
+                  trackEvent('referral_clicked', { partner: 'agent', zip });
                   logReferralClick('agent_matching');
                 }}
                 recommended
