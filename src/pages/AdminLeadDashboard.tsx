@@ -189,6 +189,9 @@ function DashboardContent() {
   const [emailFilterToolType, setEmailFilterToolType] = useState<string>('all');
   const [emailSearch, setEmailSearch] = useState('');
 
+  // ── Diagnostic ──
+  const [diagData, setDiagData] = useState<any>(null);
+  const [diagLoading, setDiagLoading] = useState(false);
   // Helper to call admin edge function
   const adminQuery = async (query: string, params?: any) => {
     const password = getAdminPassword();
