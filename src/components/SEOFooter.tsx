@@ -14,7 +14,7 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
     <div style={{ backgroundColor: 'hsl(210 12% 92%)' }}>
     <div className="max-w-5xl mx-auto px-5 sm:px-6 pt-8 sm:pt-10 pb-6">
       <div className="flex items-center justify-between mb-8">
-        <Link to="/" className="shrink-0">
+        <Link to="/" className="shrink-0" onClick={() => window.scrollTo({ top: 0 })}>
           <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-5 sm:h-6 w-auto object-contain" />
         </Link>
         <p className="text-[12px] text-muted-foreground/50">© 2026 RenewalReply</p>
