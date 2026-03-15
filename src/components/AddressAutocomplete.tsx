@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
-import { trackEvent } from '@/lib/analytics'; // GA4
+
 
 interface PlacePrediction {
   place_id: string;

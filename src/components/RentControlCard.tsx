@@ -1,8 +1,6 @@
-import { useEffect } from 'react';
 import { ExternalLink, Loader2, ShieldCheck } from 'lucide-react';
 import { getRentControlByStateCity, getApplicableCap, getNoticeRequirement, RentControlResult } from '@/data/rentControlData';
 import { useHcrLookup } from '@/hooks/useHcrLookup';
-import { trackEvent } from '@/lib/analytics';
 
 interface RentControlCardProps {
   state: string;

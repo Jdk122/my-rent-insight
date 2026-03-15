@@ -5,7 +5,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ChevronDown, Info } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import { trackEvent } from '@/lib/analytics';
+
 
 export interface ComponentSourceInfo {
   [componentId: string]: string;

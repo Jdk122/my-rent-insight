@@ -1,5 +1,5 @@
 import { BedroomType } from '@/data/rentData';
-import { trackEvent } from '@/lib/analytics';
+
 
 interface CompLinksProps {
   zip: string;
