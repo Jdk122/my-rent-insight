@@ -196,7 +196,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
               onClick={() => setShowZipOnly(true)}
               className="text-xs text-muted-foreground/80 hover:text-foreground transition-colors underline underline-offset-2"
             >
-              Don't want to enter your address? Just use your zip code →
+              Or just enter your zip code →
             </button>
             {errors.address && <p className="text-[13px] text-destructive mt-1">{errors.address}</p>}
           </div>
