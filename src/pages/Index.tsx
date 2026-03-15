@@ -328,10 +328,6 @@ const Index = () => {
                 </div>
               </div>
 
-              {/* Trust line — desktop only, below bullets */}
-              <p className="hidden md:block mt-6 text-[14px] text-foreground/50 tracking-wide">
-                Free · No account required · 38,600+ ZIP codes
-              </p>
 
               <Suspense fallback={null}>
                 <div className="mt-4 sm:mt-6 md:mt-4">
