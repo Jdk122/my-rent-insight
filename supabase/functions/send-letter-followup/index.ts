@@ -199,7 +199,7 @@ Deno.serve(async (req) => {
         },
         body: JSON.stringify({
           from: "RenewalReply <noreply@renewalreply.com>",
-          reply_to: "social@renewalreply.com",
+          reply_to: "james@renewalreply.com",
           to: [lead.email],
           subject: "How did your rent negotiation go?",
           html: buildDay45Html(lead),
