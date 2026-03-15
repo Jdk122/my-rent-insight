@@ -622,6 +622,7 @@ function DashboardContent() {
                     { col: 'confidence_level', label: 'Conf' },
                     { col: '', label: 'Quality' },
                     { col: '', label: 'Flags' },
+                    { col: '', label: '' },
                   ].map((h, i) => (
                     <th
                       key={i}
