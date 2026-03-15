@@ -126,23 +126,24 @@ function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, incr
   if (currentRent >= upper) {
     const isFalling = (marketYoY ?? 0) < -0.5;
     let score: number;
+    let rawScore: number;
     if (isFalling) {
-      if (increasePct <= 0) score = 25;
-      else if (increasePct <= 2) score = 25 - (increasePct / 2) * 2;
-      else if (increasePct <= 4) score = 23 - ((increasePct - 2) / 2) * 8;
-      else if (increasePct <= 7) score = 15 - ((increasePct - 4) / 3) * 9;
-      else if (increasePct <= 10) score = 6 - ((increasePct - 7) / 3) * 6;
-      else score = 0;
+      if (increasePct <= 0) rawScore = 25;
+      else if (increasePct <= 2) rawScore = 25 - (increasePct / 2) * 2;
+      else if (increasePct <= 4) rawScore = 23 - ((increasePct - 2) / 2) * 8;
+      else if (increasePct <= 7) rawScore = 15 - ((increasePct - 4) / 3) * 9;
+      else if (increasePct <= 10) rawScore = 6 - ((increasePct - 7) / 3) * 6;
+      else rawScore = 0;
     } else {
-      if (increasePct <= 0) score = 25;
-      else if (increasePct <= 3) score = 25 - (increasePct / 3) * 2;
-      else if (increasePct <= 6) score = 23 - ((increasePct - 3) / 3) * 8;
-      else if (increasePct <= 10) score = 15 - ((increasePct - 6) / 4) * 9;
-      else if (increasePct <= 14) score = 6 - ((increasePct - 10) / 4) * 6;
-      else score = 0;
+      if (increasePct <= 0) rawScore = 25;
+      else if (increasePct <= 3) rawScore = 25 - (increasePct / 3) * 2;
+      else if (increasePct <= 6) rawScore = 23 - ((increasePct - 3) / 3) * 8;
+      else if (increasePct <= 10) rawScore = 15 - ((increasePct - 6) / 4) * 9;
+      else if (increasePct <= 14) rawScore = 6 - ((increasePct - 10) / 4) * 6;
+      else rawScore = 0;
     }
-    score = Math.round(score);
-    return { id: 'fmr', label, score, max: 25, estimated: false };
+    const score = Math.round((rawScore / 25) * maxPts);
+    return { id: 'fmr', label, score, max: maxPts, estimated: false };
   }
   let score: number;
   if (proposedRent <= upper) {
