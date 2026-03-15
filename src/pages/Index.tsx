@@ -306,7 +306,7 @@ const Index = () => {
         <LoadingAnalysis />
       ) : !results ? (
         <main className="max-w-[620px] md:max-w-[680px] mx-auto px-5 sm:px-6 pt-6 sm:pt-14 md:pt-20 pb-10 sm:pb-14">
-          <h1 className="font-display text-[2rem] sm:text-[clamp(2.25rem,5vw,3rem)] text-foreground leading-[1.08] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
+          <h1 className="font-display text-[1.4rem] sm:text-[clamp(2.25rem,5vw,3rem)] text-foreground leading-[1.08] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
             Is your landlord charging <span className="text-primary">above&nbsp;market?</span>
           </h1>
           <p className="mt-2 sm:mt-3 text-[15px] sm:text-lg text-muted-foreground max-w-[540px] leading-relaxed font-normal tracking-tight">
