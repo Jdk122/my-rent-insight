@@ -31,12 +31,9 @@ Deno.serve(async (req) => {
   const dayAgo5 = new Date(now);
   dayAgo5.setDate(dayAgo5.getDate() - 5);
 
-  // Bad-outcome verdicts stored in the DB
-  const badVerdicts = ["Moderate", "Unfair", "Excessive", "Above Market"];
-
   const { data: leads, error } = await supabase
     .from("leads")
-    .select("id, email, fairness_score, verdict, current_rent, proposed_rent, zip")
+    .select("id, email, current_rent, proposed_rent, zip")
     .eq("tool_type", "renewal")
     .is("founder_followup_sent_at", null)
     .not("email", "is", null)
@@ -52,12 +49,7 @@ Deno.serve(async (req) => {
     );
   }
 
-  // Filter: score < 60 OR verdict in bad list
-  const eligible = (leads || []).filter((l) => {
-    const scoreBad = l.fairness_score != null && l.fairness_score < 60;
-    const verdictBad = l.verdict != null && badVerdicts.includes(l.verdict);
-    return scoreBad || verdictBad;
-  });
+  const eligible = leads || [];
 
   let sent = 0;
   let failed = 0;
