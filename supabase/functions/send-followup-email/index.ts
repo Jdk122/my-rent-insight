@@ -81,10 +81,11 @@ Deno.serve(async (req) => {
 
   for (const lead of eligible) {
     // Double-check unsubscribe at email level (another row may be unsubscribed)
+    const normalizedEmail = lead.email.trim().toLowerCase();
     const { data: unsubRows } = await supabase
       .from("leads")
       .select("unsubscribed")
-      .eq("email", lead.email)
+      .eq("email", normalizedEmail)
       .eq("unsubscribed", true)
       .limit(1);
 

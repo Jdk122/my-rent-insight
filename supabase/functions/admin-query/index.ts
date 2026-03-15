@@ -425,9 +425,19 @@ Deno.serve(async (req) => {
         });
     }
 
+    responseStatus = 200;
+    reqSuccess = true;
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
+    } finally {
+      if (logId) {
+        await rlClient
+          .from("function_request_log")
+          .update({ success: reqSuccess, response_status: responseStatus })
+          .eq("id", logId);
+      }
+    }
   } catch (err) {
     return new Response(
       JSON.stringify({ error: err instanceof Error ? err.message : "Internal error" }),
