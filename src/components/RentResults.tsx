@@ -613,7 +613,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           <motion.section
             id="section-verdict"
             {...fade(0)}
-            className="min-h-[45vh] sm:min-h-[50vh] flex flex-col items-center justify-center text-center py-8 sm:py-12"
+            className="min-h-[30vh] sm:min-h-[50vh] flex flex-col items-center justify-center text-center py-6 sm:py-12"
           >
           {hasIncrease && !asyncDataReady ? (
               <div className="flex flex-col items-center gap-4">
