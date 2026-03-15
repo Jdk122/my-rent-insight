@@ -292,7 +292,7 @@ const Index = () => {
           )}
           <Link
             to="/what-should-i-pay"
-            className="border border-border text-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:bg-muted transition-all duration-150 whitespace-nowrap hidden sm:inline-block"
+            className="border border-border text-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:bg-muted transition-all duration-150 whitespace-nowrap hidden md:inline-block"
           >
             Check Asking Price →
           </Link>
@@ -305,7 +305,7 @@ const Index = () => {
       {isLoading ? (
         <LoadingAnalysis />
       ) : !results ? (
-        <main className="max-w-[620px] mx-auto px-5 sm:px-6 pt-6 sm:pt-10 md:pt-14 pb-10 sm:pb-14">
+        <main className="max-w-[620px] md:max-w-[680px] mx-auto px-5 sm:px-6 pt-6 sm:pt-10 md:pt-14 pb-10 sm:pb-14">
           <h1 className="font-display text-[1.6rem] sm:text-[clamp(2rem,5vw,3rem)] text-foreground leading-[1.08] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
             Is your landlord charging <span className="text-primary">above market?</span>
           </h1>
