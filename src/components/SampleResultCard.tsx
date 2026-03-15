@@ -37,9 +37,8 @@ const MARKER_D = markerPath(SCORE);
 const SampleResultCard = () => (
   <div className="hidden lg:flex justify-center">
     <div
-      className="max-w-[320px] w-full bg-card rounded-lg px-5 pt-5 pb-4 border border-border/50 transition-transform duration-500 ease-out hover:rotate-0 hover:scale-[1.01] cursor-default"
+      className="max-w-[320px] w-full bg-card rounded-lg px-5 pt-5 pb-4 border border-border/50 cursor-default"
       style={{
-        transform: 'rotate(-1.5deg)',
         boxShadow:
           '0 1px 3px rgba(0,0,0,0.04), 0 6px 20px -6px rgba(0,0,0,0.08)',
       }}
