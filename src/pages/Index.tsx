@@ -317,7 +317,7 @@ const Index = () => {
           </p>
           <section id="main-content" className="mt-3 sm:mt-8" aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
-            <div className="mt-6 max-w-[540px] mx-auto">
+            <div className="mt-4 max-w-[540px] mx-auto">
               <div className="border-t border-border/40 pt-4 pb-2 px-1 text-center">
                 <p className="text-[12px] text-muted-foreground/60 font-medium mb-1.5">
                   Built on the data landlords use to price your rent.
