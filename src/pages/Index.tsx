@@ -312,7 +312,7 @@ const Index = () => {
               <h1 className="font-display text-[1.85rem] sm:text-[clamp(2rem,5vw,3rem)] md:text-[42px] text-foreground leading-[1.08] md:leading-[1.12] tracking-tight font-extrabold" style={{ letterSpacing: '-0.025em' }}>
                 Is your rent increase <span className="text-primary">above&nbsp;market?</span>
               </h1>
-              <p className="mt-2 sm:mt-3 md:mt-3 text-[15px] sm:text-lg md:text-[18px] text-muted-foreground md:text-foreground/70 max-w-[540px] leading-relaxed font-normal tracking-tight">
+              <p className="mt-2 sm:mt-3 md:mt-3 text-[15px] sm:text-lg md:text-[18px] text-muted-foreground md:text-foreground/70 max-w-[540px] leading-relaxed font-normal tracking-tight md:whitespace-nowrap">
                 Find out in 10 seconds — free, no account needed.
               </p>
 
