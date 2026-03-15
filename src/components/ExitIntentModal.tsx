@@ -72,7 +72,7 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
     const normalizedEmail = email.trim().toLowerCase();
     const utm = getUtmParams();
     try {
-      const { error: rpcError } = await supabase.rpc('upsert_lead', {
+      const leadParams = {
         p_email: normalizedEmail,
         p_analysis_id: leadContext?.analysisId || null,
         p_capture_source: 'exit_intent',
@@ -92,10 +92,16 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
         p_comp_median_rent: leadContext?.compMedianRent ?? null,
         p_hud_fmr_value: leadContext?.hudFmrValue ?? null,
         p_tool_type: toolType === 'wsip' ? 'wsip' : 'renewal',
-      } as any);
+      } as any;
+
+      let { error: rpcError } = await supabase.rpc('upsert_lead', leadParams);
+      if (rpcError && leadContext?.analysisId) {
+        console.warn('[lead] upsert_lead FK retry (exit_intent):', rpcError.message);
+        ({ error: rpcError } = await supabase.rpc('upsert_lead', { ...leadParams, p_analysis_id: null }));
+      }
       if (rpcError) console.error('[lead] upsert_lead failed (exit_intent):', rpcError.message);
 
-      const { error: evtError } = await supabase.from('lead_events' as any).insert({
+      const evtPayload = {
         email: normalizedEmail,
         analysis_id: leadContext?.analysisId || null,
         event_type: 'exit_intent',
@@ -108,7 +114,11 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
         verdict: verdictLabel || null,
         comp_median_rent: leadContext?.compMedianRent ?? null,
         hud_fmr_value: leadContext?.hudFmrValue ?? null,
-      } as any);
+      } as any;
+      let { error: evtError } = await supabase.from('lead_events' as any).insert(evtPayload);
+      if (evtError && leadContext?.analysisId) {
+        ({ error: evtError } = await supabase.from('lead_events' as any).insert({ ...evtPayload, analysis_id: null }));
+      }
       if (evtError) console.error('[lead] lead_events insert failed (exit_intent):', evtError.message);
     } catch (err) {
       console.error('[lead] exit_intent unexpected error:', err);

@@ -76,7 +76,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
     const verdict = verdictLabel || 'above';
 
     try {
-      const { error: rpcError } = await supabase.rpc('upsert_lead', {
+      const leadParams = {
         p_email: normalizedEmail,
         p_analysis_id: leadContext?.analysisId || null,
         p_capture_source: 'letter_gate',
@@ -99,14 +99,19 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
         p_fairness_score: leadContext?.fairnessScore ?? null,
         p_comp_median_rent: leadContext?.compMedianRent ?? null,
         p_hud_fmr_value: leadContext?.hudFmrValue ?? null,
-      } as any);
+      } as any;
 
+      let { error: rpcError } = await supabase.rpc('upsert_lead', leadParams);
+      if (rpcError && leadContext?.analysisId) {
+        console.warn('[lead] upsert_lead FK retry (letter_gate):', rpcError.message);
+        ({ error: rpcError } = await supabase.rpc('upsert_lead', { ...leadParams, p_analysis_id: null }));
+      }
       if (rpcError) {
         console.error('[lead] upsert_lead failed (letter_gate):', rpcError.message);
         throw rpcError;
       }
 
-      const { error: evtError } = await supabase.from('lead_events' as any).insert({
+      const evtPayload = {
         email: normalizedEmail,
         analysis_id: leadContext?.analysisId || null,
         event_type: 'letter_gate',
@@ -119,7 +124,11 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
         verdict,
         comp_median_rent: leadContext?.compMedianRent ?? null,
         hud_fmr_value: leadContext?.hudFmrValue ?? null,
-      } as any);
+      } as any;
+      let { error: evtError } = await supabase.from('lead_events' as any).insert(evtPayload);
+      if (evtError && leadContext?.analysisId) {
+        ({ error: evtError } = await supabase.from('lead_events' as any).insert({ ...evtPayload, analysis_id: null }));
+      }
       if (evtError) console.error('[lead] lead_events insert failed (letter_gate):', evtError.message);
     } catch (err) {
       console.error('[lead] letter_gate error:', err);
