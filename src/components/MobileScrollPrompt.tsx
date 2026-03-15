@@ -215,7 +215,7 @@ const MobileScrollPrompt = ({
       navigator.clipboard.writeText(url);
       toast.success('Link copied!');
     }
-    trackEvent('share_clicked', { method, source: 'mobile_scroll_prompt', tool_type: toolType });
+    trackEvent('share_clicked', { method, capture_source: 'mobile_scroll_prompt', tool_type: toolType });
     setOpen(false);
   };
 

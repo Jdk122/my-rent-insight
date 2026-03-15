@@ -126,7 +126,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
     }
 
     onEmailCaptured?.(normalizedEmail);
-    trackEvent('email_submitted', { verdict: verdict || 'unknown', zip_code: leadContext?.zip || '', source: captureSource, tool_type: 'renewal' });
+    trackEvent('email_submitted', { verdict: verdict || 'unknown', zip_code: leadContext?.zip || '', capture_source: captureSource, tool_type: 'renewal' });
     trackAdsConversion('renewal', normalizedEmail);
     if (captureSource === 'lease_reminder') {
       trackEvent('lease_reminder_signup');
