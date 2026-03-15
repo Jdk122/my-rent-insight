@@ -919,13 +919,22 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 }
               </p>
 
-              {/* ── Comp teaser line (no-increase path) ── */}
+              {/* ── Combined comp + letter prompt (mobile, no-increase) ── */}
+              {!capturedEmail && compsWithRent.length > 0 && (
+                <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-3 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
+                  <span className="text-sm font-medium text-foreground">{compsWithRent.length} matched comps found</span>
+                  <span className="text-sm font-semibold text-primary mt-0.5">Your negotiation letter is ready ↓</span>
+                  <span className="text-xs text-muted-foreground mt-0.5">Full comps, counter-offer guidance, and market data below.</span>
+                </div>
+              )}
+
+              {/* ── Comp teaser line (desktop, no-increase) ── */}
               {compsWithRent.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.25, duration: 0.4 }}
-                  className="mt-5 w-full max-w-[540px]"
+                  className="hidden sm:block mt-4 w-full max-w-[540px]"
                 >
                   <span className="inline-block border border-border/60 rounded-full px-4 py-1.5 text-sm font-semibold text-foreground/70">
                     {bldg.hasBuildingData && bldg.buildingComps.length >= 2
@@ -934,13 +943,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     }
                   </span>
                 </motion.div>
-              )}
-
-              {!capturedEmail && (
-                <div className="sm:hidden flex flex-col items-center justify-center mt-5 text-center">
-                  <span className="text-primary font-semibold text-sm">Your negotiation letter is ready ↓</span>
-                  <span className="text-muted-foreground text-xs mt-0.5">Plus full comps, counter-offer guidance, and market data.</span>
-                </div>
               )}
 
               <PreGateCompPreview compsWithRent={compsWithRent} capturedEmail={capturedEmail} fmt={fmt} />
