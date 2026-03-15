@@ -241,6 +241,8 @@ const LocationSearch = forwardRef<HTMLDivElement, LocationSearchProps>(({ classN
       )}
     </div>
   );
-};
+});
+
+LocationSearch.displayName = 'LocationSearch';
 
 export default LocationSearch;

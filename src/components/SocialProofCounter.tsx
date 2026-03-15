@@ -20,6 +20,8 @@ const SocialProofCounter = forwardRef<HTMLDivElement>((_, ref) => {
       </p>
     </div>
   );
-};
+});
+
+SocialProofCounter.displayName = 'SocialProofCounter';
 
 export default SocialProofCounter;
