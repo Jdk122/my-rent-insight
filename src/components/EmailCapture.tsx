@@ -125,11 +125,11 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
     (async () => {
       let reportUrl: string | null = null;
       if (shareReportPayload) {
-        reportUrl = await generateSharedReport(shareReportPayload, leadContext?.analysisId, email);
+        reportUrl = await generateSharedReport(shareReportPayload, leadContext?.analysisId, normalizedEmail);
         if (reportUrl) onReportGenerated?.(reportUrl);
       }
       sendConfirmationEmail({
-        email,
+        email: normalizedEmail,
         city: leadContext?.city,
         state: leadContext?.state,
         zip: leadContext?.zip,
