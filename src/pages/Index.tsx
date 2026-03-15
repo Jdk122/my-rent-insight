@@ -104,7 +104,7 @@ const Index = () => {
         }
 
         setResults({ formData: { ...data, zip }, rentData });
-        trackEvent('form_submitted', { zip, bedrooms: data.bedrooms, has_address: true });
+        trackEvent('analysis_started', { tool: 'renewal', zip, bedrooms: data.bedrooms, has_address: true });
         setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
 
         loadFredTrend(rentData.metro).then((fredTrend) => {
