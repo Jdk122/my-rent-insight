@@ -235,7 +235,7 @@ const NextStepsSection = ({
                 stats={[]}
                 actionLabel="Share Results"
                 onAction={() => {
-                  trackEvent('share_clicked', { capture_source: 'next_steps' });
+                  trackEvent('report_shared', { method: 'share_button' });
                   onShareClick?.();
                 }}
                 delay={0.28}
