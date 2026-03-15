@@ -309,10 +309,10 @@ const Index = () => {
           <div className="md:grid md:grid-cols-[1fr_390px] md:gap-8 md:items-start">
             {/* Left column: sales message */}
             <div>
-              <h1 className="font-display text-[1.85rem] sm:text-[clamp(2rem,5vw,3rem)] md:text-[42px] text-foreground leading-[1.08] md:leading-[1.12] tracking-tight font-extrabold" style={{ letterSpacing: '-0.025em' }}>
+              <h1 className="font-display text-[1.85rem] sm:text-[clamp(2rem,5vw,3rem)] md:text-[50px] text-foreground leading-[1.08] md:leading-[1.05] tracking-tight font-extrabold" style={{ letterSpacing: '-0.025em' }}>
                 Is your rent increase <span className="text-primary">above&nbsp;market?</span>
               </h1>
-              <p className="mt-2 sm:mt-3 md:mt-3 text-[15px] sm:text-lg md:text-[18px] text-muted-foreground md:text-foreground/70 max-w-[540px] leading-relaxed font-normal tracking-tight md:whitespace-nowrap">
+              <p className="mt-2 sm:mt-3 md:mt-3 text-[15px] sm:text-lg md:text-[19px] text-muted-foreground md:text-foreground/70 max-w-[540px] leading-relaxed font-normal tracking-tight md:whitespace-nowrap">
                 Find out in 10 seconds — free, no account needed.
               </p>
 
@@ -320,11 +320,11 @@ const Index = () => {
               <div className="mt-3 sm:mt-5 md:mt-6 flex flex-col gap-1.5 sm:gap-2 md:gap-3 max-w-[480px]">
                 <div className="flex items-start gap-2">
                   <span className="text-primary mt-0.5 shrink-0"><MessageSquareText size={15} className="md:w-[18px] md:h-[18px]" /></span>
-                  <span className="text-[14px] md:text-[16px] text-muted-foreground md:text-foreground/60"><strong className="text-foreground font-bold">Negotiation letter</strong> backed by your local data</span>
+                  <span className="text-[14px] md:text-[17px] text-muted-foreground md:text-foreground/60"><strong className="text-foreground font-bold">Negotiation letter</strong> backed by your local data</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <span className="text-primary mt-0.5 shrink-0"><Calculator size={15} className="md:w-[18px] md:h-[18px]" /></span>
-                  <span className="text-[14px] md:text-[16px] text-muted-foreground md:text-foreground/60"><strong className="text-foreground font-bold">Counter-offer range</strong> from real comps nearby</span>
+                  <span className="text-[14px] md:text-[17px] text-muted-foreground md:text-foreground/60"><strong className="text-foreground font-bold">Counter-offer range</strong> from real comps nearby</span>
                 </div>
               </div>
 
