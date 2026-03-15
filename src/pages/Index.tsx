@@ -292,7 +292,7 @@ const Index = () => {
           )}
           <Link
             to="/what-should-i-pay"
-            className="text-muted-foreground hover:text-foreground text-[12px] sm:text-[13px] font-medium transition-colors whitespace-nowrap hidden md:inline-block"
+            className="text-muted-foreground hover:text-foreground text-[12px] sm:text-[13px] font-medium transition-colors whitespace-nowrap hidden lg:inline-block"
           >
             Check Asking Price →
           </Link>
