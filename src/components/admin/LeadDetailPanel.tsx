@@ -35,8 +35,6 @@ export default function LeadDetailPanel({ analysis, onClose, onDeleted }: LeadDe
     if (data?.success) { onDeleted?.(analysis.id); onClose(); }
     setDeleting(false);
   };
-  const [events, setEvents] = useState<any[]>([]);
-  const [sharedReport, setSharedReport] = useState<any>(null);
 
   const lead = analysis.leads?.[0] ?? null;
 
