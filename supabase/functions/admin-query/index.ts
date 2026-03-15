@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Rate limiting
+  // Rate limiting — count first, then insert
     const ip = getClientIp(req);
     const fnName = "admin-query";
     const rlClient = createClient(
@@ -53,28 +53,42 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    await rlClient.from("function_request_log").insert({ function_name: fnName, ip_address: ip });
-
     const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-    const { count } = await rlClient
+    const { count: recentCount } = await rlClient
       .from("function_request_log")
       .select("*", { count: "exact", head: true })
       .eq("function_name", fnName)
       .eq("ip_address", ip)
       .gte("created_at", fiveMinAgo);
 
-    if ((count ?? 0) > 20) {
+    if ((recentCount ?? 0) >= 20) {
+      await rlClient.from("function_request_log").insert({
+        function_name: fnName, ip_address: ip, success: false, response_status: 429,
+      });
       return new Response(JSON.stringify({ error: "Too many requests" }), {
         status: 429,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    // Insert log row — will be updated with outcome
+    const { data: logRow } = await rlClient
+      .from("function_request_log")
+      .insert({ function_name: fnName, ip_address: ip })
+      .select("id")
+      .single();
+    const logId = logRow?.id;
+
+    let responseStatus = 500;
+    let reqSuccess = false;
+
+    try {
     const { password, query, params } = await req.json();
 
     // Validate password server-side
     const adminPassword = Deno.env.get("ADMIN_PASSWORD");
     if (!adminPassword || password !== adminPassword) {
+      responseStatus = 403;
       return new Response(JSON.stringify({ error: "Access denied" }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -411,9 +425,19 @@ Deno.serve(async (req) => {
         });
     }
 
+    responseStatus = 200;
+    reqSuccess = true;
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
+    } finally {
+      if (logId) {
+        await rlClient
+          .from("function_request_log")
+          .update({ success: reqSuccess, response_status: responseStatus })
+          .eq("id", logId);
+      }
+    }
   } catch (err) {
     return new Response(
       JSON.stringify({ error: err instanceof Error ? err.message : "Internal error" }),
