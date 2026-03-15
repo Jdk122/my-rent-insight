@@ -128,9 +128,9 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
       return;
     }
 
-    onEmailCaptured?.(email.trim());
+    onEmailCaptured?.(normalizedEmail);
     trackEvent('email_submitted', { verdict, zip_code: leadContext?.zip || '', source: 'letter_gate', tool_type: 'renewal' });
-    trackAdsConversion('renewal', email.trim());
+    trackAdsConversion('renewal', normalizedEmail);
     setUnlocked(true);
     setLoading(false);
     toast.success('Letter unlocked!');
