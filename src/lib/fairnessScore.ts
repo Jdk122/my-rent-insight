@@ -43,6 +43,7 @@ export interface FairnessScoreResult {
   tierColorHsl: string;     // HSL for gauge
   tierMessage: string;
   components: ScoreComponent[];
+  extremeIncreaseCeilingApplied?: boolean;
 }
 
 // Component 1: Increase Rate vs Area Trend (35 pts base)
