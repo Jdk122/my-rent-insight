@@ -313,7 +313,7 @@ const Index = () => {
             Get the answer in 10 seconds.
           </p>
           <p className="mt-3 sm:mt-5 text-[15px] sm:text-lg text-muted-foreground max-w-[540px] leading-relaxed font-normal tracking-tight">
-            We compare your increase to real local comps and market trends — then draft your negotiation letter.
+            See if you're overpaying — and get a free negotiation letter to fix it.
           </p>
           <section id="main-content" className="mt-4 sm:mt-8" aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
