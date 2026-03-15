@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { X, ExternalLink } from 'lucide-react';
+import { X, ExternalLink, Trash2, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { getAdminPassword, clearAdminSession } from '@/components/admin/AdminPasswordGate';
 
 interface LeadDetailPanelProps {
   analysis: any;
   onClose: () => void;
+  onDeleted?: (id: string) => void;
 }
 
 const fmt = (n: number | null | undefined) =>
