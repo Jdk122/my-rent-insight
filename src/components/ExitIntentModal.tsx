@@ -56,7 +56,7 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
   }, [capturedEmail, verdictLabel, zip]);
 
   const handleDismiss = () => {
-    trackEvent('exit_intent_dismissed', { verdict: verdictLabel, zip_code: zip });
+    trackEvent('prompt_dismissed', { prompt: 'exit_intent', zip });
     setOpen(false);
   };
 
