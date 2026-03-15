@@ -341,6 +341,27 @@ Deno.serve(async (req) => {
         break;
       }
 
+      case "delete_analysis": {
+        const analysisId = params?.analysisId;
+        if (!analysisId) {
+          return new Response(JSON.stringify({ error: "analysisId required" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        // Delete in order: lead_events → leads → referral_clicks → shared_reports → user_feedback → analyses
+        await supabase.from("lead_events").delete().eq("analysis_id", analysisId);
+        await supabase.from("leads").delete().eq("analysis_id", analysisId);
+        await supabase.from("referral_clicks").delete().eq("analysis_id", analysisId);
+        await supabase.from("shared_reports").delete().eq("analysis_id", analysisId);
+        await supabase.from("user_feedback").delete().eq("analysis_id", analysisId);
+        const { error: delErr } = await supabase.from("analyses").delete().eq("id", analysisId);
+        if (delErr) throw delErr;
+        data = { success: true };
+        break;
+      }
+
       case "feedback": {
         const { data: fbRows, error: fbErr } = await supabase
           .from("user_feedback")

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Loader2, Download, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Search, Filter, Check, X, AlertTriangle, ExternalLink, Mail, Users, ThumbsUp, ThumbsDown, MessageSquare } from 'lucide-react';
+import { Loader2, Download, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Search, Filter, Check, X, AlertTriangle, ExternalLink, Mail, Users, ThumbsUp, ThumbsDown, MessageSquare, Trash2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import AdminPasswordGate, { getAdminPassword, clearAdminSession } from '@/components/admin/AdminPasswordGate';
 import AdminNav from '@/components/admin/AdminNav';
@@ -294,6 +294,27 @@ function DashboardContent() {
       filterZip, filterCity, filterVerdict, filterLetter,
     });
     if (data) downloadCSV(data, `renewalreply-leads-${new Date().toISOString().slice(0, 10)}.csv`);
+  };
+
+  // Delete analysis with full cascade
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
+  const handleDelete = async (analysisId: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (confirmDeleteId !== analysisId) {
+      setConfirmDeleteId(analysisId);
+      return;
+    }
+    setDeletingId(analysisId);
+    const result = await adminQuery('delete_analysis', { analysisId });
+    setDeletingId(null);
+    setConfirmDeleteId(null);
+    if (result?.success) {
+      setRows(prev => prev.filter(r => r.id !== analysisId));
+      setTotalCount(prev => prev - 1);
+      if (selectedRow?.id === analysisId) setSelectedRow(null);
+    }
   };
 
   const handleSort = (col: string) => {
@@ -601,6 +622,7 @@ function DashboardContent() {
                     { col: 'confidence_level', label: 'Conf' },
                     { col: '', label: 'Quality' },
                     { col: '', label: 'Flags' },
+                    { col: '', label: '' },
                   ].map((h, i) => (
                     <th
                       key={i}
@@ -675,12 +697,22 @@ function DashboardContent() {
                           </div>
                         ) : '—'}
                       </td>
+                      <td className="px-2 py-2">
+                        <button
+                          onClick={(e) => handleDelete(r.id, e)}
+                          disabled={deletingId === r.id}
+                          className={`p-1 rounded transition-colors ${confirmDeleteId === r.id ? 'bg-red-600 text-white hover:bg-red-700' : 'text-muted-foreground hover:text-red-600 hover:bg-red-500/10'}`}
+                          title={confirmDeleteId === r.id ? 'Click again to confirm' : 'Delete'}
+                        >
+                          {deletingId === r.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                        </button>
+                      </td>
                     </tr>
                   );
                 });
                 })()}
                 {rows.length === 0 && (
-                  <tr><td colSpan={19} className="px-4 py-8 text-center text-muted-foreground">No results found</td></tr>
+                  <tr><td colSpan={20} className="px-4 py-8 text-center text-muted-foreground">No results found</td></tr>
                 )}
               </tbody>
             </table>
@@ -1331,7 +1363,7 @@ function DashboardContent() {
       </Tabs>
 
       {/* Detail Panel */}
-      {selectedRow && <LeadDetailPanel analysis={selectedRow} onClose={() => setSelectedRow(null)} />}
+      {selectedRow && <LeadDetailPanel analysis={selectedRow} onClose={() => setSelectedRow(null)} onDeleted={(id) => { setRows(prev => prev.filter(r => r.id !== id)); setTotalCount(prev => prev - 1); setSelectedRow(null); }} />}
     </div>
   );
 }

@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { X, ExternalLink } from 'lucide-react';
+import { X, ExternalLink, Trash2, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { getAdminPassword, clearAdminSession } from '@/components/admin/AdminPasswordGate';
 
 interface LeadDetailPanelProps {
   analysis: any;
   onClose: () => void;
+  onDeleted?: (id: string) => void;
 }
 
 const fmt = (n: number | null | undefined) =>
@@ -16,9 +18,23 @@ const pct = (n: number | null | undefined) =>
 const bool = (v: boolean | null | undefined) =>
   v === true ? '✓ Yes' : v === false ? '✗ No' : '—';
 
-export default function LeadDetailPanel({ analysis, onClose }: LeadDetailPanelProps) {
+export default function LeadDetailPanel({ analysis, onClose, onDeleted }: LeadDetailPanelProps) {
   const [events, setEvents] = useState<any[]>([]);
   const [sharedReport, setSharedReport] = useState<any>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const handleDelete = async () => {
+    if (!confirmDelete) { setConfirmDelete(true); return; }
+    setDeleting(true);
+    const password = getAdminPassword();
+    const { data, error } = await supabase.functions.invoke('admin-query', {
+      body: { password, query: 'delete_analysis', params: { analysisId: analysis.id } },
+    });
+    if (error || data?.error) { clearAdminSession(); window.location.reload(); return; }
+    if (data?.success) { onDeleted?.(analysis.id); onClose(); }
+    setDeleting(false);
+  };
 
   const lead = analysis.leads?.[0] ?? null;
 
@@ -62,9 +78,19 @@ export default function LeadDetailPanel({ analysis, onClose }: LeadDetailPanelPr
       <div className="relative w-full max-w-lg bg-card border-l border-border shadow-xl overflow-y-auto">
         <div className="sticky top-0 bg-card border-b border-border px-5 py-3 flex items-center justify-between z-10">
           <h3 className="font-display font-semibold text-foreground">Analysis Detail</h3>
-          <button onClick={onClose} className="p-1 hover:bg-muted rounded transition-colors">
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              className={`p-1.5 rounded transition-colors text-sm flex items-center gap-1 ${confirmDelete ? 'bg-red-600 text-white hover:bg-red-700 px-2' : 'text-muted-foreground hover:text-red-600 hover:bg-red-500/10'}`}
+            >
+              {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+              {confirmDelete && !deleting && <span>Confirm</span>}
+            </button>
+            <button onClick={onClose} className="p-1 hover:bg-muted rounded transition-colors">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         <div className="px-5 py-4">
