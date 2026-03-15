@@ -497,9 +497,10 @@ describe('Component-Level Regression', () => {
       expect(r.components.find(c => c.id === 'rate')!.max).toBe(55);
       expect(r.components.find(c => c.id === 'comps')!.max).toBe(10);
     });
-    it('0 comps: rate=65, comps absent', () => {
+    it('0 comps: rate=50, fmr=40, comps absent', () => {
       const r = score({ compCount: 0, compMedian: null });
-      expect(r.components.find(c => c.id === 'rate')!.max).toBe(65);
+      expect(r.components.find(c => c.id === 'rate')!.max).toBe(50);
+      expect(r.components.find(c => c.id === 'fmr')!.max).toBe(40);
       expect(r.components.find(c => c.id === 'comps')).toBeUndefined();
     });
   });
