@@ -206,6 +206,26 @@ Deno.serve(async (req) => {
 
       case "diagnostic": {
         const today = new Date().toISOString().slice(0, 10);
+        const mar14 = "2026-03-14";
+        const mar15 = "2026-03-15";
+
+        const { count: analysesMar14 } = await supabase
+          .from("analyses")
+          .select("*", { count: "exact", head: true })
+          .gte("created_at", mar14)
+          .lt("created_at", mar15);
+
+        const { count: leadsMar14 } = await supabase
+          .from("leads")
+          .select("*", { count: "exact", head: true })
+          .gte("created_at", mar14)
+          .lt("created_at", mar15);
+
+        const { count: eventsMar14 } = await supabase
+          .from("lead_events")
+          .select("*", { count: "exact", head: true })
+          .gte("created_at", mar14)
+          .lt("created_at", mar15);
 
         const { count: analysesToday } = await supabase
           .from("analyses")
@@ -234,19 +254,19 @@ Deno.serve(async (req) => {
           .from("analyses")
           .select("id, address, zip, city, bedrooms, current_rent, fairness_score, verdict_label, created_at, tool_type, session_id")
           .order("created_at", { ascending: false })
-          .limit(10);
+          .limit(15);
 
         const { data: recentLeads } = await supabase
           .from("leads")
           .select("id, email, analysis_id, capture_source, address, zip, city, verdict, created_at, tool_type")
           .order("created_at", { ascending: false })
-          .limit(10);
+          .limit(15);
 
         const { data: recentEvents } = await supabase
           .from("lead_events")
           .select("id, email, analysis_id, event_type, zip, verdict, created_at")
           .order("created_at", { ascending: false })
-          .limit(10);
+          .limit(15);
 
         const { data: orphanedLeads } = await supabase.rpc("find_orphaned_leads");
 
@@ -265,12 +285,14 @@ Deno.serve(async (req) => {
               .select("analysis_id")
               .in("analysis_id", analysisIds)
           : { data: [] };
-
         const linkedIds = new Set((linkedLeads || []).map((l: any) => l.analysis_id));
         const unlinked = (unlinkedAnalyses || []).filter((a: any) => !linkedIds.has(a.id));
 
         data = {
           counts: {
+            analyses_mar14: analysesMar14,
+            leads_mar14: leadsMar14,
+            events_mar14: eventsMar14,
             analyses_today: analysesToday,
             leads_today: leadsToday,
             events_today: eventsToday,

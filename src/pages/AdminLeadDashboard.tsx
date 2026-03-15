@@ -899,18 +899,31 @@ function DashboardContent() {
 
           {diagData && (
             <div className="space-y-6">
-              {/* Counts */}
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                <StatCard label="Analyses Today" value={diagData.counts.analyses_today ?? 0} />
-                <StatCard label="Leads Today" value={diagData.counts.leads_today ?? 0} />
-                <StatCard label="Events Today" value={diagData.counts.events_today ?? 0} />
-                <StatCard label="Analyses Total" value={diagData.counts.analyses_total ?? 0} />
-                <StatCard label="Leads Total" value={diagData.counts.leads_total ?? 0} />
+              {/* March 14 Counts */}
+              <div>
+                <h3 className="text-xs font-semibold text-muted-foreground mb-2">March 14</h3>
+                <div className="grid grid-cols-3 gap-3">
+                  <StatCard label="Analyses Mar 14" value={diagData.counts.analyses_mar14 ?? 0} />
+                  <StatCard label="Leads Mar 14" value={diagData.counts.leads_mar14 ?? 0} />
+                  <StatCard label="Events Mar 14" value={diagData.counts.events_mar14 ?? 0} />
+                </div>
+              </div>
+
+              {/* Today / All Time Counts */}
+              <div>
+                <h3 className="text-xs font-semibold text-muted-foreground mb-2">Today / All Time</h3>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                  <StatCard label="Analyses Today" value={diagData.counts.analyses_today ?? 0} />
+                  <StatCard label="Leads Today" value={diagData.counts.leads_today ?? 0} />
+                  <StatCard label="Events Today" value={diagData.counts.events_today ?? 0} />
+                  <StatCard label="Analyses Total" value={diagData.counts.analyses_total ?? 0} />
+                  <StatCard label="Leads Total" value={diagData.counts.leads_total ?? 0} />
+                </div>
               </div>
 
               {/* Orphaned Leads */}
               <div>
-                <h2 className="text-sm font-semibold text-foreground mb-2">Orphaned Leads (lead → deleted analysis)</h2>
+                <h2 className="text-sm font-semibold text-foreground mb-2">🔴 Orphaned Leads (lead points to deleted analysis)</h2>
                 {(!diagData.orphaned_leads || diagData.orphaned_leads.length === 0) ? (
                   <p className="text-sm text-muted-foreground">✅ No orphaned leads found</p>
                 ) : (
@@ -939,13 +952,14 @@ function DashboardContent() {
 
               {/* Unlinked Analyses */}
               <div>
-                <h2 className="text-sm font-semibold text-foreground mb-2">Recent Analyses (last 3 days) with No Lead</h2>
+                <h2 className="text-sm font-semibold text-foreground mb-2">🟡 Recent Analyses (last 3 days) with No Lead ({diagData.unlinked_analyses_3d?.length || 0})</h2>
                 {(!diagData.unlinked_analyses_3d || diagData.unlinked_analyses_3d.length === 0) ? (
                   <p className="text-sm text-muted-foreground">✅ All recent analyses have linked leads</p>
                 ) : (
                   <div className="border border-border rounded-lg overflow-x-auto">
                     <table className="w-full text-xs">
                       <thead><tr className="border-b border-border bg-muted/30">
+                        <th className="text-left px-3 py-2 font-medium">ID</th>
                         <th className="text-left px-3 py-2 font-medium">Address/Zip</th>
                         <th className="text-left px-3 py-2 font-medium">City</th>
                         <th className="text-left px-3 py-2 font-medium">Verdict</th>
@@ -956,6 +970,7 @@ function DashboardContent() {
                       <tbody>
                         {diagData.unlinked_analyses_3d.map((a: any) => (
                           <tr key={a.id} className="border-b border-border last:border-0">
+                            <td className="px-3 py-2 font-mono">{(a.id || '').slice(0, 8)}</td>
                             <td className="px-3 py-2">{a.address || a.zip || '—'}</td>
                             <td className="px-3 py-2">{a.city || '—'}</td>
                             <td className="px-3 py-2">{a.verdict_label || '—'}</td>
@@ -972,10 +987,11 @@ function DashboardContent() {
 
               {/* Recent Analyses */}
               <div>
-                <h2 className="text-sm font-semibold text-foreground mb-2">Recent Analyses (last 10)</h2>
+                <h2 className="text-sm font-semibold text-foreground mb-2">Recent Analyses (last 15)</h2>
                 <div className="border border-border rounded-lg overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead><tr className="border-b border-border bg-muted/30">
+                      <th className="text-left px-3 py-2 font-medium">ID</th>
                       <th className="text-left px-3 py-2 font-medium">Address/Zip</th>
                       <th className="text-left px-3 py-2 font-medium">City</th>
                       <th className="text-left px-3 py-2 font-medium">BR</th>
@@ -989,6 +1005,7 @@ function DashboardContent() {
                     <tbody>
                       {(diagData.recent_analyses || []).map((a: any) => (
                         <tr key={a.id} className="border-b border-border last:border-0">
+                          <td className="px-3 py-2 font-mono">{(a.id || '').slice(0, 8)}</td>
                           <td className="px-3 py-2">{a.address || a.zip || '—'}</td>
                           <td className="px-3 py-2">{a.city || '—'}</td>
                           <td className="px-3 py-2">{a.bedrooms ?? '—'}</td>
@@ -1007,7 +1024,7 @@ function DashboardContent() {
 
               {/* Recent Leads */}
               <div>
-                <h2 className="text-sm font-semibold text-foreground mb-2">Recent Leads (last 10)</h2>
+                <h2 className="text-sm font-semibold text-foreground mb-2">Recent Leads (last 15)</h2>
                 <div className="border border-border rounded-lg overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead><tr className="border-b border-border bg-muted/30">
@@ -1040,7 +1057,7 @@ function DashboardContent() {
 
               {/* Recent Events */}
               <div>
-                <h2 className="text-sm font-semibold text-foreground mb-2">Recent Lead Events (last 10)</h2>
+                <h2 className="text-sm font-semibold text-foreground mb-2">Recent Lead Events (last 15)</h2>
                 <div className="border border-border rounded-lg overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead><tr className="border-b border-border bg-muted/30">
