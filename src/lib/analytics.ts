@@ -50,7 +50,7 @@ export function trackAdsConversion(
     }
 
     // Tool-specific conversion action (both tools use same conversion label)
-    const conversionLabel = 'AW-17990530610/H5tjCKStoIIcELLsxoJD';
+    const conversionLabel = 'AW-17990530610/3GPLCIyp14YcELLsxoJD';
 
     window.gtag?.('event', 'conversion', {
       send_to: conversionLabel,
