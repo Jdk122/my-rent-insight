@@ -65,6 +65,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
   const [showZipOnly, setShowZipOnly] = useState(!!prefill?.zip && !prefill?.address);
   const [errors, setErrors] = useState<FormErrors>({});
   const [attempted, setAttempted] = useState(false);
+  const [increaseTouched, setIncreaseTouched] = useState(false);
 
   const addressRef = useRef<HTMLDivElement>(null);
   const rentRef = useRef<HTMLDivElement>(null);
@@ -294,6 +295,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
                     setRentIncrease(fmtInput(e.target.value));
                   }
                   clearError('rentIncrease');
+                  setIncreaseTouched(true);
                 }}
                 className={`h-12 font-mono text-lg bg-background ${!increaseIsPercent ? 'pl-8' : 'pl-3.5'} ${errorClass('rentIncrease')}`}
                 min={0}
@@ -326,6 +328,11 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
             </div>
           </div>
           {(() => {
+            if (!increaseTouched) return (
+              <p className="text-xs text-muted-foreground">
+                The amount your landlord wants to raise your rent by.
+              </p>
+            );
             const incVal = rentIncrease && rentIncrease.trim() !== ''
               ? (increaseIsPercent ? parseFloat(rentIncrease) : parseFloat(parseFormatted(rentIncrease)))
               : NaN;
