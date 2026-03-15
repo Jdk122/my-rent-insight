@@ -207,7 +207,7 @@ const NextStepsSection = ({
                 ]}
                 actionLabel="Check Rates"
                 actionHref="https://www.bankrate.com/mortgages/mortgage-calculator/"
-                onAction={() => { trackEvent('mortgage_link_clicked'); logReferralClick('mortgage_check'); }}
+                onAction={() => { trackEvent('referral_clicked', { partner: 'mortgage' }); logReferralClick('mortgage_check'); }}
                 delay={0.32}
               />
             </>
