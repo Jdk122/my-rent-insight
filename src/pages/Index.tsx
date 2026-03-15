@@ -317,18 +317,14 @@ const Index = () => {
           </p>
           <section id="main-content" className="mt-3 sm:mt-8" aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
-            <div className="mt-8 max-w-[540px] mx-auto">
-              <div className="border-t border-border/40 pt-5 pb-2 px-1 text-center">
-                <p className="text-[13px] text-muted-foreground font-medium mb-3">
+            <div className="mt-6 max-w-[540px] mx-auto">
+              <div className="border-t border-border/40 pt-4 pb-2 px-1 text-center">
+                <p className="text-[12px] text-muted-foreground/60 font-medium mb-1.5">
                   Built on the data landlords use to price your rent.
                 </p>
-                <div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-2">
-                  <span className="text-[11px] text-muted-foreground/70 bg-muted/50 border border-border/40 rounded-full px-3 py-1">HUD Fair Market Rent</span>
-                  <span className="text-[11px] text-muted-foreground/70 bg-muted/50 border border-border/40 rounded-full px-3 py-1">Zillow ZORI</span>
-                  <span className="text-[11px] text-muted-foreground/70 bg-muted/50 border border-border/40 rounded-full px-3 py-1">Apartment List</span>
-                  <span className="text-[11px] text-muted-foreground/70 bg-muted/50 border border-border/40 rounded-full px-3 py-1">Live Market Comps</span>
-                  <span className="text-[11px] text-muted-foreground/70 bg-muted/50 border border-border/40 rounded-full px-3 py-1">NY DHCR</span>
-                </div>
+                <p className="text-[11px] text-muted-foreground/40 tracking-wide">
+                  HUD Fair Market Rent · Zillow ZORI · Apartment List · Live Market Comps · NY DHCR
+                </p>
               </div>
             </div>
             <Suspense fallback={null}>
