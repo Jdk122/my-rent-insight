@@ -312,10 +312,10 @@ const Index = () => {
           <p className="mt-1 sm:mt-2 font-display text-[1.3rem] sm:text-[1.6rem] text-muted-foreground font-semibold tracking-tight">
             Get the answer in 10 seconds.
           </p>
-          <p className="mt-3 sm:mt-5 text-[15px] sm:text-lg text-muted-foreground max-w-[540px] leading-relaxed font-normal tracking-tight">
+          <p className="mt-2 sm:mt-4 text-[15px] sm:text-lg text-muted-foreground max-w-[540px] leading-relaxed font-normal tracking-tight">
             See if you're overpaying — and get a free negotiation letter to fix it.
           </p>
-          <section id="main-content" className="mt-4 sm:mt-8" aria-label="Rent increase checker">
+          <section id="main-content" className="mt-3 sm:mt-8" aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
             <div className="mt-6 mb-1 max-w-[540px]">
               <div className="border-t border-b border-border/40 py-3 px-1">
