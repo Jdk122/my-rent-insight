@@ -309,8 +309,8 @@ const Index = () => {
           <div className="md:grid md:grid-cols-[1fr_420px] md:gap-10 md:items-start">
             {/* Left column: sales message */}
             <div>
-              <h1 className="font-display text-[1.85rem] sm:text-[clamp(2rem,5vw,3rem)] md:text-[50px] text-foreground leading-[1.08] md:leading-[1.05] tracking-tight font-extrabold" style={{ letterSpacing: '-0.025em' }}>
-                Is your rent increase<br /> <span className="text-primary">above&nbsp;market?</span>
+              <h1 className="font-display text-[1.85rem] sm:text-[clamp(2rem,5vw,3rem)] md:text-[50px] text-foreground leading-[1.08] md:leading-[1.05] tracking-tight font-extrabold md:max-w-[420px]" style={{ letterSpacing: '-0.025em' }}>
+                Is your rent increase <span className="text-primary">above&nbsp;market?</span>
               </h1>
               <p className="mt-2 sm:mt-3 md:mt-3 text-[15px] sm:text-lg md:text-[19px] text-muted-foreground md:text-foreground/70 max-w-[540px] leading-relaxed font-normal tracking-tight md:whitespace-nowrap">
                 Find out in 10 seconds — free, no account needed.
