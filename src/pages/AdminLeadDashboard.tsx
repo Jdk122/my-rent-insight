@@ -196,6 +196,10 @@ function DashboardContent() {
   const [lookupData, setLookupData] = useState<any>(null);
   const [lookupLoading, setLookupLoading] = useState(false);
 
+  // ── Feedback ──
+  const [feedbackRows, setFeedbackRows] = useState<any[]>([]);
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
+
   // Helper to call admin edge function
   const adminQuery = async (query: string, params?: any) => {
     const password = getAdminPassword();
