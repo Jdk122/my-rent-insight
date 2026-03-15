@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-const SocialProofCounter = () => {
+const SocialProofCounter = forwardRef<HTMLDivElement>((_, ref) => {
   const [count, setCount] = useState<number | null>(null);
 
   useEffect(() => {
