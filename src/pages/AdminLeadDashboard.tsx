@@ -1055,7 +1055,7 @@ function DashboardContent() {
 
               {/* Recent Events */}
               <div>
-                <h2 className="text-sm font-semibold text-foreground mb-2">Recent Lead Events (last 10)</h2>
+                <h2 className="text-sm font-semibold text-foreground mb-2">Recent Lead Events (last 15)</h2>
                 <div className="border border-border rounded-lg overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead><tr className="border-b border-border bg-muted/30">
