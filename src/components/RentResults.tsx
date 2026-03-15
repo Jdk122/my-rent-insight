@@ -800,7 +800,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
-                className="mt-3 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-[540px]"
+                className="mt-2 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 max-w-[540px]"
               >
                 {(() => {
                   const increaseIsHighGap = increasePct > marketYoy * 2 && increasePct > 0 && marketYoy > 0;
@@ -813,10 +813,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 })().map((stat) => (
                     <div
                       key={stat.label}
-                      className={`text-center rounded-lg border px-2 sm:px-3 py-3 sm:py-4 flex flex-col items-center min-h-[76px] sm:min-h-[84px] ${stat.highlight ? 'border-destructive/30 bg-destructive/5' : 'border-border/80 bg-card'}`}
+                      className={`text-center rounded-lg border px-2 sm:px-3 py-2.5 sm:py-4 flex flex-col items-center min-h-[68px] sm:min-h-[84px] ${stat.highlight ? 'border-destructive/30 bg-destructive/5' : 'border-border/60 sm:border-border/80 bg-card'}`}
                       style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
                     >
-                      <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1 min-h-[24px] flex items-end">{stat.label}</p>
+                      <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1 min-h-[24px] flex items-end">{stat.label}</p>
                       <p className={`font-display text-[20px] sm:text-[24px] md:text-[28px] tracking-tight tabular-nums mt-auto ${stat.color}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
                         {stat.value}
                       </p>
