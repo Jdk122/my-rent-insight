@@ -139,11 +139,11 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
     (async () => {
       let reportUrl: string | null = null;
       if (shareReportPayload) {
-        reportUrl = await generateSharedReport(shareReportPayload, leadContext?.analysisId, email.trim());
+        reportUrl = await generateSharedReport(shareReportPayload, leadContext?.analysisId, normalizedEmail);
         if (reportUrl) onReportGenerated?.(reportUrl);
       }
       sendConfirmationEmail({
-        email: email.trim(),
+        email: normalizedEmail,
         city: leadContext?.city,
         state: leadContext?.state,
         zip: leadContext?.zip,
