@@ -340,7 +340,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
         </button>
         <div className="-mt-1.5 sm:-mt-3">
           <p className="text-[11px] text-muted-foreground/80 text-center mt-1">
-            Free · No account required · Used across 38,600+ ZIP codes
+            Free · No account required · 38,600+ ZIP codes
           </p>
           <p className="text-[11px] text-muted-foreground/80 text-center mt-0.5">
             By using this tool, you agree to our{' '}
