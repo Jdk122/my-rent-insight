@@ -441,7 +441,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       utm_medium: utm.utm_medium || null,
       utm_campaign: utm.utm_campaign || null,
       confidence_level: confidence.level ?? null,
-      effective_confidence_level: effectiveConfidence.level ?? null,
       results_shared: false,
       letter_tone: null,
       rent_stabilized: null,
