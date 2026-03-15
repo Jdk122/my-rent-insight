@@ -379,7 +379,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
           <p className="text-[13px] text-muted-foreground text-center mt-1.5 font-medium">
             Free · No account required · 38,600+ ZIP codes
           </p>
-          <p className="text-[11px] text-muted-foreground/80 text-center mt-1.5">
+          <p className="text-[9px] text-muted-foreground/60 text-center mt-1.5">
             By using this tool, you agree to our{' '}
             <a href="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</a>
             {' '}and{' '}
