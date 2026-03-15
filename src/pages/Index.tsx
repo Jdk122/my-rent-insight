@@ -292,7 +292,7 @@ const Index = () => {
           )}
           <Link
             to="/what-should-i-pay"
-            className="border border-border text-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:bg-muted transition-all duration-150 whitespace-nowrap hidden md:inline-block"
+            className="text-muted-foreground hover:text-foreground text-[12px] sm:text-[13px] font-medium transition-colors whitespace-nowrap hidden md:inline-block"
           >
             Check Asking Price →
           </Link>
@@ -305,19 +305,19 @@ const Index = () => {
       {isLoading ? (
         <LoadingAnalysis />
       ) : !results ? (
-        <main className="max-w-[620px] md:max-w-[1040px] mx-auto px-5 sm:px-6 pt-6 sm:pt-14 md:pt-14 pb-10 sm:pb-14">
-          <div className="md:grid md:grid-cols-[1.05fr_0.95fr] md:gap-10 lg:gap-14 md:items-start">
+        <main className="max-w-[620px] md:max-w-[920px] mx-auto px-5 sm:px-6 pt-6 sm:pt-14 md:pt-10 pb-10 sm:pb-14 md:pb-10">
+          <div className="md:grid md:grid-cols-[1.05fr_0.95fr] md:gap-8 md:items-start">
             {/* Left column: sales message */}
             <div>
               <h1 className="font-display text-[1.85rem] sm:text-[clamp(2rem,5vw,3rem)] text-foreground leading-[1.08] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
                 Is your rent increase <span className="text-primary">above&nbsp;market?</span>
               </h1>
-              <p className="mt-2 sm:mt-3 text-[15px] sm:text-lg text-muted-foreground max-w-[540px] leading-relaxed font-normal tracking-tight">
+              <p className="mt-2 sm:mt-3 md:mt-2 text-[15px] sm:text-lg text-muted-foreground max-w-[540px] leading-relaxed font-normal tracking-tight">
                 Find out in 10 seconds — free, no account needed.
               </p>
 
               {/* Value props */}
-              <div className="mt-3 sm:mt-5 flex flex-col gap-1.5 sm:gap-2 max-w-[480px]">
+              <div className="mt-3 sm:mt-5 md:mt-4 flex flex-col gap-1.5 sm:gap-2 max-w-[480px]">
                 <div className="flex items-start gap-2">
                   <span className="text-primary mt-0.5 shrink-0"><MessageSquareText size={15} /></span>
                   <span className="text-[14px] text-muted-foreground"><strong className="text-foreground font-semibold">Negotiation letter</strong> backed by your local data</span>
@@ -329,15 +329,15 @@ const Index = () => {
               </div>
 
               <Suspense fallback={null}>
-                <div className="mt-4 sm:mt-6">
+                <div className="mt-4 sm:mt-6 md:mt-4">
                   <SocialProofCounter />
                 </div>
               </Suspense>
 
-              {/* Data source bar — desktop only, below value props */}
-              <div className="hidden md:block mt-6">
+              {/* Data source bar — desktop only, below social proof */}
+              <div className="hidden md:block mt-4">
                 <div className="border-t border-border/40 pt-3 pb-2 px-1">
-                  <p className="text-[11px] text-muted-foreground/50 tracking-wide">
+                  <p className="text-[11px] text-muted-foreground/70 tracking-wide">
                     HUD Fair Market Rent · Zillow ZORI · Apartment List · Live Comps · DHCR
                   </p>
                 </div>
@@ -346,7 +346,7 @@ const Index = () => {
 
             {/* Right column: form card */}
             <section id="main-content" className="mt-3 sm:mt-6 md:mt-0" aria-label="Rent increase checker">
-              <div className="md:bg-card md:border md:border-border/60 md:rounded-2xl md:p-6 lg:md:p-8 md:shadow-sm">
+              <div className="md:bg-card md:border md:border-border/60 md:rounded-2xl md:p-6">
                 <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
               </div>
               {/* Data source bar — mobile only */}
