@@ -382,10 +382,25 @@ function DashboardContent() {
           <StatCard label="% Letter Generated" value={stats.total_submissions > 0 ? `${Math.round((stats.letter_count / stats.total_submissions) * 100)}%` : '0%'} />
           <StatCard label="% Shared" value={stats.total_submissions > 0 ? `${Math.round((stats.shared_count / stats.total_submissions) * 100)}%` : '0%'} />
           <StatCard label="Total Leads (email)" value={stats.total_leads} />
-          <StatCard label="Email Capture Rate" value={stats.total_submissions > 0 ? `${Math.round((stats.total_leads_all / stats.total_submissions) * 100)}%` : '0%'} />
+          <StatCard label="Emails / Submissions" value={`${stats.total_leads_all} / ${stats.total_submissions}`} />
           <StatCard label="% Partner Opt-In" value={stats.total_leads_all > 0 ? `${Math.round((stats.partner_optin_count / stats.total_leads_all) * 100)}%` : '0%'} />
         </div>
       ) : null}
+
+      {/* ━━━ Captures by First-Touch Source ━━━ */}
+      {stats?.capture_by_first_source?.length > 0 && (
+        <div>
+          <h2 className="text-sm font-semibold text-muted-foreground mb-2">Captures by First-Touch Source</h2>
+          <div className="flex flex-wrap gap-2">
+            {stats.capture_by_first_source.map((s: any) => (
+              <div key={s.source} className="border border-border rounded-lg px-3 py-2 bg-card">
+                <div className="text-xs text-muted-foreground">{s.source || 'unknown'}</div>
+                <div className="text-sm font-semibold text-foreground">{s.count} <span className="text-xs font-normal text-muted-foreground">({s.count_30d} last 30d)</span></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ━━━ Conversion Funnel ━━━ */}
       {stats && (
