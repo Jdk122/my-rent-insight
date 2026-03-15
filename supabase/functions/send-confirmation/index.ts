@@ -86,6 +86,59 @@ function buildWsipHtml(data: any) {
   `;
 }
 
+async function fireGA4ServerEvent(
+  email: string,
+  toolType: string,
+  zip: string | null,
+  verdict: string | null,
+) {
+  const measurementId = Deno.env.get("GA4_MEASUREMENT_ID");
+  const apiSecret = Deno.env.get("GA4_API_SECRET");
+  if (!measurementId || !apiSecret) {
+    return;
+  }
+  try {
+    const normalized = email.trim().toLowerCase();
+    const encoded = new TextEncoder().encode(normalized);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", encoded);
+    const hashHex = Array.from(new Uint8Array(hashBuffer))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+    const clientId = `server.${hashHex.slice(0, 16)}`;
+    const payload = {
+      client_id: clientId,
+      user_data: {
+        sha256_email_address: [hashHex],
+      },
+      events: [
+        {
+          name: "generate_lead",
+          params: {
+            currency: "USD",
+            value: 1.0,
+            tool_type: toolType || "renewal",
+            zip_code: zip || "",
+            verdict: verdict || "",
+            engagement_time_msec: 1,
+            session_id: Date.now().toString(),
+          },
+        },
+      ],
+    };
+    const url = `https://www.google-analytics.com/mp/collect?measurement_id=${measurementId}&api_secret=${apiSecret}`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      console.error(`[ga4-mp] Unexpected status ${res.status}`);
+    }
+  } catch (err) {
+    console.error("[ga4-mp] Server event error:", err);
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
