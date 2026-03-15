@@ -126,10 +126,10 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
     }
 
     onEmailCaptured?.(normalizedEmail);
-    trackEvent('email_submitted', { verdict: verdict || 'unknown', zip_code: leadContext?.zip || '', capture_source: captureSource, tool_type: 'renewal' });
+    trackEvent('email_captured', { gate: captureSource, tool: 'renewal', verdict: verdict || 'unknown', zip: leadContext?.zip || '' });
     trackAdsConversion('renewal', normalizedEmail);
     if (captureSource === 'lease_reminder') {
-      trackEvent('lease_reminder_signup');
+      trackEvent('lease_info_saved', { action: 'reminder_set', tool: 'renewal', zip: leadContext?.zip || '' });
     }
     setSubmitted(true);
     toast.success("You're on the list.");

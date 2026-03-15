@@ -42,7 +42,7 @@ const ShareSection = ({ increasePct, marketPct, excessAnnual, multiplier, landlo
         document.body.removeChild(textarea);
       }
     } catch {}
-    trackEvent('share_clicked', { share_method: 'copy_link' });
+    trackEvent('report_shared', { method: 'copy_link' });
     if (ok) toast.success('Copied to clipboard');
     else toast.error('Copy failed — try selecting and copying manually.');
   };

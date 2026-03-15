@@ -276,7 +276,7 @@ const WsipResults = ({
 
   // ━━━ Analytics ━━━
   useEffect(() => {
-    trackEvent('wsip_results_viewed', { zip, bedrooms: bedroomNum, has_asking_rent: !!askingRent });
+    trackEvent('analysis_completed', { tool: 'wsip', zip, bedrooms: bedroomNum, has_asking_rent: !!askingRent });
   }, []);
 
   // ━━━ Log analysis to DB ━━━
@@ -1033,7 +1033,7 @@ const WsipPostConversion = ({ email, leadContext, verdictLabel, zip }: {
       console.error('Post-conversion save failed:', err);
     }
 
-    trackEvent('wsip_post_conversion_saved', { verdict: verdictLabel, zip_code: zip, move_timeline: moveTimeline });
+    trackEvent('lease_info_saved', { action: 'lease_saved', tool: 'wsip', zip, verdict: verdictLabel });
     setSaved(true);
     toast.success('Saved!');
   };

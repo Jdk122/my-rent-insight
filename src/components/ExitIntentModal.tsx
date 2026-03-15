@@ -45,9 +45,9 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
       setOpen(true);
 
       if (capturedEmail) {
-        trackEvent('exit_intent_shown', { verdict: verdictLabel, zip_code: zip, type: 'share' });
+        trackEvent('prompt_shown', { prompt: 'exit_intent', tool: toolType, verdict: verdictLabel, zip, type: 'share' });
       } else {
-        trackEvent('exit_intent_shown', { verdict: verdictLabel, zip_code: zip, type: 'capture' });
+        trackEvent('prompt_shown', { prompt: 'exit_intent', tool: toolType, verdict: verdictLabel, zip, type: 'capture' });
       }
     };
 
@@ -56,7 +56,7 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
   }, [capturedEmail, verdictLabel, zip]);
 
   const handleDismiss = () => {
-    trackEvent('exit_intent_dismissed', { verdict: verdictLabel, zip_code: zip });
+    trackEvent('prompt_dismissed', { prompt: 'exit_intent', zip });
     setOpen(false);
   };
 
@@ -125,8 +125,7 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
     }
 
     onEmailCaptured(normalizedEmail);
-    trackEvent('exit_intent_converted', { verdict: verdictLabel, zip_code: zip });
-    trackEvent('email_submitted', { verdict: verdictLabel, zip_code: zip, capture_source: 'exit_intent', tool_type: toolType });
+    trackEvent('email_captured', { gate: 'exit_intent', tool: toolType, verdict: verdictLabel, zip });
     trackAdsConversion(toolType, normalizedEmail);
     setLoading(false);
     setOpen(false);
@@ -185,7 +184,7 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
       navigator.clipboard.writeText(url);
       toast.success('Link copied!');
     }
-    trackEvent('share_clicked', { method, capture_source: 'exit_intent', tool_type: toolType });
+    trackEvent('report_shared', { method, tool: toolType });
     setOpen(false);
   };
 

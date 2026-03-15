@@ -67,7 +67,7 @@ const FeedbackWidget = ({
 
       if (error) throw error;
       setFeedbackId((data as any)?.id ?? null);
-      trackEvent('feedback_submitted', { page, rating });
+      trackEvent('lease_info_saved', { action: 'feedback', page, rating });
 
       if (rating === 'positive') {
         setPhase('done');
@@ -87,7 +87,7 @@ const FeedbackWidget = ({
       .from('user_feedback' as any)
       .update({ reason } as any)
       .eq('id', feedbackId);
-    trackEvent('feedback_reason', { page, reason });
+    
     setPhase('comment');
   }, [feedbackId, page]);
 
@@ -98,7 +98,7 @@ const FeedbackWidget = ({
       .from('user_feedback' as any)
       .update({ comment } as any)
       .eq('id', feedbackId);
-    trackEvent('feedback_comment', { page });
+    
     setSubmittingUpdate(false);
     setPhase('done');
   }, [feedbackId, comment, page]);

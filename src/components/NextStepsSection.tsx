@@ -176,7 +176,7 @@ const NextStepsSection = ({
                 actionLabel="Get Matched Free"
                 onAction={() => {
                   setModalOpen(true);
-                  trackEvent('agent_card_clicked', { zip });
+                  trackEvent('referral_clicked', { partner: 'agent', zip });
                   logReferralClick('agent_matching');
                 }}
                 recommended
@@ -193,7 +193,7 @@ const NextStepsSection = ({
                 ]}
                 actionLabel="Compare Movers"
                 actionHref="https://www.moving.com/movers/"
-                onAction={() => { trackEvent('moving_quote_clicked'); logReferralClick('moving_quotes'); }}
+                onAction={() => { trackEvent('referral_clicked', { partner: 'moving' }); logReferralClick('moving_quotes'); }}
                 delay={0.28}
               />
 
@@ -207,7 +207,7 @@ const NextStepsSection = ({
                 ]}
                 actionLabel="Check Rates"
                 actionHref="https://www.bankrate.com/mortgages/mortgage-calculator/"
-                onAction={() => { trackEvent('mortgage_link_clicked'); logReferralClick('mortgage_check'); }}
+                onAction={() => { trackEvent('referral_clicked', { partner: 'mortgage' }); logReferralClick('mortgage_check'); }}
                 delay={0.32}
               />
             </>
@@ -223,7 +223,7 @@ const NextStepsSection = ({
                 ]}
                 actionLabel="Get a Free Quote"
                 actionHref="https://www.lemonade.com/renters"
-                onAction={() => { trackEvent('insurance_quote_clicked'); logReferralClick('renters_insurance'); }}
+                onAction={() => { trackEvent('referral_clicked', { partner: 'insurance' }); logReferralClick('renters_insurance'); }}
                 recommended
                 delay={0.24}
               />
@@ -235,7 +235,7 @@ const NextStepsSection = ({
                 stats={[]}
                 actionLabel="Share Results"
                 onAction={() => {
-                  trackEvent('share_clicked', { capture_source: 'next_steps' });
+                  trackEvent('report_shared', { method: 'share_button' });
                   onShareClick?.();
                 }}
                 delay={0.28}
@@ -251,7 +251,7 @@ const NextStepsSection = ({
             target="_blank"
             rel="noopener noreferrer"
             className="text-[13px] font-medium text-primary hover:underline inline-flex items-center gap-1 shrink-0"
-            onClick={() => { trackEvent('mortgage_banner_clicked'); logReferralClick('mortgage_banner'); }}
+            onClick={() => { trackEvent('referral_clicked', { partner: 'mortgage_banner' }); logReferralClick('mortgage_banner'); }}
           >
             See if you qualify <ArrowRight className="w-3 h-3" />
           </a>

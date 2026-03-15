@@ -129,7 +129,7 @@ const WhatShouldIPay = () => {
         propertyData: propResult ?? null,
       });
 
-      trackEvent('wsip_form_submitted', { zip, bedrooms: data.bedrooms, has_asking_rent: !!data.askingRent });
+      trackEvent('analysis_started', { tool: 'wsip', zip, bedrooms: data.bedrooms, has_asking_rent: !!data.askingRent });
       setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
 
       loadFredTrend(rentData.metro).then((fredTrend) => {

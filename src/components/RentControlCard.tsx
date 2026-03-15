@@ -1,8 +1,6 @@
-import { useEffect } from 'react';
 import { ExternalLink, Loader2, ShieldCheck } from 'lucide-react';
 import { getRentControlByStateCity, getApplicableCap, getNoticeRequirement, RentControlResult } from '@/data/rentControlData';
 import { useHcrLookup } from '@/hooks/useHcrLookup';
-import { trackEvent } from '@/lib/analytics';
 
 interface RentControlCardProps {
   state: string;
@@ -22,11 +20,6 @@ const RentControlCard = ({ state, city, zip, increasePct, address }: RentControl
 
   const { result: hcrResult, loading: hcrLoading } = useHcrLookup(address || null, zip);
 
-  useEffect(() => {
-    if (hcrResult?.found && hcrResult.stabilized) {
-      trackEvent('dhcr_match_found', { zip, stabilized: true });
-    }
-  }, [hcrResult, zip]);
 
   return (
     <div>

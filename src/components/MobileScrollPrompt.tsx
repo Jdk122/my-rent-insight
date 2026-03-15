@@ -75,9 +75,9 @@ const MobileScrollPrompt = ({
         setOpen(true);
 
         if (capturedEmail) {
-          trackEvent('mobile_scroll_prompt_shown', { verdict: verdictLabel, zip_code: zip, type: 'share' });
+          trackEvent('prompt_shown', { prompt: 'mobile_scroll', tool: toolType, verdict: verdictLabel, zip, type: 'share' });
         } else {
-          trackEvent('mobile_scroll_prompt_shown', { verdict: verdictLabel, zip_code: zip, type: 'capture' });
+          trackEvent('prompt_shown', { prompt: 'mobile_scroll', tool: toolType, verdict: verdictLabel, zip, type: 'capture' });
         }
       }
     };
@@ -87,7 +87,7 @@ const MobileScrollPrompt = ({
   }, [capturedEmail, verdictLabel, zip]);
 
   const handleDismiss = () => {
-    trackEvent('mobile_scroll_prompt_dismissed', { verdict: verdictLabel, zip_code: zip });
+    trackEvent('prompt_dismissed', { prompt: 'mobile_scroll', zip });
     setOpen(false);
   };
 
@@ -156,8 +156,7 @@ const MobileScrollPrompt = ({
     }
 
     onEmailCaptured(normalizedEmail);
-    trackEvent('mobile_scroll_prompt_converted', { verdict: verdictLabel, zip_code: zip });
-    trackEvent('email_submitted', { verdict: verdictLabel, zip_code: zip, capture_source: 'mobile_scroll_prompt', tool_type: toolType });
+    trackEvent('email_captured', { gate: 'mobile_scroll', tool: toolType, verdict: verdictLabel, zip });
     trackAdsConversion(toolType, normalizedEmail);
     setLoading(false);
     setOpen(false);
@@ -215,7 +214,7 @@ const MobileScrollPrompt = ({
       navigator.clipboard.writeText(url);
       toast.success('Link copied!');
     }
-    trackEvent('share_clicked', { method, capture_source: 'mobile_scroll_prompt', tool_type: toolType });
+    trackEvent('report_shared', { method, tool: toolType });
     setOpen(false);
   };
 

@@ -1,5 +1,5 @@
 import { BedroomType } from '@/data/rentData';
-import { trackEvent } from '@/lib/analytics';
+
 
 interface CompLinksProps {
   zip: string;
@@ -75,15 +75,7 @@ const CompLinks = ({ zip, city, state, bedrooms, verdict, fairnessScore }: CompL
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => trackEvent('comp_link_clicked', {
-              platform: link.name,
-              zip,
-              city,
-              state,
-              bedrooms,
-              verdict: verdict ?? null,
-              fairness_score: fairnessScore ?? null,
-            })}
+            onClick={() => {}}
             className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-border rounded text-sm font-medium text-foreground bg-card hover:border-foreground transition-colors"
           >
             {link.name}

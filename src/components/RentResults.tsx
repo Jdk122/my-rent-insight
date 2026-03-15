@@ -350,34 +350,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   // ━━━ Analytics tracking ━━━
   useEffect(() => {
-    trackEvent('results_viewed', { zip: rentData.zip, verdict: verdictLabel });
-
-    const startTime = Date.now();
-    const handleUnload = () => {
-      const seconds = Math.round((Date.now() - startTime) / 1000);
-      trackEvent('time_on_results', { seconds });
-    };
-    window.addEventListener('beforeunload', handleUnload);
-
-    const sectionIds = ['section-verdict', 'section-gate', 'section-comps', 'section-letter', 'section-share'];
-    const firedSections = new Set<string>();
-    const sectionObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !firedSections.has(entry.target.id)) {
-            firedSections.add(entry.target.id);
-            trackEvent('results_scrolled_to_section', { section: entry.target.id.replace('section-', '') });
-          }
-        });
-      },
-      { threshold: 0.3 }
-    );
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) sectionObserver.observe(el);
-    });
-
-    return () => { window.removeEventListener('beforeunload', handleUnload); sectionObserver.disconnect(); };
+    trackEvent('analysis_completed', { tool: 'renewal', zip: rentData.zip, verdict: verdictLabel, score: fairnessScore?.total ?? null });
   }, []);
 
   // ━━━ Anonymous analysis logging ━━━
@@ -470,14 +443,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       }
     });
 
-    if (inferredPropertyType) {
-      trackEvent('user_property_type', {
-        property_type: inferredPropertyType,
-        zip_code: rentData.zip,
-        bedrooms: bedroomNum,
-        verdict: verdictLabel,
-      });
-    }
   }, [hasIncrease, fairnessScore, rentcast.loading]);
 
   // ━━━ Lazy-update analysis record ━━━

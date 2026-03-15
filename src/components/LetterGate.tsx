@@ -45,7 +45,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          trackEvent('letter_blur_shown', { verdict: verdictLabel || 'above', zip_code: leadContext?.zip || '' });
+          trackEvent('prompt_shown', { prompt: 'letter_gate', tool: 'renewal', verdict: verdictLabel || 'above', zip: leadContext?.zip || '' });
           observer.disconnect();
         }
       },
@@ -138,7 +138,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
     }
 
     onEmailCaptured?.(normalizedEmail);
-    trackEvent('email_submitted', { verdict, zip_code: leadContext?.zip || '', capture_source: 'letter_gate', tool_type: 'renewal' });
+    trackEvent('email_captured', { gate: 'letter_gate', tool: 'renewal', verdict, zip: leadContext?.zip || '' });
     trackAdsConversion('renewal', normalizedEmail);
     setUnlocked(true);
     setLoading(false);
@@ -185,7 +185,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
   const handleCopy = () => {
     const text = letterRef.current?.innerText || '';
     navigator.clipboard.writeText(text);
-    trackEvent('letter_copied', { capture_source: 'letter_gate' });
+    trackEvent('letter_used', { action: 'copied' });
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
     toast.success('Copied to clipboard');

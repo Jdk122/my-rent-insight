@@ -338,7 +338,7 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
       if (fnError) throw fnError;
       if (data?.letter) {
         setAiLetter(data.letter);
-        trackEvent('ai_letter_generated', { zip });
+        trackEvent('letter_used', { action: 'generated', zip });
         onLetterGenerated?.();
       } else {
         throw new Error('No letter returned');
@@ -377,7 +377,7 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
   const handleRegenerate = () => {
     setAiLetter(null);
     generateLetter();
-    trackEvent('letter_regenerated');
+    trackEvent('letter_used', { action: 'regenerated' });
   };
 
   // ── Loading state ──
