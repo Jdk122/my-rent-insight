@@ -156,7 +156,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="border border-border rounded-2xl p-5 sm:p-6 md:p-8 bg-card space-y-4 sm:space-y-5">
+      <form onSubmit={handleSubmit} className="border border-border/80 rounded-2xl p-5 sm:p-6 md:p-8 bg-card space-y-4 sm:space-y-5 shadow-sm">
         {prefill && (
           <p className="text-[13px] text-muted-foreground pl-3 border-l-2 border-primary/40 leading-relaxed">
             Welcome back! We've pre-filled your info from last year. Just enter your new proposed rent.
@@ -334,11 +334,14 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full h-12 sm:h-14 bg-primary text-primary-foreground text-[15px] sm:text-base font-bold rounded-lg hover:opacity-90 active:scale-[0.99] transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
+          className="w-full h-12 sm:h-14 bg-primary text-primary-foreground text-[15px] sm:text-base font-bold rounded-lg hover:opacity-90 active:scale-[0.99] transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none shadow-md shadow-primary/20"
         >
           {isLoading ? 'Loading data…' : 'Get My Answer →'}
         </button>
-        <p className="text-[11px] text-muted-foreground/60 text-center mt-3">
+        <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
+          Free · No account required · Used across 38,600+ ZIP codes
+        </p>
+        <p className="text-[11px] text-muted-foreground/60 text-center mt-1">
           By using this tool, you agree to our{' '}
           <a href="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</a>
           {' '}and{' '}
