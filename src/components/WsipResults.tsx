@@ -416,6 +416,19 @@ const WsipResults = ({
         onReportGenerated={(url) => { setReportUrl(url); }}
       />
 
+      {/* Mobile Scroll Prompt (mobile only) — re-engagement */}
+      <MobileScrollPrompt
+        capturedEmail={capturedEmail}
+        leadContext={leadContext}
+        verdictLabel={verdictLabel}
+        zip={zip}
+        city={city}
+        onEmailCaptured={onEmailCaptured}
+        toolType="wsip"
+        shareReportPayload={shareReportPayload}
+        onReportGenerated={(url) => { setReportUrl(url); }}
+      />
+
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            PHASE 1: FREE CREDIBILITY LAYER
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}

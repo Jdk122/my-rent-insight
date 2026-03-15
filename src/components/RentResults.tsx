@@ -603,6 +603,19 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         onReportGenerated={(url) => { setReportUrl(url); }}
       />
 
+      {/* Mobile Scroll Prompt (mobile only) — re-engagement */}
+      <MobileScrollPrompt
+        capturedEmail={capturedEmail}
+        leadContext={leadContext}
+        verdictLabel={verdictLabel}
+        zip={rentData.zip}
+        city={city}
+        onEmailCaptured={setCapturedEmail}
+        toolType="renewal"
+        shareReportPayload={shareReportPayload}
+        onReportGenerated={(url) => { setReportUrl(url); }}
+      />
+
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            PHASE 1: FREE CREDIBILITY LAYER
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
