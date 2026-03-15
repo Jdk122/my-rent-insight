@@ -3,7 +3,7 @@ import { ChevronRight, MessageSquareText, Calculator } from 'lucide-react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { useSearchParams, Link } from 'react-router-dom';
 
-
+import SampleResultCard from '@/components/SampleResultCard';
 const LocationSearch = lazy(() => import('@/components/LocationSearch'));
 
 const POPULAR_CITIES = [
