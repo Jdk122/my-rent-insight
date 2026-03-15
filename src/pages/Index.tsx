@@ -3,7 +3,7 @@ import { ChevronRight, MessageSquareText, Calculator } from 'lucide-react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { useSearchParams, Link } from 'react-router-dom';
 
-
+import SampleResultCard from '@/components/SampleResultCard';
 const LocationSearch = lazy(() => import('@/components/LocationSearch'));
 
 const POPULAR_CITIES = [
@@ -333,6 +333,11 @@ const Index = () => {
                   <SocialProofCounter />
                 </div>
               </Suspense>
+
+              {/* Sample result preview — desktop only */}
+              <div className="mt-6">
+                <SampleResultCard />
+              </div>
 
               {/* Data source bar — desktop only */}
               <div className="hidden lg:block mt-6">
