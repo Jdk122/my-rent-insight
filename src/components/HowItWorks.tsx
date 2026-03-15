@@ -34,7 +34,7 @@ const defaultSteps: HowItWorksStep[] = [
 const HowItWorks = React.forwardRef<HTMLElement, HowItWorksProps>(
   ({ steps = defaultSteps, subtitle = 'Three steps. No account required.' }, ref) => (
     <section ref={ref} className="w-full border-t border-border/60" aria-label="How it works">
-      <div className="max-w-[820px] mx-auto px-5 sm:px-6 py-14 sm:py-20">
+      <div className="max-w-[820px] mx-auto px-5 sm:px-6 pt-10 pb-14 sm:pb-16">
         <h2
           className="font-display text-[22px] sm:text-[26px] text-foreground text-center tracking-tight mb-2"
           style={{ letterSpacing: '-0.02em' }}
