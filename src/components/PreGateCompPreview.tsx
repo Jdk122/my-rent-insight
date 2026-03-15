@@ -67,7 +67,7 @@ const PreGateCompPreview = ({ compsWithRent, capturedEmail, fmt }: PreGateCompPr
         </div>
       </div>
       {remaining > 0 && (
-        <p className="text-xs text-muted-foreground/70 mt-2 text-center">
+        <p className="text-xs text-muted-foreground mt-2 text-center">
           {remaining} more comparable{remaining !== 1 ? 's' : ''} available in your full report
         </p>
       )}
