@@ -334,6 +334,11 @@ const Index = () => {
                 </div>
               </Suspense>
 
+              {/* Sample result preview — desktop only */}
+              <div className="mt-6">
+                <SampleResultCard />
+              </div>
+
               {/* Data source bar — desktop only */}
               <div className="hidden lg:block mt-6">
                 <div className="border-t border-border/50 pt-4 pb-2">
