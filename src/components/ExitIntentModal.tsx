@@ -71,8 +71,9 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
 
     const utm = getUtmParams();
     try {
+      const normalizedEmail = email.trim().toLowerCase();
       const { error: rpcError } = await supabase.rpc('upsert_lead', {
-        p_email: email.trim(),
+        p_email: normalizedEmail,
         p_analysis_id: leadContext?.analysisId || null,
         p_capture_source: 'exit_intent',
         p_address: leadContext?.address || null,
@@ -90,6 +91,7 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
         p_fairness_score: leadContext?.fairnessScore ?? null,
         p_comp_median_rent: leadContext?.compMedianRent ?? null,
         p_hud_fmr_value: leadContext?.hudFmrValue ?? null,
+        p_tool_type: toolType === 'wsip' ? 'wsip' : 'renewal',
       } as any);
       if (rpcError) console.error('[lead] upsert_lead failed (exit_intent):', rpcError.message);
 
