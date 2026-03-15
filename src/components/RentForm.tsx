@@ -166,9 +166,9 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
         {/* Address — primary input */}
         {!showZipOnly && (
           <div className="space-y-1.5" ref={addressRef}>
-            <Label className="text-sm font-medium text-foreground">Your Address</Label>
+            <Label className="text-sm md:text-[13px] font-medium text-foreground">Your Address</Label>
             <AddressAutocomplete
-              className={`h-12 text-sm bg-background ${errorClass('address')}`}
+              className={`h-12 md:h-10 text-sm md:text-[14px] bg-background ${errorClass('address')}`}
               placeholder="Start typing your address..."
               onSelect={(addr) => {
                 if (addr.zip) setZip(addr.zip);
