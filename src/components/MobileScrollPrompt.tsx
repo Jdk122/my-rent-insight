@@ -75,9 +75,9 @@ const MobileScrollPrompt = ({
         setOpen(true);
 
         if (capturedEmail) {
-          trackEvent('mobile_scroll_prompt_shown', { verdict: verdictLabel, zip_code: zip, type: 'share' });
+          trackEvent('prompt_shown', { prompt: 'mobile_scroll', tool: toolType, verdict: verdictLabel, zip, type: 'share' });
         } else {
-          trackEvent('mobile_scroll_prompt_shown', { verdict: verdictLabel, zip_code: zip, type: 'capture' });
+          trackEvent('prompt_shown', { prompt: 'mobile_scroll', tool: toolType, verdict: verdictLabel, zip, type: 'capture' });
         }
       }
     };
