@@ -114,10 +114,10 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
       console.error('[lead] exit_intent unexpected error:', err);
     }
 
-    onEmailCaptured(email.trim());
+    onEmailCaptured(normalizedEmail);
     trackEvent('exit_intent_converted', { verdict: verdictLabel, zip_code: zip });
     trackEvent('email_submitted', { verdict: verdictLabel, zip_code: zip, source: 'exit_intent', tool_type: toolType });
-    trackAdsConversion(toolType, email.trim());
+    trackAdsConversion(toolType, normalizedEmail);
     setLoading(false);
     setOpen(false);
     toast.success('Sent to your email!');
