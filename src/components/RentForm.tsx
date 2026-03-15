@@ -65,6 +65,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
   const [showZipOnly, setShowZipOnly] = useState(!!prefill?.zip && !prefill?.address);
   const [errors, setErrors] = useState<FormErrors>({});
   const [attempted, setAttempted] = useState(false);
+  const [increaseTouched, setIncreaseTouched] = useState(false);
 
   const addressRef = useRef<HTMLDivElement>(null);
   const rentRef = useRef<HTMLDivElement>(null);
