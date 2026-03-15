@@ -208,7 +208,7 @@ const ReportGate = ({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          trackEvent('report_gate_shown', { verdict: verdictLabel, zip_code: zip, tool: toolType });
+          trackEvent('prompt_shown', { prompt: 'report_gate', tool: toolType, verdict: verdictLabel, zip });
           observer.disconnect();
         }
       },
