@@ -342,8 +342,17 @@ const Index = () => {
               {/* Data source bar — desktop only */}
               <div className="hidden lg:block mt-6">
                 <div className="border-t border-border/50 pt-4 pb-2 text-center">
-                  <p className="text-[clamp(12px,1vw,15px)] text-foreground/40 tracking-wider uppercase whitespace-nowrap">
-                    HUD FMR · Zillow ZORI · Apt List · Live Comps · DHCR
+                  <p className="text-[11px] text-muted-foreground/50 tracking-widest uppercase mb-1.5">Powered by</p>
+                  <p className="text-[13px] text-foreground/55 font-medium tracking-wide whitespace-nowrap">
+                    HUD Fair Market Rent
+                    <span className="mx-2 text-border">·</span>
+                    Zillow ZORI
+                    <span className="mx-2 text-border">·</span>
+                    Apartment List
+                    <span className="mx-2 text-border">·</span>
+                    Rentcast
+                    <span className="mx-2 text-border">·</span>
+                    NY DHCR
                   </p>
                 </div>
               </div>
