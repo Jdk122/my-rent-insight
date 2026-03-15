@@ -991,7 +991,7 @@ function DashboardContent() {
                 <div className="border border-border rounded-lg overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead><tr className="border-b border-border bg-muted/30">
-                      <th className="text-left px-3 py-2 font-medium">Address/Zip</th>
+                      <th className="text-left px-3 py-2 font-medium">ID</th>
                       <th className="text-left px-3 py-2 font-medium">City</th>
                       <th className="text-left px-3 py-2 font-medium">BR</th>
                       <th className="text-left px-3 py-2 font-medium">Rent</th>
