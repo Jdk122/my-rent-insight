@@ -87,7 +87,7 @@ const MobileScrollPrompt = ({
   }, [capturedEmail, verdictLabel, zip]);
 
   const handleDismiss = () => {
-    trackEvent('mobile_scroll_prompt_dismissed', { verdict: verdictLabel, zip_code: zip });
+    trackEvent('prompt_dismissed', { prompt: 'mobile_scroll', zip });
     setOpen(false);
   };
 
