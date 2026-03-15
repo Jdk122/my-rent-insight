@@ -308,6 +308,39 @@ Deno.serve(async (req) => {
         break;
       }
 
+      case "lead_lookup": {
+        const searchEmail = (params?.email || "").trim().toLowerCase();
+        if (!searchEmail) {
+          data = { error: "Email required" };
+          break;
+        }
+        const { data: leadRows } = await supabase
+          .from("leads")
+          .select("*")
+          .ilike("email", `%${searchEmail}%`)
+          .order("created_at", { ascending: false })
+          .limit(10);
+        const { data: eventRows } = await supabase
+          .from("lead_events")
+          .select("*")
+          .ilike("email", `%${searchEmail}%`)
+          .order("created_at", { ascending: false })
+          .limit(20);
+        const lookupAnalysisIds = [
+          ...(leadRows || []).map((l: any) => l.analysis_id).filter(Boolean),
+          ...(eventRows || []).map((e: any) => e.analysis_id).filter(Boolean),
+        ];
+        const lookupUniqueIds = [...new Set(lookupAnalysisIds)];
+        const { data: analysisRows } = lookupUniqueIds.length > 0
+          ? await supabase
+              .from("analyses")
+              .select("id, address, zip, city, bedrooms, current_rent, proposed_rent, fairness_score, verdict_label, created_at, tool_type")
+              .in("id", lookupUniqueIds)
+          : { data: [] };
+        data = { leads: leadRows, events: eventRows, analyses: analysisRows };
+        break;
+      }
+
       default:
         return new Response(JSON.stringify({ error: "Unknown query type" }), {
           status: 400,
