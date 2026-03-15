@@ -107,8 +107,8 @@ function scoreVsComps(proposedRent: number, compMedian: number | null, maxPts: n
   return { id: 'comps', label, score, max: maxPts, estimated: false };
 }
 
-// Component 3: Increase Reasonableness (25 pts)
-function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, increasePct: number, marketYoY?: number, f50?: number[] | null, bedroomCount?: number, rcMedianRent?: number | null, rcTotalListings?: number | null): ScoreComponent {
+// Component 3: Increase Reasonableness (25 pts base)
+function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, increasePct: number, marketYoY?: number, f50?: number[] | null, bedroomCount?: number, rcMedianRent?: number | null, rcTotalListings?: number | null, maxPts: number = 25): ScoreComponent {
   let label = 'Increase Reasonableness';
   let upper: number;
   let labelSuffix = '';
