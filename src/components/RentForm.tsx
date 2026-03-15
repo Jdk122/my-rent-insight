@@ -338,7 +338,10 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
         >
           {isLoading ? 'Loading data…' : 'Get My Answer →'}
         </button>
-        <p className="text-[11px] text-muted-foreground/60 text-center mt-3">
+        <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
+          Free · No account required · Used across 38,600+ ZIP codes
+        </p>
+        <p className="text-[11px] text-muted-foreground/60 text-center mt-1">
           By using this tool, you agree to our{' '}
           <a href="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</a>
           {' '}and{' '}
