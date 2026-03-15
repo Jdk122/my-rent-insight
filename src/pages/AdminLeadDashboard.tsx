@@ -1363,7 +1363,7 @@ function DashboardContent() {
       </Tabs>
 
       {/* Detail Panel */}
-      {selectedRow && <LeadDetailPanel analysis={selectedRow} onClose={() => setSelectedRow(null)} />}
+      {selectedRow && <LeadDetailPanel analysis={selectedRow} onClose={() => setSelectedRow(null)} onDeleted={(id) => { setRows(prev => prev.filter(r => r.id !== id)); setTotalCount(prev => prev - 1); setSelectedRow(null); }} />}
     </div>
   );
 }
