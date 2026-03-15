@@ -107,8 +107,8 @@ function scoreVsComps(proposedRent: number, compMedian: number | null, maxPts: n
   return { id: 'comps', label, score, max: maxPts, estimated: false };
 }
 
-// Component 3: Increase Reasonableness (25 pts)
-function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, increasePct: number, marketYoY?: number, f50?: number[] | null, bedroomCount?: number, rcMedianRent?: number | null, rcTotalListings?: number | null): ScoreComponent {
+// Component 3: Increase Reasonableness (25 pts base)
+function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, increasePct: number, marketYoY?: number, f50?: number[] | null, bedroomCount?: number, rcMedianRent?: number | null, rcTotalListings?: number | null, maxPts: number = 25): ScoreComponent {
   let label = 'Increase Reasonableness';
   let upper: number;
   let labelSuffix = '';
@@ -125,38 +125,38 @@ function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, incr
   upper = Math.max(upper, fmr);
   if (currentRent >= upper) {
     const isFalling = (marketYoY ?? 0) < -0.5;
-    let score: number;
+    let rawScore: number;
     if (isFalling) {
-      if (increasePct <= 0) score = 25;
-      else if (increasePct <= 2) score = 25 - (increasePct / 2) * 2;
-      else if (increasePct <= 4) score = 23 - ((increasePct - 2) / 2) * 8;
-      else if (increasePct <= 7) score = 15 - ((increasePct - 4) / 3) * 9;
-      else if (increasePct <= 10) score = 6 - ((increasePct - 7) / 3) * 6;
-      else score = 0;
+      if (increasePct <= 0) rawScore = 25;
+      else if (increasePct <= 2) rawScore = 25 - (increasePct / 2) * 2;
+      else if (increasePct <= 4) rawScore = 23 - ((increasePct - 2) / 2) * 8;
+      else if (increasePct <= 7) rawScore = 15 - ((increasePct - 4) / 3) * 9;
+      else if (increasePct <= 10) rawScore = 6 - ((increasePct - 7) / 3) * 6;
+      else rawScore = 0;
     } else {
-      if (increasePct <= 0) score = 25;
-      else if (increasePct <= 3) score = 25 - (increasePct / 3) * 2;
-      else if (increasePct <= 6) score = 23 - ((increasePct - 3) / 3) * 8;
-      else if (increasePct <= 10) score = 15 - ((increasePct - 6) / 4) * 9;
-      else if (increasePct <= 14) score = 6 - ((increasePct - 10) / 4) * 6;
-      else score = 0;
+      if (increasePct <= 0) rawScore = 25;
+      else if (increasePct <= 3) rawScore = 25 - (increasePct / 3) * 2;
+      else if (increasePct <= 6) rawScore = 23 - ((increasePct - 3) / 3) * 8;
+      else if (increasePct <= 10) rawScore = 15 - ((increasePct - 6) / 4) * 9;
+      else if (increasePct <= 14) rawScore = 6 - ((increasePct - 10) / 4) * 6;
+      else rawScore = 0;
     }
-    score = Math.round(score);
-    return { id: 'fmr', label, score, max: 25, estimated: false };
+    const score = Math.round((rawScore / 25) * maxPts);
+    return { id: 'fmr', label, score, max: maxPts, estimated: false };
   }
-  let score: number;
+  let rawScore: number;
   if (proposedRent <= upper) {
-    score = 25;
+    rawScore = 25;
   } else {
     const above = (proposedRent - upper) / upper;
-    if (above <= 0) score = 25;
-    else if (above <= 0.10) score = 25 - (above / 0.10) * 10;
-    else if (above <= 0.25) score = 15 - ((above - 0.10) / 0.15) * 9;
-    else if (above <= 0.35) score = 6 - ((above - 0.25) / 0.10) * 6;
-    else score = 0;
+    if (above <= 0) rawScore = 25;
+    else if (above <= 0.10) rawScore = 25 - (above / 0.10) * 10;
+    else if (above <= 0.25) rawScore = 15 - ((above - 0.10) / 0.15) * 9;
+    else if (above <= 0.35) rawScore = 6 - ((above - 0.25) / 0.10) * 6;
+    else rawScore = 0;
   }
-  score = Math.round(score);
-  return { id: 'fmr', label, score, max: 25, estimated: false };
+  const score = Math.round((rawScore / 25) * maxPts);
+  return { id: 'fmr', label, score, max: maxPts, estimated: false };
 }
 
 // Component 4: Market Momentum (10 pts)
@@ -252,11 +252,16 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
   const cc = validatedInput.compCount ?? (validatedInput.compMedian !== null ? 5 : 0);
   let compMax: number;
   let rateMax: number;
+  let fmrMax: number = 25;
   // Base weights: Rate=35, Comps=30, Reasonableness=25, Momentum=10 = 100
   if (cc >= 5) { compMax = 30; rateMax = 35; }
   else if (cc >= 3) { compMax = 18; rateMax = 47; }
   else if (cc >= 1) { compMax = 10; rateMax = 55; }
-  else { compMax = 0; rateMax = 65; }
+  else {
+    compMax = 0;
+    rateMax = 50;   // 35 base + 15 from comps
+    fmrMax = 40;    // 25 base + 15 from comps
+  }
 
   // Premium rent tier: when currentRent > 2× FMR, comps are less reliable
   if (validatedInput.currentRent > validatedInput.fmr * 2.0 && compMax > 0) {
@@ -292,7 +297,7 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
   const components = [
     scoreRateVsTrend(validatedInput.increasePct, validatedInput.marketYoY, validatedInput.alYoY, rateMax, validatedInput.compositeTrend),
     scoreVsComps(validatedInput.proposedRent, validatedInput.compMedian, compMax, validatedInput.buildingMedian, validatedInput.buildingCompCount, validatedInput.sameLineMedian, validatedInput.currentRent),
-    scoreVsFmr(validatedInput.proposedRent, validatedInput.fmr, validatedInput.currentRent, validatedInput.increasePct, validatedInput.marketYoY, validatedInput.f50, validatedInput.bedroomCount, validatedInput.rcMedianRent, validatedInput.rcTotalListings),
+    scoreVsFmr(validatedInput.proposedRent, validatedInput.fmr, validatedInput.currentRent, validatedInput.increasePct, validatedInput.marketYoY, validatedInput.f50, validatedInput.bedroomCount, validatedInput.rcMedianRent, validatedInput.rcTotalListings, fmrMax),
     scoreMarketMomentum(validatedInput.zillowMonthly, validatedInput.alMoM, validatedInput.hvd),
   ];
   const visibleComponents = components.filter(c => c.max > 0);
@@ -321,6 +326,28 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
   if (ceiling !== null && total > ceiling) {
     total = Math.round(ceiling);
     extremeIncreaseCeilingApplied = true;
+  }
+
+  // ── Comp contradiction guardrail ──
+  const compComponent = components.find(c => c.id === 'comps');
+  if (compComponent && compComponent.max >= 18) {
+    const compPct = compComponent.score / compComponent.max;
+    if (compPct < 0.40 && total >= 60) {
+      total = Math.min(total, 59);
+    } else if (compPct < 0.25 && total >= 40) {
+      total = Math.min(total, 39);
+    }
+  }
+
+  // ── Zero-comp rent position guardrail (Oshkosh fix) ──
+  if (cc < 3 && validatedInput.fmr > 0) {
+    const fmrUpper = validatedInput.fmr * 1.15;
+    const rentAboveFmrRatio = (validatedInput.currentRent - fmrUpper) / fmrUpper;
+    if (rentAboveFmrRatio > 0.50 && total >= 70) {
+      total = Math.min(total, 69);
+    } else if (rentAboveFmrRatio > 0.30 && total >= 80) {
+      total = Math.min(total, 79);
+    }
   }
 
   return { total, ...getTier(total), components: visibleComponents, extremeIncreaseCeilingApplied };

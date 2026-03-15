@@ -497,9 +497,10 @@ describe('Component-Level Regression', () => {
       expect(r.components.find(c => c.id === 'rate')!.max).toBe(55);
       expect(r.components.find(c => c.id === 'comps')!.max).toBe(10);
     });
-    it('0 comps: rate=65, comps absent', () => {
+    it('0 comps: rate=50, fmr=40, comps absent', () => {
       const r = score({ compCount: 0, compMedian: null });
-      expect(r.components.find(c => c.id === 'rate')!.max).toBe(65);
+      expect(r.components.find(c => c.id === 'rate')!.max).toBe(50);
+      expect(r.components.find(c => c.id === 'fmr')!.max).toBe(40);
       expect(r.components.find(c => c.id === 'comps')).toBeUndefined();
     });
   });
@@ -673,5 +674,73 @@ describe('Outlier Detection', () => {
   it('correlation weighting favors high-corr comps', () => {
     const comps = [{ ...makeComp('1 St', 1000, 2, 0.5), correlation: 0.1 }, { ...makeComp('2 St', 3000, 2, 0.5), correlation: 0.9 }];
     expect(correlationWeightedMedian(comps)!).toBeGreaterThan(2000);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// SECTION 8: OSHKOSH FIX & COMP CONTRADICTION GUARDRAILS
+// ═══════════════════════════════════════════════════════════════
+
+describe('Oshkosh Fix — Zero-comp score inflation prevention', () => {
+  it('Rent 2x FMR with trend-aligned increase and zero comps should NOT score Good Deal', () => {
+    const r = score({
+      increasePct: 4, marketYoY: 4,
+      proposedRent: 2496, currentRent: 2400,
+      compMedian: null, compCount: 0,
+      fmr: 1200, zillowMonthly: 0.3,
+    });
+    expect(r.total).toBeLessThan(80);
+  });
+
+  it('Rent at FMR with trend-aligned increase and zero comps SHOULD score well', () => {
+    const r = score({
+      increasePct: 3, marketYoY: 3,
+      proposedRent: 1957, currentRent: 1900,
+      compMedian: null, compCount: 0,
+      fmr: 2000, zillowMonthly: 0.2,
+    });
+    expect(r.total).toBeGreaterThanOrEqual(70);
+  });
+
+  it('Zero comps redistributes weight to both Rate and Reasonableness', () => {
+    const r = score({ compCount: 0, compMedian: null });
+    const rateComp = r.components.find(c => c.id === 'rate')!;
+    const fmrComp = r.components.find(c => c.id === 'fmr')!;
+    expect(rateComp.max).toBe(50);
+    expect(fmrComp.max).toBe(40);
+    const totalMax = r.components.reduce((sum, c) => sum + c.max, 0);
+    expect(totalMax).toBe(100);
+  });
+});
+
+describe('Comp Contradiction Guardrail', () => {
+  it('Strong comps showing overpayment should pull score below At Market', () => {
+    const r = score({
+      increasePct: 5, marketYoY: 4,
+      proposedRent: 2500, currentRent: 2381,
+      compMedian: 2000, compCount: 8,
+      fmr: 1800, zillowMonthly: 0.3,
+    });
+    expect(r.total).toBeLessThan(60);
+  });
+
+  it('Strong comps confirming fair rent should NOT trigger guardrail', () => {
+    const r = score({
+      increasePct: 5, marketYoY: 4,
+      proposedRent: 2100, currentRent: 2000,
+      compMedian: 2100, compCount: 8,
+      fmr: 1800, zillowMonthly: 0.3,
+    });
+    expect(r.total).toBeGreaterThanOrEqual(60);
+  });
+
+  it('Low comp count should NOT trigger contradiction guardrail', () => {
+    const r = score({
+      increasePct: 5, marketYoY: 4,
+      proposedRent: 2500, currentRent: 2381,
+      compMedian: 2000, compCount: 1,
+      fmr: 1800, zillowMonthly: 0.3,
+    });
+    expect(r.total).toBeGreaterThanOrEqual(40);
   });
 });
