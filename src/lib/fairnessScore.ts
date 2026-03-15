@@ -253,11 +253,16 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
   const cc = validatedInput.compCount ?? (validatedInput.compMedian !== null ? 5 : 0);
   let compMax: number;
   let rateMax: number;
+  let fmrMax: number = 25;
   // Base weights: Rate=35, Comps=30, Reasonableness=25, Momentum=10 = 100
   if (cc >= 5) { compMax = 30; rateMax = 35; }
   else if (cc >= 3) { compMax = 18; rateMax = 47; }
   else if (cc >= 1) { compMax = 10; rateMax = 55; }
-  else { compMax = 0; rateMax = 65; }
+  else {
+    compMax = 0;
+    rateMax = 50;   // 35 base + 15 from comps
+    fmrMax = 40;    // 25 base + 15 from comps
+  }
 
   // Premium rent tier: when currentRent > 2× FMR, comps are less reliable
   if (validatedInput.currentRent > validatedInput.fmr * 2.0 && compMax > 0) {
