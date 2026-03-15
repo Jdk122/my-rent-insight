@@ -44,6 +44,7 @@ const CookieConsent = () => {
     });
     localStorage.setItem(STORAGE_KEY, '1');
     setVisible(false);
+    window.dispatchEvent(new Event('rr_cookie_dismissed'));
   };
 
   if (!visible) return null;
