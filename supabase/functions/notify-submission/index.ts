@@ -51,16 +51,7 @@ Deno.serve(async (req) => {
       }
 
       // If no direct match, check if there's a recent lead for this zip
-      if (!leadEmail && zip) {
-        const { data: recentLead } = await sb
-          .from("leads")
-          .select("email")
-          .eq("zip", zip)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .single();
-        if (recentLead?.email) leadEmail = recentLead.email;
-      }
+      // ZIP-based fallback removed — only use directEmail or analysis_id lookup
 
       // SAFETY NET: If we have a captured email, ensure lead + event exist in DB
       // This catches cases where client-side inserts failed silently
