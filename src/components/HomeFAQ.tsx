@@ -38,7 +38,7 @@ const faqs: { q: string; a: React.ReactNode }[] = [
 ];
 
 const HomeFAQ = () => (
-  <section className="max-w-[620px] mx-auto px-5 sm:px-6 pt-14 sm:pt-20 pb-14 sm:pb-20 border-t border-border/60" aria-label="Frequently asked questions">
+  <section className="max-w-[820px] mx-auto px-5 sm:px-6 pt-10 pb-14 sm:pb-16 border-t border-border/40" aria-label="Frequently asked questions">
     <h2 className="font-display text-[22px] sm:text-[26px] text-foreground tracking-tight text-center mb-2" style={{ letterSpacing: '-0.02em' }}>
       Frequently Asked Questions
     </h2>
