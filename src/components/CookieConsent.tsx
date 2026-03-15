@@ -29,6 +29,7 @@ const CookieConsent = () => {
           });
           localStorage.setItem(STORAGE_KEY, '1');
           setVisible(false);
+          window.dispatchEvent(new Event('rr_cookie_dismissed'));
         }
       }, 6200); // 1200ms delay + 5000ms visible = 6200ms total
       return () => { clearTimeout(t); clearTimeout(autoDismiss); };
