@@ -6,6 +6,32 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+const badVerdicts = ["Moderate", "Unfair", "Excessive", "Above Market"];
+
+function getEmailCopy(lead: any): { subject: string; text: string } {
+  const score = lead.fairness_score;
+  const verdict = lead.verdict;
+  const isAbove = (score != null && score < 60) || (verdict != null && badVerdicts.includes(verdict));
+  const isGood = score != null && score >= 80;
+
+  if (isAbove) {
+    return {
+      subject: "Did your negotiation work?",
+      text: "Hey — you used RenewalReply recently to check your rent increase. I'm the founder, and I'm curious: did you end up negotiating with your landlord?\n\nIf the tool helped, I'd love to hear what happened. If it didn't, I'd still really appreciate the honest feedback.\n\n— James",
+    };
+  }
+  if (isGood) {
+    return {
+      subject: "How did your renewal go?",
+      text: "Hey — you used RenewalReply recently and your rent looked like a solid deal. I'm the founder, and I'm curious: did you end up renewing? I'd love to hear how it went — your feedback helps me make the tool better for other renters.\n\n— James",
+    };
+  }
+  return {
+    subject: "How did your renewal go?",
+    text: "Hey — you used RenewalReply recently to check your rent increase. I'm the founder, and I'm curious: how did the renewal go? Did you end up negotiating, or did you sign as-is? Either way, I'd love to hear what happened — your feedback helps me make the tool better.\n\n— James",
+  };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -25,7 +51,6 @@ Deno.serve(async (req) => {
   const supabase = createClient(supabaseUrl, serviceKey);
   const now = new Date();
 
-  // Leads captured 5–7 days ago
   const dayAgo7 = new Date(now);
   dayAgo7.setDate(dayAgo7.getDate() - 7);
   const dayAgo5 = new Date(now);
@@ -33,7 +58,7 @@ Deno.serve(async (req) => {
 
   const { data: leads, error } = await supabase
     .from("leads")
-    .select("id, email, current_rent, proposed_rent, zip")
+    .select("id, email, fairness_score, verdict, current_rent, proposed_rent, zip")
     .eq("tool_type", "renewal")
     .is("founder_followup_sent_at", null)
     .not("email", "is", null)
@@ -50,13 +75,11 @@ Deno.serve(async (req) => {
   }
 
   const eligible = leads || [];
-
   let sent = 0;
   let failed = 0;
 
-  const body = `Hey — you used RenewalReply recently to check your rent increase. I'm the founder, and I'm curious: did you end up negotiating with your landlord?\n\nIf the tool helped, I'd love to hear what happened. If it didn't, I'd still really appreciate the honest feedback.\n\n— James`;
-
   for (const lead of eligible) {
+    const { subject, text } = getEmailCopy(lead);
     const attemptedAt = new Date().toISOString();
     try {
       const res = await fetch("https://api.resend.com/emails", {
@@ -69,8 +92,8 @@ Deno.serve(async (req) => {
           from: "James from RenewalReply <noreply@renewalreply.com>",
           reply_to: "james@renewalreply.com",
           to: [lead.email],
-          subject: "Did your negotiation work?",
-          text: body,
+          subject,
+          text,
         }),
       });
 
@@ -91,16 +114,13 @@ Deno.serve(async (req) => {
         continue;
       }
 
-      // Consume response body
       await res.text();
 
-      // Mark sent on lead
       await supabase
         .from("leads")
         .update({ founder_followup_sent_at: new Date().toISOString() })
         .eq("id", lead.id);
 
-      // Log success
       await supabase.from("email_send_attempts").insert({
         lead_id: lead.id,
         email: lead.email,
@@ -126,10 +146,10 @@ Deno.serve(async (req) => {
     }
   }
 
-  console.log(`Founder followup: ${sent} sent, ${failed} failed, ${eligible.length} eligible, ${(leads || []).length} queried`);
+  console.log(`Founder followup: ${sent} sent, ${failed} failed, ${eligible.length} eligible`);
 
   return new Response(
-    JSON.stringify({ sent, failed, eligible: eligible.length, queried: (leads || []).length }),
+    JSON.stringify({ sent, failed, eligible: eligible.length }),
     { headers: { ...corsHeaders, "Content-Type": "application/json" } },
   );
 });
