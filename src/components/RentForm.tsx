@@ -328,6 +328,11 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
             </div>
           </div>
           {(() => {
+            if (!increaseTouched) return (
+              <p className="text-xs text-muted-foreground">
+                The amount your landlord wants to raise your rent by.
+              </p>
+            );
             const incVal = rentIncrease && rentIncrease.trim() !== ''
               ? (increaseIsPercent ? parseFloat(rentIncrease) : parseFloat(parseFormatted(rentIncrease)))
               : NaN;
