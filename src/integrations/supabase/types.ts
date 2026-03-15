@@ -290,6 +290,44 @@ export type Database = {
         }
         Relationships: []
       }
+      email_send_attempts: {
+        Row: {
+          attempted_at: string
+          email: string
+          error_message: string | null
+          id: string
+          lead_id: string
+          success: boolean
+          template: string
+        }
+        Insert: {
+          attempted_at?: string
+          email: string
+          error_message?: string | null
+          id?: string
+          lead_id: string
+          success?: boolean
+          template?: string
+        }
+        Update: {
+          attempted_at?: string
+          email?: string
+          error_message?: string | null
+          id?: string
+          lead_id?: string
+          success?: boolean
+          template?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_lead"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_events: {
         Row: {
           address: string | null
@@ -365,6 +403,7 @@ export type Database = {
           fairness_score: number | null
           first_captured_at: string | null
           followup_sent_at: string | null
+          founder_followup_sent_at: string | null
           hud_fmr_value: number | null
           id: string
           increase_pct: number | null
@@ -404,6 +443,7 @@ export type Database = {
           fairness_score?: number | null
           first_captured_at?: string | null
           followup_sent_at?: string | null
+          founder_followup_sent_at?: string | null
           hud_fmr_value?: number | null
           id?: string
           increase_pct?: number | null
@@ -443,6 +483,7 @@ export type Database = {
           fairness_score?: number | null
           first_captured_at?: string | null
           followup_sent_at?: string | null
+          founder_followup_sent_at?: string | null
           hud_fmr_value?: number | null
           id?: string
           increase_pct?: number | null
