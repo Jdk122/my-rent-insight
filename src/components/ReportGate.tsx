@@ -299,8 +299,7 @@ const ReportGate = ({
     // Unlock immediately
     onEmailCaptured(trimmed);
     setLoading(false);
-    trackEvent('report_gate_converted', { verdict: verdictLabel, zip_code: zip, tool: toolType });
-    trackEvent('email_submitted', { verdict: verdictLabel, zip_code: zip, capture_source: 'report_gate', tool_type: toolType });
+    trackEvent('email_captured', { gate: 'report_gate', tool: toolType, verdict: verdictLabel, zip });
     trackAdsConversion(toolType, trimmed);
 
     // Generate report + send email in parallel (non-blocking)

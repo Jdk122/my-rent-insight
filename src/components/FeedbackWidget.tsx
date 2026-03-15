@@ -98,7 +98,7 @@ const FeedbackWidget = ({
       .from('user_feedback' as any)
       .update({ comment } as any)
       .eq('id', feedbackId);
-    trackEvent('feedback_comment', { page });
+    
     setSubmittingUpdate(false);
     setPhase('done');
   }, [feedbackId, comment, page]);

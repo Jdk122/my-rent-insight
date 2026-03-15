@@ -92,7 +92,7 @@ const AddressAutocomplete = ({ onSelect, placeholder = '123 Main St, Austin, TX'
         zip,
         fullAddress: data.result.formatted_address || prediction.description,
       });
-      trackEvent('address_entered', { method: 'autocomplete' });
+      
     } catch { /* silent */ }
   };
 

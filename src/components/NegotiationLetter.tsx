@@ -377,7 +377,7 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
   const handleRegenerate = () => {
     setAiLetter(null);
     generateLetter();
-    trackEvent('letter_regenerated');
+    trackEvent('letter_used', { action: 'regenerated' });
   };
 
   // ── Loading state ──

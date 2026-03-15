@@ -185,7 +185,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
   const handleCopy = () => {
     const text = letterRef.current?.innerText || '';
     navigator.clipboard.writeText(text);
-    trackEvent('letter_copied', { capture_source: 'letter_gate' });
+    trackEvent('letter_used', { action: 'copied' });
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
     toast.success('Copied to clipboard');

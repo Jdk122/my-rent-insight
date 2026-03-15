@@ -65,12 +65,7 @@ const RenewalReminderModal = ({ open, onOpenChange, zip }: RenewalReminderModalP
         return;
       }
 
-      trackEvent('reminder_set', {
-        zip,
-        lease_month: month,
-        lease_year: year,
-        source: 'seo_reminder_modal',
-      });
+      trackEvent('lease_info_saved', { action: 'reminder_set', tool: 'renewal', zip });
 
       setSubmitted(true);
     } catch (err) {

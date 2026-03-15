@@ -443,14 +443,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       }
     });
 
-    if (inferredPropertyType) {
-      trackEvent('user_property_type', {
-        property_type: inferredPropertyType,
-        zip_code: rentData.zip,
-        bedrooms: bedroomNum,
-        verdict: verdictLabel,
-      });
-    }
   }, [hasIncrease, fairnessScore, rentcast.loading]);
 
   // ━━━ Lazy-update analysis record ━━━

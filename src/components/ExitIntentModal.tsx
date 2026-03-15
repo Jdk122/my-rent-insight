@@ -184,7 +184,7 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
       navigator.clipboard.writeText(url);
       toast.success('Link copied!');
     }
-    trackEvent('share_clicked', { method, capture_source: 'exit_intent', tool_type: toolType });
+    trackEvent('report_shared', { method, tool: toolType });
     setOpen(false);
   };
 

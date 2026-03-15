@@ -57,7 +57,7 @@ const PostConversionFlow = ({ email, leadContext, verdictLabel, zip }: PostConve
       console.error('Post-conversion save failed:', err);
     }
 
-    trackEvent('post_conversion_lease_saved', { verdict: verdictLabel, zip_code: zip });
+    trackEvent('lease_info_saved', { action: 'lease_saved', tool: 'renewal', zip, verdict: verdictLabel });
     setSaved(true);
     toast.success('Saved!');
   };

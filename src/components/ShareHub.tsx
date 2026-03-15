@@ -157,17 +157,17 @@ const ShareHub = ({
   const emailSubject = `Worth checking — is our rent increase fair in ${city}?`;
   const emailBody = `Hey,\n\nI ran my address through a rent fairness tool and thought you'd want to know.\n\n${brLabel} rents in ${zipCode} (${city}, ${state}) moved ${marketSign}${marketYoy}% this year. My landlord is asking for ${increasePct}%.\n\nCheck yours here: ${shareUrl}`;
 
-  const handleSMS = () => { trackEvent('share_clicked', { share_method: 'sms' }); window.open(`sms:?&body=${encodeURIComponent(smsBody)}`); };
-  const handleWhatsApp = () => { trackEvent('share_clicked', { share_method: 'whatsapp' }); window.open(`https://wa.me/?text=${encodeURIComponent(whatsappBody)}`); };
-  const handleNeighborEmail = () => { trackEvent('share_clicked', { share_method: 'email' }); window.open(`mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`); };
+  const handleSMS = () => { trackEvent('report_shared', { method: 'sms' }); window.open(`sms:?&body=${encodeURIComponent(smsBody)}`); };
+  const handleWhatsApp = () => { trackEvent('report_shared', { method: 'whatsapp' }); window.open(`https://wa.me/?text=${encodeURIComponent(whatsappBody)}`); };
+  const handleNeighborEmail = () => { trackEvent('report_shared', { method: 'email' }); window.open(`mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`); };
   const handleTwitter = () => {
-    trackEvent('share_clicked', { share_method: 'twitter' });
+    trackEvent('report_shared', { method: 'twitter' });
     const tweetText = `Just checked — ${brLabel} rents in ${zipCode} (${city}) moved ${marketSign}${marketYoy}% this year. My landlord wants ${increasePct}%. Free tool:`;
     window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
   };
-  const handleFacebook = () => { trackEvent('share_clicked', { share_method: 'facebook' }); window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank'); };
+  const handleFacebook = () => { trackEvent('report_shared', { method: 'facebook' }); window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank'); };
   const handleNeighborCopy = async () => {
-    trackEvent('share_clicked', { share_method: 'copy_link' });
+    trackEvent('report_shared', { method: 'copy_link' });
     const ok = await copyToClipboard(shareUrl);
     if (ok) {
       setNeighborCopied(true);

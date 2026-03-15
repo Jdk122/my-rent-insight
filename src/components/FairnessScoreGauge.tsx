@@ -162,7 +162,6 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
       >
         <Collapsible open={breakdownOpen} onOpenChange={(open) => {
           setBreakdownOpen(open);
-          if (open) trackEvent('score_details_expanded');
         }}>
           <CollapsibleTrigger className="flex items-center justify-center gap-1.5 w-full py-2 text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors group">
             See score details

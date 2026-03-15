@@ -1033,7 +1033,7 @@ const WsipPostConversion = ({ email, leadContext, verdictLabel, zip }: {
       console.error('Post-conversion save failed:', err);
     }
 
-    trackEvent('wsip_post_conversion_saved', { verdict: verdictLabel, zip_code: zip, move_timeline: moveTimeline });
+    trackEvent('lease_info_saved', { action: 'lease_saved', tool: 'wsip', zip, verdict: verdictLabel });
     setSaved(true);
     toast.success('Saved!');
   };

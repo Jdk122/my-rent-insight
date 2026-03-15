@@ -54,7 +54,7 @@ const AgentLeadModal = ({
         verdict_label: verdictLabel || null,
         fairness_score: fairnessScore ?? null,
       } as any);
-      trackEvent('agent_lead_captured', { zip: zip || '', bedrooms, verdict_label: verdictLabel || '' });
+      trackEvent('referral_clicked', { partner: 'agent_form', zip: zip || '', bedrooms, verdict: verdictLabel || '' });
       trackAdsConversion('renewal', email);
       setSubmitted(true);
     } catch {
