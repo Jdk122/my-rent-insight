@@ -50,11 +50,11 @@ const Methodology = () => {
 
           <h2>Score Tiers</h2>
           <ul>
-            <li>80–100: Excellent</li>
-            <li>60–79: Fair</li>
-            <li>40–59: Moderate</li>
-            <li>20–39: Unfair</li>
-            <li>0–19: Excessive</li>
+             <li>80–100: Good Deal</li>
+             <li>60–79: At Market</li>
+             <li>40–59: Above Trend</li>
+             <li>20–39: Overpaying</li>
+             <li>0–19: Overpaying</li>
           </ul>
 
           <h2>Data Sources</h2>
