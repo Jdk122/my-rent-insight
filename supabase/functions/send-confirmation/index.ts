@@ -195,6 +195,14 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Fire GA4 server event best-effort — do NOT await, do not block response
+    fireGA4ServerEvent(
+      email,
+      tool_type === "wsip" ? "wsip" : "renewal",
+      zip || null,
+      verdict_label || null,
+    ).catch((err) => console.error("[ga4-mp] background error:", err));
+
     return new Response(JSON.stringify({ sent: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
