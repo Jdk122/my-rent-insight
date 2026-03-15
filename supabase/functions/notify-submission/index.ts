@@ -9,6 +9,12 @@ const corsHeaders = {
 const fmt = (n: number | null | undefined) =>
   n != null ? `$${Math.round(n).toLocaleString("en-US")}` : "—";
 
+function getClientIp(req: Request): string {
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0].trim();
+  return req.headers.get("x-real-ip") || "unknown";
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -24,6 +30,32 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Rate limiting
+    const ip = getClientIp(req);
+    const fnName = "notify-submission";
+    const sbUrl = Deno.env.get("SUPABASE_URL")!;
+    const sbKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const rlClient = createClient(sbUrl, sbKey);
+
+    // Log request
+    await rlClient.from("function_request_log").insert({ function_name: fnName, ip_address: ip });
+
+    // Check rolling window
+    const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const { count } = await rlClient
+      .from("function_request_log")
+      .select("*", { count: "exact", head: true })
+      .eq("function_name", fnName)
+      .eq("ip_address", ip)
+      .gte("created_at", fiveMinAgo);
+
+    if ((count ?? 0) > 20) {
+      return new Response(JSON.stringify({ error: "Too many requests" }), {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const body = await req.json();
     const {
       zip, city, state, bedrooms, current_rent, proposed_rent,
@@ -51,16 +83,7 @@ Deno.serve(async (req) => {
       }
 
       // If no direct match, check if there's a recent lead for this zip
-      if (!leadEmail && zip) {
-        const { data: recentLead } = await sb
-          .from("leads")
-          .select("email")
-          .eq("zip", zip)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .single();
-        if (recentLead?.email) leadEmail = recentLead.email;
-      }
+      // ZIP-based fallback removed — only use directEmail or analysis_id lookup
 
       // SAFETY NET: If we have a captured email, ensure lead + event exist in DB
       // This catches cases where client-side inserts failed silently

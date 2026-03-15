@@ -95,7 +95,8 @@ const Outcome = () => {
       name: email || 'Followup lead',
       email: email || `followup-${leadId}@unknown.com`,
       neighborhoods: neighborhoods.trim() || null,
-      bedrooms: budget.trim() || null, // store budget in bedrooms field as text
+      budget: budget.trim() || null,
+      bedrooms: null,
       move_date: timeline || null,
       zip: null,
     } as any);
