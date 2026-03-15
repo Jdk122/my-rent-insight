@@ -15,21 +15,28 @@ const emailHeader = `
 `;
 
 function emailFooter(cityLabel: string, unsubUrl: string) {
+  const unsubLine = unsubUrl
+    ? `<a href="${unsubUrl}" style="color:#999;text-decoration:underline;">Unsubscribe</a>`
+    : "";
   return `
     <p style="font-family:'DM Sans',Arial,sans-serif;font-size:15px;color:#555;margin-top:28px;">— RenewalReply</p>
     <hr style="border:none;border-top:1px solid #eee;margin:32px 0 16px;" />
     <p style="font-family:'DM Sans',Arial,sans-serif;font-size:11px;color:#999;text-align:center;">
-      You received this because you used RenewalReply for ${cityLabel}.<br/>
-      <a href="${unsubUrl}" style="color:#999;text-decoration:underline;">Unsubscribe</a>
+      You received this because you used RenewalReply for ${cityLabel}.${unsubLine ? `<br/>${unsubLine}` : ""}
     </p>
   `;
 }
 
-function buildRenewalHtml(data: any) {
-  const { city, state, zip, bedrooms, fairness_score, verdict_label, report_url } = data;
+function getClientIp(req: Request): string {
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0].trim();
+  return req.headers.get("x-real-ip") || "unknown";
+}
+
+function buildRenewalHtml(data: any, unsubUrl: string) {
+  const { city, state, zip, fairness_score, verdict_label, report_url } = data;
   const cityLabel = city && state ? `${city}, ${state}` : zip ? `ZIP ${zip}` : "your area";
   const reportUrl = report_url || `${BASE_URL}/rent/${zip || ""}`;
-  const unsubUrl = `${BASE_URL}/outcome?result=unsubscribe&id=`;
 
   const scoreLine = fairness_score != null
     ? `<p style="font-family:'DM Serif Display',Georgia,serif;font-size:18px;font-weight:700;color:#1b1f27;margin:16px 0 4px;">Your Fairness Score: ${fairness_score}/100 — ${verdict_label || "See report"}</p>`
@@ -56,12 +63,11 @@ function buildRenewalHtml(data: any) {
   `;
 }
 
-function buildWsipHtml(data: any) {
-  const { city, state, zip, bedrooms, report_url } = data;
+function buildWsipHtml(data: any, unsubUrl: string) {
+  const { city, state, zip, report_url } = data;
   const cityLabel = city && state ? `${city}, ${state}` : zip ? `ZIP ${zip}` : "your area";
   const reportUrl = report_url || `${BASE_URL}/what-should-i-pay`;
   const renewalUrl = BASE_URL;
-  const unsubUrl = `${BASE_URL}/outcome?result=unsubscribe&id=`;
 
   const persistentNote = report_url
     ? `<p style="font-size:14px;color:#6b7280;margin-top:20px;line-height:1.6;">This link is your permanent report — you can access it anytime, even from a different device.</p>`
@@ -94,9 +100,7 @@ async function fireGA4ServerEvent(
 ) {
   const measurementId = Deno.env.get("GA4_MEASUREMENT_ID");
   const apiSecret = Deno.env.get("GA4_API_SECRET");
-  if (!measurementId || !apiSecret) {
-    return;
-  }
+  if (!measurementId || !apiSecret) return;
   try {
     const normalized = email.trim().toLowerCase();
     const encoded = new TextEncoder().encode(normalized);
@@ -107,23 +111,17 @@ async function fireGA4ServerEvent(
     const clientId = `server.${hashHex.slice(0, 16)}`;
     const payload = {
       client_id: clientId,
-      user_data: {
-        sha256_email_address: [hashHex],
-      },
-      events: [
-        {
-          name: "generate_lead",
-          params: {
-            currency: "USD",
-            value: 1.0,
-            tool_type: toolType || "renewal",
-            zip_code: zip || "",
-            verdict: verdict || "",
-            engagement_time_msec: 1,
-            session_id: Date.now().toString(),
-          },
+      user_data: { sha256_email_address: [hashHex] },
+      events: [{
+        name: "generate_lead",
+        params: {
+          currency: "USD", value: 1.0,
+          tool_type: toolType || "renewal",
+          zip_code: zip || "", verdict: verdict || "",
+          engagement_time_msec: 1,
+          session_id: Date.now().toString(),
         },
-      ],
+      }],
     };
     const url = `https://www.google-analytics.com/mp/collect?measurement_id=${measurementId}&api_secret=${apiSecret}`;
     const res = await fetch(url, {
@@ -131,9 +129,7 @@ async function fireGA4ServerEvent(
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    if (!res.ok) {
-      console.error(`[ga4-mp] Unexpected status ${res.status}`);
-    }
+    if (!res.ok) console.error(`[ga4-mp] Unexpected status ${res.status}`);
   } catch (err) {
     console.error("[ga4-mp] Server event error:", err);
   }
@@ -152,9 +148,33 @@ Deno.serve(async (req) => {
     );
   }
 
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabase = createClient(supabaseUrl, serviceKey);
+
   try {
+    // Rate limiting
+    const ip = getClientIp(req);
+    const fnName = "send-confirmation";
+
+    await supabase.from("function_request_log").insert({ function_name: fnName, ip_address: ip });
+
+    const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const { count } = await supabase
+      .from("function_request_log")
+      .select("*", { count: "exact", head: true })
+      .eq("function_name", fnName)
+      .eq("ip_address", ip)
+      .gte("created_at", fiveMinAgo);
+
+    if ((count ?? 0) > 10) {
+      return new Response(JSON.stringify({ error: "Too many requests" }), {
+        status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const data = await req.json();
-    const { email, city, state, zip, bedrooms, tool_type, fairness_score, verdict_label, report_url } = data;
+    const { email, city, state, zip, tool_type, fairness_score, verdict_label, report_url } = data;
 
     if (!email) {
       return new Response(
@@ -163,10 +183,39 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Check if this email is unsubscribed
+    const { data: unsubCheck } = await supabase
+      .from("leads")
+      .select("unsubscribed")
+      .eq("email", email.trim().toLowerCase())
+      .eq("unsubscribed", true)
+      .limit(1);
+
+    if (unsubCheck && unsubCheck.length > 0) {
+      // Silently skip — user is unsubscribed
+      return new Response(JSON.stringify({ sent: false, reason: "unsubscribed" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Look up lead ID for unsubscribe link
+    const { data: leadRow } = await supabase
+      .from("leads")
+      .select("id")
+      .eq("email", email.trim().toLowerCase())
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    const leadId = leadRow?.id || "";
+    const unsubUrl = leadId
+      ? `${BASE_URL}/outcome?result=unsubscribe&id=${leadId}`
+      : "";
+
     const isWsip = tool_type === "wsip";
     const cityLabel = city && state ? `${city}, ${state}` : zip ? `ZIP ${zip}` : "your area";
 
-    const html = isWsip ? buildWsipHtml(data) : buildRenewalHtml(data);
+    const html = isWsip ? buildWsipHtml(data, unsubUrl) : buildRenewalHtml(data, unsubUrl);
     const subject = isWsip
       ? `Your market report for ${cityLabel}`
       : `Your rent analysis for ${cityLabel}`;
@@ -195,7 +244,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Fire GA4 server event best-effort — do NOT await, do not block response
+    // Fire GA4 server event best-effort
     fireGA4ServerEvent(
       email,
       tool_type === "wsip" ? "wsip" : "renewal",

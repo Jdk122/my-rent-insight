@@ -30,6 +30,32 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Rate limiting
+    const ip = getClientIp(req);
+    const fnName = "notify-submission";
+    const sbUrl = Deno.env.get("SUPABASE_URL")!;
+    const sbKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const rlClient = createClient(sbUrl, sbKey);
+
+    // Log request
+    await rlClient.from("function_request_log").insert({ function_name: fnName, ip_address: ip });
+
+    // Check rolling window
+    const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const { count } = await rlClient
+      .from("function_request_log")
+      .select("*", { count: "exact", head: true })
+      .eq("function_name", fnName)
+      .eq("ip_address", ip)
+      .gte("created_at", fiveMinAgo);
+
+    if ((count ?? 0) > 20) {
+      return new Response(JSON.stringify({ error: "Too many requests" }), {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const body = await req.json();
     const {
       zip, city, state, bedrooms, current_rent, proposed_rent,

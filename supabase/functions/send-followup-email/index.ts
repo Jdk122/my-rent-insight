@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
 
   const { data: leads, error } = await supabase
     .from("leads")
-    .select("id, email, fairness_score, verdict, current_rent, proposed_rent, zip")
+    .select("id, email, fairness_score, verdict, current_rent, proposed_rent, zip, unsubscribed")
     .eq("tool_type", "renewal")
     .is("founder_followup_sent_at", null)
     .not("email", "is", null)
@@ -77,8 +77,22 @@ Deno.serve(async (req) => {
   const eligible = leads || [];
   let sent = 0;
   let failed = 0;
+  let skippedUnsub = 0;
 
   for (const lead of eligible) {
+    // Double-check unsubscribe at email level (another row may be unsubscribed)
+    const { data: unsubRows } = await supabase
+      .from("leads")
+      .select("unsubscribed")
+      .eq("email", lead.email)
+      .eq("unsubscribed", true)
+      .limit(1);
+
+    if (unsubRows && unsubRows.length > 0) {
+      skippedUnsub++;
+      continue;
+    }
+
     const { subject, text } = getEmailCopy(lead);
     const attemptedAt = new Date().toISOString();
     try {
@@ -146,10 +160,10 @@ Deno.serve(async (req) => {
     }
   }
 
-  console.log(`Founder followup: ${sent} sent, ${failed} failed, ${eligible.length} eligible`);
+  console.log(`Founder followup: ${sent} sent, ${failed} failed, ${skippedUnsub} skipped (unsub), ${eligible.length} eligible`);
 
   return new Response(
-    JSON.stringify({ sent, failed, eligible: eligible.length }),
+    JSON.stringify({ sent, failed, skipped_unsubscribed: skippedUnsub, eligible: eligible.length }),
     { headers: { ...corsHeaders, "Content-Type": "application/json" } },
   );
 });
