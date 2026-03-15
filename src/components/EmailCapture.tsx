@@ -91,6 +91,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
         p_fairness_score: leadContext?.fairnessScore ?? null,
         p_comp_median_rent: leadContext?.compMedianRent ?? null,
         p_hud_fmr_value: leadContext?.hudFmrValue ?? null,
+        p_tool_type: 'renewal',
       } as any;
 
       let { error: rpcError } = await supabase.rpc('upsert_lead', leadParams);
