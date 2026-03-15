@@ -204,6 +204,88 @@ Deno.serve(async (req) => {
         break;
       }
 
+      case "diagnostic": {
+        const today = new Date().toISOString().slice(0, 10);
+
+        const { count: analysesToday } = await supabase
+          .from("analyses")
+          .select("*", { count: "exact", head: true })
+          .gte("created_at", today);
+
+        const { count: leadsToday } = await supabase
+          .from("leads")
+          .select("*", { count: "exact", head: true })
+          .gte("created_at", today);
+
+        const { count: eventsToday } = await supabase
+          .from("lead_events")
+          .select("*", { count: "exact", head: true })
+          .gte("created_at", today);
+
+        const { count: analysesTotal } = await supabase
+          .from("analyses")
+          .select("*", { count: "exact", head: true });
+
+        const { count: leadsTotal } = await supabase
+          .from("leads")
+          .select("*", { count: "exact", head: true });
+
+        const { data: recentAnalyses } = await supabase
+          .from("analyses")
+          .select("id, address, zip, city, bedrooms, current_rent, fairness_score, verdict_label, created_at, tool_type, session_id")
+          .order("created_at", { ascending: false })
+          .limit(10);
+
+        const { data: recentLeads } = await supabase
+          .from("leads")
+          .select("id, email, analysis_id, capture_source, address, zip, city, verdict, created_at, tool_type")
+          .order("created_at", { ascending: false })
+          .limit(10);
+
+        const { data: recentEvents } = await supabase
+          .from("lead_events")
+          .select("id, email, analysis_id, event_type, zip, verdict, created_at")
+          .order("created_at", { ascending: false })
+          .limit(10);
+
+        const { data: orphanedLeads } = await supabase.rpc("find_orphaned_leads");
+
+        const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
+        const { data: unlinkedAnalyses } = await supabase
+          .from("analyses")
+          .select("id, address, zip, city, fairness_score, verdict_label, created_at, tool_type")
+          .gte("created_at", threeDaysAgo)
+          .order("created_at", { ascending: false })
+          .limit(50);
+
+        const analysisIds = (unlinkedAnalyses || []).map((a: any) => a.id);
+        const { data: linkedLeads } = analysisIds.length > 0
+          ? await supabase
+              .from("leads")
+              .select("analysis_id")
+              .in("analysis_id", analysisIds)
+          : { data: [] };
+
+        const linkedIds = new Set((linkedLeads || []).map((l: any) => l.analysis_id));
+        const unlinked = (unlinkedAnalyses || []).filter((a: any) => !linkedIds.has(a.id));
+
+        data = {
+          counts: {
+            analyses_today: analysesToday,
+            leads_today: leadsToday,
+            events_today: eventsToday,
+            analyses_total: analysesTotal,
+            leads_total: leadsTotal,
+          },
+          recent_analyses: recentAnalyses,
+          recent_leads: recentLeads,
+          recent_events: recentEvents,
+          orphaned_leads: orphanedLeads,
+          unlinked_analyses_3d: unlinked,
+        };
+        break;
+      }
+
       default:
         return new Response(JSON.stringify({ error: "Unknown query type" }), {
           status: 400,

@@ -724,6 +724,7 @@ export type Database = {
       admin_dashboard_stats: { Args: never; Returns: Json }
       admin_traffic_stats: { Args: never; Returns: Json }
       admin_zip_leaderboard: { Args: never; Returns: Json }
+      find_orphaned_leads: { Args: never; Returns: Json }
       get_analyses_count: { Args: never; Returns: number }
       get_shared_report: {
         Args: { p_short_id: string }
