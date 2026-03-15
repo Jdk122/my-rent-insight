@@ -673,6 +673,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     componentSources={sources}
                     contextNotes={
                       <>
+                        {fairnessScore?.extremeIncreaseCeilingApplied && (
+                          <div className="rounded-lg border border-amber-200 bg-amber-50/50 dark:border-amber-900/50 dark:bg-amber-950/20 p-3">
+                            <div className="flex gap-2.5">
+                              <Info className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+                              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                                <span className="font-medium text-foreground">Why this score was adjusted:</span> Even though your proposed rent is still below market, the size of the increase itself is unusually aggressive relative to local trends.
+                              </p>
+                            </div>
+                          </div>
+                        )}
                         {compOverpayment && fairnessScore && fairnessScore.total >= 60 && (
                           <div className="rounded-lg border border-amber-200 bg-amber-50/50 dark:border-amber-900/50 dark:bg-amber-950/20 p-3">
                             <div className="flex gap-2.5">

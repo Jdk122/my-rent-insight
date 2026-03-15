@@ -124,11 +124,117 @@ describe('KNOWN LIMITATIONS — flip when fixed', () => {
     expect(result.tier).toBe('excellent'); // this is the problem — Excellent with zero comps
   });
 
-  it('EXTREME INPUT: 150% increase clamped to 100% still scores 57 (Moderate)', () => {
-    // ROOT CAUSE: Clamp prevents overflow but Reasonableness + Momentum still contribute.
+  it('EXTREME INPUT: 150% increase clamped and ceilinged to Moderate', () => {
     const result = score({ increasePct: 150 });
-    expect(result.total).toBe(57);
+    expect(result.total).toBeLessThanOrEqual(55);
     expect(result.tier).toBe('moderate');
+    expect(result.extremeIncreaseCeilingApplied).toBe(true);
+  });
+
+  it('Below-market rent with extreme increase should not score Fair', () => {
+    const result = calculateFairnessScore({
+      increasePct: 100,
+      marketYoY: 3,
+      proposedRent: 1000,
+      currentRent: 500,
+      compMedian: 1135,
+      compCount: 10,
+      fmr: 1140,
+      zillowMonthly: 0.3,
+    });
+    expect(result.total).toBeLessThanOrEqual(55);
+    expect(result.tier).toBe('moderate');
+    expect(result.extremeIncreaseCeilingApplied).toBe(true);
+  });
+
+  it('Ceiling boundary: 14.9% increase with 9.9 gap — no ceiling', () => {
+    const result = score({ increasePct: 14.9, marketYoY: 5 });
+    // 14.9% < 15 threshold → no ceiling applied
+    expect(result.extremeIncreaseCeilingApplied).toBeFalsy();
+  });
+
+  it('Ceiling boundary: 15% increase with 10 gap — score capped at 65', () => {
+    // With 15% increase vs 5% trend (gap=10), rate component scores 0.
+    // Non-rate components max out at 65 total. Ceiling is 65.
+    // Score doesn't exceed ceiling, but is constrained to ≤65.
+    const result = calculateFairnessScore({
+      increasePct: 15, marketYoY: 5,
+      proposedRent: 1150, currentRent: 1000,
+      compMedian: 1500, compCount: 10, fmr: 1400, zillowMonthly: 0.3,
+    });
+    expect(result.total).toBeLessThanOrEqual(65);
+  });
+
+  it('Ceiling boundary: 24.9% increase with 19.9 gap — score capped at 65', () => {
+    const result = calculateFairnessScore({
+      increasePct: 24.9, marketYoY: 5,
+      proposedRent: 1249, currentRent: 1000,
+      compMedian: 1600, compCount: 10, fmr: 1500, zillowMonthly: 0.3,
+    });
+    expect(result.total).toBeLessThanOrEqual(65);
+  });
+
+  it('Ceiling boundary: 25% increase with 20 gap — hard ceiling applies', () => {
+    const result = score({ increasePct: 25, marketYoY: 5 });
+    expect(result.total).toBeLessThanOrEqual(55);
+    expect(result.extremeIncreaseCeilingApplied).toBe(true);
+  });
+
+  it('Ceiling with missing trend data defaults to 0', () => {
+    const result = calculateFairnessScore({
+      increasePct: 30,
+      marketYoY: 0,
+      proposedRent: 1500,
+      currentRent: 1000,
+      compMedian: 1600,
+      compCount: 5,
+      fmr: 1400,
+      zillowMonthly: null,
+    });
+    // 30% increase, 0 trend → gap = 30 → hard ceiling
+    expect(result.total).toBeLessThanOrEqual(55);
+    expect(result.extremeIncreaseCeilingApplied).toBe(true);
+  });
+
+  it('Ceiling with negative trend still applies correctly', () => {
+    const result = calculateFairnessScore({
+      increasePct: 25,
+      marketYoY: -2,
+      proposedRent: 1200,
+      currentRent: 960,
+      compMedian: 1300,
+      compCount: 8,
+      fmr: 1100,
+      zillowMonthly: null,
+    });
+    // 25% increase, -2% trend → gap = 27 → hard ceiling
+    expect(result.total).toBeLessThanOrEqual(55);
+    expect(result.extremeIncreaseCeilingApplied).toBe(true);
+  });
+
+  it('High increase close to trend does NOT trigger ceiling', () => {
+    const result = score({ increasePct: 25, marketYoY: 20 });
+    // 25% increase but only 5 gap from 20% trend → no ceiling
+    expect(result.extremeIncreaseCeilingApplied).toBeFalsy();
+  });
+
+  it('Does not mark ceiling as applied when score is already below the cap', () => {
+    // This tests the flag honesty: ceiling is eligible but score is already low enough
+    const result = calculateFairnessScore({
+      increasePct: 30,
+      marketYoY: 3,
+      proposedRent: 2600,
+      currentRent: 2000,
+      compMedian: 2000,
+      compCount: 10,
+      fmr: 1800,
+      zillowMonthly: 0.3,
+    });
+    // 30% increase, 3% trend → gap = 27 → hard ceiling eligible at 55
+    // But proposed rent ($2600) is well above comps ($2000) and FMR ($1800)
+    // so the raw score should already be low — ceiling should not fire
+    expect(result.total).toBeLessThanOrEqual(55);
+    expect(result.extremeIncreaseCeilingApplied).toBe(false);
   });
 
   it('ADDRESS BUG: #12B unit designator not stripped from address normalization', () => {

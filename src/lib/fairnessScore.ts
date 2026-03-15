@@ -43,6 +43,7 @@ export interface FairnessScoreResult {
   tierColorHsl: string;     // HSL for gauge
   tierMessage: string;
   components: ScoreComponent[];
+  extremeIncreaseCeilingApplied?: boolean;
 }
 
 // Component 1: Increase Rate vs Area Trend (35 pts base)
@@ -295,8 +296,34 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
     scoreMarketMomentum(validatedInput.zillowMonthly, validatedInput.alMoM, validatedInput.hvd),
   ];
   const visibleComponents = components.filter(c => c.max > 0);
-  const total = components.reduce((sum, c) => sum + c.score, 0);
-  return { total, ...getTier(total), components: visibleComponents };
+  let total = components.reduce((sum, c) => sum + c.score, 0);
+
+  // ── Extreme increase rate ceiling ──
+  // When the increase rate is extreme relative to the local trend, cap the
+  // total score so it cannot land in "Fair" or "Excellent" tiers even if the
+  // absolute rent is below market. This prevents a 100% increase from scoring
+  // 61 "Fair" just because the tenant was deeply underrenting before.
+  // This is a product guardrail, not a scoring component — the individual
+  // component scores remain unchanged so the breakdown is still accurate.
+  // The flag is only set to true when the ceiling actually changes the score.
+  const effectiveTrend = validatedInput.compositeTrend ?? validatedInput.marketYoY ?? 0;
+  const rateGap = validatedInput.increasePct - effectiveTrend;
+
+  let extremeIncreaseCeilingApplied = false;
+  let ceiling: number | null = null;
+
+  if (validatedInput.increasePct >= 25 && rateGap >= 20) {
+    ceiling = 55;
+  } else if (validatedInput.increasePct >= 15 && rateGap >= 10) {
+    ceiling = 65;
+  }
+
+  if (ceiling !== null && total > ceiling) {
+    total = Math.round(ceiling);
+    extremeIncreaseCeilingApplied = true;
+  }
+
+  return { total, ...getTier(total), components: visibleComponents, extremeIncreaseCeilingApplied };
 }
 
 // Context-aware tier message that explains WHY the score landed where it did
