@@ -31,6 +31,7 @@ import FairnessScoreGauge, { ComponentSourceInfo } from './FairnessScoreGauge';
 import MarketSnapshot from './MarketSnapshot';
 import NextStepsSection from './NextStepsSection';
 import ExitIntentModal from './ExitIntentModal';
+import MobileScrollPrompt from './MobileScrollPrompt';
 import PostConversionFlow from './PostConversionFlow';
 import FeedbackWidget from './FeedbackWidget';
 import SocialProofLine from './SocialProofLine';
