@@ -125,8 +125,7 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
     }
 
     onEmailCaptured(normalizedEmail);
-    trackEvent('exit_intent_converted', { verdict: verdictLabel, zip_code: zip });
-    trackEvent('email_submitted', { verdict: verdictLabel, zip_code: zip, capture_source: 'exit_intent', tool_type: toolType });
+    trackEvent('email_captured', { gate: 'exit_intent', tool: toolType, verdict: verdictLabel, zip });
     trackAdsConversion(toolType, normalizedEmail);
     setLoading(false);
     setOpen(false);
