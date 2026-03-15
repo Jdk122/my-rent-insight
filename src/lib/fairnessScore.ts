@@ -125,7 +125,6 @@ function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, incr
   upper = Math.max(upper, fmr);
   if (currentRent >= upper) {
     const isFalling = (marketYoY ?? 0) < -0.5;
-    let score: number;
     let rawScore: number;
     if (isFalling) {
       if (increasePct <= 0) rawScore = 25;
