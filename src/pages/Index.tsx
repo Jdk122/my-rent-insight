@@ -307,7 +307,7 @@ const Index = () => {
       ) : !results ? (
         <main className="max-w-[620px] mx-auto px-5 sm:px-6 pt-6 sm:pt-16 md:pt-24 pb-10 sm:pb-14">
           <h1 className="font-display text-[1.85rem] sm:text-[clamp(2.5rem,6vw,4rem)] text-foreground leading-[1.08] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-            Your landlord raised the rent. Is it <span className="text-primary">above market?</span>
+            Your rent increase may be above market. <span className="text-primary">Check in 10 seconds.</span>
           </h1>
           <p className="mt-4 sm:mt-6 text-[15px] sm:text-lg md:text-xl text-muted-foreground max-w-[540px] leading-relaxed font-normal tracking-tight">
             Real local comps, market trends, and a free negotiation letter<span className="text-primary font-medium no-underline"> — in 10 seconds.</span>
