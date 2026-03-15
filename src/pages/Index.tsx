@@ -306,11 +306,8 @@ const Index = () => {
         <LoadingAnalysis />
       ) : !results ? (
         <main className="max-w-[620px] mx-auto px-5 sm:px-6 pt-6 sm:pt-16 md:pt-24 pb-10 sm:pb-14">
-          <p className="font-display text-[1.5rem] sm:text-[2rem] text-muted-foreground leading-[1.2] tracking-tight font-semibold" style={{ letterSpacing: '-0.02em' }}>
-            Most renters overpay.
-          </p>
-          <h1 className="font-display text-[1.85rem] sm:text-[clamp(2.5rem,6vw,4rem)] text-foreground leading-[1.08] tracking-tight mt-1 sm:mt-2" style={{ letterSpacing: '-0.02em' }}>
-            Is your increase <span className="text-primary">above market?</span>
+          <h1 className="font-display text-[1.85rem] sm:text-[clamp(2.5rem,6vw,4rem)] text-foreground leading-[1.08] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
+            Your landlord raised the rent. Is it <span className="text-primary">above market?</span>
           </h1>
           <p className="mt-4 sm:mt-6 text-[15px] sm:text-lg md:text-xl text-muted-foreground max-w-[540px] leading-relaxed font-normal tracking-tight">
             Real local comps, market trends, and a free negotiation letter<span className="text-primary font-medium no-underline"> — in 10 seconds.</span>
