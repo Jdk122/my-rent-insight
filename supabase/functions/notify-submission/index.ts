@@ -29,33 +29,43 @@ Deno.serve(async (req) => {
     );
   }
 
+  const sbUrl = Deno.env.get("SUPABASE_URL")!;
+  const sbKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const sb = createClient(sbUrl, sbKey);
+
+  // Rate limiting — count first, then insert
+  const ip = getClientIp(req);
+  const fnName = "notify-submission";
+  const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+
+  const { count: recentCount } = await sb
+    .from("function_request_log")
+    .select("*", { count: "exact", head: true })
+    .eq("function_name", fnName)
+    .eq("ip_address", ip)
+    .gte("created_at", fiveMinAgo);
+
+  if ((recentCount ?? 0) >= 20) {
+    await sb.from("function_request_log").insert({
+      function_name: fnName, ip_address: ip, success: false, response_status: 429,
+    });
+    return new Response(JSON.stringify({ error: "Too many requests" }), {
+      status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
+  // Insert log row — will be updated with outcome
+  const { data: logRow } = await sb
+    .from("function_request_log")
+    .insert({ function_name: fnName, ip_address: ip })
+    .select("id")
+    .single();
+  const logId = logRow?.id;
+
+  let responseStatus = 500;
+  let success = false;
+
   try {
-    // Rate limiting
-    const ip = getClientIp(req);
-    const fnName = "notify-submission";
-    const sbUrl = Deno.env.get("SUPABASE_URL")!;
-    const sbKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const rlClient = createClient(sbUrl, sbKey);
-
-    // Log request
-    await rlClient.from("function_request_log").insert({ function_name: fnName, ip_address: ip });
-
-    // Check rolling window
-    const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-    const { count } = await rlClient
-      .from("function_request_log")
-      .select("*", { count: "exact", head: true })
-      .eq("function_name", fnName)
-      .eq("ip_address", ip)
-      .gte("created_at", fiveMinAgo);
-
-    if ((count ?? 0) > 20) {
-      return new Response(JSON.stringify({ error: "Too many requests" }), {
-        status: 429,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const body = await req.json();
     const {
       zip, city, state, bedrooms, current_rent, proposed_rent,
@@ -64,35 +74,49 @@ Deno.serve(async (req) => {
       analysis_id, email: directEmail,
     } = body;
 
-    // Use directly provided email first, then look up by analysis_id or zip
+    // Only use directEmail or analysis_id lookup — no ZIP fallback
     let leadEmail: string | null = directEmail || null;
     let totalLeads: number | null = null;
-    try {
-      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-      const sb = createClient(supabaseUrl, supabaseKey);
 
-      if (!leadEmail && analysis_id) {
-        const { data: leadRow } = await sb
-          .from("leads")
-          .select("email")
-          .eq("analysis_id", analysis_id)
-          .limit(1)
-          .single();
-        if (leadRow?.email) leadEmail = leadRow.email;
-      }
+    if (!leadEmail && analysis_id) {
+      const { data: leadRow } = await sb
+        .from("leads")
+        .select("email")
+        .eq("analysis_id", analysis_id)
+        .limit(1)
+        .single();
+      if (leadRow?.email) leadEmail = leadRow.email;
+    }
 
-      // If no direct match, check if there's a recent lead for this zip
-      // ZIP-based fallback removed — only use directEmail or analysis_id lookup
-
-      // SAFETY NET: If we have a captured email, ensure lead + event exist in DB
-      // This catches cases where client-side inserts failed silently
-      if (directEmail) {
-        const normalizedEmail = directEmail.trim().toLowerCase();
+    // SAFETY NET: If we have a captured email, ensure lead + event exist in DB
+    if (directEmail) {
+      const normalizedEmail = directEmail.trim().toLowerCase();
+      try {
+        await sb.rpc('upsert_lead', {
+          p_email: normalizedEmail,
+          p_analysis_id: analysis_id || null,
+          p_capture_source: null,
+          p_address: address || null,
+          p_city: city || null,
+          p_state: state || null,
+          p_zip: zip || null,
+          p_bedrooms: bedrooms ?? null,
+          p_current_rent: current_rent ?? null,
+          p_proposed_rent: proposed_rent ?? null,
+          p_increase_pct: increase_pct ?? null,
+          p_verdict: verdict_label || null,
+          p_fairness_score: fairness_score ?? null,
+          p_comp_median_rent: comp_median_rent ?? null,
+          p_hud_fmr_value: hud_fmr_value ?? null,
+          p_tool_type: body.tool_type || 'renewal',
+        });
+        console.log('[notify-submission] Safety net: upserted lead for', normalizedEmail);
+      } catch (leadErr) {
+        // Retry without analysis_id on FK violation
         try {
           await sb.rpc('upsert_lead', {
             p_email: normalizedEmail,
-            p_analysis_id: analysis_id || null,
+            p_analysis_id: null,
             p_capture_source: null,
             p_address: address || null,
             p_city: city || null,
@@ -108,61 +132,36 @@ Deno.serve(async (req) => {
             p_hud_fmr_value: hud_fmr_value ?? null,
             p_tool_type: body.tool_type || 'renewal',
           });
-          console.log('[notify-submission] Safety net: upserted lead for', normalizedEmail);
-        } catch (leadErr) {
-          // Retry without analysis_id on FK violation
-          try {
-            await sb.rpc('upsert_lead', {
-              p_email: normalizedEmail,
-              p_analysis_id: null,
-              p_capture_source: null,
-              p_address: address || null,
-              p_city: city || null,
-              p_state: state || null,
-              p_zip: zip || null,
-              p_bedrooms: bedrooms ?? null,
-              p_current_rent: current_rent ?? null,
-              p_proposed_rent: proposed_rent ?? null,
-              p_increase_pct: increase_pct ?? null,
-              p_verdict: verdict_label || null,
-              p_fairness_score: fairness_score ?? null,
-              p_comp_median_rent: comp_median_rent ?? null,
-              p_hud_fmr_value: hud_fmr_value ?? null,
-              p_tool_type: body.tool_type || 'renewal',
-            });
-            console.log('[notify-submission] Safety net: upserted lead (no analysis_id) for', normalizedEmail);
-          } catch (retryErr) {
-            console.error('[notify-submission] Safety net lead upsert failed:', retryErr);
-          }
+          console.log('[notify-submission] Safety net: upserted lead (no analysis_id) for', normalizedEmail);
+        } catch (retryErr) {
+          console.error('[notify-submission] Safety net lead upsert failed:', retryErr);
         }
-
-        // Also ensure lead_event exists
-        try {
-          await sb.from('lead_events').insert({
-            email: normalizedEmail,
-            analysis_id: analysis_id || null,
-            event_type: 'notify_safety_net',
-            fairness_score: fairness_score ?? null,
-            address: address || null,
-            zip: zip || null,
-            current_rent: current_rent ?? null,
-            proposed_rent: proposed_rent ?? null,
-            increase_pct: increase_pct ?? null,
-            verdict: verdict_label || null,
-            comp_median_rent: comp_median_rent ?? null,
-            hud_fmr_value: hud_fmr_value ?? null,
-          });
-        } catch { /* non-critical */ }
       }
 
-      // Get total lead count
-      const { count } = await sb
-        .from("leads")
-        .select("*", { count: "exact", head: true });
-      totalLeads = count;
-    } catch (dbErr) {
-      console.error('[notify-submission] DB operations error:', dbErr);
+      // Also ensure lead_event exists
+      try {
+        await sb.from('lead_events').insert({
+          email: normalizedEmail,
+          analysis_id: analysis_id || null,
+          event_type: 'notify_safety_net',
+          fairness_score: fairness_score ?? null,
+          address: address || null,
+          zip: zip || null,
+          current_rent: current_rent ?? null,
+          proposed_rent: proposed_rent ?? null,
+          increase_pct: increase_pct ?? null,
+          verdict: verdict_label || null,
+          comp_median_rent: comp_median_rent ?? null,
+          hud_fmr_value: hud_fmr_value ?? null,
+        });
+      } catch { /* non-critical */ }
     }
+
+    // Get total lead count
+    const { count } = await sb
+      .from("leads")
+      .select("*", { count: "exact", head: true });
+    totalLeads = count;
 
     const emailBadge = leadEmail
       ? `<tr style="background:#e6f9e6"><td style="padding:6px 12px 6px 0;color:#1a7a1a;font-weight:600">📧 Email Captured</td><td style="padding:6px 0;font-weight:700;color:#1a7a1a">${leadEmail}</td></tr>`
@@ -215,20 +214,31 @@ Deno.serve(async (req) => {
     if (!res.ok) {
       const errText = await res.text();
       console.error("Resend error:", errText);
+      responseStatus = 500;
       return new Response(JSON.stringify({ error: errText }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    responseStatus = 200;
+    success = true;
     return new Response(JSON.stringify({ ok: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
     console.error("notify-submission error:", err);
+    responseStatus = 500;
     return new Response(JSON.stringify({ error: String(err) }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
+  } finally {
+    if (logId) {
+      await sb
+        .from("function_request_log")
+        .update({ success, response_status: responseStatus })
+        .eq("id", logId);
+    }
   }
 });

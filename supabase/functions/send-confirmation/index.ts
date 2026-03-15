@@ -152,47 +152,64 @@ Deno.serve(async (req) => {
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const supabase = createClient(supabaseUrl, serviceKey);
 
+  // Rate limiting — count first, then insert
+  const ip = getClientIp(req);
+  const fnName = "send-confirmation";
+  const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+
+  const { count: recentCount } = await supabase
+    .from("function_request_log")
+    .select("*", { count: "exact", head: true })
+    .eq("function_name", fnName)
+    .eq("ip_address", ip)
+    .gte("created_at", fiveMinAgo);
+
+  if ((recentCount ?? 0) >= 10) {
+    // Log the throttled request
+    await supabase.from("function_request_log").insert({
+      function_name: fnName, ip_address: ip, success: false, response_status: 429,
+    });
+    return new Response(JSON.stringify({ error: "Too many requests" }), {
+      status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
+  // Insert initial log row — will be updated with outcome
+  const { data: logRow } = await supabase
+    .from("function_request_log")
+    .insert({ function_name: fnName, ip_address: ip })
+    .select("id")
+    .single();
+  const logId = logRow?.id;
+
+  let responseStatus = 500;
+  let success = false;
+
   try {
-    // Rate limiting
-    const ip = getClientIp(req);
-    const fnName = "send-confirmation";
-
-    await supabase.from("function_request_log").insert({ function_name: fnName, ip_address: ip });
-
-    const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-    const { count } = await supabase
-      .from("function_request_log")
-      .select("*", { count: "exact", head: true })
-      .eq("function_name", fnName)
-      .eq("ip_address", ip)
-      .gte("created_at", fiveMinAgo);
-
-    if ((count ?? 0) > 10) {
-      return new Response(JSON.stringify({ error: "Too many requests" }), {
-        status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const data = await req.json();
     const { email, city, state, zip, tool_type, fairness_score, verdict_label, report_url } = data;
 
     if (!email) {
+      responseStatus = 400;
       return new Response(
         JSON.stringify({ error: "email is required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
+    const normalizedEmail = email.trim().toLowerCase();
+
     // Check if this email is unsubscribed
     const { data: unsubCheck } = await supabase
       .from("leads")
       .select("unsubscribed")
-      .eq("email", email.trim().toLowerCase())
+      .eq("email", normalizedEmail)
       .eq("unsubscribed", true)
       .limit(1);
 
     if (unsubCheck && unsubCheck.length > 0) {
-      // Silently skip — user is unsubscribed
+      responseStatus = 200;
+      success = true;
       return new Response(JSON.stringify({ sent: false, reason: "unsubscribed" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -202,7 +219,7 @@ Deno.serve(async (req) => {
     const { data: leadRow } = await supabase
       .from("leads")
       .select("id")
-      .eq("email", email.trim().toLowerCase())
+      .eq("email", normalizedEmail)
       .order("created_at", { ascending: false })
       .limit(1)
       .single();
@@ -238,6 +255,7 @@ Deno.serve(async (req) => {
     if (!res.ok) {
       const body = await res.text();
       console.error(`Confirmation email Resend error for ${email}: ${res.status} ${body}`);
+      responseStatus = 500;
       return new Response(
         JSON.stringify({ error: "Failed to send email", detail: body }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -252,14 +270,25 @@ Deno.serve(async (req) => {
       verdict_label || null,
     ).catch((err) => console.error("[ga4-mp] background error:", err));
 
+    responseStatus = 200;
+    success = true;
     return new Response(JSON.stringify({ sent: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error("send-confirmation error:", e);
+    responseStatus = 500;
     return new Response(
       JSON.stringify({ error: "Internal error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
+  } finally {
+    // Update log row with outcome
+    if (logId) {
+      await supabase
+        .from("function_request_log")
+        .update({ success, response_status: responseStatus })
+        .eq("id", logId);
+    }
   }
 });
