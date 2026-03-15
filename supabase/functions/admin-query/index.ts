@@ -341,6 +341,17 @@ Deno.serve(async (req) => {
         break;
       }
 
+      case "feedback": {
+        const { data: fbRows, error: fbErr } = await sb
+          .from("user_feedback")
+          .select("id, analysis_id, rating, reason, comment, page, verdict_snapshot, score_snapshot, confidence_snapshot, created_at")
+          .order("created_at", { ascending: false })
+          .limit(100);
+        if (fbErr) throw fbErr;
+        data = fbRows;
+        break;
+      }
+
       default:
         return new Response(JSON.stringify({ error: "Unknown query type" }), {
           status: 400,

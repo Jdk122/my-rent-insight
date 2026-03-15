@@ -1240,6 +1240,94 @@ function DashboardContent() {
             </div>
           )}
         </TabsContent>
+
+        {/* ━━━ Feedback Tab ━━━ */}
+        <TabsContent value="feedback" className="space-y-4">
+          {feedbackLoading ? (
+            <div className="text-sm text-muted-foreground"><Loader2 className="w-4 h-4 animate-spin inline mr-1" /> Loading feedback…</div>
+          ) : feedbackRows.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No feedback submitted yet.</p>
+          ) : (
+            <>
+              {/* Summary cards */}
+              {(() => {
+                const pos = feedbackRows.filter((f: any) => f.rating === 'positive').length;
+                const neg = feedbackRows.filter((f: any) => f.rating === 'negative').length;
+                const withComment = feedbackRows.filter((f: any) => f.comment).length;
+                const reasonCounts: Record<string, number> = {};
+                feedbackRows.forEach((f: any) => { if (f.reason) reasonCounts[f.reason] = (reasonCounts[f.reason] || 0) + 1; });
+                return (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <div className="border border-border rounded-lg p-3 bg-card">
+                        <div className="text-xs text-muted-foreground mb-1">Total</div>
+                        <div className="text-lg font-semibold text-foreground">{feedbackRows.length}</div>
+                      </div>
+                      <div className="border border-border rounded-lg p-3 bg-card">
+                        <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1"><ThumbsUp className="w-3 h-3" /> Positive</div>
+                        <div className="text-lg font-semibold text-emerald-600">{pos}</div>
+                      </div>
+                      <div className="border border-border rounded-lg p-3 bg-card">
+                        <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1"><ThumbsDown className="w-3 h-3" /> Negative</div>
+                        <div className="text-lg font-semibold text-red-600">{neg}</div>
+                      </div>
+                      <div className="border border-border rounded-lg p-3 bg-card">
+                        <div className="text-xs text-muted-foreground mb-1">With Comments</div>
+                        <div className="text-lg font-semibold text-foreground">{withComment}</div>
+                      </div>
+                    </div>
+                    {Object.keys(reasonCounts).length > 0 && (
+                      <div>
+                        <h3 className="text-sm font-semibold text-foreground mb-2">Reason Breakdown</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {Object.entries(reasonCounts).sort((a, b) => b[1] - a[1]).map(([reason, count]) => (
+                            <span key={reason} className="text-xs px-3 py-1.5 rounded-full border border-border bg-muted/30">
+                              {reason} <span className="font-semibold ml-1">{count}</span>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
+              {/* Table */}
+              <div className="border border-border rounded-lg overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead><tr className="border-b border-border bg-muted/30">
+                    <th className="text-left px-3 py-2 font-medium">Rating</th>
+                    <th className="text-left px-3 py-2 font-medium">Page</th>
+                    <th className="text-left px-3 py-2 font-medium">Verdict</th>
+                    <th className="text-left px-3 py-2 font-medium">Score</th>
+                    <th className="text-left px-3 py-2 font-medium">Confidence</th>
+                    <th className="text-left px-3 py-2 font-medium">Reason</th>
+                    <th className="text-left px-3 py-2 font-medium">Comment</th>
+                    <th className="text-left px-3 py-2 font-medium">Analysis</th>
+                    <th className="text-left px-3 py-2 font-medium">Date</th>
+                  </tr></thead>
+                  <tbody>
+                    {feedbackRows.map((f: any) => (
+                      <tr key={f.id} className="border-b border-border last:border-0">
+                        <td className="px-3 py-2">
+                          {f.rating === 'positive' ? <ThumbsUp className="w-3.5 h-3.5 text-emerald-600" /> : <ThumbsDown className="w-3.5 h-3.5 text-red-500" />}
+                        </td>
+                        <td className="px-3 py-2">{f.page === 'renewal_results' ? 'Renewal' : 'WSIP'}</td>
+                        <td className="px-3 py-2">{f.verdict_snapshot || '—'}</td>
+                        <td className="px-3 py-2">{f.score_snapshot ?? '—'}</td>
+                        <td className="px-3 py-2">{f.confidence_snapshot || '—'}</td>
+                        <td className="px-3 py-2">{f.reason || '—'}</td>
+                        <td className="px-3 py-2 max-w-[200px] truncate" title={f.comment || ''}>{f.comment || '—'}</td>
+                        <td className="px-3 py-2 font-mono">{(f.analysis_id || '').slice(0, 8)}</td>
+                        <td className="px-3 py-2 whitespace-nowrap">{new Date(f.created_at).toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+        </TabsContent>
       </Tabs>
 
       {/* Detail Panel */}
