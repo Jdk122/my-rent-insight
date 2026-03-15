@@ -348,22 +348,6 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
           <a href="/terms" className="underline hover:text-foreground transition-colors">Terms of Service</a>.
         </p>
       </form>
-
-      {/* Credibility badges */}
-      <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-x-6 gap-y-1.5 sm:gap-y-2 mt-5 sm:mt-6 text-[11px] sm:text-xs text-muted-foreground">
-        <span className="flex items-center gap-1.5">
-          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8M8 12h8M8 17h4"/></svg>
-          38,600+ zip codes covered
-        </span>
-        <span className="flex items-center gap-1.5">
-          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-          Results in under 10 seconds
-        </span>
-        <span className="flex items-center gap-1.5">
-          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>
-          Free negotiation letter included
-        </span>
-      </div>
     </div>
   );
 };
