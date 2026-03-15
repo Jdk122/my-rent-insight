@@ -69,9 +69,9 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
     setError('');
     setLoading(true);
 
+    const normalizedEmail = email.trim().toLowerCase();
     const utm = getUtmParams();
     try {
-      const normalizedEmail = email.trim().toLowerCase();
       const { error: rpcError } = await supabase.rpc('upsert_lead', {
         p_email: normalizedEmail,
         p_analysis_id: leadContext?.analysisId || null,
