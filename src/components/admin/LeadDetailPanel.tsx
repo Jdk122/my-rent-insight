@@ -78,9 +78,19 @@ export default function LeadDetailPanel({ analysis, onClose, onDeleted }: LeadDe
       <div className="relative w-full max-w-lg bg-card border-l border-border shadow-xl overflow-y-auto">
         <div className="sticky top-0 bg-card border-b border-border px-5 py-3 flex items-center justify-between z-10">
           <h3 className="font-display font-semibold text-foreground">Analysis Detail</h3>
-          <button onClick={onClose} className="p-1 hover:bg-muted rounded transition-colors">
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              className={`p-1.5 rounded transition-colors text-sm flex items-center gap-1 ${confirmDelete ? 'bg-red-600 text-white hover:bg-red-700 px-2' : 'text-muted-foreground hover:text-red-600 hover:bg-red-500/10'}`}
+            >
+              {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+              {confirmDelete && !deleting && <span>Confirm</span>}
+            </button>
+            <button onClick={onClose} className="p-1 hover:bg-muted rounded transition-colors">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         <div className="px-5 py-4">
