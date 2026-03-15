@@ -140,8 +140,7 @@ const ShareHub = ({
   };
 
   const handleShareNeighbors = async () => {
-    trackEvent('share_neighbors', { zip: zipCode });
-    trackEvent('report_link_generated', { zip_code: zipCode, verdict });
+    trackEvent('report_shared', { method: 'neighbors', zip: zipCode, verdict });
     const url = reportUrl || await generateReportLink();
     if (url) {
       setActivePanel('neighbors');
