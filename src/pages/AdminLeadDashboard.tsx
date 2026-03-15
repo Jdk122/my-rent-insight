@@ -296,6 +296,27 @@ function DashboardContent() {
     if (data) downloadCSV(data, `renewalreply-leads-${new Date().toISOString().slice(0, 10)}.csv`);
   };
 
+  // Delete analysis with full cascade
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
+  const handleDelete = async (analysisId: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (confirmDeleteId !== analysisId) {
+      setConfirmDeleteId(analysisId);
+      return;
+    }
+    setDeletingId(analysisId);
+    const result = await adminQuery('delete_analysis', { analysisId });
+    setDeletingId(null);
+    setConfirmDeleteId(null);
+    if (result?.success) {
+      setRows(prev => prev.filter(r => r.id !== analysisId));
+      setTotalCount(prev => prev - 1);
+      if (selectedRow?.id === analysisId) setSelectedRow(null);
+    }
+  };
+
   const handleSort = (col: string) => {
     if (sortCol === col) setSortAsc(!sortAsc);
     else { setSortCol(col); setSortAsc(false); }
