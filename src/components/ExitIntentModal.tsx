@@ -96,7 +96,7 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
       if (rpcError) console.error('[lead] upsert_lead failed (exit_intent):', rpcError.message);
 
       const { error: evtError } = await supabase.from('lead_events' as any).insert({
-        email: email.trim(),
+        email: normalizedEmail,
         analysis_id: leadContext?.analysisId || null,
         event_type: 'exit_intent',
         fairness_score: leadContext?.fairnessScore ?? null,
