@@ -306,7 +306,7 @@ const Index = () => {
         <LoadingAnalysis />
       ) : !results ? (
         <main className="max-w-[620px] md:max-w-[920px] mx-auto px-5 sm:px-6 pt-6 sm:pt-14 md:pt-10 pb-10 sm:pb-14 md:pb-10">
-          <div className="md:grid md:grid-cols-[1.05fr_0.95fr] md:gap-8 md:items-start">
+          <div className="md:grid md:grid-cols-[1.05fr_0.95fr] md:gap-8 md:items-center">
             {/* Left column: sales message */}
             <div>
               <h1 className="font-display text-[1.85rem] sm:text-[clamp(2rem,5vw,3rem)] text-foreground leading-[1.08] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
@@ -328,13 +328,18 @@ const Index = () => {
                 </div>
               </div>
 
+              {/* Trust line — desktop only, below bullets */}
+              <p className="hidden md:block mt-4 text-[11px] text-muted-foreground/80">
+                Free · No account required · 38,600+ ZIP codes
+              </p>
+
               <Suspense fallback={null}>
                 <div className="mt-4 sm:mt-6 md:mt-4">
                   <SocialProofCounter />
                 </div>
               </Suspense>
 
-              {/* Data source bar — desktop only, below social proof */}
+              {/* Data source bar — desktop only */}
               <div className="hidden md:block mt-4">
                 <div className="border-t border-border/40 pt-3 pb-2 px-1">
                   <p className="text-[11px] text-muted-foreground/70 tracking-wide">
