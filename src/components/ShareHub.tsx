@@ -113,8 +113,7 @@ const ShareHub = ({
   };
 
   const handleShareLandlord = async () => {
-    trackEvent('share_landlord', { zip: zipCode });
-    trackEvent('report_link_generated', { zip_code: zipCode, verdict });
+    trackEvent('report_shared', { method: 'landlord', zip: zipCode, verdict });
     const url = reportUrl || await generateReportLink();
     if (url) {
       // Try native share on mobile first
