@@ -64,11 +64,12 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
     e.preventDefault();
     if (!email) return;
 
+    const normalizedEmail = email.trim().toLowerCase();
     const utm = getUtmParams();
 
     try {
       await supabase.rpc('upsert_lead', {
-        p_email: email,
+        p_email: normalizedEmail,
         p_analysis_id: leadContext?.analysisId || null,
         p_capture_source: captureSource,
         p_address: leadContext?.address || null,
@@ -93,7 +94,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
       } as any);
 
       await supabase.from('lead_events' as any).insert({
-        email,
+        email: normalizedEmail,
         analysis_id: leadContext?.analysisId || null,
         event_type: captureSource,
         fairness_score: leadContext?.fairnessScore ?? null,
@@ -111,9 +112,9 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
       toast.error('Something went wrong saving your info.');
     }
 
-    onEmailCaptured?.(email);
+    onEmailCaptured?.(normalizedEmail);
     trackEvent('email_submitted', { verdict: verdict || 'unknown', zip_code: leadContext?.zip || '', source: captureSource, tool_type: 'renewal' });
-    trackAdsConversion('renewal', email);
+    trackAdsConversion('renewal', normalizedEmail);
     if (captureSource === 'lease_reminder') {
       trackEvent('lease_reminder_signup');
     }
@@ -124,11 +125,11 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
     (async () => {
       let reportUrl: string | null = null;
       if (shareReportPayload) {
-        reportUrl = await generateSharedReport(shareReportPayload, leadContext?.analysisId, email);
+        reportUrl = await generateSharedReport(shareReportPayload, leadContext?.analysisId, normalizedEmail);
         if (reportUrl) onReportGenerated?.(reportUrl);
       }
       sendConfirmationEmail({
-        email,
+        email: normalizedEmail,
         city: leadContext?.city,
         state: leadContext?.state,
         zip: leadContext?.zip,
@@ -140,7 +141,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
       });
       // Re-notify with captured email
       await notifySubmission({
-        email,
+        email: normalizedEmail,
         zip: leadContext?.zip || null,
         city: leadContext?.city || city,
         state: leadContext?.state || null,

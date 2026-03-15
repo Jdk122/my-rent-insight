@@ -69,10 +69,11 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
     setError('');
     setLoading(true);
 
+    const normalizedEmail = email.trim().toLowerCase();
     const utm = getUtmParams();
     try {
       const { error: rpcError } = await supabase.rpc('upsert_lead', {
-        p_email: email.trim(),
+        p_email: normalizedEmail,
         p_analysis_id: leadContext?.analysisId || null,
         p_capture_source: 'exit_intent',
         p_address: leadContext?.address || null,
@@ -90,11 +91,12 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
         p_fairness_score: leadContext?.fairnessScore ?? null,
         p_comp_median_rent: leadContext?.compMedianRent ?? null,
         p_hud_fmr_value: leadContext?.hudFmrValue ?? null,
+        p_tool_type: toolType === 'wsip' ? 'wsip' : 'renewal',
       } as any);
       if (rpcError) console.error('[lead] upsert_lead failed (exit_intent):', rpcError.message);
 
       const { error: evtError } = await supabase.from('lead_events' as any).insert({
-        email: email.trim(),
+        email: normalizedEmail,
         analysis_id: leadContext?.analysisId || null,
         event_type: 'exit_intent',
         fairness_score: leadContext?.fairnessScore ?? null,
@@ -112,10 +114,10 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
       console.error('[lead] exit_intent unexpected error:', err);
     }
 
-    onEmailCaptured(email.trim());
+    onEmailCaptured(normalizedEmail);
     trackEvent('exit_intent_converted', { verdict: verdictLabel, zip_code: zip });
     trackEvent('email_submitted', { verdict: verdictLabel, zip_code: zip, source: 'exit_intent', tool_type: toolType });
-    trackAdsConversion(toolType, email.trim());
+    trackAdsConversion(toolType, normalizedEmail);
     setLoading(false);
     setOpen(false);
     toast.success('Sent to your email!');
@@ -124,11 +126,11 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
     (async () => {
       let reportUrl: string | null = null;
       if (shareReportPayload) {
-        reportUrl = await generateSharedReport(shareReportPayload, leadContext?.analysisId, email.trim());
+        reportUrl = await generateSharedReport(shareReportPayload, leadContext?.analysisId, normalizedEmail);
         if (reportUrl) onReportGenerated?.(reportUrl);
       }
       sendConfirmationEmail({
-        email: email.trim(),
+        email: normalizedEmail,
         city: leadContext?.city || city,
         state: leadContext?.state,
         zip: leadContext?.zip || zip,
@@ -140,7 +142,7 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
       });
       // Re-notify with captured email
       await notifySubmission({
-        email: email.trim(),
+        email: normalizedEmail,
         zip: leadContext?.zip || zip,
         city: leadContext?.city || city,
         state: leadContext?.state || null,

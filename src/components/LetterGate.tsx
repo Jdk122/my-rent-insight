@@ -71,12 +71,13 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
     setError('');
     setLoading(true);
 
+    const normalizedEmail = email.trim().toLowerCase();
     const utm = getUtmParams();
     const verdict = verdictLabel || 'above';
 
     try {
       const { error: rpcError } = await supabase.rpc('upsert_lead', {
-        p_email: email.trim(),
+        p_email: normalizedEmail,
         p_analysis_id: leadContext?.analysisId || null,
         p_capture_source: 'letter_gate',
         p_address: leadContext?.address || null,
@@ -105,14 +106,8 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
         throw rpcError;
       }
 
-      if (leadContext?.analysisId) {
-        await supabase.from('leads' as any).update({
-          letter_generated_at: new Date().toISOString(),
-        } as any).eq('analysis_id', leadContext.analysisId);
-      }
-
       const { error: evtError } = await supabase.from('lead_events' as any).insert({
-        email: email.trim(),
+        email: normalizedEmail,
         analysis_id: leadContext?.analysisId || null,
         event_type: 'letter_gate',
         fairness_score: leadContext?.fairnessScore ?? null,
@@ -133,9 +128,9 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
       return;
     }
 
-    onEmailCaptured?.(email.trim());
+    onEmailCaptured?.(normalizedEmail);
     trackEvent('email_submitted', { verdict, zip_code: leadContext?.zip || '', source: 'letter_gate', tool_type: 'renewal' });
-    trackAdsConversion('renewal', email.trim());
+    trackAdsConversion('renewal', normalizedEmail);
     setUnlocked(true);
     setLoading(false);
     toast.success('Letter unlocked!');
@@ -144,11 +139,11 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
     (async () => {
       let reportUrl: string | null = null;
       if (shareReportPayload) {
-        reportUrl = await generateSharedReport(shareReportPayload, leadContext?.analysisId, email.trim());
+        reportUrl = await generateSharedReport(shareReportPayload, leadContext?.analysisId, normalizedEmail);
         if (reportUrl) onReportGenerated?.(reportUrl);
       }
       sendConfirmationEmail({
-        email: email.trim(),
+        email: normalizedEmail,
         city: leadContext?.city,
         state: leadContext?.state,
         zip: leadContext?.zip,
@@ -160,7 +155,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
       });
       // Re-notify with captured email
       await notifySubmission({
-        email: email.trim(),
+        email: normalizedEmail,
         zip: leadContext?.zip || null,
         city: leadContext?.city || null,
         state: leadContext?.state || null,
