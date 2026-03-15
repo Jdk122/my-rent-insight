@@ -68,7 +68,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
     const utm = getUtmParams();
 
     try {
-      await supabase.rpc('upsert_lead', {
+      const leadParams = {
         p_email: normalizedEmail,
         p_analysis_id: leadContext?.analysisId || null,
         p_capture_source: captureSource,
@@ -91,9 +91,16 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
         p_fairness_score: leadContext?.fairnessScore ?? null,
         p_comp_median_rent: leadContext?.compMedianRent ?? null,
         p_hud_fmr_value: leadContext?.hudFmrValue ?? null,
-      } as any);
+      } as any;
 
-      await supabase.from('lead_events' as any).insert({
+      let { error: rpcError } = await supabase.rpc('upsert_lead', leadParams);
+      if (rpcError && leadContext?.analysisId) {
+        console.warn('[lead] upsert_lead FK retry:', rpcError.message);
+        ({ error: rpcError } = await supabase.rpc('upsert_lead', { ...leadParams, p_analysis_id: null }));
+      }
+      if (rpcError) console.error('[lead] upsert_lead failed:', rpcError.message);
+
+      const evtPayload = {
         email: normalizedEmail,
         analysis_id: leadContext?.analysisId || null,
         event_type: captureSource,
@@ -106,7 +113,12 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
         verdict: verdict || null,
         comp_median_rent: leadContext?.compMedianRent ?? null,
         hud_fmr_value: leadContext?.hudFmrValue ?? null,
-      } as any);
+      } as any;
+      let { error: evtError } = await supabase.from('lead_events' as any).insert(evtPayload);
+      if (evtError && leadContext?.analysisId) {
+        ({ error: evtError } = await supabase.from('lead_events' as any).insert({ ...evtPayload, analysis_id: null }));
+      }
+      if (evtError) console.error('[lead] lead_events insert failed:', evtError.message);
     } catch (err) {
       console.error('Lead save failed:', err);
       toast.error('Something went wrong saving your info.');
