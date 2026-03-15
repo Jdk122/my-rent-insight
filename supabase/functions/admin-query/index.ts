@@ -342,7 +342,7 @@ Deno.serve(async (req) => {
       }
 
       case "feedback": {
-        const { data: fbRows, error: fbErr } = await sb
+        const { data: fbRows, error: fbErr } = await supabase
           .from("user_feedback")
           .select("id, analysis_id, rating, reason, comment, page, verdict_snapshot, score_snapshot, confidence_snapshot, created_at")
           .order("created_at", { ascending: false })
