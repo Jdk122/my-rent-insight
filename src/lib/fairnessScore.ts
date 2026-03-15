@@ -191,27 +191,27 @@ function scoreMarketMomentum(zillowMonthly: number | null, alMoM?: number | null
 // Tier thresholds
 function getTier(total: number): Pick<FairnessScoreResult, 'tier' | 'tierLabel' | 'tierColor' | 'tierColorHsl' | 'tierMessage'> {
   if (total >= 80) return {
-    tier: 'excellent', tierLabel: 'Excellent', tierColor: 'text-verdict-good',
+    tier: 'excellent', tierLabel: 'Good Deal', tierColor: 'text-verdict-good',
     tierColorHsl: '152 50% 33%',
     tierMessage: 'Your increase is very fair. Renewing is a solid decision.',
   };
   if (total >= 60) return {
-    tier: 'fair', tierLabel: 'Fair', tierColor: 'text-verdict-fair',
+    tier: 'fair', tierLabel: 'At Market', tierColor: 'text-verdict-fair',
     tierColorHsl: '80 55% 40%',
     tierMessage: 'Your increase is within a reasonable range for your area.',
   };
   if (total >= 40) return {
-    tier: 'moderate', tierLabel: 'Moderate', tierColor: 'text-accent-amber',
+    tier: 'moderate', tierLabel: 'Above Trend', tierColor: 'text-accent-amber',
     tierColorHsl: '38 85% 36%',
     tierMessage: 'Your increase is on the high side. You may have room to negotiate.',
   };
   if (total >= 20) return {
-    tier: 'unfair', tierLabel: 'Unfair', tierColor: 'text-destructive',
+    tier: 'unfair', tierLabel: 'Overpaying', tierColor: 'text-destructive',
     tierColorHsl: '15 65% 46%',
     tierMessage: 'Your increase significantly exceeds market conditions. We recommend negotiating.',
   };
   return {
-    tier: 'excessive', tierLabel: 'Excessive', tierColor: 'text-destructive',
+    tier: 'excessive', tierLabel: 'Overpaying', tierColor: 'text-destructive',
     tierColorHsl: '6 60% 46%',
     tierMessage: 'Your increase is well above what the data supports. Negotiation or exploring other options is strongly recommended.',
   };
