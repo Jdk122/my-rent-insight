@@ -305,7 +305,13 @@ const WsipResults = ({
       utm_source: utm.utm_source || null,
       utm_medium: utm.utm_medium || null,
       utm_campaign: utm.utm_campaign || null,
-    } as any).then(() => {});
+    } as any).then(({ error }: any) => {
+      if (error) {
+        console.error('[WsipResults] Analysis insert failed:', error.message, error);
+      } else {
+        console.log('[WsipResults] Analysis logged:', analysisId);
+      }
+    });
   }, []);
 
   // ━━━ Share report payload ━━━

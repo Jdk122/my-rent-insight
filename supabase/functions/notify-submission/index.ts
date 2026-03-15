@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
           await sb.rpc('upsert_lead', {
             p_email: normalizedEmail,
             p_analysis_id: analysis_id || null,
-            p_capture_source: 'notify_safety_net',
+            p_capture_source: null,
             p_address: address || null,
             p_city: city || null,
             p_state: state || null,
@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
             await sb.rpc('upsert_lead', {
               p_email: normalizedEmail,
               p_analysis_id: null,
-              p_capture_source: 'notify_safety_net',
+              p_capture_source: null,
               p_address: address || null,
               p_city: city || null,
               p_state: state || null,
