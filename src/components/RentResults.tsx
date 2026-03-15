@@ -935,9 +935,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               )}
 
               {!capturedEmail && (
-                <div className="sm:hidden flex flex-col items-center justify-center mt-5 mx-4 py-3 px-4 rounded-lg border border-primary/20 bg-primary/5 text-center">
-                  <span className="text-primary font-bold text-sm">Your negotiation letter is ready ↓</span>
-                  <span className="text-muted-foreground text-xs mt-1">Plus full comps, counter-offer guidance, and market data.</span>
+                <div className="sm:hidden flex flex-col items-center justify-center mt-5 text-center">
+                  <span className="text-primary font-semibold text-sm">Your negotiation letter is ready ↓</span>
+                  <span className="text-muted-foreground text-xs mt-0.5">Plus full comps, counter-offer guidance, and market data.</span>
                 </div>
               )}
 
