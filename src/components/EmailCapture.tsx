@@ -64,11 +64,12 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
     e.preventDefault();
     if (!email) return;
 
+    const normalizedEmail = email.trim().toLowerCase();
     const utm = getUtmParams();
 
     try {
       await supabase.rpc('upsert_lead', {
-        p_email: email,
+        p_email: normalizedEmail,
         p_analysis_id: leadContext?.analysisId || null,
         p_capture_source: captureSource,
         p_address: leadContext?.address || null,
