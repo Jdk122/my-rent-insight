@@ -192,6 +192,10 @@ function DashboardContent() {
   // ── Diagnostic ──
   const [diagData, setDiagData] = useState<any>(null);
   const [diagLoading, setDiagLoading] = useState(false);
+  const [lookupEmail, setLookupEmail] = useState('');
+  const [lookupData, setLookupData] = useState<any>(null);
+  const [lookupLoading, setLookupLoading] = useState(false);
+
   // Helper to call admin edge function
   const adminQuery = async (query: string, params?: any) => {
     const password = getAdminPassword();
