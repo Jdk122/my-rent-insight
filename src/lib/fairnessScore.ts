@@ -329,6 +329,28 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
     extremeIncreaseCeilingApplied = true;
   }
 
+  // ── Comp contradiction guardrail ──
+  const compComponent = components.find(c => c.id === 'comps');
+  if (compComponent && compComponent.max >= 18) {
+    const compPct = compComponent.score / compComponent.max;
+    if (compPct < 0.40 && total >= 60) {
+      total = Math.min(total, 59);
+    } else if (compPct < 0.25 && total >= 40) {
+      total = Math.min(total, 39);
+    }
+  }
+
+  // ── Zero-comp rent position guardrail (Oshkosh fix) ──
+  if (cc < 3 && validatedInput.fmr > 0) {
+    const fmrUpper = validatedInput.fmr * 1.15;
+    const rentAboveFmrRatio = (validatedInput.currentRent - fmrUpper) / fmrUpper;
+    if (rentAboveFmrRatio > 0.50 && total >= 70) {
+      total = Math.min(total, 69);
+    } else if (rentAboveFmrRatio > 0.30 && total >= 80) {
+      total = Math.min(total, 79);
+    }
+  }
+
   return { total, ...getTier(total), components: visibleComponents, extremeIncreaseCeilingApplied };
 }
 

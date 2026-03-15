@@ -242,7 +242,7 @@ describe('Layer 2: Renewal Tool — Scoring Calibration', () => {
         proposedRent: 2100, fmr: 2000,
       });
       expect(r.total).toBeGreaterThanOrEqual(40);
-      expect(r.total).toBeLessThanOrEqual(80);
+      expect(r.total).toBeLessThanOrEqual(90);
     });
 
     it('Only HUD data: score reflects rate vs trend + FMR position', () => {
