@@ -312,7 +312,7 @@ const Index = () => {
           <p className="mt-4 sm:mt-6 text-[15px] sm:text-lg md:text-xl text-muted-foreground max-w-[540px] leading-relaxed font-normal tracking-tight">
             Most renters overpay by $50–150/month and don't know it. Enter your address, see if your landlord is overcharging you, and get a free negotiation letter<span className="text-primary font-medium no-underline"> — in 10 seconds.</span>
           </p>
-          <section id="main-content" className="mt-8 sm:mt-10" aria-label="Rent increase checker">
+          <section id="main-content" <section id="main-content" className="mt-5 sm:mt-10" aria-label="Rent increase checker"> aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
             <div className="mt-6 mb-1 max-w-[540px]">
               <div className="border-t border-b border-border/40 py-3 px-1">
