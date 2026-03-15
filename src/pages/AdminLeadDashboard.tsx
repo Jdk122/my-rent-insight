@@ -878,6 +878,197 @@ function DashboardContent() {
             </>
           )}
         </TabsContent>
+
+        {/* ━━━ DIAGNOSTIC TAB ━━━ */}
+        <TabsContent value="diagnostic" className="space-y-6">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={async () => {
+                setDiagLoading(true);
+                const data = await adminQuery('diagnostic');
+                if (data) setDiagData(data);
+                setDiagLoading(false);
+              }}
+              disabled={diagLoading}
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-60"
+            >
+              {diagLoading ? <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Running…</span> : 'Run Diagnostic'}
+            </button>
+            {diagData && <span className="text-xs text-muted-foreground">Last run: {new Date().toLocaleTimeString()}</span>}
+          </div>
+
+          {diagData && (
+            <div className="space-y-6">
+              {/* Counts */}
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                <StatCard label="Analyses Today" value={diagData.counts.analyses_today ?? 0} />
+                <StatCard label="Leads Today" value={diagData.counts.leads_today ?? 0} />
+                <StatCard label="Events Today" value={diagData.counts.events_today ?? 0} />
+                <StatCard label="Analyses Total" value={diagData.counts.analyses_total ?? 0} />
+                <StatCard label="Leads Total" value={diagData.counts.leads_total ?? 0} />
+              </div>
+
+              {/* Orphaned Leads */}
+              <div>
+                <h2 className="text-sm font-semibold text-foreground mb-2">Orphaned Leads (lead → deleted analysis)</h2>
+                {(!diagData.orphaned_leads || diagData.orphaned_leads.length === 0) ? (
+                  <p className="text-sm text-muted-foreground">✅ No orphaned leads found</p>
+                ) : (
+                  <div className="border border-border rounded-lg overflow-x-auto">
+                    <table className="w-full text-xs">
+                      <thead><tr className="border-b border-border bg-muted/30">
+                        <th className="text-left px-3 py-2 font-medium">Email</th>
+                        <th className="text-left px-3 py-2 font-medium">Analysis ID</th>
+                        <th className="text-left px-3 py-2 font-medium">Source</th>
+                        <th className="text-left px-3 py-2 font-medium">Created</th>
+                      </tr></thead>
+                      <tbody>
+                        {diagData.orphaned_leads.map((l: any) => (
+                          <tr key={l.id} className="border-b border-border last:border-0">
+                            <td className="px-3 py-2" title={l.email}>{(l.email || '').slice(0, 25)}</td>
+                            <td className="px-3 py-2 font-mono">{(l.analysis_id || '').slice(0, 8)}</td>
+                            <td className="px-3 py-2">{l.capture_source}</td>
+                            <td className="px-3 py-2">{new Date(l.created_at).toLocaleString()}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
+              {/* Unlinked Analyses */}
+              <div>
+                <h2 className="text-sm font-semibold text-foreground mb-2">Recent Analyses (last 3 days) with No Lead</h2>
+                {(!diagData.unlinked_analyses_3d || diagData.unlinked_analyses_3d.length === 0) ? (
+                  <p className="text-sm text-muted-foreground">✅ All recent analyses have linked leads</p>
+                ) : (
+                  <div className="border border-border rounded-lg overflow-x-auto">
+                    <table className="w-full text-xs">
+                      <thead><tr className="border-b border-border bg-muted/30">
+                        <th className="text-left px-3 py-2 font-medium">Address/Zip</th>
+                        <th className="text-left px-3 py-2 font-medium">City</th>
+                        <th className="text-left px-3 py-2 font-medium">Verdict</th>
+                        <th className="text-left px-3 py-2 font-medium">Score</th>
+                        <th className="text-left px-3 py-2 font-medium">Tool</th>
+                        <th className="text-left px-3 py-2 font-medium">Created</th>
+                      </tr></thead>
+                      <tbody>
+                        {diagData.unlinked_analyses_3d.map((a: any) => (
+                          <tr key={a.id} className="border-b border-border last:border-0">
+                            <td className="px-3 py-2">{a.address || a.zip || '—'}</td>
+                            <td className="px-3 py-2">{a.city || '—'}</td>
+                            <td className="px-3 py-2">{a.verdict_label || '—'}</td>
+                            <td className="px-3 py-2">{a.fairness_score ?? '—'}</td>
+                            <td className="px-3 py-2">{a.tool_type}</td>
+                            <td className="px-3 py-2">{new Date(a.created_at).toLocaleString()}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
+              {/* Recent Analyses */}
+              <div>
+                <h2 className="text-sm font-semibold text-foreground mb-2">Recent Analyses (last 10)</h2>
+                <div className="border border-border rounded-lg overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead><tr className="border-b border-border bg-muted/30">
+                      <th className="text-left px-3 py-2 font-medium">Address/Zip</th>
+                      <th className="text-left px-3 py-2 font-medium">City</th>
+                      <th className="text-left px-3 py-2 font-medium">BR</th>
+                      <th className="text-left px-3 py-2 font-medium">Rent</th>
+                      <th className="text-left px-3 py-2 font-medium">Score</th>
+                      <th className="text-left px-3 py-2 font-medium">Verdict</th>
+                      <th className="text-left px-3 py-2 font-medium">Tool</th>
+                      <th className="text-left px-3 py-2 font-medium">Created</th>
+                      <th className="text-left px-3 py-2 font-medium">Session</th>
+                    </tr></thead>
+                    <tbody>
+                      {(diagData.recent_analyses || []).map((a: any) => (
+                        <tr key={a.id} className="border-b border-border last:border-0">
+                          <td className="px-3 py-2">{a.address || a.zip || '—'}</td>
+                          <td className="px-3 py-2">{a.city || '—'}</td>
+                          <td className="px-3 py-2">{a.bedrooms ?? '—'}</td>
+                          <td className="px-3 py-2">{a.current_rent ? fmt(a.current_rent) : '—'}</td>
+                          <td className="px-3 py-2">{a.fairness_score ?? '—'}</td>
+                          <td className="px-3 py-2">{a.verdict_label || '—'}</td>
+                          <td className="px-3 py-2">{a.tool_type}</td>
+                          <td className="px-3 py-2">{new Date(a.created_at).toLocaleString()}</td>
+                          <td className="px-3 py-2 font-mono">{(a.session_id || '').slice(0, 8)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Recent Leads */}
+              <div>
+                <h2 className="text-sm font-semibold text-foreground mb-2">Recent Leads (last 10)</h2>
+                <div className="border border-border rounded-lg overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead><tr className="border-b border-border bg-muted/30">
+                      <th className="text-left px-3 py-2 font-medium">Email</th>
+                      <th className="text-left px-3 py-2 font-medium">Source</th>
+                      <th className="text-left px-3 py-2 font-medium">Analysis</th>
+                      <th className="text-left px-3 py-2 font-medium">Address/Zip</th>
+                      <th className="text-left px-3 py-2 font-medium">City</th>
+                      <th className="text-left px-3 py-2 font-medium">Verdict</th>
+                      <th className="text-left px-3 py-2 font-medium">Tool</th>
+                      <th className="text-left px-3 py-2 font-medium">Created</th>
+                    </tr></thead>
+                    <tbody>
+                      {(diagData.recent_leads || []).map((l: any) => (
+                        <tr key={l.id} className="border-b border-border last:border-0">
+                          <td className="px-3 py-2" title={l.email}>{(l.email || '').slice(0, 25)}</td>
+                          <td className="px-3 py-2">{l.capture_source || '—'}</td>
+                          <td className="px-3 py-2 font-mono">{(l.analysis_id || '').slice(0, 8)}</td>
+                          <td className="px-3 py-2">{l.address || l.zip || '—'}</td>
+                          <td className="px-3 py-2">{l.city || '—'}</td>
+                          <td className="px-3 py-2">{l.verdict || '—'}</td>
+                          <td className="px-3 py-2">{l.tool_type}</td>
+                          <td className="px-3 py-2">{new Date(l.created_at).toLocaleString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Recent Events */}
+              <div>
+                <h2 className="text-sm font-semibold text-foreground mb-2">Recent Lead Events (last 10)</h2>
+                <div className="border border-border rounded-lg overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead><tr className="border-b border-border bg-muted/30">
+                      <th className="text-left px-3 py-2 font-medium">Email</th>
+                      <th className="text-left px-3 py-2 font-medium">Event</th>
+                      <th className="text-left px-3 py-2 font-medium">Analysis</th>
+                      <th className="text-left px-3 py-2 font-medium">Zip</th>
+                      <th className="text-left px-3 py-2 font-medium">Verdict</th>
+                      <th className="text-left px-3 py-2 font-medium">Created</th>
+                    </tr></thead>
+                    <tbody>
+                      {(diagData.recent_events || []).map((e: any) => (
+                        <tr key={e.id} className="border-b border-border last:border-0">
+                          <td className="px-3 py-2" title={e.email}>{(e.email || '').slice(0, 25)}</td>
+                          <td className="px-3 py-2">{e.event_type}</td>
+                          <td className="px-3 py-2 font-mono">{(e.analysis_id || '').slice(0, 8)}</td>
+                          <td className="px-3 py-2">{e.zip || '—'}</td>
+                          <td className="px-3 py-2">{e.verdict || '—'}</td>
+                          <td className="px-3 py-2">{new Date(e.created_at).toLocaleString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+        </TabsContent>
       </Tabs>
 
       {/* Detail Panel */}
