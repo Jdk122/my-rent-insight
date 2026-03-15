@@ -94,7 +94,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
       } as any);
 
       await supabase.from('lead_events' as any).insert({
-        email,
+        email: normalizedEmail,
         analysis_id: leadContext?.analysisId || null,
         event_type: captureSource,
         fairness_score: leadContext?.fairnessScore ?? null,
