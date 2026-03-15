@@ -350,7 +350,7 @@ const Index = () => {
             </div>
 
             {/* Right column: form card */}
-            <section id="main-content" className="mt-3 sm:mt-6 lg:mt-0" aria-label="Rent increase checker">
+            <section id="main-content" className="mt-3 sm:mt-6 lg:mt-4" aria-label="Rent increase checker">
               <div>
                 <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
               </div>
