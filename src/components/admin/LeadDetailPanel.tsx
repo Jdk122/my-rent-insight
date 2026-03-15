@@ -18,7 +18,23 @@ const pct = (n: number | null | undefined) =>
 const bool = (v: boolean | null | undefined) =>
   v === true ? '✓ Yes' : v === false ? '✗ No' : '—';
 
-export default function LeadDetailPanel({ analysis, onClose }: LeadDetailPanelProps) {
+export default function LeadDetailPanel({ analysis, onClose, onDeleted }: LeadDetailPanelProps) {
+  const [events, setEvents] = useState<any[]>([]);
+  const [sharedReport, setSharedReport] = useState<any>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const handleDelete = async () => {
+    if (!confirmDelete) { setConfirmDelete(true); return; }
+    setDeleting(true);
+    const password = getAdminPassword();
+    const { data, error } = await supabase.functions.invoke('admin-query', {
+      body: { password, query: 'delete_analysis', params: { analysisId: analysis.id } },
+    });
+    if (error || data?.error) { clearAdminSession(); window.location.reload(); return; }
+    if (data?.success) { onDeleted?.(analysis.id); onClose(); }
+    setDeleting(false);
+  };
   const [events, setEvents] = useState<any[]>([]);
   const [sharedReport, setSharedReport] = useState<any>(null);
 
