@@ -145,19 +145,19 @@ function scoreVsFmr(proposedRent: number, fmr: number, currentRent: number, incr
     const score = Math.round((rawScore / 25) * maxPts);
     return { id: 'fmr', label, score, max: maxPts, estimated: false };
   }
-  let score: number;
+  let rawScore: number;
   if (proposedRent <= upper) {
-    score = 25;
+    rawScore = 25;
   } else {
     const above = (proposedRent - upper) / upper;
-    if (above <= 0) score = 25;
-    else if (above <= 0.10) score = 25 - (above / 0.10) * 10;
-    else if (above <= 0.25) score = 15 - ((above - 0.10) / 0.15) * 9;
-    else if (above <= 0.35) score = 6 - ((above - 0.25) / 0.10) * 6;
-    else score = 0;
+    if (above <= 0) rawScore = 25;
+    else if (above <= 0.10) rawScore = 25 - (above / 0.10) * 10;
+    else if (above <= 0.25) rawScore = 15 - ((above - 0.10) / 0.15) * 9;
+    else if (above <= 0.35) rawScore = 6 - ((above - 0.25) / 0.10) * 6;
+    else rawScore = 0;
   }
-  score = Math.round(score);
-  return { id: 'fmr', label, score, max: 25, estimated: false };
+  const score = Math.round((rawScore / 25) * maxPts);
+  return { id: 'fmr', label, score, max: maxPts, estimated: false };
 }
 
 // Component 4: Market Momentum (10 pts)
