@@ -338,7 +338,7 @@ const Index = () => {
               {/* Data source bar — desktop only */}
               <div className="hidden md:block mt-3">
                 <div className="border-t border-border/60 pt-3 pb-2 px-1">
-                  <p className="text-[11px] text-foreground/40 tracking-wide whitespace-nowrap">
+                  <p className="text-[11px] text-foreground/55 tracking-wide whitespace-nowrap">
                     HUD FMR · Zillow ZORI · Apt List · Live Comps · DHCR
                   </p>
                 </div>
