@@ -67,7 +67,7 @@ const FeedbackWidget = ({
 
       if (error) throw error;
       setFeedbackId((data as any)?.id ?? null);
-      trackEvent('feedback_submitted', { page, rating });
+      trackEvent('lease_info_saved', { action: 'feedback', page, rating });
 
       if (rating === 'positive') {
         setPhase('done');
