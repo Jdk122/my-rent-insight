@@ -800,7 +800,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
-                className="mt-3 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-[540px]"
+                className="mt-2 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 max-w-[540px]"
               >
                 {(() => {
                   const increaseIsHighGap = increasePct > marketYoy * 2 && increasePct > 0 && marketYoy > 0;
@@ -813,10 +813,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 })().map((stat) => (
                     <div
                       key={stat.label}
-                      className={`text-center rounded-lg border px-2 sm:px-3 py-3 sm:py-4 flex flex-col items-center min-h-[76px] sm:min-h-[84px] ${stat.highlight ? 'border-destructive/30 bg-destructive/5' : 'border-border/80 bg-card'}`}
+                      className={`text-center rounded-lg border px-2 sm:px-3 py-2.5 sm:py-4 flex flex-col items-center min-h-[68px] sm:min-h-[84px] ${stat.highlight ? 'border-destructive/30 bg-destructive/5' : 'border-border/60 sm:border-border/80 bg-card'}`}
                       style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
                     >
-                      <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1 min-h-[24px] flex items-end">{stat.label}</p>
+                      <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1 min-h-[24px] flex items-end">{stat.label}</p>
                       <p className={`font-display text-[20px] sm:text-[24px] md:text-[28px] tracking-tight tabular-nums mt-auto ${stat.color}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
                         {stat.value}
                       </p>
@@ -825,13 +825,22 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 ))}
               </motion.div>
 
-              {/* ── Comp teaser line ── */}
+              {/* ── Combined comp + letter prompt (mobile only) ── */}
+              {!capturedEmail && compsWithRent.length > 0 && (
+                <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-3 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
+                  <span className="text-sm font-medium text-foreground">{compsWithRent.length} matched comps found</span>
+                  <span className="text-sm font-semibold text-primary mt-0.5">Your negotiation letter is ready ↓</span>
+                  <span className="text-xs text-muted-foreground mt-0.5">Full comps, counter-offer guidance, and market data below.</span>
+                </div>
+              )}
+
+              {/* ── Comp teaser line (desktop) ── */}
               {compsWithRent.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.25, duration: 0.4 }}
-                  className="mt-5 w-full max-w-[540px]"
+                  className="hidden sm:block mt-4 w-full max-w-[540px]"
                 >
                   <span className="inline-block border border-border/60 rounded-full px-4 py-1.5 text-sm font-semibold text-foreground/70">
                     {bldg.hasBuildingData && bldg.buildingComps.length >= 2
@@ -840,13 +849,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     }
                   </span>
                 </motion.div>
-              )}
-
-              {!capturedEmail && (
-                <div className="sm:hidden flex flex-col items-center justify-center mt-5 text-center">
-                  <span className="text-primary font-semibold text-sm">Your negotiation letter is ready ↓</span>
-                  <span className="text-muted-foreground text-xs mt-0.5">Plus full comps, counter-offer guidance, and market data.</span>
-                </div>
               )}
 
               <PreGateCompPreview compsWithRent={compsWithRent} capturedEmail={capturedEmail} fmt={fmt} />
@@ -917,13 +919,22 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 }
               </p>
 
-              {/* ── Comp teaser line (no-increase path) ── */}
+              {/* ── Combined comp + letter prompt (mobile, no-increase) ── */}
+              {!capturedEmail && compsWithRent.length > 0 && (
+                <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-3 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
+                  <span className="text-sm font-medium text-foreground">{compsWithRent.length} matched comps found</span>
+                  <span className="text-sm font-semibold text-primary mt-0.5">Your negotiation letter is ready ↓</span>
+                  <span className="text-xs text-muted-foreground mt-0.5">Full comps, counter-offer guidance, and market data below.</span>
+                </div>
+              )}
+
+              {/* ── Comp teaser line (desktop, no-increase) ── */}
               {compsWithRent.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.25, duration: 0.4 }}
-                  className="mt-5 w-full max-w-[540px]"
+                  className="hidden sm:block mt-4 w-full max-w-[540px]"
                 >
                   <span className="inline-block border border-border/60 rounded-full px-4 py-1.5 text-sm font-semibold text-foreground/70">
                     {bldg.hasBuildingData && bldg.buildingComps.length >= 2
@@ -932,13 +943,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     }
                   </span>
                 </motion.div>
-              )}
-
-              {!capturedEmail && (
-                <div className="sm:hidden flex flex-col items-center justify-center mt-5 text-center">
-                  <span className="text-primary font-semibold text-sm">Your negotiation letter is ready ↓</span>
-                  <span className="text-muted-foreground text-xs mt-0.5">Plus full comps, counter-offer guidance, and market data.</span>
-                </div>
               )}
 
               <PreGateCompPreview compsWithRent={compsWithRent} capturedEmail={capturedEmail} fmt={fmt} />

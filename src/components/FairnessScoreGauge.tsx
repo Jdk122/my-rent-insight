@@ -155,7 +155,7 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
 
       {/* Collapsible score breakdown */}
       <motion.div
-        className="mt-1 mb-1 w-full max-w-[480px]"
+        className="mt-0.5 mb-0.5 w-full max-w-[480px]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.9, duration: 0.4 }}
@@ -163,9 +163,9 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
         <Collapsible open={breakdownOpen} onOpenChange={(open) => {
           setBreakdownOpen(open);
         }}>
-          <CollapsibleTrigger className="flex items-center justify-center gap-1.5 w-full py-2 text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors group">
+          <CollapsibleTrigger className="flex items-center justify-center gap-1.5 w-full py-1.5 text-xs font-medium text-muted-foreground/60 hover:text-foreground transition-colors group">
             See score details
-            <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${breakdownOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${breakdownOpen ? 'rotate-180' : ''}`} />
           </CollapsibleTrigger>
           <CollapsibleContent>
             <div className="mt-2 space-y-3 px-2">
