@@ -155,7 +155,7 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
 
       {/* Collapsible score breakdown */}
       <motion.div
-        className="mt-6 w-full max-w-[480px]"
+        className="mt-3 w-full max-w-[480px]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.9, duration: 0.4 }}
