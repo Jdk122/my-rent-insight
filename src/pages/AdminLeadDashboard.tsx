@@ -395,10 +395,10 @@ function DashboardContent() {
             <FunnelStep label="Tool Completed" count={stats.total_submissions} />
             <FunnelArrow from={stats.total_submissions} to={stats.above_market_count} />
             <FunnelStep label="Above Market" count={stats.above_market_count} />
-            <FunnelArrow from={stats.above_market_count} to={stats.letter_count} />
-            <FunnelStep label="Letter Generated" count={stats.letter_count} />
-            <FunnelArrow from={stats.letter_count} to={stats.total_leads_all} />
+            <FunnelArrow from={stats.above_market_count} to={stats.total_leads_all} />
             <FunnelStep label="Email Captured" count={stats.total_leads_all} />
+            <FunnelArrow from={stats.total_leads_all} to={stats.letter_count} />
+            <FunnelStep label="Letter Generated" count={stats.letter_count} />
             <FunnelArrow from={stats.total_leads_all} to={stats.shared_count} />
             <FunnelStep label="Shared" count={stats.shared_count} />
           </div>
