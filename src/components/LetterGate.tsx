@@ -71,12 +71,13 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
     setError('');
     setLoading(true);
 
+    const normalizedEmail = email.trim().toLowerCase();
     const utm = getUtmParams();
     const verdict = verdictLabel || 'above';
 
     try {
       const { error: rpcError } = await supabase.rpc('upsert_lead', {
-        p_email: email.trim(),
+        p_email: normalizedEmail,
         p_analysis_id: leadContext?.analysisId || null,
         p_capture_source: 'letter_gate',
         p_address: leadContext?.address || null,
