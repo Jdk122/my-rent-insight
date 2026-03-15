@@ -842,6 +842,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </motion.div>
               )}
 
+              {!capturedEmail && (
+                <div className="sm:hidden flex flex-col items-center justify-center mt-4 text-xs text-center">
+                  <span className="text-primary font-semibold">Your negotiation letter is ready ↓</span>
+                  <span className="text-muted-foreground mt-0.5">Plus full comps, counter-offer guidance, and market data.</span>
+                </div>
+              )}
+
               <PreGateCompPreview compsWithRent={compsWithRent} capturedEmail={capturedEmail} fmt={fmt} />
 
               {/* ── Email gate (moved from Phase 2) ── */}
@@ -925,6 +932,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     }
                   </span>
                 </motion.div>
+              )}
+
+              {!capturedEmail && (
+                <div className="sm:hidden flex flex-col items-center justify-center mt-4 text-xs text-center">
+                  <span className="text-primary font-semibold">Your negotiation letter is ready ↓</span>
+                  <span className="text-muted-foreground mt-0.5">Plus full comps, counter-offer guidance, and market data.</span>
+                </div>
               )}
 
               <PreGateCompPreview compsWithRent={compsWithRent} capturedEmail={capturedEmail} fmt={fmt} />
