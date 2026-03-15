@@ -276,7 +276,7 @@ const WsipResults = ({
 
   // ━━━ Analytics ━━━
   useEffect(() => {
-    trackEvent('wsip_results_viewed', { zip, bedrooms: bedroomNum, has_asking_rent: !!askingRent });
+    trackEvent('analysis_completed', { tool: 'wsip', zip, bedrooms: bedroomNum, has_asking_rent: !!askingRent });
   }, []);
 
   // ━━━ Log analysis to DB ━━━
