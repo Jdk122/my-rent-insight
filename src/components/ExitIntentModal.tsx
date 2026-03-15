@@ -126,11 +126,11 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
     (async () => {
       let reportUrl: string | null = null;
       if (shareReportPayload) {
-        reportUrl = await generateSharedReport(shareReportPayload, leadContext?.analysisId, email.trim());
+        reportUrl = await generateSharedReport(shareReportPayload, leadContext?.analysisId, normalizedEmail);
         if (reportUrl) onReportGenerated?.(reportUrl);
       }
       sendConfirmationEmail({
-        email: email.trim(),
+        email: normalizedEmail,
         city: leadContext?.city || city,
         state: leadContext?.state,
         zip: leadContext?.zip || zip,
@@ -142,7 +142,7 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
       });
       // Re-notify with captured email
       await notifySubmission({
-        email: email.trim(),
+        email: normalizedEmail,
         zip: leadContext?.zip || zip,
         city: leadContext?.city || city,
         state: leadContext?.state || null,

@@ -141,7 +141,7 @@ const EmailCapture = ({ city, captureSource = 'lease_reminder', prefilledEmail, 
       });
       // Re-notify with captured email
       await notifySubmission({
-        email,
+        email: normalizedEmail,
         zip: leadContext?.zip || null,
         city: leadContext?.city || city,
         state: leadContext?.state || null,

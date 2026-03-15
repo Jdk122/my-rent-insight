@@ -155,7 +155,7 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
       });
       // Re-notify with captured email
       await notifySubmission({
-        email: email.trim(),
+        email: normalizedEmail,
         zip: leadContext?.zip || null,
         city: leadContext?.city || null,
         state: leadContext?.state || null,
