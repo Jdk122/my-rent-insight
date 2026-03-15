@@ -87,7 +87,7 @@ const FeedbackWidget = ({
       .from('user_feedback' as any)
       .update({ reason } as any)
       .eq('id', feedbackId);
-    trackEvent('feedback_reason', { page, reason });
+    
     setPhase('comment');
   }, [feedbackId, page]);
 
