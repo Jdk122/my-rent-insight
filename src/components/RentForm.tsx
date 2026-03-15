@@ -325,9 +325,39 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
               </button>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground">
-            The amount your landlord wants to raise your rent by.
-          </p>
+          {(() => {
+            const incVal = rentIncrease && rentIncrease.trim() !== ''
+              ? (increaseIsPercent ? parseFloat(rentIncrease) : parseFloat(parseFormatted(rentIncrease)))
+              : NaN;
+            const rentVal = parseFloat(parseFormatted(currentRent));
+            if (isNaN(incVal) || incVal <= 0) return (
+              <p className="text-xs text-muted-foreground">
+                The amount your landlord wants to raise your rent by.
+              </p>
+            );
+            if (increaseIsPercent && !isNaN(rentVal) && rentVal > 0) {
+              const monthlyInc = Math.round(rentVal * incVal / 100);
+              const annual = monthlyInc * 12;
+              return (
+                <p className="text-xs font-medium text-amber-700 dark:text-amber-400 animate-fade-in">
+                  That's about ${monthlyInc.toLocaleString('en-US')}/mo — ${annual.toLocaleString('en-US')} more per year
+                </p>
+              );
+            }
+            if (!increaseIsPercent) {
+              const annual = Math.round(incVal) * 12;
+              return (
+                <p className="text-xs font-medium text-amber-700 dark:text-amber-400 animate-fade-in">
+                  That's ${annual.toLocaleString('en-US')} more per year
+                </p>
+              );
+            }
+            return (
+              <p className="text-xs text-muted-foreground">
+                The amount your landlord wants to raise your rent by.
+              </p>
+            );
+          })()}
           {errors.rentIncrease && <p className="text-[13px] text-destructive mt-1">{errors.rentIncrease}</p>}
         </div>
 
