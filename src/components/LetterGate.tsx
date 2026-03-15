@@ -106,14 +106,8 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
         throw rpcError;
       }
 
-      if (leadContext?.analysisId) {
-        await supabase.from('leads' as any).update({
-          letter_generated_at: new Date().toISOString(),
-        } as any).eq('analysis_id', leadContext.analysisId);
-      }
-
       const { error: evtError } = await supabase.from('lead_events' as any).insert({
-        email: email.trim(),
+        email: normalizedEmail,
         analysis_id: leadContext?.analysisId || null,
         event_type: 'letter_gate',
         fairness_score: leadContext?.fairnessScore ?? null,
