@@ -70,7 +70,7 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
     <div className="flex flex-col items-center w-full">
       {/* Header label */}
       <motion.p
-        className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground text-center mb-3"
+        className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground text-center mb-2"
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.5 }}
@@ -145,7 +145,7 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
 
       {/* Dynamic verdict message */}
       <motion.div
-        className="mt-2 max-w-[460px] text-center"
+        className="mt-1 max-w-[460px] text-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7, duration: 0.5 }}
@@ -155,7 +155,7 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
 
       {/* Collapsible score breakdown */}
       <motion.div
-        className="mt-2 mb-2 w-full max-w-[480px]"
+        className="mt-1 mb-1 w-full max-w-[480px]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.9, duration: 0.4 }}
