@@ -305,37 +305,37 @@ const Index = () => {
       {isLoading ? (
         <LoadingAnalysis />
       ) : !results ? (
-        <main className="max-w-[620px] md:max-w-[960px] mx-auto px-5 sm:px-6 pt-6 sm:pt-14 md:pt-[90px] pb-10 sm:pb-14 md:pb-16">
-          <div className="md:grid md:grid-cols-[1fr_380px] md:gap-8 md:items-start">
+        <main className="max-w-[620px] lg:max-w-[960px] mx-auto px-5 sm:px-6 pt-6 sm:pt-14 lg:pt-[90px] pb-10 sm:pb-14 lg:pb-16">
+          <div className="lg:grid lg:grid-cols-[1fr_380px] lg:gap-8 lg:items-start">
             {/* Left column: sales message */}
             <div>
-              <h1 className="font-display text-[1.85rem] sm:text-[clamp(2rem,5vw,3rem)] md:text-[clamp(44px,4vw,56px)] text-foreground leading-[1.08] md:leading-[1.08] tracking-tight font-extrabold" style={{ letterSpacing: '-0.03em' }}>
+              <h1 className="font-display text-[1.85rem] sm:text-[clamp(2rem,5vw,3rem)] lg:text-[clamp(44px,4vw,56px)] text-foreground leading-[1.08] lg:leading-[1.08] tracking-tight font-extrabold" style={{ letterSpacing: '-0.03em' }}>
                 Is your rent increase <span className="text-primary">above&nbsp;market?</span>
               </h1>
-              <p className="mt-2 sm:mt-3 md:mt-5 text-[15px] sm:text-lg md:text-[clamp(19px,1.7vw,24px)] text-muted-foreground md:text-foreground/60 max-w-[700px] leading-relaxed font-normal tracking-tight md:whitespace-nowrap">
+              <p className="mt-2 sm:mt-3 lg:mt-5 text-[15px] sm:text-lg lg:text-[clamp(19px,1.7vw,24px)] text-muted-foreground lg:text-foreground/60 max-w-[700px] leading-relaxed font-normal tracking-tight lg:whitespace-nowrap">
                 Find out in 10 seconds — free, no account needed.
               </p>
 
               {/* Value props */}
-              <div className="mt-3 sm:mt-5 md:mt-8 flex flex-col gap-1.5 sm:gap-2 md:gap-5 max-w-[600px]">
-                <div className="flex items-start gap-2 md:gap-3">
-                  <span className="text-primary mt-0.5 shrink-0"><MessageSquareText size={15} className="md:w-[22px] md:h-[22px]" /></span>
-                  <span className="text-[14px] md:text-[clamp(17px,1.4vw,21px)] text-muted-foreground md:text-foreground/55 leading-snug md:whitespace-nowrap"><strong className="text-foreground font-bold">Negotiation letter</strong> backed by your local data</span>
+              <div className="mt-3 sm:mt-5 lg:mt-8 flex flex-col gap-1.5 sm:gap-2 lg:gap-5 max-w-[600px]">
+                <div className="flex items-start gap-2 lg:gap-3">
+                  <span className="text-primary mt-0.5 shrink-0"><MessageSquareText size={15} className="lg:w-[22px] lg:h-[22px]" /></span>
+                  <span className="text-[14px] lg:text-[clamp(17px,1.4vw,21px)] text-muted-foreground lg:text-foreground/55 leading-snug lg:whitespace-nowrap"><strong className="text-foreground font-bold">Negotiation letter</strong> backed by your local data</span>
                 </div>
-                <div className="flex items-start gap-2 md:gap-3">
-                  <span className="text-primary mt-0.5 shrink-0"><Calculator size={15} className="md:w-[22px] md:h-[22px]" /></span>
-                  <span className="text-[14px] md:text-[clamp(17px,1.4vw,21px)] text-muted-foreground md:text-foreground/55 leading-snug md:whitespace-nowrap"><strong className="text-foreground font-bold">Counter-offer range</strong> from real comps nearby</span>
+                <div className="flex items-start gap-2 lg:gap-3">
+                  <span className="text-primary mt-0.5 shrink-0"><Calculator size={15} className="lg:w-[22px] lg:h-[22px]" /></span>
+                  <span className="text-[14px] lg:text-[clamp(17px,1.4vw,21px)] text-muted-foreground lg:text-foreground/55 leading-snug lg:whitespace-nowrap"><strong className="text-foreground font-bold">Counter-offer range</strong> from real comps nearby</span>
                 </div>
               </div>
 
               <Suspense fallback={null}>
-                <div className="mt-4 sm:mt-6 md:mt-8">
+                <div className="mt-4 sm:mt-6 lg:mt-8">
                   <SocialProofCounter />
                 </div>
               </Suspense>
 
               {/* Data source bar — desktop only */}
-              <div className="hidden md:block mt-6">
+              <div className="hidden lg:block mt-6">
                 <div className="border-t border-border/50 pt-4 pb-2">
                   <p className="text-[clamp(12px,1vw,15px)] text-foreground/40 tracking-wider uppercase whitespace-nowrap">
                     HUD FMR · Zillow ZORI · Apt List · Live Comps · DHCR
@@ -345,12 +345,12 @@ const Index = () => {
             </div>
 
             {/* Right column: form card */}
-            <section id="main-content" className="mt-3 sm:mt-6 md:mt-0" aria-label="Rent increase checker">
+            <section id="main-content" className="mt-3 sm:mt-6 lg:mt-0" aria-label="Rent increase checker">
               <div>
                 <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
               </div>
-              {/* Data source bar — mobile only */}
-              <div className="mt-4 max-w-[540px] mx-auto md:hidden">
+              {/* Data source bar — mobile/tablet only */}
+              <div className="mt-4 max-w-[540px] mx-auto lg:hidden">
                 <div className="border-t border-border/40 pt-3 pb-2 px-1 text-center">
                   <p className="text-[11px] text-muted-foreground/50 tracking-wide">
                     HUD Fair Market Rent · Zillow ZORI · Apartment List · Live Comps · DHCR
