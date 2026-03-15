@@ -1003,7 +1003,7 @@ function DashboardContent() {
                     </tr></thead>
                     <tbody>
                       {(diagData.recent_analyses || []).map((a: any) => (
-                        <tr key={a.id} className="border-b border-border last:border-0">
+                          <td className="px-3 py-2 font-mono">{(a.id || '').slice(0, 8)}</td>
                           <td className="px-3 py-2">{a.address || a.zip || '—'}</td>
                           <td className="px-3 py-2">{a.city || '—'}</td>
                           <td className="px-3 py-2">{a.bedrooms ?? '—'}</td>
