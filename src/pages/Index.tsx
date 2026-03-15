@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
-import { ChevronRight, MessageSquareText, Calculator, Scale } from 'lucide-react';
+import { ChevronRight, MessageSquareText, Calculator } from 'lucide-react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { useSearchParams, Link } from 'react-router-dom';
 
@@ -318,19 +318,13 @@ const Index = () => {
             <div className="flex items-start gap-2.5">
               <MessageSquareText size={15} className="text-primary mt-0.5 shrink-0" />
               <p className="text-[13px] sm:text-[14px] text-muted-foreground leading-snug">
-                <span className="font-semibold text-foreground">Ready-to-send negotiation letter</span> — backed by your local data
+                <span className="font-semibold text-foreground">Ready-to-send negotiation letter</span> — backed by local data
               </p>
             </div>
             <div className="flex items-start gap-2.5">
               <Calculator size={15} className="text-primary mt-0.5 shrink-0" />
               <p className="text-[13px] sm:text-[14px] text-muted-foreground leading-snug">
-                <span className="font-semibold text-foreground">Your counter-offer range</span> — calculated from real comps nearby
-              </p>
-            </div>
-            <div className="flex items-start gap-2.5">
-              <Scale size={15} className="text-primary mt-0.5 shrink-0" />
-              <p className="text-[13px] sm:text-[14px] text-muted-foreground leading-snug">
-                <span className="font-semibold text-foreground">Fairness score</span> — see exactly how your rent compares to market
+                <span className="font-semibold text-foreground">Your counter-offer range</span> — from real comps nearby
               </p>
             </div>
           </div>
