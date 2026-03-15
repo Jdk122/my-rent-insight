@@ -293,6 +293,12 @@ const Index = () => {
             </button>
           )}
           <Link
+            to="/guides"
+            className="text-muted-foreground hover:text-foreground text-[12px] sm:text-[13px] font-medium transition-colors whitespace-nowrap"
+          >
+            Guides
+          </Link>
+          <Link
             to="/what-should-i-pay"
             className="text-muted-foreground hover:text-foreground text-[12px] sm:text-[13px] font-medium transition-colors whitespace-nowrap hidden lg:inline-block"
           >
