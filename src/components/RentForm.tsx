@@ -156,7 +156,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="border border-border/80 rounded-2xl p-4 pb-3 sm:p-6 sm:pb-5 md:p-8 md:pb-6 bg-card space-y-3 sm:space-y-5 shadow-sm">
+      <form onSubmit={handleSubmit} className="border border-border/80 rounded-2xl p-4 pb-3 sm:p-6 sm:pb-4 md:p-8 md:pb-5 bg-card space-y-3 sm:space-y-5 shadow-sm">
         {prefill && (
           <p className="text-[13px] text-muted-foreground pl-3 border-l-2 border-primary/40 leading-relaxed">
             Welcome back! We've pre-filled your info from last year. Just enter your new proposed rent.
@@ -341,7 +341,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
         <p className="text-[11px] text-muted-foreground/80 text-center mt-1">
           Free · No account required · Used across 38,600+ ZIP codes
         </p>
-        <p className="text-[11px] text-muted-foreground/80 text-center mt-0">
+        <p className="text-[11px] text-muted-foreground/80 text-center mt-0.5">
           By using this tool, you agree to our{' '}
           <a href="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</a>
           {' '}and{' '}
