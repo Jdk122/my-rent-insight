@@ -113,7 +113,7 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
           Overpaying
         </span>
         <span
-          className="absolute text-[11px] font-semibold text-foreground/60 tracking-wide"
+          className="absolute text-[10px] font-semibold text-foreground/60 tracking-wide whitespace-nowrap"
           style={{ left: arcR.x, top: CY + 8, transform: 'translateX(-50%)' }}
         >
           Good Deal
