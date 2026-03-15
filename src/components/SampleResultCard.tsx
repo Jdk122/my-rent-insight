@@ -111,7 +111,7 @@ const SampleResultCard = () => (
         That's $4,200 more per year.
       </p>
 
-      <p className="text-[10px] text-muted-foreground/35 text-center mt-3 pt-2.5 border-t border-border/30">
+      <p className="text-[11px] text-muted-foreground/45 text-center mt-2.5 pt-2 border-t border-border/30 tracking-wide">
         Sample result · Hoboken, NJ 07030
       </p>
     </div>
