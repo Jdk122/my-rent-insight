@@ -308,7 +308,7 @@ const Index = () => {
       </nav>
 
       {/* Spacer for fixed nav */}
-      <div className="h-[52px] sm:h-[56px]" />
+      <div className="h-[48px] sm:h-[56px]" />
 
       {isLoading ? (
         <LoadingAnalysis />
