@@ -367,6 +367,7 @@ function DashboardContent() {
         <TabsList className="mb-4">
           <TabsTrigger value="overview" className="gap-1.5"><Users className="w-3.5 h-3.5" /> Overview</TabsTrigger>
           <TabsTrigger value="emails" className="gap-1.5"><Mail className="w-3.5 h-3.5" /> Email Lists {emailLeads.filter(l => !l.unsubscribed).length > 0 && <span className="ml-1 text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded-full">{emailLeads.filter(l => !l.unsubscribed).length}</span>}</TabsTrigger>
+          <TabsTrigger value="diagnostic" className="gap-1.5"><AlertTriangle className="w-3.5 h-3.5" /> Diagnostic</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-8">
