@@ -230,9 +230,9 @@ const ReportGate = ({
 
     const utm = getUtmParams();
     try {
-      const { error: rpcError } = await supabase.rpc('upsert_lead', {
+      const leadParams = {
         p_email: trimmed,
-        p_analysis_id: analysisId,
+        p_analysis_id: analysisId || null,
         p_capture_source: 'report_gate',
         p_address: leadContext?.address || null,
         p_city: leadContext?.city || null,
@@ -250,12 +250,19 @@ const ReportGate = ({
         p_comp_median_rent: leadContext?.compMedianRent ?? null,
         p_hud_fmr_value: leadContext?.hudFmrValue ?? null,
         p_tool_type: toolType === 'wsip' ? 'wsip' : 'renewal',
-      } as any);
+      } as any;
+
+      let { error: rpcError } = await supabase.rpc('upsert_lead', leadParams);
+      // Retry without analysis_id on FK violation
+      if (rpcError && analysisId) {
+        console.warn('[lead] upsert_lead FK retry without analysis_id:', rpcError.message);
+        ({ error: rpcError } = await supabase.rpc('upsert_lead', { ...leadParams, p_analysis_id: null }));
+      }
       if (rpcError) console.error('[lead] upsert_lead failed (report_gate):', rpcError.message);
 
-      const { error: evtError } = await supabase.from('lead_events' as any).insert({
+      let { error: evtError } = await supabase.from('lead_events' as any).insert({
         email: trimmed,
-        analysis_id: analysisId,
+        analysis_id: analysisId || null,
         event_type: 'report_gate',
         fairness_score: leadContext?.fairnessScore ?? null,
         address: leadContext?.address || null,
@@ -267,6 +274,23 @@ const ReportGate = ({
         comp_median_rent: leadContext?.compMedianRent ?? null,
         hud_fmr_value: leadContext?.hudFmrValue ?? null,
       } as any);
+      // Retry without analysis_id on FK violation
+      if (evtError && analysisId) {
+        ({ error: evtError } = await supabase.from('lead_events' as any).insert({
+          email: trimmed,
+          analysis_id: null,
+          event_type: 'report_gate',
+          fairness_score: leadContext?.fairnessScore ?? null,
+          address: leadContext?.address || null,
+          zip: leadContext?.zip || null,
+          current_rent: leadContext?.currentRent ?? null,
+          proposed_rent: leadContext?.proposedRent ?? null,
+          increase_pct: leadContext?.increasePct ?? null,
+          verdict: verdictLabel || null,
+          comp_median_rent: leadContext?.compMedianRent ?? null,
+          hud_fmr_value: leadContext?.hudFmrValue ?? null,
+        } as any));
+      }
       if (evtError) console.error('[lead] lead_events insert failed (report_gate):', evtError.message);
     } catch (err) {
       console.error('[lead] report_gate unexpected error:', err);
