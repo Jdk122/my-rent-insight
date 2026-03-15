@@ -45,9 +45,9 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
       setOpen(true);
 
       if (capturedEmail) {
-        trackEvent('exit_intent_shown', { verdict: verdictLabel, zip_code: zip, type: 'share' });
+        trackEvent('prompt_shown', { prompt: 'exit_intent', tool: toolType, verdict: verdictLabel, zip, type: 'share' });
       } else {
-        trackEvent('exit_intent_shown', { verdict: verdictLabel, zip_code: zip, type: 'capture' });
+        trackEvent('prompt_shown', { prompt: 'exit_intent', tool: toolType, verdict: verdictLabel, zip, type: 'capture' });
       }
     };
 
