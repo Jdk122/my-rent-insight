@@ -306,39 +306,39 @@ const Index = () => {
         <LoadingAnalysis />
       ) : !results ? (
         <main className="max-w-[620px] md:max-w-[1020px] mx-auto px-5 sm:px-6 pt-6 sm:pt-14 md:pt-[72px] pb-10 sm:pb-14 md:pb-16">
-          <div className="md:grid md:grid-cols-[1fr_420px] md:gap-10 md:items-start">
+          <div className="md:grid md:grid-cols-[1fr_390px] md:gap-12 md:items-start">
             {/* Left column: sales message */}
             <div>
-              <h1 className="font-display text-[1.85rem] sm:text-[clamp(2rem,5vw,3rem)] md:text-[48px] text-foreground leading-[1.08] md:leading-[1.08] tracking-tight font-extrabold" style={{ letterSpacing: '-0.025em' }}>
+              <h1 className="font-display text-[1.85rem] sm:text-[clamp(2rem,5vw,3rem)] md:text-[54px] text-foreground leading-[1.08] md:leading-[1.05] tracking-tight font-extrabold" style={{ letterSpacing: '-0.025em' }}>
                 Is your rent increase <span className="text-primary">above&nbsp;market?</span>
               </h1>
-              <p className="mt-2 sm:mt-3 md:mt-3 text-[15px] sm:text-lg md:text-[19px] text-muted-foreground md:text-foreground/70 max-w-[540px] leading-relaxed font-normal tracking-tight md:whitespace-nowrap">
+              <p className="mt-2 sm:mt-3 md:mt-5 text-[15px] sm:text-lg md:text-[21px] text-muted-foreground md:text-foreground/65 max-w-[540px] leading-relaxed font-normal tracking-tight md:whitespace-nowrap">
                 Find out in 10 seconds — free, no account needed.
               </p>
 
               {/* Value props */}
-              <div className="mt-3 sm:mt-5 md:mt-6 flex flex-col gap-1.5 sm:gap-2 md:gap-3 max-w-[480px]">
-                <div className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5 shrink-0"><MessageSquareText size={15} className="md:w-[18px] md:h-[18px]" /></span>
-                  <span className="text-[14px] md:text-[17px] text-muted-foreground md:text-foreground/60"><strong className="text-foreground font-bold">Negotiation letter</strong> backed by your local data</span>
+              <div className="mt-3 sm:mt-5 md:mt-8 flex flex-col gap-1.5 sm:gap-2 md:gap-4 max-w-[480px]">
+                <div className="flex items-start gap-2 md:gap-3">
+                  <span className="text-primary mt-0.5 shrink-0"><MessageSquareText size={15} className="md:w-[20px] md:h-[20px]" /></span>
+                  <span className="text-[14px] md:text-[18px] text-muted-foreground md:text-foreground/55"><strong className="text-foreground font-extrabold">Negotiation letter</strong> backed by your local data</span>
                 </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5 shrink-0"><Calculator size={15} className="md:w-[18px] md:h-[18px]" /></span>
-                  <span className="text-[14px] md:text-[17px] text-muted-foreground md:text-foreground/60"><strong className="text-foreground font-bold">Counter-offer range</strong> from real comps nearby</span>
+                <div className="flex items-start gap-2 md:gap-3">
+                  <span className="text-primary mt-0.5 shrink-0"><Calculator size={15} className="md:w-[20px] md:h-[20px]" /></span>
+                  <span className="text-[14px] md:text-[18px] text-muted-foreground md:text-foreground/55"><strong className="text-foreground font-extrabold">Counter-offer range</strong> from real comps nearby</span>
                 </div>
               </div>
 
 
               <Suspense fallback={null}>
-                <div className="mt-4 sm:mt-6 md:mt-4">
+                <div className="mt-4 sm:mt-6 md:mt-8">
                   <SocialProofCounter />
                 </div>
               </Suspense>
 
               {/* Data source bar — desktop only */}
-              <div className="hidden md:block mt-3">
-                <div className="border-t border-border/60 pt-3 pb-2 px-1">
-                  <p className="text-[11px] text-foreground/55 tracking-wide whitespace-nowrap">
+              <div className="hidden md:block mt-6">
+                <div className="border-t border-border/60 pt-4 pb-2 px-1">
+                  <p className="text-[14px] text-foreground/45 tracking-wide whitespace-nowrap">
                     HUD FMR · Zillow ZORI · Apt List · Live Comps · DHCR
                   </p>
                 </div>
