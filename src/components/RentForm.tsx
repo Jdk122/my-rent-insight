@@ -339,7 +339,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
           {isLoading ? 'Loading data…' : 'Get My Answer →'}
         </button>
         <div className="-mt-1.5 sm:-mt-3">
-          <p className="text-[11px] text-muted-foreground/80 text-center mt-1">
+          <p className="text-[11px] text-muted-foreground/80 text-center mt-1 md:hidden">
             Free · No account required · 38,600+ ZIP codes
           </p>
           <p className="text-[11px] text-muted-foreground/80 text-center mt-0.5">
