@@ -295,6 +295,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
                     setRentIncrease(fmtInput(e.target.value));
                   }
                   clearError('rentIncrease');
+                  setIncreaseTouched(true);
                 }}
                 className={`h-12 font-mono text-lg bg-background ${!increaseIsPercent ? 'pl-8' : 'pl-3.5'} ${errorClass('rentIncrease')}`}
                 min={0}
