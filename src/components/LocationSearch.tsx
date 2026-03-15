@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, forwardRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { slugify, STATE_NAMES } from '@/data/cityStateUtils';
@@ -106,7 +106,7 @@ interface LocationSearchProps {
   className?: string;
 }
 
-const LocationSearch = ({ className }: LocationSearchProps) => {
+const LocationSearch = forwardRef<HTMLDivElement, LocationSearchProps>(({ className }, ref) => {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -241,6 +241,8 @@ const LocationSearch = ({ className }: LocationSearchProps) => {
       )}
     </div>
   );
-};
+});
+
+LocationSearch.displayName = 'LocationSearch';
 
 export default LocationSearch;

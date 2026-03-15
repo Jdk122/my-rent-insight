@@ -335,7 +335,7 @@ const Index = () => {
               </Suspense>
 
               {/* Sample result preview — desktop only */}
-              <div className="mt-6">
+              <div className="hidden md:block mt-6">
                 <SampleResultCard />
               </div>
 
