@@ -23,12 +23,12 @@ function getEmailCopy(lead: any): { subject: string; text: string } {
   if (isGood) {
     return {
       subject: "How did your renewal go?",
-      text: "Hey — you used RenewalReply recently and your rent looked like a solid deal. I'm the founder, and I'm curious: did you end up renewing? I'd love to hear how it went — your feedback helps me make the tool better for other renters.\n\n— James",
+      text: "Hey — you used RenewalReply recently and your rent looked like a good deal. I'm the founder, and I'm curious: did you renew? Did you ask for any extras like repairs or upgrades? I'd love to hear how it went — your feedback helps me make the tool better for other renters.\n\n— James",
     };
   }
   return {
     subject: "How did your renewal go?",
-    text: "Hey — you used RenewalReply recently to check your rent increase. I'm the founder, and I'm curious: how did the renewal go? Did you end up negotiating, or did you sign as-is? Either way, I'd love to hear what happened — your feedback helps me make the tool better.\n\n— James",
+    text: "Hey — you used RenewalReply recently to check your rent increase. I'm the founder, and I'm curious: how did the renewal go? Did you end up negotiating or asking for anything? Either way, I'd love to hear what happened — your feedback helps me make the tool better.\n\n— James",
   };
 }
 
