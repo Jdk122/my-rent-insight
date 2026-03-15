@@ -154,13 +154,22 @@ describe('KNOWN LIMITATIONS — flip when fixed', () => {
   });
 
   it('Ceiling boundary: 15% increase with 10 gap — soft ceiling applies', () => {
-    const result = score({ increasePct: 15, marketYoY: 5 });
+    // Use below-market rent so raw score would exceed 65 without ceiling
+    const result = calculateFairnessScore({
+      increasePct: 15, marketYoY: 5,
+      proposedRent: 1150, currentRent: 1000,
+      compMedian: 1500, compCount: 10, fmr: 1400, zillowMonthly: 0.3,
+    });
     expect(result.total).toBeLessThanOrEqual(65);
     expect(result.extremeIncreaseCeilingApplied).toBe(true);
   });
 
   it('Ceiling boundary: 24.9% increase with 19.9 gap — soft ceiling only', () => {
-    const result = score({ increasePct: 24.9, marketYoY: 5 });
+    const result = calculateFairnessScore({
+      increasePct: 24.9, marketYoY: 5,
+      proposedRent: 1249, currentRent: 1000,
+      compMedian: 1600, compCount: 10, fmr: 1500, zillowMonthly: 0.3,
+    });
     expect(result.total).toBeLessThanOrEqual(65);
     expect(result.extremeIncreaseCeilingApplied).toBe(true);
   });
