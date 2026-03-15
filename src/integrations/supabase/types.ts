@@ -363,6 +363,7 @@ export type Database = {
           email: string
           fair_counter_offer: string | null
           fairness_score: number | null
+          first_captured_at: string | null
           followup_sent_at: string | null
           hud_fmr_value: number | null
           id: string
@@ -372,6 +373,7 @@ export type Database = {
           letter_generated: boolean | null
           letter_generated_at: string | null
           market_trend_pct: number | null
+          original_capture_source: string | null
           outcome: string | null
           partner_opt_in: boolean | null
           proposed_rent: number | null
@@ -400,6 +402,7 @@ export type Database = {
           email: string
           fair_counter_offer?: string | null
           fairness_score?: number | null
+          first_captured_at?: string | null
           followup_sent_at?: string | null
           hud_fmr_value?: number | null
           id?: string
@@ -409,6 +412,7 @@ export type Database = {
           letter_generated?: boolean | null
           letter_generated_at?: string | null
           market_trend_pct?: number | null
+          original_capture_source?: string | null
           outcome?: string | null
           partner_opt_in?: boolean | null
           proposed_rent?: number | null
@@ -437,6 +441,7 @@ export type Database = {
           email?: string
           fair_counter_offer?: string | null
           fairness_score?: number | null
+          first_captured_at?: string | null
           followup_sent_at?: string | null
           hud_fmr_value?: number | null
           id?: string
@@ -446,6 +451,7 @@ export type Database = {
           letter_generated?: boolean | null
           letter_generated_at?: string | null
           market_trend_pct?: number | null
+          original_capture_source?: string | null
           outcome?: string | null
           partner_opt_in?: boolean | null
           proposed_rent?: number | null
