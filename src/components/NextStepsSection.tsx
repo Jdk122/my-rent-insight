@@ -223,7 +223,7 @@ const NextStepsSection = ({
                 ]}
                 actionLabel="Get a Free Quote"
                 actionHref="https://www.lemonade.com/renters"
-                onAction={() => { trackEvent('insurance_quote_clicked'); logReferralClick('renters_insurance'); }}
+                onAction={() => { trackEvent('referral_clicked', { partner: 'insurance' }); logReferralClick('renters_insurance'); }}
                 recommended
                 delay={0.24}
               />
