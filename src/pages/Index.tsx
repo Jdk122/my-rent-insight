@@ -307,10 +307,10 @@ const Index = () => {
       ) : !results ? (
         <main className="max-w-[620px] mx-auto px-5 sm:px-6 pt-6 sm:pt-16 md:pt-24 pb-10 sm:pb-14">
           <h1 className="font-display text-[2.25rem] sm:text-[clamp(3rem,8vw,5rem)] text-foreground leading-[1.08] tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-            Is your rent increase <span className="text-primary">fair?</span>
+            Most renters overpay. Is your increase <span className="text-primary">above market?</span>
           </h1>
           <p className="mt-4 sm:mt-6 text-[15px] sm:text-lg md:text-xl text-muted-foreground max-w-[540px] leading-relaxed font-normal tracking-tight">
-            Most renters overpay by $50–150/month and don't know it. Enter your address, see if your landlord is overcharging you, and get a free negotiation letter<span className="text-primary font-medium no-underline"> — in 10 seconds.</span>
+            Real local comps, market trends, and a free negotiation letter<span className="text-primary font-medium no-underline"> — in 10 seconds.</span>
           </p>
           <section id="main-content" className="mt-5 sm:mt-10" aria-label="Rent increase checker">
             <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
