@@ -35,14 +35,9 @@ const SCORE = 47;
 const MARKER_D = markerPath(SCORE);
 
 const SampleResultCard = () => (
-  <div
-    className="hidden lg:block max-w-[320px]"
-    style={{
-      transform: 'rotate(-1.5deg)',
-    }}
-  >
+  <div className="hidden lg:flex justify-center">
     <div
-      className="bg-card rounded-xl px-5 pt-5 pb-4 border border-border/60"
+      className="max-w-[320px] w-full bg-card rounded-xl px-5 pt-5 pb-4 border border-border/60"
       style={{
         boxShadow: '0 8px 30px -8px rgba(0,0,0,0.12), 0 2px 8px -4px rgba(0,0,0,0.06)',
       }}
