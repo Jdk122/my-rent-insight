@@ -327,7 +327,7 @@ const Index = () => {
               </p>
 
               {/* Value props */}
-              <div className="mt-3 sm:mt-5 lg:mt-8 flex flex-col gap-1.5 sm:gap-2 lg:gap-5 max-w-[600px]">
+              <div className="mt-3 sm:mt-5 lg:mt-7 flex flex-col gap-1.5 sm:gap-2 lg:gap-3.5 max-w-[600px]">
                 <div className="flex items-start gap-2 lg:gap-3">
                   <span className="text-primary mt-0.5 shrink-0"><MessageSquareText size={15} className="lg:w-[22px] lg:h-[22px]" /></span>
                   <span className="text-[14px] lg:text-[clamp(17px,1.4vw,21px)] text-muted-foreground lg:text-foreground/55 leading-snug lg:whitespace-nowrap"><strong className="text-foreground font-bold">Negotiation letter</strong> backed by your local data</span>
@@ -343,18 +343,18 @@ const Index = () => {
               </div>
 
               <Suspense fallback={null}>
-                <div className="mt-4 sm:mt-6 lg:mt-8">
+                <div className="mt-4 sm:mt-5 lg:mt-7">
                   <SocialProofCounter />
                 </div>
               </Suspense>
 
               {/* Sample result preview — desktop only */}
-              <div className="hidden md:block mt-6">
+              <div className="hidden md:block mt-5 lg:mt-6">
                 <SampleResultCard />
               </div>
 
               {/* Data source bar — desktop only */}
-              <div className="hidden lg:block mt-6">
+              <div className="hidden lg:block mt-5">
                 <div className="border-t border-border/50 pt-4 pb-2 text-center">
                   <p className="text-[13px] text-muted-foreground/80 tracking-wide whitespace-nowrap">
                     Powered by: HUD FMR · Zillow ZORI · Apartment List · Live Comps · DHCR
