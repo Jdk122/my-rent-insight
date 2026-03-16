@@ -148,6 +148,7 @@ function getGateCopy(
       heading: `This unit looks overpriced by ~$${fmt(monthlySavings)}/month`,
           bulletA: 'See the comps behind that estimate',
           bulletB: 'Get a data-backed plan before you negotiate',
+          bulletC: 'See available apartments nearby that could save you money',
           cta: 'Email me my negotiation plan →',
           valueAnchor: `This could help you save ~$${fmt(monthlySavings * 12)}/year.`,
         };
@@ -156,6 +157,7 @@ function getGateCopy(
         heading: 'This asking rent is above market. Here\'s the proof.',
         bulletA: 'See the comps showing fair market rent',
         bulletB: 'Get a negotiation plan to get a better price',
+        bulletC: 'See available apartments nearby that could save you money',
         cta: 'Email me my negotiation plan →',
       };
     case 'fair':
