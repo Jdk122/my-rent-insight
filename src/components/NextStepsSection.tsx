@@ -253,7 +253,7 @@ const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedE
   }
 
   // Sort: below proposedRent first (cheapest first), then above (cheapest first)
-  const sorted = [...dedupedListings].sort((a, b) => {
+  const sorted = [...filteredListings].sort((a, b) => {
     const aBelow = a.rent < proposedRent ? 0 : 1;
     const bBelow = b.rent < proposedRent ? 0 : 1;
     if (aBelow !== bBelow) return aBelow - bBelow;
