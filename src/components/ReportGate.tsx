@@ -150,7 +150,7 @@ function getGateCopy(
           bulletB: 'Get a data-backed plan before you negotiate',
           bulletC: 'See available apartments nearby that could save you money',
           cta: 'Email me my negotiation plan →',
-          valueAnchor: `This could help you save ~$${fmt(monthlySavings * 12)}/year.`,
+          valueAnchor: `This could help you save ~$${fmt(monthlySavings * 12)}/year on your renewal.`,
         };
       }
       return {
