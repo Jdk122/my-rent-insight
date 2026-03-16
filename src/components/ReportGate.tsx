@@ -90,6 +90,7 @@ function getGateCopy(
     heading: `Your landlord is asking ~$${fmt(monthlyOverpayment)}/month above market. Here's the evidence.`,
             bulletA: compsCount > 0 ? `${compsCount} comparable units showing your landlord is charging above market` : 'Comparable units showing your landlord is charging above market',
             bulletB: 'A send-ready negotiation letter with your exact counter-offer built in',
+            bulletC: 'See available apartments nearby that could save you money',
             cta: 'Email me my counter-offer →',
             valueAnchor: `This could help you save ~$${fmt(monthlyOverpayment * 12)}/year.`,
           };
