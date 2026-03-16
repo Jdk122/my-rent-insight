@@ -25,6 +25,7 @@ interface NextStepsSectionProps {
   capturedEmail?: string;
   listings?: ActiveListing[];
   listingsLoading?: boolean;
+  compAddresses?: string[];
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
