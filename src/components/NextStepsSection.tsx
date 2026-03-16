@@ -341,6 +341,7 @@ const NextStepsSection = ({
               zip={zip}
               capturedEmail={capturedEmail}
               compAddresses={compAddresses}
+              onLogReferral={logReferralClick}
             />
 
             <ActionCard
