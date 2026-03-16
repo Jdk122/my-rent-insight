@@ -165,6 +165,7 @@ function getGateCopy(
         heading: 'Fair price confirmed. Get the full breakdown before you sign.',
         bulletA: 'See the nearby comps behind this result',
         bulletB: 'Get the full market context before you decide',
+        bulletC: 'Browse available apartments in your area',
         cta: 'Email me the full breakdown →',
       };
     case 'below':
