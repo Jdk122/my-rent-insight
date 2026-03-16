@@ -250,6 +250,7 @@ const Index = () => {
             <button
               onClick={() => {
                 document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' });
+              }}
               className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap"
             >
               <span className="hidden sm:inline">Copy your letter →</span>
