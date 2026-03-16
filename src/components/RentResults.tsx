@@ -1268,6 +1268,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 capturedEmail={capturedEmail}
                 listings={rentcastListings.data?.listings ?? []}
                 listingsLoading={rentcastListings.loading}
+                compAddresses={compsWithRent.map(c => c.formattedAddress)}
               />
             )}
 
