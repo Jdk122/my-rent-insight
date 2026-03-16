@@ -147,18 +147,21 @@ describe('5. County/metro ZORI waterfall', () => {
 
 // ─── 6. Dynamic weight redistribution ───
 
-describe('6. Dynamic weight redistribution', () => {
-  it('compCount=0: comps component not in visible components', () => {
+describe('6. Dynamic weight redistribution (v2.3 — continuous interpolation)', () => {
+  it('compCount=0 with no compConfidence: comps component has weight=15 (conf=0 interpolation)', () => {
     const result = calculateFairnessScore({
       ...base,
       compCount: 0,
       compMedian: null,
     });
     const compsComp = result.components.find(c => c.id === 'comps');
-    expect(compsComp).toBeUndefined();
+    // v2.3: at conf=0, compMax = 15 (not 0). Component is visible but estimated.
+    expect(compsComp).toBeDefined();
+    expect(compsComp!.max).toBe(15);
+    expect(compsComp!.estimated).toBe(true);
   });
 
-  it('compCount=5: comps max=30, rate max=35', () => {
+  it('compCount=5 without compConfidence: uses conf=0 default weights', () => {
     const result = calculateFairnessScore({
       ...base,
       compCount: 5,
@@ -166,7 +169,8 @@ describe('6. Dynamic weight redistribution', () => {
     });
     const compsComp = result.components.find(c => c.id === 'comps')!;
     const rateComp = result.components.find(c => c.id === 'rate')!;
-    expect(compsComp.max).toBe(30);
+    // v2.3: without compConfidence, conf=0 → compMax=15, rateMax=35
+    expect(compsComp.max).toBe(15);
     expect(rateComp.max).toBe(35);
   });
 });
@@ -191,12 +195,11 @@ describe('7. Tier boundary consistency', () => {
     });
   }
 
-  it('tier boundaries: 79→fair, 80→excellent', () => {
-    // With momentum=10, fmr=25, we need rate to produce specific scores
-    // rate max=65 when compCount=0. diff=0 → full 65. Total = 65+25+10 = 100
-    // We find increasePct values that land near boundaries by checking
-    const s0 = scoreWithIncrease(3); // diff=0 → rate=65 → total=100
-    expect(s0.total).toBe(100);
+  it('tier boundaries: verify tier mapping is correct', () => {
+    // v2.3: weight interpolation changed, so exact totals differ.
+    // Instead, verify the tier function works correctly at known boundaries.
+    const s0 = scoreWithIncrease(3);
+    expect(s0.total).toBeGreaterThanOrEqual(80);
     expect(s0.tier).toBe('excellent');
 
     // Verify tier labels at known boundaries

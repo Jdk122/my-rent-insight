@@ -55,16 +55,17 @@ describe('Component 5: Missing Zillow Default', () => {
 });
 
 // ─── FMR LABEL RENAME (Component 3) ───
+// v2.3: renamed to "Market Ceiling Check"
 
 describe('Component 3: FMR Label Rename', () => {
-  it('returns "Increase Reasonableness" when rent is below FMR upper', () => {
+  it('returns "Market Ceiling Check" when rent is below FMR upper', () => {
     const comp = getComponent({ ...baseInput, currentRent: 1500, fmr: 1800 }, 'fmr');
-    expect(comp.label).toBe('Increase Reasonableness');
+    expect(comp.label).toBe('Market Ceiling Check');
   });
 
-  it('returns "Increase Reasonableness" when rent exceeds FMR upper (fallback path)', () => {
+  it('returns "Market Ceiling Check" when rent exceeds FMR upper (fallback path)', () => {
     const comp = getComponent({ ...baseInput, currentRent: 4000, fmr: 1800 }, 'fmr');
-    expect(comp.label).toBe('Increase Reasonableness');
+    expect(comp.label).toBe('Market Ceiling Check');
   });
 
   it('never returns the old label "Rent vs. HUD Benchmark"', () => {
@@ -77,14 +78,17 @@ describe('Component 3: FMR Label Rename', () => {
     for (const overrides of scenarios) {
       const comp = getComponent({ ...baseInput, ...overrides }, 'fmr');
       expect(comp.label).not.toBe('Rent vs. HUD Benchmark');
+      expect(comp.label).not.toBe('Increase Reasonableness');
     }
   });
 });
 
 // ─── FMR DECLINING MARKET TIGHTENING (Component 3) ───
+// v2.3: fmrMax is now interpolated based on compConfidence. With no compConfidence
+// passed (defaults to conf=0), fmrMax = 40. Scores are scaled from rawScore/25 * 40.
 
 describe('Component 3: Declining Market Tightening', () => {
-  // currentRent=4000, fmr=1800 → currentRent > fmr*1.15 (2070), triggers fallback path
+  // currentRent=4000, fmr=1800 → currentRent > upper, triggers fallback path
   const highRentInput: FairnessScoreInput = {
     ...baseInput,
     currentRent: 4000,
@@ -93,42 +97,50 @@ describe('Component 3: Declining Market Tightening', () => {
   };
 
   describe('falling market (marketYoY = -2)', () => {
-    it('increasePct=3 → 19/25 (interpolated in 2-4% band)', () => {
+    it('increasePct=3 → score in falling 2-4% band (fmrMax=40)', () => {
       const comp = getComponent({ ...highRentInput, marketYoY: -2, increasePct: 3 }, 'fmr');
+      // rawScore = 23 - ((3-2)/2)*8 = 19, scaled: round(19/25 * 40) = 30
+      expect(comp.score).toBe(30);
+      expect(comp.max).toBe(40);
+    });
+
+    it('increasePct=5 → score in falling 4-7% band (fmrMax=40)', () => {
+      const comp = getComponent({ ...highRentInput, marketYoY: -2, increasePct: 5 }, 'fmr');
+      // rawScore = 15 - ((5-4)/3)*9 = 12, scaled: round(12/25 * 40) = 19
       expect(comp.score).toBe(19);
     });
 
-    it('increasePct=5 → 12/25 (interpolated in 4-7% band)', () => {
-      const comp = getComponent({ ...highRentInput, marketYoY: -2, increasePct: 5 }, 'fmr');
-      expect(comp.score).toBe(12);
-    });
-
-    it('increasePct=8 → 4/25 (interpolated in 7-10% band)', () => {
+    it('increasePct=8 → score in falling 7-10% band (fmrMax=40)', () => {
       const comp = getComponent({ ...highRentInput, marketYoY: -2, increasePct: 8 }, 'fmr');
-      expect(comp.score).toBe(4);
+      // rawScore = 6 - ((8-7)/3)*6 = 4, scaled: round(4/25 * 40) = 6
+      expect(comp.score).toBe(6);
     });
   });
 
   describe('rising market (marketYoY = +2)', () => {
-    it('increasePct=3 → 23/25 (falls in <=3% band)', () => {
+    it('increasePct=3 → score in <=3% band (fmrMax=40)', () => {
       const comp = getComponent({ ...highRentInput, marketYoY: 2, increasePct: 3 }, 'fmr');
-      expect(comp.score).toBe(23);
+      // rawScore = 25 - (3/3)*2 = 23, scaled: round(23/25 * 40) = 37
+      expect(comp.score).toBe(37);
     });
 
-    it('increasePct=5 → 18/25 (interpolated in 3-6% band)', () => {
+    it('increasePct=5 → score in 3-6% band (fmrMax=40)', () => {
       const comp = getComponent({ ...highRentInput, marketYoY: 2, increasePct: 5 }, 'fmr');
-      expect(comp.score).toBe(18);
+      // rawScore = 23 - ((5-3)/3)*8 ≈ 17.67, scaled: round(17.67/25 * 40) = 28
+      expect(comp.score).toBe(28);
     });
 
-    it('increasePct=8 → 11/25 (interpolated in 6-10% band)', () => {
+    it('increasePct=8 → score in 6-10% band (fmrMax=40)', () => {
       const comp = getComponent({ ...highRentInput, marketYoY: 2, increasePct: 8 }, 'fmr');
-      expect(comp.score).toBe(11);
+      // rawScore = 15 - ((8-6)/4)*9 = 10.5, scaled: round(10.5/25 * 40) = 17
+      expect(comp.score).toBe(17);
     });
   });
 
-  it('marketYoY=0 (flat) uses rising breakpoints: increasePct=5 → 18/25 (interpolated)', () => {
+  it('marketYoY=0 (flat) uses rising breakpoints: increasePct=5 → scaled to fmrMax=40', () => {
     const comp = getComponent({ ...highRentInput, marketYoY: 0, increasePct: 5 }, 'fmr');
-    expect(comp.score).toBe(18);
+    // Same as rising: rawScore ≈ 17.67, scaled: round(17.67/25 * 40) = 28
+    expect(comp.score).toBe(28);
   });
 });
 

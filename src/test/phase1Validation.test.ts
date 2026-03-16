@@ -31,7 +31,7 @@ const cases: TestCase[] = [
       increasePct: 7, marketYoY: -1.5, proposedRent: 4280, currentRent: 4000,
       fmr: 1900, compMedian: 3800, zillowMonthly: null,
     },
-    expectations: { comp3Score: 6, comp5Score: 5 },
+    expectations: { comp3Score: 10, comp5Score: 5 },
   },
   {
     name: 'Case 3 - Fair increase, has Zillow data',
@@ -47,7 +47,7 @@ const cases: TestCase[] = [
       increasePct: 0, marketYoY: 2, proposedRent: 1800, currentRent: 1800,
       fmr: 1600, compMedian: 1750, zillowMonthly: 0.2,
     },
-    expectations: { comp3Label: 'Increase Reasonableness' },
+    expectations: { comp3Label: 'Market Ceiling Check' },
   },
   {
     name: 'Case 5 - Renter far above market, counter-offer check',
