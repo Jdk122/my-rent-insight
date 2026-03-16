@@ -111,6 +111,7 @@ function getGateCopy(
           heading: 'Your increase exceeds the local market. Here\'s what to send your landlord.',
           bulletA: compsCount > 0 ? `${compsCount} comparable units showing what your neighbors actually pay` : 'Comparable units showing what your neighbors actually pay',
           bulletB: 'A landlord-ready negotiation letter you can send this week',
+          bulletC: 'See available apartments nearby that could save you money',
           cta: 'Email me my counter-offer →',
         };
       case 'at-market':
