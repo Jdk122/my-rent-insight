@@ -180,6 +180,7 @@ function getGateCopy(
         heading: 'Your fair rent range is ready',
         bulletA: 'Comparable rentals near you',
         bulletB: 'A fair price range to negotiate with confidence',
+        bulletC: 'Browse available apartments in your area',
         cta: 'Email me my market report →',
       };
   }
