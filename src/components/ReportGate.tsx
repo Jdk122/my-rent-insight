@@ -119,6 +119,7 @@ function getGateCopy(
           heading: 'Your rent is fair — but you still have leverage. Here\'s the proof.',
           bulletA: compsCount > 0 ? `${compsCount} comparable units — see exactly where you stand` : 'Comparable units — see exactly where you stand',
           bulletB: 'A ready-to-send renewal response that protects your position',
+          bulletC: 'Browse available apartments in your area',
           cta: 'Email me my full report →',
         };
       case 'below':
