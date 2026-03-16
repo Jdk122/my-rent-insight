@@ -122,9 +122,10 @@ interface ListingCardProps {
   listing: ActiveListing;
   proposedRent: number;
   zip: string;
+  isBestValue?: boolean;
 }
 
-const ListingCard = ({ listing, proposedRent, zip }: ListingCardProps) => {
+const ListingCard = ({ listing, proposedRent, zip, isBestValue }: ListingCardProps) => {
   const savings = proposedRent - listing.rent;
   const hasSavings = savings > 0;
 
@@ -135,7 +136,7 @@ const ListingCard = ({ listing, proposedRent, zip }: ListingCardProps) => {
   if (listing.daysOnMarket != null) meta.push(`Listed ${listing.daysOnMarket} days ago`);
 
   const ctaUrl = listing.listingUrl || `https://www.zillow.com/homes/${encodeURIComponent(listing.formattedAddress)}`;
-  const ctaLabel = listing.listingUrl ? 'View listing' : 'Search this address on Zillow';
+  const ctaLabel = listing.listingUrl ? 'View listing' : 'Search on Zillow';
 
   const handleClick = () => {
     trackEvent('listing_clicked', {
@@ -148,35 +149,37 @@ const ListingCard = ({ listing, proposedRent, zip }: ListingCardProps) => {
   };
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4 transition-shadow duration-200 hover:shadow-md">
-      <div className="flex items-start gap-3">
-        <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center shrink-0 mt-0.5">
-          <MapPin className="w-4 h-4 text-muted-foreground" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-[15px] font-semibold text-foreground leading-tight truncate">{listing.formattedAddress}</p>
-          {meta.length > 0 && (
-            <p className="text-[13px] text-muted-foreground mt-0.5">{meta.join(' · ')}</p>
-          )}
-          <div className="flex items-center gap-2 mt-2">
-            <span className="text-[15px] font-semibold text-foreground">${fmt(listing.rent)}/mo</span>
-            {hasSavings && (
-              <span className="text-[11px] font-semibold bg-green-50 text-green-700 border border-green-200 rounded-full px-2 py-0.5">
-                Save ${fmt(savings)}/mo
-              </span>
-            )}
-          </div>
-          <a
-            href={ctaUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={handleClick}
-            className="inline-flex items-center gap-1 text-[13px] font-semibold text-primary hover:text-primary/80 transition-colors mt-2"
-          >
-            {ctaLabel} <ArrowRight className="w-3.5 h-3.5" />
-          </a>
-        </div>
+    <div className={`rounded-xl border bg-card p-4 transition-all duration-200 hover:shadow-md hover:border-primary/20 ${
+      hasSavings ? 'border-l-4 border-l-emerald-400 border-t border-r border-b border-border' : 'border-border'
+    }`}>
+      <div className="flex flex-wrap items-center gap-2 mb-1">
+        <p className="text-[15px] font-semibold text-foreground leading-tight">{listing.formattedAddress}</p>
+        {isBestValue && (
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-700 bg-emerald-50 rounded-full px-2 py-0.5 shrink-0">
+            Best Value
+          </span>
+        )}
       </div>
+      {meta.length > 0 && (
+        <p className="text-[13px] text-muted-foreground mb-3">{meta.join(' · ')}</p>
+      )}
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-[15px] font-semibold text-foreground">${fmt(listing.rent)}/mo</span>
+        {hasSavings && (
+          <span className="text-[13px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-2.5 py-1">
+            Save ${fmt(savings)}/mo
+          </span>
+        )}
+      </div>
+      <a
+        href={ctaUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={handleClick}
+        className="inline-flex items-center gap-1 text-[13px] font-semibold text-primary hover:text-primary/80 transition-colors"
+      >
+        {ctaLabel} <ArrowRight className="w-3.5 h-3.5" />
+      </a>
     </div>
   );
 };
