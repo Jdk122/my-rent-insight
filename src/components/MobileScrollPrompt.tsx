@@ -219,7 +219,7 @@ const MobileScrollPrompt = ({
     setOpen(false);
   };
 
-  if (!open || cookieVisible) return null;
+  if (!open) return null;
 
   return (
     <>
