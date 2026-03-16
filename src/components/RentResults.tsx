@@ -30,6 +30,7 @@ import { calculateCompositeTrend } from '@/lib/compositeTrend';
 import FairnessScoreGauge, { ComponentSourceInfo } from './FairnessScoreGauge';
 import MarketSnapshot from './MarketSnapshot';
 import NextStepsSection from './NextStepsSection';
+import { useRentcastListings } from '@/hooks/useRentcastListings';
 import ExitIntentModal from './ExitIntentModal';
 import MobileScrollPrompt from './MobileScrollPrompt';
 import PostConversionFlow from './PostConversionFlow';
@@ -310,6 +311,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const isAboveMarket = effectiveVerdict === 'above';
   const isFair = effectiveVerdict === 'at-market';
   const isBelowMarket = effectiveVerdict === 'below';
+
+  const rentcastListings = useRentcastListings(
+    rentData.zip,
+    bedroomNum,
+    analysisId,
+    !!capturedEmail && isAboveMarket,
+  );
 
   useEffect(() => {
     if (effectiveVerdict) onVerdictReady?.(isAboveMarket);
@@ -1258,6 +1266,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 }}
                 analysisId={analysisId}
                 capturedEmail={capturedEmail}
+                listings={rentcastListings.data?.listings ?? []}
+                listingsLoading={rentcastListings.loading}
               />
             )}
 

@@ -1,9 +1,10 @@
 import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Building, Truck, Key, Shield, Share2, ArrowRight } from 'lucide-react';
+import { Truck, Key, Shield, Share2, ArrowRight, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
 import { trackEvent } from '@/lib/analytics';
 import { supabase } from '@/integrations/supabase/client';
-import AgentLeadModal from './AgentLeadModal';
+import { Skeleton } from '@/components/ui/skeleton';
+import type { ActiveListing } from '@/hooks/useRentcastListings';
 
 interface NextStepsSectionProps {
   isAboveMarket: boolean;
@@ -22,17 +23,19 @@ interface NextStepsSectionProps {
   onShareClick?: () => void;
   analysisId?: string | null;
   capturedEmail?: string;
+  listings?: ActiveListing[];
+  listingsLoading?: boolean;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
-
-const bedroomLabel = (n: number) => (n === 0 ? 'studios' : n === 1 ? '1-bedrooms' : `${n}-bedrooms`);
 
 const fade = (delay: number) => ({
   initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.45, delay, ease: [0.16, 1, 0.3, 1] as const },
 });
+
+/* ── ActionCard (reused for Moving / Mortgage / Insurance / Share) ── */
 
 interface ActionCardProps {
   icon: React.ReactNode;
@@ -112,6 +115,153 @@ const ActionCard = ({ icon, title, description, stats, actionLabel, actionHref, 
   </motion.div>
 );
 
+/* ── Listing card ── */
+
+interface ListingCardProps {
+  listing: ActiveListing;
+  proposedRent: number;
+  zip: string;
+}
+
+const ListingCard = ({ listing, proposedRent, zip }: ListingCardProps) => {
+  const savings = proposedRent - listing.rent;
+  const hasSavings = savings > 0;
+
+  const meta: string[] = [];
+  if (listing.bedrooms != null) meta.push(`${listing.bedrooms === 0 ? 'Studio' : `${listing.bedrooms} bed`}`);
+  if (listing.bathrooms != null) meta.push(`${listing.bathrooms} bath`);
+  if (listing.squareFootage != null) meta.push(`${fmt(listing.squareFootage)} sqft`);
+  if (listing.daysOnMarket != null) meta.push(`Listed ${listing.daysOnMarket} days ago`);
+
+  const ctaUrl = listing.listingUrl || `https://www.zillow.com/homes/${encodeURIComponent(listing.formattedAddress)}`;
+  const ctaLabel = listing.listingUrl ? 'View listing' : 'Search this address on Zillow';
+
+  const handleClick = () => {
+    trackEvent('listing_clicked', {
+      zip,
+      listing_address: listing.formattedAddress,
+      listing_rent: listing.rent,
+      savings: Math.max(0, savings),
+      had_direct_url: !!listing.listingUrl,
+    });
+  };
+
+  return (
+    <div className="rounded-xl border border-border bg-card p-4 transition-shadow duration-200 hover:shadow-md">
+      <div className="flex items-start gap-3">
+        <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center shrink-0 mt-0.5">
+          <MapPin className="w-4 h-4 text-muted-foreground" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-[15px] font-semibold text-foreground leading-tight truncate">{listing.formattedAddress}</p>
+          {meta.length > 0 && (
+            <p className="text-[13px] text-muted-foreground mt-0.5">{meta.join(' · ')}</p>
+          )}
+          <div className="flex items-center gap-2 mt-2">
+            <span className="text-[15px] font-semibold text-foreground">${fmt(listing.rent)}/mo</span>
+            {hasSavings && (
+              <span className="text-[11px] font-semibold bg-green-50 text-green-700 border border-green-200 rounded-full px-2 py-0.5">
+                Save ${fmt(savings)}/mo
+              </span>
+            )}
+          </div>
+          <a
+            href={ctaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={handleClick}
+            className="inline-flex items-center gap-1 text-[13px] font-semibold text-primary hover:text-primary/80 transition-colors mt-2"
+          >
+            {ctaLabel} <ArrowRight className="w-3.5 h-3.5" />
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ── Browse links ── */
+
+const BrowseLinks = ({ zip }: { zip: string }) => (
+  <p className="text-[13px] text-muted-foreground mt-3">
+    Browse more:{' '}
+    <a href={`https://www.zillow.com/homes/for_rent/${zip}_rb/`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Zillow</a>
+    {' · '}
+    <a href={`https://www.apartments.com/${zip}/`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Apartments.com</a>
+  </p>
+);
+
+/* ── Listings block ── */
+
+interface ListingsBlockProps {
+  listings: ActiveListing[];
+  listingsLoading: boolean;
+  proposedRent: number;
+  zip: string;
+  capturedEmail?: string;
+}
+
+const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedEmail }: ListingsBlockProps) => {
+  const [expanded, setExpanded] = useState(false);
+
+  // Don't render anything if gate not unlocked
+  if (!capturedEmail) return null;
+
+  // Loading skeleton
+  if (listingsLoading) {
+    return (
+      <motion.div {...fade(0.24)} className="space-y-2">
+        <p className="text-[14px] font-semibold text-muted-foreground animate-pulse">Finding available apartments near you...</p>
+        {[0, 1, 2].map(i => (
+          <Skeleton key={i} className="h-[100px] w-full rounded-xl" />
+        ))}
+      </motion.div>
+    );
+  }
+
+  // Empty state
+  if (!listings.length) {
+    return (
+      <motion.div {...fade(0.24)}>
+        <p className="text-[13px] text-muted-foreground">No active listings found in your area right now. New apartments are listed daily — check back soon.</p>
+        <BrowseLinks zip={zip} />
+      </motion.div>
+    );
+  }
+
+  const hasAnyCheaper = listings.some(l => l.rent < proposedRent);
+  const heading = hasAnyCheaper
+    ? 'Available apartments nearby that could save you money'
+    : 'Available apartments nearby';
+
+  const visible = expanded ? listings : listings.slice(0, 3);
+  const hasMore = listings.length > 3;
+
+  return (
+    <motion.div {...fade(0.24)} className="space-y-2">
+      <h3 className="text-[15px] font-semibold text-foreground">{heading}</h3>
+      {visible.map((l, i) => (
+        <ListingCard key={i} listing={l} proposedRent={proposedRent} zip={zip} />
+      ))}
+      {hasMore && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="inline-flex items-center gap-1 text-[13px] font-semibold text-muted-foreground hover:text-foreground transition-colors"
+        >
+          {expanded ? (
+            <>Show fewer <ChevronUp className="w-3.5 h-3.5" /></>
+          ) : (
+            <>Show more apartments <ChevronDown className="w-3.5 h-3.5" /></>
+          )}
+        </button>
+      )}
+      <BrowseLinks zip={zip} />
+    </motion.div>
+  );
+};
+
+/* ── Main section ── */
+
 const NextStepsSection = ({
   isAboveMarket,
   fairnessScore,
@@ -129,9 +279,9 @@ const NextStepsSection = ({
   onShareClick,
   analysisId,
   capturedEmail,
+  listings,
+  listingsLoading,
 }: NextStepsSectionProps) => {
-  const [modalOpen, setModalOpen] = useState(false);
-
   const logReferralClick = useCallback((linkType: string) => {
     supabase.from('referral_clicks').insert({
       analysis_id: analysisId ?? null,
@@ -141,7 +291,6 @@ const NextStepsSection = ({
     } as any).then(() => {});
   }, [analysisId, capturedEmail, zip]);
 
-  const savings = compMedianRent ? Math.round(proposedRent - compMedianRent) : null;
   const estimatedHomePrice = Math.round(currentRent * 200);
   const overpaymentDisplay = dollarOverpayment && dollarOverpayment > 0 ? dollarOverpayment : null;
 
@@ -152,124 +301,97 @@ const NextStepsSection = ({
     : `Your rent looks fair — here's how to stay protected`;
 
   return (
-    <>
-      <motion.section id="section-next-steps" {...fade(0.22)} className="pt-10 pb-6">
-        <div className="border-t border-border/60 pt-8 mb-6">
-          <h2 className="text-xl font-semibold text-foreground tracking-tight">{heading}</h2>
-        </div>
+    <motion.section id="section-next-steps" {...fade(0.22)} className="pt-10 pb-6">
+      <div className="border-t border-border/60 pt-8 mb-6">
+        <h2 className="text-xl font-semibold text-foreground tracking-tight">{heading}</h2>
+      </div>
 
-        <div className="space-y-3">
-          {isAboveMarket ? (
-            <>
-              <ActionCard
-                icon={<Building className="w-5 h-5" />}
-                title="See Apartments in Your Budget"
-                description="View listings and compare to what you're being asked to pay."
-                stats={[
-                  ...(compMedianRent
-                    ? [{ label: `Median ${bedroomLabel(bedrooms)} in ${city}`, value: `$${fmt(compMedianRent)}/mo` }]
-                    : []),
-                  ...(savings && savings > 0
-                    ? [{ label: 'Potential savings', value: `~$${fmt(savings)}/mo` }]
-                    : []),
-                ]}
-                actionLabel="Get Matched Free"
-                onAction={() => {
-                  setModalOpen(true);
-                  trackEvent('referral_clicked', { partner: 'agent', zip });
-                  logReferralClick('agent_matching');
-                }}
-                recommended
-                delay={0.24}
-              />
+      <div className="space-y-3">
+        {isAboveMarket ? (
+          <>
+            {/* Real listings block (replaces old "See Apartments" placeholder) */}
+            <ListingsBlock
+              listings={listings ?? []}
+              listingsLoading={!!listingsLoading}
+              proposedRent={proposedRent}
+              zip={zip}
+              capturedEmail={capturedEmail}
+            />
 
-              <ActionCard
-                icon={<Truck className="w-5 h-5" />}
-                title="Get Free Moving Quotes"
-                description="Compare vetted movers before you commit to a renewal."
-                stats={[
-                  { label: `Typical move in ${state}`, value: '$1,200–$2,500' },
-                  { label: 'Quote turnaround', value: 'Often same day' },
-                ]}
-                actionLabel="Compare Movers"
-                actionHref="https://www.moving.com/movers/"
-                onAction={() => { trackEvent('referral_clicked', { partner: 'moving' }); logReferralClick('moving_quotes'); }}
-                delay={0.28}
-              />
+            <ActionCard
+              icon={<Truck className="w-5 h-5" />}
+              title="Get Free Moving Quotes"
+              description="Compare vetted movers before you commit to a renewal."
+              stats={[
+                { label: `Typical move in ${state}`, value: '$1,200–$2,500' },
+                { label: 'Quote turnaround', value: 'Often same day' },
+              ]}
+              actionLabel="Compare Movers"
+              actionHref="https://www.moving.com/movers/"
+              onAction={() => { trackEvent('referral_clicked', { partner: 'moving' }); logReferralClick('moving_quotes'); }}
+              delay={0.28}
+            />
 
-              <ActionCard
-                icon={<Key className="w-5 h-5" />}
-                title="Could You Buy Instead?"
-                description="Run a quick affordability check with current mortgage assumptions."
-                stats={[
-                  { label: 'Estimated buying power', value: `$${fmt(estimatedHomePrice)}` },
-                  { label: 'Based on current rent', value: `$${fmt(currentRent)}/mo` },
-                ]}
-                actionLabel="Check Rates"
-                actionHref="https://www.bankrate.com/mortgages/mortgage-calculator/"
-                onAction={() => { trackEvent('referral_clicked', { partner: 'mortgage' }); logReferralClick('mortgage_check'); }}
-                delay={0.32}
-              />
-            </>
-          ) : (
-            <>
-              <ActionCard
-                icon={<Shield className="w-5 h-5" />}
-                title="Protect Your Home"
-                description="Renters insurance can cover theft, accidental damage, and liability."
-                stats={[
-                  { label: 'Typical starting cost', value: 'From $5/mo' },
-                  { label: 'Setup time', value: 'A few minutes' },
-                ]}
-                actionLabel="Get a Free Quote"
-                actionHref="https://www.lemonade.com/renters"
-                onAction={() => { trackEvent('referral_clicked', { partner: 'insurance' }); logReferralClick('renters_insurance'); }}
-                recommended
-                delay={0.24}
-              />
+            <ActionCard
+              icon={<Key className="w-5 h-5" />}
+              title="Could You Buy Instead?"
+              description="Run a quick affordability check with current mortgage assumptions."
+              stats={[
+                { label: 'Estimated buying power', value: `$${fmt(estimatedHomePrice)}` },
+                { label: 'Based on current rent', value: `$${fmt(currentRent)}/mo` },
+              ]}
+              actionLabel="Check Rates"
+              actionHref="https://www.bankrate.com/mortgages/mortgage-calculator/"
+              onAction={() => { trackEvent('referral_clicked', { partner: 'mortgage' }); logReferralClick('mortgage_check'); }}
+              delay={0.32}
+            />
+          </>
+        ) : (
+          <>
+            <ActionCard
+              icon={<Shield className="w-5 h-5" />}
+              title="Protect Your Home"
+              description="Renters insurance can cover theft, accidental damage, and liability."
+              stats={[
+                { label: 'Typical starting cost', value: 'From $5/mo' },
+                { label: 'Setup time', value: 'A few minutes' },
+              ]}
+              actionLabel="Get a Free Quote"
+              actionHref="https://www.lemonade.com/renters"
+              onAction={() => { trackEvent('referral_clicked', { partner: 'insurance' }); logReferralClick('renters_insurance'); }}
+              recommended
+              delay={0.24}
+            />
 
-              <ActionCard
-                icon={<Share2 className="w-5 h-5" />}
-                title="Share With Your Neighbors"
-                description="Know someone dealing with a rent increase? Send them this tool."
-                stats={[]}
-                actionLabel="Share Results"
-                onAction={() => {
-                  trackEvent('report_shared', { method: 'share_button' });
-                  onShareClick?.();
-                }}
-                delay={0.28}
-              />
-            </>
-          )}
-        </div>
+            <ActionCard
+              icon={<Share2 className="w-5 h-5" />}
+              title="Share With Your Neighbors"
+              description="Know someone dealing with a rent increase? Send them this tool."
+              stats={[]}
+              actionLabel="Share Results"
+              onAction={() => {
+                trackEvent('report_shared', { method: 'share_button' });
+                onShareClick?.();
+              }}
+              delay={0.28}
+            />
+          </>
+        )}
+      </div>
 
-        <div className="mt-4 flex items-center justify-between rounded-xl border border-border bg-secondary/60 px-4 py-3">
-          <span className="text-[13px] text-muted-foreground">At ${fmt(currentRent)}/mo in rent, you might be able to own.</span>
-          <a
-            href="https://www.bankrate.com/mortgages/mortgage-calculator/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[13px] font-medium text-primary hover:underline inline-flex items-center gap-1 shrink-0"
-            onClick={() => { trackEvent('referral_clicked', { partner: 'mortgage_banner' }); logReferralClick('mortgage_banner'); }}
-          >
-            See if you qualify <ArrowRight className="w-3 h-3" />
-          </a>
-        </div>
-      </motion.section>
-
-      <AgentLeadModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        prefillBedrooms={bedrooms}
-        zip={zip}
-        currentRent={currentRent}
-        proposedRent={proposedRent}
-        propertyType={propertyType}
-        verdictLabel={verdictLabel}
-        fairnessScore={fairnessScore}
-      />
-    </>
+      <div className="mt-4 flex items-center justify-between rounded-xl border border-border bg-secondary/60 px-4 py-3">
+        <span className="text-[13px] text-muted-foreground">At ${fmt(currentRent)}/mo in rent, you might be able to own.</span>
+        <a
+          href="https://www.bankrate.com/mortgages/mortgage-calculator/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[13px] font-medium text-primary hover:underline inline-flex items-center gap-1 shrink-0"
+          onClick={() => { trackEvent('referral_clicked', { partner: 'mortgage_banner' }); logReferralClick('mortgage_banner'); }}
+        >
+          See if you qualify <ArrowRight className="w-3 h-3" />
+        </a>
+      </div>
+    </motion.section>
   );
 };
 
