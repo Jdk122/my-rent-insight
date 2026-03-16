@@ -199,7 +199,7 @@ const Index = () => {
                 "name": "How many zip codes does RenewalReply cover?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "RenewalReply covers 38,600+ US zip codes using HUD Fair Market Rent data, making it one of the most comprehensive rent fairness tools available."
+                  "text": "RenewalReply covers 38,600+ US zip codes using real nearby listings, Zillow rent trends, and HUD Fair Market Rent data, making it one of the most comprehensive rent fairness tools available."
                 }
               }
             ]
