@@ -238,9 +238,12 @@ const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedE
     l => !!l.formattedAddress && !compSet.has(l.formattedAddress.toLowerCase().replace(/\s+/g, ' ').trim())
   );
 
-  // Empty state: no listings OR none cheaper than proposed rent
-  const hasAnyCheaper = dedupedListings.some(l => l.rent < proposedRent);
-  if (!dedupedListings.length || !hasAnyCheaper) {
+  // For above-market: only show cheaper listings; for at-market: show all
+  const filteredListings = isAboveMarket
+    ? dedupedListings.filter(l => l.rent < proposedRent)
+    : dedupedListings;
+
+  if (!filteredListings.length) {
     return (
       <motion.div {...fade(0.24)}>
         <p className="text-[13px] text-muted-foreground">No active listings found in your area right now. New apartments are listed daily — check back soon.</p>
