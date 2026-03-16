@@ -207,6 +207,7 @@ interface ListingsBlockProps {
   capturedEmail?: string;
   compAddresses?: string[];
   onLogReferral?: (linkType: string) => void;
+  isAboveMarket?: boolean;
 }
 
 const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedEmail, compAddresses, onLogReferral }: ListingsBlockProps) => {
