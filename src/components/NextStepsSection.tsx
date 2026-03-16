@@ -264,7 +264,7 @@ const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedE
     <motion.div {...fade(0.24)} className="space-y-2">
       <h3 className="text-[15px] font-semibold text-foreground">Available apartments nearby that could save you money</h3>
       {visible.map((l, i) => (
-        <ListingCard key={i} listing={l} proposedRent={proposedRent} zip={zip} isBestValue={i === 0 && firstIsBestValue} />
+        <ListingCard key={i} listing={l} proposedRent={proposedRent} zip={zip} isBestValue={i === 0 && firstIsBestValue} onLogReferral={() => onLogReferral?.('listing_click')} />
       ))}
       {hasMore && (
         <button
