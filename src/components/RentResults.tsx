@@ -312,6 +312,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const isFair = effectiveVerdict === 'at-market';
   const isBelowMarket = effectiveVerdict === 'below';
 
+  const rentcastListings = useRentcastListings(
+    rentData.zip,
+    bedroomNum,
+    analysisId,
+    !!capturedEmail && isAboveMarket,
+  );
+
   useEffect(() => {
     if (effectiveVerdict) onVerdictReady?.(isAboveMarket);
   }, [effectiveVerdict]);
