@@ -79,6 +79,7 @@ function getGateCopy(
         heading,
         bulletA: 'See the comps showing your rent is already fair — and why the increase isn\'t',
         bulletB: 'Get a landlord-ready letter that says yes to renewing — but no to the increase',
+        bulletC: 'See available apartments nearby that could save you money',
         cta: 'Email me my negotiation plan →',
       };
     }
@@ -89,6 +90,7 @@ function getGateCopy(
     heading: `Your landlord is asking ~$${fmt(monthlyOverpayment)}/month above market. Here's the evidence.`,
             bulletA: compsCount > 0 ? `${compsCount} comparable units showing your landlord is charging above market` : 'Comparable units showing your landlord is charging above market',
             bulletB: 'A send-ready negotiation letter with your exact counter-offer built in',
+            bulletC: 'See available apartments nearby that could save you money',
             cta: 'Email me my counter-offer →',
             valueAnchor: `This could help you save ~$${fmt(monthlyOverpayment * 12)}/year.`,
           };
@@ -101,6 +103,7 @@ function getGateCopy(
             heading: `Your landlord wants ${increaseText}% — the market moved ${marketText}%. Here's what to send them.`,
             bulletA: compsCount > 0 ? `${compsCount} comparable units showing what your neighbors actually pay` : 'Comparable units showing what your neighbors actually pay',
             bulletB: 'A landlord-ready negotiation letter you can send this week',
+            bulletC: 'See available apartments nearby that could save you money',
             cta: 'Email me my counter-offer →',
           };
         }
@@ -108,6 +111,7 @@ function getGateCopy(
           heading: 'Your increase exceeds the local market. Here\'s what to send your landlord.',
           bulletA: compsCount > 0 ? `${compsCount} comparable units showing what your neighbors actually pay` : 'Comparable units showing what your neighbors actually pay',
           bulletB: 'A landlord-ready negotiation letter you can send this week',
+          bulletC: 'See available apartments nearby that could save you money',
           cta: 'Email me my counter-offer →',
         };
       case 'at-market':
@@ -115,6 +119,7 @@ function getGateCopy(
           heading: 'Your rent is fair — but you still have leverage. Here\'s the proof.',
           bulletA: compsCount > 0 ? `${compsCount} comparable units — see exactly where you stand` : 'Comparable units — see exactly where you stand',
           bulletB: 'A ready-to-send renewal response that protects your position',
+          bulletC: 'Browse available apartments in your area',
           cta: 'Email me my full report →',
         };
       case 'below':
@@ -129,6 +134,7 @@ function getGateCopy(
           heading: 'Your rent isn\'t going up — do you know what you\'d pay if you moved?',
           bulletA: compsCount > 0 ? `See how your current rent stacks up against ${compsCount} nearby listings` : 'See how your current rent stacks up against nearby listings',
           bulletB: 'A market snapshot to keep in your back pocket for next year\'s renewal',
+          bulletC: 'Browse available apartments in your area',
           cta: 'Email me my market report →',
         };
     }
@@ -142,6 +148,7 @@ function getGateCopy(
       heading: `This unit looks overpriced by ~$${fmt(monthlySavings)}/month`,
           bulletA: 'See the comps behind that estimate',
           bulletB: 'Get a data-backed plan before you negotiate',
+          bulletC: 'See available apartments nearby that could save you money',
           cta: 'Email me my negotiation plan →',
           valueAnchor: `This could help you save ~$${fmt(monthlySavings * 12)}/year.`,
         };
@@ -150,6 +157,7 @@ function getGateCopy(
         heading: 'This asking rent is above market. Here\'s the proof.',
         bulletA: 'See the comps showing fair market rent',
         bulletB: 'Get a negotiation plan to get a better price',
+        bulletC: 'See available apartments nearby that could save you money',
         cta: 'Email me my negotiation plan →',
       };
     case 'fair':
@@ -157,6 +165,7 @@ function getGateCopy(
         heading: 'Fair price confirmed. Get the full breakdown before you sign.',
         bulletA: 'See the nearby comps behind this result',
         bulletB: 'Get the full market context before you decide',
+        bulletC: 'Browse available apartments in your area',
         cta: 'Email me the full breakdown →',
       };
     case 'below':
@@ -171,6 +180,7 @@ function getGateCopy(
         heading: 'Your fair rent range is ready',
         bulletA: 'Comparable rentals near you',
         bulletB: 'A fair price range to negotiate with confidence',
+        bulletC: 'Browse available apartments in your area',
         cta: 'Email me my market report →',
       };
   }
@@ -349,7 +359,7 @@ const ReportGate = ({
         {copy.heading}
       </h2>
       <div className="text-sm text-muted-foreground mb-6 max-w-[440px] mx-auto text-left space-y-1.5">
-        {[copy.bulletA, copy.bulletB].map((item, i) => (
+        {[copy.bulletA, copy.bulletB, copy.bulletC].filter(Boolean).map((item, i) => (
           <div key={i} className="flex items-start gap-2">
             <span className="text-primary shrink-0 mt-0.5 font-semibold">✓</span>
             <span className="leading-relaxed font-medium">{item}</span>
