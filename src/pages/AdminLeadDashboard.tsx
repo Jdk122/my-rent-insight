@@ -532,6 +532,7 @@ function DashboardContent() {
                         mortgage_check: '🔑 Mortgage',
                         renters_insurance: '🛡️ Insurance',
                         mortgage_banner: '🏦 Mortgage Banner',
+                        listing_click: '🏘️ Listing',
                       };
                       return (
                         <tr key={c.id} className="border-b border-border/50 hover:bg-muted/30">
