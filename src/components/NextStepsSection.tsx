@@ -210,7 +210,7 @@ interface ListingsBlockProps {
   isAboveMarket?: boolean;
 }
 
-const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedEmail, compAddresses, onLogReferral }: ListingsBlockProps) => {
+const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedEmail, compAddresses, onLogReferral, isAboveMarket = true }: ListingsBlockProps) => {
   const [expanded, setExpanded] = useState(false);
 
   // Don't render anything if gate not unlocked
