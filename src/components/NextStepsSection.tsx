@@ -350,6 +350,7 @@ const NextStepsSection = ({
               capturedEmail={capturedEmail}
               compAddresses={compAddresses}
               onLogReferral={logReferralClick}
+              isAboveMarket={true}
             />
 
             <ActionCard
