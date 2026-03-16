@@ -86,7 +86,7 @@ serve(async (req) => {
       );
     }
 
-    // --- Rate limiting (5/hour) ---
+    // --- Rate limiting (20/hour) ---
     const clientIP =
       req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
     const windowStart = new Date();
@@ -103,7 +103,7 @@ serve(async (req) => {
       .eq('endpoint', 'generate-letter')
       .eq('window_start', windowKey)
       .maybeSingle();
-    if (rlRow && rlRow.request_count >= 5) {
+    if (rlRow && rlRow.request_count >= 20) {
       return new Response(
         JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
         { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
