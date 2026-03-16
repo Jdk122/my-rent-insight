@@ -1266,6 +1266,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 }}
                 analysisId={analysisId}
                 capturedEmail={capturedEmail}
+                listings={rentcastListings.data?.listings ?? []}
+                listingsLoading={rentcastListings.loading}
               />
             )}
 
