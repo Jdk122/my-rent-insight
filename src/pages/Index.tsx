@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
-import { ChevronRight, MessageSquareText, Calculator } from 'lucide-react';
+import { ChevronRight, MessageSquareText, Calculator, Building2 } from 'lucide-react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { useSearchParams, Link } from 'react-router-dom';
 
@@ -335,6 +335,10 @@ const Index = () => {
                 <div className="flex items-start gap-2 lg:gap-3">
                   <span className="text-primary mt-0.5 shrink-0"><Calculator size={15} className="lg:w-[22px] lg:h-[22px]" /></span>
                   <span className="text-[14px] lg:text-[clamp(17px,1.4vw,21px)] text-muted-foreground lg:text-foreground/55 leading-snug lg:whitespace-nowrap"><strong className="text-foreground font-bold">Counter-offer range</strong> from real comps nearby</span>
+                </div>
+                <div className="flex items-start gap-2 lg:gap-3">
+                  <span className="text-primary mt-0.5 shrink-0"><Building2 size={15} className="lg:w-[22px] lg:h-[22px]" /></span>
+                  <span className="text-[14px] lg:text-[clamp(17px,1.4vw,21px)] text-muted-foreground lg:text-foreground/55 leading-snug lg:whitespace-nowrap"><strong className="text-foreground font-bold">Available apartments</strong> nearby that could save you money</span>
                 </div>
               </div>
 
