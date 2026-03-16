@@ -385,8 +385,13 @@ function getScoreBasisMessage(
     const bldgNote = buildingCompCount > 0 ? ` including ${buildingCompCount} in your building` : '';
     return `Based on ${compCount} nearby listings${bldgNote}.`;
   }
-  if (uiBand === 'Medium') {
+  if (uiBand === 'Medium' || (uiBand === 'Low' && compCount >= 5)) {
+    // Even if confidence score is low (e.g. distant or high-variance comps),
+    // 5+ comps should still mention listings rather than only federal benchmarks.
     return `Based on ${compCount} nearby listings and regional rent trend data.`;
+  }
+  if (compCount > 0) {
+    return `Based on ${compCount} nearby listings, federal rent benchmarks, and regional trends.`;
   }
   return 'Based primarily on federal rent benchmarks and regional trends.';
 }
