@@ -200,9 +200,10 @@ interface ListingsBlockProps {
   proposedRent: number;
   zip: string;
   capturedEmail?: string;
+  compAddresses?: string[];
 }
 
-const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedEmail }: ListingsBlockProps) => {
+const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedEmail, compAddresses }: ListingsBlockProps) => {
   const [expanded, setExpanded] = useState(false);
 
   // Don't render anything if gate not unlocked
