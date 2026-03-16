@@ -234,8 +234,16 @@ const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedE
     ? 'Available apartments nearby that could save you money'
     : 'Available apartments nearby';
 
-  const visible = expanded ? listings : listings.slice(0, 3);
-  const hasMore = listings.length > 3;
+  // Sort: below proposedRent first (cheapest first), then above (cheapest first)
+  const sorted = [...listings].sort((a, b) => {
+    const aBelow = a.rent < proposedRent ? 0 : 1;
+    const bBelow = b.rent < proposedRent ? 0 : 1;
+    if (aBelow !== bBelow) return aBelow - bBelow;
+    return a.rent - b.rent;
+  });
+
+  const visible = expanded ? sorted : sorted.slice(0, 3);
+  const hasMore = sorted.length > 3;
 
   return (
     <motion.div {...fade(0.24)} className="space-y-2">
