@@ -17,7 +17,7 @@ const defaultSteps: HowItWorksStep[] = [
   {
     number: '01',
     title: 'Enter Your Details',
-    description: 'Your address, current rent, and proposed increase. Takes 30 seconds.',
+    description: 'Your address, current rent, and proposed increase. Takes 10 seconds.',
   },
   {
     number: '02',
