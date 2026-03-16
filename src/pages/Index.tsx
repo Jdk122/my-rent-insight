@@ -153,7 +153,7 @@ const Index = () => {
             "@type": "WebApplication",
             "name": "RenewalReply Rent Increase Tool",
             "url": "https://www.renewalreply.com",
-            "description": "Free tool to check if your rent increase is fair using HUD Fair Market Rents, Zillow rent trends, and real nearby listings for 38,600+ US zip codes.",
+            "description": "Free tool to check if your rent increase is fair using real nearby listings, Zillow rent trends, and HUD Fair Market Rents for 38,600+ US zip codes.",
             "applicationCategory": "FinanceApplication",
             "operatingSystem": "Web",
             "browserRequirements": "Requires JavaScript",
@@ -175,7 +175,7 @@ const Index = () => {
                 "name": "How do I know if my rent increase is fair?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Compare your proposed rent to the HUD Fair Market Rent for your zip code. RenewalReply checks your rent increase against HUD Fair Market Rent data, Zillow rent trends, and real comparable listings near your address."
+                  "text": "Compare your proposed rent to real comparable listings near your address. RenewalReply checks your rent increase against nearby listings, Zillow rent trends, and HUD Fair Market Rent data for your zip code."
                 }
               },
               {
@@ -199,7 +199,7 @@ const Index = () => {
                 "name": "How many zip codes does RenewalReply cover?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "RenewalReply covers 38,600+ US zip codes using HUD Fair Market Rent data, making it one of the most comprehensive rent fairness tools available."
+                  "text": "RenewalReply covers 38,600+ US zip codes using real nearby listings, Zillow rent trends, and HUD Fair Market Rent data, making it one of the most comprehensive rent fairness tools available."
                 }
               }
             ]
@@ -357,7 +357,7 @@ const Index = () => {
               <div className="hidden lg:block mt-5">
                 <div className="border-t border-border/50 pt-4 pb-2 text-center">
                   <p className="text-[13px] text-muted-foreground/80 tracking-wide whitespace-nowrap">
-                    Powered by: HUD FMR · Zillow ZORI · Apartment List · Live Comps · DHCR
+                    Powered by: Live Comps · Zillow ZORI · Apartment List · HUD FMR · DHCR
                   </p>
                 </div>
               </div>
@@ -372,7 +372,7 @@ const Index = () => {
               <div className="mt-4 max-w-[540px] mx-auto lg:hidden">
                 <div className="border-t border-border/40 pt-3 pb-2 px-1 text-center">
                   <p className="text-[11px] text-muted-foreground/70 tracking-wide">
-                    HUD Fair Market Rent · Zillow ZORI · Apartment List · Live Comps · DHCR
+                    Live Comps · Zillow ZORI · Apartment List · HUD Fair Market Rent · DHCR
                   </p>
                 </div>
               </div>
