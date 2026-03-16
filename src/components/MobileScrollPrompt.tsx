@@ -35,7 +35,6 @@ const MobileScrollPrompt = ({
   onReportGenerated,
 }: MobileScrollPromptProps) => {
   const [open, setOpen] = useState(false);
-  const [cookieVisible, setCookieVisible] = useState(!localStorage.getItem('rr_cookie_consent'));
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
