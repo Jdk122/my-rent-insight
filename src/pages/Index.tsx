@@ -175,7 +175,7 @@ const Index = () => {
                 "name": "How do I know if my rent increase is fair?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Compare your proposed rent to the HUD Fair Market Rent for your zip code. RenewalReply checks your rent increase against HUD Fair Market Rent data, Zillow rent trends, and real comparable listings near your address."
+                  "text": "Compare your proposed rent to real comparable listings near your address. RenewalReply checks your rent increase against nearby listings, Zillow rent trends, and HUD Fair Market Rent data for your zip code."
                 }
               },
               {
