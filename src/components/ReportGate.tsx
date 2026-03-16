@@ -359,7 +359,7 @@ const ReportGate = ({
         {copy.heading}
       </h2>
       <div className="text-sm text-muted-foreground mb-6 max-w-[440px] mx-auto text-left space-y-1.5">
-        {[copy.bulletA, copy.bulletB].map((item, i) => (
+        {[copy.bulletA, copy.bulletB, copy.bulletC].filter(Boolean).map((item, i) => (
           <div key={i} className="flex items-start gap-2">
             <span className="text-primary shrink-0 mt-0.5 font-semibold">✓</span>
             <span className="leading-relaxed font-medium">{item}</span>
