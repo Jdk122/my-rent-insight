@@ -123,9 +123,10 @@ interface ListingCardProps {
   proposedRent: number;
   zip: string;
   isBestValue?: boolean;
+  onLogReferral?: () => void;
 }
 
-const ListingCard = ({ listing, proposedRent, zip, isBestValue }: ListingCardProps) => {
+const ListingCard = ({ listing, proposedRent, zip, isBestValue, onLogReferral }: ListingCardProps) => {
   const savings = proposedRent - listing.rent;
   const hasSavings = savings > 0;
 
@@ -146,6 +147,7 @@ const ListingCard = ({ listing, proposedRent, zip, isBestValue }: ListingCardPro
       savings: Math.max(0, savings),
       had_direct_url: !!listing.listingUrl,
     });
+    onLogReferral?.();
   };
 
   return (
