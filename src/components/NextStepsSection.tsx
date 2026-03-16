@@ -207,9 +207,10 @@ interface ListingsBlockProps {
   capturedEmail?: string;
   compAddresses?: string[];
   onLogReferral?: (linkType: string) => void;
+  isAboveMarket?: boolean;
 }
 
-const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedEmail, compAddresses, onLogReferral }: ListingsBlockProps) => {
+const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedEmail, compAddresses, onLogReferral, isAboveMarket = true }: ListingsBlockProps) => {
   const [expanded, setExpanded] = useState(false);
 
   // Don't render anything if gate not unlocked
@@ -237,9 +238,12 @@ const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedE
     l => !!l.formattedAddress && !compSet.has(l.formattedAddress.toLowerCase().replace(/\s+/g, ' ').trim())
   );
 
-  // Empty state: no listings OR none cheaper than proposed rent
-  const hasAnyCheaper = dedupedListings.some(l => l.rent < proposedRent);
-  if (!dedupedListings.length || !hasAnyCheaper) {
+  // For above-market: only show cheaper listings; for at-market: show all
+  const filteredListings = isAboveMarket
+    ? dedupedListings.filter(l => l.rent < proposedRent)
+    : dedupedListings;
+
+  if (!filteredListings.length) {
     return (
       <motion.div {...fade(0.24)}>
         <p className="text-[13px] text-muted-foreground">No active listings found in your area right now. New apartments are listed daily — check back soon.</p>
@@ -249,7 +253,7 @@ const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedE
   }
 
   // Sort: below proposedRent first (cheapest first), then above (cheapest first)
-  const sorted = [...dedupedListings].sort((a, b) => {
+  const sorted = [...filteredListings].sort((a, b) => {
     const aBelow = a.rent < proposedRent ? 0 : 1;
     const bBelow = b.rent < proposedRent ? 0 : 1;
     if (aBelow !== bBelow) return aBelow - bBelow;
@@ -260,9 +264,13 @@ const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedE
   const visible = expanded ? sorted : sorted.slice(0, 3);
   const hasMore = sorted.length > 3;
 
+  const header = isAboveMarket
+    ? 'Available apartments nearby that could save you money'
+    : 'See what else is available in your area';
+
   return (
     <motion.div {...fade(0.24)} className="space-y-2">
-      <h3 className="text-[15px] font-semibold text-foreground">Available apartments nearby that could save you money</h3>
+      <h3 className="text-[15px] font-semibold text-foreground">{header}</h3>
       {visible.map((l, i) => (
         <ListingCard key={i} listing={l} proposedRent={proposedRent} zip={zip} isBestValue={i === 0 && firstIsBestValue} onLogReferral={() => onLogReferral?.('listing_click')} />
       ))}
@@ -342,6 +350,7 @@ const NextStepsSection = ({
               capturedEmail={capturedEmail}
               compAddresses={compAddresses}
               onLogReferral={logReferralClick}
+              isAboveMarket={true}
             />
 
             <ActionCard
@@ -400,6 +409,17 @@ const NextStepsSection = ({
                 onShareClick?.();
               }}
               delay={0.28}
+            />
+
+            <ListingsBlock
+              listings={listings ?? []}
+              listingsLoading={!!listingsLoading}
+              proposedRent={proposedRent}
+              zip={zip}
+              capturedEmail={capturedEmail}
+              compAddresses={compAddresses}
+              onLogReferral={logReferralClick}
+              isAboveMarket={false}
             />
           </>
         )}

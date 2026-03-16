@@ -316,7 +316,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     rentData.zip,
     bedroomNum,
     analysisId,
-    !!capturedEmail && isAboveMarket,
+    !!capturedEmail && effectiveVerdict !== 'below',
   );
 
   useEffect(() => {
