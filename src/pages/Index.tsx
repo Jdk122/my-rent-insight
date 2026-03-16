@@ -357,7 +357,7 @@ const Index = () => {
               <div className="hidden lg:block mt-5">
                 <div className="border-t border-border/50 pt-4 pb-2 text-center">
                   <p className="text-[13px] text-muted-foreground/80 tracking-wide whitespace-nowrap">
-                    Powered by: HUD FMR · Zillow ZORI · Apartment List · Live Comps · DHCR
+                    Powered by: Live Comps · Zillow ZORI · Apartment List · HUD FMR · DHCR
                   </p>
                 </div>
               </div>
