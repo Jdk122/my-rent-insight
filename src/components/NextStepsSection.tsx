@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Truck, Key, Shield, Share2, ArrowRight, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
+import { Truck, Key, Shield, Share2, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { trackEvent } from '@/lib/analytics';
 import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
