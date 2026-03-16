@@ -410,6 +410,17 @@ const NextStepsSection = ({
               }}
               delay={0.28}
             />
+
+            <ListingsBlock
+              listings={listings ?? []}
+              listingsLoading={!!listingsLoading}
+              proposedRent={proposedRent}
+              zip={zip}
+              capturedEmail={capturedEmail}
+              compAddresses={compAddresses}
+              onLogReferral={logReferralClick}
+              isAboveMarket={false}
+            />
           </>
         )}
       </div>
