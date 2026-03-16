@@ -92,7 +92,7 @@ function getGateCopy(
             bulletB: 'A send-ready negotiation letter with your exact counter-offer built in',
             bulletC: 'See available apartments nearby that could save you money',
             cta: 'Email me my counter-offer →',
-            valueAnchor: `This could help you save ~$${fmt(monthlyOverpayment * 12)}/year.`,
+            valueAnchor: `This could help you save ~$${fmt(monthlyOverpayment * 12)}/year on your renewal.`,
           };
         }
         // Only use the specific % headline if both values are valid numbers
