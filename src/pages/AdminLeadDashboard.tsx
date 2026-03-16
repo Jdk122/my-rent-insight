@@ -481,6 +481,7 @@ function DashboardContent() {
                   mortgage_check: '🔑 Mortgage Check',
                   renters_insurance: '🛡️ Renters Insurance',
                   mortgage_banner: '🏦 Mortgage Banner',
+                  listing_click: '🏘️ Listing Click',
                 };
                 return (
                   <div key={s.link_type} className="border border-border rounded-lg p-3 bg-card">
