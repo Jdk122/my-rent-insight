@@ -1,6 +1,6 @@
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { FairnessScoreResult, FMR_COMPONENT_TOOLTIP } from '@/lib/fairnessScore';
+import { FairnessScoreResult, FMR_COMPONENT_TOOLTIP, PriceLevelBand } from '@/lib/fairnessScore';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ChevronDown, Info } from 'lucide-react';
@@ -143,6 +143,31 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
         </div>
       </div>
 
+      {/* Price Level Badge (v2.3) */}
+      {score.priceLevelLabel && (
+        <motion.div
+          className="mt-1"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.9, duration: 0.4 }}
+        >
+          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${
+            score.priceLevel === 'below-market'
+              ? 'bg-verdict-good/10 text-verdict-good border-verdict-good/30'
+              : score.priceLevel === 'above-market'
+              ? 'bg-destructive/10 text-destructive border-destructive/30'
+              : 'bg-muted text-muted-foreground border-border'
+          }`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${
+              score.priceLevel === 'below-market' ? 'bg-verdict-good'
+              : score.priceLevel === 'above-market' ? 'bg-destructive'
+              : 'bg-muted-foreground'
+            }`} />
+            {score.priceLevelLabel}
+          </span>
+        </motion.div>
+      )}
+
       {/* Dynamic verdict message */}
       <motion.div
         className="mt-2 max-w-[460px] text-center"
@@ -152,6 +177,18 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
       >
         {dynamicMessage}
       </motion.div>
+
+      {/* Score basis attribution (v2.3) */}
+      {score.scoreBasisMessage && (
+        <motion.p
+          className="text-[11px] text-muted-foreground/60 text-center mt-1 max-w-[400px]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.0, duration: 0.4 }}
+        >
+          {score.scoreBasisMessage}
+        </motion.p>
+      )}
 
       {/* Collapsible score breakdown */}
       <motion.div
@@ -224,9 +261,23 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
                 );
               })}
               <p className="text-[11px] text-muted-foreground leading-relaxed pt-2">
-                The Fairness Score combines five independent data points to measure how your rent increase compares to local market conditions.{' '}
+                The Fairness Score combines four independent data points to measure how your rent increase compares to local market conditions.{' '}
                 <Link to="/methodology" className="text-primary hover:underline">See methodology →</Link>
               </p>
+              {/* Decoupled market note (v2.3) */}
+              {score.decoupledMarketNote && (
+                <div className="rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900/50 dark:bg-blue-950/20 p-3 mt-2">
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    {score.decoupledMarketNote}
+                  </p>
+                </div>
+              )}
+              {/* Building echo chamber note (v2.3) */}
+              {score.buildingEchoChamberNote && (
+                <p className="text-[11px] text-muted-foreground/70 mt-2 italic">
+                  {score.buildingEchoChamberNote}
+                </p>
+              )}
               {contextNotes && (
                 <div className="pt-3 mt-3 border-t border-border/50 space-y-2">
                   {contextNotes}

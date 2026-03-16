@@ -25,6 +25,7 @@ import { checkAnalysisDedup } from '@/lib/analysisDedup';
 import DataConfidenceBadge from './DataConfidenceBadge';
 import { assessConfidence, detectOutliers, checkCrossSourceConsistency, getCompRadius, filterFurnished, deduplicateComps, applySeasonalAdjustment } from '@/lib/dataQuality';
 import { calculateFairnessScore, scoreToVerdict, FairnessScoreResult } from '@/lib/fairnessScore';
+import { calculateCompConfidence, computeCompIqr, medianOf, CompConfidenceResult } from '@/lib/compConfidence';
 import { getBuildingRange } from '@/lib/buildingRange';
 import { calculateCompositeTrend } from '@/lib/compositeTrend';
 import FairnessScoreGauge, { ComponentSourceInfo } from './FairnessScoreGauge';
@@ -229,6 +230,58 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     return filtered.length > 0 && filtered.every(c => c.isSameBuilding);
   }, [outlierResult]);
 
+  // ━━━ v2.3: Comp Confidence + IQR ━━━
+  const compIqrData = useMemo(() => {
+    const filtered = outlierResult?.filtered ?? [];
+    return computeCompIqr(filtered);
+  }, [outlierResult]);
+
+  const compConfidence = useMemo<CompConfidenceResult | null>(() => {
+    const filtered = outlierResult?.filtered ?? [];
+    if (filtered.length === 0 && !bldg.hasBuildingData) return null;
+
+    const sameLineComps = bldg.hasBuildingData
+      ? bldg.buildingComps.filter((c: any) => c.isSameUnitLine && c.rent != null && c.rent > 0)
+      : [];
+    const buildingCompsWithRent = bldg.hasBuildingData
+      ? bldg.buildingComps.filter((c: any) => c.rent != null && c.rent > 0)
+      : [];
+    const buildingBrMatched = bldg.hasBuildingData
+      ? buildingCompsWithRent.filter((c: any) => c.bedrooms === bedroomNum)
+      : [];
+    const nearbyBrMatched = filtered.filter(
+      c => !c.isSameBuilding && c.bedrooms === bedroomNum && c.distance != null && c.distance <= 0.5
+    );
+
+    const distances = filtered
+      .map(c => c.distance)
+      .filter((d): d is number => d !== null);
+    const medianDist = distances.length > 0 ? medianOf(distances) : null;
+    const daysOldValues = filtered
+      .map(c => c.daysOld)
+      .filter((d): d is number => d !== null);
+    const medDaysOld = daysOldValues.length > 0 ? medianOf(daysOldValues) : null;
+
+    return calculateCompConfidence({
+      comps: filtered,
+      subjectAddress: formData.fullAddress ?? null,
+      sameLineCompCount: sameLineComps.length,
+      buildingCompCount: buildingCompsWithRent.length,
+      buildingBedroomMatchCount: buildingBrMatched.length,
+      nearbyBedroomMatchCount: nearbyBrMatched.length,
+      medianCompDistance: medianDist,
+      compIqrRatio: compIqrData?.iqrRatio ?? null,
+      medianDaysOld: medDaysOld,
+    });
+  }, [outlierResult, bldg, bedroomNum, formData.fullAddress, compIqrData]);
+
+  // ZORI zip rent for market tier detection
+  const zoriZipRent = useMemo(() => {
+    // Use rcMarket median as primary, since ZORI rent level isn't directly in rentData
+    // zoriYoY is a % change, not an absolute rent. rcMedianRent serves as the local market median.
+    return rcMarket.rcMedianRent ?? null;
+  }, [rcMarket.rcMedianRent]);
+
   const fairnessScore = useMemo<FairnessScoreResult | null>(() => {
     if (!hasIncrease) return null;
     if (!asyncDataReady) return null;
@@ -253,8 +306,15 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       buildingCompCount: bldg.hasBuildingData ? bldg.buildingComps.length : null,
       sameLineMedian,
       allSameBuilding,
+      // v2.3 additions
+      compConfidence,
+      compP25: compIqrData?.p25 ?? null,
+      compP75: compIqrData?.p75 ?? null,
+      compIqrRatio: compIqrData?.iqrRatio ?? null,
+      zoriZipRent,
+      comps: outlierResult?.filtered ?? null,
     });
-  }, [hasIncrease, asyncDataReady, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings, compositeTrendResult, bldg, sameLineMedian, allSameBuilding]);
+  }, [hasIncrease, asyncDataReady, increasePct, marketYoy, newRent, medianCompRent, outlierResult, rentData.fmr, rentData.zillowMonthly, rentData.hvd, rentData.alYoY, rentData.alMoM, rentData.f50, rcMarket.rcMedianRent, rcMarket.rcTotalListings, compositeTrendResult, bldg, sameLineMedian, allSameBuilding, compConfidence, compIqrData, zoriZipRent]);
 
   // ━━━ Comp-overpayment detection ━━━
   const compOverpayment = useMemo(() => {
