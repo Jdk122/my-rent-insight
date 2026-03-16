@@ -133,7 +133,7 @@ const ListingCard = ({ listing, proposedRent, zip, isBestValue }: ListingCardPro
   if (listing.bedrooms != null) meta.push(`${listing.bedrooms === 0 ? 'Studio' : `${listing.bedrooms} bed`}`);
   if (listing.bathrooms != null) meta.push(`${listing.bathrooms} bath`);
   if (listing.squareFootage != null) meta.push(`${fmt(listing.squareFootage)} sqft`);
-  if (listing.daysOnMarket != null) meta.push(`Listed ${listing.daysOnMarket} days ago`);
+  if (listing.daysOnMarket != null) meta.push(`Listed ${listing.daysOnMarket} ${listing.daysOnMarket === 1 ? 'day' : 'days'} ago`);
 
   const ctaUrl = listing.listingUrl || `https://www.zillow.com/homes/${encodeURIComponent(listing.formattedAddress)}`;
   const ctaLabel = listing.listingUrl ? 'View listing' : 'Search on Zillow';
