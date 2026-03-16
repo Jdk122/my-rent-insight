@@ -336,6 +336,7 @@ const NextStepsSection = ({
               proposedRent={proposedRent}
               zip={zip}
               capturedEmail={capturedEmail}
+              compAddresses={compAddresses}
             />
 
             <ActionCard
