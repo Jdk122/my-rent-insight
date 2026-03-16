@@ -250,6 +250,12 @@ const Index = () => {
             <button
               onClick={() => {
                 document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' });
+                const letterEl = document.querySelector('[data-letter-content]');
+                if (letterEl) {
+                  navigator.clipboard.writeText(letterEl.textContent || '').then(() => {
+                    import('sonner').then(({ toast }) => toast.success('Letter copied to clipboard!'));
+                  }).catch(() => {});
+                }
               }}
               className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap"
             >
