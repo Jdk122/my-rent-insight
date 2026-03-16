@@ -219,8 +219,9 @@ const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedE
     );
   }
 
-  // Empty state
-  if (!listings.length) {
+  // Empty state: no listings OR none cheaper than proposed rent
+  const hasAnyCheaper = listings.some(l => l.rent < proposedRent);
+  if (!listings.length || !hasAnyCheaper) {
     return (
       <motion.div {...fade(0.24)}>
         <p className="text-[13px] text-muted-foreground">No active listings found in your area right now. New apartments are listed daily — check back soon.</p>
@@ -228,11 +229,6 @@ const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedE
       </motion.div>
     );
   }
-
-  const hasAnyCheaper = listings.some(l => l.rent < proposedRent);
-  const heading = hasAnyCheaper
-    ? 'Available apartments nearby that could save you money'
-    : 'Available apartments nearby';
 
   // Sort: below proposedRent first (cheapest first), then above (cheapest first)
   const sorted = [...listings].sort((a, b) => {
