@@ -206,9 +206,10 @@ interface ListingsBlockProps {
   zip: string;
   capturedEmail?: string;
   compAddresses?: string[];
+  onLogReferral?: (linkType: string) => void;
 }
 
-const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedEmail, compAddresses }: ListingsBlockProps) => {
+const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedEmail, compAddresses, onLogReferral }: ListingsBlockProps) => {
   const [expanded, setExpanded] = useState(false);
 
   // Don't render anything if gate not unlocked
