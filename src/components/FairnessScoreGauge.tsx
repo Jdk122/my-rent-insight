@@ -143,30 +143,6 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
         </div>
       </div>
 
-      {/* Price Level Badge (v2.3) */}
-      {score.priceLevelLabel && (
-        <motion.div
-          className="mt-1"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.9, duration: 0.4 }}
-        >
-          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${
-            score.priceLevel === 'below-market'
-              ? 'bg-verdict-good/10 text-verdict-good border-verdict-good/30'
-              : score.priceLevel === 'above-market'
-              ? 'bg-destructive/10 text-destructive border-destructive/30'
-              : 'bg-muted text-muted-foreground border-border'
-          }`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${
-              score.priceLevel === 'below-market' ? 'bg-verdict-good'
-              : score.priceLevel === 'above-market' ? 'bg-destructive'
-              : 'bg-muted-foreground'
-            }`} />
-            {score.priceLevelLabel}
-          </span>
-        </motion.div>
-      )}
 
       {/* Dynamic verdict message */}
       <motion.div
