@@ -318,19 +318,6 @@ export const CompsList = ({
         </p>
       )}
 
-      {!gated && (
-        <p className="text-sm text-muted-foreground mt-6 text-center">
-          Want to browse more?{' '}
-          {browseLinks.map((link, i) => (
-            <span key={link.name}>
-              <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                {link.name} →
-              </a>
-              {i < browseLinks.length - 1 && <span className="mx-1.5">·</span>}
-            </span>
-          ))}
-        </p>
-      )}
 
       <p className="text-[10px] text-muted-foreground/60 mt-3 text-center">
         Market data sources include MLS, public records & proprietary datasets.
