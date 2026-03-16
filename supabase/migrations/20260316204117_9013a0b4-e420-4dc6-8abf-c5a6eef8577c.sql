@@ -1,0 +1,1 @@
+DELETE FROM rate_limits WHERE endpoint = 'generate-letter';
