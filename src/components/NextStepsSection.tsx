@@ -300,6 +300,7 @@ const NextStepsSection = ({
   capturedEmail,
   listings,
   listingsLoading,
+  compAddresses,
 }: NextStepsSectionProps) => {
   const logReferralClick = useCallback((linkType: string) => {
     supabase.from('referral_clicks').insert({
