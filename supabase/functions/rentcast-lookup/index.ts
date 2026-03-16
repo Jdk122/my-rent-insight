@@ -28,7 +28,7 @@ const DENSE_ZIP_PREFIXES = [
 const stripUnit = (addr: string) =>
   addr
     .replace(/\b(apt|unit|suite|ste|#|fl|floor)\s*\w+\b/gi, '')
-    .replace(/\s+[0-9]+[a-z]?\b(?=\s*,)/gi, '')
+    .replace(/\s+[0-9]{1,4}[a-z]?\b(?=\s*,)/gi, '')
     .replace(/\s*,\s*,/g, ',')
     .replace(/\s+/g, ' ')
     .trim();
