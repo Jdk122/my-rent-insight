@@ -169,7 +169,7 @@ const ListingCard = ({ listing, proposedRent, zip, isBestValue, onLogReferral }:
         <span className="text-[15px] font-semibold text-foreground">${fmt(listing.rent)}/mo</span>
         {hasSavings && (
           <span className="text-[13px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-2.5 py-1">
-            Save ${fmt(savings)}/mo
+            Save ${fmt(savings)}/mo vs your renewal
           </span>
         )}
       </div>
