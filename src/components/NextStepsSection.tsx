@@ -253,6 +253,7 @@ const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedE
     return a.rent - b.rent;
   });
 
+  const firstIsBestValue = sorted.length > 0 && sorted[0].rent < proposedRent;
   const visible = expanded ? sorted : sorted.slice(0, 3);
   const hasMore = sorted.length > 3;
 
@@ -260,7 +261,7 @@ const ListingsBlock = ({ listings, listingsLoading, proposedRent, zip, capturedE
     <motion.div {...fade(0.24)} className="space-y-2">
       <h3 className="text-[15px] font-semibold text-foreground">Available apartments nearby that could save you money</h3>
       {visible.map((l, i) => (
-        <ListingCard key={i} listing={l} proposedRent={proposedRent} zip={zip} />
+        <ListingCard key={i} listing={l} proposedRent={proposedRent} zip={zip} isBestValue={i === 0 && firstIsBestValue} />
       ))}
       {hasMore && (
         <button
