@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
-import { ChevronRight, MessageSquareText, Calculator } from 'lucide-react';
+import { ChevronRight, MessageSquareText, Calculator, Building2 } from 'lucide-react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { useSearchParams, Link } from 'react-router-dom';
 
