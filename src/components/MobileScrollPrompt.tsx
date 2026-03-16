@@ -42,12 +42,6 @@ const MobileScrollPrompt = ({
   const maxScrollRef = useRef(0);
   const firedRef = useRef(false);
 
-  // Listen for cookie consent dismissal
-  useEffect(() => {
-    const handler = () => setCookieVisible(false);
-    window.addEventListener('rr_cookie_dismissed', handler);
-    return () => window.removeEventListener('rr_cookie_dismissed', handler);
-  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
