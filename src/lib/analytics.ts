@@ -23,7 +23,9 @@ export type EventName =
   | 'followup_unsubscribe'
   | 'followup_agreed_testimonial'
   | 'followup_countered_amount'
-  | 'followup_moving_submitted';
+  | 'followup_moving_submitted'
+  | 'results_cta_clicked'
+  | 'report_unlocked';
 
 export function trackEvent(name: string, params?: Record<string, string | number | boolean | null | undefined>) {
   try {
