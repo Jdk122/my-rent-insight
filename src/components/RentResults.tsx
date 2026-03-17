@@ -77,6 +77,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   });
   const [reportUrl, setReportUrl] = useState<string | null>(null);
   const analysisLogged = useRef(isDuplicateAnalysis);
+  const gateViewedRef = useRef(false);
 
   const increaseAmount = formData.rentIncrease
     ? formData.increaseIsPercent
@@ -383,6 +384,38 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     if (effectiveVerdict) onVerdictReady?.(isAboveMarket);
   }, [effectiveVerdict]);
 
+  // Gate viewed analytics — fires once per analysis
+  useEffect(() => {
+    if (capturedEmail || gateViewedRef.current) return;
+    const el = document.getElementById('section-gate');
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !gateViewedRef.current) {
+          gateViewedRef.current = true;
+          trackEvent('gate_viewed', {
+            verdict_type: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
+            analysis_version: 'gated_results_v1',
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [capturedEmail, isAboveMarket, isFair]);
+
+  // Report unlocked analytics
+  useEffect(() => {
+    if (capturedEmail) {
+      trackEvent('report_unlocked', {
+        verdict_type: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
+        analysis_version: 'gated_results_v1',
+      });
+    }
+  }, [capturedEmail]);
+
   const isNuancedAtMarket = isFair && increasePct - marketYoy > 2 && medianCompRent != null && newRent <= medianCompRent;
   const proposedFarBelowMedian = medianCompRent != null && newRent < medianCompRent * 0.8;
 
@@ -622,7 +655,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   return (
     <>
-      <SectionNav sections={navSections} />
+      {capturedEmail && <SectionNav sections={navSections} />}
 
       {/* Exit Intent Modal (desktop only) — safety net */}
       <ExitIntentModal
@@ -811,16 +844,22 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         <p className="text-[14px] sm:text-base md:text-lg text-muted-foreground leading-relaxed">
                           {isAboveMarket && calc ? (
                             counterExceedsProposed
-                              ? <>Based on market data, your proposed rent appears to be in line with or below current market trends.</>
+                              ? <>Based on market data, your proposed rent may be more reasonable than the increase rate suggests.</>
                               : bldg.hasBuildingData && bldg.buildingComps.length >= 3 ? (
-                                <>Other units in your building rent for ${fmt(bldg.buildingLow)}{bldg.buildingLow !== bldg.buildingHigh ? `–$${fmt(bldg.buildingHigh)}` : ''}/month. At ${fmt(newRent)}/mo, your rent is {newRent > bldg.buildingHigh ? 'above' : 'at the top of'} this range.</>
-                              ) : <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. That's ${fmt(increaseAmount * 12)} more per year.</>
+                                capturedEmail
+                                  ? <>Other units in your building rent for ${fmt(bldg.buildingLow)}{bldg.buildingLow !== bldg.buildingHigh ? `–$${fmt(bldg.buildingHigh)}` : ''}/month. At ${fmt(newRent)}/mo, your rent is {newRent > bldg.buildingHigh ? 'above' : 'at the top of'} this range.</>
+                                  : <>Comparable units near you are renting for less than your proposed renewal price.</>
+                              ) : capturedEmail
+                                ? <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. That's ${fmt(increaseAmount * 12)} more per year.</>
+                                : <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. Unlock the comps, evidence, and counter-offer in your full report below.</>
                           ) : isFair ? (
                             isCompDeficient ? (
                               <>At ${fmt(newRent)}/mo with a {increasePct}% increase, your rate of increase tracks the {marketYoy}% area trend for {brLabel} rentals in {city}.</>
                             ) : isNuancedAtMarket || increasePct > marketYoy + 1.5 ? (
                               medianCompRent ? (
-                                <>Your {increasePct}% increase is above the {marketYoy}% area trend — but at ${fmt(newRent)}/mo, you're {newRent <= medianCompRent ? `still below the $${fmt(medianCompRent)} local median` : `within range for ${brLabel} rentals in ${city}`}.</>
+                                capturedEmail
+                                  ? <>Your {increasePct}% increase is above the {marketYoy}% area trend — but at ${fmt(newRent)}/mo, you're {newRent <= medianCompRent ? `still below the $${fmt(medianCompRent)} local median` : `within range for ${brLabel} rentals in ${city}`}.</>
+                                  : <>Your {increasePct}% increase is above the {marketYoy}% area trend — but at ${fmt(newRent)}/mo, you're still within range for {brLabel} rentals in {city}.</>
                               ) : (
                                 <>Your {increasePct}% increase is above the {marketYoy}% area trend — but at ${fmt(newRent)}/mo, you're still within the typical range for {brLabel} rentals in {city}.</>
                               )
@@ -835,6 +874,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <>Rents in {city} moved {marketYoy}% this year. Your landlord keeping your rent at ${fmt(formData.currentRent)}/mo means you're coming out ahead.</>
                           )}
                         </p>
+                        {!capturedEmail && isAboveMarket && Math.abs(increasePct - marketYoy) < 2 && (
+                          <p className="text-sm text-muted-foreground mt-2">
+                            Even if your increase matches area trends, your starting rent may already be above comparable units.
+                          </p>
+                        )}
                         {isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !counterExceedsProposed && (
                           <p className="text-xs text-muted-foreground/70 mt-1">
                             Area rents moved {marketYoy}% this year.
@@ -893,8 +937,38 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 ))}
               </motion.div>
 
+              {/* ── Above-fold CTA button ── */}
+              {!capturedEmail && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.1, duration: 0.4 }}
+                  className="mt-4 w-full max-w-[540px] mx-auto"
+                >
+                  <button
+                    onClick={() => {
+                      trackEvent('results_cta_clicked', {
+                        verdict_type: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
+                        has_same_building_comps: bldg.hasBuildingData,
+                        analysis_version: 'gated_results_v1',
+                      });
+                      document.getElementById('section-gate')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="w-full bg-primary text-primary-foreground py-3 px-6 rounded-lg text-[15px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
+                  >
+                    {isAboveMarket ? 'Unlock my comps + counter-offer →' : isFair ? 'See my full report →' : increasePct > 0 ? 'See how you compare →' : 'See my market report →'}
+                  </button>
+                </motion.div>
+              )}
+
               {/* ── Combined comp + letter prompt (mobile only) ── */}
               {!capturedEmail && compsWithRent.length > 0 && (
+                <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
+                  <span className="text-sm font-medium text-foreground">Your full report is ready — comps, market evidence, and your negotiation letter</span>
+                  <span className="text-sm font-semibold text-primary mt-0.5">Enter your email below to unlock ↓</span>
+                </div>
+              )}
+              {capturedEmail && compsWithRent.length > 0 && (
                 <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
                   <span className="text-sm font-medium text-foreground">{compsWithRent.length} matched comps support your result</span>
                   <span className="text-sm font-semibold text-primary mt-0.5">Your negotiation letter is ready ↓</span>
@@ -911,15 +985,17 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   className="hidden sm:block mt-4 w-full max-w-[540px]"
                 >
                   <span className="inline-block border border-border/60 rounded-full px-4 py-1.5 text-sm font-semibold text-foreground/70">
-                    {bldg.hasBuildingData && bldg.buildingComps.length >= 2
-                      ? `We found ${compsWithRent.length} matched comps supporting your result, including ${bldg.buildingComps.length} in your building.`
-                      : `We found ${compsWithRent.length} matched comps supporting your result.`
+                    {!capturedEmail
+                      ? (compsWithRent.length > 0
+                          ? `Based on ${compsWithRent.length} nearby listings and regional rent data.`
+                          : `Based on regional rent data and local market trends.`)
+                      : (bldg.hasBuildingData && bldg.buildingComps.length >= 2
+                          ? `We found ${compsWithRent.length} matched comps supporting your result, including ${bldg.buildingComps.length} in your building.`
+                          : `We found ${compsWithRent.length} matched comps supporting your result.`)
                     }
                   </span>
                 </motion.div>
               )}
-
-              <PreGateCompPreview compsWithRent={compsWithRent} capturedEmail={capturedEmail} fmt={fmt} />
 
               {/* ── Email gate (moved from Phase 2) ── */}
               {!capturedEmail && (
@@ -947,6 +1023,38 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     belowFmrHighIncrease={isBelowFmrHighIncrease}
                     increasePct={increasePct}
                   />
+
+                  {/* Blurred skeleton preview below gate */}
+                  <div className="mt-4 w-full max-w-[540px] mx-auto relative" aria-hidden="true">
+                    <div className="rounded-lg border border-border/60 bg-card p-4 space-y-3" style={{ filter: 'blur(5px)', userSelect: 'none', pointerEvents: 'none' }}>
+                      <div className="flex justify-between items-center py-2 border-b border-border/40">
+                        <div className="flex flex-col gap-1">
+                          <div className="h-3.5 w-40 bg-muted-foreground/20 rounded" />
+                          <div className="h-3 w-24 bg-muted-foreground/10 rounded" />
+                        </div>
+                        <div className="h-4 w-20 bg-muted-foreground/20 rounded" />
+                      </div>
+                      <div className="flex justify-between items-center py-2 border-b border-border/40">
+                        <div className="flex flex-col gap-1">
+                          <div className="h-3.5 w-36 bg-muted-foreground/20 rounded" />
+                          <div className="h-3 w-28 bg-muted-foreground/10 rounded" />
+                        </div>
+                        <div className="h-4 w-20 bg-muted-foreground/20 rounded" />
+                      </div>
+                      <div className="flex justify-between items-center py-2">
+                        <div className="flex flex-col gap-1">
+                          <div className="h-3.5 w-44 bg-muted-foreground/20 rounded" />
+                          <div className="h-3 w-20 bg-muted-foreground/10 rounded" />
+                        </div>
+                        <div className="h-4 w-20 bg-muted-foreground/20 rounded" />
+                      </div>
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-sm font-semibold text-muted-foreground bg-background/80 px-4 py-2 rounded-full border border-border/60">
+                        Enter your email above to unlock
+                      </span>
+                    </div>
+                  </div>
                 </section>
               )}
 
@@ -990,6 +1098,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               {/* ── Combined comp + letter prompt (mobile, no-increase) ── */}
               {!capturedEmail && compsWithRent.length > 0 && (
                 <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
+                  <span className="text-sm font-medium text-foreground">Your full report is ready — comps, market evidence, and your negotiation letter</span>
+                  <span className="text-sm font-semibold text-primary mt-0.5">Enter your email below to unlock ↓</span>
+                </div>
+              )}
+              {capturedEmail && compsWithRent.length > 0 && (
+                <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
                   <span className="text-sm font-medium text-foreground">{compsWithRent.length} matched comps support your result</span>
                   <span className="text-sm font-semibold text-primary mt-0.5">Your negotiation letter is ready ↓</span>
                   <span className="text-xs text-muted-foreground mt-0.5">Full comps, counter-offer guidance, and market data below.</span>
@@ -1005,15 +1119,17 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   className="hidden sm:block mt-4 w-full max-w-[540px]"
                 >
                   <span className="inline-block border border-border/60 rounded-full px-4 py-1.5 text-sm font-semibold text-foreground/70">
-                    {bldg.hasBuildingData && bldg.buildingComps.length >= 2
-                      ? `We found ${compsWithRent.length} matched comps supporting your result, including ${bldg.buildingComps.length} in your building.`
-                      : `We found ${compsWithRent.length} matched comps supporting your result.`
+                    {!capturedEmail
+                      ? (compsWithRent.length > 0
+                          ? `Based on ${compsWithRent.length} nearby listings and regional rent data.`
+                          : `Based on regional rent data and local market trends.`)
+                      : (bldg.hasBuildingData && bldg.buildingComps.length >= 2
+                          ? `We found ${compsWithRent.length} matched comps supporting your result, including ${bldg.buildingComps.length} in your building.`
+                          : `We found ${compsWithRent.length} matched comps supporting your result.`)
                     }
                   </span>
                 </motion.div>
               )}
-
-              <PreGateCompPreview compsWithRent={compsWithRent} capturedEmail={capturedEmail} fmt={fmt} />
 
               {/* ── Email gate (no-increase path) ── */}
               {!capturedEmail && (
@@ -1034,6 +1150,38 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     onReportGenerated={(url) => { setReportUrl(url); }}
                     marketYoy={marketYoy}
                   />
+
+                  {/* Blurred skeleton preview below gate */}
+                  <div className="mt-4 w-full max-w-[540px] mx-auto relative" aria-hidden="true">
+                    <div className="rounded-lg border border-border/60 bg-card p-4 space-y-3" style={{ filter: 'blur(5px)', userSelect: 'none', pointerEvents: 'none' }}>
+                      <div className="flex justify-between items-center py-2 border-b border-border/40">
+                        <div className="flex flex-col gap-1">
+                          <div className="h-3.5 w-40 bg-muted-foreground/20 rounded" />
+                          <div className="h-3 w-24 bg-muted-foreground/10 rounded" />
+                        </div>
+                        <div className="h-4 w-20 bg-muted-foreground/20 rounded" />
+                      </div>
+                      <div className="flex justify-between items-center py-2 border-b border-border/40">
+                        <div className="flex flex-col gap-1">
+                          <div className="h-3.5 w-36 bg-muted-foreground/20 rounded" />
+                          <div className="h-3 w-28 bg-muted-foreground/10 rounded" />
+                        </div>
+                        <div className="h-4 w-20 bg-muted-foreground/20 rounded" />
+                      </div>
+                      <div className="flex justify-between items-center py-2">
+                        <div className="flex flex-col gap-1">
+                          <div className="h-3.5 w-44 bg-muted-foreground/20 rounded" />
+                          <div className="h-3 w-20 bg-muted-foreground/10 rounded" />
+                        </div>
+                        <div className="h-4 w-20 bg-muted-foreground/20 rounded" />
+                      </div>
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-sm font-semibold text-muted-foreground bg-background/80 px-4 py-2 rounded-full border border-border/60">
+                        Enter your email above to unlock
+                      </span>
+                    </div>
+                  </div>
                 </section>
               )}
 
