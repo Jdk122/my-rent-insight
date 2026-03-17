@@ -388,7 +388,7 @@ function getScoreBasisMessage(
   if (uiBand === 'Medium' || (uiBand === 'Low' && compCount >= 5)) {
     // Even if confidence score is low (e.g. distant or high-variance comps),
     // 5+ comps should still mention listings rather than only federal benchmarks.
-    return `Based on ${compCount} nearby listings and regional rent trend data.`;
+    return `Based on ${compCount} nearby listings and local rent trend data.`;
   }
   if (compCount > 0) {
     return `Based on ${compCount} nearby listings, federal rent benchmarks, and regional trends.`;
