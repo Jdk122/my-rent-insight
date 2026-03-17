@@ -393,7 +393,7 @@ function getScoreBasisMessage(
   if (compCount > 0) {
     return `Based on ${compCount} nearby listings, federal rent benchmarks, and local trends.`;
   }
-  return 'Based primarily on federal rent benchmarks and regional trends.';
+  return 'Based primarily on federal rent benchmarks and local trends.';
 }
 
 // ─── Decoupled Market Note ───
