@@ -622,7 +622,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   return (
     <>
-      <SectionNav sections={navSections} />
+      {capturedEmail && <SectionNav sections={navSections} />}
 
       {/* Exit Intent Modal (desktop only) — safety net */}
       <ExitIntentModal
