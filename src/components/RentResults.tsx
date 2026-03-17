@@ -906,6 +906,26 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 );
               })()}
 
+              {/* ── Credibility line ── */}
+              {compsWithRent.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15, duration: 0.4 }}
+                  className="mt-3 w-full max-w-[540px]"
+                >
+                  <span className="inline-block border border-border/60 rounded-full px-4 py-1.5 text-sm font-semibold text-foreground/70">
+                    {!capturedEmail
+                      ? (compsWithRent.length > 0
+                          ? `Based on ${compsWithRent.length} nearby listings and regional rent data.`
+                          : `Based on regional rent data and local market trends.`)
+                      : (bldg.hasBuildingData && bldg.buildingComps.length >= 2
+                          ? `We found ${compsWithRent.length} matched comps supporting your result, including ${bldg.buildingComps.length} in your building.`
+                          : `We found ${compsWithRent.length} matched comps supporting your result.`)
+                    }
+                  </span>
+                </motion.div>
+              )}
 
               {/* ── Stat dashboard strip ── */}
               <motion.div
@@ -968,14 +988,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   <span className="text-xs text-muted-foreground mt-0.5">Full comps, counter-offer guidance, and market data below.</span>
                 </div>
               )}
-
-              {/* ── Comp teaser line (desktop) ── */}
+              {/* ── Credibility line (no-increase) ── */}
               {compsWithRent.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.25, duration: 0.4 }}
-                  className="hidden sm:block mt-4 w-full max-w-[540px]"
+                  transition={{ delay: 0.15, duration: 0.4 }}
+                  className="mt-3 w-full max-w-[540px]"
                 >
                   <span className="inline-block border border-border/60 rounded-full px-4 py-1.5 text-sm font-semibold text-foreground/70">
                     {!capturedEmail
@@ -989,6 +1008,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   </span>
                 </motion.div>
               )}
+
 
               {/* ── Email gate (moved from Phase 2) ── */}
               {!capturedEmail && (
@@ -1096,26 +1116,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </div>
               )}
 
-              {/* ── Comp teaser line (desktop, no-increase) ── */}
-              {compsWithRent.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.25, duration: 0.4 }}
-                  className="hidden sm:block mt-4 w-full max-w-[540px]"
-                >
-                  <span className="inline-block border border-border/60 rounded-full px-4 py-1.5 text-sm font-semibold text-foreground/70">
-                    {!capturedEmail
-                      ? (compsWithRent.length > 0
-                          ? `Based on ${compsWithRent.length} nearby listings and regional rent data.`
-                          : `Based on regional rent data and local market trends.`)
-                      : (bldg.hasBuildingData && bldg.buildingComps.length >= 2
-                          ? `We found ${compsWithRent.length} matched comps supporting your result, including ${bldg.buildingComps.length} in your building.`
-                          : `We found ${compsWithRent.length} matched comps supporting your result.`)
-                    }
-                  </span>
-                </motion.div>
-              )}
 
               {/* ── Email gate (no-increase path) ── */}
               {!capturedEmail && (
