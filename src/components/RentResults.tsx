@@ -811,16 +811,22 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         <p className="text-[14px] sm:text-base md:text-lg text-muted-foreground leading-relaxed">
                           {isAboveMarket && calc ? (
                             counterExceedsProposed
-                              ? <>Based on market data, your proposed rent appears to be in line with or below current market trends.</>
+                              ? <>Based on market data, your proposed rent may be more reasonable than the increase rate suggests.</>
                               : bldg.hasBuildingData && bldg.buildingComps.length >= 3 ? (
-                                <>Other units in your building rent for ${fmt(bldg.buildingLow)}{bldg.buildingLow !== bldg.buildingHigh ? `–$${fmt(bldg.buildingHigh)}` : ''}/month. At ${fmt(newRent)}/mo, your rent is {newRent > bldg.buildingHigh ? 'above' : 'at the top of'} this range.</>
-                              ) : <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. That's ${fmt(increaseAmount * 12)} more per year.</>
+                                capturedEmail
+                                  ? <>Other units in your building rent for ${fmt(bldg.buildingLow)}{bldg.buildingLow !== bldg.buildingHigh ? `–$${fmt(bldg.buildingHigh)}` : ''}/month. At ${fmt(newRent)}/mo, your rent is {newRent > bldg.buildingHigh ? 'above' : 'at the top of'} this range.</>
+                                  : <>Comparable units near you are renting for less than your proposed renewal price.</>
+                              ) : capturedEmail
+                                ? <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. That's ${fmt(increaseAmount * 12)} more per year.</>
+                                : <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. Unlock the comps, evidence, and counter-offer in your full report below.</>
                           ) : isFair ? (
                             isCompDeficient ? (
                               <>At ${fmt(newRent)}/mo with a {increasePct}% increase, your rate of increase tracks the {marketYoy}% area trend for {brLabel} rentals in {city}.</>
                             ) : isNuancedAtMarket || increasePct > marketYoy + 1.5 ? (
                               medianCompRent ? (
-                                <>Your {increasePct}% increase is above the {marketYoy}% area trend — but at ${fmt(newRent)}/mo, you're {newRent <= medianCompRent ? `still below the $${fmt(medianCompRent)} local median` : `within range for ${brLabel} rentals in ${city}`}.</>
+                                capturedEmail
+                                  ? <>Your {increasePct}% increase is above the {marketYoy}% area trend — but at ${fmt(newRent)}/mo, you're {newRent <= medianCompRent ? `still below the $${fmt(medianCompRent)} local median` : `within range for ${brLabel} rentals in ${city}`}.</>
+                                  : <>Your {increasePct}% increase is above the {marketYoy}% area trend — but at ${fmt(newRent)}/mo, you're still within range for {brLabel} rentals in {city}.</>
                               ) : (
                                 <>Your {increasePct}% increase is above the {marketYoy}% area trend — but at ${fmt(newRent)}/mo, you're still within the typical range for {brLabel} rentals in {city}.</>
                               )
@@ -835,6 +841,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <>Rents in {city} moved {marketYoy}% this year. Your landlord keeping your rent at ${fmt(formData.currentRent)}/mo means you're coming out ahead.</>
                           )}
                         </p>
+                        {!capturedEmail && isAboveMarket && Math.abs(increasePct - marketYoy) < 2 && (
+                          <p className="text-sm text-muted-foreground mt-2">
+                            Even if your increase matches area trends, your starting rent may already be above comparable units.
+                          </p>
+                        )}
                         {isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !counterExceedsProposed && (
                           <p className="text-xs text-muted-foreground/70 mt-1">
                             Area rents moved {marketYoy}% this year.
