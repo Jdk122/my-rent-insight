@@ -40,6 +40,7 @@ import SocialProofLine from './SocialProofLine';
 import ReportGate from './ReportGate';
 import PreGateCompPreview from './PreGateCompPreview';
 import { demoRentcast } from '@/data/demoData';
+import { getDealsCity, DEALS_CITIES as DEALS_CITIES_MAP } from '@/lib/dealsCities';
 
 interface RentResultsProps {
   formData: RentFormData;
