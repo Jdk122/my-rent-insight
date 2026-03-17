@@ -851,7 +851,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                                   : <>Comparable units near you are renting for less than your proposed renewal price.</>
                               ) : capturedEmail
                                 ? <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. That's ${fmt(increaseAmount * 12)} more per year.</>
-                                : <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. Unlock the comps, evidence, and counter-offer in your full report below.</>
+                                : <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%.</>
                           ) : isFair ? (
                             isCompDeficient ? (
                               <>At ${fmt(newRent)}/mo with a {increasePct}% increase, your rate of increase tracks the {marketYoy}% area trend for {brLabel} rentals in {city}.</>
