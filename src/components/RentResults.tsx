@@ -384,6 +384,38 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     if (effectiveVerdict) onVerdictReady?.(isAboveMarket);
   }, [effectiveVerdict]);
 
+  // Gate viewed analytics — fires once per analysis
+  useEffect(() => {
+    if (capturedEmail || gateViewedRef.current) return;
+    const el = document.getElementById('section-gate');
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !gateViewedRef.current) {
+          gateViewedRef.current = true;
+          trackEvent('gate_viewed', {
+            verdict_type: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
+            analysis_version: 'gated_results_v1',
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [capturedEmail, isAboveMarket, isFair]);
+
+  // Report unlocked analytics
+  useEffect(() => {
+    if (capturedEmail) {
+      trackEvent('report_unlocked', {
+        verdict_type: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
+        analysis_version: 'gated_results_v1',
+      });
+    }
+  }, [capturedEmail]);
+
   const isNuancedAtMarket = isFair && increasePct - marketYoy > 2 && medianCompRent != null && newRent <= medianCompRent;
   const proposedFarBelowMedian = medianCompRent != null && newRent < medianCompRent * 0.8;
 

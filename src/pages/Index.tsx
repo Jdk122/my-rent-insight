@@ -233,12 +233,7 @@ const Index = () => {
           {results && hasIncrease && isAboveMarket && !capturedEmail && (
             <button
               onClick={() => {
-                const target = document.getElementById('section-letter');
-                if (target) {
-                  target.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-                }
+                document.getElementById('section-gate')?.scrollIntoView({ behavior: 'smooth' });
               }}
               className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap"
             >
@@ -264,18 +259,9 @@ const Index = () => {
             </button>
           )}
           {results && !(hasIncrease && isAboveMarket) && !capturedEmail && (
-            document.getElementById('section-letter')
-              || document.getElementById('section-email-capture')
-              || document.querySelector('[id^="section-share"]')
-          ) && (
             <button
               onClick={() => {
-                const target = document.getElementById('section-letter')
-                  || document.getElementById('section-email-capture')
-                  || document.querySelector('[id^="section-share"]');
-                if (target) {
-                  target.scrollIntoView({ behavior: 'smooth' });
-                }
+                document.getElementById('section-gate')?.scrollIntoView({ behavior: 'smooth' });
               }}
               className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap"
             >
@@ -294,18 +280,22 @@ const Index = () => {
               <span className="sm:hidden">Share →</span>
             </button>
           )}
-          <Link
-            to="/guides"
-            className="text-muted-foreground hover:text-foreground text-[12px] sm:text-[13px] font-medium transition-colors whitespace-nowrap"
-          >
-            Guides
-          </Link>
-          <Link
-            to="/what-should-i-pay"
-            className="text-muted-foreground hover:text-foreground text-[12px] sm:text-[13px] font-medium transition-colors whitespace-nowrap hidden lg:inline-block"
-          >
-            Check Asking Price →
-          </Link>
+          {!results && (
+            <>
+              <Link
+                to="/guides"
+                className="text-muted-foreground hover:text-foreground text-[12px] sm:text-[13px] font-medium transition-colors whitespace-nowrap"
+              >
+                Guides
+              </Link>
+              <Link
+                to="/what-should-i-pay"
+                className="text-muted-foreground hover:text-foreground text-[12px] sm:text-[13px] font-medium transition-colors whitespace-nowrap hidden lg:inline-block"
+              >
+                Check Asking Price →
+              </Link>
+            </>
+          )}
         </div>
       </nav>
 
