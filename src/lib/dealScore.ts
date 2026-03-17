@@ -2,18 +2,18 @@ export interface DealScore {
   verdict: 'good-deal' | 'fair-price' | 'overpriced';
   percentDiff: number;
   explanation: string;
+  shortLabel: string;
   baselineSource: 'market' | 'hud';
   sortScore: number;
 }
 
+function bedroomLabel(bedrooms: number): string {
+  if (bedrooms === 0) return 'studios';
+  return `${bedrooms} BRs`;
+}
+
 /**
  * Score a listing against the local market median or HUD SAFMR fallback.
- *
- * @param rent       – listing asking rent
- * @param bedrooms   – bedroom count (0 = studio, 1, 2, …)
- * @param zip        – listing ZIP code
- * @param marketMap  – ZIP → bedroom → median rent (from Rentcast market data)
- * @param hudMap     – ZIP → number[] (SAFMR by bedroom index)
  */
 export function scoreListing(
   rent: number,
@@ -22,7 +22,6 @@ export function scoreListing(
   marketMap: Record<string, Record<number, number>>,
   hudMap: Record<string, number[]>,
 ): DealScore | null {
-  // Try market median first
   let baseline: number | null = null;
   let source: 'market' | 'hud' = 'market';
 
@@ -31,7 +30,6 @@ export function scoreListing(
     baseline = marketZip[bedrooms];
   }
 
-  // Fallback to HUD SAFMR
   if (baseline == null) {
     const hudZip = hudMap[zip];
     const idx = Math.min(bedrooms, 4);
@@ -45,6 +43,7 @@ export function scoreListing(
 
   const percentDiff = (rent - baseline) / baseline;
   const absPct = Math.abs(Math.round(percentDiff * 100));
+  const brLabel = bedroomLabel(bedrooms);
 
   let verdict: DealScore['verdict'];
   if (percentDiff <= -0.10) {
@@ -55,24 +54,35 @@ export function scoreListing(
     verdict = 'overpriced';
   }
 
+  let shortLabel: string;
+  if (verdict === 'good-deal') {
+    shortLabel = `${absPct}% below market`;
+  } else if (verdict === 'fair-price') {
+    shortLabel = 'At market';
+  } else {
+    shortLabel = `${absPct}% above market`;
+  }
+
+  const baseLabel = source === 'market' ? 'market median' : 'local rent benchmark';
+
   let explanation: string;
   if (source === 'market') {
     if (verdict === 'good-deal') {
-      explanation = `Priced ${absPct}% below market median for this area`;
+      explanation = `Priced ${absPct}% below the market median for ${brLabel} in this area`;
     } else if (verdict === 'fair-price') {
-      explanation = `Priced within ${absPct}% of market median`;
+      explanation = `In line with typical ${brLabel.replace('BRs', 'BR').replace('studios', 'studio')} rents in this area`;
     } else {
-      explanation = `Priced ${absPct}% above market median for this area`;
+      explanation = `Priced ${absPct}% above typical ${brLabel.replace('BRs', 'BR').replace('studios', 'studio')} rents in this area`;
     }
   } else {
     if (verdict === 'good-deal') {
-      explanation = `Priced ${absPct}% below HUD Fair Market Rent benchmark`;
+      explanation = `Priced ${absPct}% below the local rent benchmark for ${brLabel} in this area`;
     } else if (verdict === 'fair-price') {
-      explanation = `Priced near HUD Fair Market Rent for this area`;
+      explanation = `In line with the local rent benchmark for ${brLabel}`;
     } else {
-      explanation = `Priced ${absPct}% above HUD Fair Market Rent benchmark`;
+      explanation = `Priced ${absPct}% above the local rent benchmark for ${brLabel} in this area`;
     }
   }
 
-  return { verdict, percentDiff, explanation, baselineSource: source, sortScore: percentDiff };
+  return { verdict, percentDiff, explanation, shortLabel, baselineSource: source, sortScore: percentDiff };
 }

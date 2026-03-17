@@ -31,11 +31,6 @@ export const DEALS_CITIES: Record<string, DealsCityConfig> = {
   'seattle': { name: 'Seattle', state: 'WA', zips: ['98101', '98102', '98103', '98109', '98122'], metroLabel: 'Seattle', displayName: 'Seattle, WA' },
 };
 
-/**
- * Maps a ZIP code to a deals city slug, if the ZIP is in a launch city.
- * Manhattan and Brooklyn use explicit match only (borough boundaries matter).
- * Other cities use prefix matching where safe.
- */
 export function getDealsCity(zip: string): string | null {
   if (DEALS_CITIES['manhattan'].zips.includes(zip)) return 'manhattan';
   if (DEALS_CITIES['brooklyn'].zips.includes(zip)) return 'brooklyn';
@@ -49,4 +44,10 @@ export function getDealsCity(zip: string): string | null {
   if (zip.startsWith('921')) return 'san-diego';
   if (zip.startsWith('981')) return 'seattle';
   return null;
+}
+
+export function getDealsCityDisplayName(zip: string): string | null {
+  const slug = getDealsCity(zip);
+  if (!slug) return null;
+  return DEALS_CITIES[slug]?.displayName ?? null;
 }

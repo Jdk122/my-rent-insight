@@ -1,19 +1,18 @@
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
-import { CheckCircle2, AlertTriangle, XCircle, ArrowRight } from 'lucide-react';
+import { CheckCircle2, Minus, TrendingUp, ArrowRight } from 'lucide-react';
 import SEO from '@/components/SEO';
 import SEOFooter from '@/components/SEOFooter';
 import { NoIndexMeta } from '@/components/NoIndexMeta';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { getHud50Data, Hud50ZipRaw } from '@/data/dataLoader';
 import { DEALS_CITIES } from '@/lib/dealsCities';
 import { scoreListing, DealScore } from '@/lib/dealScore';
 import { trackEvent } from '@/lib/analytics';
+import { slugify, stateNameFromAbbr } from '@/data/cityStateUtils';
 
 /* ── Types ── */
 interface RawListing {
@@ -37,6 +36,33 @@ interface ScoredListing extends RawListing {
 /* ── Helpers ── */
 const normalizeAddr = (a: string) => a.toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
 
+/** Strip city/state/zip from formatted address to get just the street line */
+function streetOnly(formattedAddress: string, city: string, state: string, zip: string): string {
+  // Remove ", City, ST ZIP" or ", City, ST" suffix
+  let street = formattedAddress;
+  const suffixes = [
+    `, ${city}, ${state} ${zip}`,
+    `, ${city}, ${state}`,
+    ` ${city}, ${state} ${zip}`,
+    ` ${city} ${state} ${zip}`,
+  ];
+  for (const suf of suffixes) {
+    if (street.toLowerCase().endsWith(suf.toLowerCase())) {
+      street = street.slice(0, -suf.length);
+      break;
+    }
+  }
+  return street.trim() || formattedAddress;
+}
+
+function daysAgoLabel(days: number | null): string | null {
+  if (days == null) return null;
+  if (days === 0) return 'Listed today';
+  if (days === 1) return 'Listed 1d ago';
+  if (days <= 30) return `Listed ${days}d ago`;
+  return `Listed ${days} days ago`;
+}
+
 const BEDROOM_FILTERS = [
   { label: 'All', value: -1 },
   { label: 'Studio', value: 0 },
@@ -45,9 +71,24 @@ const BEDROOM_FILTERS = [
 ] as const;
 
 const verdictConfig = {
-  'good-deal': { label: 'Good Deal', icon: CheckCircle2, badgeCls: 'bg-emerald-500 text-white', rowCls: 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-300' },
-  'fair-price': { label: 'Fair Price', icon: AlertTriangle, badgeCls: 'bg-amber-500 text-black', rowCls: 'bg-amber-50 text-amber-800 dark:bg-amber-950/30 dark:text-amber-300' },
-  'overpriced': { label: 'Overpriced', icon: XCircle, badgeCls: 'bg-red-500 text-white', rowCls: 'bg-red-50 text-red-800 dark:bg-red-950/30 dark:text-red-300' },
+  'good-deal': {
+    label: 'Good deal',
+    icon: CheckCircle2,
+    barCls: 'bg-emerald-500',
+    rowCls: 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-300',
+  },
+  'fair-price': {
+    label: 'Fair price',
+    icon: Minus,
+    barCls: 'bg-amber-500',
+    rowCls: 'bg-amber-50 text-amber-800 dark:bg-amber-950/30 dark:text-amber-300',
+  },
+  'overpriced': {
+    label: 'Overpriced',
+    icon: TrendingUp,
+    barCls: 'bg-red-500',
+    rowCls: 'bg-red-50 text-red-800 dark:bg-red-950/30 dark:text-red-300',
+  },
 } as const;
 
 /* ── Component ── */
@@ -74,8 +115,6 @@ const DealsPage = () => {
     (async () => {
       try {
         const bedroomTypes = [0, 1, 2];
-
-        // Fire ALL listing calls + market calls in parallel
         const listingPromises: Promise<{ listings: RawListing[] }>[] = [];
         const marketPromises: Promise<{ zip: string; data: any }>[] = [];
 
@@ -102,7 +141,7 @@ const DealsPage = () => {
 
         if (cancelled) return;
 
-        // Build market baselines map: zip → bedroom → median
+        // Build market baselines map
         const marketMap: Record<string, Record<number, number>> = {};
         for (const { zip, data } of marketResults) {
           if (!data) continue;
@@ -117,20 +156,16 @@ const DealsPage = () => {
               }
             }
           }
-          // Also use the overall medianRent as a fallback key -1
-          if (typeof data.medianRent === 'number' && data.medianRent > 0) {
-            marketMap[zip][-1] = data.medianRent;
-          }
         }
 
-        // Build HUD map: zip → number[]
+        // Build HUD map
         const hudMap: Record<string, number[]> = {};
         for (const zip of city.zips) {
           const h = (hudData as Record<string, Hud50ZipRaw>)[zip];
           if (h?.f50) hudMap[zip] = h.f50;
         }
 
-        // Merge + deduplicate listings
+        // Merge + deduplicate
         const allRaw: RawListing[] = listingResults.flatMap(r => r.listings);
         const seen = new Set<string>();
         const deduped: RawListing[] = [];
@@ -142,7 +177,7 @@ const DealsPage = () => {
           deduped.push(l);
         }
 
-        // Score each listing
+        // Score
         const scored: ScoredListing[] = [];
         for (const l of deduped) {
           const br = l.bedrooms ?? 1;
@@ -152,14 +187,12 @@ const DealsPage = () => {
           }
         }
 
-        // Sort by best deal first
         scored.sort((a, b) => a.score.sortScore - b.score.sortScore);
 
         if (cancelled) return;
         setListings(scored);
         setSuccessfulEmpty(scored.length === 0);
 
-        // Analytics
         trackEvent('deals_page_view', { city: citySlug!, listing_count: scored.length });
       } catch {
         if (!cancelled) setError(true);
@@ -181,10 +214,15 @@ const DealsPage = () => {
     trackEvent('deals_filter_change', { city: citySlug!, bedrooms: val === -1 ? 'all' : val });
   };
 
-  // Redirect unknown cities — after all hooks
   if (!city) return <Navigate to="/rent-data" replace />;
 
-  /* ── Render ── */
+  // Build rent-data link for this city
+  const stateName = stateNameFromAbbr(city.state);
+  const rentDataLink = stateName ? `/rent-data/${slugify(stateName)}/${slugify(city.name)}` : null;
+
+  // Other cities for cross-linking
+  const otherCities = Object.entries(DEALS_CITIES).filter(([slug]) => slug !== citySlug);
+
   return (
     <main id="main-content" className="min-h-screen bg-background">
       <SEO
@@ -208,7 +246,7 @@ const DealsPage = () => {
             {!loading && <>{filtered.length} apartments · </>}Updated daily · Sorted by best deal first
           </p>
           <p className="text-xs text-muted-foreground/70 mt-2">
-            Rentcast Market Data · HUD SAFMR · Updated March 2026
+            Local Market Data · 38,600+ ZIP Codes · Updated March 2026
           </p>
         </header>
 
@@ -233,15 +271,17 @@ const DealsPage = () => {
         {loading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {Array.from({ length: 6 }).map((_, i) => (
-              <Card key={i} className="p-5 space-y-3">
-                <Skeleton className="h-6 w-24" />
-                <Skeleton className="h-5 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-                <Skeleton className="h-8 w-28" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-14 w-full" />
-                <Skeleton className="h-10 w-full" />
-              </Card>
+              <div key={i} className="rounded-lg border border-muted overflow-hidden">
+                <Skeleton className="h-10 w-full rounded-none" />
+                <div className="p-5 space-y-3">
+                  <Skeleton className="h-7 w-28" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-4 w-2/3" />
+                  <Skeleton className="h-14 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+              </div>
             ))}
           </div>
         )}
@@ -275,92 +315,131 @@ const DealsPage = () => {
               const baLabel = l.bathrooms != null ? `${l.bathrooms} BA` : null;
               const sqftLabel = l.squareFootage ? `${l.squareFootage.toLocaleString()} sqft` : null;
               const specs = [brLabel, baLabel, sqftLabel].filter(Boolean).join(' · ');
+              const street = streetOnly(l.formattedAddress, l.city, l.state, l.zipCode);
+              const freshness = daysAgoLabel(l.daysOnMarket);
 
               return (
-                <Card key={`${l.normalizedAddr}-${idx}`} className="p-5 flex flex-col gap-3">
-                  {/* Verdict badge */}
-                  <Badge className={`w-fit text-sm px-3 py-1 ${vc.badgeCls}`}>
-                    <Icon className="h-3.5 w-3.5 mr-1.5" />
-                    {vc.label}
-                  </Badge>
-
-                  {/* Address */}
-                  <div>
-                    <p className="font-semibold text-foreground">{l.formattedAddress}</p>
-                    <p className="text-sm text-muted-foreground">{l.city}, {l.state} {l.zipCode}</p>
+                <div key={`${l.normalizedAddr}-${idx}`} className="rounded-lg border border-muted bg-card overflow-hidden flex flex-col">
+                  {/* Verdict header bar */}
+                  <div className={`${vc.barCls} px-4 py-2.5 flex items-center justify-between`}>
+                    <span className="flex items-center gap-1.5 text-white text-sm font-semibold">
+                      <Icon className="h-4 w-4" />
+                      {vc.label}
+                    </span>
+                    <span className="text-white/85 text-xs font-medium">
+                      {l.score.shortLabel}
+                    </span>
                   </div>
 
-                  {/* Rent price */}
-                  <p className="text-2xl font-bold text-foreground">
-                    ${l.rent.toLocaleString()}<span className="text-sm font-normal text-muted-foreground">/mo</span>
-                  </p>
+                  {/* Card body */}
+                  <div className="px-5 pt-4 pb-5 flex flex-col gap-3 flex-1">
+                    {/* Price + freshness */}
+                    <div className="flex items-baseline justify-between">
+                      <p className="text-2xl font-bold text-foreground">
+                        ${l.rent.toLocaleString()}<span className="text-sm font-normal text-muted-foreground">/mo</span>
+                      </p>
+                      {freshness && (
+                        <span className="text-xs text-muted-foreground/70">{freshness}</span>
+                      )}
+                    </div>
 
-                  {/* Specs */}
-                  <p className="text-sm text-muted-foreground">{specs}</p>
-                  {l.daysOnMarket != null && (
-                    <p className="text-xs text-muted-foreground/70">
-                      Listed {l.daysOnMarket} {l.daysOnMarket === 1 ? 'day' : 'days'} ago
-                    </p>
-                  )}
+                    {/* Address */}
+                    <div>
+                      <p className="font-semibold text-[15px] text-foreground leading-snug">{street}</p>
+                      <p className="text-[13px] text-muted-foreground">{l.city}, {l.state} {l.zipCode}</p>
+                    </div>
 
-                  {/* Explanation */}
-                  <div className={`rounded-md px-3 py-2 text-sm ${vc.rowCls}`}>
-                    "{l.score.explanation}"
+                    {/* Specs */}
+                    <p className="text-sm text-muted-foreground">{specs}</p>
+
+                    {/* Explanation */}
+                    <div className={`rounded-md px-3 py-2 text-sm ${vc.rowCls}`}>
+                      {l.score.explanation}
+                    </div>
+
+                    {/* CTA */}
+                    {l.listingUrl && (
+                      <Button
+                        variant="outline"
+                        className="w-full mt-auto"
+                        onClick={() => {
+                          trackEvent('deals_listing_click', {
+                            city: citySlug!,
+                            address: l.formattedAddress,
+                            rent: l.rent,
+                            verdict: l.score.verdict,
+                            bedrooms: l.bedrooms ?? -1,
+                          });
+                          window.open(l.listingUrl!, '_blank', 'noopener');
+                        }}
+                      >
+                        View details <ArrowRight className="h-4 w-4 ml-1.5" />
+                      </Button>
+                    )}
                   </div>
-
-                  {/* CTA */}
-                  {l.listingUrl ? (
-                    <Button
-                      variant="outline"
-                      className="w-full mt-auto"
-                      onClick={() => {
-                        trackEvent('deals_listing_click', {
-                          city: citySlug!,
-                          address: l.formattedAddress,
-                          rent: l.rent,
-                          verdict: l.score.verdict,
-                          bedrooms: l.bedrooms ?? -1,
-                        });
-                        window.open(l.listingUrl!, '_blank', 'noopener');
-                      }}
-                    >
-                      View Details <ArrowRight className="h-4 w-4 ml-1.5" />
-                    </Button>
-                  ) : (
-                    <p className="text-xs text-muted-foreground mt-auto text-center">Contact landlord directly</p>
-                  )}
-                </Card>
+                </div>
               );
             })}
           </div>
         )}
 
-        {/* ── Below-listings section ── */}
-        {!loading && !error && listings.length > 0 && (
-          <div className="mt-14 space-y-6 max-w-xl">
+        {/* ── Below-listings sections ── */}
+        {!loading && !error && (
+          <div className="mt-14 space-y-10 max-w-2xl">
+            {/* Cross-sell tool links */}
             <div className="space-y-3">
               <Link
                 to="/"
                 onClick={() => trackEvent('deals_tool_click', { city: citySlug!, destination: 'renewal' })}
-                className="flex items-center gap-2 text-primary hover:underline font-medium"
+                className="block border-l-4 border-primary bg-muted/50 rounded-r-lg px-4 py-3 hover:bg-muted/70 transition-colors"
               >
-                Already renting in {city.name}? Check if your rent increase is fair <ArrowRight className="h-4 w-4" />
+                <span className="flex items-center gap-2 text-sm font-medium text-foreground">
+                  Already renting in {city.name}? Check if your rent increase is fair <ArrowRight className="h-4 w-4 shrink-0" />
+                </span>
               </Link>
               <Link
                 to="/what-should-i-pay"
                 onClick={() => trackEvent('deals_tool_click', { city: citySlug!, destination: 'wsip' })}
-                className="flex items-center gap-2 text-primary hover:underline font-medium"
+                className="block border-l-4 border-primary bg-muted/50 rounded-r-lg px-4 py-3 hover:bg-muted/70 transition-colors"
               >
-                Wondering what you should pay? Use our What Should I Pay tool <ArrowRight className="h-4 w-4" />
+                <span className="flex items-center gap-2 text-sm font-medium text-foreground">
+                  Wondering what you should pay? Use our What Should I Pay tool <ArrowRight className="h-4 w-4 shrink-0" />
+                </span>
               </Link>
             </div>
 
+            {/* Browse Other Cities */}
+            <section>
+              <h2 className="text-lg font-semibold text-foreground mb-4">Browse Apartment Deals in Other Cities</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {otherCities.map(([slug, c]) => (
+                  <Link
+                    key={slug}
+                    to={`/deals/${slug}`}
+                    className="text-sm text-primary hover:underline font-medium py-1"
+                  >
+                    {c.displayName}
+                  </Link>
+                ))}
+              </div>
+            </section>
+
+            {/* Rent data link */}
+            {rentDataLink && (
+              <Link
+                to={rentDataLink}
+                className="block text-sm text-primary hover:underline font-medium"
+              >
+                See detailed rent data and trends for {city.name} →
+              </Link>
+            )}
+
+            {/* Methodology */}
             <div className="text-sm text-muted-foreground">
               <p className="font-medium text-foreground mb-1">How we score listings</p>
               <p>
-                Every apartment is compared against the market median rent for its ZIP code and bedroom count,
-                using Rentcast market data with HUD Fair Market Rent as a secondary benchmark. Listings priced
-                significantly below the market baseline are flagged as Good Deals. Listings refresh daily.{' '}
+                Every apartment is compared against the market median rent for its ZIP code and bedroom count.
+                Listings priced significantly below the market baseline are flagged as Good Deals. Listings refresh daily.{' '}
                 <Link to="/methodology" className="text-primary hover:underline">Learn more about our methodology →</Link>
               </p>
             </div>
