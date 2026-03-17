@@ -391,7 +391,7 @@ function getScoreBasisMessage(
     return `Based on ${compCount} nearby listings and local rent trend data.`;
   }
   if (compCount > 0) {
-    return `Based on ${compCount} nearby listings, federal rent benchmarks, and regional trends.`;
+    return `Based on ${compCount} nearby listings, federal rent benchmarks, and local trends.`;
   }
   return 'Based primarily on federal rent benchmarks and regional trends.';
 }
