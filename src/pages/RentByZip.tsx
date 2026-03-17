@@ -1,4 +1,6 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
+import { getDealsCity, DEALS_CITIES as DEALS_CITIES_MAP } from '@/lib/dealsCities';
 import { useEffect, useState } from 'react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { NoIndexMeta } from '@/components/NoIndexMeta';
