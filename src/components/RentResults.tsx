@@ -77,6 +77,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   });
   const [reportUrl, setReportUrl] = useState<string | null>(null);
   const analysisLogged = useRef(isDuplicateAnalysis);
+  const gateViewedRef = useRef(false);
 
   const increaseAmount = formData.rentIncrease
     ? formData.increaseIsPercent
