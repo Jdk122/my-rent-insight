@@ -1,6 +1,4 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
-import { getDealsCity, DEALS_CITIES as DEALS_CITIES_MAP } from '@/lib/dealsCities';
 import { useEffect, useState } from 'react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { NoIndexMeta } from '@/components/NoIndexMeta';
@@ -602,24 +600,6 @@ const RentByZip = () => {
             </AccordionItem>
           </Accordion>
         </section>
-
-        {/* ═══ Deals page cross-link ═══ */}
-        {(() => {
-          const dealsSlug = zip ? getDealsCity(zip) : null;
-          if (!dealsSlug) return null;
-          const dealsConfig = DEALS_CITIES_MAP[dealsSlug];
-          if (!dealsConfig) return null;
-          return (
-            <div className="mb-8 border-l-4 border-primary bg-muted/50 rounded-r-lg px-4 py-3">
-              <Link
-                to={`/deals/${dealsSlug}`}
-                className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
-              >
-                Browse apartment deals in {dealsConfig.displayName} <ArrowRight className="h-4 w-4 shrink-0" />
-              </Link>
-            </div>
-          );
-        })()}
 
         {/* ═══ Renter Tools CTA ═══ */}
         <RenterToolsCTA zip={zip} pageType="zip" />

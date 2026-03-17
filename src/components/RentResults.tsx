@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { Info, ArrowRight } from 'lucide-react';
+import { Info } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -40,7 +40,6 @@ import SocialProofLine from './SocialProofLine';
 import ReportGate from './ReportGate';
 import PreGateCompPreview from './PreGateCompPreview';
 import { demoRentcast } from '@/data/demoData';
-import { getDealsCity, DEALS_CITIES as DEALS_CITIES_MAP } from '@/lib/dealsCities';
 
 interface RentResultsProps {
   formData: RentFormData;
@@ -1333,25 +1332,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               />
             )}
 
-            {/* ━━━ Browse Deals contextual link (above-market only) ━━━ */}
-            {isAboveMarket && (() => {
-              const dealsCity = getDealsCity(rentData.zip);
-              if (!dealsCity) return null;
-              const dealsCityConfig = DEALS_CITIES_MAP[dealsCity];
-              if (!dealsCityConfig) return null;
-              return (
-                <div className="border-l-4 border-primary bg-muted/50 rounded-r-lg px-4 py-3 mt-6">
-                  <Link
-                    to={`/deals/${dealsCity}`}
-                    className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
-                  >
-                    Thinking about moving? Browse apartment deals in {dealsCityConfig.displayName}
-                    <ArrowRight className="h-4 w-4 shrink-0" />
-                  </Link>
-                </div>
-              );
-            })()}
-
+            {/* ━━━ Know Your Rights ━━━ */}
             {hasRentControl && (
               <motion.section id="section-rights" {...fade(0.17)} className="pt-8 pb-4">
                 <div className="evidence-card">
