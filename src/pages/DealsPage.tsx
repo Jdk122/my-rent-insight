@@ -2,7 +2,7 @@ import { useParams, Navigate, Link } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
 import { CheckCircle2, AlertTriangle, XCircle, ArrowRight } from 'lucide-react';
 import SEO from '@/components/SEO';
-import { SEOFooter } from '@/components/SEOFooter';
+import SEOFooter from '@/components/SEOFooter';
 import { NoIndexMeta } from '@/components/NoIndexMeta';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -62,9 +62,6 @@ const DealsPage = () => {
   const [successfulEmpty, setSuccessfulEmpty] = useState(false);
 
   usePrerenderReady(!loading);
-
-  // Redirect unknown cities
-  if (!city) return <Navigate to="/rent-data" replace />;
 
   /* ── Data fetch ── */
   useEffect(() => {
@@ -183,6 +180,9 @@ const DealsPage = () => {
     setBedroomFilter(val);
     trackEvent('deals_filter_change', { city: citySlug!, bedrooms: val === -1 ? 'all' : val });
   };
+
+  // Redirect unknown cities — after all hooks
+  if (!city) return <Navigate to="/rent-data" replace />;
 
   /* ── Render ── */
   return (
