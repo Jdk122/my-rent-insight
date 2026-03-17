@@ -851,7 +851,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                                   : <>Comparable units near you are renting for less than your proposed renewal price.</>
                               ) : capturedEmail
                                 ? <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. That's ${fmt(increaseAmount * 12)} more per year.</>
-                                : <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. Unlock the comps, evidence, and counter-offer in your full report below.</>
+                                : <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%.</>
                           ) : isFair ? (
                             isCompDeficient ? (
                               <>At ${fmt(newRent)}/mo with a {increasePct}% increase, your rate of increase tracks the {marketYoy}% area trend for {brLabel} rentals in {city}.</>
@@ -961,13 +961,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </motion.div>
               )}
 
-              {/* ── Combined comp + letter prompt (mobile only) ── */}
-              {!capturedEmail && compsWithRent.length > 0 && (
-                <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
-                  <span className="text-sm font-medium text-foreground">Your full report is ready — comps, market evidence, and your negotiation letter</span>
-                  <span className="text-sm font-semibold text-primary mt-0.5">Enter your email below to unlock ↓</span>
-                </div>
-              )}
               {capturedEmail && compsWithRent.length > 0 && (
                 <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
                   <span className="text-sm font-medium text-foreground">{compsWithRent.length} matched comps support your result</span>
@@ -1095,13 +1088,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 }
               </p>
 
-              {/* ── Combined comp + letter prompt (mobile, no-increase) ── */}
-              {!capturedEmail && compsWithRent.length > 0 && (
-                <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
-                  <span className="text-sm font-medium text-foreground">Your full report is ready — comps, market evidence, and your negotiation letter</span>
-                  <span className="text-sm font-semibold text-primary mt-0.5">Enter your email below to unlock ↓</span>
-                </div>
-              )}
               {capturedEmail && compsWithRent.length > 0 && (
                 <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
                   <span className="text-sm font-medium text-foreground">{compsWithRent.length} matched comps support your result</span>
