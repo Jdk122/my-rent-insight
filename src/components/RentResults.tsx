@@ -961,13 +961,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </motion.div>
               )}
 
-              {/* ── Combined comp + letter prompt (mobile only) ── */}
-              {!capturedEmail && compsWithRent.length > 0 && (
-                <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
-                  <span className="text-sm font-medium text-foreground">Your full report is ready — comps, market evidence, and your negotiation letter</span>
-                  <span className="text-sm font-semibold text-primary mt-0.5">Enter your email below to unlock ↓</span>
-                </div>
-              )}
               {capturedEmail && compsWithRent.length > 0 && (
                 <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
                   <span className="text-sm font-medium text-foreground">{compsWithRent.length} matched comps support your result</span>
