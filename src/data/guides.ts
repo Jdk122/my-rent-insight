@@ -20,35 +20,36 @@ export const guides: GuideArticle[] = [
     metaTitle: 'How to Negotiate a Rent Increase: Data-Driven Guide + Email Template (2026)',
     metaDescription: 'Learn exactly how to negotiate a rent increase with market data, a worked counter-offer example, a sample email template, and insider knowledge of how landlords think about renewals.',
     publishedDate: '2026-03-11',
+    updatedDate: '2026-03-18',
     author: 'RenewalReply',
     readingTime: '10 min read',
     category: 'Rent Negotiation',
     relatedSlugs: ['rent-increase-laws-by-state', 'what-should-i-pay-for-rent'],
-    content: `You just got the renewal notice. Your landlord wants more — maybe 5%, maybe 15%.
+    content: `You just got the renewal notice. Your landlord wants more: maybe 5%, maybe 15%.
 
 Do not reply emotionally. Do not reply without data. And do not assume the number is final.
 
-In most cases, a rent increase is negotiable — if you come back with specific market evidence, a clear counter-number, and a professional tone. Tenants who do this consistently get better outcomes than tenants who respond with feelings, complaints, or silence.
+In most cases, a rent increase is negotiable, if you come back with specific market evidence, a clear counter-number, and a professional tone. Tenants who do this consistently get better outcomes than tenants who respond with feelings, complaints, or silence.
 
-This guide gives you the exact process: what data to gather, how to calculate a counteroffer, what to say in your email, how to handle common landlord responses — and the insider dynamics most renters don't understand.
+This guide gives you the exact process: what data to gather, how to calculate a counteroffer, what to say in your email, how to handle common landlord responses, and the insider dynamics most renters don't understand.
 
 ## If You Only Do Three Things
 
 1. **Check the market trend.** If rents in your area grew 3% and your landlord wants 8%, that's a 5-point gap you can point to directly. This is usually your strongest argument.
 2. **Pull comps.** Find what similar units near you are renting for *right now*. If your post-increase rent is above the median, you have a data-backed case.
-3. **Counter with a specific number.** Don't say "that's too much." Say "$2,496 — matching the 4% local trend." A specific number anchored to data is what gets taken seriously.
+3. **Counter with a specific number.** Don't say "that's too much." Say "$2,496, matching the 4% local trend." A specific number anchored to data is what gets taken seriously.
 
-> **Do it in 10 seconds:** [RenewalReply](/) pulls your local rent trend, comparable listings, and HUD benchmarks into one place — and generates a negotiation letter with your actual numbers. Free, no account required.
+> **Do it in 10 seconds:** [RenewalReply](/) pulls your local rent trend, comparable listings, and HUD benchmarks into one place, and generates a negotiation letter with your actual numbers. Free, no account required.
 
 ## Why Your Landlord Will Probably Negotiate
 
 Most renters assume the renewal number is take-it-or-leave-it. It usually isn't. Here's why.
 
-### Turnover is expensive — and landlords know exactly how expensive
+### Turnover is expensive, and landlords know exactly how expensive
 
 Replacing a tenant means vacancy loss, cleaning, repairs, listing costs, showings, screening, and uncertainty about when someone new will actually sign. The total cost varies by market and unit, but it adds up fast.
 
-In a smaller building (under 10 units), a single vacancy can represent 15%+ of the landlord's monthly revenue. That math matters. A landlord deciding whether to push for an extra $150/month isn't just choosing between two rent numbers — they're weighing that income against the risk of weeks of lost rent and thousands in turnover costs.
+In a smaller building (under 10 units), a single vacancy can represent 15%+ of the landlord's monthly revenue. That math matters. A landlord deciding whether to push for an extra $150/month isn't just choosing between two rent numbers; they're weighing that income against the risk of weeks of lost rent and thousands in turnover costs.
 
 ### Most landlords don't run rigorous comp analysis at renewal
 
@@ -58,31 +59,31 @@ That means there's often a gap between what they're asking and what the data act
 
 ### You are more valuable than you think
 
-A tenant who pays on time, doesn't generate complaints, and doesn't damage the unit is a known quantity. A new tenant is a gamble — even with screening. Landlords care about revenue, but they also care about stability. A tenant who understands that negotiates from a much stronger position.
+A tenant who pays on time, doesn't generate complaints, and doesn't damage the unit is a known quantity. A new tenant is a gamble, even with screening. Landlords care about revenue, but they also care about stability. A tenant who understands that negotiates from a much stronger position.
 
 ## When You Have the Most Leverage
 
 Not all renewal negotiations are equal. These conditions tilt the table in your favor:
 
-**High vacancy in the area.** If apartments near you are sitting empty, your landlord knows losing you means joining that pool. Check local vacancy rates — anything above 5-6% is favorable for renters.
+**High vacancy in the area.** If apartments near you are sitting empty, your landlord knows losing you means joining that pool. Check local vacancy rates: anything above 5-6% is favorable for renters.
 
 **Long days on market.** If similar units are taking 30+ days to rent, every empty day is lost revenue the landlord can't recover. This is one of the most powerful pieces of data you can bring to a negotiation.
 
-**Concessions on new leases.** This is the signal most renters miss. If new tenants in your building or area are getting one month free, waived fees, or reduced deposits, that's direct evidence the landlord's pricing power is weakening — even if your renewal letter doesn't reflect it. Landlords offer concessions before cutting headline rents because concessions don't reset the comp base for the building. If 30%+ of nearby listings are offering concessions, you have real leverage.
+**Concessions on new leases.** This is the signal most renters miss. If new tenants in your building or area are getting one month free, waived fees, or reduced deposits, that's direct evidence the landlord's pricing power is weakening, even if your renewal letter doesn't reflect it. Landlords offer concessions before cutting headline rents because concessions don't reset the comp base for the building. If 30%+ of nearby listings are offering concessions, you have real leverage.
 
 **Winter timing.** Leases expiring November through February give you natural leverage. Fewer people move in winter, which means fewer potential replacement tenants and a longer expected vacancy if you leave.
 
 **Small building.** The smaller the building, the harder a vacancy hits. A landlord with 200 units can absorb one vacancy. A landlord with 6 units feels every empty month acutely. Use that.
 
-**Rent stabilization.** In some cities — New York, Los Angeles, San Francisco, and others — your increase may be legally capped. If you're not sure whether your unit qualifies, check your city's rent board or see our [rent increase laws by state](/guides/rent-increase-laws-by-state) guide.
+**Rent stabilization.** In some cities (New York, Los Angeles, San Francisco, and others), your increase may be legally capped. If you're not sure whether your unit qualifies, check your city's rent board or see our [rent increase laws by state](/guides/rent-increase-laws-by-state) guide.
 
 ## When You Have Less Leverage (Be Honest With Yourself)
 
-**Your rent is well below market.** If comparable units near you rent for significantly more than what you're paying, the landlord has pricing room and knows it. You can still negotiate the *rate* of increase — but arguing the absolute number when you're $300 below median is a weak position.
+**Your rent is well below market.** If comparable units near you rent for significantly more than what you're paying, the landlord has pricing room and knows it. You can still negotiate the *rate* of increase, but arguing the absolute number when you're $300 below median is a weak position.
 
 **The market is tight.** Sub-3% vacancy, units leasing in under a week, no concessions anywhere. In that environment, your landlord has other applicants. You can still push back, but calibrate your expectations.
 
-**Your landlord wants you out.** This is the one most renters don't see coming. If your unit is dated and renovated units in the building command 15-30% premiums, the landlord may intentionally price your renewal high to push you out, renovate, and re-list. If your landlord seems indifferent to your departure — or actively unhelpful — they may have already decided your unit is worth more empty. In that case, your negotiating leverage is limited regardless of the data.
+**Your landlord wants you out.** This is the one most renters don't see coming. If your unit is dated and renovated units in the building command 15-30% premiums, the landlord may intentionally price your renewal high to push you out, renovate, and re-list. If your landlord seems indifferent to your departure, or actively unhelpful, they may have already decided your unit is worth more empty. In that case, your negotiating leverage is limited regardless of the data.
 
 ## What Data to Gather (Before You Reply)
 
@@ -104,7 +105,7 @@ If your post-increase rent would be above the local median for comparable units,
 
 This is the context layer that tells you how much leverage you actually have. High vacancy + long DOM + active concessions = strong renter leverage. Low vacancy + fast leasing + no concessions = limited leverage.
 
-> **Gathering this manually takes an hour.** [RenewalReply](/) pulls the key numbers — trend, comps, and benchmarks — into one view so you can see whether the increase is fair before you respond.
+> **Gathering this manually takes an hour.** [RenewalReply](/) pulls the key numbers (trend, comps, and benchmarks) into one view so you can see whether the increase is fair before you respond.
 
 ## How to Calculate a Counteroffer
 
@@ -140,7 +141,7 @@ There's a structural timing clash in renewal negotiations that works against ten
 
 **Your landlord's play:** Send the renewal offer late enough that you feel pressured to accept quickly, but early enough that they have time to re-list if you leave.
 
-**Your problem:** You need to evaluate the offer, research the market, pull comps, and formulate a counter — all while the clock ticks toward having to find a new apartment if this doesn't work out.
+**Your problem:** You need to evaluate the offer, research the market, pull comps, and formulate a counter, all while the clock ticks toward having to find a new apartment if this doesn't work out.
 
 **The fix:** Start 60-90 days before your lease expires. Don't wait for the renewal letter. You should already know what comparable units are renting for, whether the market is trending up or down, and what vacancy looks like in your area. If you wait until you receive the renewal to start researching, you've already lost leverage.
 
@@ -191,10 +192,10 @@ Ask for specifics: "Could you share which comparables you're referencing? The li
 Shift to non-monetary terms: "Would you consider a smaller increase in exchange for a longer lease term? That gives you guaranteed occupancy and saves turnover costs." Landlords who won't move on rent will often move on lease length, parking, unit improvements, or other concessions.
 
 **"We already gave you a good deal."**
-If your rent is genuinely below market, acknowledge it honestly: "I appreciate that my rent has been competitive. My concern is the *rate* of this increase — [X]% in a single year is significantly above the local trend. A more gradual adjustment would work better for both of us."
+If your rent is genuinely below market, acknowledge it honestly: "I appreciate that my rent has been competitive. My concern is the *rate* of this increase: [X]% in a single year is significantly above the local trend. A more gradual adjustment would work better for both of us."
 
 **No response.**
-Follow up by phone or in person after 3-5 business days. Silence doesn't always mean no — landlords are busy. But don't wait too long. In some jurisdictions, failing to respond to renewal terms by a deadline can reduce your options.
+Follow up by phone or in person after 3-5 business days. Silence doesn't always mean no; landlords are busy. But don't wait too long. In some jurisdictions, failing to respond to renewal terms by a deadline can reduce your options.
 
 ## What Makes a Landlord Take Your Pushback Seriously
 
@@ -202,7 +203,7 @@ Most advice says "be polite and professional." That's table stakes. Here's what 
 
 ### Real data, not feelings
 
-"I feel like my rent is too high" is not a negotiation. "My rent after this increase would be $2,640, which puts me at the 75th percentile for comparable 1-bedrooms within half a mile — based on 8 current listings" — that's a negotiation. Landlords respect data because data is what they use.
+"I feel like my rent is too high" is not a negotiation. "My rent after this increase would be $2,640, which puts me at the 75th percentile for comparable 1-bedrooms within half a mile — based on 8 current listings." That's a negotiation. Landlords respect data because data is what they use.
 
 ### Legitimate leverage, not bluffing
 
@@ -230,9 +231,9 @@ The strongest position is having a genuine alternative. If you've toured other u
 
 Not every renewal negotiation is salvageable. Watch for these signals:
 
-- **Indifference to your counteroffer** — no engagement, no counter-counter, just "that's the price"
+- **Indifference to your counteroffer:** no engagement, no counter-counter, just "that's the price"
 - **Your unit is dated** while renovated units in the building rent for 15-30% more
-- **The increase is dramatically above market** — not just above trend, but clearly designed to push you out
+- **The increase is dramatically above market:** not just above trend, but clearly designed to push you out
 - **The landlord has been renovating other units** as they turn over
 
 If two or more of these apply, the landlord may have already decided your unit is worth more empty and renovated. In that case, your best move may be to start looking rather than negotiating.
@@ -248,7 +249,7 @@ Negotiating a rent increase isn't about winning a fight. It's about making sure 
 *This guide is for informational purposes only and does not constitute legal or financial advice. Rent negotiation outcomes depend on local market conditions, lease terms, and individual circumstances.*`,
     faqItems: [
       { q: 'Can you negotiate a rent increase?', a: 'Yes. Many landlords expect some negotiation, especially when the tenant presents specific market data supporting a lower number.' },
-      { q: 'What is a reasonable rent increase?', a: 'It depends on your local market. An increase in line with the local year-over-year rent trend is generally reasonable. An increase significantly above that trend — especially if it pushes your rent above comparable units — is worth pushing back on.' },
+      { q: 'What is a reasonable rent increase?', a: 'It depends on your local market. An increase in line with the local year-over-year rent trend is generally reasonable. An increase significantly above that trend, especially if it pushes your rent above comparable units, is worth pushing back on.' },
       { q: 'How do I write a letter to negotiate rent?', a: 'Lead with your intent to stay, present specific market evidence (local trend, comparable listings, benchmarks), propose a clear counter-number with reasoning, and close by reinforcing your value as a tenant. See the sample email in this guide.' },
       { q: 'Should I negotiate by email or phone?', a: 'Email is generally better — it creates a written record, lets you present data clearly, and gives both sides time to think. Follow up by phone if you don\'t hear back within a few days.' },
       { q: 'Can I negotiate if my rent is already below market?', a: 'Yes, but shift your argument. Don\'t argue the absolute rent level — focus on the rate of increase. A 12% jump in one year is aggressive even if your rent is below the area median. Propose a gradual adjustment instead.' },
@@ -262,6 +263,7 @@ Negotiating a rent increase isn't about winning a fight. It's about making sure 
     metaTitle: 'How Much Can a Landlord Raise Rent? Rent Increase Laws by State (2026)',
     metaDescription: 'How much can a landlord raise rent in your state? See rent increase caps, required notice periods, and tenant protections for all 50 states. Updated for 2026.',
     publishedDate: '2026-03-11',
+    updatedDate: '2026-03-18',
     author: 'RenewalReply',
     readingTime: '12 min read',
     category: 'Tenant Rights',
@@ -398,23 +400,23 @@ Maryland has no statewide cap, but several jurisdictions have local rent stabili
 
 ### Minnesota
 
-Minnesota has no statewide cap. St. Paul has a 3% annual cap on rent increases, which has been controversial — housing construction dropped significantly after the policy took effect. Minneapolis does not currently have rent control. State law requires 60 days of notice for mobile home rent increases.
+Minnesota has no statewide cap. St. Paul has a 3% annual cap on rent increases, which has been controversial: housing construction dropped significantly after the policy took effect. Minneapolis does not currently have rent control. State law requires 60 days of notice for mobile home rent increases.
 
 ## States Where Most Renters Have No Cap
 
-The majority of U.S. states — roughly 35-40 — have no statewide rent cap and either ban local rent control or simply don't have any. In these states, a landlord can raise your rent by any amount at the end of your lease term, as long as they provide the required notice and the increase isn't discriminatory or retaliatory.
+The majority of U.S. states, roughly 35-40, have no statewide rent cap and either ban local rent control or simply don't have any. In these states, a landlord can raise your rent by any amount at the end of your lease term, as long as they provide the required notice and the increase isn't discriminatory or retaliatory.
 
 Even in these states, landlords cannot raise rent:
 
 **During your lease term** (unless the lease specifically allows it)
 
-**In retaliation** for filing a complaint, requesting repairs, or joining a tenant organization
+**In retaliation** for filing a complaint, requesting repairs, reporting code violations, or joining a tenant organization
 
 **In a discriminatory way** based on race, color, religion, national origin, sex, familial status, or disability (federal Fair Housing Act protections apply everywhere)
 
 The required notice period varies — some states specify 30, 45, 60, or 90 days. Others have no specific statewide statute, meaning the notice requirement defaults to whatever the lease says or applicable local law. Always check both your lease and your local jurisdiction's rules.
 
-**States that ban local rent control (as of early 2026):** The majority of U.S. states either explicitly prohibit local governments from enacting rent control or have no local rent control in practice. Preemption laws vary in scope and wording — some are broad statutory bans, others arise from state constitutional or judicial precedent. If you're unsure whether your city or county has the authority to pass rent control, check your state's statutes or consult a local housing attorney.
+**States that ban local rent control (as of early 2026):** The majority of U.S. states either explicitly prohibit local governments from enacting rent control or have no local rent control in practice. Preemption laws vary in scope and wording: some are broad statutory bans, others arise from state constitutional or judicial precedent. If you're unsure whether your city or county has the authority to pass rent control, check your state's statutes or consult a local housing attorney.
 
 ## What to Do If You Think Your Increase Is Too High
 
@@ -453,17 +455,18 @@ Not sure what rent you should be paying in the first place? Check what similar u
     metaTitle: 'Is This Apartment Overpriced? What You Should Pay for Rent (2026)',
     metaDescription: 'Not sure if your rent is fair? Learn how to evaluate any asking price using comparable listings, local trends, and HUD data — the same framework landlords use to set your rent.',
     publishedDate: '2026-03-11',
+    updatedDate: '2026-03-18',
     author: 'RenewalReply',
     readingTime: '9 min read',
     category: 'Rent Comparison',
     relatedSlugs: ['how-to-negotiate-rent-increase', 'rent-increase-laws-by-state'],
     content: `You found a place you like. The landlord wants $2,200 a month.
 
-You have no idea if that's fair. Neither do most renters. They browse a few listings, guess, and sign — and a renter overpaying by even $150/month spends $1,800 more over the next year than they needed to.
+You have no idea if that's fair. Neither do most renters. They browse a few listings, guess, and sign, and a renter overpaying by even $150/month spends $1,800 more over the next year than they needed to.
 
-The problem isn't laziness. It's that the data is scattered, the listings you're comparing aren't truly comparable, and the people advising you often get paid when you sign — not when you get a fair deal.
+The problem isn't laziness. It's that the data is scattered, the listings you're comparing aren't truly comparable, and the people advising you often get paid when you sign, not when you get a fair deal.
 
-This guide gives you the same framework landlords use to price your apartment — so you can tell whether you're looking at a fair deal, an overpriced unit, or a steal.
+This guide gives you the same framework landlords use to price your apartment, so you can tell whether you're looking at a fair deal, an overpriced unit, or a steal.
 
 ## If You Only Do Three Things
 
@@ -485,7 +488,7 @@ Evaluating rent correctly means pulling comparable listings, filtering by bedroo
 
 ### Your building might have no good comps
 
-In smaller buildings, walkups, or mixed-use properties, there may be zero comparable units listed in or near your building right now. The luxury high-rise three blocks away is not a comp — but it's what shows up when you search.
+In smaller buildings, walkups, or mixed-use properties, there may be zero comparable units listed in or near your building right now. The luxury high-rise three blocks away is not a comp, but it's what shows up when you search.
 
 ## The Three Data Layers That Determine Fair Rent
 
@@ -515,7 +518,7 @@ The hard part isn't finding listings — it's comparing the right ones. Metro-le
 
 **Days on market.** Units sitting 30+ days mean landlords have less pricing power. In a tight market where units lease in under a week, you have less room to negotiate.
 
-**Concession activity.** Free months, waived fees, and reduced deposits are the first sign of a softening market. Landlords offer concessions *before* cutting headline rents — because concessions don't reset the comp base for the building. If nearby listings are offering free months and yours isn't, ask why.
+**Concession activity.** Free months, waived fees, and reduced deposits are the first sign of a softening market. Landlords offer concessions *before* cutting headline rents, because concessions don't reset the comp base for the building. If nearby listings are offering free months and yours isn't, ask why.
 
 ### Layer 3: Government benchmarks (broad context)
 
@@ -525,11 +528,11 @@ HUD publishes Fair Market Rent annually — metro-level FMRs and ZIP-level Small
 
 Understanding the other side of the table helps you evaluate what you're being quoted.
 
-**Large landlords use pricing algorithms.** Revenue management software recommends a price for each unit daily based on comps, occupancy, and seasonal demand. The price you see is market-calibrated — but calibrated to maximize the *landlord's* revenue, not to give you the lowest possible price.
+**Large landlords use pricing algorithms.** Revenue management software recommends a price for each unit daily based on comps, occupancy, and seasonal demand. The price you see is market-calibrated, but calibrated to maximize the *landlord's* revenue, not to give you the lowest possible price.
 
-**Small landlords (2-10 units) use rougher methods.** Often a mix of mortgage coverage needs, what the last tenant paid, and a quick listing scan. Less precise means their pricing can be above *or below* market — which is opportunity for you in either direction.
+**Small landlords (2-10 units) use rougher methods.** Often a mix of mortgage coverage needs, what the last tenant paid, and a quick listing scan. Less precise means their pricing can be above *or below* market, which is opportunity for you in either direction.
 
-**Renewal pricing is a different calculation** — see our [renewal negotiation guide](/guides/how-to-negotiate-a-rent-increase) for that process.
+**Renewal pricing is a different calculation:** see our [renewal negotiation guide](/guides/how-to-negotiate-a-rent-increase) for that process.
 
 ## Watch for Concessions and Effective Rent
 
@@ -551,7 +554,7 @@ Concessions are common in new construction and in markets with rising vacancy. A
 
 **Step 3: Benchmark against HUD.** Look up the SAFMR for the ZIP. If the asking price is 30%+ above the benchmark, make sure you can explain the premium (renovation, premium building, included amenities). If you can't, the price may be inflated.
 
-**Step 4: Evaluate the unit itself.** Floor level, natural light, laundry, noise, building condition, super responsiveness — these affect value in ways raw numbers don't capture. Two units at the same price in the same ZIP can be wildly different values.
+**Step 4: Evaluate the unit itself.** Floor level, natural light, laundry, noise, building condition, super responsiveness: these affect value in ways raw numbers don't capture. Two units at the same price in the same ZIP can be wildly different values.
 
 **Step 5: Calculate effective rent.** If concessions are offered, do the math on what you're actually paying per month over the full lease term.
 
@@ -567,7 +570,7 @@ Concessions are common in new construction and in markets with rising vacancy. A
 
 ## Negotiating on a New Apartment
 
-The leverage dynamics for a new apartment are different from a renewal. You have no existing relationship with the landlord — but you also have something valuable: complete freedom to walk away.
+The leverage dynamics for a new apartment are different from a renewal. You have no existing relationship with the landlord, but you also have something valuable: complete freedom to walk away.
 
 ### What gives you leverage on a new listing
 
@@ -583,7 +586,7 @@ The leverage dynamics for a new apartment are different from a renewal. You have
 
 **"I can't afford it."** This tells the landlord to find someone who can. It's not leverage.
 
-**Vague complaints about the price.** "This seems high" is not a negotiation. "The median for comparable 1BRs within half a mile is $2,250 based on 8 current listings, and this unit is listed at $2,400 without premium features" — that's a negotiation.
+**Vague complaints about the price.** "This seems high" is not a negotiation. "The median for comparable 1BRs within half a mile is $2,250 based on 8 current listings, and this unit is listed at $2,400 without premium features." That's a negotiation.
 
 **Bluffing without options.** Saying "I'll go somewhere else" only works if you mean it and the landlord believes you mean it.
 
@@ -603,7 +606,7 @@ The standard benchmark: monthly rent should be no more than 30% of gross monthly
 
 The 30% rule is a useful guideline, not a universal truth. It originated as a federal policy threshold for defining "cost-burdened" households and doesn't account for individual debt, savings goals, or local cost of living. In high-cost cities, many renters spend 35-40% on housing out of necessity. But above 30%, your margin for unexpected expenses narrows.
 
-If the fair market rent in your area exceeds what you can comfortably afford, the answer isn't to overspend — it's to look at adjacent neighborhoods, different bedroom configurations, or different building classes where the market fits your budget.
+If the fair market rent in your area exceeds what you can comfortably afford, the answer isn't to overspend; it's to look at adjacent neighborhoods, different bedroom configurations, or different building classes where the market fits your budget.
 
 ## Red Flags That a Rent Is Too High
 
@@ -628,7 +631,7 @@ Most renters don't check. The ones who get the best deals aren't the loudest —
 *This guide is for informational purposes only and does not constitute financial or legal advice. Rent prices vary based on unit condition, amenities, location, and market timing.*`,
     faqItems: [
       { q: 'How do I know if my rent is fair?', a: 'Compare your rent to three layers: comparable listings nearby (strongest signal), local rent trends (directional), and HUD Fair Market Rent (broad context). If your rent is at or below the median for similar units and in line with the trend, it\'s likely fair.' },
-      { q: 'What is fair market rent?', a: 'HUD publishes Fair Market Rent annually at metro/county and ZIP levels. SAFMRs are ZIP-specific and more precise. They represent roughly the 40th percentile of gross rents — useful as a baseline, but lagging and not unit-specific.' },
+      { q: 'What is fair market rent?', a: 'HUD publishes Fair Market Rent annually at metro/county and ZIP levels. SAFMRs are ZIP-specific and more precise. They represent roughly the 40th percentile of gross rents, useful as a baseline, but lagging and not unit-specific.' },
       { q: 'How much of my income should go to rent?', a: 'The standard benchmark is 30% of gross monthly income. Many renters in expensive cities exceed this, but staying at or below 30% provides significantly more financial flexibility.' },
       { q: 'Should I negotiate rent on a new apartment?', a: 'Yes — especially if comparable listings are lower, the unit has been listed 30+ days, concessions are common in the area, or you\'re signing during winter months. Come with comp data and a specific number.' },
       { q: 'What if my rent is below market?', a: 'You\'re in a strong position. At renewal, instead of arguing for lower rent, negotiate for non-monetary value: a longer lease locking in the current rate, unit improvements, or maintenance commitments.' },
