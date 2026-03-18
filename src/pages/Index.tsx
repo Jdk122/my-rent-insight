@@ -340,11 +340,6 @@ const Index = () => {
                 </div>
               </div>
 
-              <Suspense fallback={null}>
-                <div className="mt-4 sm:mt-5 lg:mt-7">
-                  <SocialProofCounter />
-                </div>
-              </Suspense>
 
               {/* Sample result preview — desktop only */}
               <div className="hidden md:block mt-5 lg:mt-6">
@@ -366,6 +361,11 @@ const Index = () => {
               <div>
                 <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
               </div>
+              <Suspense fallback={null}>
+                <div className="mt-4 sm:mt-5 lg:mt-4">
+                  <SocialProofCounter />
+                </div>
+              </Suspense>
               {/* Data source bar — mobile/tablet only */}
               <div className="mt-4 max-w-[540px] mx-auto lg:hidden">
                 <div className="border-t border-border/40 pt-3 pb-2 px-1 text-center">
