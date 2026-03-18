@@ -6,30 +6,67 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+const BASE_URL = "https://renewalreply.com";
+const WORDMARK = `${BASE_URL}/renewalreply-wordmark.png`;
+
+const emailHeader = `
+  <img src="${WORDMARK}" alt="RenewalReply" width="140" style="display:block;margin:0 0 16px;" />
+  <div style="height:2px;background:#168eca;margin:0 0 24px;"></div>
+`;
+
+function buildButton(label: string, href: string, color: string) {
+  return `<a href="${href}" style="display:inline-block;padding:12px 20px;background:${color};color:#fff;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-right:8px;margin-bottom:8px;">${label}</a>`;
+}
+
 const badVerdicts = ["Moderate", "Unfair", "Excessive", "Above Market"];
 
-function getEmailCopy(lead: any): { subject: string; text: string } {
+function getEmailHtml(lead: any): { subject: string; html: string } {
   const score = lead.fairness_score;
   const verdict = lead.verdict;
   const isAbove = (score != null && score < 60) || (verdict != null && badVerdicts.includes(verdict));
   const isGood = score != null && score >= 80;
 
+  const agreedUrl = `${BASE_URL}/outcome?id=${lead.id}&result=agreed`;
+  const noResponseUrl = `${BASE_URL}/outcome?id=${lead.id}&result=no_response`;
+  const movingUrl = `${BASE_URL}/outcome?id=${lead.id}&result=moving`;
+  const unsubUrl = `${BASE_URL}/outcome?id=${lead.id}&result=unsubscribe`;
+
+  let subject: string;
+  let intro: string;
+
   if (isAbove) {
-    return {
-      subject: "Did your negotiation work?",
-      text: "Hey — you used RenewalReply recently to check your rent increase. I'm the founder, and I'm curious: did you end up negotiating with your landlord?\n\nIf the tool helped, I'd love to hear what happened. If it didn't, I'd still really appreciate the honest feedback.\n\n— James",
-    };
+    subject = "Did your negotiation work?";
+    intro = `Hey — you used RenewalReply recently to check your rent increase. I'm the founder, and I'm curious: did you end up negotiating with your landlord? Let me know with one click:`;
+  } else if (isGood) {
+    subject = "How did your renewal go?";
+    intro = `Hey — you used RenewalReply recently and your rent looked like a good deal. I'm the founder, and I'm curious: did you renew? Let me know with one click:`;
+  } else {
+    subject = "How did your renewal go?";
+    intro = `Hey — you used RenewalReply recently to check your rent increase. I'm the founder, and I'm curious: how did the renewal go? Let me know with one click:`;
   }
-  if (isGood) {
-    return {
-      subject: "How did your renewal go?",
-      text: "Hey — you used RenewalReply recently and your rent looked like a good deal. I'm the founder, and I'm curious: did you renew? Did you ask for any extras like repairs or upgrades? I'd love to hear how it went — your feedback helps me make the tool better for other renters.\n\n— James",
-    };
-  }
-  return {
-    subject: "How did your renewal go?",
-    text: "Hey — you used RenewalReply recently to check your rent increase. I'm the founder, and I'm curious: how did the renewal go? Did you end up negotiating or asking for anything? Either way, I'd love to hear what happened — your feedback helps me make the tool better.\n\n— James",
-  };
+
+  const html = `
+    <div style="font-family:'DM Sans',Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
+      ${emailHeader}
+      <p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 24px;">${intro}</p>
+      <div style="margin-bottom:16px;">
+        ${buildButton("I negotiated successfully ✓", agreedUrl, "#2d6a4f")}
+        ${buildButton("I'm still deciding", noResponseUrl, "#6b7280")}
+        ${buildButton("I moved instead", movingUrl, "#b8860b")}
+      </div>
+      <p style="font-size:15px;color:#555;line-height:1.7;margin:24px 0 0;">
+        Your feedback helps me make the tool better for other renters. Either way, I appreciate it.
+      </p>
+      <p style="font-family:'DM Sans',Arial,sans-serif;font-size:15px;color:#555;margin-top:20px;">— James</p>
+      <hr style="border:none;border-top:1px solid #eee;margin:32px 0 16px;" />
+      <p style="font-size:11px;color:#999;text-align:center;">
+        You received this because you used RenewalReply.<br/>
+        <a href="${unsubUrl}" style="color:#999;text-decoration:underline;">Unsubscribe</a>
+      </p>
+    </div>
+  `;
+
+  return { subject, html };
 }
 
 Deno.serve(async (req) => {
