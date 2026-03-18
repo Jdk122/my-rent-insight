@@ -32,6 +32,19 @@ const Methodology = () => {
         title="How RenewalReply Works — Methodology & Data Sources"
         description="Learn how RenewalReply's Fairness Score analyzes rent increases using HUD rents, Apartment List trends, Zillow ZORI, and live market comps."
         canonical="/methodology"
+        jsonLd={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'TechArticle',
+            headline: 'How RenewalReply Works — Methodology & Data Sources',
+            description: 'Learn how RenewalReply\'s Fairness Score analyzes rent increases using HUD rents, Apartment List trends, Zillow ZORI, and live market comps.',
+            datePublished: '2026-02-28',
+            dateModified: '2026-03-16',
+            author: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
+            publisher: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com', logo: { '@type': 'ImageObject', url: 'https://www.renewalreply.com/renewalreply-logo-square.png' } },
+            mainEntityOfPage: 'https://www.renewalreply.com/methodology',
+          },
+        ]}
       />
 
       <noscript>

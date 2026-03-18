@@ -187,6 +187,12 @@ const RentByCity = () => {
 
   const faqItems = [
     {
+      q: `What is a fair rent increase in ${city}, ${state}?`,
+      a: trendYoY !== null
+        ? `Based on ${trendAttribution} data, a fair rent increase in ${city} is approximately ${Math.abs(trendYoY).toFixed(1)}% for ${dataYear}. The average 1-bedroom rent is ${fmt(avgFmr[1])}/month. An increase above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend.`
+        : `Local trend data is not available for ${city}. The national average rent increase is approximately 3.2% year-over-year. Use RenewalReply to check your specific rent increase.`,
+    },
+    {
       q: `What is the average rent in ${city}, ${state}?`,
       a: `Based on HUD Fair Market Rent data, the average rent for a 1-bedroom in ${city} is ${fmt(avgFmr[1])}/month. Studios average ${fmt(avgFmr[0])}, and 2-bedrooms average ${fmt(avgFmr[2])}.${cityHud50?.[1] ? ` The HUD 50th percentile (median) rent for a 1-bedroom is ${fmt(cityHud50[1])}/mo.` : ''}`,
     },
@@ -279,6 +285,7 @@ const RentByCity = () => {
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
           <h1>{`Average Rent in ${city}, ${state} (${dataYear})`}</h1>
           <p>{`The average 1-bedroom rent in ${city} is ${fmt(avgFmr[1])}/month based on HUD Fair Market Rent data across ${zips.length} zip codes.`}{trendYoY !== null ? ` Rents changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year (${trendHeroSource}).` : ''}</p>
+          {trendYoY !== null && <p>{`Based on ${trendAttribution} data, a fair rent increase in ${city}, ${state} is approximately ${Math.abs(trendYoY).toFixed(1)}% for ${dataYear}. An increase above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.`}</p>}
           {freshestFormatted && <p>{`Data through: ${freshestFormatted}`}</p>}
           <p><a href="https://www.renewalreply.com/">{`Check if your rent increase is fair →`}</a></p>
           <h2>{`Rent by Zip Code in ${city}`}</h2>
@@ -364,7 +371,18 @@ const RentByCity = () => {
                 ? ` Year-over-year rent trends in ${city} show a ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% change based on ${trendAttribution}. ${trendYoY < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendYoY.toFixed(1)}% in this area is above the local market trend.`}`
                 : ''}
             </p>
+            {trendYoY !== null && (
+              <p>
+                Based on {trendAttribution} data, a fair rent increase in {city}, {state} is approximately {Math.abs(trendYoY).toFixed(1)}% for {dataYear}. An increase above {Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.
+              </p>
+            )}
           </div>
+
+          {/* Visible source attribution */}
+          <p className="mt-2 text-xs text-muted-foreground/70">
+            Sources: {trendSource ? `${trendSource}, ` : ''}HUD SAFMR, Rentcast.{' '}
+            {freshestFormatted && <>Updated {freshestFormatted}.</>}
+          </p>
 
           {/* HUD-only note */}
           {!hasMarketData && (

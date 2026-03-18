@@ -172,6 +172,14 @@ const Index = () => {
             "mainEntity": [
               {
                 "@type": "Question",
+                "name": "Is my rent increase fair?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "A rent increase is generally fair if it aligns with the year-over-year rent trend in your area. RenewalReply's free Fairness Score tool compares your specific increase to local market trends from Apartment List, Zillow ZORI, and HUD data, plus real comparable listings near your address. Enter your ZIP code, bedroom count, and rent details to get an instant score across 38,600+ US zip codes."
+                }
+              },
+              {
+                "@type": "Question",
                 "name": "How do I know if my rent increase is fair?",
                 "acceptedAnswer": {
                   "@type": "Answer",

@@ -286,6 +286,13 @@ const RentByZip = () => {
                 name: `Is ${city} rent controlled?`,
                 acceptedAnswer: { '@type': 'Answer', text: cap ? `Yes. ${cap.jurisdiction} has rent increase protections.${cap.maxIncreaseFormula ? ` The cap is generally ${cap.maxIncreaseFormula}.` : ''}${cap.applicability ? ` This applies to: ${cap.applicability}.` : ''}` : `No. There are no specific rent control laws covering ${city}, ${state} at this time. Landlords can raise rent by any amount with proper notice.` },
               },
+              {
+                '@type': 'Question',
+                name: `What is a fair rent increase in ${city} (${zip})?`,
+                acceptedAnswer: { '@type': 'Answer', text: trendYoY !== null
+                  ? `Based on ${trendAttribution} data, a fair rent increase in ${city} (${zip}) is approximately ${Math.abs(trendYoY).toFixed(1)}% for ${dataYear}. The typical 1-bedroom rent is ${fmt(heroRent)}/month. Any increase above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend. Use RenewalReply's free Fairness Score tool to check your specific rent increase.`
+                  : `Local trend data is not available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}% year-over-year. Use RenewalReply's free tool to check your specific rent increase against local comparable listings and federal benchmarks.` },
+              },
             ],
           },
         ]}
@@ -314,6 +321,10 @@ const RentByZip = () => {
           <p><small>Source: HUD Small Area Fair Market Rents (SAFMR) FY{hudFY}</small></p>
           {nearby.length > 0 && (<><h2>Nearby Areas</h2><ul>{nearby.map(({ zip: nZip, raw: nRaw }) => (<li key={nZip}><a href={`https://www.renewalreply.com/rent/${nZip}`}>{nZip} — {nRaw.c || 'Unknown'}, {nRaw.s} — 1-BR: {fmt(nRaw.f[1])}</a></li>))}</ul></>)}
           <p><a href={`https://www.renewalreply.com/rent-data/${stateSlug}/${citySlug}`}>{`← ${city}, ${state} rent data`}</a></p>
+          <p>{trendYoY !== null
+            ? `Based on ${trendAttribution} data, a fair rent increase in ${city} (${zip}) is approximately ${Math.abs(trendYoY).toFixed(1)}% for ${dataYear}. The typical 1-bedroom rent is ${fmt(heroRent)}/month. Any increase significantly above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.`
+            : `The national average rent increase is approximately ${NATIONAL_AVG_YOY}% year-over-year. Without local trend data for ${zip}, increases significantly above ${NATIONAL_AVG_YOY}% may warrant further research.`
+          }</p>
           {dataConfidence === 'limited'
             ? <p><a href="https://www.renewalreply.com/what-should-i-pay">{`Check what rent should cost in ${zip} →`}</a></p>
             : <p><a href="https://www.renewalreply.com/">Check if your rent increase is fair →</a></p>
@@ -418,6 +429,20 @@ const RentByZip = () => {
             )}
             <p>The confidence level for this estimate is {dataConfidence} based on {dataSourceCount} data source{dataSourceCount !== 1 ? 's' : ''}.</p>
           </div>
+
+          {/* GEO: Direct answer to "what is a fair rent increase in [ZIP]?" */}
+          <p className="mt-4 text-sm text-foreground/80 leading-relaxed">
+            {trendYoY !== null
+              ? `Based on ${trendAttribution} data, a fair rent increase in ${city} (${zip}) is approximately ${Math.abs(trendYoY).toFixed(1)}% for ${dataYear}. The typical 1-bedroom rent is ${fmt(heroRent)}/month. Any increase significantly above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.`
+              : `The national average rent increase is approximately ${NATIONAL_AVG_YOY}% year-over-year. Without local trend data for ${zip}, increases significantly above ${NATIONAL_AVG_YOY}% may warrant further research.`
+            }
+          </p>
+
+          {/* Visible source attribution — helps AI engines trust the data */}
+          <p className="mt-2 text-xs text-muted-foreground/70">
+            Sources: {trendAttribution ? `${trendAttribution}, ` : ''}HUD SAFMR FY{hudFY}, Rentcast.{' '}
+            Updated {freshestFormatted}.
+          </p>
 
           {dataConfidence === 'moderate' && !hasMarketData && (
             <p className="mt-3 text-sm text-muted-foreground bg-muted/40 border border-border rounded-lg px-4 py-3">

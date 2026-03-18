@@ -82,7 +82,54 @@ const Guide = () => {
       }
     : null;
 
-  const jsonLd = faqJsonLd ? [articleJsonLd, faqJsonLd] : [articleJsonLd];
+  const howToJsonLd = article.slug === 'how-to-negotiate-rent-increase'
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'HowTo',
+        name: 'How to Negotiate a Rent Increase',
+        description: 'A step-by-step guide to negotiating your rent increase using market data, comparable listings, and a professional counter-offer email.',
+        totalTime: 'PT30M',
+        step: [
+          {
+            '@type': 'HowToStep',
+            name: 'Check the market trend',
+            text: 'Look up the year-over-year rent trend for your area. If rents grew 3% and your landlord wants 8%, that 5-point gap is your strongest argument.',
+            url: 'https://www.renewalreply.com/guides/how-to-negotiate-rent-increase',
+          },
+          {
+            '@type': 'HowToStep',
+            name: 'Pull comparable listings',
+            text: 'Find what similar units near you are renting for right now. If your post-increase rent is above the median for comparable units, you have a data-backed case.',
+            url: 'https://www.renewalreply.com/guides/how-to-negotiate-rent-increase',
+          },
+          {
+            '@type': 'HowToStep',
+            name: 'Calculate your counter-offer',
+            text: 'Anchor your counter to the local rent trend. If the trend is 4% and your landlord wants 10%, a counter in the 4-6% range is data-backed and reasonable.',
+            url: 'https://www.renewalreply.com/guides/how-to-negotiate-rent-increase',
+          },
+          {
+            '@type': 'HowToStep',
+            name: 'Send a professional counter-offer email',
+            text: 'Lead with your intent to stay, present specific market evidence, propose a clear counter-number with reasoning, and close by reinforcing your value as a tenant.',
+            url: 'https://www.renewalreply.com/guides/how-to-negotiate-rent-increase',
+          },
+          {
+            '@type': 'HowToStep',
+            name: 'Handle the response',
+            text: 'If accepted, confirm in writing. If countered, evaluate whether the gap is worth continued negotiation. If rejected, consider non-monetary concessions or alternatives.',
+            url: 'https://www.renewalreply.com/guides/how-to-negotiate-rent-increase',
+          },
+        ],
+        tool: [
+          { '@type': 'HowToTool', name: 'RenewalReply Fairness Score tool (free)' },
+          { '@type': 'HowToTool', name: 'Local comparable rental listings' },
+          { '@type': 'HowToTool', name: 'HUD Fair Market Rent data' },
+        ],
+      }
+    : null;
+
+  const jsonLd = [articleJsonLd, faqJsonLd, howToJsonLd].filter(Boolean);
 
   const pubDate = new Date(article.publishedDate).toLocaleDateString('en-US', {
     year: 'numeric', month: 'long', day: 'numeric',
