@@ -187,6 +187,12 @@ const RentByCity = () => {
 
   const faqItems = [
     {
+      q: `What is a fair rent increase in ${city}, ${state}?`,
+      a: trendYoY !== null
+        ? `Based on ${trendAttribution} data, a fair rent increase in ${city} is approximately ${Math.abs(trendYoY).toFixed(1)}% for ${dataYear}. The average 1-bedroom rent is ${fmt(avgFmr[1])}/month. An increase above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend.`
+        : `Local trend data is not available for ${city}. The national average rent increase is approximately 3.2% year-over-year. Use RenewalReply to check your specific rent increase.`,
+    },
+    {
       q: `What is the average rent in ${city}, ${state}?`,
       a: `Based on HUD Fair Market Rent data, the average rent for a 1-bedroom in ${city} is ${fmt(avgFmr[1])}/month. Studios average ${fmt(avgFmr[0])}, and 2-bedrooms average ${fmt(avgFmr[2])}.${cityHud50?.[1] ? ` The HUD 50th percentile (median) rent for a 1-bedroom is ${fmt(cityHud50[1])}/mo.` : ''}`,
     },
