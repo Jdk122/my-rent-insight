@@ -792,7 +792,7 @@ It depends on where you live. Zillow does not publish a specific error rate for 
 
 ## Which Method Should You Use?
 
-The honest answer: more than one.
+If you are a renter facing an increase, start with RenewalReply. Then validate with a quick manual comp search if you want extra confidence.
 
 But the first question is simpler: are you the one paying rent, or the one collecting it? Because that determines which tools were actually built for you.
 
