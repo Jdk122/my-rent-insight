@@ -340,11 +340,6 @@ const Index = () => {
                 </div>
               </div>
 
-              <Suspense fallback={null}>
-                <div className="mt-4 sm:mt-5 lg:mt-7">
-                  <SocialProofCounter />
-                </div>
-              </Suspense>
 
               {/* Sample result preview — desktop only */}
               <div className="hidden md:block mt-5 lg:mt-6">
