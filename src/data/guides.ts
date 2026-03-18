@@ -459,7 +459,7 @@ Not sure what rent you should be paying in the first place? Check what similar u
     author: 'RenewalReply',
     readingTime: '9 min read',
     category: 'Rent Comparison',
-    relatedSlugs: ['how-to-negotiate-rent-increase', 'rent-increase-laws-by-state'],
+    relatedSlugs: ['how-to-negotiate-rent-increase', 'rent-increase-laws-by-state', 'how-to-check-rent-fair'],
     content: `You found a place you like. The landlord wants $2,200 a month.
 
 You have no idea if that's fair. Neither do most renters. They browse a few listings, guess, and sign, and a renter overpaying by even $150/month spends $1,800 more over the next year than they needed to.
