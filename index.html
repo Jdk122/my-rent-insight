@@ -90,40 +90,20 @@
 
     <script type="module" src="/src/main.tsx"></script>
 
-    <!-- Deferred GA4 + Google Ads — loads after main content renders -->
+    <!-- GA4 + Google Ads — standard async load for reliable paid-traffic attribution -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8RN57799GY"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-
-      // Consent Mode v2 — deny by default, grant on consent
       gtag('consent', 'default', {
-        'analytics_storage': 'granted',
-        'ad_storage': 'granted',
-        'ad_user_data': 'granted',
-        'ad_personalization': 'denied',
+        analytics_storage: 'granted',
+        ad_storage: 'granted',
+        ad_user_data: 'granted',
+        ad_personalization: 'denied'
       });
-
       gtag('js', new Date());
-      // Defer loading the GA4 script until after first paint
-      if (typeof requestIdleCallback === 'function') {
-        requestIdleCallback(function() {
-          var s = document.createElement('script');
-          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-8RN57799GY';
-          s.async = true;
-          document.head.appendChild(s);
-          gtag('config', 'G-8RN57799GY');
-          gtag('config', 'AW-17990530610');
-        });
-      } else {
-        setTimeout(function() {
-          var s = document.createElement('script');
-          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-8RN57799GY';
-          s.async = true;
-          document.head.appendChild(s);
-          gtag('config', 'G-8RN57799GY');
-          gtag('config', 'AW-17990530610');
-        }, 3000);
-      }
+      gtag('config', 'G-8RN57799GY', { send_page_view: false });
+      gtag('config', 'AW-17990530610', { send_page_view: false });
     </script>
 
     <!-- Microsoft Advertising UET tag — deferred -->
