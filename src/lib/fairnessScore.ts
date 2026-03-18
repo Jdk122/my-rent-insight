@@ -539,7 +539,9 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
   let extremeIncreaseCeilingApplied = false;
   let ceiling: number | null = null;
 
-  if (validatedInput.increasePct >= 25 && rateGap >= 20) {
+  if (validatedInput.increasePct >= 50 && rateGap >= 40) {
+    ceiling = 40;
+  } else if (validatedInput.increasePct >= 25 && rateGap >= 20) {
     ceiling = 55;
   } else if (validatedInput.increasePct >= 15 && rateGap >= 10) {
     ceiling = 65;
