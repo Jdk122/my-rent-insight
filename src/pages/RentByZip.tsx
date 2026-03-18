@@ -286,6 +286,13 @@ const RentByZip = () => {
                 name: `Is ${city} rent controlled?`,
                 acceptedAnswer: { '@type': 'Answer', text: cap ? `Yes. ${cap.jurisdiction} has rent increase protections.${cap.maxIncreaseFormula ? ` The cap is generally ${cap.maxIncreaseFormula}.` : ''}${cap.applicability ? ` This applies to: ${cap.applicability}.` : ''}` : `No. There are no specific rent control laws covering ${city}, ${state} at this time. Landlords can raise rent by any amount with proper notice.` },
               },
+              {
+                '@type': 'Question',
+                name: `What is a fair rent increase in ${city} (${zip})?`,
+                acceptedAnswer: { '@type': 'Answer', text: trendYoY !== null
+                  ? `Based on ${trendAttribution} data, a fair rent increase in ${city} (${zip}) is approximately ${Math.abs(trendYoY).toFixed(1)}% for ${dataYear}. The typical 1-bedroom rent is ${fmt(heroRent)}/month. Any increase above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend. Use RenewalReply's free Fairness Score tool to check your specific rent increase.`
+                  : `Local trend data is not available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}% year-over-year. Use RenewalReply's free tool to check your specific rent increase against local comparable listings and federal benchmarks.` },
+              },
             ],
           },
         ]}
