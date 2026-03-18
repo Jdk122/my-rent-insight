@@ -362,7 +362,7 @@ const Index = () => {
                 <RentForm key={formKey} onSubmit={handleSubmit} isLoading={isLoading} prefill={prefill} />
               </div>
               <Suspense fallback={null}>
-                <div className="mt-3 flex justify-center">
+                <div className="mt-2 flex justify-center">
                   <SocialProofCounter />
                 </div>
               </Suspense>
