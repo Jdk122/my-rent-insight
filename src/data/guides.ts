@@ -24,7 +24,7 @@ export const guides: GuideArticle[] = [
     author: 'RenewalReply',
     readingTime: '10 min read',
     category: 'Rent Negotiation',
-    relatedSlugs: ['rent-increase-laws-by-state', 'what-should-i-pay-for-rent'],
+    relatedSlugs: ['rent-increase-laws-by-state', 'what-should-i-pay-for-rent', 'how-to-check-rent-fair'],
     content: `You just got the renewal notice. Your landlord wants more: maybe 5%, maybe 15%.
 
 Do not reply emotionally. Do not reply without data. And do not assume the number is final.
@@ -459,7 +459,7 @@ Not sure what rent you should be paying in the first place? Check what similar u
     author: 'RenewalReply',
     readingTime: '9 min read',
     category: 'Rent Comparison',
-    relatedSlugs: ['how-to-negotiate-rent-increase', 'rent-increase-laws-by-state'],
+    relatedSlugs: ['how-to-negotiate-rent-increase', 'rent-increase-laws-by-state', 'how-to-check-rent-fair'],
     content: `You found a place you like. The landlord wants $2,200 a month.
 
 You have no idea if that's fair. Neither do most renters. They browse a few listings, guess, and sign, and a renter overpaying by even $150/month spends $1,800 more over the next year than they needed to.
@@ -637,6 +637,196 @@ Most renters don't check. The ones who get the best deals aren't the loudest —
       { q: 'What if my rent is below market?', a: 'You\'re in a strong position. At renewal, instead of arguing for lower rent, negotiate for non-monetary value: a longer lease locking in the current rate, unit improvements, or maintenance commitments.' },
       { q: 'Can I find out what my neighbors pay?', a: 'In rent-stabilized buildings, rent data is sometimes public. For market-rate units, check active listings in your building or nearby. RenewalReply\'s What Should I Pay tool automates this comparison.' },
     ],
+  },
+  {
+    slug: 'how-to-check-rent-fair',
+    title: 'How to Check If Your Rent Is Fair: 5 Methods Compared',
+    metaTitle: 'How to Check If Your Rent Is Fair: 5 Methods Compared (2026)',
+    metaDescription: 'Five ways to check whether your rent or rent increase is fair, from free tools to paid services to DIY research. Includes a side-by-side comparison with pros, cons, and data sources.',
+    publishedDate: '2026-03-18',
+    author: 'RenewalReply',
+    readingTime: '8 min read',
+    category: 'Rent Comparison',
+    relatedSlugs: ['how-to-negotiate-rent-increase', 'what-should-i-pay-for-rent', 'rent-increase-laws-by-state'],
+    faqItems: [
+      {
+        q: 'What is the most accurate way to check if my rent is fair?',
+        a: 'No single method is perfectly accurate. The most reliable approach combines multiple data points: local rent trends from sources like ZORI or Apartment List, active comparable listings near you, and federal benchmarks like HUD Fair Market Rents. Rental markets are hyperlocal and unit-specific, so tools that cross-reference multiple data sources will give you a better picture than any one source alone.'
+      },
+      {
+        q: 'Is Rentometer free?',
+        a: 'No, not really. Rentometer offers a very limited free search that shows a basic rent range, but full reports with comps, trends, and filtering require a paid plan starting at $16/month (Essential). The Pro plan is $29/month. Team plans start at $49/month. They offer a 3-day trial.'
+      },
+      {
+        q: 'How accurate is the Zillow Rent Zestimate?',
+        a: 'It varies significantly by location. Zillow does not publish a specific error rate for the Rent Zestimate the way they do for the home sale Zestimate. In markets with lots of active rental listings, the estimate can be a reasonable ballpark. In areas with sparse data or unusual property types, it can be significantly off. It also does not account for unit condition, renovations, or lease-specific factors like concessions.'
+      },
+      {
+        q: 'Is there a free tool to check if my rent increase is fair?',
+        a: 'Yes. RenewalReply offers a free rent fairness analysis that compares your rent increase against local market trends, comparable listings, and federal benchmarks. You enter your address, current rent, proposed rent, and lease details, and get a fairness verdict with a score. The basic verdict and fair range are free. Detailed evidence, comps, and a negotiation letter are available after email signup (still free).'
+      },
+      {
+        q: 'What data should I look at to know if my rent is too high?',
+        a: 'Three things matter most. First, the year-over-year rent trend in your ZIP code or city — if your increase exceeds the local trend, that is a red flag. Second, active listings for comparable units nearby — if similar apartments are listed for less than your proposed rent, you are being asked to pay above market. Third, vacancy rates and concessions — if landlords nearby are offering free months or other incentives, the market is softer than your landlord is pricing for.'
+      }
+    ],
+    content: `The best way to check if your rent is fair is to compare your proposed rent against local comparable listings, year-over-year rent trends in your area, and a federal benchmark like HUD Fair Market Rent. No single source gives you the full picture, so the most reliable approach combines several. This guide compares five ways to do that — from free rent comparison tools to paid services to manual research — so you can figure out which method fits your situation.
+
+If you are looking for a Rentometer alternative that is free and built for renters (not landlords), or you just want to know how to check rent prices in your area, this is the right starting point.
+
+> **At a glance:**
+> - **Best free renter tool:** [RenewalReply](/) — fairness verdict, comps, trend data, negotiation letter
+> - **Best paid comp tool:** [Rentometer](https://www.rentometer.com) — deep historical data, granular filtering
+> - **Best quick estimate:** [Zillow Rent Zestimate](https://www.zillow.com/rent/what-is-a-rent-zestimate/) — instant, free, massive coverage
+> - **Best DIY method:** Manual comp research — full control, no tool required
+> - **Best first step:** Ask your landlord what data supports the increase
+
+One thing worth understanding upfront: almost every rent data tool on the market was built for landlords, property managers, and real estate investors. Rentometer, Zillow Rental Manager, RentSpree, TurboTenant — these are all designed to help the person *setting* the rent, not the person *paying* it. That means the framing, the output, and the features all center on "what should I charge?" rather than "is what I am being charged fair?" That distinction matters, and it shapes how useful each tool is depending on which side of the lease you are on.
+
+## Quick Comparison
+
+| Method | Cost | Built For | What You Get | Best For |
+|--------|------|-----------|-------------|----------|
+| [RenewalReply](/) | Free | **Renters** | Fairness score, fair range, comps, trend data, negotiation letter | Renters facing an increase who want a verdict and next steps |
+| [Rentometer](https://www.rentometer.com) | $16-29/mo | **Landlords & investors** | Rent estimates, comps, filtering, branded reports | Landlords pricing a unit or investors analyzing deals |
+| [Zillow Rent Zestimate](https://www.zillow.com/rent/what-is-a-rent-zestimate/) | Free | **Landlords & general** | Single rent estimate per property | Quick ballpark for a specific address |
+| Manual comp research | Free (your time) | **Anyone** | Whatever you find | People who want full control over the data |
+| Asking your landlord | Free | **Renters** | Their justification | Tenants with responsive, reasonable landlords |
+
+Each of these approaches has a place. The right one depends on your situation.
+
+## 1. RenewalReply Rent Fairness Checker
+
+**Cost:** Free. No credit card, no trial period.
+
+**What it does:** You enter your address, unit details, current rent, and the proposed new rent. The tool pulls data from four sources — HUD Fair Market Rents, Zillow Observed Rent Index (ZORI), Apartment List rental estimates, and local comparable listings via Rentcast — then runs a scoring algorithm that weights each source based on data confidence for your specific location.
+
+You get a fairness verdict (Excellent Deal through Significantly Overpaying), a fair rent range, a numerical score, and the year-over-year rent trend for your area. If you provide your email, you also get the detailed evidence breakdown, individual comp listings, and a pre-written negotiation letter with your actual numbers.
+
+**Where it works well:**
+- It is one of the few tools built specifically to answer "is my rent increase fair?" from the renter's side of the table. Most other tools in this space — Rentometer, Zillow, RentSpree, TurboTenant — were built to help landlords and investors price properties. That is a fundamentally different question than whether your specific increase is justified. RenewalReply starts from your lease, your increase, and your market, and works backward to a verdict.
+- The scoring engine cross-references multiple data sources rather than relying on one. When local comp data is thin, it leans more heavily on federal benchmarks and metro-level trends. When comp data is strong, it weights that more. This matters because no single rent data source is reliable everywhere.
+- The output is actionable. You do not just get a number — you get a verdict, an explanation of why, and a letter you can actually send to your landlord.
+
+**Where it falls short:**
+- Coverage varies by location. In dense metro areas, the tool pulls strong local comps. In rural areas or small towns, comp data can be thin, and the analysis relies more on broader benchmarks.
+- It does not account for unit-specific features. A renovated unit with in-unit laundry and a dishwasher is worth more than an unrenovated one in the same building. No automated tool — RenewalReply, Rentometer, Zillow, or otherwise — can see inside your apartment. This is a universal limitation of rent data tools, not specific to any one of them.
+- It is a newer tool. Rentometer has been around since 2008 and has a much larger user base and brand recognition.
+
+**Disclosure:** This guide is published on the RenewalReply website. We are obviously not unbiased here, but we are being straightforward about what the tool does well and where it has gaps. If one of the other methods on this list is a better fit for your situation, use that one.
+
+## 2. Rentometer
+
+### Is Rentometer free in 2026?
+
+Not really. Rentometer offers a very limited free lookup, but anything useful — full reports, comp downloads, filtering — requires a paid plan.
+
+**Cost:** Starts at $16/month (Essential) or $29/month (Pro). 3-day trial available.
+
+**What it does:** You enter an address and Rentometer searches its database of rental listings and historical data to give you an estimated rent range, along with comparable listings nearby. Paid plans include filtering by building type, bedroom count, square footage, and time period. Pro users get branded reports and API access.
+
+Rentometer processes over 10 million rental records annually, and its database goes back years. For investors or landlords who need to run dozens of searches per month, the Pro plan offers tools like batch processing and a yield tracker.
+
+**Where it works well:**
+- Large historical dataset. Rentometer has been operating since 2008 and has deep coverage in most U.S. markets. If you need to see how rents have moved over the past 3-5 years, Rentometer can do that.
+- Filtering granularity. You can narrow comps by building type (apartment vs. house), bedroom count, square footage, price range, and timeframe. This is useful for getting precise comps in areas with mixed housing stock.
+- Established and trusted. Real estate agents, property managers, and appraisers use Rentometer regularly. If you are negotiating with a landlord, a Rentometer report carries name recognition.
+
+**Where it falls short:**
+- It costs money. $16-29 per month is a real expense for a renter who needs to check one rent increase, one time. The 3-day trial mitigates this, but you have to remember to cancel.
+- It is designed for landlords and investors, not renters. Everything about Rentometer — the pricing, the interface, the report branding, the batch processing, the yield tracker — is built to help someone decide what to charge for a property. If you are a renter trying to figure out whether your increase is fair, you are essentially using a landlord tool in reverse. It gives you raw data, but you have to interpret it yourself and figure out what it means for your situation.
+- No negotiation support. Rentometer tells you what comparable units rent for. It does not tell you whether your specific increase is justified relative to the trend, and it does not generate a response you can send to your landlord.
+
+## 3. Zillow Rent Zestimate
+
+### How accurate is Zillow Rent Zestimate in 2026?
+
+It depends on where you live. Zillow does not publish a specific error rate for the Rent Zestimate. In areas with lots of active listings, it can be a solid ballpark. In areas with sparse data or unusual unit types, it can be way off. It also cannot account for unit condition, renovations, or concessions.
+
+**Cost:** Free.
+
+**What it does:** Zillow's algorithm estimates a monthly rent price for a specific property based on its physical characteristics, local listing data, and public records. You can look up a Rent Zestimate for any property in Zillow's database (over 125 million homes). The estimate includes a rent range showing the high and low ends.
+
+**Where it works well:**
+- Massive coverage. Zillow has data on more properties than anyone else. If you need a quick number for almost any address in the country, the Rent Zestimate exists.
+- It is free, with no signup or trial required.
+- In markets with lots of active rental listings, the Rent Zestimate can be reasonably close to real-world asking rents. Dense urban areas with high listing volume tend to produce better estimates.
+
+**Where it falls short:**
+- It estimates what a property *should* rent for — not whether your *increase* is fair. There is no trend comparison, no scoring, and no context about whether your specific increase is above or below market. You get a number. What you do with it is up to you.
+- Accuracy is uneven. Zillow does not publish a specific error rate for the Rent Zestimate the way they do for the home sale Zestimate. In areas with sparse listing data, the rent range can be extremely wide, which makes the estimate less useful. The algorithm also cannot account for unit condition, renovations, or landlord concessions.
+- Property-focused, not lease-focused. The Rent Zestimate does not know your current rent, your lease terms, or how much your landlord is asking for. It is a snapshot of one property at one moment, not an analysis of your rental situation.
+
+## 4. Manual Comp Research
+
+**Cost:** Free, but it takes time. Budget 1-3 hours for a thorough search.
+
+**What it does:** You search listing platforms — Zillow, Apartments.com, Realtor.com, Craigslist, Facebook Marketplace — for apartments similar to yours in the same neighborhood. You compare their asking rents to what your landlord is proposing.
+
+**Where it works well:**
+- You control the data. You can filter for exactly your unit type, your neighborhood, your building class. You can see the actual listings, read descriptions, and judge whether a comp is truly comparable.
+- You see the current market in real time. Listing sites show what is available right now, which is the most relevant data point for a rent negotiation.
+- No cost and no tool to learn. Everyone knows how to search Zillow.
+
+**Where it falls short:**
+- It is time consuming and easy to do poorly. Most people search too narrow an area, use too few comps, or compare units that are not actually similar. A studio in a luxury doorman building is not a comp for a studio in a walk-up — even if they are on the same block.
+- Listing prices are asking rents, not actual rents. In soft markets, many units lease below asking price, sometimes significantly. In tight markets, some units get bid up. Asking rents are directionally useful but not the full picture.
+- You miss the trend. Listing searches show you what the market looks like today, but they do not tell you how fast rents are changing. Your landlord's increase might be 8%, but if the market moved 7%, the increase is only 1 point above trend. That context matters for negotiation, and you will not get it from scrolling listings.
+- Selection bias. You tend to find listings that are currently available — which often means they are harder to rent. Units that lease quickly disappear from the market before you see them. This can skew your comps toward higher-priced or less desirable units.
+
+## 5. Ask Your Landlord for Their Justification
+
+**Cost:** Free. Takes five minutes to write the email.
+
+**What it does:** You respond to the renewal notice and ask your landlord to explain the basis for the increase. What market data did they use? What comparable properties justify the new number?
+
+**Where it works well:**
+- It is fast and direct. Some landlords, especially smaller ones, will engage honestly. You might learn that the increase is driven by a specific expense (property tax hike, insurance increase, capital improvement) rather than market movement.
+- It signals that you are paying attention. Many landlords anchor their increase assuming most tenants will not push back. Simply asking "what data supports this?" changes the dynamic.
+- It costs nothing and you can do it immediately.
+
+**Where it falls short:**
+- Your landlord is the opposing party in this negotiation. Their incentive is to justify the increase, not to give you ammunition against it. Even well-intentioned landlords will naturally present data that supports their number.
+- Many landlords do not run rigorous analysis at renewal. A lot of renewal pricing is "we raised everyone 5%" or "that's what the software suggested." If you ask for supporting data and they do not have any, that is useful information — but the conversation can get awkward.
+- Corporate management companies are often unwilling to negotiate with individual tenants outside their standard process. Asking may produce a form response rather than a real conversation.
+
+## Which Method Should You Use?
+
+The honest answer: more than one.
+
+But the first question is simpler: are you the one paying rent, or the one collecting it? Because that determines which tools were actually built for you.
+
+If you are a renter facing an increase and you only use one tool, make sure it is one that starts from your side of the equation — your current rent, your increase, your market. Tools built for landlords can give you useful data, but they will not tell you whether your increase is fair or what to do about it. You have to reverse-engineer that yourself.
+
+If you want to go deeper, the most effective approach is to start with a tool that gives you a verdict and structured evidence (like [RenewalReply](/)), then validate the key numbers with a quick manual comp search. If you want deeper historical data or granular filtering, Rentometer's trial can fill that gap. And Zillow's Rent Zestimate is always worth a quick check as a sanity test on the absolute number.
+
+The least effective approach is doing nothing and accepting whatever number your landlord sent. Even a simple five-minute search gives you more leverage than most tenants have when they respond.
+
+**If you are a renter facing an increase:** Start with [RenewalReply](/) — it is free, built for your exact situation, and takes about 60 seconds. If you want to go deeper, supplement with manual comp research or a Rentometer trial. Then read our [guide to negotiating a rent increase](/guides/how-to-negotiate-rent-increase) for the full playbook.
+
+**If you are a landlord pricing a unit:** Rentometer is the better tool for you. Its filtering, batch processing, and historical data are designed for the pricing question, and the reports are professional-grade.
+
+**If you just want a quick number:** Zillow's Rent Zestimate is instant and free. Understand its limits, but for a five-second gut check, it works.
+
+### Quick Decision Tree
+
+- **Got a renewal notice and need to respond?** [RenewalReply](/) — free verdict + negotiation letter in 60 seconds.
+- **Want to dig into historical comps with filters?** Rentometer 3-day trial.
+- **Just curious what your place is worth?** Zillow Rent Zestimate.
+- **Want to validate any tool's output?** Spend 15 minutes pulling your own comps on Zillow or Apartments.com.
+- **Not sure where to start?** Ask your landlord what data supports the increase. Their answer (or lack of one) tells you a lot.
+
+## A Note on Data Sources
+
+No rent data source is perfect. Each has coverage gaps, lag time, and methodological quirks. Here is what powers the main tools:
+
+**RenewalReply** combines four sources: HUD Small Area Fair Market Rents (federal benchmarks set annually), ZORI (Zillow's observed rent index based on listed and transacted rents), Apartment List's rental estimates (based on Census data calibrated with listing data), and Rentcast comp data (active and recent listings). The scoring engine weights each source based on data confidence for a given location.
+
+**Rentometer** uses its own proprietary database of rental listings aggregated from multiple sources. It has been collecting this data since 2008, which gives it strong historical depth.
+
+**Zillow Rent Zestimate** uses public property records, MLS feeds, and its own listing data to generate algorithmic estimates. It has the broadest property coverage of any platform.
+
+None of these tools can see inside your apartment, account for your specific lease terms, or know about negotiated concessions. They are starting points, not final answers. But a starting point backed by data is dramatically better than no data at all.`
   },
 ];
 

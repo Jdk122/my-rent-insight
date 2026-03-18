@@ -129,7 +129,52 @@ const Guide = () => {
       }
     : null;
 
-  const jsonLd = [articleJsonLd, faqJsonLd, howToJsonLd].filter(Boolean);
+  const itemListJsonLd = article.slug === 'how-to-check-rent-fair'
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'How to Check If Your Rent Is Fair: 5 Methods Compared',
+        description: 'A comparison of five methods renters can use to check whether their rent or rent increase is fair, including free tools, paid services, and manual research.',
+        numberOfItems: 5,
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'RenewalReply Rent Fairness Checker',
+            url: 'https://www.renewalreply.com',
+            description: 'Free renter-focused tool that combines HUD benchmarks, Zillow trends, Apartment List data, and local comps to score your rent increase.'
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Rentometer',
+            url: 'https://www.rentometer.com',
+            description: 'Paid rental comp service starting at $16/month, primarily designed for landlords, investors, and property managers.'
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: 'Zillow Rent Zestimate',
+            url: 'https://www.zillow.com/rent/what-is-a-rent-zestimate/',
+            description: 'Free algorithmic rent estimate based on property data and comparable listings. Property-focused, not increase-focused.'
+          },
+          {
+            '@type': 'ListItem',
+            position: 4,
+            name: 'Manual Comp Research',
+            description: 'Searching Zillow, Apartments.com, and Craigslist yourself to find comparable listings and estimate fair market rent.'
+          },
+          {
+            '@type': 'ListItem',
+            position: 5,
+            name: 'Ask Your Landlord or Management Company',
+            description: 'Requesting justification for a rent increase directly from your landlord, including what market data they used.'
+          }
+        ]
+      }
+    : null;
+
+  const jsonLd = [articleJsonLd, faqJsonLd, howToJsonLd, itemListJsonLd].filter(Boolean);
 
   const pubDate = new Date(article.publishedDate).toLocaleDateString('en-US', {
     year: 'numeric', month: 'long', day: 'numeric',
