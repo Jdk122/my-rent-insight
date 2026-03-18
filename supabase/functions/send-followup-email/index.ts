@@ -131,7 +131,7 @@ Deno.serve(async (req) => {
       continue;
     }
 
-    const { subject, text } = getEmailCopy(lead);
+    const { subject, html } = getEmailHtml(lead);
     const attemptedAt = new Date().toISOString();
     try {
       const res = await fetch("https://api.resend.com/emails", {
@@ -145,7 +145,7 @@ Deno.serve(async (req) => {
           reply_to: "james@renewalreply.com",
           to: [lead.email],
           subject,
-          text,
+          html,
         }),
       });
 
