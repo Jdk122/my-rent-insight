@@ -370,7 +370,18 @@ const RentByCity = () => {
                 ? ` Year-over-year rent trends in ${city} show a ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% change based on ${trendAttribution}. ${trendYoY < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendYoY.toFixed(1)}% in this area is above the local market trend.`}`
                 : ''}
             </p>
+            {trendYoY !== null && (
+              <p>
+                Based on {trendAttribution} data, a fair rent increase in {city}, {state} is approximately {Math.abs(trendYoY).toFixed(1)}% for {dataYear}. An increase above {Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.
+              </p>
+            )}
           </div>
+
+          {/* Visible source attribution */}
+          <p className="mt-2 text-xs text-muted-foreground/70">
+            Sources: {trendSource ? `${trendSource}, ` : ''}HUD SAFMR, Rentcast.{' '}
+            {freshestFormatted && <>Updated {freshestFormatted}.</>}
+          </p>
 
           {/* HUD-only note */}
           {!hasMarketData && (
