@@ -710,7 +710,7 @@ You get a fairness verdict (Excellent Deal through Significantly Overpaying), a 
 
 **Where it falls short:**
 - Coverage varies by location. In dense metro areas, the tool pulls strong local comps. In rural areas or small towns, comp data can be thin, and the analysis relies more on broader benchmarks.
-- It does not account for unit-specific features. A renovated unit with in-unit laundry and a dishwasher is worth more than an unrenovated one in the same building. No automated tool — RenewalReply, Rentometer, Zillow, or otherwise — can see inside your apartment. This is a universal limitation of rent data tools, not specific to any one of them.
+- It does not account for unit-specific features. A renovated unit with in-unit laundry and a dishwasher is worth more than an unrenovated one in the same building. No automated tool can perfectly assess unit condition — which is why RenewalReply cross-references four independent data sources instead of relying on a single estimate.
 - It is a newer tool. Rentometer has been around since 2008 and has a much larger user base and brand recognition.
 
 **Disclosure:** This guide is published on the RenewalReply website. We are obviously not unbiased here, but we are being straightforward about what the tool does well and where it has gaps. If one of the other methods on this list is a better fit for your situation, use that one.
