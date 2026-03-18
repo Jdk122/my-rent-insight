@@ -550,14 +550,29 @@ export function calculateFairnessScore(input: FairnessScoreInput): FairnessScore
     extremeIncreaseCeilingApplied = true;
   }
 
-  // 4B. Comp Contradiction Guardrail (UNCHANGED)
+  // 4B. Comp Contradiction Guardrail (REVISED — proportional compression)
+  // When proposed rent is significantly above comp median, cap the score into the
+  // appropriate tier, but use non-comp components to preserve relative ordering.
+  // This ensures a 2% increase scores differently from a 4% increase even when
+  // both are far above the comp median.
   const compComponent = components.find(c => c.id === 'comps');
   if (compComponent && compComponent.max >= 18) {
     const compPct = compComponent.score / compComponent.max;
-    if (compPct < 0.40 && total >= 60) {
-      total = Math.min(total, 59);
-    } else if (compPct < 0.25 && total >= 40) {
+    const nonCompTotal = total - compComponent.score;
+    const nonCompMax = 100 - compComponent.max;
+    const rawNonCompPct = nonCompMax > 0 ? nonCompTotal / nonCompMax : 0.5;
+    const nonCompPct = Math.max(0, Math.min(1, rawNonCompPct));
+
+    if (compPct < 0.25 && total >= 40) {
+      // Severe comp contradiction: compress into Overpaying tier (20–39).
+      total = 20 + Math.round(nonCompPct * 19);
       total = Math.min(total, 39);
+      total = Math.max(total, 20);
+    } else if (compPct < 0.40 && total >= 60) {
+      // Moderate comp contradiction: compress into Above Trend tier (40–59).
+      total = 40 + Math.round(nonCompPct * 19);
+      total = Math.min(total, 59);
+      total = Math.max(total, 40);
     }
   }
 
