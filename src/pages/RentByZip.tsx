@@ -419,6 +419,20 @@ const RentByZip = () => {
             <p>The confidence level for this estimate is {dataConfidence} based on {dataSourceCount} data source{dataSourceCount !== 1 ? 's' : ''}.</p>
           </div>
 
+          {/* GEO: Direct answer to "what is a fair rent increase in [ZIP]?" */}
+          <p className="mt-4 text-sm text-foreground/80 leading-relaxed">
+            {trendYoY !== null
+              ? `Based on ${trendAttribution} data, a fair rent increase in ${city} (${zip}) is approximately ${Math.abs(trendYoY).toFixed(1)}% for ${dataYear}. The typical 1-bedroom rent is ${fmt(heroRent)}/month. Any increase significantly above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.`
+              : `The national average rent increase is approximately ${NATIONAL_AVG_YOY}% year-over-year. Without local trend data for ${zip}, increases significantly above ${NATIONAL_AVG_YOY}% may warrant further research.`
+            }
+          </p>
+
+          {/* Visible source attribution — helps AI engines trust the data */}
+          <p className="mt-2 text-xs text-muted-foreground/70">
+            Sources: {trendAttribution ? `${trendAttribution}, ` : ''}HUD SAFMR FY{hudFY}, Rentcast.{' '}
+            Updated {freshestFormatted}.
+          </p>
+
           {dataConfidence === 'moderate' && !hasMarketData && (
             <p className="mt-3 text-sm text-muted-foreground bg-muted/40 border border-border rounded-lg px-4 py-3">
               📊 Market trend data is limited for this area. The analysis below uses federal rent benchmarks.
