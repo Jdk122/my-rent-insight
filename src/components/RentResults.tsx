@@ -943,7 +943,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.1, duration: 0.4 }}
-                  className="mt-4 w-full max-w-[540px] mx-auto"
+                  className="mt-4 w-full max-w-[540px] mx-auto md:hidden"
                 >
                   <button
                     onClick={() => {
