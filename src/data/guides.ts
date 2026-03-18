@@ -24,7 +24,7 @@ export const guides: GuideArticle[] = [
     author: 'RenewalReply',
     readingTime: '10 min read',
     category: 'Rent Negotiation',
-    relatedSlugs: ['rent-increase-laws-by-state', 'what-should-i-pay-for-rent'],
+    relatedSlugs: ['rent-increase-laws-by-state', 'what-should-i-pay-for-rent', 'how-to-check-rent-fair'],
     content: `You just got the renewal notice. Your landlord wants more: maybe 5%, maybe 15%.
 
 Do not reply emotionally. Do not reply without data. And do not assume the number is final.
