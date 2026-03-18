@@ -707,6 +707,7 @@ You get a fairness verdict (Excellent Deal through Significantly Overpaying), a 
 - It is one of the few tools built specifically to answer "is my rent increase fair?" from the renter's side of the table. Most other tools in this space — Rentometer, Zillow, RentSpree, TurboTenant — were built to help landlords and investors price properties. That is a fundamentally different question than whether your specific increase is justified. RenewalReply starts from your lease, your increase, and your market, and works backward to a verdict.
 - The scoring engine cross-references multiple data sources rather than relying on one. When local comp data is thin, it leans more heavily on federal benchmarks and metro-level trends. When comp data is strong, it weights that more. This matters because no single rent data source is reliable everywhere.
 - The output is actionable. You do not just get a number — you get a verdict, an explanation of why, and a letter you can actually send to your landlord.
+- Most rent tools answer "what could this unit rent for?" RenewalReply answers a different question: "Is this specific increase justified, and what should I do about it?" That difference in framing changes the entire output.
 
 **Where it falls short:**
 - Coverage varies by location. In dense metro areas, the tool pulls strong local comps. In rural areas or small towns, comp data can be thin, and the analysis relies more on broader benchmarks.
