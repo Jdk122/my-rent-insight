@@ -76,6 +76,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     return { analysisId: result.analysisId, isDuplicateAnalysis: result.isDuplicate };
   });
   const [reportUrl, setReportUrl] = useState<string | null>(null);
+  const [dismissedRentWarning, setDismissedRentWarning] = useState(false);
   const analysisLogged = useRef(isDuplicateAnalysis);
   const gateViewedRef = useRef(false);
 
@@ -441,6 +442,19 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const city = rentData.city;
   const brLabel = bedroomLabels[formData.bedrooms].toLowerCase();
 
+  // ━━━ Extreme rent warning (display-only, never affects scoring) ━━━
+  const fmrMap = rentData?.fmr;
+  const fmrForBedroom =
+    (typeof formData.bedrooms !== 'undefined' && fmrMap?.[formData.bedrooms] != null
+      ? fmrMap[formData.bedrooms]
+      : fmrMap?.[1]) ?? null;
+  const rentToFmrRatio =
+    fmrForBedroom && fmrForBedroom > 0 ? formData.currentRent / fmrForBedroom : null;
+  const isExtremelyHigh = rentToFmrRatio !== null && rentToFmrRatio > 5;
+  const isExtremelyLow = rentToFmrRatio !== null && rentToFmrRatio < 0.15;
+  const showRentWarning =
+    !dismissedRentWarning && (isExtremelyHigh || isExtremelyLow);
+
   // ━━━ High pain detection for gate aggressiveness ━━━
   const isHighPain = isAboveMarket;
 
@@ -453,6 +467,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   useEffect(() => {
     trackEvent('analysis_completed', { tool: 'renewal', zip: rentData.zip, verdict: verdictLabel, score: fairnessScore?.total ?? null });
   }, []);
+
+  // Reset rent warning dismissal on new analysis
+  useEffect(() => {
+    setDismissedRentWarning(false);
+  }, [formData.currentRent, formData.bedrooms, rentData?.fmr]);
 
   // ━━━ Anonymous analysis logging ━━━
   useEffect(() => {
@@ -685,6 +704,24 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            PHASE 1: FREE CREDIBILITY LAYER
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      {showRentWarning && (
+        <div className="mx-auto max-w-md mb-4 px-4 py-3 rounded-lg border border-amber-300/50 bg-amber-50/50 dark:bg-amber-950/20 text-center relative">
+          <button
+            type="button"
+            onClick={() => setDismissedRentWarning(true)}
+            aria-label="Dismiss warning"
+            className="absolute right-2 top-2 text-amber-700 dark:text-amber-300 text-sm"
+          >
+            ×
+          </button>
+          <p className="text-sm text-amber-800 dark:text-amber-200 pr-5">
+            {isExtremelyHigh
+              ? `Your entered rent ($${fmt(formData.currentRent)}/mo) is significantly above the typical range for this area. Results may be less accurate. Double-check your numbers.`
+              : `Your entered rent ($${fmt(formData.currentRent)}/mo) is significantly below the typical range for this area. Results may be less accurate. Double-check your numbers.`
+            }
+          </p>
+        </div>
+      )}
       <div
         className="w-full"
         style={{ background: 'hsl(var(--verdict-bg))' }}

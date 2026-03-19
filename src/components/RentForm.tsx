@@ -86,6 +86,10 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
     const rentVal = parseFloat(parseFormatted(currentRent));
     if (!currentRent || isNaN(rentVal) || rentVal <= 0) {
       errs.currentRent = 'Please enter your current monthly rent';
+    } else if (rentVal < 100) {
+      errs.currentRent = 'Monthly rent must be at least $100';
+    } else if (rentVal > 50000) {
+      errs.currentRent = 'Monthly rent cannot exceed $50,000';
     }
 
     // Allow empty or 0 increase — user gets market data without a verdict
@@ -93,6 +97,10 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
       const incVal = increaseIsPercent ? parseFloat(rentIncrease) : parseFloat(parseFormatted(rentIncrease));
       if (isNaN(incVal) || incVal < 0) {
         errs.rentIncrease = 'Looking for a rent decrease? Lucky you! This tool is designed for rent increases. Enter 0 if your rent isn\'t changing.';
+      } else if (increaseIsPercent && incVal > 200) {
+        errs.rentIncrease = 'A 200%+ increase seems unlikely. Please double-check your numbers.';
+      } else if (!increaseIsPercent && incVal > 25000) {
+        errs.rentIncrease = 'That increase amount seems unusually high. Please double-check your numbers.';
       }
     }
 
