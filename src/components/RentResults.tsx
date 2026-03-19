@@ -468,6 +468,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     trackEvent('analysis_completed', { tool: 'renewal', zip: rentData.zip, verdict: verdictLabel, score: fairnessScore?.total ?? null });
   }, []);
 
+  // Reset rent warning dismissal on new analysis
+  useEffect(() => {
+    setDismissedRentWarning(false);
+  }, [formData.currentRent, formData.bedrooms, rentData?.fmr]);
+
   // ━━━ Anonymous analysis logging ━━━
   useEffect(() => {
     if (analysisLogged.current) return;
