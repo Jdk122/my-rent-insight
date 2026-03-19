@@ -176,9 +176,7 @@ const RentByZip = () => {
   const hasHud50 = hud50 !== null && hud50.f50 !== undefined && hud50.f50[1] > 0;
   const isThinPage = !hasMarketData && !hasHud50;
 
-  // Detect near-duplicate single-ZIP city pages
-  const isNearDuplicateSingleZipPage = totalCityZips === 1 && !hasMarketData;
-  const shouldNoindex = isThinPage || isNearDuplicateSingleZipPage;
+  const shouldNoindex = isThinPage;
 
   // Canonical: single-ZIP cities canonicalize to the city page
   const canonicalPath = totalCityZips === 1
