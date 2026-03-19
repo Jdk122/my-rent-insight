@@ -86,6 +86,10 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
     const rentVal = parseFloat(parseFormatted(currentRent));
     if (!currentRent || isNaN(rentVal) || rentVal <= 0) {
       errs.currentRent = 'Please enter your current monthly rent';
+    } else if (rentVal < 100) {
+      errs.currentRent = 'Monthly rent must be at least $100';
+    } else if (rentVal > 50000) {
+      errs.currentRent = 'Monthly rent cannot exceed $50,000';
     }
 
     // Allow empty or 0 increase — user gets market data without a verdict
