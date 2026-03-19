@@ -442,6 +442,19 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const city = rentData.city;
   const brLabel = bedroomLabels[formData.bedrooms].toLowerCase();
 
+  // ━━━ Extreme rent warning (display-only, never affects scoring) ━━━
+  const fmrMap = rentData?.fmr;
+  const fmrForBedroom =
+    (typeof formData.bedrooms !== 'undefined' && fmrMap?.[formData.bedrooms] != null
+      ? fmrMap[formData.bedrooms]
+      : fmrMap?.[1]) ?? null;
+  const rentToFmrRatio =
+    fmrForBedroom && fmrForBedroom > 0 ? formData.currentRent / fmrForBedroom : null;
+  const isExtremelyHigh = rentToFmrRatio !== null && rentToFmrRatio > 5;
+  const isExtremelyLow = rentToFmrRatio !== null && rentToFmrRatio < 0.15;
+  const showRentWarning =
+    !dismissedRentWarning && (isExtremelyHigh || isExtremelyLow);
+
   // ━━━ High pain detection for gate aggressiveness ━━━
   const isHighPain = isAboveMarket;
 
