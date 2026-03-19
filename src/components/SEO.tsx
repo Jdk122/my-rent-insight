@@ -27,7 +27,9 @@ const SEO = ({
   noindex = false,
   jsonLd,
 }: SEOProps) => {
-  const fullCanonical = canonical ? `${SITE_URL}${canonical}` : SITE_URL;
+  const fullCanonical = canonical
+    ? `${SITE_URL}${canonical}`
+    : `${SITE_URL}${typeof window !== 'undefined' ? window.location.pathname : '/'}`;
   const prevRef = useRef<{ title: string } | null>(null);
   const jsonLdIdsRef = useRef<string[]>([]);
   const managedMetaRef = useRef<string[]>([]);
