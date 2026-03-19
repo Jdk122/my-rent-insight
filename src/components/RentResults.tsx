@@ -76,6 +76,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     return { analysisId: result.analysisId, isDuplicateAnalysis: result.isDuplicate };
   });
   const [reportUrl, setReportUrl] = useState<string | null>(null);
+  const [dismissedRentWarning, setDismissedRentWarning] = useState(false);
   const analysisLogged = useRef(isDuplicateAnalysis);
   const gateViewedRef = useRef(false);
 
