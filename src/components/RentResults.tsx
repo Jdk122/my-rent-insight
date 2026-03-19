@@ -704,6 +704,24 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            PHASE 1: FREE CREDIBILITY LAYER
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      {showRentWarning && (
+        <div className="mx-auto max-w-md mb-4 px-4 py-3 rounded-lg border border-amber-300/50 bg-amber-50/50 dark:bg-amber-950/20 text-center relative">
+          <button
+            type="button"
+            onClick={() => setDismissedRentWarning(true)}
+            aria-label="Dismiss warning"
+            className="absolute right-2 top-2 text-amber-700 dark:text-amber-300 text-sm"
+          >
+            ×
+          </button>
+          <p className="text-sm text-amber-800 dark:text-amber-200 pr-5">
+            {isExtremelyHigh
+              ? `Your entered rent ($${fmt(formData.currentRent)}/mo) is significantly above the typical range for this area. Results may be less accurate. Double-check your numbers.`
+              : `Your entered rent ($${fmt(formData.currentRent)}/mo) is significantly below the typical range for this area. Results may be less accurate. Double-check your numbers.`
+            }
+          </p>
+        </div>
+      )}
       <div
         className="w-full"
         style={{ background: 'hsl(var(--verdict-bg))' }}
