@@ -1,6 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+const SocialIcon = ({ href, label, children }: { href: string; label: string; children: React.ReactNode }) => (
+  <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="text-muted-foreground/50 hover:text-foreground transition-colors">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">{children}</svg>
+  </a>
+);
+
 interface SEOFooterProps {
   onContactClick?: () => void;
 }
