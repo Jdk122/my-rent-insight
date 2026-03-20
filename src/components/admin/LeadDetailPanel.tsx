@@ -31,7 +31,12 @@ export default function LeadDetailPanel({ analysis, onClose, onDeleted }: LeadDe
     const { data, error } = await supabase.functions.invoke('admin-query', {
       body: { password, query: 'delete_analysis', params: { analysisId: analysis.id } },
     });
-    if (error || data?.error) { clearAdminSession(); window.location.reload(); return; }
+    if (error || data?.error) {
+      const is403 = data?.error === 'Access denied' || (error as any)?.status === 403;
+      if (is403) { clearAdminSession(); window.location.reload(); }
+      setDeleting(false);
+      return;
+    }
     if (data?.success) { onDeleted?.(analysis.id); onClose(); }
     setDeleting(false);
   };

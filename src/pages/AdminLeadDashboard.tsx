@@ -207,8 +207,12 @@ function DashboardContent() {
       body: { password, query, params },
     });
     if (error || data?.error) {
-      clearAdminSession();
-      window.location.reload();
+      // Only force re-auth on 403 (wrong password), not transient errors
+      const is403 = data?.error === 'Access denied' || (error as any)?.status === 403;
+      if (is403) {
+        clearAdminSession();
+        window.location.reload();
+      }
       return null;
     }
     return data;

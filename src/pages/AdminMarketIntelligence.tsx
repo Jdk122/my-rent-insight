@@ -36,8 +36,11 @@ function MarketContent() {
         body: { password, query: q, params },
       });
       if (error || data?.error) {
-        clearAdminSession();
-        window.location.reload();
+        const is403 = data?.error === 'Access denied' || (error as any)?.status === 403;
+        if (is403) {
+          clearAdminSession();
+          window.location.reload();
+        }
         return null;
       }
       return data;
