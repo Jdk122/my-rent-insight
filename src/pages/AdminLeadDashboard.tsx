@@ -1421,6 +1421,16 @@ function DashboardContent() {
                           <td className="px-3 py-2 text-xs">{o.tool_type === 'wsip' ? 'WSIP' : 'Renewal'}</td>
                           <td className="px-3 py-2 max-w-[200px] truncate text-xs" title={o.testimonial || ''}>{o.testimonial || '—'}</td>
                           <td className="px-3 py-2 whitespace-nowrap text-xs">{new Date(o.created_at).toLocaleDateString()}</td>
+                          <td className="px-2 py-2">
+                            <button
+                              onClick={(e) => handleDeleteLead(o.id, setOutcomeRows, e)}
+                              disabled={deletingLeadId === o.id}
+                              className={`p-1 rounded transition-colors ${confirmDeleteLeadId === o.id ? 'bg-red-600 text-white hover:bg-red-700' : 'text-muted-foreground hover:text-red-600 hover:bg-red-500/10'}`}
+                              title={confirmDeleteLeadId === o.id ? 'Click again to confirm' : 'Delete lead'}
+                            >
+                              {deletingLeadId === o.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                            </button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
