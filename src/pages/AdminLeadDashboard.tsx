@@ -1521,6 +1521,16 @@ function DashboardContent() {
                         <td className="px-3 py-2 max-w-[200px] truncate" title={f.comment || ''}>{f.comment || '—'}</td>
                         <td className="px-3 py-2 font-mono">{(f.analysis_id || '').slice(0, 8)}</td>
                         <td className="px-3 py-2 whitespace-nowrap">{new Date(f.created_at).toLocaleString()}</td>
+                        <td className="px-2 py-2">
+                          <button
+                            onClick={(e) => handleDeleteFeedback(f.id, e)}
+                            disabled={deletingFeedbackId === f.id}
+                            className={`p-1 rounded transition-colors ${confirmDeleteFeedbackId === f.id ? 'bg-red-600 text-white hover:bg-red-700' : 'text-muted-foreground hover:text-red-600 hover:bg-red-500/10'}`}
+                            title={confirmDeleteFeedbackId === f.id ? 'Click again to confirm' : 'Delete feedback'}
+                          >
+                            {deletingFeedbackId === f.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
