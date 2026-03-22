@@ -61,7 +61,7 @@ Deno.serve(async (req) => {
       .eq("ip_address", ip)
       .gte("created_at", fiveMinAgo);
 
-    if ((recentCount ?? 0) >= 20) {
+    if ((recentCount ?? 0) >= 60) {
       await rlClient.from("function_request_log").insert({
         function_name: fnName, ip_address: ip, success: false, response_status: 429,
       });
