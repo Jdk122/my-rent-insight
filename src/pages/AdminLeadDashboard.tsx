@@ -965,6 +965,16 @@ function DashboardContent() {
                               <span className="text-emerald-600 font-medium">Active</span>
                             )}
                           </td>
+                          <td className="px-2 py-2">
+                            <button
+                              onClick={(e) => handleDeleteLead(l.id, setEmailLeads, e)}
+                              disabled={deletingLeadId === l.id}
+                              className={`p-1 rounded transition-colors ${confirmDeleteLeadId === l.id ? 'bg-red-600 text-white hover:bg-red-700' : 'text-muted-foreground hover:text-red-600 hover:bg-red-500/10'}`}
+                              title={confirmDeleteLeadId === l.id ? 'Click again to confirm' : 'Delete lead'}
+                            >
+                              {deletingLeadId === l.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                            </button>
+                          </td>
                         </tr>
                       );
                     })}
