@@ -418,6 +418,18 @@ Deno.serve(async (req) => {
         break;
       }
 
+      case "outcomes": {
+        const { data: outcomeRows, error: outcomeErr } = await supabase
+          .from("leads")
+          .select("id, email, outcome, testimonial, verdict, city, state, zip, current_rent, proposed_rent, fairness_score, tool_type, capture_source, created_at, followup_sent_at, founder_followup_sent_at, unsubscribed")
+          .not("outcome", "is", null)
+          .order("created_at", { ascending: false })
+          .limit(200);
+        if (outcomeErr) throw outcomeErr;
+        data = outcomeRows;
+        break;
+      }
+
       default:
         return new Response(JSON.stringify({ error: "Unknown query type" }), {
           status: 400,

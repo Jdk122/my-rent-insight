@@ -200,6 +200,11 @@ function DashboardContent() {
   const [feedbackRows, setFeedbackRows] = useState<any[]>([]);
   const [feedbackLoading, setFeedbackLoading] = useState(false);
 
+  // ── Outcomes ──
+  const [outcomeRows, setOutcomeRows] = useState<any[]>([]);
+  const [outcomeLoading, setOutcomeLoading] = useState(false);
+  const [outcomeFilter, setOutcomeFilter] = useState<string>('all');
+
   // Helper to call admin edge function
   const adminQuery = async (query: string, params?: any) => {
     const password = getAdminPassword();
