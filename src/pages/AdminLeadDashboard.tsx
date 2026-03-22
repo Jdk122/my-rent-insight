@@ -1399,6 +1399,7 @@ function DashboardContent() {
                         <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Tool</th>
                         <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Testimonial</th>
                         <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Date</th>
+                        <th className="px-2 py-2 text-left text-xs font-semibold text-muted-foreground w-8"></th>
                       </tr>
                     </thead>
                     <tbody>
