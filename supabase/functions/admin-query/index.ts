@@ -407,6 +407,35 @@ Deno.serve(async (req) => {
         break;
       }
 
+      case "delete_lead": {
+        const leadId = params?.leadId;
+        if (!leadId) {
+          return new Response(JSON.stringify({ error: "leadId required" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        await supabase.from("lead_events").delete().eq("email", (await supabase.from("leads").select("email").eq("id", leadId).single()).data?.email || "");
+        await supabase.from("email_send_attempts").delete().eq("lead_id", leadId);
+        const { error: leadDelErr } = await supabase.from("leads").delete().eq("id", leadId);
+        if (leadDelErr) throw leadDelErr;
+        data = { success: true };
+        break;
+      }
+
+      case "delete_feedback": {
+        const feedbackId = params?.feedbackId;
+        if (!feedbackId) {
+          return new Response(JSON.stringify({ error: "feedbackId required" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        const { error: fbDelErr } = await supabase.from("user_feedback").delete().eq("id", feedbackId);
+        if (fbDelErr) throw fbDelErr;
+        data = { success: true };
+        break;
+
       case "feedback": {
         const { data: fbRows, error: fbErr } = await supabase
           .from("user_feedback")

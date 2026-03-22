@@ -326,6 +326,44 @@ function DashboardContent() {
     }
   };
 
+  // Delete lead record
+  const [deletingLeadId, setDeletingLeadId] = useState<string | null>(null);
+  const [confirmDeleteLeadId, setConfirmDeleteLeadId] = useState<string | null>(null);
+
+  const handleDeleteLead = async (leadId: string, listSetter: React.Dispatch<React.SetStateAction<any[]>>, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (confirmDeleteLeadId !== leadId) {
+      setConfirmDeleteLeadId(leadId);
+      return;
+    }
+    setDeletingLeadId(leadId);
+    const result = await adminQuery('delete_lead', { leadId });
+    setDeletingLeadId(null);
+    setConfirmDeleteLeadId(null);
+    if (result?.success) {
+      listSetter(prev => prev.filter(r => r.id !== leadId));
+    }
+  };
+
+  // Delete feedback record
+  const [deletingFeedbackId, setDeletingFeedbackId] = useState<string | null>(null);
+  const [confirmDeleteFeedbackId, setConfirmDeleteFeedbackId] = useState<string | null>(null);
+
+  const handleDeleteFeedback = async (feedbackId: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (confirmDeleteFeedbackId !== feedbackId) {
+      setConfirmDeleteFeedbackId(feedbackId);
+      return;
+    }
+    setDeletingFeedbackId(feedbackId);
+    const result = await adminQuery('delete_feedback', { feedbackId });
+    setDeletingFeedbackId(null);
+    setConfirmDeleteFeedbackId(null);
+    if (result?.success) {
+      setFeedbackRows(prev => prev.filter(r => r.id !== feedbackId));
+    }
+  };
+
   const handleSort = (col: string) => {
     if (sortCol === col) setSortAsc(!sortAsc);
     else { setSortCol(col); setSortAsc(false); }
