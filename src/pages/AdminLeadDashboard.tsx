@@ -326,6 +326,44 @@ function DashboardContent() {
     }
   };
 
+  // Delete lead record
+  const [deletingLeadId, setDeletingLeadId] = useState<string | null>(null);
+  const [confirmDeleteLeadId, setConfirmDeleteLeadId] = useState<string | null>(null);
+
+  const handleDeleteLead = async (leadId: string, listSetter: React.Dispatch<React.SetStateAction<any[]>>, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (confirmDeleteLeadId !== leadId) {
+      setConfirmDeleteLeadId(leadId);
+      return;
+    }
+    setDeletingLeadId(leadId);
+    const result = await adminQuery('delete_lead', { leadId });
+    setDeletingLeadId(null);
+    setConfirmDeleteLeadId(null);
+    if (result?.success) {
+      listSetter(prev => prev.filter(r => r.id !== leadId));
+    }
+  };
+
+  // Delete feedback record
+  const [deletingFeedbackId, setDeletingFeedbackId] = useState<string | null>(null);
+  const [confirmDeleteFeedbackId, setConfirmDeleteFeedbackId] = useState<string | null>(null);
+
+  const handleDeleteFeedback = async (feedbackId: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (confirmDeleteFeedbackId !== feedbackId) {
+      setConfirmDeleteFeedbackId(feedbackId);
+      return;
+    }
+    setDeletingFeedbackId(feedbackId);
+    const result = await adminQuery('delete_feedback', { feedbackId });
+    setDeletingFeedbackId(null);
+    setConfirmDeleteFeedbackId(null);
+    if (result?.success) {
+      setFeedbackRows(prev => prev.filter(r => r.id !== feedbackId));
+    }
+  };
+
   const handleSort = (col: string) => {
     if (sortCol === col) setSortAsc(!sortAsc);
     else { setSortCol(col); setSortAsc(false); }
@@ -883,6 +921,7 @@ function DashboardContent() {
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Tool</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Emails Sent</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Status</th>
+                      <th className="px-2 py-2 text-left text-xs font-medium text-muted-foreground w-8"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -925,6 +964,16 @@ function DashboardContent() {
                             ) : (
                               <span className="text-emerald-600 font-medium">Active</span>
                             )}
+                          </td>
+                          <td className="px-2 py-2">
+                            <button
+                              onClick={(e) => handleDeleteLead(l.id, setEmailLeads, e)}
+                              disabled={deletingLeadId === l.id}
+                              className={`p-1 rounded transition-colors ${confirmDeleteLeadId === l.id ? 'bg-red-600 text-white hover:bg-red-700' : 'text-muted-foreground hover:text-red-600 hover:bg-red-500/10'}`}
+                              title={confirmDeleteLeadId === l.id ? 'Click again to confirm' : 'Delete lead'}
+                            >
+                              {deletingLeadId === l.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                            </button>
                           </td>
                         </tr>
                       );
@@ -1350,6 +1399,7 @@ function DashboardContent() {
                         <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Tool</th>
                         <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Testimonial</th>
                         <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Date</th>
+                        <th className="px-2 py-2 text-left text-xs font-semibold text-muted-foreground w-8"></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1371,6 +1421,16 @@ function DashboardContent() {
                           <td className="px-3 py-2 text-xs">{o.tool_type === 'wsip' ? 'WSIP' : 'Renewal'}</td>
                           <td className="px-3 py-2 max-w-[200px] truncate text-xs" title={o.testimonial || ''}>{o.testimonial || '—'}</td>
                           <td className="px-3 py-2 whitespace-nowrap text-xs">{new Date(o.created_at).toLocaleDateString()}</td>
+                          <td className="px-2 py-2">
+                            <button
+                              onClick={(e) => handleDeleteLead(o.id, setOutcomeRows, e)}
+                              disabled={deletingLeadId === o.id}
+                              className={`p-1 rounded transition-colors ${confirmDeleteLeadId === o.id ? 'bg-red-600 text-white hover:bg-red-700' : 'text-muted-foreground hover:text-red-600 hover:bg-red-500/10'}`}
+                              title={confirmDeleteLeadId === o.id ? 'Click again to confirm' : 'Delete lead'}
+                            >
+                              {deletingLeadId === o.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                            </button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -1445,6 +1505,7 @@ function DashboardContent() {
                     <th className="text-left px-3 py-2 font-medium">Comment</th>
                     <th className="text-left px-3 py-2 font-medium">Analysis</th>
                     <th className="text-left px-3 py-2 font-medium">Date</th>
+                    <th className="text-left px-2 py-2 font-medium w-8"></th>
                   </tr></thead>
                   <tbody>
                     {feedbackRows.map((f: any) => (
@@ -1460,6 +1521,16 @@ function DashboardContent() {
                         <td className="px-3 py-2 max-w-[200px] truncate" title={f.comment || ''}>{f.comment || '—'}</td>
                         <td className="px-3 py-2 font-mono">{(f.analysis_id || '').slice(0, 8)}</td>
                         <td className="px-3 py-2 whitespace-nowrap">{new Date(f.created_at).toLocaleString()}</td>
+                        <td className="px-2 py-2">
+                          <button
+                            onClick={(e) => handleDeleteFeedback(f.id, e)}
+                            disabled={deletingFeedbackId === f.id}
+                            className={`p-1 rounded transition-colors ${confirmDeleteFeedbackId === f.id ? 'bg-red-600 text-white hover:bg-red-700' : 'text-muted-foreground hover:text-red-600 hover:bg-red-500/10'}`}
+                            title={confirmDeleteFeedbackId === f.id ? 'Click again to confirm' : 'Delete feedback'}
+                          >
+                            {deletingFeedbackId === f.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
