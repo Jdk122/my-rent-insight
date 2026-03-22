@@ -435,6 +435,7 @@ Deno.serve(async (req) => {
         if (fbDelErr) throw fbDelErr;
         data = { success: true };
         break;
+      }
 
       case "feedback": {
         const { data: fbRows, error: fbErr } = await supabase
