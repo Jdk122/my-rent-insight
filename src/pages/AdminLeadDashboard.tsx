@@ -921,6 +921,7 @@ function DashboardContent() {
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Tool</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Emails Sent</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Status</th>
+                      <th className="px-2 py-2 text-left text-xs font-medium text-muted-foreground w-8"></th>
                     </tr>
                   </thead>
                   <tbody>
