@@ -411,6 +411,12 @@ function DashboardContent() {
               adminQuery('feedback').then((data) => { setFeedbackRows(data || []); setFeedbackLoading(false); });
             }
           }}><MessageSquare className="w-3.5 h-3.5" /> Feedback {feedbackRows.length > 0 && <span className="ml-1 text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded-full">{feedbackRows.length}</span>}</TabsTrigger>
+          <TabsTrigger value="outcomes" className="gap-1.5" onClick={() => {
+            if (outcomeRows.length === 0 && !outcomeLoading) {
+              setOutcomeLoading(true);
+              adminQuery('outcomes').then((data) => { setOutcomeRows(data || []); setOutcomeLoading(false); });
+            }
+          }}><ClipboardCheck className="w-3.5 h-3.5" /> Outcomes {outcomeRows.length > 0 && <span className="ml-1 text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded-full">{outcomeRows.length}</span>}</TabsTrigger>
           <TabsTrigger value="diagnostic" className="gap-1.5"><AlertTriangle className="w-3.5 h-3.5" /> Diagnostic</TabsTrigger>
         </TabsList>
 
