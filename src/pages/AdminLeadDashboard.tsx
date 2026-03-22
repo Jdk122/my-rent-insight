@@ -1290,6 +1290,97 @@ function DashboardContent() {
           )}
         </TabsContent>
 
+        {/* ━━━ Outcomes Tab ━━━ */}
+        <TabsContent value="outcomes" className="space-y-4">
+          {outcomeLoading ? (
+            <div className="text-sm text-muted-foreground"><Loader2 className="w-4 h-4 animate-spin inline mr-1" /> Loading outcomes…</div>
+          ) : outcomeRows.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No outcome responses yet.</p>
+          ) : (() => {
+            const filtered = outcomeFilter === 'all' ? outcomeRows : outcomeRows.filter((o: any) => o.outcome === outcomeFilter);
+            const counts = {
+              agreed: outcomeRows.filter((o: any) => o.outcome === 'agreed').length,
+              no_response: outcomeRows.filter((o: any) => o.outcome === 'no_response').length,
+              moving: outcomeRows.filter((o: any) => o.outcome === 'moving').length,
+              unsubscribe: outcomeRows.filter((o: any) => o.outcome === 'unsubscribe').length,
+            };
+            return (
+              <>
+                {/* Summary cards */}
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                  <StatCard label="Total Responses" value={outcomeRows.length} />
+                  <StatCard label="✅ Negotiated" value={counts.agreed} />
+                  <StatCard label="⏳ Still Deciding" value={counts.no_response} />
+                  <StatCard label="🚚 Moved" value={counts.moving} />
+                  <StatCard label="🚫 Unsubscribed" value={counts.unsubscribe} />
+                </div>
+
+                {/* Filter */}
+                <div className="flex gap-2 flex-wrap">
+                  {[
+                    { label: 'All', value: 'all' },
+                    { label: '✅ Negotiated', value: 'agreed' },
+                    { label: '⏳ Still Deciding', value: 'no_response' },
+                    { label: '🚚 Moved', value: 'moving' },
+                    { label: '🚫 Unsubscribed', value: 'unsubscribe' },
+                  ].map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => setOutcomeFilter(opt.value)}
+                      className={`px-3 py-1.5 text-xs rounded-full border transition-colors ${
+                        outcomeFilter === opt.value
+                          ? 'bg-primary/15 text-primary border-primary/30'
+                          : 'bg-background text-muted-foreground border-border hover:border-foreground'
+                      }`}
+                    >
+                      {opt.label} {opt.value !== 'all' && <span className="ml-1 opacity-60">({counts[opt.value as keyof typeof counts]})</span>}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Table */}
+                <div className="overflow-x-auto border border-border rounded-lg">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-border bg-muted/30">
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Email</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Outcome</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Verdict</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Location</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Tool</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Testimonial</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filtered.map((o: any) => (
+                        <tr key={o.id} className="border-b border-border/50 hover:bg-muted/20 transition-colors">
+                          <td className="px-3 py-2 font-mono text-xs">{o.email}</td>
+                          <td className="px-3 py-2">
+                            <span className={`inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium border ${
+                              o.outcome === 'agreed' ? 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30' :
+                              o.outcome === 'moving' ? 'bg-blue-500/15 text-blue-600 border-blue-500/30' :
+                              o.outcome === 'no_response' ? 'bg-yellow-500/15 text-yellow-700 border-yellow-500/30' :
+                              'bg-red-500/15 text-red-600 border-red-500/30'
+                            }`}>
+                              {o.outcome === 'agreed' ? 'Negotiated' : o.outcome === 'no_response' ? 'Still Deciding' : o.outcome === 'moving' ? 'Moved' : 'Unsubscribed'}
+                            </span>
+                          </td>
+                          <td className="px-3 py-2">{o.verdict || '—'}</td>
+                          <td className="px-3 py-2">{o.city && o.state ? `${o.city}, ${o.state}` : o.zip || '—'}</td>
+                          <td className="px-3 py-2 text-xs">{o.tool_type === 'wsip' ? 'WSIP' : 'Renewal'}</td>
+                          <td className="px-3 py-2 max-w-[200px] truncate text-xs" title={o.testimonial || ''}>{o.testimonial || '—'}</td>
+                          <td className="px-3 py-2 whitespace-nowrap text-xs">{new Date(o.created_at).toLocaleDateString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            );
+          })()}
+        </TabsContent>
+
         {/* ━━━ Feedback Tab ━━━ */}
         <TabsContent value="feedback" className="space-y-4">
           {feedbackLoading ? (
