@@ -28,6 +28,7 @@ const WhatShouldIPay = lazy(() => import("./pages/WhatShouldIPay"));
 const Guides = lazy(() => import("./pages/Guides"));
 const Guide = lazy(() => import("./pages/Guide"));
 const DemoIndex = lazy(() => import("./pages/DemoIndex"));
+const Deals = lazy(() => import("./pages/Deals"));
 
 const queryClient = new QueryClient();
 
@@ -82,6 +83,7 @@ const App = () => (
           <Route path="/guides" element={<Suspense fallback={<PageSkeleton />}><Guides /></Suspense>} />
           <Route path="/guides/:slug" element={<Suspense fallback={<PageSkeleton />}><Guide /></Suspense>} />
           <Route path="/demos" element={<Suspense fallback={<PageSkeleton />}><DemoIndex /></Suspense>} />
+          <Route path="/deals/:citySlug" element={<Suspense fallback={<PageSkeleton />}><Deals /></Suspense>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<Suspense fallback={<PageSkeleton />}><NotFound /></Suspense>} />
         </Routes>
