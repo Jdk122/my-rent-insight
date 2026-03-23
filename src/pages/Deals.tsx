@@ -340,6 +340,10 @@ const Deals = () => {
           cityName={city.name}
           onClose={() => setSelected(null)}
           onEmailCaptured={handleEmailCaptured}
+          skipGate={!freeViewUsed || emailCaptured}
+          onAnalysisViewed={() => {
+            if (!freeViewUsed) setFreeViewUsed(true);
+          }}
         />
       )}
 
