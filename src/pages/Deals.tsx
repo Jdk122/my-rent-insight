@@ -31,6 +31,10 @@ const Deals = () => {
   const [cleanOnly, setCleanOnly] = useState(false);
   const [selected, setSelected] = useState<DealListing | null>(null);
 
+  // Gate state: first analysis free, gate on second click
+  const [freeViewUsed, setFreeViewUsed] = useState(false);
+  const [emailCaptured, setEmailCaptured] = useState(false);
+
   // Market context
   const [marketByZip, setMarketByZip] = useState<Record<string, any>>({});
   const [trendResult, setTrendResult] = useState<CompositeTrendResult | null>(null);
