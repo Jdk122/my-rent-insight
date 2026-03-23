@@ -40,6 +40,7 @@ const DealAlerts = ({ cityName, zip, onEmailCaptured }: DealAlertsProps) => {
     trackEvent('email_captured', { gate: 'deals_alert', city: cityName });
     setSubmitted(true);
     setLoading(false);
+    onEmailCaptured?.(trimmed);
     toast.success('You\'re subscribed!');
   };
 

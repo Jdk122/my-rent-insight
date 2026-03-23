@@ -281,9 +281,15 @@ const DealGateModal = ({ listing, cityName, onClose, onEmailCaptured, skipGate, 
             >
               View on Zillow →
             </a>
-            <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
-              Full report sent to your email.
-            </p>
+            {submitted ? (
+              <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
+                Full report sent to your email.
+              </p>
+            ) : (
+              <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
+                Want reports for every listing? Enter your email on the next one.
+              </p>
+            )}
           </div>
         )}
       </div>
