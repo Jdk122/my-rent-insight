@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
@@ -17,6 +17,8 @@ interface DealGateModalProps {
   cityName: string;
   onClose: () => void;
   onEmailCaptured: (email: string) => void;
+  skipGate?: boolean;
+  onAnalysisViewed?: () => void;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US');
@@ -28,12 +30,21 @@ const COMPONENT_LABELS = [
   { key: 'momentum' as const, label: 'Market Direction' },
 ];
 
-const DealGateModal = ({ listing, cityName, onClose, onEmailCaptured }: DealGateModalProps) => {
+const DealGateModal = ({ listing, cityName, onClose, onEmailCaptured, skipGate, onAnalysisViewed }: DealGateModalProps) => {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const beds = listing.beds === 0 ? 'Studio' : `${listing.beds}BR`;
+
+  useEffect(() => {
+    if (skipGate) {
+      onAnalysisViewed?.();
+      if (!submitted) {
+        trackEvent('deals_free_analysis_viewed', { address: listing.address, score: listing.score });
+      }
+    }
+  }, [skipGate]);
 
   const handleSubmit = async () => {
     const trimmed = email.trim().toLowerCase();
