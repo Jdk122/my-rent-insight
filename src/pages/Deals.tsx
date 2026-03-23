@@ -454,7 +454,7 @@ const Deals = () => {
                 )}
               </div>
 
-              <DealAlerts cityName={displayName} zip={primaryZip} />
+              <DealAlerts cityName={displayName} zip={primaryZip} onEmailCaptured={handleAlertEmailCaptured} />
 
               {/* SEO section */}
               <section className="mt-8">
