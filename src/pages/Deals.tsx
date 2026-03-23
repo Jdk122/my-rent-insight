@@ -136,7 +136,7 @@ const Deals = () => {
     else if (sort === 'sav') r.sort((a, b) => b.savingsPerMonth - a.savingsPerMonth);
     else if (sort === 'new') r.sort((a, b) => (a.daysOnMarket ?? 999) - (b.daysOnMarket ?? 999));
 
-    return r;
+    return r.slice(0, 15);
   }, [deals, beds, sort, cleanOnly]);
 
   const handleEmailCaptured = useCallback((email: string) => {
