@@ -254,7 +254,7 @@ const Deals = () => {
         } as DealListing;
       })
       .filter((d): d is DealListing => d !== null);
-  }, [rawListings, batchIQRByBed, marketByZip, trendResult, stateVacancyRate, primaryZip]);
+  }, [rawListings, batchIQRByBed, marketByZip, trendResult, stateVacancyRate, primaryZip, walkScores, stabilizedMap]);
 
   // Apply filters and sort
   const filteredDeals = useMemo(() => {
