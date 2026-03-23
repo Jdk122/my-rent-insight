@@ -32,6 +32,7 @@ const Deals = () => {
   const city = citySlug ? findDealCity(citySlug) : undefined;
 
   const [rawListings, setRawListings] = useState<any[]>([]);
+  const [totalScanned, setTotalScanned] = useState(0);
   const [medianRents, setMedianRents] = useState<Record<number, number>>({});
   const [loading, setLoading] = useState(true);
   const [beds, setBeds] = useState<BedFilter>('All');
