@@ -1,28 +1,18 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { findDealCity, DEAL_CITIES } from '@/data/dealsCities';
+import { findDealCity } from '@/data/dealsCities';
+import { scoreListing } from '@/lib/dealScore';
 import SEO from '@/components/SEO';
 import PageNav from '@/components/PageNav';
 import DealCard from '@/components/deals/DealCard';
 import DealGateModal from '@/components/deals/DealGateModal';
+import DealAlerts from '@/components/deals/DealAlerts';
 import DealsSidebar from '@/components/deals/DealsSidebar';
 import type { DealListing } from '@/components/deals/DealCard';
 import { trackEvent } from '@/lib/analytics';
 
 const fmt = (n: number) => n.toLocaleString('en-US');
-
-/** Score a listing relative to a median — higher = better deal */
-function scoreListing(rent: number, median: number): { score: number; verdict: 'great' | 'good' | null } {
-  if (!median || median <= 0) return { score: 0, verdict: null };
-  const pctBelow = ((median - rent) / median) * 100;
-  // Map pctBelow to a 0–100 score. 20%+ below = 95, 0% below = 60
-  const raw = Math.round(60 + (pctBelow / 20) * 35);
-  const score = Math.max(0, Math.min(100, raw));
-  if (score >= 80) return { score, verdict: 'great' };
-  if (score >= 75) return { score, verdict: 'good' };
-  return { score, verdict: null };
-}
 
 type BedFilter = 'All' | 'S' | '1' | '2' | '3';
 type SortKey = 'score' | 'price' | 'sav' | 'new';
@@ -95,8 +85,8 @@ const Deals = () => {
       .map((l, idx) => {
         const bedCount = l.bedrooms ?? 1;
         const median = medianRents[bedCount] || 0;
-        const { score, verdict } = scoreListing(l.rent, median);
-        if (!verdict) return null; // Only show deals scoring 75+
+        const { score, verdict, savingsPerMonth, savingsPct } = scoreListing(l.rent, median);
+        if (!verdict) return null;
 
         return {
           id: `deal-${idx}`,
@@ -109,9 +99,9 @@ const Deals = () => {
           daysOnMarket: l.daysOnMarket,
           score,
           verdict,
-          savingsPerMonth: Math.max(0, median - l.rent),
-          savingsPct: median > 0 ? Math.round(((median - l.rent) / median) * 100) : 0,
-          cleanBuilding: true, // TODO: integrate building data
+          savingsPerMonth,
+          savingsPct,
+          cleanBuilding: true, // TODO: integrate HPD violations data in v2
           issues: 0,
         } as DealListing;
       })
@@ -143,13 +133,36 @@ const Deals = () => {
   if (!city) return <Navigate to="/rent-data" replace />;
 
   const overallMedian = medianRents[1] || null;
+  const primaryZip = city.zips[0];
+  const displayName = city.neighborhood || city.name;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Deals', item: 'https://renewalreply.com/rent-data' },
+          { '@type': 'ListItem', position: 2, name: 'New York', item: 'https://renewalreply.com/rent-data/new-york' },
+          { '@type': 'ListItem', position: 3, name: displayName },
+        ],
+      },
+      {
+        '@type': 'WebPage',
+        name: `Apartment Deals in ${displayName}, ${city.stateAbbr}`,
+        description: `${deals.length} apartments in ${displayName} (${primaryZip}) scored below market rent.`,
+        url: `https://renewalreply.com/deals/${city.slug}`,
+      },
+    ],
+  };
 
   return (
     <div className="min-h-screen bg-background font-body">
       <SEO
-        title={`Apartment Deals in ${city.neighborhood || city.name}, ${city.stateAbbr} — Below-Market Rentals`}
-        description={`We scored hundreds of apartments and found ${deals.length} priced below market in ${city.neighborhood || city.name}. See scores, savings, and get the full analysis.`}
+        title={`Apartment Deals in ${displayName}, NYC — Scored Below Market`}
+        description={`${deals.length || 'Top'} apartments in ${displayName} (${primaryZip}) scored below market rent. See how much you can save on 1BR, 2BR, and studio apartments. Updated daily.`}
         canonical={`/deals/${city.slug}`}
+        jsonLd={jsonLd}
       />
 
       <style>{`
@@ -162,7 +175,6 @@ const Deals = () => {
 
       <PageNav ctaText="Check My Rent →" />
 
-      {/* Modal */}
       {selected && (
         <DealGateModal
           listing={selected}
@@ -177,13 +189,13 @@ const Deals = () => {
         <nav className="text-xs text-muted-foreground mb-3.5 flex items-center gap-1">
           <Link to="/rent-data" className="hover:text-foreground transition-colors">Deals</Link>
           <span className="opacity-30">/</span>
-          <Link to={`/rent-data/${city.state}`} className="hover:text-foreground transition-colors">{city.stateAbbr}</Link>
+          <Link to={`/rent-data/${city.state}`} className="hover:text-foreground transition-colors">New York</Link>
           <span className="opacity-30">/</span>
-          <span className="text-muted-foreground/80">{city.neighborhood || city.name}</span>
+          <span className="text-muted-foreground/80">{displayName}</span>
         </nav>
 
         <h1 className="font-display text-2xl font-normal text-foreground leading-tight mb-1.5">
-          Apartment Deals in {city.neighborhood || city.name}
+          Apartment Deals in {displayName}
         </h1>
         <p className="text-sm text-muted-foreground leading-relaxed max-w-[480px]">
           {loading ? (
@@ -262,38 +274,18 @@ const Deals = () => {
                 )}
               </div>
 
-              {/* Deal alerts CTA */}
-              <div className="mt-5 p-4 rounded-lg bg-card border border-border">
-                <div className="flex items-center gap-4 flex-wrap">
-                  <div className="flex-1 min-w-[200px]">
-                    <div className="text-sm font-semibold text-foreground mb-0.5">Get deals in your inbox</div>
-                    <div className="text-xs text-muted-foreground">
-                      New {city.neighborhood || city.name} deals, weekly. Most are gone in days.
-                    </div>
-                  </div>
-                  <div className="flex gap-1.5 shrink-0">
-                    <input
-                      type="email"
-                      placeholder="you@email.com"
-                      className="w-[180px] px-2.5 py-2 rounded-md border-[1.5px] border-border text-xs outline-none bg-muted/30 focus:border-primary transition-colors"
-                    />
-                    <button className="px-3.5 py-2 rounded-md bg-primary text-primary-foreground text-xs font-semibold hover:brightness-90 transition-all whitespace-nowrap">
-                      Subscribe
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <DealAlerts cityName={displayName} zip={primaryZip} />
 
               {/* SEO section */}
               <section className="mt-8">
                 <h2 className="font-display text-base font-normal text-foreground mb-2">
-                  How we find deals in {city.neighborhood || city.name}
+                  How we find deals in {displayName}
                 </h2>
                 <div className="text-[13.5px] text-muted-foreground leading-relaxed space-y-2">
                   <p>
                     {overallMedian
-                      ? `The typical 1-bedroom in ${city.neighborhood || city.name} rents for $${fmt(overallMedian)}/month.`
-                      : `We analyze every available listing in ${city.neighborhood || city.name}.`}
+                      ? `The typical 1-bedroom in ${displayName} rents for $${fmt(overallMedian)}/month.`
+                      : `We analyze every available listing in ${displayName}.`}
                     {' '}We score every listing against similar apartments nearby, factor in building quality and market conditions,
                     and only show the ones priced meaningfully below market.
                   </p>

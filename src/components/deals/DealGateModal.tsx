@@ -5,6 +5,7 @@ import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
 import { notifySubmission } from '@/lib/notifySubmission';
+import { zillowUrl } from '@/lib/dealScore';
 import { toast } from 'sonner';
 import DealScoreRing from './DealScoreRing';
 import type { DealListing } from './DealCard';
@@ -105,8 +106,11 @@ const DealGateModal = ({ listing, cityName, onClose, onEmailCaptured }: DealGate
       }, 'deals_gate_submit');
     })();
 
-    // Auto-close after success
-    setTimeout(onClose, 2500);
+    // Open Zillow listing and close after delay
+    setTimeout(() => {
+      window.open(zillowUrl(listing.address), '_blank');
+      onClose();
+    }, 2000);
   };
 
   return (
@@ -193,8 +197,11 @@ const DealGateModal = ({ listing, cityName, onClose, onEmailCaptured }: DealGate
               ✓
             </div>
             <h2 className="text-base font-bold text-foreground mb-1.5">Check your inbox</h2>
-            <p className="text-[13.5px] text-muted-foreground leading-relaxed">
+            <p className="text-[13.5px] text-muted-foreground leading-relaxed mb-2">
               Your full analysis for {listing.address} is on the way.
+            </p>
+            <p className="text-xs text-muted-foreground/60">
+              Opening the listing on Zillow…
             </p>
           </div>
         )}
