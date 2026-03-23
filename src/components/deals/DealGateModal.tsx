@@ -144,7 +144,7 @@ const DealGateModal = ({ listing, cityName, onClose, onEmailCaptured, skipGate, 
           <X className="w-4 h-4" />
         </button>
 
-        {!submitted ? (
+        {!(skipGate || submitted) ? (
           <div className="p-7">
             {/* Listing preview */}
             <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg mb-5">
