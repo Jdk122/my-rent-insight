@@ -1,4 +1,5 @@
 import DealScoreRing from './DealScoreRing';
+import type { DealScoreResult } from '@/lib/dealScore';
 
 export interface DealListing {
   id: string;
@@ -7,12 +8,22 @@ export interface DealListing {
   baths: number;
   sqft: number | null;
   rent: number;
-  medianRent: number;
   daysOnMarket: number | null;
+  // Full score result fields
   score: number;
   verdict: 'great' | 'good';
   savingsPerMonth: number;
   savingsPct: number;
+  median: number;
+  isSuspicious: boolean;
+  hasLeverage: boolean;
+  leverageNote: string | null;
+  components: DealScoreResult['components'];
+  fairRange: DealScoreResult['fairRange'];
+  trendContext: string | null;
+  walkScore: number | null;
+  isRentStabilized: boolean;
+  // Legacy fields
   cleanBuilding: boolean;
   issues: number;
 }
@@ -74,6 +85,12 @@ const DealCard = ({ listing, index, onSelect }: DealCardProps) => {
             <>
               <span className="opacity-30">·</span>
               <span>{listing.daysOnMarket}d ago</span>
+            </>
+          )}
+          {listing.hasLeverage && (
+            <>
+              <span className="opacity-30">·</span>
+              <span className="text-primary font-medium">Room to negotiate</span>
             </>
           )}
         </div>
