@@ -36,6 +36,14 @@ const Deals = () => {
   const [trendResult, setTrendResult] = useState<CompositeTrendResult | null>(null);
   const [stateVacancyRate, setStateVacancyRate] = useState<number | null>(null);
 
+  // Enrichment signals
+  const [walkScores, setWalkScores] = useState<Record<string, number>>({});
+  const [stabilizedMap, setStabilizedMap] = useState<Record<string, boolean>>({});
+
+  // NYC detection
+  const NYC_ZIP_PREFIXES = ['100', '101', '102', '103', '104', '111', '112', '113', '114', '116'];
+  const isNYCMarket = city?.zips.some(z => NYC_ZIP_PREFIXES.includes(z.substring(0, 3))) ?? false;
+
   const primaryZip = city?.zips[0] || '10003';
 
   // Fetch listings
