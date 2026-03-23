@@ -278,8 +278,13 @@ const Deals = () => {
   }, [deals, beds, sort, cleanOnly]);
 
   const handleEmailCaptured = useCallback((email: string) => {
+    setEmailCaptured(true);
     trackEvent('deals_email_captured', { city: city?.name || '', email });
   }, [city?.name]);
+
+  const handleAlertEmailCaptured = useCallback((email: string) => {
+    setEmailCaptured(true);
+  }, []);
 
   // Invalid city → redirect
   if (!city) return <Navigate to="/rent-data" replace />;
