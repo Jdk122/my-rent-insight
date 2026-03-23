@@ -28,6 +28,7 @@ const WhatShouldIPay = lazy(() => import("./pages/WhatShouldIPay"));
 const Guides = lazy(() => import("./pages/Guides"));
 const Guide = lazy(() => import("./pages/Guide"));
 const DemoIndex = lazy(() => import("./pages/DemoIndex"));
+const Deals = lazy(() => import("./pages/Deals"));
 
 const queryClient = new QueryClient();
 
