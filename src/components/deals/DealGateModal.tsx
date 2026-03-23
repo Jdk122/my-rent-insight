@@ -197,8 +197,11 @@ const DealGateModal = ({ listing, cityName, onClose, onEmailCaptured }: DealGate
               ✓
             </div>
             <h2 className="text-base font-bold text-foreground mb-1.5">Check your inbox</h2>
-            <p className="text-[13.5px] text-muted-foreground leading-relaxed">
+            <p className="text-[13.5px] text-muted-foreground leading-relaxed mb-2">
               Your full analysis for {listing.address} is on the way.
+            </p>
+            <p className="text-xs text-muted-foreground/60">
+              Opening the listing on Zillow…
             </p>
           </div>
         )}
