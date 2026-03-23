@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import DealScoreRing from './DealScoreRing';
 import type { DealListing } from './DealCard';
 import { Link } from 'react-router-dom';
+import { Progress } from '@/components/ui/progress';
 
 interface DealGateModalProps {
   listing: DealListing;
@@ -19,6 +20,13 @@ interface DealGateModalProps {
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US');
+
+const COMPONENT_LABELS = [
+  { key: 'position' as const, label: 'Price vs Market' },
+  { key: 'range' as const, label: 'Fair Range Position' },
+  { key: 'freshness' as const, label: 'Listing Freshness' },
+  { key: 'momentum' as const, label: 'Market Direction' },
+];
 
 const DealGateModal = ({ listing, cityName, onClose, onEmailCaptured }: DealGateModalProps) => {
   const [email, setEmail] = useState('');
@@ -100,17 +108,11 @@ const DealGateModal = ({ listing, cityName, onClose, onEmailCaptured }: DealGate
         bedrooms: listing.beds,
         proposed_rent: null,
         increase_pct: null,
-        comp_median_rent: listing.medianRent,
+        comp_median_rent: listing.median,
         hud_fmr_value: null,
         analysis_id: null,
       }, 'deals_gate_submit');
     })();
-
-    // Open Zillow listing and close after delay
-    setTimeout(() => {
-      window.open(zillowUrl(listing.address), '_blank');
-      onClose();
-    }, 2000);
   };
 
   return (
@@ -192,16 +194,74 @@ const DealGateModal = ({ listing, cityName, onClose, onEmailCaptured }: DealGate
             </p>
           </div>
         ) : (
-          <div className="p-10 text-center">
-            <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-3.5 text-xl">
-              ✓
+          <div className="p-7">
+            {/* Success — analysis breakdown */}
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-sm text-accent font-bold">✓</div>
+              <div>
+                <h2 className="text-sm font-bold text-foreground">Your analysis for {listing.address}</h2>
+              </div>
             </div>
-            <h2 className="text-base font-bold text-foreground mb-1.5">Check your inbox</h2>
-            <p className="text-[13.5px] text-muted-foreground leading-relaxed mb-2">
-              Your full analysis for {listing.address} is on the way.
-            </p>
-            <p className="text-xs text-muted-foreground/60">
-              Opening the listing on Zillow…
+
+            <div className="flex items-center gap-3 mb-4">
+              <DealScoreRing score={listing.score} size={48} />
+              <div>
+                <div className="text-lg font-bold text-foreground">{listing.score}/100</div>
+                <div className="text-xs text-muted-foreground">
+                  {listing.verdict === 'great' ? 'Great Deal' : 'Good Deal'}
+                </div>
+              </div>
+            </div>
+
+            {/* Component bars */}
+            {listing.components && (
+              <div className="space-y-2 mb-4">
+                {COMPONENT_LABELS.map(({ key, label }) => {
+                  const comp = listing.components![key];
+                  const pct = Math.round((comp.score / comp.max) * 100);
+                  return (
+                    <div key={key}>
+                      <div className="flex justify-between text-[11px] text-muted-foreground mb-0.5">
+                        <span>{label}</span>
+                        <span className="font-semibold text-foreground">{comp.score}/{comp.max}</span>
+                      </div>
+                      <Progress value={pct} className="h-1.5" />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Key stats */}
+            <div className="text-xs text-muted-foreground space-y-1 mb-4">
+              <p>
+                <span className="font-semibold text-foreground">${fmt(listing.rent)}/mo</span> vs{' '}
+                <span className="font-semibold text-foreground">${fmt(listing.median)}</span> median
+                {listing.savingsPerMonth > 0 && (
+                  <> — save <span className="text-accent font-semibold">${fmt(listing.savingsPerMonth)}/mo</span></>
+                )}
+              </p>
+              {listing.daysOnMarket != null && (
+                <p>Listed {listing.daysOnMarket} days{listing.trendContext ? ` · Market trend: ${listing.trendContext}` : ''}</p>
+              )}
+              {listing.hasLeverage && listing.leverageNote && (
+                <p className="text-primary font-medium">{listing.leverageNote}</p>
+              )}
+              {listing.isRentStabilized && (
+                <p className="text-primary font-medium">🏛 Rent Stabilized</p>
+              )}
+            </div>
+
+            <a
+              href={zillowUrl(listing.address)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-bold text-center hover:brightness-90 transition-all"
+            >
+              View on Zillow →
+            </a>
+            <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
+              Full report sent to your email.
             </p>
           </div>
         )}

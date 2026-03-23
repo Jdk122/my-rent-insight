@@ -2,7 +2,9 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { findDealCity } from '@/data/dealsCities';
-import { scoreListing } from '@/lib/dealScore';
+import { scoreListing, normalizeBedrooms, computeBatchIQR } from '@/lib/dealScore';
+import { calculateCompositeTrend, type CompositeTrendResult } from '@/lib/compositeTrend';
+import { getRentData, getApartmentListData } from '@/data/dataLoader';
 import SEO from '@/components/SEO';
 import PageNav from '@/components/PageNav';
 import DealCard from '@/components/deals/DealCard';
@@ -23,31 +25,35 @@ const Deals = () => {
 
   const [rawListings, setRawListings] = useState<any[]>([]);
   const [totalScanned, setTotalScanned] = useState(0);
-  const [medianRents, setMedianRents] = useState<Record<number, number>>({});
   const [loading, setLoading] = useState(true);
   const [beds, setBeds] = useState<BedFilter>('All');
   const [sort, setSort] = useState<SortKey>('score');
   const [cleanOnly, setCleanOnly] = useState(false);
   const [selected, setSelected] = useState<DealListing | null>(null);
 
-  // Fetch all listings via bulk deals-listings function
+  // Market context
+  const [marketByZip, setMarketByZip] = useState<Record<string, any>>({});
+  const [trendResult, setTrendResult] = useState<CompositeTrendResult | null>(null);
+  const [stateVacancyRate, setStateVacancyRate] = useState<number | null>(null);
+
+  const primaryZip = city?.zips[0] || '10003';
+
+  // Fetch listings
   useEffect(() => {
     if (!city) return;
     setLoading(true);
 
-    const fetchAll = async () => {
+    (async () => {
       try {
         const { data, error } = await supabase.functions.invoke('deals-listings', {
           body: { zips: city.zips },
         });
-
         if (error || !data?.listings) {
           console.error('deals-listings error:', error);
           setRawListings([]);
           setLoading(false);
           return;
         }
-
         setRawListings(data.listings);
         setTotalScanned(data.totalScanned || data.listings.length);
       } catch (err) {
@@ -56,37 +62,115 @@ const Deals = () => {
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchAll();
+    })();
   }, [city?.slug]);
 
-  // Compute medians by bedroom count
+  // Fetch market data per unique ZIP across listings
   useEffect(() => {
-    if (!rawListings.length) return;
-    const byBeds: Record<number, number[]> = {};
-    rawListings.forEach(l => {
-      const b = l.bedrooms ?? 1;
-      if (!byBeds[b]) byBeds[b] = [];
-      byBeds[b].push(l.rent);
-    });
+    if (!rawListings.length || !city) return;
 
-    const meds: Record<number, number> = {};
-    Object.entries(byBeds).forEach(([b, rents]) => {
-      const sorted = rents.sort((a, c) => a - c);
-      meds[Number(b)] = sorted[Math.floor(sorted.length / 2)];
-    });
-    setMedianRents(meds);
+    (async () => {
+      const listingZips = [...new Set(rawListings.map((l: any) => l.zipCode || primaryZip))];
+      const results: Record<string, any> = {};
+
+      await Promise.all(listingZips.map(async (zip) => {
+        try {
+          const { data } = await supabase.functions.invoke('rentcast-market', { body: { zip } });
+          if (data) results[zip] = data;
+        } catch (err) {
+          console.error(`Market data failed for ${zip}:`, err);
+        }
+      }));
+
+      setMarketByZip(results);
+    })();
+  }, [rawListings, primaryZip]);
+
+  // Fetch composite trend from existing data sources (same pattern as RentByZip)
+  useEffect(() => {
+    if (!city) return;
+
+    (async () => {
+      try {
+        const [allData, alData] = await Promise.all([
+          getRentData(),
+          getApartmentListData(),
+        ]);
+
+        const zipData = allData[primaryZip] || null;
+        const al = alData[primaryZip] || null;
+
+        const result = calculateCompositeTrend({
+          alYoY: al?.aly ?? null,
+          zoriYoY: zipData?.zy ?? null,
+          zoriSource: zipData?.zy != null ? 'zip' : null,
+          hudYoY: zipData?.y ?? null,
+        });
+
+        setTrendResult(result);
+      } catch (err) {
+        console.error('Trend fetch failed:', err);
+      }
+    })();
+  }, [primaryZip]);
+
+  // Fetch state vacancy rate
+  useEffect(() => {
+    if (!city) return;
+
+    (async () => {
+      try {
+        const { data } = await supabase.functions.invoke('fred-vacancy', {
+          body: { state: city.stateAbbr },
+        });
+        if (data?.rate != null) setStateVacancyRate(parseFloat(data.rate));
+      } catch (err) {
+        console.error('Vacancy fetch failed:', err);
+      }
+    })();
+  }, [city?.stateAbbr]);
+
+  // Precompute batch IQR per bedroom count ONCE
+  const batchIQRByBed = useMemo(() => {
+    if (!rawListings.length) return {};
+    const allBedCounts = [...new Set(rawListings.map((l: any) => normalizeBedrooms(l.bedrooms)))];
+    const lookup: Record<number, { median: number; p25: number | null; p75: number | null }> = {};
+    for (const bc of allBedCounts) {
+      lookup[bc] = computeBatchIQR(rawListings, bc);
+    }
+    return lookup;
   }, [rawListings]);
 
   // Score and filter listings
   const deals: DealListing[] = useMemo(() => {
+    if (!rawListings.length || !Object.keys(batchIQRByBed).length) return [];
+
     return rawListings
-      .map((l, idx) => {
-        const bedCount = l.bedrooms ?? 1;
-        const median = medianRents[bedCount] || 0;
-        const { score, verdict, savingsPerMonth, savingsPct } = scoreListing(l.rent, median);
-        if (!verdict) return null;
+      .map((l: any, idx: number) => {
+        const bedCount = normalizeBedrooms(l.bedrooms);
+        const listingZip = l.zipCode || primaryZip;
+        const market = marketByZip[listingZip] || marketByZip[primaryZip] || null;
+        const batchIQR = batchIQRByBed[bedCount] || { median: 0, p25: null, p75: null };
+
+        // Get Rentcast median for this bedroom count
+        const rcMedian = market?.medianRent ?? null;
+
+        const result = scoreListing({
+          rent: l.rent,
+          bedrooms: bedCount,
+          daysOnMarket: l.daysOnMarket ?? null,
+          rcMedianRent: rcMedian,
+          compositeTrend: trendResult?.compositeTrend ?? null,
+          trendConfidence: trendResult?.confidenceScore ?? 0,
+          batchMedian: batchIQR.median,
+          batchP25: batchIQR.p25,
+          batchP75: batchIQR.p75,
+          stateVacancyRate,
+          walkScore: null,
+          isRentStabilized: false,
+        });
+
+        if (!result.verdict) return null;
 
         return {
           id: `deal-${idx}`,
@@ -95,18 +179,14 @@ const Deals = () => {
           baths: l.bathrooms ?? 1,
           sqft: l.squareFootage || null,
           rent: l.rent,
-          medianRent: median,
           daysOnMarket: l.daysOnMarket,
-          score,
-          verdict,
-          savingsPerMonth,
-          savingsPct,
+          ...result,
           cleanBuilding: true, // TODO: integrate HPD violations data in v2
           issues: 0,
         } as DealListing;
       })
       .filter((d): d is DealListing => d !== null);
-  }, [rawListings, medianRents]);
+  }, [rawListings, batchIQRByBed, marketByZip, trendResult, stateVacancyRate, primaryZip]);
 
   // Apply filters and sort
   const filteredDeals = useMemo(() => {
@@ -132,8 +212,10 @@ const Deals = () => {
   // Invalid city → redirect
   if (!city) return <Navigate to="/rent-data" replace />;
 
-  const overallMedian = medianRents[1] || null;
-  const primaryZip = city.zips[0];
+  // Market context for hero
+  const primaryMarket = marketByZip[primaryZip] || null;
+  const heroMedian1BR = primaryMarket?.medianRent ?? batchIQRByBed[1]?.median ?? null;
+  const heroTrend = trendResult?.compositeTrend ?? null;
   const displayName = city.neighborhood || city.name;
 
   const jsonLd = {
@@ -197,16 +279,33 @@ const Deals = () => {
         <h1 className="font-display text-2xl font-normal text-foreground leading-tight mb-1.5">
           Apartment Deals in {displayName}
         </h1>
-        <p className="text-sm text-muted-foreground leading-relaxed max-w-[480px]">
+        <p className="text-sm text-muted-foreground leading-relaxed max-w-[540px]">
           {loading ? (
             'Scoring apartments in your area…'
           ) : (
             <>
-              We scored {totalScanned || rawListings.length} apartments and found{' '}
+              We scored {totalScanned} apartments and found{' '}
               <strong className="text-accent">{deals.length} priced below market</strong>.
             </>
           )}
         </p>
+
+        {/* Hero market context */}
+        {!loading && (heroMedian1BR || heroTrend != null || (stateVacancyRate != null && stateVacancyRate > 5)) && (
+          <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground flex-wrap">
+            {heroMedian1BR != null && heroMedian1BR > 0 && (
+              <span>{displayName} median 1BR: <strong className="text-foreground">${fmt(heroMedian1BR)}</strong></span>
+            )}
+            {heroTrend != null && (
+              <span className={heroTrend > 0 ? 'text-destructive' : 'text-accent'}>
+                {heroTrend > 0 ? '+' : ''}{heroTrend}% YoY
+              </span>
+            )}
+            {stateVacancyRate != null && stateVacancyRate > 5 && (
+              <span>{city.stateAbbr} vacancy: {stateVacancyRate.toFixed(1)}%</span>
+            )}
+          </div>
+        )}
       </header>
 
       {/* Main content */}
@@ -283,8 +382,8 @@ const Deals = () => {
                 </h2>
                 <div className="text-[13.5px] text-muted-foreground leading-relaxed space-y-2">
                   <p>
-                    {overallMedian
-                      ? `The typical 1-bedroom in ${displayName} rents for $${fmt(overallMedian)}/month.`
+                    {heroMedian1BR
+                      ? `The typical 1-bedroom in ${displayName} rents for $${fmt(heroMedian1BR)}/month${heroTrend != null ? `, ${heroTrend > 0 ? 'up' : 'down'} ${Math.abs(heroTrend)}% from last year` : ''}.`
                       : `We analyze every available listing in ${displayName}.`}
                     {' '}We score every listing against similar apartments nearby, factor in building quality and market conditions,
                     and only show the ones priced meaningfully below market.
@@ -300,8 +399,8 @@ const Deals = () => {
 
         <DealsSidebar
           city={city}
-          medianRent1BR={overallMedian}
-          yoyChange={null}
+          medianRent1BR={heroMedian1BR}
+          yoyChange={heroTrend}
           activeListings={rawListings.length}
         />
       </div>
