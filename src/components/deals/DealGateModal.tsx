@@ -5,6 +5,7 @@ import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
 import { notifySubmission } from '@/lib/notifySubmission';
+import { zillowUrl } from '@/lib/dealScore';
 import { toast } from 'sonner';
 import DealScoreRing from './DealScoreRing';
 import type { DealListing } from './DealCard';
