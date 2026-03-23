@@ -93,6 +93,27 @@ const DealCard = ({ listing, index, onSelect }: DealCardProps) => {
               <span className="text-primary font-medium">Room to negotiate</span>
             </>
           )}
+          {listing.walkScore != null && (
+            <>
+              <span className="opacity-30">·</span>
+              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                listing.walkScore >= 90 ? 'bg-accent/10 text-accent' :
+                listing.walkScore >= 70 ? 'bg-accent/5 text-accent/80' :
+                listing.walkScore >= 50 ? 'bg-muted text-muted-foreground' :
+                'bg-muted text-muted-foreground/60'
+              }`}>
+                🚶 {listing.walkScore}
+              </span>
+            </>
+          )}
+          {listing.isRentStabilized && (
+            <>
+              <span className="opacity-30">·</span>
+              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-primary/10 text-primary">
+                🏛 Stabilized
+              </span>
+            </>
+          )}
         </div>
       </div>
 

@@ -247,6 +247,16 @@ const DealGateModal = ({ listing, cityName, onClose, onEmailCaptured }: DealGate
               {listing.hasLeverage && listing.leverageNote && (
                 <p className="text-primary font-medium">{listing.leverageNote}</p>
               )}
+              {listing.walkScore != null && (
+                <p>
+                  Walk Score: {listing.walkScore} — {
+                    listing.walkScore >= 90 ? "Walker's Paradise" :
+                    listing.walkScore >= 70 ? 'Very Walkable' :
+                    listing.walkScore >= 50 ? 'Somewhat Walkable' :
+                    'Car-Dependent'
+                  }
+                </p>
+              )}
               {listing.isRentStabilized && (
                 <p className="text-primary font-medium">🏛 Rent Stabilized</p>
               )}

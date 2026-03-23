@@ -36,6 +36,14 @@ const Deals = () => {
   const [trendResult, setTrendResult] = useState<CompositeTrendResult | null>(null);
   const [stateVacancyRate, setStateVacancyRate] = useState<number | null>(null);
 
+  // Enrichment signals
+  const [walkScores, setWalkScores] = useState<Record<string, number>>({});
+  const [stabilizedMap, setStabilizedMap] = useState<Record<string, boolean>>({});
+
+  // NYC detection
+  const NYC_ZIP_PREFIXES = ['100', '101', '102', '103', '104', '111', '112', '113', '114', '116'];
+  const isNYCMarket = city?.zips.some(z => NYC_ZIP_PREFIXES.includes(z.substring(0, 3))) ?? false;
+
   const primaryZip = city?.zips[0] || '10003';
 
   // Fetch listings
@@ -114,6 +122,62 @@ const Deals = () => {
     })();
   }, [primaryZip]);
 
+  // Fetch Walk Scores for listings with coordinates
+  useEffect(() => {
+    if (!rawListings.length) return;
+
+    (async () => {
+      const scores: Record<string, number> = {};
+      const withCoords = rawListings
+        .filter((l: any) => l.latitude != null && l.longitude != null)
+        .slice(0, 20);
+
+      for (let i = 0; i < withCoords.length; i += 5) {
+        const batch = withCoords.slice(i, i + 5);
+        await Promise.all(batch.map(async (l: any) => {
+          try {
+            const { data } = await supabase.functions.invoke('walkscore-lookup', {
+              body: { address: l.formattedAddress, lat: l.latitude, lon: l.longitude },
+            });
+            if (data?.walkscore != null) {
+              const key = (l.formattedAddress || '').toLowerCase().trim();
+              scores[key] = data.walkscore;
+            }
+          } catch (err) {
+            console.error('Walk score fetch failed:', err);
+          }
+        }));
+      }
+
+      setWalkScores(scores);
+    })();
+  }, [rawListings]);
+
+  // Fetch DHCR rent stabilization data (NYC only)
+  useEffect(() => {
+    if (!rawListings.length || !isNYCMarket) return;
+
+    (async () => {
+      const addresses = rawListings
+        .map((l: any) => l.formattedAddress)
+        .filter(Boolean)
+        .slice(0, 50);
+
+      if (!addresses.length) return;
+
+      try {
+        const { data } = await supabase.functions.invoke('dhcr-batch-lookup', {
+          body: { addresses },
+        });
+        if (data?.results) {
+          setStabilizedMap(data.results);
+        }
+      } catch (err) {
+        console.error('DHCR batch lookup failed:', err);
+      }
+    })();
+  }, [rawListings, isNYCMarket]);
+
   // Fetch state vacancy rate
   useEffect(() => {
     if (!city) return;
@@ -155,6 +219,10 @@ const Deals = () => {
         // Get Rentcast median for this bedroom count
         const rcMedian = market?.medianRent ?? null;
 
+        const addrKey = (l.formattedAddress || '').toLowerCase().trim();
+        const walkScore = walkScores[addrKey] ?? null;
+        const isRentStabilized = stabilizedMap[l.formattedAddress] ?? false;
+
         const result = scoreListing({
           rent: l.rent,
           bedrooms: bedCount,
@@ -166,8 +234,8 @@ const Deals = () => {
           batchP25: batchIQR.p25,
           batchP75: batchIQR.p75,
           stateVacancyRate,
-          walkScore: null,
-          isRentStabilized: false,
+          walkScore,
+          isRentStabilized,
         });
 
         if (!result.verdict) return null;
@@ -186,7 +254,7 @@ const Deals = () => {
         } as DealListing;
       })
       .filter((d): d is DealListing => d !== null);
-  }, [rawListings, batchIQRByBed, marketByZip, trendResult, stateVacancyRate, primaryZip]);
+  }, [rawListings, batchIQRByBed, marketByZip, trendResult, stateVacancyRate, primaryZip, walkScores, stabilizedMap]);
 
   // Apply filters and sort
   const filteredDeals = useMemo(() => {
