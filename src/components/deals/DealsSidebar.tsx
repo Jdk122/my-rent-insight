@@ -84,6 +84,34 @@ const DealsSidebar = ({ city, medianRent1BR, yoyChange, activeListings }: DealsS
           Check my increase →
         </Link>
       </SideCard>
+
+      {/* Affiliate services */}
+      <SideCard title="Moving soon?">
+        {[
+          { icon: '🛡', title: 'Renters Insurance', sub: 'From $5/mo', accent: 'hsl(var(--primary))', href: '#' },
+          { icon: '✓', title: 'Need a Guarantor?', sub: 'Get approved fast', accent: '#7c3aed', href: '#' },
+          { icon: '📦', title: 'Moving Help', sub: 'Compare movers', accent: '#ea580c', href: '#' },
+          { icon: '📊', title: 'Build Credit', sub: 'Report rent free', accent: 'hsl(var(--accent-green))', href: '#' },
+        ].map((svc) => (
+          <a
+            key={svc.title}
+            href={svc.href}
+            className="flex gap-2 items-center py-1.5 border-b border-border/50 last:border-0 no-underline hover:opacity-70 transition-opacity"
+          >
+            <div
+              className="w-7 h-7 rounded-md flex items-center justify-center text-[13px] shrink-0"
+              style={{ background: `${svc.accent}14` }}
+            >
+              {svc.icon}
+            </div>
+            <div className="flex-1">
+              <div className="text-xs font-semibold text-foreground">{svc.title}</div>
+              <div className="text-[11px] text-muted-foreground">{svc.sub}</div>
+            </div>
+            <span className="text-[11px] font-semibold" style={{ color: svc.accent }}>→</span>
+          </a>
+        ))}
+      </SideCard>
     </aside>
   );
 };
