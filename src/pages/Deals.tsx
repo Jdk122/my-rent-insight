@@ -190,7 +190,7 @@ const Deals = () => {
             'Scoring apartments in your area…'
           ) : (
             <>
-              We scored {rawListings.length} apartments and found{' '}
+              We scored {totalScanned || rawListings.length} apartments and found{' '}
               <strong className="text-accent">{deals.length} priced below market</strong>.
             </>
           )}
