@@ -10,7 +10,7 @@ interface DealAlertsProps {
   onEmailCaptured?: (email: string) => void;
 }
 
-const DealAlerts = ({ cityName, zip }: DealAlertsProps) => {
+const DealAlerts = ({ cityName, zip, onEmailCaptured }: DealAlertsProps) => {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
