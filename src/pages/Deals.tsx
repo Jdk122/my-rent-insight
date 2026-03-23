@@ -219,6 +219,10 @@ const Deals = () => {
         // Get Rentcast median for this bedroom count
         const rcMedian = market?.medianRent ?? null;
 
+        const addrKey = (l.formattedAddress || '').toLowerCase().trim();
+        const walkScore = walkScores[addrKey] ?? null;
+        const isRentStabilized = stabilizedMap[l.formattedAddress] ?? false;
+
         const result = scoreListing({
           rent: l.rent,
           bedrooms: bedCount,
@@ -230,8 +234,8 @@ const Deals = () => {
           batchP25: batchIQR.p25,
           batchP75: batchIQR.p75,
           stateVacancyRate,
-          walkScore: null,
-          isRentStabilized: false,
+          walkScore,
+          isRentStabilized,
         });
 
         if (!result.verdict) return null;
