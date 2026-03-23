@@ -106,8 +106,11 @@ const DealGateModal = ({ listing, cityName, onClose, onEmailCaptured }: DealGate
       }, 'deals_gate_submit');
     })();
 
-    // Auto-close after success
-    setTimeout(onClose, 2500);
+    // Open Zillow listing and close after delay
+    setTimeout(() => {
+      window.open(zillowUrl(listing.address), '_blank');
+      onClose();
+    }, 2000);
   };
 
   return (
