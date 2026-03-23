@@ -32,6 +32,7 @@ const Deals = () => {
   const city = citySlug ? findDealCity(citySlug) : undefined;
 
   const [rawListings, setRawListings] = useState<any[]>([]);
+  const [totalScanned, setTotalScanned] = useState(0);
   const [medianRents, setMedianRents] = useState<Record<number, number>>({});
   const [loading, setLoading] = useState(true);
   const [beds, setBeds] = useState<BedFilter>('All');
@@ -39,37 +40,32 @@ const Deals = () => {
   const [cleanOnly, setCleanOnly] = useState(false);
   const [selected, setSelected] = useState<DealListing | null>(null);
 
-  // Fetch listings for all zips in parallel
+  // Fetch all listings via bulk deals-listings function
   useEffect(() => {
     if (!city) return;
     setLoading(true);
 
     const fetchAll = async () => {
-      const bedConfigs = [0, 1, 2];
-      const calls = city.zips.flatMap(zip =>
-        bedConfigs.map(b => supabase.functions.invoke('rentcast-listings', { body: { zip, bedrooms: b } }))
-      );
+      try {
+        const { data, error } = await supabase.functions.invoke('deals-listings', {
+          body: { zips: city.zips },
+        });
 
-      const results = await Promise.allSettled(calls);
-      const allListings: any[] = [];
-
-      results.forEach(r => {
-        if (r.status === 'fulfilled' && r.value.data?.listings) {
-          allListings.push(...r.value.data.listings);
+        if (error || !data?.listings) {
+          console.error('deals-listings error:', error);
+          setRawListings([]);
+          setLoading(false);
+          return;
         }
-      });
 
-      // Deduplicate by normalized address
-      const seen = new Set<string>();
-      const deduped = allListings.filter(l => {
-        const key = (l.formattedAddress || '').toLowerCase().replace(/\s+/g, ' ').trim();
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      });
-
-      setRawListings(deduped);
-      setLoading(false);
+        setRawListings(data.listings);
+        setTotalScanned(data.totalScanned || data.listings.length);
+      } catch (err) {
+        console.error('deals-listings fetch failed:', err);
+        setRawListings([]);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchAll();
@@ -194,7 +190,7 @@ const Deals = () => {
             'Scoring apartments in your area…'
           ) : (
             <>
-              We scored {rawListings.length} apartments and found{' '}
+              We scored {totalScanned || rawListings.length} apartments and found{' '}
               <strong className="text-accent">{deals.length} priced below market</strong>.
             </>
           )}
