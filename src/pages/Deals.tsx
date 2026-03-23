@@ -31,6 +31,10 @@ const Deals = () => {
   const [cleanOnly, setCleanOnly] = useState(false);
   const [selected, setSelected] = useState<DealListing | null>(null);
 
+  // Gate state: first analysis free, gate on second click
+  const [freeViewUsed, setFreeViewUsed] = useState(false);
+  const [emailCaptured, setEmailCaptured] = useState(false);
+
   // Market context
   const [marketByZip, setMarketByZip] = useState<Record<string, any>>({});
   const [trendResult, setTrendResult] = useState<CompositeTrendResult | null>(null);
@@ -274,8 +278,13 @@ const Deals = () => {
   }, [deals, beds, sort, cleanOnly]);
 
   const handleEmailCaptured = useCallback((email: string) => {
+    setEmailCaptured(true);
     trackEvent('deals_email_captured', { city: city?.name || '', email });
   }, [city?.name]);
+
+  const handleAlertEmailCaptured = useCallback((email: string) => {
+    setEmailCaptured(true);
+  }, []);
 
   // Invalid city → redirect
   if (!city) return <Navigate to="/rent-data" replace />;
@@ -331,6 +340,10 @@ const Deals = () => {
           cityName={city.name}
           onClose={() => setSelected(null)}
           onEmailCaptured={handleEmailCaptured}
+          skipGate={!freeViewUsed || emailCaptured}
+          onAnalysisViewed={() => {
+            if (!freeViewUsed) setFreeViewUsed(true);
+          }}
         />
       )}
 
@@ -441,7 +454,7 @@ const Deals = () => {
                 )}
               </div>
 
-              <DealAlerts cityName={displayName} zip={primaryZip} />
+              <DealAlerts cityName={displayName} zip={primaryZip} onEmailCaptured={handleAlertEmailCaptured} />
 
               {/* SEO section */}
               <section className="mt-8">

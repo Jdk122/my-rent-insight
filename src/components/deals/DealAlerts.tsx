@@ -7,9 +7,10 @@ import { toast } from 'sonner';
 interface DealAlertsProps {
   cityName: string;
   zip: string;
+  onEmailCaptured?: (email: string) => void;
 }
 
-const DealAlerts = ({ cityName, zip }: DealAlertsProps) => {
+const DealAlerts = ({ cityName, zip, onEmailCaptured }: DealAlertsProps) => {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -39,6 +40,7 @@ const DealAlerts = ({ cityName, zip }: DealAlertsProps) => {
     trackEvent('email_captured', { gate: 'deals_alert', city: cityName });
     setSubmitted(true);
     setLoading(false);
+    onEmailCaptured?.(trimmed);
     toast.success('You\'re subscribed!');
   };
 
