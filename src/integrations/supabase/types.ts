@@ -786,6 +786,39 @@ export type Database = {
         }
         Relationships: []
       }
+      walkscore_cache: {
+        Row: {
+          bike: number | null
+          created_at: string | null
+          description: string | null
+          normalized_address: string
+          raw: Json | null
+          transit: number | null
+          updated_at: string | null
+          walkscore: number | null
+        }
+        Insert: {
+          bike?: number | null
+          created_at?: string | null
+          description?: string | null
+          normalized_address: string
+          raw?: Json | null
+          transit?: number | null
+          updated_at?: string | null
+          walkscore?: number | null
+        }
+        Update: {
+          bike?: number | null
+          created_at?: string | null
+          description?: string | null
+          normalized_address?: string
+          raw?: Json | null
+          transit?: number | null
+          updated_at?: string | null
+          walkscore?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
