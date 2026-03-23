@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 interface DealAlertsProps {
   cityName: string;
   zip: string;
+  onEmailCaptured?: (email: string) => void;
 }
 
 const DealAlerts = ({ cityName, zip }: DealAlertsProps) => {
