@@ -437,7 +437,7 @@ const WsipResults = ({
           <motion.section
             id="section-verdict"
             {...fade(0)}
-            className="min-h-0 md:min-h-[50vh] flex flex-col items-center justify-center text-center py-5 sm:py-12"
+            className="min-h-0 md:min-h-[50vh] flex flex-col items-center justify-center text-center py-4 sm:py-12"
           >
             {/* Verdict headline */}
             <h1
