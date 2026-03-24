@@ -1088,7 +1088,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
               <p className={`text-[13px] text-muted-foreground/70 mt-4 max-w-[440px] leading-relaxed ${!capturedEmail ? 'order-[4] md:order-none' : ''}`}>
                 {marketYoy > 3
-                  ? `Rents in ${city} went up ${marketYoy}% this year — staying flat is a win. Scroll down to see the full market data.`
+                  ? `Rents in ${city} went up ${marketYoy}% this year. Staying flat is a win. Scroll down to see the full market data.`
                   : marketYoy > 0
                   ? `Rents in ${city} are up ${marketYoy}% this year. Your landlord keeping your rent flat means you're getting a better deal over time.`
                   : `Rents in ${city} are ${marketYoy < 0 ? `down ${Math.abs(marketYoy)}%` : 'flat'} this year. Your rent is holding steady with the market.`
