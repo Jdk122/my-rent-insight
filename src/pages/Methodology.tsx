@@ -141,7 +141,7 @@ const Methodology = () => {
                   <p className="text-[13px] font-semibold text-foreground mb-2">Score Tiers</p>
                    <ScoreTier range="80–100" label="Good Deal" color="text-verdict-good" />
                    <ScoreTier range="60–79" label="At Market" color="text-verdict-fair" />
-                   <ScoreTier range="40–59" label="Above Trend" color="text-accent-amber" />
+                   <ScoreTier range="40–59" label="Above Market" color="text-accent-amber" />
                    <ScoreTier range="20–39" label="Overpaying" color="text-destructive" />
                    <ScoreTier range="0–19" label="Overpaying" color="text-destructive" />
                 </div>
