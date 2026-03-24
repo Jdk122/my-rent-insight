@@ -23,6 +23,7 @@ export interface DealListing {
   trendContext: string | null;
   walkScore: number | null;
   isRentStabilized: boolean;
+  listingUrl: string | null;
   // Legacy fields
   cleanBuilding: boolean;
   issues: number;

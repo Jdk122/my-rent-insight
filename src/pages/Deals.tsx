@@ -339,6 +339,8 @@ const Deals = () => {
         <DealGateModal
           listing={selected}
           cityName={city.name}
+          cityStateAbbr={city.stateAbbr}
+          cityZip={primaryZip}
           onClose={() => setSelected(null)}
           onEmailCaptured={handleEmailCaptured}
           skipGate={!freeViewUsed || emailCaptured}
