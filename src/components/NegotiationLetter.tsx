@@ -164,7 +164,7 @@ function buildFallbackLetter(props: {
         if (isCollaborative && newRent <= compMedian) {
           paragraphs.push(
             `I reviewed ${compCount} comparable ${brLabel.toLowerCase()} rental${compCount !== 1 ? 's' : ''} currently listed nearby. ` +
-            `I understand my rent is competitively priced — the median asking rent for similar units is $${fmt(compMedian)}/month, ` +
+            `I understand my rent is competitively priced. The median asking rent for similar units is $${fmt(compMedian)}/month, ` +
             `and my proposed rent of $${fmt(newRent)} is ${position} that figure.`
           );
         } else {
