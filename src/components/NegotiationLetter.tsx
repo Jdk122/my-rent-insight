@@ -201,7 +201,7 @@ function buildFallbackLetter(props: {
       if (unitLineComps.length > 0) {
         const avgUnitLineRent = Math.round(unitLineComps.reduce((sum, c) => sum + (c.rent || 0), 0) / unitLineComps.length);
         paragraphs.push(
-          `Notably, ${unitLineComps.length} identical-layout unit${unitLineComps.length > 1 ? 's' : ''} in this building — same floor plan, same exposure — recently rented at an average of $${fmt(avgUnitLineRent)}/month. These are the most directly comparable data points available.`
+          `Notably, ${unitLineComps.length} identical-layout unit${unitLineComps.length > 1 ? 's' : ''} in this building (same floor plan, same exposure) recently rented at an average of $${fmt(avgUnitLineRent)}/month. These are the most directly comparable data points available.`
         );
       } else if (sameBuildingComps.length > 0) {
         const avgBuildingRent = Math.round(sameBuildingComps.reduce((sum, c) => sum + (c.rent || 0), 0) / sameBuildingComps.length);
