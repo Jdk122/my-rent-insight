@@ -924,7 +924,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         )}
                         {capturedEmail && isNycZip(rentData.zip) && hasIncrease && (
                           <p className="text-xs text-muted-foreground/70 mt-2">
-                            Live in a rent-stabilized apartment? Your increase may be legally capped —{' '}
+                            Live in a rent-stabilized apartment? Your increase may be legally capped.{' '}
                             <button
                               onClick={() => document.getElementById('section-rights')?.scrollIntoView({ behavior: 'smooth' })}
                               className="underline hover:text-muted-foreground transition-colors"
