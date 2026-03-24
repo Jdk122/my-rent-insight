@@ -1000,29 +1000,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 ))}
               </motion.div>
 
-              {/* ── Above-fold CTA button ── */}
-              {!capturedEmail && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.1, duration: 0.4 }}
-                  className="mt-4 w-full max-w-[540px] mx-auto md:hidden"
-                >
-                  <button
-                    onClick={() => {
-                      trackEvent('results_cta_clicked', {
-                        verdict_type: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
-                        has_same_building_comps: bldg.hasBuildingData,
-                        analysis_version: 'gated_results_v1',
-                      });
-                      document.getElementById('section-gate')?.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    className="w-full bg-primary text-primary-foreground py-3 px-6 rounded-lg text-[15px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
-                  >
-                    {isAboveMarket ? 'Unlock my comps + counter-offer →' : isFair ? 'See my full report →' : increasePct > 0 ? 'See how you compare →' : 'See my market report →'}
-                  </button>
-                </motion.div>
-              )}
+
+
 
               {capturedEmail && compsWithRent.length > 0 && (
                 <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
