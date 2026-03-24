@@ -309,6 +309,10 @@ const WhatShouldIPay = () => {
           </section>
 
           <Suspense fallback={null}>
+            <BrowseDealsSection />
+          </Suspense>
+
+          <Suspense fallback={null}>
             <WsipFAQ />
           </Suspense>
 
