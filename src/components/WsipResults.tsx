@@ -239,7 +239,7 @@ const WsipResults = ({
       return "This is a competitive market. Landlords have pricing power. Move fast on good deals.";
     }
     if ((dom !== null && dom > 50) || (vacancy !== null && vacancy > 6)) {
-      return "This is a renter's market — you have leverage to negotiate.";
+      return "This is a renter's market. You have leverage to negotiate.";
     }
     return "This market is balanced — negotiate, but be realistic about competing offers.";
   }, [rentData.alVacancy, rcMarket.rcAvgDaysOnMarket]);
