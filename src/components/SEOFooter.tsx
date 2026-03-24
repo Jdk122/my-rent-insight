@@ -54,12 +54,7 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
         <div>
           <h3 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/70 mb-3">Browse Deals</h3>
           <ul className="space-y-1.5">
-            <li><Link to="/deals/east-village" className={linkClass}>NYC</Link></li>
-            <li><Link to="/deals/jersey-city" className={linkClass}>New Jersey</Link></li>
-            <li><Link to="/deals/brickell" className={linkClass}>Miami</Link></li>
-            <li><Link to="/deals/lincoln-park" className={linkClass}>Chicago</Link></li>
-            <li><Link to="/deals/east-austin" className={linkClass}>Austin</Link></li>
-            <li><Link to="/deals/mission-district" className={linkClass}>San Francisco</Link></li>
+            <li><Link to="/deals" className={linkClass}>Browse All Deals</Link></li>
           </ul>
         </div>
 
