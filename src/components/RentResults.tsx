@@ -943,15 +943,40 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   />
                 );
               })()}
+              </div>
 
+              {/* Mobile proof cue — shows before gate on mobile */}
+              {!capturedEmail && compsWithRent.length > 0 && (
+                <div className="md:hidden text-center mt-3 mb-1 w-full max-w-[540px]">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    <span className="font-medium text-foreground">{compsWithRent.length} matched comp{compsWithRent.length !== 1 ? 's' : ''}</span>
+                    {' '}and your{' '}
+                    <span className="font-medium text-foreground">negotiation letter</span>
+                    {' '}are ready.
+                  </p>
+                </div>
+              )}
+              {!capturedEmail && compsWithRent.length === 0 && (
+                <div className="md:hidden text-center mt-3 mb-1 w-full max-w-[540px]">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Your <span className="font-medium text-foreground">market report</span> and{' '}
+                    <span className="font-medium text-foreground">negotiation letter</span> are ready.
+                  </p>
+                </div>
+              )}
 
               {/* ── Stat dashboard strip ── */}
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
-                className="mt-2 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 max-w-[540px]"
+                className={`mt-2 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 max-w-[540px] ${!capturedEmail ? 'order-[10] md:order-none' : ''}`}
               >
+                {!capturedEmail && (
+                  <p className="md:hidden col-span-2 text-[9px] font-semibold uppercase tracking-widest text-muted-foreground text-center mb-1">
+                    Your full report
+                  </p>
+                )}
                 {(() => {
                   const increaseIsHighGap = increasePct > marketYoy * 2 && increasePct > 0 && marketYoy > 0;
                   return [
