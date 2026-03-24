@@ -123,7 +123,7 @@ function buildFallbackLetter(props: {
       );
     }
     asks.push(
-      `a unit improvement in exchange for early signing — for example, fresh paint, an appliance upgrade, or a repair I've been meaning to mention. ` +
+      `a unit improvement in exchange for early signing, such as fresh paint, an appliance upgrade, or a repair I've been meaning to mention. ` +
       `I'd be happy to sign today if we could address one of these`
     );
 
