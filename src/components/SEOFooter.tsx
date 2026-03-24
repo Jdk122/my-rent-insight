@@ -51,6 +51,32 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
           </ul>
         </div>
 
+        {/* Browse Deals */}
+        <div>
+          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/70 mb-3">Browse Deals</h3>
+          <ul className="space-y-2">
+            {[
+              { label: 'NYC', filter: 'NY' },
+              { label: 'NJ', filter: 'NJ' },
+              { label: 'Miami', filter: 'FL' },
+              { label: 'Chicago', filter: 'IL' },
+              { label: 'Austin', filter: 'TX' },
+              { label: 'San Francisco', filter: 'CA' },
+            ].map(group => (
+              <li key={group.filter}>
+                <span className="text-[11px] font-medium text-foreground/50">{group.label}</span>
+                <ul className="mt-0.5 space-y-0.5">
+                  {DEAL_CITIES.filter(c => c.stateAbbr === group.filter).map(city => (
+                    <li key={city.slug}>
+                      <Link to={`/deals/${city.slug}`} className={linkClass}>{city.neighborhood || city.name}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
+
         {/* Resources */}
         <div>
           <h3 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/70 mb-3">Resources</h3>

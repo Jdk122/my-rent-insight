@@ -355,7 +355,7 @@ const Deals = () => {
         <nav className="text-xs text-muted-foreground mb-3.5 flex items-center gap-1">
           <Link to="/rent-data" className="hover:text-foreground transition-colors">Deals</Link>
           <span className="opacity-30">/</span>
-          <Link to={`/rent-data/${city.state}`} className="hover:text-foreground transition-colors">New York</Link>
+          <Link to={`/rent-data/${city.state}`} className="hover:text-foreground transition-colors">{city.stateAbbr}</Link>
           <span className="opacity-30">/</span>
           <span className="text-muted-foreground/80">{displayName}</span>
         </nav>
