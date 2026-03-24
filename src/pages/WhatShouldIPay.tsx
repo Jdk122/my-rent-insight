@@ -271,12 +271,17 @@ const WhatShouldIPay = () => {
             />
           </Suspense>
 
+          {/* ━━━ Browse Apartment Deals ━━━ */}
+          <Suspense fallback={null}>
+            <BrowseDealsSection />
+          </Suspense>
+
           {/* ━━━ Renter Guides (educate) ━━━ */}
-          <section className="max-w-[820px] mx-auto px-5 sm:px-6 pt-10 pb-14 sm:pb-16 border-t border-border/40">
+          <section className="max-w-[820px] mx-auto px-5 sm:px-6 pt-6 pb-8 border-t border-border/40">
             <h2 className="font-display text-[22px] sm:text-[26px] text-foreground tracking-tight text-center mb-2" style={{ letterSpacing: '-0.02em' }}>
               Renter Guides
             </h2>
-            <p className="text-[15px] text-muted-foreground text-center max-w-[440px] mx-auto mb-8 leading-relaxed">
+            <p className="text-[15px] text-muted-foreground text-center max-w-[440px] mx-auto mb-6 leading-relaxed">
               Learn how to save money on your next lease.
             </p>
             <div className="space-y-3">
@@ -302,22 +307,18 @@ const WhatShouldIPay = () => {
                 <ChevronRight className="text-primary/50 group-hover:text-primary shrink-0 transition-all duration-200 group-hover:translate-x-0.5" size={18} />
               </Link>
             </div>
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 text-sm">
+            <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-4 text-sm">
               <Link to="/" className="text-primary hover:underline font-medium">Check your rent increase →</Link>
               <Link to="/rent-data" className="text-primary hover:underline font-medium">Browse rent data by city →</Link>
             </div>
           </section>
 
           <Suspense fallback={null}>
-            <BrowseDealsSection />
-          </Suspense>
-
-          <Suspense fallback={null}>
             <WsipFAQ />
           </Suspense>
 
           {/* ━━━ Explore Rent Data (discover) ━━━ */}
-          <section className="max-w-[820px] mx-auto px-5 sm:px-6 pt-10 pb-14 sm:pb-16 border-t border-border/40">
+          <section className="max-w-[820px] mx-auto px-5 sm:px-6 pt-6 pb-10 border-t border-border/40">
             <h2 className="font-display text-[22px] sm:text-[26px] text-foreground tracking-tight text-center mb-2" style={{ letterSpacing: '-0.02em' }}>
               Explore Rent Data
             </h2>
