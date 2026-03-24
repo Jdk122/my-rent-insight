@@ -84,7 +84,7 @@ function buildFallbackLetter(props: {
 
   if (isStrategic) {
     paragraphs.push(
-      `Thank you for the lease renewal notice. I appreciate the proposed terms — an increase of $${fmt(increaseAmt)}/month (${increasePct}%) ` +
+      `Thank you for the lease renewal notice. I appreciate the proposed terms. An increase of $${fmt(increaseAmt)}/month (${increasePct}%) ` +
       `from $${fmt(currentRent)} to $${fmt(newRent)}/month is reasonable, and I'm happy to continue living here. ` +
       `I'd like to discuss a couple of ideas that could benefit both of us as part of this renewal.`
     );
@@ -109,7 +109,7 @@ function buildFallbackLetter(props: {
     const areaName = trendArea || city;
     const trendDir = marketYoy > 0.5 ? 'rising' : marketYoy < -0.5 ? 'declining' : 'stable';
     paragraphs.push(
-      `I've been a reliable tenant — on-time payments, care of the property, and plans to stay long-term. ` +
+      `I've been a reliable tenant with on-time payments, care of the property, and plans to stay long-term. ` +
       `Rents in ${areaName} have been ${trendDir} (${marketYoy > 0 ? '+' : ''}${marketYoy}% this year), ` +
       `which means guaranteed occupancy at your proposed rate protects us both from market uncertainty.`
     );
@@ -118,12 +118,12 @@ function buildFallbackLetter(props: {
     const asks: string[] = [];
     if (marketYoy > 1) {
       asks.push(
-        `a 2-year lease at the current increase rate of ${increasePct}%, locking in before the market moves further — ` +
-        `this gives you guaranteed occupancy and saves the listing and turnover costs that typically run $3,000–$8,000+`
+        `a 2-year lease at the current increase rate of ${increasePct}%, locking in before the market moves further. ` +
+        `This gives you guaranteed occupancy and saves the listing and turnover costs that typically run $3,000–$8,000+`
       );
     }
     asks.push(
-      `a unit improvement in exchange for early signing — for example, fresh paint, an appliance upgrade, or a repair I've been meaning to mention. ` +
+      `a unit improvement in exchange for early signing, such as fresh paint, an appliance upgrade, or a repair I've been meaning to mention. ` +
       `I'd be happy to sign today if we could address one of these`
     );
 
@@ -134,7 +134,7 @@ function buildFallbackLetter(props: {
 
     if (compMedian && compCount && compCount > 0 && newRent <= compMedian) {
       paragraphs.push(
-        `For context, I've reviewed ${compCount} comparable listings nearby — the median asking rent is $${fmt(compMedian)}/month, ` +
+        `For context, I've reviewed ${compCount} comparable listings nearby. The median asking rent is $${fmt(compMedian)}/month, ` +
         `so I recognize the value of the rate you're offering.`
       );
     }
@@ -164,7 +164,7 @@ function buildFallbackLetter(props: {
         if (isCollaborative && newRent <= compMedian) {
           paragraphs.push(
             `I reviewed ${compCount} comparable ${brLabel.toLowerCase()} rental${compCount !== 1 ? 's' : ''} currently listed nearby. ` +
-            `I understand my rent is competitively priced — the median asking rent for similar units is $${fmt(compMedian)}/month, ` +
+            `I understand my rent is competitively priced. The median asking rent for similar units is $${fmt(compMedian)}/month, ` +
             `and my proposed rent of $${fmt(newRent)} is ${position} that figure.`
           );
         } else {
@@ -201,7 +201,7 @@ function buildFallbackLetter(props: {
       if (unitLineComps.length > 0) {
         const avgUnitLineRent = Math.round(unitLineComps.reduce((sum, c) => sum + (c.rent || 0), 0) / unitLineComps.length);
         paragraphs.push(
-          `Notably, ${unitLineComps.length} identical-layout unit${unitLineComps.length > 1 ? 's' : ''} in this building — same floor plan, same exposure — recently rented at an average of $${fmt(avgUnitLineRent)}/month. These are the most directly comparable data points available.`
+          `Notably, ${unitLineComps.length} identical-layout unit${unitLineComps.length > 1 ? 's' : ''} in this building (same floor plan, same exposure) recently rented at an average of $${fmt(avgUnitLineRent)}/month. These are the most directly comparable data points available.`
         );
       } else if (sameBuildingComps.length > 0) {
         const avgBuildingRent = Math.round(sameBuildingComps.reduce((sum, c) => sum + (c.rent || 0), 0) / sameBuildingComps.length);
@@ -214,7 +214,7 @@ function buildFallbackLetter(props: {
     if (rcTotalListings && rcAvgDaysOnMarket) {
       if (isCollaborative) {
         if (rcAvgDaysOnMarket > 25 || (alVacancy !== null && alVacancy !== undefined && alVacancy > 5)) {
-          let s = `I notice some units in the area are taking time to fill — about ${Math.round(rcAvgDaysOnMarket)} days on average across ${rcTotalListings} active listings.`;
+          let s = `I notice some units in the area are taking time to fill, averaging ${Math.round(rcAvgDaysOnMarket)} days on market across ${rcTotalListings} active listings.`;
           if (alVacancy !== null && alVacancy !== undefined && alVacancy > 5) s += ` The local vacancy rate is around ${alVacancy.toFixed(1)}%.`;
           s += ` Retaining a reliable tenant avoids the costs and uncertainty of turnover.`;
           paragraphs.push(s);
@@ -233,10 +233,10 @@ function buildFallbackLetter(props: {
       const modestDiscount = Math.min(75, Math.round(increaseAmt * 0.4));
       const counterSuggestion = newRent - modestDiscount;
       paragraphs.push(
-        `As a long-term tenant with a strong payment history, I'd like to propose a renewal rate of $${fmt(counterSuggestion)}/month — ` +
-        `a modest adjustment of $${fmt(modestDiscount)}/month from the proposed rate. ` +
+        `As a long-term tenant with a strong payment history, I'd like to propose a renewal rate of $${fmt(counterSuggestion)}/month. ` +
+        `This is a modest adjustment of $${fmt(modestDiscount)}/month from the proposed rate. ` +
         `I believe this small renewal incentive reflects the value of tenant retention, ` +
-        `as turnover costs — vacancy, cleaning, re-listing, and showing — typically run several months of rent.`
+        `as turnover costs (vacancy, cleaning, re-listing, and showing) typically run several months of rent.`
       );
       paragraphs.push(`I truly value living here and hope we can find an arrangement that works well for both of us. I'm happy to discuss this at your convenience.`);
     } else {
@@ -251,7 +251,7 @@ function buildFallbackLetter(props: {
   }
 
   paragraphs.push(`Sincerely,\n\n`);
-  paragraphs.push(`Analysis by RenewalReply — renewalreply.com`);
+  paragraphs.push(`Analysis by RenewalReply · renewalreply.com`);
 
   return paragraphs.join('\n\n');
 }
@@ -346,7 +346,7 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
     } catch (e) {
       console.error('AI letter generation failed:', e);
       setError(true);
-      toast.error('Letter generation failed — showing template version.');
+      toast.error('Letter generation failed. Showing template version.');
     } finally {
       setLoading(false);
     }
@@ -439,7 +439,7 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
 
       {/* Legal disclaimer */}
       <p className="text-[11px] text-muted-foreground/70 mt-4 leading-relaxed max-w-[540px]">
-        This letter is generated using AI and public housing data — not legal advice. Review and customize before sending. Rent regulations vary by location and lease terms.{' '}
+        This letter is generated using AI and public housing data. This is not legal advice. Review and customize before sending. Rent regulations vary by location and lease terms.{' '}
         <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>
       </p>
     </div>

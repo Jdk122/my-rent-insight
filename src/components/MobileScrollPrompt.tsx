@@ -204,8 +204,8 @@ const MobileScrollPrompt = ({
     const isWsip = toolType === 'wsip';
     const url = isWsip ? 'https://www.renewalreply.com/what-should-i-pay' : 'https://www.renewalreply.com';
     const text = isWsip
-      ? 'Check if that apartment listing is fairly priced — most are $100-300/mo above market.'
-      : 'Check if your rent increase is fair — most renters overpay $50-150/mo.';
+      ? 'Check if that apartment listing is fairly priced. Most are $100-300/mo above market.'
+      : 'Check if your rent increase is fair. Most renters overpay $50-150/mo.';
     const subject = isWsip ? 'Is that apartment fairly priced?' : 'Is your rent increase fair?';
     if (method === 'text') {
       window.open(`sms:?body=${encodeURIComponent(text + ' ' + url)}`, '_blank');
@@ -247,8 +247,8 @@ const MobileScrollPrompt = ({
             </h3>
             <p className="text-sm text-muted-foreground">
               {toolType === 'wsip'
-                ? 'Share this tool — most listings are $100-300/mo above market.'
-                : 'Share this tool — most renters overpay $50-150/mo.'}
+                ? 'Share this tool. Most listings are $100-300/mo above market.'
+                : 'Share this tool. Most renters overpay $50-150/mo.'}
             </p>
             <div className="flex flex-col gap-2">
               <button onClick={() => handleShare('text')} className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors">
@@ -268,7 +268,7 @@ const MobileScrollPrompt = ({
               Don't leave without your data.
             </h3>
             <p className="text-sm text-muted-foreground text-center">
-              We'll email your full analysis — free.
+              We'll email your full analysis. Free.
             </p>
             <form onSubmit={handleSubmit} className="space-y-3">
               <input

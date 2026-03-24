@@ -178,7 +178,7 @@ const WsipResults = ({
       } else if (askingRent <= bHigh * 1.10) {
         v = 'in-range';
         headline = "Slightly above this building's range.";
-        subtitle = `Other ${unitDesc} here rent for $${fmt(bLow)} – $${fmt(bHigh)}. The asking price of $${fmt(askingRent)} is slightly above — worth negotiating.`;
+        subtitle = `Other ${unitDesc} here rent for $${fmt(bLow)} – $${fmt(bHigh)}. The asking price of $${fmt(askingRent)} is slightly above, making it worth negotiating.`;
       } else {
         v = 'above';
         headline = "That's overpriced.";
@@ -236,12 +236,12 @@ const WsipResults = ({
     const vacancy = rentData.alVacancy;
     const dom = rcMarket.rcAvgDaysOnMarket;
     if (dom !== null && dom < 25 && vacancy !== null && vacancy < 3) {
-      return "This is a competitive market — landlords have pricing power. Move fast on good deals.";
+      return "This is a competitive market. Landlords have pricing power. Move fast on good deals.";
     }
     if ((dom !== null && dom > 50) || (vacancy !== null && vacancy > 6)) {
-      return "This is a renter's market — you have leverage to negotiate.";
+      return "This is a renter's market. You have leverage to negotiate.";
     }
-    return "This market is balanced — negotiate, but be realistic about competing offers.";
+    return "This market is balanced. Negotiate, but be realistic about competing offers.";
   }, [rentData.alVacancy, rcMarket.rcAvgDaysOnMarket]);
 
   // ━━━ Lead context ━━━
@@ -353,7 +353,7 @@ const WsipResults = ({
     const compCount = compsWithRent.length;
     const bedroomDesc = bedroomNum === 0 ? 'studio' : `${bedroomNum}-bedroom`;
     const lines = [
-      `Subject: Inquiry About ${addr} — ${brLabel} Listing\n`,
+      `Subject: Inquiry About ${addr} · ${brLabel} Listing\n`,
       `Hi,\n`,
       `I'm interested in ${addr} and have been researching comparable units in the area. Based on ${compCount} similar ${bedroomDesc} listings nearby, the typical range is $${fmt(fairRangeLow)}–$${fmt(fairRangeHigh)} per month.`,
     ];
@@ -513,8 +513,8 @@ const WsipResults = ({
                   {verdict === 'above'
                     ? 'This listing is priced above comparable units in the area. You have strong data to negotiate a lower price. Your market report is ready below.'
                     : verdict === 'below'
-                    ? 'This listing is priced below comparable units — a strong deal. Lock it in before it\'s gone. Get the full comp report to confirm below.'
-                    : 'This listing is priced within the fair range — but that doesn\'t mean the price is final. Renters who negotiate before signing save an average of $100/month. See how to approach it below.'
+                    ? 'This listing is priced below comparable units. A strong deal. Lock it in before it\'s gone. Get the full comp report to confirm below.'
+                    : 'This listing is priced within the fair range, but that doesn\'t mean the price is final. Renters who negotiate before signing save an average of $100/month. See how to approach it below.'
                   }
                 </p>
               </motion.div>
@@ -766,7 +766,7 @@ const WsipResults = ({
                 <div className="evidence-card">
                   <h3 className="evidence-card-header">What the Market Says</h3>
                   <p className="text-xs text-muted-foreground mb-4">
-                    {city}, {rentData.state} — {brLabel}
+                    {city}, {rentData.state} · {brLabel}
                   </p>
 
                   <div className="context-row context-row-even">
@@ -774,7 +774,7 @@ const WsipResults = ({
                     <span className="context-value">
                       {marketYoy > 0 ? '+' : ''}{marketYoy}%
                       <span className="context-sub"> ({compositeTrendResult.sourceCount >= 2
-                        ? 'composite — ' + compositeTrendResult.sources.map(s => s.label).join(', ')
+                        ? 'composite: ' + compositeTrendResult.sources.map(s => s.label).join(', ')
                         : compositeTrendResult.primarySource})</span>
                     </span>
                   </div>
@@ -803,7 +803,7 @@ const WsipResults = ({
                     <div className={`context-row ${verdict === 'above' ? 'context-row-highlight' : 'context-row-odd'}`}>
                       <span className="context-label">Asking price</span>
                       <span className={`context-value ${verdict === 'above' ? 'text-destructive font-bold' : verdict === 'below' ? 'text-verdict-good font-bold' : ''}`}>
-                        ${fmt(askingRent)} — {bldg.hasBuildingData
+                        ${fmt(askingRent)} · {bldg.hasBuildingData
                           ? (askingRent <= bldg.buildingLow ? "below this building's range"
                             : askingRent <= bldg.buildingHigh ? "within this building's range"
                             : askingRent <= bldg.buildingHigh * 1.10 ? "slightly above this building's range"
@@ -904,7 +904,7 @@ const WsipResults = ({
                         {bldg.hasBuildingData && askingRent > bldg.buildingHigh && (
                           <li className="flex gap-2">
                             <span className="text-primary font-bold shrink-0">•</span>
-                            The highest similar unit in this building rents for ${fmt(bldg.buildingHigh)} — the asking price of ${fmt(askingRent)} is ${fmt(askingRent - bldg.buildingHigh)} above this.
+                            The highest similar unit in this building rents for ${fmt(bldg.buildingHigh)}. The asking price of ${fmt(askingRent)} is ${fmt(askingRent - bldg.buildingHigh)} above this.
                           </li>
                         )}
                         {bldg.hasBuildingData && (
@@ -922,13 +922,13 @@ const WsipResults = ({
                         {rcMarket.rcTotalListings !== null && rcMarket.rcTotalListings > 5 && (
                           <li className="flex gap-2">
                             <span className="text-primary font-bold shrink-0">•</span>
-                            There are {rcMarket.rcTotalListings} active listings in this ZIP — mention that you're exploring options.
+                            There are {rcMarket.rcTotalListings} active listings in this ZIP. Mention that you're exploring options.
                           </li>
                         )}
                         {rcMarket.rcAvgDaysOnMarket !== null && (
                           <li className="flex gap-2">
                             <span className="text-primary font-bold shrink-0">•</span>
-                            Units sit for {Math.round(rcMarket.rcAvgDaysOnMarket)} days on average — the landlord has incentive to close quickly.
+                            Units sit for {Math.round(rcMarket.rcAvgDaysOnMarket)} days on average. The landlord has incentive to close quickly.
                           </li>
                         )}
                         <li className="flex gap-2">
@@ -963,7 +963,7 @@ const WsipResults = ({
                         </li>
                         <li className="flex gap-2">
                           <span className="text-primary font-bold shrink-0">•</span>
-                          <strong>Show you've done your research.</strong> Tell the landlord: "I've looked at the market data and this is in line with comparable units — I'm ready to move forward."
+                          <strong>Show you've done your research.</strong> Tell the landlord: "I've looked at the market data and this is in line with comparable units. I'm ready to move forward."
                         </li>
                         <li className="flex gap-2">
                           <span className="text-primary font-bold shrink-0">•</span>
@@ -976,11 +976,11 @@ const WsipResults = ({
                   {/* GOOD DEAL */}
                   {!showNegotiation && verdict === 'below' && (
                     <>
-                      <p className="text-sm font-medium text-foreground">This is below market — act fast. Here's how to lock it in:</p>
+                      <p className="text-sm font-medium text-foreground">This is below market. Act fast. Here's how to lock it in:</p>
                       <ul className="space-y-3 text-sm text-foreground">
                         <li className="flex gap-2">
                           <span className="text-primary font-bold shrink-0">•</span>
-                          <strong>Apply the same day.</strong> Below-market units attract heavy interest. Don't wait for a second tour — submit your application immediately.
+                          <strong>Apply the same day.</strong> Below-market units attract heavy interest. Don't wait for a second tour. Submit your application immediately.
                         </li>
                         <li className="flex gap-2">
                           <span className="text-primary font-bold shrink-0">•</span>

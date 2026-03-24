@@ -781,7 +781,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                           <div>
                             <p className="text-[12px] font-medium text-foreground mb-0.5">Important context about your rent</p>
                             <p className="text-[11px] text-muted-foreground leading-relaxed">
-                              Your rent is currently below the area median for similar units. However, area medians include units of all conditions and amenity levels — including renovated units and buildings with more amenities. A lower rent may already reflect fair value for your specific unit. Regardless, a {increasePct}% increase is significantly above the local rent trend of {marketYoy}%, which gives you room to negotiate the rate of increase.
+                              Your rent is currently below the area median for similar units. However, area medians include units of all conditions and amenity levels, including renovated units and buildings with more amenities. A lower rent may already reflect fair value for your specific unit. Regardless, a {increasePct}% increase is significantly above the local rent trend of {marketYoy}%, which gives you room to negotiate the rate of increase.
                             </p>
                           </div>
                         </div>
@@ -806,7 +806,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <div className="flex gap-2.5">
                               <Info className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
                               <p className="text-[11px] text-muted-foreground leading-relaxed">
-                                <span className="font-medium text-foreground">Your increase tracks the {marketYoy > 0 ? '+' : ''}{marketYoy}% area trend</span>, but your proposed rent of ${fmt(newRent)} is ${fmt(compOverpayment.dollarOver)}/mo above the median for similar {bedroomLabels[formData.bedrooms].toLowerCase()}s nearby (${fmt(medianCompRent!)} based on {compOverpayment.compCount} comparable listings). Your unit may justify a premium — but it's worth knowing where you stand.
+                                <span className="font-medium text-foreground">Your increase tracks the {marketYoy > 0 ? '+' : ''}{marketYoy}% area trend</span>, but your proposed rent of ${fmt(newRent)} is ${fmt(compOverpayment.dollarOver)}/mo above the median for similar {bedroomLabels[formData.bedrooms].toLowerCase()}s nearby (${fmt(medianCompRent!)} based on {compOverpayment.compCount} comparable listings). Your unit may justify a premium, but it's worth knowing where you stand.
                               </p>
                             </div>
                           </div>
@@ -896,10 +896,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             ) : isNuancedAtMarket || increasePct > marketYoy + 1.5 ? (
                               medianCompRent ? (
                                 capturedEmail
-                                  ? <>Your {increasePct}% increase is above the {marketYoy}% area trend — but at ${fmt(newRent)}/mo, you're {newRent <= medianCompRent ? `still below the $${fmt(medianCompRent)} local median` : `within range for ${brLabel} rentals in ${city}`}.</>
-                                  : <>Your {increasePct}% increase is above the {marketYoy}% area trend — but at ${fmt(newRent)}/mo, you're still within range for {brLabel} rentals in {city}.</>
+                                  ? <>Your {increasePct}% increase is above the {marketYoy}% area trend, but at ${fmt(newRent)}/mo you're {newRent <= medianCompRent ? `still below the $${fmt(medianCompRent)} local median` : `within range for ${brLabel} rentals in ${city}`}.</>
+                                  : <>Your {increasePct}% increase is above the {marketYoy}% area trend, but at ${fmt(newRent)}/mo you're still within range for {brLabel} rentals in {city}.</>
                               ) : (
-                                <>Your {increasePct}% increase is above the {marketYoy}% area trend — but at ${fmt(newRent)}/mo, you're still within the typical range for {brLabel} rentals in {city}.</>
+                                <>Your {increasePct}% increase is above the {marketYoy}% area trend, but at ${fmt(newRent)}/mo you're still within the typical range for {brLabel} rentals in {city}.</>
                               )
                             ) : (
                               <>At ${fmt(newRent)}/mo, your {increasePct}% increase tracks the {marketYoy}% area trend for {brLabel} rentals in {city}.</>
@@ -907,7 +907,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                           ) : increasePct > 0 ? (
                             isCompDeficient
                               ? <>At ${fmt(newRent)}/mo with a {increasePct}% increase, your rate of increase is below the {marketYoy}% area trend for {brLabel} rentals in {city}.</>
-                              : <>At ${fmt(newRent)}/mo, your rent is below the local market average for {brLabel} rentals in {city} — even with a {increasePct}% increase, you're getting a competitive deal.</>
+                              : <>At ${fmt(newRent)}/mo, your rent is below the local market average for {brLabel} rentals in {city}. Even with a {increasePct}% increase, you're getting a competitive deal.</>
                           ) : (
                             <>Rents in {city} moved {marketYoy}% this year. Your landlord keeping your rent at ${fmt(formData.currentRent)}/mo means you're coming out ahead.</>
                           )}
@@ -924,7 +924,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         )}
                         {capturedEmail && isNycZip(rentData.zip) && hasIncrease && (
                           <p className="text-xs text-muted-foreground/70 mt-2">
-                            Live in a rent-stabilized apartment? Your increase may be legally capped —{' '}
+                            Live in a rent-stabilized apartment? Your increase may be legally capped.{' '}
                             <button
                               onClick={() => document.getElementById('section-rights')?.scrollIntoView({ behavior: 'smooth' })}
                               className="underline hover:text-muted-foreground transition-colors"
@@ -1088,7 +1088,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
               <p className={`text-[13px] text-muted-foreground/70 mt-4 max-w-[440px] leading-relaxed ${!capturedEmail ? 'order-[4] md:order-none' : ''}`}>
                 {marketYoy > 3
-                  ? `Rents in ${city} went up ${marketYoy}% this year — staying flat is a win. Scroll down to see the full market data.`
+                  ? `Rents in ${city} went up ${marketYoy}% this year. Staying flat is a win. Scroll down to see the full market data.`
                   : marketYoy > 0
                   ? `Rents in ${city} are up ${marketYoy}% this year. Your landlord keeping your rent flat means you're getting a better deal over time.`
                   : `Rents in ${city} are ${marketYoy < 0 ? `down ${Math.abs(marketYoy)}%` : 'flat'} this year. Your rent is holding steady with the market.`
@@ -1216,7 +1216,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 <motion.div {...fade(0.08)} className="evidence-card">
                   <h3 className="evidence-card-header">What the Market Says</h3>
                   <p className="text-xs text-muted-foreground mb-4">
-                    {city}, {rentData.state} — {bedroomLabels[formData.bedrooms]}
+                    {city}, {rentData.state} · {bedroomLabels[formData.bedrooms]}
                     {rentcast.data?.propertyType && <> · {rentcast.data.propertyType}</>}
                   </p>
                   {utilityNote && (
@@ -1231,7 +1231,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     <span className="context-value">
                       {marketYoy > 0 ? '+' : ''}{marketYoy}%
                       {rentData.yoyCapped && <span className="context-sub"> (capped)</span>}
-                      <span className="context-sub"> ({compositeTrendResult.sourceCount >= 2 ? 'composite — ' + compositeTrendResult.sources.map(s => s.label).join(', ') : compositeTrendResult.primarySource})</span>
+                      <span className="context-sub"> ({compositeTrendResult.sourceCount >= 2 ? 'composite: ' + compositeTrendResult.sources.map(s => s.label).join(', ') : compositeTrendResult.primarySource})</span>
                     </span>
                   </div>
                   {rentData.zillowMonthly !== null && rentData.zillowDirection && (
@@ -1265,7 +1265,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                           ? 'text-destructive'
                           : 'text-muted-foreground'
                       }`}>
-                        ${fmt(formData.currentRent)} — {
+                        ${fmt(formData.currentRent)} · {
                           formData.currentRent < calc.typicalRangeLow
                             ? 'below this range'
                             : formData.currentRent > calc.typicalRangeHigh
@@ -1307,7 +1307,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   </p>
                   {rentData.yoyReliability === 'government' && (
                     <p className="text-xs text-muted-foreground mt-1">
-                      HUD benchmark estimate — actual market trends may differ.
+                      HUD benchmark estimate. Actual market trends may differ.
                     </p>
                   )}
                   {rentData.yoySource === 'hud' && rentData.priorSource === 'm' && (
@@ -1351,9 +1351,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   >
                     <p className="text-base font-medium text-foreground leading-relaxed">
                       {isAboveMarket
-                        ? 'Your counteroffer is ready — scroll down for your negotiation letter.'
+                        ? 'Your counteroffer is ready. Scroll down for your negotiation letter.'
                         : isBelowMarket
-                        ? "Your rent is below market — but you can still negotiate for value. See your options below."
+                        ? "Your rent is below market, but you can still negotiate for value. See your options below."
                         : 'Renters who negotiate with data save an average of $1,200/year. Your letter is ready below.'}
                     </p>
                   </motion.div>
@@ -1413,7 +1413,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         <div className="flex-1 min-w-0">
                           <p className="text-xs text-muted-foreground truncate">{comp.formattedAddress}</p>
                           <p className="text-[10px] text-muted-foreground/60">
-                            Excluded from analysis — {comp.rent !== null && medianCompRent && comp.rent > medianCompRent ? 'significantly above' : 'significantly below'} local median
+                            Excluded from analysis: {comp.rent !== null && medianCompRent && comp.rent > medianCompRent ? 'significantly above' : 'significantly below'} local median
                           </p>
                         </div>
                         {comp.rent !== null && (
@@ -1475,12 +1475,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               <motion.section id="section-letter" {...fade(0.19)} className="pt-8 pb-8">
                 {isFair && !isAboveMarket && !isBelowMarket && (
                   <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">
-                    Even a fair increase is worth negotiating. Landlords expect it — and avoiding turnover is worth more to them than $50-100/month.
+                    Even a fair increase is worth negotiating. Landlords expect it, and avoiding turnover is worth more to them than $50-100/month.
                   </p>
                 )}
                 {isBelowMarket && (
                   <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">
-                    Your landlord is offering below-market terms — that's leverage. Here's how to lock in this rate or negotiate extras like a longer lease, a unit upgrade, or a repair you've been waiting on.
+                    Your landlord is offering below-market terms. That's leverage. Here's how to lock in this rate or negotiate extras like a longer lease, a unit upgrade, or a repair you've been waiting on.
                   </p>
                 )}
                 <NegotiationLetter
@@ -1595,7 +1595,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       : isFair
                       ? `My rent increase is right at market.`
                       : isBelowMarket
-                      ? `My rent is below market — even with a ${increasePct}% increase.`
+                      ? `My rent is below market, even with a ${increasePct}% increase.`
                       : `My rent isn't going up — and rents in ${city} moved ${marketYoy}%.`
                   }
                   stats={

@@ -70,15 +70,15 @@ function getGateCopy(
 
       const heading =
         hasValidIncrease && rawMultiple && rawMultiple >= 2
-          ? `Your rent is below market — but a ${displayIncreasePct}% increase is ${trendMultiple}x the area trend.`
+          ? `Your rent is below market, but a ${displayIncreasePct}% increase is ${trendMultiple}x the area trend.`
           : hasValidIncrease
-            ? `Your rent is below market — but a ${displayIncreasePct}% increase is still too aggressive.`
-            : `Your rent is below market — but the increase is still too aggressive.`;
+            ? `Your rent is below market, but a ${displayIncreasePct}% increase is still too aggressive.`
+            : `Your rent is below market, but the increase is still too aggressive.`;
 
       return {
         heading,
-        bulletA: 'See the comps showing your rent is already fair — and why the increase isn\'t',
-        bulletB: 'Get a landlord-ready letter that says yes to renewing — but no to the increase',
+        bulletA: 'See the comps showing your rent is already fair and why the increase isn\'t',
+        bulletB: 'Get a landlord-ready letter that says yes to renewing but no to the increase',
         bulletC: 'See available apartments nearby that could save you money',
         cta: 'Email me my negotiation plan →',
       };
@@ -116,8 +116,8 @@ function getGateCopy(
         };
       case 'at-market':
         return {
-          heading: 'Your rent is fair — but you still have leverage. Here\'s the proof.',
-          bulletA: compsCount > 0 ? `${compsCount} comparable units — see exactly where you stand` : 'Comparable units — see exactly where you stand',
+          heading: 'Your rent is fair, but you still have leverage. Here\'s the proof.',
+          bulletA: compsCount > 0 ? `${compsCount} comparable units showing exactly where you stand` : 'Comparable units showing exactly where you stand',
           bulletB: 'A ready-to-send renewal response that protects your position',
           bulletC: 'Browse available apartments in your area',
           cta: 'Email me my full report →',
@@ -126,12 +126,12 @@ function getGateCopy(
         return {
           heading: 'Your rent is a good deal. Here\'s what to ask for at renewal.',
           bulletA: compsCount > 0 ? `See how much less you pay than ${compsCount} nearby units` : 'See how much less you pay than nearby units',
-          bulletB: 'Get a renewal response to lock in your rate — or ask for extras like repairs, upgrades, or a lease extension',
+          bulletB: 'Get a renewal response to lock in your rate or ask for extras like repairs, upgrades, or a lease extension',
           cta: 'Email me my renewal plan →',
         };
       default: // 'none' or fallback
         return {
-          heading: 'Your rent isn\'t going up — do you know what you\'d pay if you moved?',
+          heading: 'Your rent isn\'t going up. Do you know what you\'d pay if you moved?',
           bulletA: compsCount > 0 ? `See how your current rent stacks up against ${compsCount} nearby listings` : 'See how your current rent stacks up against nearby listings',
           bulletB: 'A market snapshot to keep in your back pocket for next year\'s renewal',
           bulletC: 'Browse available apartments in your area',
