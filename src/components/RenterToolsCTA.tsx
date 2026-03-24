@@ -1,22 +1,43 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import RenewalReminderModal from './RenewalReminderModal';
+import { findDealsNeighborhoodByZip, findDealsNeighborhoodsByCity, findDealsNeighborhoodsByState } from '@/data/dealsMatch';
 
 interface RenterToolsCTAProps {
   zip?: string;
   city?: string;
   stateName?: string;
+  stateAbbr?: string;
   pageType?: 'zip' | 'city' | 'state' | 'tool';
 }
 
-const RenterToolsCTA = ({ zip, city, stateName, pageType = 'tool' }: RenterToolsCTAProps) => {
+const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool' }: RenterToolsCTAProps) => {
   const [reminderOpen, setReminderOpen] = useState(false);
   const renewalLink = '/';
   const wsipLink = '/what-should-i-pay';
 
   type CardDef = { title: string; sub: string; cta: string; to?: string; scroll?: string; action?: 'reminder' };
 
+  /** Resolve a contextual deals card. Returns null when there is no real match. */
+  const getDealsCard = (): CardDef | null => {
+    if (pageType === 'zip' && zip) {
+      const match = findDealsNeighborhoodByZip(zip);
+      if (match) return { title: `Deals in ${match.neighborhood || match.name}`, sub: `Apartments scored below market in ${match.neighborhood || match.name}.`, cta: 'Browse Deals →', to: `/deals/${match.slug}` };
+    }
+    if (pageType === 'city' && city && stateAbbr) {
+      const matches = findDealsNeighborhoodsByCity(city, stateAbbr);
+      if (matches.length === 1) return { title: `Deals in ${matches[0].neighborhood || matches[0].name}`, sub: 'See apartments scored below market.', cta: 'Browse Deals →', to: `/deals/${matches[0].slug}` };
+      if (matches.length > 1) return { title: `Apartment Deals Near ${city}`, sub: `${matches.length} neighborhoods with scored listings.`, cta: 'Browse Deals →', to: '/deals' };
+    }
+    if (pageType === 'state' && stateAbbr) {
+      const matches = findDealsNeighborhoodsByState(stateAbbr);
+      if (matches.length > 0) return { title: `Apartment Deals in ${stateName || 'This State'}`, sub: `${matches.length} neighborhood${matches.length > 1 ? 's' : ''} with scored listings.`, cta: 'Browse Deals →', to: '/deals' };
+    }
+    return null;
+  };
+
   const getCards = (): CardDef[] => {
+    const dealsCard = getDealsCard();
     switch (pageType) {
       case 'zip':
         return [
@@ -28,10 +49,11 @@ const RenterToolsCTA = ({ zip, city, stateName, pageType = 'tool' }: RenterTools
           },
           {
             title: 'Got a Rent Increase?',
-            sub: 'See if your landlord is overcharging — in 60 seconds.',
+            sub: 'See if your landlord is overcharging. In 60 seconds.',
             cta: 'Check Your Increase →',
             to: renewalLink,
           },
+          ...(dealsCard ? [dealsCard] : []),
         ];
       case 'city':
         return [
@@ -47,15 +69,16 @@ const RenterToolsCTA = ({ zip, city, stateName, pageType = 'tool' }: RenterTools
             cta: 'Check Your Increase →',
             to: renewalLink,
           },
-          {
+          ...(dealsCard ? [dealsCard] : [{
             title: `Browse ${city || 'City'} ZIP Codes`,
             sub: 'See rent data by ZIP code in this city.',
             cta: 'View ZIP Codes ↓',
             scroll: 'section-zipcodes',
-          },
+          }]),
         ];
       case 'state':
         return [
+          ...(dealsCard ? [dealsCard] : []),
           {
             title: `Explore Cities in ${stateName || 'This State'}`,
             sub: 'Browse rent data by city.',
@@ -64,7 +87,7 @@ const RenterToolsCTA = ({ zip, city, stateName, pageType = 'tool' }: RenterTools
           },
           {
             title: 'Check Your Rent Increase',
-            sub: 'See if your landlord is overcharging — in 60 seconds.',
+            sub: 'See if your landlord is overcharging. In 60 seconds.',
             cta: 'Check Your Increase →',
             to: renewalLink,
           },
@@ -73,7 +96,7 @@ const RenterToolsCTA = ({ zip, city, stateName, pageType = 'tool' }: RenterTools
         return [
           {
             title: 'Got a Rent Increase?',
-            sub: 'See if your landlord is overcharging — in 60 seconds.',
+            sub: 'See if your landlord is overcharging. In 60 seconds.',
             cta: 'Check Your Increase →',
             to: renewalLink,
           },
