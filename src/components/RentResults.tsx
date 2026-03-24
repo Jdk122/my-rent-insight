@@ -1014,7 +1014,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
               {/* ── Email gate (moved from Phase 2) ── */}
               {!capturedEmail && (
-                <section id="section-gate" className="py-8">
+                <section id="section-gate" className="py-3 sm:py-8">
                   <ReportGate
                     toolType="renewal"
                     compsCount={compsWithRent.length}
