@@ -572,7 +572,7 @@ const RentByCity = () => {
         </section>
 
         {/* ═══ Renter Tools CTA ═══ */}
-        <RenterToolsCTA zip={zips[0]?.zip} city={city} pageType="city" />
+        <RenterToolsCTA zip={zips[0]?.zip} city={city} stateAbbr={state} pageType="city" />
 
         {/* ═══ Renter Guides ═══ */}
         <section className="mb-12">
