@@ -945,22 +945,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 );
               })()}
 
-              {/* Mobile proof cue — shows before gate on mobile */}
-              {!capturedEmail && compsWithRent.length > 0 && (
-                <div className="md:hidden text-center mt-2 mb-1 w-full max-w-[540px]">
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    <span className="font-medium text-foreground">{compsWithRent.length} matched comp{compsWithRent.length !== 1 ? 's' : ''}</span>
-                    {' '}+ <span className="font-medium text-foreground">negotiation letter</span> ready
-                  </p>
-                </div>
-              )}
-              {!capturedEmail && compsWithRent.length === 0 && (
-                <div className="md:hidden text-center mt-2 mb-1 w-full max-w-[540px]">
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    <span className="font-medium text-foreground">Market report</span> + <span className="font-medium text-foreground">negotiation letter</span> ready
-                  </p>
-                </div>
-              )}
+
+
 
               {/* ── Stat dashboard strip ── */}
               <motion.div
@@ -1109,21 +1095,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 }
               </p>
 
-              {/* Mobile proof cue — no-increase path */}
-              {!capturedEmail && (
-                <div className="md:hidden text-center mt-2 mb-1 w-full max-w-[400px]">
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {compsWithRent.length > 0 ? (
-                      <>
-                        <span className="font-medium text-foreground">{compsWithRent.length} matched comp{compsWithRent.length !== 1 ? 's' : ''}</span>
-                        {' '}+ <span className="font-medium text-foreground">market report</span> ready
-                      </>
-                    ) : (
-                      <>Your <span className="font-medium text-foreground">market report</span> is ready.</>
-                    )}
-                  </p>
-                </div>
-              )}
+
 
               {capturedEmail && compsWithRent.length > 0 && (
                 <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
