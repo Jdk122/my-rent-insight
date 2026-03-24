@@ -321,7 +321,7 @@ const Index = () => {
                 Is your rent increase <span className="text-primary">above&nbsp;market?</span>
               </h1>
               <p className="mt-2 sm:mt-3 lg:mt-5 text-[15px] sm:text-lg lg:text-[clamp(19px,1.7vw,24px)] text-muted-foreground lg:text-foreground/60 max-w-[700px] leading-relaxed font-normal tracking-tight lg:whitespace-nowrap">
-                Find out in 10 seconds — free, no account needed.
+                Find out in 10 seconds. Free, no account needed.
               </p>
 
               {/* Value props */}

@@ -211,8 +211,8 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
             </h3>
             <p className="text-sm text-muted-foreground">
               {toolType === 'wsip'
-                ? 'Share this tool — most listings are $100-300/mo above market.'
-                : 'Share this tool — most renters overpay $50-150/mo.'}
+                ? 'Share this tool. Most listings are $100-300/mo above market.'
+                : 'Share this tool. Most renters overpay $50-150/mo.'}
             </p>
             <div className="flex flex-col gap-2 max-w-[280px] mx-auto">
               <button onClick={() => handleShare('text')} className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors">

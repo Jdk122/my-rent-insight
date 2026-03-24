@@ -268,7 +268,7 @@ const MobileScrollPrompt = ({
               Don't leave without your data.
             </h3>
             <p className="text-sm text-muted-foreground text-center">
-              We'll email your full analysis — free.
+              We'll email your full analysis. Free.
             </p>
             <form onSubmit={handleSubmit} className="space-y-3">
               <input
