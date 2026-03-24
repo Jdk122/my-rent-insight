@@ -963,7 +963,7 @@ const WsipResults = ({
                         </li>
                         <li className="flex gap-2">
                           <span className="text-primary font-bold shrink-0">•</span>
-                          <strong>Show you've done your research.</strong> Tell the landlord: "I've looked at the market data and this is in line with comparable units — I'm ready to move forward."
+                          <strong>Show you've done your research.</strong> Tell the landlord: "I've looked at the market data and this is in line with comparable units. I'm ready to move forward."
                         </li>
                         <li className="flex gap-2">
                           <span className="text-primary font-bold shrink-0">•</span>
