@@ -1413,7 +1413,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         <div className="flex-1 min-w-0">
                           <p className="text-xs text-muted-foreground truncate">{comp.formattedAddress}</p>
                           <p className="text-[10px] text-muted-foreground/60">
-                            Excluded from analysis — {comp.rent !== null && medianCompRent && comp.rent > medianCompRent ? 'significantly above' : 'significantly below'} local median
+                            Excluded from analysis: {comp.rent !== null && medianCompRent && comp.rent > medianCompRent ? 'significantly above' : 'significantly below'} local median
                           </p>
                         </div>
                         {comp.rent !== null && (
