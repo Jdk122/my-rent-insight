@@ -236,7 +236,7 @@ const WsipResults = ({
     const vacancy = rentData.alVacancy;
     const dom = rcMarket.rcAvgDaysOnMarket;
     if (dom !== null && dom < 25 && vacancy !== null && vacancy < 3) {
-      return "This is a competitive market — landlords have pricing power. Move fast on good deals.";
+      return "This is a competitive market. Landlords have pricing power. Move fast on good deals.";
     }
     if ((dom !== null && dom > 50) || (vacancy !== null && vacancy > 6)) {
       return "This is a renter's market — you have leverage to negotiate.";
