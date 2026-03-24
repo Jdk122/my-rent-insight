@@ -479,6 +479,24 @@ const Deals = () => {
               </section>
             </>
           )}
+
+          {/* Mobile cross-sell — sidebar is hidden on mobile */}
+          <div className="md:hidden space-y-3 mt-6 mb-8 px-1">
+            <Link to="/" className="block rounded-xl border border-border bg-card p-4 hover:border-primary/40 transition-all">
+              <p className="font-semibold text-foreground text-[14px]">Already renting here?</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Check if your rent increase is fair.</p>
+              <span className="text-xs text-primary font-medium mt-1.5 inline-block">Check my increase →</span>
+            </Link>
+            <Link to="/what-should-i-pay" className="block rounded-xl border border-border bg-card p-4 hover:border-primary/40 transition-all">
+              <p className="font-semibold text-foreground text-[14px]">Considering a listing?</p>
+              <p className="text-xs text-muted-foreground mt-0.5">See if the asking rent is fair.</p>
+              <span className="text-xs text-primary font-medium mt-1.5 inline-block">Check asking price →</span>
+            </Link>
+            <Link to={`/rent-data/zip/${primaryZip}`} className="block rounded-xl border border-border bg-card p-4 hover:border-primary/40 transition-all">
+              <p className="font-semibold text-foreground text-[14px]">Rent data for {primaryZip}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">HUD benchmarks, trends, and nearby comparisons.</p>
+            </Link>
+          </div>
         </main>
 
         <DealsSidebar

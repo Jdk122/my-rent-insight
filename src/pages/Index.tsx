@@ -292,6 +292,12 @@ const Index = () => {
           {!results && (
             <>
               <Link
+                to="/deals"
+                className="text-muted-foreground hover:text-foreground text-[12px] sm:text-[13px] font-medium transition-colors whitespace-nowrap"
+              >
+                Deals
+              </Link>
+              <Link
                 to="/guides"
                 className="text-muted-foreground hover:text-foreground text-[12px] sm:text-[13px] font-medium transition-colors whitespace-nowrap"
               >

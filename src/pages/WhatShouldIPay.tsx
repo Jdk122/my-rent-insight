@@ -194,6 +194,12 @@ const WhatShouldIPay = () => {
             </button>
           )}
           <Link
+            to="/deals"
+            className="text-[12px] sm:text-[13px] text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
+          >
+            Deals
+          </Link>
+          <Link
             to="/"
             className="text-[12px] sm:text-[13px] text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap hidden sm:inline-block"
           >
