@@ -437,7 +437,7 @@ const WsipResults = ({
           <motion.section
             id="section-verdict"
             {...fade(0)}
-            className="min-h-0 md:min-h-[50vh] flex flex-col items-center justify-center text-center py-8 sm:py-12"
+            className="min-h-0 md:min-h-[50vh] flex flex-col items-center justify-center text-center py-5 sm:py-12"
           >
             {/* Verdict headline */}
             <h1
@@ -501,7 +501,7 @@ const WsipResults = ({
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.18, duration: 0.4 }}
-                className={`mt-2 mb-4 w-full max-w-[480px] border-l-4 pl-4 py-2 rounded-r-md ${
+                className={`mt-1 mb-2 md:mt-2 md:mb-4 w-full max-w-[480px] border-l-4 pl-4 py-2 rounded-r-md ${
                   verdict === 'above'
                     ? 'border-destructive/60 bg-destructive/5'
                     : verdict === 'below'
@@ -509,7 +509,7 @@ const WsipResults = ({
                     : 'border-blue-400/60 bg-blue-50/50 dark:bg-blue-950/20'
                 }`}
               >
-                <p className="text-base font-medium text-foreground leading-relaxed">
+                <p className="text-sm md:text-base font-medium text-foreground leading-relaxed">
                   {verdict === 'above'
                     ? 'This listing is priced above comparable units in the area. You have strong data to negotiate a lower price. Your market report is ready below.'
                     : verdict === 'below'
@@ -530,7 +530,7 @@ const WsipResults = ({
             )}
 
             {/* Range bar */}
-            <div className="w-full max-w-[480px] mb-6">
+            <div className="w-full max-w-[480px] mb-3 md:mb-6">
               <div className="relative h-8 rounded-full overflow-hidden bg-muted/50">
                 <div className="absolute top-0 bottom-0 bg-verdict-good/15" style={{ left: 0, width: `${rangeLowPct}%` }} />
                 <div className="absolute top-0 bottom-0 bg-verdict-fair/20" style={{ left: `${rangeLowPct}%`, width: `${rangeHighPct - rangeLowPct}%` }} />
@@ -568,7 +568,7 @@ const WsipResults = ({
                       : 'Based on local market data and rent trends.'}
                   </p>
                 </div>
-                <section id="section-gate" className="py-6">
+                <section id="section-gate" className="py-3">
                   <ReportGate
                     toolType="wsip"
                     compsCount={compsWithRent.length}
