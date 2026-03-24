@@ -976,7 +976,7 @@ const WsipResults = ({
                   {/* GOOD DEAL */}
                   {!showNegotiation && verdict === 'below' && (
                     <>
-                      <p className="text-sm font-medium text-foreground">This is below market — act fast. Here's how to lock it in:</p>
+                      <p className="text-sm font-medium text-foreground">This is below market. Act fast. Here's how to lock it in:</p>
                       <ul className="space-y-3 text-sm text-foreground">
                         <li className="flex gap-2">
                           <span className="text-primary font-bold shrink-0">•</span>
