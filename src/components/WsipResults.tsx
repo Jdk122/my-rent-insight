@@ -241,7 +241,7 @@ const WsipResults = ({
     if ((dom !== null && dom > 50) || (vacancy !== null && vacancy > 6)) {
       return "This is a renter's market. You have leverage to negotiate.";
     }
-    return "This market is balanced — negotiate, but be realistic about competing offers.";
+    return "This market is balanced. Negotiate, but be realistic about competing offers.";
   }, [rentData.alVacancy, rcMarket.rcAvgDaysOnMarket]);
 
   // ━━━ Lead context ━━━
