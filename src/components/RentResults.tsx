@@ -970,7 +970,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
-                className={`mt-2 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 max-w-[540px] ${!capturedEmail ? 'order-[10] md:order-none' : ''}`}
+                className={`mt-2 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 max-w-[540px] ${!capturedEmail ? 'order-[4] md:order-none' : ''}`}
               >
                 {!capturedEmail && (
                   <p className="md:hidden col-span-2 text-[9px] font-semibold uppercase tracking-widest text-muted-foreground text-center mb-1">
@@ -1038,42 +1038,44 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     belowFmrHighIncrease={isBelowFmrHighIncrease}
                     increasePct={increasePct}
                   />
-
-                  {/* Blurred skeleton preview below gate */}
-                  <div className="mt-4 w-full max-w-[540px] mx-auto relative" aria-hidden="true">
-                    <div className="rounded-lg border border-border/60 bg-card p-4 space-y-3" style={{ filter: 'blur(5px)', userSelect: 'none', pointerEvents: 'none' }}>
-                      <div className="flex justify-between items-center py-2 border-b border-border/40">
-                        <div className="flex flex-col gap-1">
-                          <div className="h-3.5 w-40 bg-muted-foreground/20 rounded" />
-                          <div className="h-3 w-24 bg-muted-foreground/10 rounded" />
-                        </div>
-                        <div className="h-4 w-20 bg-muted-foreground/20 rounded" />
-                      </div>
-                      <div className="flex justify-between items-center py-2 border-b border-border/40">
-                        <div className="flex flex-col gap-1">
-                          <div className="h-3.5 w-36 bg-muted-foreground/20 rounded" />
-                          <div className="h-3 w-28 bg-muted-foreground/10 rounded" />
-                        </div>
-                        <div className="h-4 w-20 bg-muted-foreground/20 rounded" />
-                      </div>
-                      <div className="flex justify-between items-center py-2">
-                        <div className="flex flex-col gap-1">
-                          <div className="h-3.5 w-44 bg-muted-foreground/20 rounded" />
-                          <div className="h-3 w-20 bg-muted-foreground/10 rounded" />
-                        </div>
-                        <div className="h-4 w-20 bg-muted-foreground/20 rounded" />
-                      </div>
-                    </div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-sm font-semibold text-muted-foreground bg-background/80 px-4 py-2 rounded-full border border-border/60">
-                        Enter your email above to unlock
-                      </span>
-                    </div>
-                  </div>
                 </section>
               )}
 
-              <div className={`mt-4 flex flex-col items-center gap-2 ${!capturedEmail ? 'order-[11] md:order-none' : ''}`}>
+              {/* Blurred skeleton preview below gate */}
+              {!capturedEmail && (
+                <div className="mt-4 w-full max-w-[540px] mx-auto relative order-[5] md:order-none" aria-hidden="true">
+                  <div className="rounded-lg border border-border/60 bg-card p-4 space-y-3" style={{ filter: 'blur(5px)', userSelect: 'none', pointerEvents: 'none' }}>
+                    <div className="flex justify-between items-center py-2 border-b border-border/40">
+                      <div className="flex flex-col gap-1">
+                        <div className="h-3.5 w-40 bg-muted-foreground/20 rounded" />
+                        <div className="h-3 w-24 bg-muted-foreground/10 rounded" />
+                      </div>
+                      <div className="h-4 w-20 bg-muted-foreground/20 rounded" />
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-border/40">
+                      <div className="flex flex-col gap-1">
+                        <div className="h-3.5 w-36 bg-muted-foreground/20 rounded" />
+                        <div className="h-3 w-28 bg-muted-foreground/10 rounded" />
+                      </div>
+                      <div className="h-4 w-20 bg-muted-foreground/20 rounded" />
+                    </div>
+                    <div className="flex justify-between items-center py-2">
+                      <div className="flex flex-col gap-1">
+                        <div className="h-3.5 w-44 bg-muted-foreground/20 rounded" />
+                        <div className="h-3 w-20 bg-muted-foreground/10 rounded" />
+                      </div>
+                      <div className="h-4 w-20 bg-muted-foreground/20 rounded" />
+                    </div>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-sm font-semibold text-muted-foreground bg-background/80 px-4 py-2 rounded-full border border-border/60">
+                      Enter your email above to unlock
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <div className={`mt-4 flex flex-col items-center gap-2 ${!capturedEmail ? 'order-[6] md:order-none' : ''}`}>
                 <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
                   ← Check a different address
                 </button>
@@ -1088,7 +1090,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 Here's how your current rent of <strong className="text-foreground">${fmt(formData.currentRent)}/mo</strong> compares to what similar {brLabel} apartments are going for in {city}.
               </p>
 
-              <div className={`mt-6 w-full grid grid-cols-2 gap-3 max-w-[400px] ${!capturedEmail ? 'order-[10] md:order-none' : ''}`}>
+              <div className={`mt-6 w-full grid grid-cols-2 gap-3 max-w-[400px] ${!capturedEmail ? 'order-[4] md:order-none' : ''}`}>
                 <div className="text-center rounded-lg border border-border/80 bg-card px-3 py-3" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your Rent</p>
                   <p className="font-display text-[22px] sm:text-[26px] tracking-tight text-foreground" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>${fmt(formData.currentRent)}</p>
@@ -1101,7 +1103,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </div>
               </div>
 
-              <p className={`text-[13px] text-muted-foreground/70 mt-4 max-w-[440px] leading-relaxed ${!capturedEmail ? 'order-[10] md:order-none' : ''}`}>
+              <p className={`text-[13px] text-muted-foreground/70 mt-4 max-w-[440px] leading-relaxed ${!capturedEmail ? 'order-[4] md:order-none' : ''}`}>
                 {marketYoy > 3
                   ? `Rents in ${city} went up ${marketYoy}% this year — staying flat is a win. Scroll down to see the full market data.`
                   : marketYoy > 0
@@ -1191,7 +1193,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </section>
               )}
 
-              <div className={`mt-4 flex flex-col items-center gap-2 ${!capturedEmail ? 'order-[11] md:order-none' : ''}`}>
+              <div className={`mt-4 flex flex-col items-center gap-2 ${!capturedEmail ? 'order-[6] md:order-none' : ''}`}>
                 <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
                   ← Check a different address
                 </button>
