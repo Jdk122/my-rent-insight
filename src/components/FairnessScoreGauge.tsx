@@ -156,7 +156,7 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
 
       {/* Score basis attribution (v2.3) */}
       {score.scoreBasisMessage && (
-        <motion.p
+        <motion.p data-score-basis
           className="text-[11px] text-muted-foreground/60 text-center mt-1 max-w-[400px]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
