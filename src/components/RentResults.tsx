@@ -1088,7 +1088,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 Here's how your current rent of <strong className="text-foreground">${fmt(formData.currentRent)}/mo</strong> compares to what similar {brLabel} apartments are going for in {city}.
               </p>
 
-              <div className="mt-6 w-full grid grid-cols-2 gap-3 max-w-[400px]">
+              <div className={`mt-6 w-full grid grid-cols-2 gap-3 max-w-[400px] ${!capturedEmail ? 'order-[10] md:order-none' : ''}`}>
                 <div className="text-center rounded-lg border border-border/80 bg-card px-3 py-3" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your Rent</p>
                   <p className="font-display text-[22px] sm:text-[26px] tracking-tight text-foreground" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>${fmt(formData.currentRent)}</p>
@@ -1101,7 +1101,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </div>
               </div>
 
-              <p className="text-[13px] text-muted-foreground/70 mt-4 max-w-[440px] leading-relaxed">
+              <p className={`text-[13px] text-muted-foreground/70 mt-4 max-w-[440px] leading-relaxed ${!capturedEmail ? 'order-[10] md:order-none' : ''}`}>
                 {marketYoy > 3
                   ? `Rents in ${city} went up ${marketYoy}% this year — staying flat is a win. Scroll down to see the full market data.`
                   : marketYoy > 0
@@ -1109,6 +1109,24 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   : `Rents in ${city} are ${marketYoy < 0 ? `down ${Math.abs(marketYoy)}%` : 'flat'} this year. Your rent is holding steady with the market.`
                 }
               </p>
+
+              {/* Mobile proof cue — no-increase path */}
+              {!capturedEmail && (
+                <div className="md:hidden text-center mt-3 mb-1 w-full max-w-[400px]">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {compsWithRent.length > 0 ? (
+                      <>
+                        <span className="font-medium text-foreground">{compsWithRent.length} matched comp{compsWithRent.length !== 1 ? 's' : ''}</span>
+                        {' '}and your{' '}
+                        <span className="font-medium text-foreground">market report</span>
+                        {' '}are ready.
+                      </>
+                    ) : (
+                      <>Your <span className="font-medium text-foreground">market report</span> is ready.</>
+                    )}
+                  </p>
+                </div>
+              )}
 
               {capturedEmail && compsWithRent.length > 0 && (
                 <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
