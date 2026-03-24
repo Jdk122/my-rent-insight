@@ -126,7 +126,7 @@ function getGateCopy(
         return {
           heading: 'Your rent is a good deal. Here\'s what to ask for at renewal.',
           bulletA: compsCount > 0 ? `See how much less you pay than ${compsCount} nearby units` : 'See how much less you pay than nearby units',
-          bulletB: 'Get a renewal response to lock in your rate — or ask for extras like repairs, upgrades, or a lease extension',
+          bulletB: 'Get a renewal response to lock in your rate or ask for extras like repairs, upgrades, or a lease extension',
           cta: 'Email me my renewal plan →',
         };
       default: // 'none' or fallback
