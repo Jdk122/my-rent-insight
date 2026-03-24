@@ -1475,7 +1475,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               <motion.section id="section-letter" {...fade(0.19)} className="pt-8 pb-8">
                 {isFair && !isAboveMarket && !isBelowMarket && (
                   <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">
-                    Even a fair increase is worth negotiating. Landlords expect it — and avoiding turnover is worth more to them than $50-100/month.
+                    Even a fair increase is worth negotiating. Landlords expect it, and avoiding turnover is worth more to them than $50-100/month.
                   </p>
                 )}
                 {isBelowMarket && (
