@@ -772,6 +772,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 }
 
                 return (
+                  <div className={!capturedEmail ? '[&_[data-score-details]]:max-md:hidden' : ''}>
                   <FairnessScoreGauge
                     topNote={isBelowFmrHighIncrease ? (
                       <div className="rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900/50 dark:bg-blue-950/20 p-3">
