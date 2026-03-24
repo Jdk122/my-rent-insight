@@ -10,6 +10,7 @@ interface ConfirmationEmailParams {
   fairnessScore?: number | null;
   verdictLabel?: string | null;
   reportUrl?: string | null;
+  analysisUrl?: string | null;
 }
 
 export async function sendConfirmationEmail(params: ConfirmationEmailParams) {
@@ -25,6 +26,7 @@ export async function sendConfirmationEmail(params: ConfirmationEmailParams) {
         fairness_score: params.fairnessScore ?? null,
         verdict_label: params.verdictLabel || null,
         report_url: params.reportUrl || null,
+        analysis_url: params.analysisUrl || null,
       },
     });
   } catch (err) {
