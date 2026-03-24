@@ -189,7 +189,7 @@ serve(async (req) => {
   }
 
   try {
-    // --- Rate limiting (10/hour) ---
+    // --- Rate limiting setup (checked before API call, not on cache hits) ---
     const clientIP =
       req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
     const windowStart = new Date();
@@ -199,29 +199,30 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     );
-    const { data: rlRow } = await rlSb
-      .from('rate_limits')
-      .select('request_count')
-      .eq('ip_address', clientIP)
-      .eq('endpoint', 'rentcast-lookup')
-      .eq('window_start', windowKey)
-      .maybeSingle();
-    if (rlRow && rlRow.request_count >= 10) {
-      return new Response(
-        JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
-        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+
+    const checkAndIncrementRateLimit = async () => {
+      const { data: rlRow } = await rlSb
+        .from('rate_limits')
+        .select('request_count')
+        .eq('ip_address', clientIP)
+        .eq('endpoint', 'rentcast-lookup')
+        .eq('window_start', windowKey)
+        .maybeSingle();
+      if (rlRow && rlRow.request_count >= 10) {
+        return true; // rate limited
+      }
+      await rlSb.from('rate_limits').upsert(
+        {
+          ip_address: clientIP,
+          endpoint: 'rentcast-lookup',
+          window_start: windowKey,
+          request_count: (rlRow?.request_count ?? 0) + 1,
+        },
+        { onConflict: 'ip_address,endpoint,window_start' },
       );
-    }
-    await rlSb.from('rate_limits').upsert(
-      {
-        ip_address: clientIP,
-        endpoint: 'rentcast-lookup',
-        window_start: windowKey,
-        request_count: (rlRow?.request_count ?? 0) + 1,
-      },
-      { onConflict: 'ip_address,endpoint,window_start' },
-    );
-    // --- End rate limiting ---
+      return false;
+    };
+    // --- End rate limiting setup ---
 
     const { zip, bedrooms, address, bathrooms, squareFootage } = await req.json();
 
