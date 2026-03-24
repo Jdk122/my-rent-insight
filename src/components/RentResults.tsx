@@ -907,7 +907,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                           ) : increasePct > 0 ? (
                             isCompDeficient
                               ? <>At ${fmt(newRent)}/mo with a {increasePct}% increase, your rate of increase is below the {marketYoy}% area trend for {brLabel} rentals in {city}.</>
-                              : <>At ${fmt(newRent)}/mo, your rent is below the local market average for {brLabel} rentals in {city} — even with a {increasePct}% increase, you're getting a competitive deal.</>
+                              : <>At ${fmt(newRent)}/mo, your rent is below the local market average for {brLabel} rentals in {city}. Even with a {increasePct}% increase, you're getting a competitive deal.</>
                           ) : (
                             <>Rents in {city} moved {marketYoy}% this year. Your landlord keeping your rent at ${fmt(formData.currentRent)}/mo means you're coming out ahead.</>
                           )}
