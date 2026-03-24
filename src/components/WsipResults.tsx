@@ -922,7 +922,7 @@ const WsipResults = ({
                         {rcMarket.rcTotalListings !== null && rcMarket.rcTotalListings > 5 && (
                           <li className="flex gap-2">
                             <span className="text-primary font-bold shrink-0">•</span>
-                            There are {rcMarket.rcTotalListings} active listings in this ZIP — mention that you're exploring options.
+                            There are {rcMarket.rcTotalListings} active listings in this ZIP. Mention that you're exploring options.
                           </li>
                         )}
                         {rcMarket.rcAvgDaysOnMarket !== null && (
