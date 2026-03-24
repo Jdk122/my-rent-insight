@@ -531,7 +531,7 @@ const WsipResults = ({
 
             {/* Range bar */}
             <div className="w-full max-w-[480px] mb-3 md:mb-6">
-              <div className="relative h-8 rounded-full overflow-hidden bg-muted/50">
+              <div className="relative h-6 md:h-8 rounded-full overflow-hidden bg-muted/50">
                 <div className="absolute top-0 bottom-0 bg-verdict-good/15" style={{ left: 0, width: `${rangeLowPct}%` }} />
                 <div className="absolute top-0 bottom-0 bg-verdict-fair/20" style={{ left: `${rangeLowPct}%`, width: `${rangeHighPct - rangeLowPct}%` }} />
                 <div className="absolute top-0 bottom-0 bg-destructive/15" style={{ left: `${rangeHighPct}%`, right: 0 }} />
