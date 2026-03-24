@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { DEAL_CITIES } from '@/data/dealsCities';
 
 const SocialIcon = ({ href, label, children }: { href: string; label: string; children: React.ReactNode }) => (
   <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="text-muted-foreground/50 hover:text-foreground transition-colors">
