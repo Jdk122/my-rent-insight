@@ -980,7 +980,7 @@ const WsipResults = ({
                       <ul className="space-y-3 text-sm text-foreground">
                         <li className="flex gap-2">
                           <span className="text-primary font-bold shrink-0">•</span>
-                          <strong>Apply the same day.</strong> Below-market units attract heavy interest. Don't wait for a second tour — submit your application immediately.
+                          <strong>Apply the same day.</strong> Below-market units attract heavy interest. Don't wait for a second tour. Submit your application immediately.
                         </li>
                         <li className="flex gap-2">
                           <span className="text-primary font-bold shrink-0">•</span>
