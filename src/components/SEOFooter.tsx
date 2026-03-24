@@ -44,7 +44,7 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
         {/* Tools */}
         <div>
           <h3 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/70 mb-3">Tools</h3>
-          <ul className="space-y-2">
+          <ul className="space-y-1.5">
             <li><Link to="/" className={linkClass}>Check My Increase</Link></li>
             <li><Link to="/what-should-i-pay" className={linkClass}>Check Asking Price</Link></li>
           </ul>
@@ -53,7 +53,7 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
         {/* Browse Deals */}
         <div>
           <h3 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/70 mb-3">Browse Deals</h3>
-          <ul className="space-y-2">
+          <ul className="space-y-1.5">
             <li><Link to="/deals/east-village" className={linkClass}>NYC</Link></li>
             <li><Link to="/deals/jersey-city" className={linkClass}>New Jersey</Link></li>
             <li><Link to="/deals/brickell" className={linkClass}>Miami</Link></li>
@@ -66,7 +66,7 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
         {/* Resources */}
         <div>
           <h3 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/70 mb-3">Resources</h3>
-          <ul className="space-y-2">
+          <ul className="space-y-1.5">
             <li><Link to="/rent-data" className={linkClass}>Rent Data</Link></li>
             <li><Link to="/guides" className={linkClass}>Guides</Link></li>
             <li><Link to="/methodology" className={linkClass}>Methodology</Link></li>
@@ -77,7 +77,7 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
         {/* Company */}
         <div>
           <h3 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/70 mb-3">Company</h3>
-          <ul className="space-y-2">
+          <ul className="space-y-1.5">
             <li><Link to="/privacy" className={linkClass}>Privacy</Link></li>
             <li><Link to="/terms" className={linkClass}>Terms</Link></li>
             <li>
