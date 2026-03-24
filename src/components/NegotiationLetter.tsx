@@ -84,7 +84,7 @@ function buildFallbackLetter(props: {
 
   if (isStrategic) {
     paragraphs.push(
-      `Thank you for the lease renewal notice. I appreciate the proposed terms — an increase of $${fmt(increaseAmt)}/month (${increasePct}%) ` +
+      `Thank you for the lease renewal notice. I appreciate the proposed terms. An increase of $${fmt(increaseAmt)}/month (${increasePct}%) ` +
       `from $${fmt(currentRent)} to $${fmt(newRent)}/month is reasonable, and I'm happy to continue living here. ` +
       `I'd like to discuss a couple of ideas that could benefit both of us as part of this renewal.`
     );
