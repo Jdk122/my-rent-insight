@@ -271,7 +271,7 @@ const Index = () => {
               onClick={() => {
                 document.getElementById('section-gate')?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap"
+              className="max-md:hidden bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20 whitespace-nowrap"
             >
               <span className="hidden sm:inline">Save my results →</span>
               <span className="sm:hidden">Save results →</span>
