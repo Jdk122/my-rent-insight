@@ -1351,9 +1351,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   >
                     <p className="text-base font-medium text-foreground leading-relaxed">
                       {isAboveMarket
-                        ? 'Your counteroffer is ready — scroll down for your negotiation letter.'
+                        ? 'Your counteroffer is ready. Scroll down for your negotiation letter.'
                         : isBelowMarket
-                        ? "Your rent is below market — but you can still negotiate for value. See your options below."
+                        ? "Your rent is below market, but you can still negotiate for value. See your options below."
                         : 'Renters who negotiate with data save an average of $1,200/year. Your letter is ready below.'}
                     </p>
                   </motion.div>
