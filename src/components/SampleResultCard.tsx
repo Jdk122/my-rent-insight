@@ -93,7 +93,7 @@ const SampleResultCard = () => (
           className="font-display text-[12px] font-semibold tracking-tight text-center -mt-1"
           style={{ letterSpacing: '-0.01em', color: 'hsl(var(--accent-amber))' }}
         >
-          Above Trend
+          Above Market
         </p>
       </div>
 
