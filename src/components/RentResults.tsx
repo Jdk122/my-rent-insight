@@ -879,7 +879,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <>Good news — <span className="text-verdict-good">your rent isn't going up.</span></>
                           )}
                         </h1>
-                        <p className="text-[14px] sm:text-base md:text-lg text-muted-foreground leading-relaxed">
+                        <p className="text-[13px] sm:text-base md:text-lg text-muted-foreground leading-relaxed">
                           {isAboveMarket && calc ? (
                             counterExceedsProposed
                               ? <>Based on market data, your proposed rent may be more reasonable than the increase rate suggests.</>
@@ -947,20 +947,17 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
               {/* Mobile proof cue — shows before gate on mobile */}
               {!capturedEmail && compsWithRent.length > 0 && (
-                <div className="md:hidden text-center mt-3 mb-1 w-full max-w-[540px]">
+                <div className="md:hidden text-center mt-2 mb-1 w-full max-w-[540px]">
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     <span className="font-medium text-foreground">{compsWithRent.length} matched comp{compsWithRent.length !== 1 ? 's' : ''}</span>
-                    {' '}and your{' '}
-                    <span className="font-medium text-foreground">negotiation letter</span>
-                    {' '}are ready.
+                    {' '}+ <span className="font-medium text-foreground">negotiation letter</span> ready
                   </p>
                 </div>
               )}
               {!capturedEmail && compsWithRent.length === 0 && (
-                <div className="md:hidden text-center mt-3 mb-1 w-full max-w-[540px]">
+                <div className="md:hidden text-center mt-2 mb-1 w-full max-w-[540px]">
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    Your <span className="font-medium text-foreground">market report</span> and{' '}
-                    <span className="font-medium text-foreground">negotiation letter</span> are ready.
+                    <span className="font-medium text-foreground">Market report</span> + <span className="font-medium text-foreground">negotiation letter</span> ready
                   </p>
                 </div>
               )}
@@ -1114,14 +1111,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
               {/* Mobile proof cue — no-increase path */}
               {!capturedEmail && (
-                <div className="md:hidden text-center mt-3 mb-1 w-full max-w-[400px]">
+                <div className="md:hidden text-center mt-2 mb-1 w-full max-w-[400px]">
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {compsWithRent.length > 0 ? (
                       <>
                         <span className="font-medium text-foreground">{compsWithRent.length} matched comp{compsWithRent.length !== 1 ? 's' : ''}</span>
-                        {' '}and your{' '}
-                        <span className="font-medium text-foreground">market report</span>
-                        {' '}are ready.
+                        {' '}+ <span className="font-medium text-foreground">market report</span> ready
                       </>
                     ) : (
                       <>Your <span className="font-medium text-foreground">market report</span> is ready.</>
