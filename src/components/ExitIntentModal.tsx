@@ -173,8 +173,8 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
     const isWsip = toolType === 'wsip';
     const url = isWsip ? 'https://www.renewalreply.com/what-should-i-pay' : 'https://www.renewalreply.com';
     const text = isWsip
-      ? 'Check if that apartment listing is fairly priced — most are $100-300/mo above market.'
-      : 'Check if your rent increase is fair — most renters overpay $50-150/mo.';
+      ? 'Check if that apartment listing is fairly priced. Most are $100-300/mo above market.'
+      : 'Check if your rent increase is fair. Most renters overpay $50-150/mo.';
     const subject = isWsip ? 'Is that apartment fairly priced?' : 'Is your rent increase fair?';
     if (method === 'text') {
       window.open(`sms:?body=${encodeURIComponent(text + ' ' + url)}`, '_blank');
