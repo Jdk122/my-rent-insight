@@ -1231,7 +1231,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     <span className="context-value">
                       {marketYoy > 0 ? '+' : ''}{marketYoy}%
                       {rentData.yoyCapped && <span className="context-sub"> (capped)</span>}
-                      <span className="context-sub"> ({compositeTrendResult.sourceCount >= 2 ? 'composite — ' + compositeTrendResult.sources.map(s => s.label).join(', ') : compositeTrendResult.primarySource})</span>
+                      <span className="context-sub"> ({compositeTrendResult.sourceCount >= 2 ? 'composite: ' + compositeTrendResult.sources.map(s => s.label).join(', ') : compositeTrendResult.primarySource})</span>
                     </span>
                   </div>
                   {rentData.zillowMonthly !== null && rentData.zillowDirection && (
