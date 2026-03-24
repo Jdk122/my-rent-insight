@@ -1007,6 +1007,22 @@ const WsipResults = ({
               />
             </section>
 
+            {/* ━━━ Deals cross-link ━━━ */}
+            {(() => {
+              const matchedCity = DEAL_CITIES.find(c => c.zips.includes(zip));
+              const dealsHref = matchedCity ? `/deals/${matchedCity.slug}` : '/deals';
+              const dealsLabel = matchedCity
+                ? `Browse below-market apartments in ${matchedCity.neighborhood || matchedCity.name} →`
+                : 'Browse below-market apartments near you →';
+              return (
+                <div className="text-center pb-4">
+                  <Link to={dealsHref} className="text-sm text-primary hover:underline font-medium">
+                    {dealsLabel}
+                  </Link>
+                </div>
+              );
+            })()}
+
             <p className="text-[11px] text-muted-foreground/60 text-center mb-2">
               See something that doesn't look right?{' '}
               <a href="mailto:james@renewalreply.com?subject=Data%20issue%20report&body=Address%3A%20%0AZip%3A%20%0AWhat%20looks%20wrong%3A%20" className="underline hover:text-muted-foreground transition-colors">
