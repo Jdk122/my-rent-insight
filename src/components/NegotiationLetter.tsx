@@ -233,10 +233,10 @@ function buildFallbackLetter(props: {
       const modestDiscount = Math.min(75, Math.round(increaseAmt * 0.4));
       const counterSuggestion = newRent - modestDiscount;
       paragraphs.push(
-        `As a long-term tenant with a strong payment history, I'd like to propose a renewal rate of $${fmt(counterSuggestion)}/month — ` +
-        `a modest adjustment of $${fmt(modestDiscount)}/month from the proposed rate. ` +
+        `As a long-term tenant with a strong payment history, I'd like to propose a renewal rate of $${fmt(counterSuggestion)}/month. ` +
+        `This is a modest adjustment of $${fmt(modestDiscount)}/month from the proposed rate. ` +
         `I believe this small renewal incentive reflects the value of tenant retention, ` +
-        `as turnover costs — vacancy, cleaning, re-listing, and showing — typically run several months of rent.`
+        `as turnover costs (vacancy, cleaning, re-listing, and showing) typically run several months of rent.`
       );
       paragraphs.push(`I truly value living here and hope we can find an arrangement that works well for both of us. I'm happy to discuss this at your convenience.`);
     } else {
