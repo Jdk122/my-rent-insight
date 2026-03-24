@@ -65,7 +65,7 @@ const Methodology = () => {
           <ul>
              <li>80–100: Good Deal</li>
              <li>60–79: At Market</li>
-             <li>40–59: Above Trend</li>
+             <li>40–59: Above Market</li>
              <li>20–39: Overpaying</li>
              <li>0–19: Overpaying</li>
           </ul>
