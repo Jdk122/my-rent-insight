@@ -928,7 +928,7 @@ const WsipResults = ({
                         {rcMarket.rcAvgDaysOnMarket !== null && (
                           <li className="flex gap-2">
                             <span className="text-primary font-bold shrink-0">•</span>
-                            Units sit for {Math.round(rcMarket.rcAvgDaysOnMarket)} days on average — the landlord has incentive to close quickly.
+                            Units sit for {Math.round(rcMarket.rcAvgDaysOnMarket)} days on average. The landlord has incentive to close quickly.
                           </li>
                         )}
                         <li className="flex gap-2">
