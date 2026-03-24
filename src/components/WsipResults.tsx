@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Copy, Check } from 'lucide-react';
 import { RentLookupResult, bedroomLabels, BedroomType } from '@/data/rentData';
+import { DEAL_CITIES } from '@/data/dealsCities';
 import { useRentcast } from '@/hooks/useRentcast';
 import { useRentcastMarket } from '@/hooks/useRentcastMarket';
 import { PropertyLookupResult } from '@/hooks/usePropertyLookup';
@@ -1006,6 +1007,22 @@ const WsipResults = ({
                 zip={zip}
               />
             </section>
+
+            {/* ━━━ Deals cross-link ━━━ */}
+            {(() => {
+              const matchedCity = DEAL_CITIES.find(c => c.zips.includes(zip));
+              const dealsHref = matchedCity ? `/deals/${matchedCity.slug}` : '/deals';
+              const dealsLabel = matchedCity
+                ? `Browse below-market apartments in ${matchedCity.neighborhood || matchedCity.name} →`
+                : 'Browse below-market apartments near you →';
+              return (
+                <div className="text-center pb-4">
+                  <Link to={dealsHref} className="text-sm text-primary hover:underline font-medium">
+                    {dealsLabel}
+                  </Link>
+                </div>
+              );
+            })()}
 
             <p className="text-[11px] text-muted-foreground/60 text-center mb-2">
               See something that doesn't look right?{' '}
