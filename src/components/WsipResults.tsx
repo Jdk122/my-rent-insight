@@ -520,9 +520,9 @@ const WsipResults = ({
               </motion.div>
             )}
 
-            {/* Rent control note (WSIP) — building-aware */}
+            {/* Rent control note — hidden on mobile (moved below gate) */}
             {rentControlCap && rentControlCap.maxIncreaseFormula && buildingEligibility !== 'ineligible' && (
-              <p className="text-xs text-muted-foreground mb-4 max-w-[480px]">
+              <p className="hidden md:block text-xs text-muted-foreground mb-4 max-w-[480px]">
                 Note: {rentControlCap.jurisdiction} has rent control regulations that may affect pricing
                 {buildingEligibility === 'eligible' ? ' for this building' : ' for eligible buildings in this area'}.
                 {buildingEligibility === 'unknown' && !propertyData && ' Enter a full address to check if this building qualifies.'}
