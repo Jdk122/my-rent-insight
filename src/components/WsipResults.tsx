@@ -441,7 +441,7 @@ const WsipResults = ({
           >
             {/* Verdict headline */}
             <h1
-              className="font-display text-[1.35rem] sm:text-[clamp(1.5rem,4.5vw,2.2rem)] text-foreground leading-[1.15] tracking-tight mb-3"
+              className="font-display text-[1.25rem] sm:text-[clamp(1.5rem,4.5vw,2.2rem)] text-foreground leading-[1.15] tracking-tight mb-2"
               style={{ letterSpacing: '-0.02em' }}
             >
               {verdictHeadline ? (
