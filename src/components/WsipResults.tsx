@@ -481,7 +481,7 @@ const WsipResults = ({
 
 
 
-            <p className="text-[14px] sm:text-base text-muted-foreground leading-relaxed max-w-[480px] mb-4">
+            <p className="text-[13px] sm:text-base text-muted-foreground leading-snug max-w-[480px] mb-2 md:mb-4">
               {verdictSubtitle ? (
                 verdictSubtitle
               ) : askingRent ? (
