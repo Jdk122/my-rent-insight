@@ -19,10 +19,10 @@ const BrowseDealsSection: React.FC = () => (
       className="font-display text-[22px] sm:text-[26px] text-foreground tracking-tight text-center mb-2"
       style={{ letterSpacing: '-0.02em' }}
     >
-      Apartments Priced Below Market
+      Curated Apartment Deals
     </h2>
     <p className="text-[15px] text-muted-foreground text-center max-w-[480px] mx-auto mb-6 leading-relaxed">
-      Scored against local comps. Updated daily.
+      Scored for price, quality, and location. Only the ones worth your time.
     </p>
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       {NEIGHBORHOODS.map(n => (
