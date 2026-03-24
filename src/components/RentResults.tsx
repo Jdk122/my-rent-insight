@@ -1014,7 +1014,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
               {/* ── Email gate (moved from Phase 2) ── */}
               {!capturedEmail && (
-                <>
                 <section id="section-gate" className="py-3 sm:py-8">
                   <ReportGate
                     toolType="renewal"
@@ -1040,8 +1039,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     increasePct={increasePct}
                   />
                 </section>
+              )}
 
-                {/* Blurred skeleton preview below gate */}
+              {/* Blurred skeleton preview below gate */}
+              {!capturedEmail && (
                 <div className="mt-4 w-full max-w-[540px] mx-auto relative order-[5] md:order-none" aria-hidden="true">
                   <div className="rounded-lg border border-border/60 bg-card p-4 space-y-3" style={{ filter: 'blur(5px)', userSelect: 'none', pointerEvents: 'none' }}>
                     <div className="flex justify-between items-center py-2 border-b border-border/40">
@@ -1072,7 +1073,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     </span>
                   </div>
                 </div>
-                </>
               )}
 
               <div className={`mt-4 flex flex-col items-center gap-2 ${!capturedEmail ? 'order-[6] md:order-none' : ''}`}>
