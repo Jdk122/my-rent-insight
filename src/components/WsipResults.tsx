@@ -509,7 +509,7 @@ const WsipResults = ({
                     : 'border-blue-400/60 bg-blue-50/50 dark:bg-blue-950/20'
                 }`}
               >
-                <p className="text-sm md:text-base font-medium text-foreground leading-relaxed">
+                <p className="text-xs md:text-base font-medium text-foreground leading-snug md:leading-relaxed">
                   {verdict === 'above'
                     ? 'This listing is priced above comparable units in the area. You have strong data to negotiate a lower price. Your market report is ready below.'
                     : verdict === 'below'
