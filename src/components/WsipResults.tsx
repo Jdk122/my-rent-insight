@@ -437,11 +437,11 @@ const WsipResults = ({
           <motion.section
             id="section-verdict"
             {...fade(0)}
-            className="min-h-0 md:min-h-[50vh] flex flex-col items-center justify-center text-center py-5 sm:py-12"
+            className="min-h-0 md:min-h-[50vh] flex flex-col items-center justify-center text-center py-4 sm:py-12"
           >
             {/* Verdict headline */}
             <h1
-              className="font-display text-[1.35rem] sm:text-[clamp(1.5rem,4.5vw,2.2rem)] text-foreground leading-[1.15] tracking-tight mb-3"
+              className="font-display text-[1.25rem] sm:text-[clamp(1.5rem,4.5vw,2.2rem)] text-foreground leading-[1.15] tracking-tight mb-2"
               style={{ letterSpacing: '-0.02em' }}
             >
               {verdictHeadline ? (
@@ -473,7 +473,7 @@ const WsipResults = ({
             )}
 
             {askingRent && savings !== null && savings > 0 && (
-              <p className="text-base sm:text-lg font-medium text-destructive mb-2">
+              <p className="text-sm sm:text-lg font-medium text-destructive mb-1">
                 ${fmt(savings)}/month above market
               </p>
             )}
@@ -481,7 +481,7 @@ const WsipResults = ({
 
 
 
-            <p className="text-[14px] sm:text-base text-muted-foreground leading-relaxed max-w-[480px] mb-4">
+            <p className="text-[13px] sm:text-base text-muted-foreground leading-snug max-w-[480px] mb-2 md:mb-4">
               {verdictSubtitle ? (
                 verdictSubtitle
               ) : askingRent ? (
@@ -501,7 +501,7 @@ const WsipResults = ({
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.18, duration: 0.4 }}
-                className={`mt-1 mb-2 md:mt-2 md:mb-4 w-full max-w-[480px] border-l-4 pl-4 py-2 rounded-r-md ${
+                className={`mt-0 mb-1 md:mt-2 md:mb-4 w-full max-w-[480px] border-l-4 pl-3 py-1.5 md:pl-4 md:py-2 rounded-r-md ${
                   verdict === 'above'
                     ? 'border-destructive/60 bg-destructive/5'
                     : verdict === 'below'
@@ -509,7 +509,7 @@ const WsipResults = ({
                     : 'border-blue-400/60 bg-blue-50/50 dark:bg-blue-950/20'
                 }`}
               >
-                <p className="text-sm md:text-base font-medium text-foreground leading-relaxed">
+                <p className="text-xs md:text-base font-medium text-foreground leading-snug md:leading-relaxed">
                   {verdict === 'above'
                     ? 'This listing is priced above comparable units in the area. You have strong data to negotiate a lower price. Your market report is ready below.'
                     : verdict === 'below'
@@ -531,7 +531,7 @@ const WsipResults = ({
 
             {/* Range bar */}
             <div className="w-full max-w-[480px] mb-3 md:mb-6">
-              <div className="relative h-8 rounded-full overflow-hidden bg-muted/50">
+              <div className="relative h-6 md:h-8 rounded-full overflow-hidden bg-muted/50">
                 <div className="absolute top-0 bottom-0 bg-verdict-good/15" style={{ left: 0, width: `${rangeLowPct}%` }} />
                 <div className="absolute top-0 bottom-0 bg-verdict-fair/20" style={{ left: `${rangeLowPct}%`, width: `${rangeHighPct - rangeLowPct}%` }} />
                 <div className="absolute top-0 bottom-0 bg-destructive/15" style={{ left: `${rangeHighPct}%`, right: 0 }} />
@@ -561,7 +561,7 @@ const WsipResults = ({
             {/* ── MOBILE: proof cue + gate BEFORE stat cards ── */}
             {!capturedEmail && (
               <div className="block md:hidden w-full">
-                <div className="text-center mt-4 mb-2">
+                <div className="text-center mt-2 mb-1">
                   <p className="text-xs text-muted-foreground">
                     {compsWithRent.length > 0
                       ? `Based on ${compsWithRent.length} nearby comps and current market data.`
