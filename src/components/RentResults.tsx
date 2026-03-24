@@ -896,10 +896,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             ) : isNuancedAtMarket || increasePct > marketYoy + 1.5 ? (
                               medianCompRent ? (
                                 capturedEmail
-                                  ? <>Your {increasePct}% increase is above the {marketYoy}% area trend — but at ${fmt(newRent)}/mo, you're {newRent <= medianCompRent ? `still below the $${fmt(medianCompRent)} local median` : `within range for ${brLabel} rentals in ${city}`}.</>
-                                  : <>Your {increasePct}% increase is above the {marketYoy}% area trend — but at ${fmt(newRent)}/mo, you're still within range for {brLabel} rentals in {city}.</>
+                                  ? <>Your {increasePct}% increase is above the {marketYoy}% area trend, but at ${fmt(newRent)}/mo you're {newRent <= medianCompRent ? `still below the $${fmt(medianCompRent)} local median` : `within range for ${brLabel} rentals in ${city}`}.</>
+                                  : <>Your {increasePct}% increase is above the {marketYoy}% area trend, but at ${fmt(newRent)}/mo you're still within range for {brLabel} rentals in {city}.</>
                               ) : (
-                                <>Your {increasePct}% increase is above the {marketYoy}% area trend — but at ${fmt(newRent)}/mo, you're still within the typical range for {brLabel} rentals in {city}.</>
+                                <>Your {increasePct}% increase is above the {marketYoy}% area trend, but at ${fmt(newRent)}/mo you're still within the typical range for {brLabel} rentals in {city}.</>
                               )
                             ) : (
                               <>At ${fmt(newRent)}/mo, your {increasePct}% increase tracks the {marketYoy}% area trend for {brLabel} rentals in {city}.</>
