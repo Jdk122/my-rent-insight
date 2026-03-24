@@ -118,8 +118,8 @@ function buildFallbackLetter(props: {
     const asks: string[] = [];
     if (marketYoy > 1) {
       asks.push(
-        `a 2-year lease at the current increase rate of ${increasePct}%, locking in before the market moves further — ` +
-        `this gives you guaranteed occupancy and saves the listing and turnover costs that typically run $3,000–$8,000+`
+        `a 2-year lease at the current increase rate of ${increasePct}%, locking in before the market moves further. ` +
+        `This gives you guaranteed occupancy and saves the listing and turnover costs that typically run $3,000–$8,000+`
       );
     }
     asks.push(
