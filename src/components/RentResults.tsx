@@ -970,7 +970,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
-                className={`mt-2 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 max-w-[540px] ${!capturedEmail ? 'order-[10] md:order-none' : ''}`}
+                className={`mt-2 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 max-w-[540px] ${!capturedEmail ? 'order-[4] md:order-none' : ''}`}
               >
                 {!capturedEmail && (
                   <p className="md:hidden col-span-2 text-[9px] font-semibold uppercase tracking-widest text-muted-foreground text-center mb-1">
