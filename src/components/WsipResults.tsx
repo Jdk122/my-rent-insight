@@ -561,7 +561,7 @@ const WsipResults = ({
             {/* ── MOBILE: proof cue + gate BEFORE stat cards ── */}
             {!capturedEmail && (
               <div className="block md:hidden w-full">
-                <div className="text-center mt-4 mb-2">
+                <div className="text-center mt-2 mb-1">
                   <p className="text-xs text-muted-foreground">
                     {compsWithRent.length > 0
                       ? `Based on ${compsWithRent.length} nearby comps and current market data.`
