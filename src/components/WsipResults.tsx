@@ -501,7 +501,7 @@ const WsipResults = ({
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.18, duration: 0.4 }}
-                className={`mt-1 mb-2 md:mt-2 md:mb-4 w-full max-w-[480px] border-l-4 pl-4 py-2 rounded-r-md ${
+                className={`mt-0 mb-1 md:mt-2 md:mb-4 w-full max-w-[480px] border-l-4 pl-3 py-1.5 md:pl-4 md:py-2 rounded-r-md ${
                   verdict === 'above'
                     ? 'border-destructive/60 bg-destructive/5'
                     : verdict === 'below'
