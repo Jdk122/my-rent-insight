@@ -19,6 +19,7 @@ const WsipFAQ = lazy(() => import('@/components/WsipFAQ'));
 const HowItWorks = lazy(() => import('@/components/HowItWorks'));
 const SEOFooter = lazy(() => import('@/components/SEOFooter'));
 const LocationSearch = lazy(() => import('@/components/LocationSearch'));
+const BrowseDealsSection = lazy(() => import('@/components/BrowseDealsSection'));
 
 const POPULAR_CITIES = [
   { city: 'New York', stateSlug: 'new-york', citySlug: 'new-york' },

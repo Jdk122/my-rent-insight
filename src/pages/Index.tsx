@@ -5,6 +5,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 
 import SampleResultCard from '@/components/SampleResultCard';
 const LocationSearch = lazy(() => import('@/components/LocationSearch'));
+const BrowseDealsSection = lazy(() => import('@/components/BrowseDealsSection'));
 
 const POPULAR_CITIES = [
   { city: 'New York', stateSlug: 'new-york', citySlug: 'new-york' },
