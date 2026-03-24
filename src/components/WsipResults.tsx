@@ -803,7 +803,7 @@ const WsipResults = ({
                     <div className={`context-row ${verdict === 'above' ? 'context-row-highlight' : 'context-row-odd'}`}>
                       <span className="context-label">Asking price</span>
                       <span className={`context-value ${verdict === 'above' ? 'text-destructive font-bold' : verdict === 'below' ? 'text-verdict-good font-bold' : ''}`}>
-                        ${fmt(askingRent)} — {bldg.hasBuildingData
+                        ${fmt(askingRent)} · {bldg.hasBuildingData
                           ? (askingRent <= bldg.buildingLow ? "below this building's range"
                             : askingRent <= bldg.buildingHigh ? "within this building's range"
                             : askingRent <= bldg.buildingHigh * 1.10 ? "slightly above this building's range"
