@@ -311,6 +311,15 @@ serve(async (req) => {
     const isDense = DENSE_ZIP_PREFIXES.includes(zipPrefix);
     params.set('maxRadius', isDense ? '1' : '3');
 
+    // ── Rate-limit check (only before actual API call, not cache hits) ──
+    const rateLimited = await checkAndIncrementRateLimit();
+    if (rateLimited) {
+      return new Response(
+        JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
     // ── Primary fetch with retry for transient failures ──────────────
     const apiUrl = `https://api.rentcast.io/v1/avm/rent/long-term?${params.toString()}`;
 
