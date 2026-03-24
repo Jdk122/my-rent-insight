@@ -251,7 +251,7 @@ function buildFallbackLetter(props: {
   }
 
   paragraphs.push(`Sincerely,\n\n`);
-  paragraphs.push(`Analysis by RenewalReply — renewalreply.com`);
+  paragraphs.push(`Analysis by RenewalReply · renewalreply.com`);
 
   return paragraphs.join('\n\n');
 }
