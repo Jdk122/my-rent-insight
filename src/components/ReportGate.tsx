@@ -353,12 +353,12 @@ const ReportGate = ({
   const copy = getGateCopy(toolType, verdict, verdictLabel, compsCount, monthlyOverpayment, monthlySavings, belowFmrHighIncrease, increasePct, marketYoy);
 
   return (
-    <div ref={gateRef} className="rounded-xl border border-primary/20 px-5 sm:px-8 py-7 sm:py-9 text-center" style={{ background: 'hsl(var(--primary) / 0.04)' }}>
+    <div ref={gateRef} className="rounded-xl border border-primary/20 px-5 sm:px-8 py-5 sm:py-9 text-center" style={{ background: 'hsl(var(--primary) / 0.04)' }}>
       {toolType === 'renewal' && <SocialProofCounter />}
-      <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-3" style={{ letterSpacing: '-0.015em' }}>
+      <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-2 sm:mb-3" style={{ letterSpacing: '-0.015em' }}>
         {copy.heading}
       </h2>
-      <div className="text-sm text-muted-foreground mb-6 max-w-[440px] mx-auto text-left space-y-1.5">
+      <div className="text-sm text-muted-foreground mb-4 sm:mb-6 max-w-[440px] mx-auto text-left space-y-1 sm:space-y-1.5">
         {[copy.bulletA, copy.bulletB, copy.bulletC].filter(Boolean).map((item, i) => (
           <div key={i} className="flex items-start gap-2">
             <span className="text-primary shrink-0 mt-0.5 font-semibold">✓</span>
@@ -366,33 +366,33 @@ const ReportGate = ({
           </div>
         ))}
       </div>
-      <p className="text-sm text-muted-foreground mb-4 -mt-3">
+      <p className="text-sm text-muted-foreground mb-3 sm:mb-4 -mt-2 sm:-mt-3">
         {copy.valueAnchor ?? 'See the market data behind your result.'}
       </p>
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-[480px] mx-auto">
+      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 sm:gap-3 max-w-[480px] mx-auto">
         <input
           type="email"
           placeholder="Your email"
           value={email}
           onChange={(e) => { setEmail(e.target.value); if (error) setError(''); }}
           autoComplete="email"
-          className={`w-full sm:flex-1 sm:min-w-0 h-12 sm:h-auto px-4 py-3.5 text-base sm:text-sm border rounded-lg bg-card text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 ${
+          className={`w-full sm:flex-1 sm:min-w-0 h-12 sm:h-auto px-4 py-3 sm:py-3.5 text-base sm:text-sm border rounded-lg bg-card text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 ${
             error ? 'border-destructive' : 'border-border focus:border-foreground'
           }`}
         />
         <button
           type="submit"
           disabled={loading}
-          className="w-full sm:w-auto bg-primary text-primary-foreground px-6 py-3.5 rounded-lg text-base sm:text-lg font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap shrink-0 disabled:opacity-60"
+          className="w-full sm:w-auto bg-primary text-primary-foreground px-6 py-3 sm:py-3.5 rounded-lg text-base sm:text-lg font-semibold hover:opacity-90 transition-opacity shadow-sm shadow-primary/20 whitespace-nowrap shrink-0 disabled:opacity-60"
         >
           {loading ? 'Unlocking…' : copy.cta}
         </button>
       </form>
       {error && <p className="text-xs text-destructive mt-1">{error}</p>}
-      <p className="text-sm text-muted-foreground mt-3 font-medium">
+      <p className="text-xs sm:text-sm text-muted-foreground mt-2 sm:mt-3 font-medium">
         Free · Instant delivery · Unsubscribe anytime
       </p>
-      <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
+      <p className="text-[10px] sm:text-[11px] text-muted-foreground/60 text-center mt-1 sm:mt-2">
         Unsubscribe anytime. See our{' '}
         <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
       </p>
