@@ -879,17 +879,17 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <>Good news — <span className="text-verdict-good">your rent isn't going up.</span></>
                           )}
                         </h1>
-                        <p className="text-[12px] sm:text-base md:text-lg text-muted-foreground leading-relaxed">
+                        <p className="text-[13px] sm:text-base md:text-lg text-muted-foreground leading-relaxed">
                           {isAboveMarket && calc ? (
                             counterExceedsProposed
                               ? <>Based on market data, your proposed rent may be more reasonable than the increase rate suggests.</>
                               : bldg.hasBuildingData && bldg.buildingComps.length >= 3 ? (
                                 capturedEmail
                                   ? <>Other units in your building rent for ${fmt(bldg.buildingLow)}{bldg.buildingLow !== bldg.buildingHigh ? `–$${fmt(bldg.buildingHigh)}` : ''}/month. At ${fmt(newRent)}/mo, your rent is {newRent > bldg.buildingHigh ? 'above' : 'at the top of'} this range.</>
-                                  : <>Comparable units near you are renting for less than your proposed renewal price.</>
+                                  : <>Comparable units near you rent for less than your proposed price.</>
                               ) : capturedEmail
-                                ? <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%. That's ${fmt(increaseAmount * 12)} more per year.</>
-                                : <>Rents near you moved {marketYoy}% but your landlord wants {increasePct}%.</>
+                                ? <>Rents moved {marketYoy}% — your landlord wants {increasePct}%. That's ${fmt(increaseAmount * 12)} more per year.</>
+                                : <>Rents moved {marketYoy}% — your landlord wants {increasePct}%.</>
                           ) : isFair ? (
                             isCompDeficient ? (
                               <>At ${fmt(newRent)}/mo with a {increasePct}% increase, your rate of increase tracks the {marketYoy}% area trend for {brLabel} rentals in {city}.</>
