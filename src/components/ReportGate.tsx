@@ -77,8 +77,8 @@ function getGateCopy(
 
       return {
         heading,
-        bulletA: 'See the comps showing your rent is already fair — and why the increase isn\'t',
-        bulletB: 'Get a landlord-ready letter that says yes to renewing — but no to the increase',
+        bulletA: 'See the comps showing your rent is already fair and why the increase isn\'t',
+        bulletB: 'Get a landlord-ready letter that says yes to renewing but no to the increase',
         bulletC: 'See available apartments nearby that could save you money',
         cta: 'Email me my negotiation plan →',
       };
