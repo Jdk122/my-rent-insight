@@ -319,7 +319,7 @@ const Deals = () => {
   return (
     <div className="min-h-screen bg-background font-body">
       <SEO
-        title={`Apartment Deals in ${displayName}, NYC — Scored Below Market`}
+        title={`Apartment Deals in ${displayName}, ${city.stateAbbr} — Scored Below Market`}
         description={`${deals.length || 'Top'} apartments in ${displayName} (${primaryZip}) scored below market rent. See how much you can save on 1BR, 2BR, and studio apartments. Updated daily.`}
         canonical={`/deals/${city.slug}`}
         jsonLd={jsonLd}
