@@ -472,6 +472,11 @@ const Index = () => {
                 <Link to="/rent-data" className="text-sm text-primary hover:underline font-medium">View all states →</Link>
               </div>
             </section>
+
+            {/* ━━━ Browse Apartment Deals ━━━ */}
+            <Suspense fallback={null}>
+              <BrowseDealsSection />
+            </Suspense>
         </Suspense>
       )}
 

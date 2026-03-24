@@ -369,6 +369,10 @@ const WhatShouldIPay = () => {
       )}
 
       <Suspense fallback={null}>
+        <BrowseDealsSection />
+      </Suspense>
+
+      <Suspense fallback={null}>
         <SEOFooter onContactClick={() => setContactOpen(true)} />
       </Suspense>
 
