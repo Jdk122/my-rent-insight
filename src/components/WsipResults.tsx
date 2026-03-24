@@ -766,7 +766,7 @@ const WsipResults = ({
                 <div className="evidence-card">
                   <h3 className="evidence-card-header">What the Market Says</h3>
                   <p className="text-xs text-muted-foreground mb-4">
-                    {city}, {rentData.state} — {brLabel}
+                    {city}, {rentData.state} · {brLabel}
                   </p>
 
                   <div className="context-row context-row-even">
