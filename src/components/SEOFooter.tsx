@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { DEAL_CITIES } from '@/data/dealsCities';
 
 const SocialIcon = ({ href, label, children }: { href: string; label: string; children: React.ReactNode }) => (
   <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="text-muted-foreground/50 hover:text-foreground transition-colors">
@@ -40,13 +41,39 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
       </div>
 
       {/* Link columns */}
-      <nav aria-label="Footer navigation" className="grid grid-cols-3 gap-x-6 sm:gap-x-8 gap-y-8 sm:max-w-xl sm:mx-auto">
+      <nav aria-label="Footer navigation" className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 sm:gap-x-8 gap-y-8 sm:max-w-3xl sm:mx-auto">
         {/* Tools */}
         <div>
           <h3 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/70 mb-3">Tools</h3>
           <ul className="space-y-2">
             <li><Link to="/" className={linkClass}>Check My Increase</Link></li>
             <li><Link to="/what-should-i-pay" className={linkClass}>Check Asking Price</Link></li>
+          </ul>
+        </div>
+
+        {/* Browse Deals */}
+        <div>
+          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-foreground/70 mb-3">Browse Deals</h3>
+          <ul className="space-y-2">
+            {[
+              { label: 'NYC', filter: 'NY' },
+              { label: 'NJ', filter: 'NJ' },
+              { label: 'Miami', filter: 'FL' },
+              { label: 'Chicago', filter: 'IL' },
+              { label: 'Austin', filter: 'TX' },
+              { label: 'San Francisco', filter: 'CA' },
+            ].map(group => (
+              <li key={group.filter}>
+                <span className="text-[11px] font-medium text-foreground/50">{group.label}</span>
+                <ul className="mt-0.5 space-y-0.5">
+                  {DEAL_CITIES.filter(c => c.stateAbbr === group.filter).map(city => (
+                    <li key={city.slug}>
+                      <Link to={`/deals/${city.slug}`} className={linkClass}>{city.neighborhood || city.name}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
           </ul>
         </div>
 

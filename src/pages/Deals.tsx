@@ -303,7 +303,7 @@ const Deals = () => {
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Deals', item: 'https://renewalreply.com/rent-data' },
-          { '@type': 'ListItem', position: 2, name: 'New York', item: 'https://renewalreply.com/rent-data/new-york' },
+          { '@type': 'ListItem', position: 2, name: city.stateAbbr, item: `https://renewalreply.com/rent-data/${city.state}` },
           { '@type': 'ListItem', position: 3, name: displayName },
         ],
       },
@@ -319,7 +319,7 @@ const Deals = () => {
   return (
     <div className="min-h-screen bg-background font-body">
       <SEO
-        title={`Apartment Deals in ${displayName}, NYC — Scored Below Market`}
+        title={`Apartment Deals in ${displayName}, ${city.stateAbbr} — Scored Below Market`}
         description={`${deals.length || 'Top'} apartments in ${displayName} (${primaryZip}) scored below market rent. See how much you can save on 1BR, 2BR, and studio apartments. Updated daily.`}
         canonical={`/deals/${city.slug}`}
         jsonLd={jsonLd}
@@ -355,7 +355,7 @@ const Deals = () => {
         <nav className="text-xs text-muted-foreground mb-3.5 flex items-center gap-1">
           <Link to="/rent-data" className="hover:text-foreground transition-colors">Deals</Link>
           <span className="opacity-30">/</span>
-          <Link to={`/rent-data/${city.state}`} className="hover:text-foreground transition-colors">New York</Link>
+          <Link to={`/rent-data/${city.state}`} className="hover:text-foreground transition-colors">{city.stateAbbr}</Link>
           <span className="opacity-30">/</span>
           <span className="text-muted-foreground/80">{displayName}</span>
         </nav>
