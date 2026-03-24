@@ -1112,14 +1112,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
               {/* Mobile proof cue — no-increase path */}
               {!capturedEmail && (
-                <div className="md:hidden text-center mt-3 mb-1 w-full max-w-[400px]">
+                <div className="md:hidden text-center mt-2 mb-1 w-full max-w-[400px]">
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {compsWithRent.length > 0 ? (
                       <>
                         <span className="font-medium text-foreground">{compsWithRent.length} matched comp{compsWithRent.length !== 1 ? 's' : ''}</span>
-                        {' '}and your{' '}
-                        <span className="font-medium text-foreground">market report</span>
-                        {' '}are ready.
+                        {' '}+ <span className="font-medium text-foreground">market report</span> ready
                       </>
                     ) : (
                       <>Your <span className="font-medium text-foreground">market report</span> is ready.</>
