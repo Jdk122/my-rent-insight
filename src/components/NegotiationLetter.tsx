@@ -109,7 +109,7 @@ function buildFallbackLetter(props: {
     const areaName = trendArea || city;
     const trendDir = marketYoy > 0.5 ? 'rising' : marketYoy < -0.5 ? 'declining' : 'stable';
     paragraphs.push(
-      `I've been a reliable tenant — on-time payments, care of the property, and plans to stay long-term. ` +
+      `I've been a reliable tenant with on-time payments, care of the property, and plans to stay long-term. ` +
       `Rents in ${areaName} have been ${trendDir} (${marketYoy > 0 ? '+' : ''}${marketYoy}% this year), ` +
       `which means guaranteed occupancy at your proposed rate protects us both from market uncertainty.`
     );
