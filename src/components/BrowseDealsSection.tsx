@@ -8,14 +8,12 @@ const CHIPS: { label: string; slug: string }[] = [
   { label: 'Lincoln Park', slug: 'lincoln-park' },
   { label: 'Mission District', slug: 'mission-district' },
   { label: 'Wicker Park', slug: 'wicker-park' },
-  { label: 'South Congress', slug: 'south-congress' },
-  { label: 'Astoria', slug: 'astoria' },
 ];
 
 const BrowseDealsSection: React.FC = () => (
-  <section className="max-w-[820px] mx-auto px-5 sm:px-6 pt-10 pb-14 sm:pb-16 border-t border-border/40 bg-primary/5 rounded-b-lg">
+  <section className="max-w-[820px] mx-auto px-5 sm:px-6 pt-5 pb-14 sm:pb-16">
     <h2
-      className="font-display text-[22px] sm:text-[26px] text-foreground tracking-tight text-center mb-2"
+      className="font-display text-[19px] sm:text-[22px] text-foreground tracking-tight text-center mb-2"
       style={{ letterSpacing: '-0.02em' }}
     >
       Browse Apartment Deals
