@@ -955,10 +955,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </div>
               )}
               {!capturedEmail && compsWithRent.length === 0 && (
-                <div className="md:hidden text-center mt-3 mb-1 w-full max-w-[540px]">
+                <div className="md:hidden text-center mt-2 mb-1 w-full max-w-[540px]">
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    Your <span className="font-medium text-foreground">market report</span> and{' '}
-                    <span className="font-medium text-foreground">negotiation letter</span> are ready.
+                    <span className="font-medium text-foreground">Market report</span> + <span className="font-medium text-foreground">negotiation letter</span> ready
                   </p>
                 </div>
               )}
