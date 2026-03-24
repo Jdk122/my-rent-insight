@@ -1265,7 +1265,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                           ? 'text-destructive'
                           : 'text-muted-foreground'
                       }`}>
-                        ${fmt(formData.currentRent)} — {
+                        ${fmt(formData.currentRent)} · {
                           formData.currentRent < calc.typicalRangeLow
                             ? 'below this range'
                             : formData.currentRent > calc.typicalRangeHigh
