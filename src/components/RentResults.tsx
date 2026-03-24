@@ -806,7 +806,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <div className="flex gap-2.5">
                               <Info className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
                               <p className="text-[11px] text-muted-foreground leading-relaxed">
-                                <span className="font-medium text-foreground">Your increase tracks the {marketYoy > 0 ? '+' : ''}{marketYoy}% area trend</span>, but your proposed rent of ${fmt(newRent)} is ${fmt(compOverpayment.dollarOver)}/mo above the median for similar {bedroomLabels[formData.bedrooms].toLowerCase()}s nearby (${fmt(medianCompRent!)} based on {compOverpayment.compCount} comparable listings). Your unit may justify a premium — but it's worth knowing where you stand.
+                                <span className="font-medium text-foreground">Your increase tracks the {marketYoy > 0 ? '+' : ''}{marketYoy}% area trend</span>, but your proposed rent of ${fmt(newRent)} is ${fmt(compOverpayment.dollarOver)}/mo above the median for similar {bedroomLabels[formData.bedrooms].toLowerCase()}s nearby (${fmt(medianCompRent!)} based on {compOverpayment.compCount} comparable listings). Your unit may justify a premium, but it's worth knowing where you stand.
                               </p>
                             </div>
                           </div>
