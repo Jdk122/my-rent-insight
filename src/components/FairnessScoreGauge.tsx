@@ -133,7 +133,7 @@ const FairnessScoreGauge = ({ score, dynamicMessage, componentSources, contextNo
           </motion.span>
           <span className="text-[11px] text-foreground/40 font-semibold mt-1">/ 100</span>
           <motion.span
-            className={`font-display text-[17px] font-semibold tracking-tight mt-2.5 ${score.tierColor}`}
+            className={`font-display text-[17px] font-semibold tracking-tight mt-2.5 max-md:hidden ${score.tierColor}`}
             style={{ letterSpacing: '-0.01em' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
