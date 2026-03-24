@@ -236,6 +236,128 @@ export type Database = {
         }
         Relationships: []
       }
+      deal_analyses: {
+        Row: {
+          address: string
+          baths: number | null
+          beds: number
+          city: string
+          components: Json | null
+          created_at: string | null
+          days_on_market: number | null
+          expires_at: string | null
+          fair_range: Json | null
+          has_leverage: boolean | null
+          id: string
+          is_rent_stabilized: boolean | null
+          is_suspicious: boolean | null
+          leverage_note: string | null
+          listing_url: string | null
+          median: number
+          rent: number
+          savings_pct: number | null
+          savings_per_month: number
+          score: number
+          score_version: string | null
+          short_id: string
+          sqft: number | null
+          state_abbr: string | null
+          trend_context: string | null
+          verdict: string
+          walk_score: number | null
+          zip: string | null
+        }
+        Insert: {
+          address: string
+          baths?: number | null
+          beds: number
+          city: string
+          components?: Json | null
+          created_at?: string | null
+          days_on_market?: number | null
+          expires_at?: string | null
+          fair_range?: Json | null
+          has_leverage?: boolean | null
+          id?: string
+          is_rent_stabilized?: boolean | null
+          is_suspicious?: boolean | null
+          leverage_note?: string | null
+          listing_url?: string | null
+          median: number
+          rent: number
+          savings_pct?: number | null
+          savings_per_month: number
+          score: number
+          score_version?: string | null
+          short_id: string
+          sqft?: number | null
+          state_abbr?: string | null
+          trend_context?: string | null
+          verdict: string
+          walk_score?: number | null
+          zip?: string | null
+        }
+        Update: {
+          address?: string
+          baths?: number | null
+          beds?: number
+          city?: string
+          components?: Json | null
+          created_at?: string | null
+          days_on_market?: number | null
+          expires_at?: string | null
+          fair_range?: Json | null
+          has_leverage?: boolean | null
+          id?: string
+          is_rent_stabilized?: boolean | null
+          is_suspicious?: boolean | null
+          leverage_note?: string | null
+          listing_url?: string | null
+          median?: number
+          rent?: number
+          savings_pct?: number | null
+          savings_per_month?: number
+          score?: number
+          score_version?: string | null
+          short_id?: string
+          sqft?: number | null
+          state_abbr?: string | null
+          trend_context?: string | null
+          verdict?: string
+          walk_score?: number | null
+          zip?: string | null
+        }
+        Relationships: []
+      }
+      deal_analysis_leads: {
+        Row: {
+          created_at: string | null
+          deal_analysis_id: string
+          email: string
+          id: string
+        }
+        Insert: {
+          created_at?: string | null
+          deal_analysis_id: string
+          email: string
+          id?: string
+        }
+        Update: {
+          created_at?: string | null
+          deal_analysis_id?: string
+          email?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_analysis_leads_deal_analysis_id_fkey"
+            columns: ["deal_analysis_id"]
+            isOneToOne: false
+            referencedRelation: "deal_analyses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dhcr_buildings: {
         Row: {
           bldg_no: string

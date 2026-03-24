@@ -253,6 +253,7 @@ const Deals = () => {
           rent: l.rent,
           daysOnMarket: l.daysOnMarket,
           ...result,
+          listingUrl: l.listingUrl || null,
           cleanBuilding: true, // TODO: integrate HPD violations data in v2
           issues: 0,
         } as DealListing;
@@ -338,6 +339,8 @@ const Deals = () => {
         <DealGateModal
           listing={selected}
           cityName={city.name}
+          cityStateAbbr={city.stateAbbr}
+          cityZip={primaryZip}
           onClose={() => setSelected(null)}
           onEmailCaptured={handleEmailCaptured}
           skipGate={!freeViewUsed || emailCaptured}
