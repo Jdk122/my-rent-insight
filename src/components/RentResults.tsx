@@ -879,7 +879,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <>Good news — <span className="text-verdict-good">your rent isn't going up.</span></>
                           )}
                         </h1>
-                        <p className="text-[13px] sm:text-base md:text-lg text-muted-foreground leading-relaxed">
+                        <p className="text-[12px] sm:text-base md:text-lg text-muted-foreground leading-relaxed">
                           {isAboveMarket && calc ? (
                             counterExceedsProposed
                               ? <>Based on market data, your proposed rent may be more reasonable than the increase rate suggests.</>
