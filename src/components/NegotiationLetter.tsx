@@ -134,7 +134,7 @@ function buildFallbackLetter(props: {
 
     if (compMedian && compCount && compCount > 0 && newRent <= compMedian) {
       paragraphs.push(
-        `For context, I've reviewed ${compCount} comparable listings nearby — the median asking rent is $${fmt(compMedian)}/month, ` +
+        `For context, I've reviewed ${compCount} comparable listings nearby. The median asking rent is $${fmt(compMedian)}/month, ` +
         `so I recognize the value of the rate you're offering.`
       );
     }
