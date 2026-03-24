@@ -941,9 +941,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       </div>
                     }
                   />
+                  </div>
                 );
               })()}
-              </div>
 
               {/* Mobile proof cue — shows before gate on mobile */}
               {!capturedEmail && compsWithRent.length > 0 && (
