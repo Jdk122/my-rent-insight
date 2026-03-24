@@ -178,7 +178,7 @@ const WsipResults = ({
       } else if (askingRent <= bHigh * 1.10) {
         v = 'in-range';
         headline = "Slightly above this building's range.";
-        subtitle = `Other ${unitDesc} here rent for $${fmt(bLow)} – $${fmt(bHigh)}. The asking price of $${fmt(askingRent)} is slightly above — worth negotiating.`;
+        subtitle = `Other ${unitDesc} here rent for $${fmt(bLow)} – $${fmt(bHigh)}. The asking price of $${fmt(askingRent)} is slightly above, making it worth negotiating.`;
       } else {
         v = 'above';
         headline = "That's overpriced.";
