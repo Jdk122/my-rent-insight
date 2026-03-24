@@ -568,7 +568,7 @@ const WsipResults = ({
                       : 'Based on local market data and rent trends.'}
                   </p>
                 </div>
-                <section id="section-gate" className="py-6">
+                <section id="section-gate" className="py-3">
                   <ReportGate
                     toolType="wsip"
                     compsCount={compsWithRent.length}
