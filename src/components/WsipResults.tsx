@@ -774,7 +774,7 @@ const WsipResults = ({
                     <span className="context-value">
                       {marketYoy > 0 ? '+' : ''}{marketYoy}%
                       <span className="context-sub"> ({compositeTrendResult.sourceCount >= 2
-                        ? 'composite — ' + compositeTrendResult.sources.map(s => s.label).join(', ')
+                        ? 'composite: ' + compositeTrendResult.sources.map(s => s.label).join(', ')
                         : compositeTrendResult.primarySource})</span>
                     </span>
                   </div>
