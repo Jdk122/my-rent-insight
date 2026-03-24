@@ -1307,7 +1307,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   </p>
                   {rentData.yoyReliability === 'government' && (
                     <p className="text-xs text-muted-foreground mt-1">
-                      HUD benchmark estimate — actual market trends may differ.
+                      HUD benchmark estimate. Actual market trends may differ.
                     </p>
                   )}
                   {rentData.yoySource === 'hud' && rentData.priorSource === 'm' && (
