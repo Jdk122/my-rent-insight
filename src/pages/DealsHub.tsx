@@ -21,7 +21,7 @@ const METRO_ORDER: { key: string; label: string; sub: string }[] = [
 ];
 
 const DealsHub: React.FC = () => {
-  usePrerenderReady();
+  usePrerenderReady(true);
 
   return (
     <div className="min-h-screen bg-background font-body flex flex-col">
