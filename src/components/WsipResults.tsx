@@ -558,8 +558,39 @@ const WsipResults = ({
               )}
             </div>
 
-            {/* Stat cards — always show all four */}
-            <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-[540px]">
+            {/* ── MOBILE: proof cue + gate BEFORE stat cards ── */}
+            {!capturedEmail && (
+              <div className="block md:hidden w-full">
+                <div className="text-center mt-4 mb-2">
+                  <p className="text-xs text-muted-foreground">
+                    {compsWithRent.length > 0
+                      ? `Based on ${compsWithRent.length} nearby comps and current market data.`
+                      : 'Based on local market data and rent trends.'}
+                  </p>
+                </div>
+                <section id="section-gate" className="py-6">
+                  <ReportGate
+                    toolType="wsip"
+                    compsCount={compsWithRent.length}
+                    verdictLabel={verdictLabel}
+                    isHighPain={isHighPain}
+                    leadContext={leadContext}
+                    analysisId={analysisId}
+                    zip={zip}
+                    city={city}
+                    onEmailCaptured={onEmailCaptured}
+                    prefilledEmail={capturedEmail}
+                    shareReportPayload={shareReportPayload}
+                    onReportGenerated={(url) => { setReportUrl(url); }}
+                    marketYoy={marketYoy}
+                    monthlySavings={savings}
+                  />
+                </section>
+              </div>
+            )}
+
+            {/* Stat cards — DESKTOP: show above gate. MOBILE: show below gate */}
+            <div className="hidden md:grid w-full grid-cols-4 gap-4 max-w-[540px]">
               <div className="text-center rounded-lg border border-border/80 bg-card px-2 sm:px-3 py-3 sm:py-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
                 <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">
                   {bldg.hasBuildingData ? 'Range' : 'Fair Range'}
@@ -600,13 +631,13 @@ const WsipResults = ({
               </div>
             </div>
 
-            {/* ── Comp teaser line ── */}
+            {/* ── Comp teaser line — DESKTOP only above gate ── */}
             {compsWithRent.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25, duration: 0.4 }}
-                className="mt-5 w-full max-w-[540px]"
+                className="hidden md:block mt-5 w-full max-w-[540px]"
               >
                 <span className="inline-block border border-border/60 rounded-full px-4 py-1.5 text-sm font-semibold text-foreground/70">
                   {bldg.hasBuildingData && bldg.buildingComps.length >= 2
@@ -617,11 +648,14 @@ const WsipResults = ({
               </motion.div>
             )}
 
-            <PreGateCompPreview compsWithRent={compsWithRent} capturedEmail={capturedEmail} fmt={fmt} />
+            {/* PreGateCompPreview — DESKTOP only above gate */}
+            <div className="hidden md:block">
+              <PreGateCompPreview compsWithRent={compsWithRent} capturedEmail={capturedEmail} fmt={fmt} />
+            </div>
 
-            {/* ── Email gate (moved from Phase 2) ── */}
+            {/* ── Email gate — DESKTOP position (after comp preview) ── */}
             {!capturedEmail && (
-              <section id="section-gate" className="py-8">
+              <section id="section-gate-desktop" className="py-8 hidden md:block">
                 <ReportGate
                   toolType="wsip"
                   compsCount={compsWithRent.length}
@@ -641,8 +675,75 @@ const WsipResults = ({
               </section>
             )}
 
-            <div className="mt-4 flex flex-col items-center gap-2">
-              <button onClick={onReset} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+            {/* ── MOBILE: stat cards + comp teaser + preview BELOW gate ── */}
+            <div className="block md:hidden w-full">
+              <div className="w-full grid grid-cols-2 gap-3 max-w-[540px] mt-4">
+                <div className="text-center rounded-lg border border-border/80 bg-card px-2 py-3" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">
+                    {bldg.hasBuildingData ? 'Range' : 'Fair Range'}
+                  </p>
+                  {bldg.hasBuildingData ? (
+                    <div>
+                      <p className="font-display text-[16px] tracking-tight text-foreground tabular-nums" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
+                        ${fmt(bldg.buildingLow)}–${fmt(bldg.buildingHigh)}
+                      </p>
+                      <p className="text-[9px] text-muted-foreground/60 mt-1">This building</p>
+                      <p className="text-[10px] text-muted-foreground/50 mt-0.5">
+                        Area: ${fmt(fairRangeLow)}–${fmt(fairRangeHigh)}
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="font-display text-[16px] tracking-tight text-foreground tabular-nums" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
+                      ${fmt(fairRangeLow)}–${fmt(fairRangeHigh)}
+                    </p>
+                  )}
+                </div>
+                <div className="text-center rounded-lg border border-border/80 bg-card px-2 py-3" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Area Trend</p>
+                  <p className={`font-display text-[16px] tracking-tight tabular-nums ${marketYoy > 0 ? 'text-destructive' : marketYoy < 0 ? 'text-verdict-good' : 'text-foreground'}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
+                    {marketYoy > 0 ? '+' : ''}{marketYoy}%
+                  </p>
+                </div>
+                <div className="text-center rounded-lg border border-border/80 bg-card px-2 py-3" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Vacancy Rate</p>
+                  <p className="font-display text-[16px] tracking-tight text-foreground tabular-nums" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
+                    {rentData.alVacancy !== null ? `${rentData.alVacancy.toFixed(1)}%` : '—'}
+                  </p>
+                </div>
+                <div className="text-center rounded-lg border border-border/80 bg-card px-2 py-3" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Days on Market</p>
+                  <p className="font-display text-[16px] tracking-tight text-foreground tabular-nums" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
+                    {rcMarket.rcAvgDaysOnMarket !== null ? Math.round(rcMarket.rcAvgDaysOnMarket) : '—'}
+                  </p>
+                </div>
+              </div>
+
+              {compsWithRent.length > 0 && (
+                <div className="mt-4 w-full max-w-[540px]">
+                  <span className="inline-block border border-border/60 rounded-full px-4 py-1.5 text-sm font-semibold text-foreground/70">
+                    {bldg.hasBuildingData && bldg.buildingComps.length >= 2
+                      ? `We found ${compsWithRent.length} comps near you, including ${bldg.buildingComps.length} in your building.`
+                      : `We found ${compsWithRent.length} comps near you.`
+                    }
+                  </span>
+                </div>
+              )}
+
+              <PreGateCompPreview compsWithRent={compsWithRent} capturedEmail={capturedEmail} fmt={fmt} />
+
+              {/* Rent control note — mobile position (below gate) */}
+              {rentControlCap && rentControlCap.maxIncreaseFormula && buildingEligibility !== 'ineligible' && (
+                <p className="text-xs text-muted-foreground mt-4 max-w-[480px]">
+                  Note: {rentControlCap.jurisdiction} has rent control regulations that may affect pricing
+                  {buildingEligibility === 'eligible' ? ' for this building' : ' for eligible buildings in this area'}.
+                  {buildingEligibility === 'unknown' && !propertyData && ' Enter a full address to check if this building qualifies.'}
+                </p>
+              )}
+            </div>
+
+            <div className="mt-4 md:mt-4 flex flex-col items-center gap-2">
+              <div className="block md:hidden h-6" aria-hidden />
+              <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
                 ← Check a different address
               </button>
             </div>
