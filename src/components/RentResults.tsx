@@ -1073,8 +1073,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </section>
               )}
 
-              <div className="mt-4 flex flex-col items-center gap-2">
-                <button onClick={onReset} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+              <div className={`mt-4 flex flex-col items-center gap-2 ${!capturedEmail ? 'order-[11] md:order-none' : ''}`}>
+                <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
                   ← Check a different address
                 </button>
               </div>
