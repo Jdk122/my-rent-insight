@@ -358,7 +358,7 @@ const ReportGate = ({
       <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-2 sm:mb-3" style={{ letterSpacing: '-0.015em' }}>
         {copy.heading}
       </h2>
-      <div className="text-sm text-muted-foreground mb-4 sm:mb-6 max-w-[440px] mx-auto text-left space-y-1 sm:space-y-1.5">
+      <div className="text-sm text-muted-foreground mb-4 sm:mb-6 max-w-[440px] mx-auto text-left space-y-0.5 sm:space-y-1.5">
         {[copy.bulletA, copy.bulletB, copy.bulletC].filter(Boolean).map((item, i) => (
           <div key={i} className="flex items-start gap-2">
             <span className="text-primary shrink-0 mt-0.5 font-semibold">✓</span>

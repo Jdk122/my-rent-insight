@@ -324,7 +324,7 @@ function getTier(total: number): Pick<FairnessScoreResult, 'tier' | 'tierLabel' 
     tierMessage: 'Your increase is within a reasonable range for your area.',
   };
   if (total >= 40) return {
-    tier: 'moderate', tierLabel: 'Above Trend', tierColor: 'text-accent-amber',
+    tier: 'moderate', tierLabel: 'Above Market', tierColor: 'text-accent-amber',
     tierColorHsl: '38 85% 36%',
     tierMessage: 'Your increase is on the high side. You may have room to negotiate.',
   };
