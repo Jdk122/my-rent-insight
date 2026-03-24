@@ -473,7 +473,7 @@ const WsipResults = ({
             )}
 
             {askingRent && savings !== null && savings > 0 && (
-              <p className="text-base sm:text-lg font-medium text-destructive mb-2">
+              <p className="text-sm sm:text-lg font-medium text-destructive mb-1">
                 ${fmt(savings)}/month above market
               </p>
             )}
