@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
@@ -15,6 +16,8 @@ import { Progress } from '@/components/ui/progress';
 interface DealGateModalProps {
   listing: DealListing;
   cityName: string;
+  cityStateAbbr?: string;
+  cityZip?: string;
   onClose: () => void;
   onEmailCaptured: (email: string) => void;
   skipGate?: boolean;
@@ -30,11 +33,13 @@ const COMPONENT_LABELS = [
   { key: 'momentum' as const, label: 'Market Direction' },
 ];
 
-const DealGateModal = ({ listing, cityName, onClose, onEmailCaptured, skipGate, onAnalysisViewed }: DealGateModalProps) => {
+const DealGateModal = ({ listing, cityName, cityStateAbbr, cityZip, onClose, onEmailCaptured, skipGate, onAnalysisViewed }: DealGateModalProps) => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [analysisShortId, setAnalysisShortId] = useState<string | null>(null);
   const beds = listing.beds === 0 ? 'Studio' : `${listing.beds}BR`;
 
   useEffect(() => {
@@ -57,13 +62,56 @@ const DealGateModal = ({ listing, cityName, onClose, onEmailCaptured, skipGate, 
 
     const utm = getUtmParams();
 
+    // 1. Call create-deal-analysis Edge Function
+    let analysisUrl: string | null = null;
+    try {
+      const { data: analysisData, error: analysisError } = await supabase.functions.invoke('create-deal-analysis', {
+        body: {
+          email: trimmed,
+          address: listing.address,
+          city: cityName,
+          stateAbbr: cityStateAbbr || null,
+          zip: cityZip || null,
+          beds: listing.beds,
+          baths: listing.baths,
+          sqft: listing.sqft,
+          rent: listing.rent,
+          daysOnMarket: listing.daysOnMarket,
+          listingUrl: listing.listingUrl,
+          score: listing.score,
+          verdict: listing.verdict,
+          savingsPerMonth: listing.savingsPerMonth,
+          savingsPct: listing.savingsPct,
+          median: listing.median,
+          isSuspicious: listing.isSuspicious,
+          hasLeverage: listing.hasLeverage,
+          leverageNote: listing.leverageNote,
+          trendContext: listing.trendContext,
+          walkScore: listing.walkScore,
+          isRentStabilized: listing.isRentStabilized,
+          components: listing.components,
+          fairRange: listing.fairRange,
+        },
+      });
+
+      if (!analysisError && analysisData?.shortId) {
+        setAnalysisShortId(analysisData.shortId);
+        analysisUrl = analysisData.analysisUrl;
+      } else {
+        console.error('[deals] create-deal-analysis failed:', analysisError);
+      }
+    } catch (err) {
+      console.error('[deals] create-deal-analysis failed:', err);
+    }
+
+    // 2. Keep existing upsert_lead for CRM
     try {
       const leadParams = {
         p_email: trimmed,
         p_capture_source: 'deals_gate',
         p_address: listing.address,
         p_city: cityName,
-        p_zip: null as string | null,
+        p_zip: cityZip || null,
         p_bedrooms: listing.beds,
         p_current_rent: listing.rent,
         p_fairness_score: listing.score,
@@ -106,6 +154,7 @@ const DealGateModal = ({ listing, cityName, onClose, onEmailCaptured, skipGate, 
         bedrooms: listing.beds,
         toolType: 'wsip',
         verdictLabel: listing.verdict === 'great' ? 'Great Deal' : 'Good Deal',
+        analysisUrl: analysisUrl || undefined,
       });
       await notifySubmission({
         email: trimmed,
@@ -114,8 +163,8 @@ const DealGateModal = ({ listing, cityName, onClose, onEmailCaptured, skipGate, 
         current_rent: listing.rent,
         fairness_score: listing.score,
         verdict_label: listing.verdict === 'great' ? 'Great Deal' : 'Good Deal',
-        zip: null,
-        state: null,
+        zip: cityZip || null,
+        state: cityStateAbbr || null,
         bedrooms: listing.beds,
         proposed_rent: null,
         increase_pct: null,
@@ -125,6 +174,8 @@ const DealGateModal = ({ listing, cityName, onClose, onEmailCaptured, skipGate, 
       }, 'deals_gate_submit');
     })();
   };
+
+  const listingHref = listing.listingUrl || zillowUrl(listing.address);
 
   return (
     <div
@@ -273,14 +324,37 @@ const DealGateModal = ({ listing, cityName, onClose, onEmailCaptured, skipGate, 
               )}
             </div>
 
-            <a
-              href={zillowUrl(listing.address)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block w-full py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-bold text-center hover:brightness-90 transition-all"
-            >
-              View on Zillow →
-            </a>
+            {/* Two CTAs: View full analysis + View on listing site */}
+            {analysisShortId ? (
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={() => {
+                    onClose();
+                    navigate(`/deals/analysis/${analysisShortId}`);
+                  }}
+                  className="block w-full py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-bold text-center hover:brightness-90 transition-all"
+                >
+                  View full analysis →
+                </button>
+                <a
+                  href={listingHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full py-2.5 rounded-lg border-[1.5px] border-primary text-primary text-sm font-bold text-center hover:bg-primary/5 transition-colors"
+                >
+                  View listing →
+                </a>
+              </div>
+            ) : (
+              <a
+                href={listingHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-bold text-center hover:brightness-90 transition-all"
+              >
+                View listing →
+              </a>
+            )}
             {submitted ? (
               <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
                 Full report sent to your email.
