@@ -1480,7 +1480,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 )}
                 {isBelowMarket && (
                   <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">
-                    Your landlord is offering below-market terms — that's leverage. Here's how to lock in this rate or negotiate extras like a longer lease, a unit upgrade, or a repair you've been waiting on.
+                    Your landlord is offering below-market terms. That's leverage. Here's how to lock in this rate or negotiate extras like a longer lease, a unit upgrade, or a repair you've been waiting on.
                   </p>
                 )}
                 <NegotiationLetter
