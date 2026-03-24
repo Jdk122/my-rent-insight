@@ -1216,7 +1216,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 <motion.div {...fade(0.08)} className="evidence-card">
                   <h3 className="evidence-card-header">What the Market Says</h3>
                   <p className="text-xs text-muted-foreground mb-4">
-                    {city}, {rentData.state} — {bedroomLabels[formData.bedrooms]}
+                    {city}, {rentData.state} · {bedroomLabels[formData.bedrooms]}
                     {rentcast.data?.propertyType && <> · {rentcast.data.propertyType}</>}
                   </p>
                   {utilityNote && (
