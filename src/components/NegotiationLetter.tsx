@@ -346,7 +346,7 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
     } catch (e) {
       console.error('AI letter generation failed:', e);
       setError(true);
-      toast.error('Letter generation failed — showing template version.');
+      toast.error('Letter generation failed. Showing template version.');
     } finally {
       setLoading(false);
     }
