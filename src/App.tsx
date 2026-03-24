@@ -29,6 +29,7 @@ const Guides = lazy(() => import("./pages/Guides"));
 const Guide = lazy(() => import("./pages/Guide"));
 const DemoIndex = lazy(() => import("./pages/DemoIndex"));
 const Deals = lazy(() => import("./pages/Deals"));
+const DealsHub = lazy(() => import("./pages/DealsHub"));
 const DealAnalysis = lazy(() => import("./pages/DealAnalysis"));
 
 const queryClient = new QueryClient();
