@@ -947,12 +947,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
               {/* Mobile proof cue — shows before gate on mobile */}
               {!capturedEmail && compsWithRent.length > 0 && (
-                <div className="md:hidden text-center mt-3 mb-1 w-full max-w-[540px]">
+                <div className="md:hidden text-center mt-2 mb-1 w-full max-w-[540px]">
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     <span className="font-medium text-foreground">{compsWithRent.length} matched comp{compsWithRent.length !== 1 ? 's' : ''}</span>
-                    {' '}and your{' '}
-                    <span className="font-medium text-foreground">negotiation letter</span>
-                    {' '}are ready.
+                    {' '}+ <span className="font-medium text-foreground">negotiation letter</span> ready
                   </p>
                 </div>
               )}
