@@ -131,7 +131,7 @@ function getGateCopy(
         };
       default: // 'none' or fallback
         return {
-          heading: 'Your rent isn\'t going up — do you know what you\'d pay if you moved?',
+          heading: 'Your rent isn\'t going up. Do you know what you\'d pay if you moved?',
           bulletA: compsCount > 0 ? `See how your current rent stacks up against ${compsCount} nearby listings` : 'See how your current rent stacks up against nearby listings',
           bulletB: 'A market snapshot to keep in your back pocket for next year\'s renewal',
           bulletC: 'Browse available apartments in your area',
