@@ -439,7 +439,7 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
 
       {/* Legal disclaimer */}
       <p className="text-[11px] text-muted-foreground/70 mt-4 leading-relaxed max-w-[540px]">
-        This letter is generated using AI and public housing data — not legal advice. Review and customize before sending. Rent regulations vary by location and lease terms.{' '}
+        This letter is generated using AI and public housing data. This is not legal advice. Review and customize before sending. Rent regulations vary by location and lease terms.{' '}
         <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>
       </p>
     </div>
