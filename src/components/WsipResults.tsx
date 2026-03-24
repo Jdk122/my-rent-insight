@@ -904,7 +904,7 @@ const WsipResults = ({
                         {bldg.hasBuildingData && askingRent > bldg.buildingHigh && (
                           <li className="flex gap-2">
                             <span className="text-primary font-bold shrink-0">•</span>
-                            The highest similar unit in this building rents for ${fmt(bldg.buildingHigh)} — the asking price of ${fmt(askingRent)} is ${fmt(askingRent - bldg.buildingHigh)} above this.
+                            The highest similar unit in this building rents for ${fmt(bldg.buildingHigh)}. The asking price of ${fmt(askingRent)} is ${fmt(askingRent - bldg.buildingHigh)} above this.
                           </li>
                         )}
                         {bldg.hasBuildingData && (
