@@ -353,7 +353,7 @@ const WsipResults = ({
     const compCount = compsWithRent.length;
     const bedroomDesc = bedroomNum === 0 ? 'studio' : `${bedroomNum}-bedroom`;
     const lines = [
-      `Subject: Inquiry About ${addr} — ${brLabel} Listing\n`,
+      `Subject: Inquiry About ${addr} · ${brLabel} Listing\n`,
       `Hi,\n`,
       `I'm interested in ${addr} and have been researching comparable units in the area. Based on ${compCount} similar ${bedroomDesc} listings nearby, the typical range is $${fmt(fairRangeLow)}–$${fmt(fairRangeHigh)} per month.`,
     ];
