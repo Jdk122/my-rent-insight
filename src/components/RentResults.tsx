@@ -730,7 +730,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           <motion.section
             id="section-verdict"
             {...fade(0)}
-            className="min-h-[30vh] sm:min-h-[50vh] flex flex-col items-center justify-center text-center py-6 sm:py-12"
+            className="min-h-0 sm:min-h-[50vh] flex flex-col items-center justify-center text-center py-4 sm:py-12"
           >
           {hasIncrease && !asyncDataReady ? (
               <div className="flex flex-col items-center gap-4">
@@ -772,6 +772,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 }
 
                 return (
+                  <div className={!capturedEmail ? '[&_[data-score-details]]:max-md:hidden' : ''}>
                   <FairnessScoreGauge
                     topNote={isBelowFmrHighIncrease ? (
                       <div className="rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900/50 dark:bg-blue-950/20 p-3">
@@ -940,17 +941,42 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       </div>
                     }
                   />
+                  </div>
                 );
               })()}
 
+              {/* Mobile proof cue — shows before gate on mobile */}
+              {!capturedEmail && compsWithRent.length > 0 && (
+                <div className="md:hidden text-center mt-3 mb-1 w-full max-w-[540px]">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    <span className="font-medium text-foreground">{compsWithRent.length} matched comp{compsWithRent.length !== 1 ? 's' : ''}</span>
+                    {' '}and your{' '}
+                    <span className="font-medium text-foreground">negotiation letter</span>
+                    {' '}are ready.
+                  </p>
+                </div>
+              )}
+              {!capturedEmail && compsWithRent.length === 0 && (
+                <div className="md:hidden text-center mt-3 mb-1 w-full max-w-[540px]">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Your <span className="font-medium text-foreground">market report</span> and{' '}
+                    <span className="font-medium text-foreground">negotiation letter</span> are ready.
+                  </p>
+                </div>
+              )}
 
               {/* ── Stat dashboard strip ── */}
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
-                className="mt-2 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 max-w-[540px]"
+                className={`mt-2 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 max-w-[540px] ${!capturedEmail ? 'order-[10] md:order-none' : ''}`}
               >
+                {!capturedEmail && (
+                  <p className="md:hidden col-span-2 text-[9px] font-semibold uppercase tracking-widest text-muted-foreground text-center mb-1">
+                    Your full report
+                  </p>
+                )}
                 {(() => {
                   const increaseIsHighGap = increasePct > marketYoy * 2 && increasePct > 0 && marketYoy > 0;
                   return [
@@ -974,29 +1000,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 ))}
               </motion.div>
 
-              {/* ── Above-fold CTA button ── */}
-              {!capturedEmail && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.1, duration: 0.4 }}
-                  className="mt-4 w-full max-w-[540px] mx-auto md:hidden"
-                >
-                  <button
-                    onClick={() => {
-                      trackEvent('results_cta_clicked', {
-                        verdict_type: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
-                        has_same_building_comps: bldg.hasBuildingData,
-                        analysis_version: 'gated_results_v1',
-                      });
-                      document.getElementById('section-gate')?.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    className="w-full bg-primary text-primary-foreground py-3 px-6 rounded-lg text-[15px] font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
-                  >
-                    {isAboveMarket ? 'Unlock my comps + counter-offer →' : isFair ? 'See my full report →' : increasePct > 0 ? 'See how you compare →' : 'See my market report →'}
-                  </button>
-                </motion.div>
-              )}
+
+
 
               {capturedEmail && compsWithRent.length > 0 && (
                 <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
@@ -1009,7 +1014,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
               {/* ── Email gate (moved from Phase 2) ── */}
               {!capturedEmail && (
-                <section id="section-gate" className="py-8">
+                <section id="section-gate" className="py-3 sm:py-8">
                   <ReportGate
                     toolType="renewal"
                     compsCount={compsWithRent.length}
@@ -1068,8 +1073,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </section>
               )}
 
-              <div className="mt-4 flex flex-col items-center gap-2">
-                <button onClick={onReset} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+              <div className={`mt-4 flex flex-col items-center gap-2 ${!capturedEmail ? 'order-[11] md:order-none' : ''}`}>
+                <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
                   ← Check a different address
                 </button>
               </div>
@@ -1083,7 +1088,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 Here's how your current rent of <strong className="text-foreground">${fmt(formData.currentRent)}/mo</strong> compares to what similar {brLabel} apartments are going for in {city}.
               </p>
 
-              <div className="mt-6 w-full grid grid-cols-2 gap-3 max-w-[400px]">
+              <div className={`mt-6 w-full grid grid-cols-2 gap-3 max-w-[400px] ${!capturedEmail ? 'order-[10] md:order-none' : ''}`}>
                 <div className="text-center rounded-lg border border-border/80 bg-card px-3 py-3" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your Rent</p>
                   <p className="font-display text-[22px] sm:text-[26px] tracking-tight text-foreground" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>${fmt(formData.currentRent)}</p>
@@ -1096,7 +1101,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </div>
               </div>
 
-              <p className="text-[13px] text-muted-foreground/70 mt-4 max-w-[440px] leading-relaxed">
+              <p className={`text-[13px] text-muted-foreground/70 mt-4 max-w-[440px] leading-relaxed ${!capturedEmail ? 'order-[10] md:order-none' : ''}`}>
                 {marketYoy > 3
                   ? `Rents in ${city} went up ${marketYoy}% this year — staying flat is a win. Scroll down to see the full market data.`
                   : marketYoy > 0
@@ -1104,6 +1109,24 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   : `Rents in ${city} are ${marketYoy < 0 ? `down ${Math.abs(marketYoy)}%` : 'flat'} this year. Your rent is holding steady with the market.`
                 }
               </p>
+
+              {/* Mobile proof cue — no-increase path */}
+              {!capturedEmail && (
+                <div className="md:hidden text-center mt-3 mb-1 w-full max-w-[400px]">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {compsWithRent.length > 0 ? (
+                      <>
+                        <span className="font-medium text-foreground">{compsWithRent.length} matched comp{compsWithRent.length !== 1 ? 's' : ''}</span>
+                        {' '}and your{' '}
+                        <span className="font-medium text-foreground">market report</span>
+                        {' '}are ready.
+                      </>
+                    ) : (
+                      <>Your <span className="font-medium text-foreground">market report</span> is ready.</>
+                    )}
+                  </p>
+                </div>
+              )}
 
               {capturedEmail && compsWithRent.length > 0 && (
                 <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
@@ -1168,8 +1191,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </section>
               )}
 
-              <div className="mt-4 flex flex-col items-center gap-2">
-                <button onClick={onReset} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+              <div className={`mt-4 flex flex-col items-center gap-2 ${!capturedEmail ? 'order-[11] md:order-none' : ''}`}>
+                <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
                   ← Check a different address
                 </button>
               </div>
