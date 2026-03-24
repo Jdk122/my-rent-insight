@@ -1014,6 +1014,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
               {/* ── Email gate (moved from Phase 2) ── */}
               {!capturedEmail && (
+                <>
                 <section id="section-gate" className="py-3 sm:py-8">
                   <ReportGate
                     toolType="renewal"
@@ -1071,6 +1072,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     </span>
                   </div>
                 </div>
+                </>
               )}
 
               <div className={`mt-4 flex flex-col items-center gap-2 ${!capturedEmail ? 'order-[6] md:order-none' : ''}`}>
