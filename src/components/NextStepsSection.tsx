@@ -362,7 +362,7 @@ const NextStepsSection = ({
                 { label: 'Quote turnaround', value: 'Often same day' },
               ]}
               actionLabel="Compare Movers"
-              actionHref="https://www.moving.com/movers/"
+              actionHref="https://www.hireahelper.com/?affil=32303039"
               onAction={() => { trackEvent('referral_clicked', { partner: 'moving' }); logReferralClick('moving_quotes'); }}
               delay={0.28}
             />
