@@ -50,7 +50,7 @@ const PartnerCTA = ({
           impressionFired.current = true;
 
           trackEvent('affiliate_impression', {
-            link_type: config.linkType,
+            link_type: linkType,
             verdict,
             tool_used: toolUsed,
             city,
