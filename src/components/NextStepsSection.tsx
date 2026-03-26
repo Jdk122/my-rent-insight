@@ -229,13 +229,32 @@ const NextStepsSection = ({
     } as any).then(() => {});
   }, [analysisId, capturedEmail, zip]);
 
+  // Don't render if no email captured
+  if (!capturedEmail) return null;
+
+  // Don't render empty states — only render when we have listings to show (or are loading)
+  if (!listingsLoading) {
+    const compSet = new Set(
+      (compAddresses ?? [])
+        .filter(Boolean)
+        .map(a => a.toLowerCase().replace(/\s+/g, ' ').trim())
+    );
+    const dedupedListings = (listings ?? []).filter(
+      l => !!l.formattedAddress && !compSet.has(l.formattedAddress.toLowerCase().replace(/\s+/g, ' ').trim())
+    );
+    const filteredListings = isAboveMarket
+      ? dedupedListings.filter(l => l.rent < proposedRent)
+      : dedupedListings;
+    if (filteredListings.length === 0) return null;
+  }
+
   const overpaymentDisplay = dollarOverpayment && dollarOverpayment > 0 ? dollarOverpayment : null;
 
   const heading = isAboveMarket
     ? overpaymentDisplay
       ? `You're paying ~$${fmt(overpaymentDisplay)}/mo above market — here are your options`
       : `Your rent is above market — here are your options`
-    : `Your rent looks fair — here's how to stay protected`;
+    : `See what else is available in your area`;
 
   return (
     <motion.section id="section-next-steps" {...fade(0.22)} className="pt-10 pb-6">
