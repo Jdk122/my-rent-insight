@@ -10,52 +10,151 @@ const BASE_URL = "https://renewalreply.com";
 const WORDMARK = `${BASE_URL}/renewalreply-wordmark.png`;
 
 const emailHeader = `
-  <img src="${WORDMARK}" alt="RenewalReply" width="140" style="display:block;margin:0 0 16px;" />
-  <div style="height:2px;background:#168eca;margin:0 0 24px;"></div>
+  <img src="${WORDMARK}" alt="RenewalReply" width="150" style="display:block;margin:0 0 24px" />
 `;
 
 function emailFooter(cityLabel: string, unsubUrl: string) {
   const unsubLine = unsubUrl
-    ? `<a href="${unsubUrl}" style="color:#999;text-decoration:underline;">Unsubscribe</a>`
+    ? `<a href="${unsubUrl}" style="color:#999;text-decoration:underline">Unsubscribe</a>`
     : "";
   return `
-    <p style="font-family:'DM Sans',Arial,sans-serif;font-size:15px;color:#555;margin-top:28px;">— RenewalReply</p>
-    <hr style="border:none;border-top:1px solid #eee;margin:32px 0 16px;" />
-    <p style="font-family:'DM Sans',Arial,sans-serif;font-size:11px;color:#999;text-align:center;">
+    <hr style="border:none;border-top:1px solid #eee;margin:32px 0 16px" />
+    <p style="font-size:11px;color:#999;line-height:1.4;margin:0">
       You received this because you used RenewalReply for ${cityLabel}.${unsubLine ? `<br/>${unsubLine}` : ""}
     </p>
   `;
 }
 
-function getClientIp(req: Request): string {
-  const xff = req.headers.get("x-forwarded-for");
-  if (xff) return xff.split(",")[0].trim();
-  return req.headers.get("x-real-ip") || "unknown";
+// ─── Verdict classification (single source of truth) ───
+
+interface VerdictClass {
+  isAboveMarket: boolean;
+  isGoodDeal: boolean;
+  isFair: boolean;
 }
+
+function classifyVerdict(fairnessScore: number | null, verdictLabel: string | null): VerdictClass {
+  const label = (verdictLabel || "").toLowerCase();
+
+  const isAboveMarket =
+    (typeof fairnessScore === "number" && fairnessScore < 60) ||
+    label.includes("above market") ||
+    label.includes("overpriced") ||
+    label.includes("high") ||
+    label.includes("unfair") ||
+    label.includes("excessive");
+
+  const isGoodDeal =
+    !isAboveMarket && (
+      label.includes("good deal") ||
+      label.includes("below market") ||
+      label.includes("great") ||
+      (typeof fairnessScore === "number" && fairnessScore >= 80)
+    );
+
+  return {
+    isAboveMarket,
+    isGoodDeal,
+    isFair: !isAboveMarket && !isGoodDeal,
+  };
+}
+
+// ─── Renewal email variants ───
+
+interface EmailVariant {
+  subject: string;
+  preheader: string;
+  headline: string;
+  body: string;
+  cta: string;
+}
+
+function getRenewalVariant(data: any, cityLabel: string): EmailVariant {
+  const v = classifyVerdict(data.fairness_score, data.verdict_label);
+
+  if (v.isAboveMarket) {
+    return {
+      subject: `Your rent increase looks above market`,
+      preheader: "We pulled the comps. Here's what we found.",
+      headline: "This increase looks above market",
+      body: `We pulled the comps for ${cityLabel}. Your increase is higher than what similar apartments are renting for right now. Your report has the data, the fair range, and a negotiation letter you can send before your landlord's deadline.`,
+      cta: "See the comps and letter →",
+    };
+  }
+
+  if (v.isGoodDeal) {
+    return {
+      subject: `Your renewal looks below market`,
+      preheader: "Good news — the comps back you up.",
+      headline: "This renewal looks below market",
+      body: `Good news on your ${cityLabel} renewal. This increase is actually below what similar apartments are renting for. Your report has the numbers so you can see for yourself.`,
+      cta: "See the comps and fair range →",
+    };
+  }
+
+  return {
+    subject: `Your renewal looks in line with the market`,
+    preheader: "Here's where you stand before you reply.",
+    headline: "This renewal looks in line with the market",
+    body: `Here's where your ${cityLabel} renewal stands. Your increase is in line with what similar apartments are going for. Your report shows the comps and fair range so you can decide whether to push back or sign.`,
+    cta: "See the comps and fair range →",
+  };
+}
+
+// ─── WSIP email variant ───
+
+function getWsipVariant(data: any, cityLabel: string): EmailVariant {
+  const v = classifyVerdict(data.fairness_score, data.verdict_label);
+
+  if (v.isAboveMarket) {
+    return {
+      subject: `This listing looks overpriced`,
+      preheader: "The asking rent on this one is high.",
+      headline: "This listing is priced above market",
+      body: `We checked the comps for this ${cityLabel} listing. The asking price is higher than what similar apartments are going for. Your report has the fair range and the data behind it.`,
+      cta: "See the comps and fair range →",
+    };
+  }
+
+  return {
+    subject: `Your fair rent range is ready`,
+    preheader: `Here's what the comps say about ${cityLabel}.`,
+    headline: "Your market report is ready",
+    body: `We ran the numbers for ${cityLabel}. Your report has the fair rent range and the comparable listings behind it so you can see if the price makes sense.`,
+    cta: "See the comps and fair range →",
+  };
+}
+
+// ─── HTML builders ───
 
 function buildRenewalHtml(data: any, unsubUrl: string) {
   const { city, state, zip, fairness_score, verdict_label, report_url } = data;
   const cityLabel = city && state ? `${city}, ${state}` : zip ? `ZIP ${zip}` : "your area";
   const reportUrl = report_url || `${BASE_URL}/rent/${zip || ""}`;
 
+  const variant = getRenewalVariant(data, cityLabel);
+
   const scoreLine = fairness_score != null
-    ? `<p style="font-family:'DM Serif Display',Georgia,serif;font-size:18px;font-weight:700;color:#1b1f27;margin:16px 0 4px;">Your Fairness Score: ${fairness_score}/100 — ${verdict_label || "See report"}</p>`
+    ? `<p style="font-size:14px;color:#1a1a1a;margin:0 0 20px;font-weight:600">Fairness Score: ${fairness_score}/100${verdict_label ? ` — ${verdict_label}` : ""}</p>`
     : "";
 
   const persistentNote = report_url
-    ? `<p style="font-size:14px;color:#6b7280;margin-top:20px;line-height:1.6;">This link is your permanent report — you can access it anytime, even from a different device.</p>`
+    ? `<p style="font-size:12px;color:#888;margin:20px 0 0">Bookmark this — your report is saved and you can come back to it anytime.</p>`
     : "";
 
   return `
-    <div style="font-family:'DM Sans',Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
+    <div style="font-family:'Georgia',serif;max-width:560px;margin:0 auto;padding:32px 24px;background:#fffaf5">
+      <div style="display:none;max-height:0;overflow:hidden">${variant.preheader}</div>
       ${emailHeader}
-      <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:#1b1f27;margin:0 0 12px;">Your rent analysis is ready</h1>
+      <h1 style="font-family:'Georgia',serif;font-size:22px;font-weight:700;color:#1a1a1a;margin:0 0 16px;line-height:1.3">
+        ${variant.headline}
+      </h1>
       ${scoreLine}
-      <p style="font-size:15px;color:#555;line-height:1.7;margin:16px 0;">
-        Your full report with comparable listings, market data, and negotiation letter is available now:
+      <p style="font-size:15px;color:#333;line-height:1.6;margin:0 0 24px">
+        ${variant.body}
       </p>
-      <a href="${reportUrl}" style="display:inline-block;padding:14px 24px;background:#168eca;color:#fff;border-radius:8px;text-decoration:none;font-size:15px;font-weight:600;">
-        View your full report →
+      <a href="${reportUrl}" style="display:inline-block;background:#1a1a1a;color:#ffffff;padding:12px 28px;border-radius:6px;font-size:14px;font-weight:600;text-decoration:none">
+        ${variant.cta}
       </a>
       ${persistentNote}
       ${emailFooter(cityLabel, unsubUrl)}
@@ -67,30 +166,33 @@ function buildWsipHtml(data: any, unsubUrl: string) {
   const { city, state, zip, report_url } = data;
   const cityLabel = city && state ? `${city}, ${state}` : zip ? `ZIP ${zip}` : "your area";
   const reportUrl = report_url || `${BASE_URL}/what-should-i-pay`;
-  const renewalUrl = BASE_URL;
+
+  const variant = getWsipVariant(data, cityLabel);
 
   const persistentNote = report_url
-    ? `<p style="font-size:14px;color:#6b7280;margin-top:20px;line-height:1.6;">This link is your permanent report — you can access it anytime, even from a different device.</p>`
+    ? `<p style="font-size:12px;color:#888;margin:20px 0 0">Bookmark this — your report is saved and you can come back to it anytime.</p>`
     : "";
 
   return `
-    <div style="font-family:'DM Sans',Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
+    <div style="font-family:'Georgia',serif;max-width:560px;margin:0 auto;padding:32px 24px;background:#fffaf5">
+      <div style="display:none;max-height:0;overflow:hidden">${variant.preheader}</div>
       ${emailHeader}
-      <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:#1b1f27;margin:0 0 12px;">Your market report is ready</h1>
-      <p style="font-size:15px;color:#555;line-height:1.7;margin:16px 0;">
-        Your full report with comparable listings and fair rent range for ${cityLabel} is available now:
+      <h1 style="font-family:'Georgia',serif;font-size:22px;font-weight:700;color:#1a1a1a;margin:0 0 16px;line-height:1.3">
+        ${variant.headline}
+      </h1>
+      <p style="font-size:15px;color:#333;line-height:1.6;margin:0 0 24px">
+        ${variant.body}
       </p>
-      <a href="${reportUrl}" style="display:inline-block;padding:14px 24px;background:#168eca;color:#fff;border-radius:8px;text-decoration:none;font-size:15px;font-weight:600;">
-        View your full report →
+      <a href="${reportUrl}" style="display:inline-block;background:#1a1a1a;color:#ffffff;padding:12px 28px;border-radius:6px;font-size:14px;font-weight:600;text-decoration:none">
+        ${variant.cta}
       </a>
       ${persistentNote}
-      <p style="font-size:14px;color:#6b7280;margin-top:20px;line-height:1.6;">
-        Already have a lease? <a href="${renewalUrl}" style="color:#168eca;text-decoration:underline;">Check if your next rent increase is fair →</a>
-      </p>
       ${emailFooter(cityLabel, unsubUrl)}
     </div>
   `;
 }
+
+// ─── GA4 server event ───
 
 async function fireGA4ServerEvent(
   email: string,
@@ -135,6 +237,14 @@ async function fireGA4ServerEvent(
   }
 }
 
+// ─── Main handler ───
+
+function getClientIp(req: Request): string {
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0].trim();
+  return req.headers.get("x-real-ip") || "unknown";
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -152,7 +262,6 @@ Deno.serve(async (req) => {
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const supabase = createClient(supabaseUrl, serviceKey);
 
-  // Rate limiting — count first, then insert
   const ip = getClientIp(req);
   const fnName = "send-confirmation";
   const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
@@ -165,7 +274,6 @@ Deno.serve(async (req) => {
     .gte("created_at", fiveMinAgo);
 
   if ((recentCount ?? 0) >= 10) {
-    // Log the throttled request
     await supabase.from("function_request_log").insert({
       function_name: fnName, ip_address: ip, success: false, response_status: 429,
     });
@@ -174,7 +282,6 @@ Deno.serve(async (req) => {
     });
   }
 
-  // Insert initial log row — will be updated with outcome
   const { data: logRow } = await supabase
     .from("function_request_log")
     .insert({ function_name: fnName, ip_address: ip })
@@ -199,7 +306,6 @@ Deno.serve(async (req) => {
 
     const normalizedEmail = email.trim().toLowerCase();
 
-    // Check if this email is unsubscribed
     const { data: unsubCheck } = await supabase
       .from("leads")
       .select("unsubscribed")
@@ -215,7 +321,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Look up lead ID for unsubscribe link
     const { data: leadRow } = await supabase
       .from("leads")
       .select("id")
@@ -233,9 +338,10 @@ Deno.serve(async (req) => {
     const cityLabel = city && state ? `${city}, ${state}` : zip ? `ZIP ${zip}` : "your area";
 
     const html = isWsip ? buildWsipHtml(data, unsubUrl) : buildRenewalHtml(data, unsubUrl);
+
     const subject = isWsip
-      ? `Your market report for ${cityLabel}`
-      : `Your rent analysis for ${cityLabel}`;
+      ? getWsipVariant(data, cityLabel).subject
+      : getRenewalVariant(data, cityLabel).subject;
 
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -262,7 +368,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Fire GA4 server event best-effort
     fireGA4ServerEvent(
       email,
       tool_type === "wsip" ? "wsip" : "renewal",
@@ -283,7 +388,6 @@ Deno.serve(async (req) => {
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } finally {
-    // Update log row with outcome
     if (logId) {
       await supabase
         .from("function_request_log")
