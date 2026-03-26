@@ -1477,7 +1477,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
             {/* ━━━ Intent Fork + Contextual CTA (fair/below-market path) ━━━ */}
             {hasIncrease && !isAboveMarket && capturedEmail && (
-              <section className="pt-6 pb-4 space-y-4">
+              <section className="pt-6 pb-4 space-y-3">
                 <IntentFork
                   analysisId={analysisId}
                   verdict={verdictLabel}
@@ -1586,7 +1586,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
             {/* ━━━ Intent Fork + Contextual CTA (above-market path) ━━━ */}
             {hasIncrease && isAboveMarket && capturedEmail && (
-              <section className="pt-6 pb-4 space-y-4">
+              <section className="pt-6 pb-4 space-y-3">
                 <IntentFork
                   analysisId={analysisId}
                   verdict={verdictLabel}

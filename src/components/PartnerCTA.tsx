@@ -121,7 +121,7 @@ const PartnerCTA = ({
         target="_blank"
         rel="sponsored noopener noreferrer"
         onClick={handleClick}
-        className="mt-3 inline-block rounded-md px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-90"
+        className="mt-3 inline-block rounded-md px-3.5 py-1.5 text-[12px] font-semibold text-white transition-opacity hover:opacity-90"
         style={{ backgroundColor: 'hsl(var(--accent-green, 151 50% 38%))' }}
       >
         {config.buttonLabel}
