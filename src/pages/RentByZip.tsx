@@ -178,10 +178,8 @@ const RentByZip = () => {
 
   const shouldNoindex = isThinPage;
 
-  // Canonical: single-ZIP cities canonicalize to the city page
-  const canonicalPath = totalCityZips === 1
-    ? `/rent-data/${stateSlug}/${citySlug}`
-    : `/rent/${zip}`;
+  // Canonical: every ZIP page owns its own canonical URL
+  const canonicalPath = `/rent/${zip}`;
 
   // Data confidence level for display differentiation
   const dataConfidence = (() => {

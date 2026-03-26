@@ -255,7 +255,7 @@ const DealAnalysis = () => {
             View listing →
           </a>
           <Link
-            to={`/?zip=${a.zip || ''}&bedrooms=${a.beds}`}
+            to={`/rent/${a.zip || ''}`}
             className="flex-1 py-3 rounded-lg border-[1.5px] border-primary text-primary text-sm font-bold text-center hover:bg-primary/5 transition-colors"
           >
             Check your current rent →
