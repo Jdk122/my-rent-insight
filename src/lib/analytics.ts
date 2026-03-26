@@ -25,7 +25,12 @@ export type EventName =
   | 'followup_countered_amount'
   | 'followup_moving_submitted'
   | 'results_cta_clicked'
-  | 'report_unlocked';
+  | 'report_unlocked'
+  | 'intent_selected'
+  | 'affiliate_impression'
+  | 'affiliate_click'
+  | 'internal_click'
+  | 'listing_clicked';
 
 export function trackEvent(name: string, params?: Record<string, string | number | boolean | null | undefined>) {
   try {
