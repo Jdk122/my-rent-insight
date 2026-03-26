@@ -55,32 +55,34 @@ const IntentFork = ({
   };
 
   return (
-    <div className="rounded-lg border border-blue-200 dark:border-blue-800 p-5 text-center">
+    <div className="border-t border-border pt-6 text-center">
       <p className="text-[15px] font-semibold text-foreground">What's your next step?</p>
       <p className="text-[13px] text-muted-foreground mt-1 mb-4">We'll show you what to do next.</p>
       <div className="flex gap-3">
         <button
           onClick={() => handleSelect('stay')}
-          className={`flex-1 rounded-lg border px-4 py-3 transition-all ${
+          className={`flex-1 rounded-lg border px-5 py-4 text-left transition-all ${
             selectedIntent === 'stay'
-              ? 'border-primary bg-primary/10 shadow-sm'
+              ? 'border-l-[3px] bg-accent/60 shadow-sm'
               : selectedIntent === 'move'
-              ? 'border-border opacity-50'
-              : 'border-border hover:border-primary/40'
+              ? 'border-border opacity-40'
+              : 'border-border hover:bg-muted/50'
           }`}
+          style={selectedIntent === 'stay' ? { borderLeftColor: 'hsl(var(--accent-green, 151 50% 38%))' } : { borderLeftColor: 'hsl(var(--accent-green, 151 50% 38%))', borderLeftWidth: '2px' }}
         >
           <p className="text-[13px] font-semibold text-foreground">I want to stay</p>
           <p className="text-[11px] text-muted-foreground mt-0.5">Negotiate your renewal</p>
         </button>
         <button
           onClick={() => handleSelect('move')}
-          className={`flex-1 rounded-lg border px-4 py-3 transition-all ${
+          className={`flex-1 rounded-lg border px-5 py-4 text-left transition-all ${
             selectedIntent === 'move'
-              ? 'border-primary bg-primary/10 shadow-sm'
+              ? 'border-l-[3px] bg-primary/10 shadow-sm'
               : selectedIntent === 'stay'
-              ? 'border-border opacity-50'
-              : 'border-border hover:border-primary/40'
+              ? 'border-border opacity-40'
+              : 'border-border hover:bg-muted/50'
           }`}
+          style={selectedIntent === 'move' ? { borderLeftColor: 'hsl(var(--primary))' } : { borderLeftColor: 'hsl(var(--primary))', borderLeftWidth: '2px' }}
         >
           <p className="text-[13px] font-semibold text-foreground">I want to move</p>
           <p className="text-[11px] text-muted-foreground mt-0.5">See what else is out there</p>
