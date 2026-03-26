@@ -34,11 +34,8 @@ const PartnerCTA = ({
 }: PartnerCTAProps) => {
   const impressionFired = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
-
   const isRentReporting = variant === 'rent_reporting';
-  const config = isRentReporting ? VARIANTS.rent_reporting : null;
-
-  const linkType = config?.linkType ?? 'partner_rent_reporting';
+  const linkType = isRentReporting ? VARIANTS.rent_reporting.linkType : 'partner_rent_reporting';
 
   useEffect(() => {
     const el = containerRef.current;
@@ -77,7 +74,7 @@ const PartnerCTA = ({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [analysisId, verdict, toolUsed, city, zip, placement, config.linkType]);
+  }, [analysisId, verdict, toolUsed, city, zip, placement, linkType, isRentReporting]);
 
   const handleClick = useCallback(() => {
     trackEvent('affiliate_click', {
@@ -102,55 +99,9 @@ const PartnerCTA = ({
   }, [analysisId, verdict, toolUsed, city, zip, placement, linkType]);
 
   // moving_help is not rendered onsite in v1
-  if (!isRentReporting || !config) return null;
+  if (!isRentReporting) return null;
 
-  const href = AFFILIATE_LINKS[variant];
-
-  return (
-    <div
-      ref={containerRef}
-      className="border-l-[3px] rounded-r-lg bg-secondary pl-4 pr-4 py-4"
-      style={{ borderLeftColor: 'hsl(var(--accent-green, 151 50% 38%))' }}
-    >
-      <p className="text-[13px] font-semibold text-foreground">{config.headline}</p>
-      <p className="text-[12px] text-muted-foreground mt-1 leading-relaxed">{config.subtext}</p>
-      <a
-        href={href}
-        target="_blank"
-        rel="sponsored noopener noreferrer"
-        onClick={handleClick}
-        className="mt-3 inline-block rounded-md px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-90"
-        style={{ backgroundColor: 'hsl(var(--accent-green, 151 50% 38%))' }}
-      >
-        {config.buttonLabel}
-      </a>
-      <p className="text-[10px] text-muted-foreground/60 mt-2">
-        RenewalReply may earn a commission from this partner.
-      </p>
-    </div>
-  );
-};
-
-export default PartnerCTA;
-      verdict,
-      tool_used: toolUsed,
-      city,
-      zip,
-      placement,
-    });
-
-    if (analysisId) {
-      supabase
-        .from('referral_clicks')
-        .insert({
-          link_type: config.linkType,
-          analysis_id: analysisId,
-          zip,
-        } as any)
-        .then(() => {});
-    }
-  }, [analysisId, verdict, toolUsed, city, zip, placement, config.linkType]);
-
+  const config = VARIANTS.rent_reporting;
   const href = AFFILIATE_LINKS[variant];
 
   return (
