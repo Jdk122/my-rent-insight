@@ -1584,40 +1584,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </section>
             )}
 
-            {/* ━━━ Intent Fork + Contextual CTA (fair/below-market path) ━━━ */}
-            {hasIncrease && !isAboveMarket && capturedEmail && (
-              <section className="pt-6 pb-4 space-y-4">
-                <IntentFork
-                  analysisId={analysisId}
-                  verdict={verdictLabel}
-                  toolUsed="renewal"
-                  city={city}
-                  zip={rentData.zip}
-                  placement="post_verdict"
-                  selectedIntent={selectedIntent}
-                  onIntentSelected={setSelectedIntent}
-                />
-                {selectedIntent === 'stay' && (
-                  <PartnerCTA
-                    variant="rent_reporting"
-                    analysisId={analysisId}
-                    verdict={verdictLabel}
-                    toolUsed="renewal"
-                    city={city}
-                    zip={rentData.zip}
-                    placement="post_verdict"
-                  />
-                )}
-                {selectedIntent === 'move' && (
-                  <MoveCTA
-                    city={city}
-                    zip={rentData.zip}
-                    hasListings={(rentcastListings.data?.listings ?? []).length >= 2}
-                    placement="post_verdict"
-                  />
-                )}
-              </section>
-            )}
+
+
 
             {/* ━━━ Post-conversion flow ━━━ */}
             <section className="pb-4 pt-2">
