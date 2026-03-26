@@ -21,7 +21,7 @@ const SERVICES = [
   { icon: '🛡', title: 'Renters Insurance', sub: 'From $5/mo', accent: 'hsl(var(--primary))', href: '#' },
   { icon: '✓', title: 'Need a Guarantor?', sub: 'Get approved fast', accent: '#7c3aed', href: '#' },
   { icon: '📦', title: 'Moving Help', sub: 'Compare movers', accent: '#ea580c', href: 'https://www.hireahelper.com/?affil=32303039' },
-  { icon: '📊', title: 'Build Credit', sub: 'Report rent free', accent: 'hsl(var(--accent-green))', href: '#' },
+  { icon: '📊', title: 'Build Credit', sub: 'Report rent free', accent: 'hsl(var(--accent-green))', href: 'https://prf.hn/click/camref:1110lBJ34' },
 ];
 
 const DealAnalysis = () => {
