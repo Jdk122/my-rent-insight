@@ -32,12 +32,11 @@ const PartnerCTA = ({
   zip,
   placement,
 }: PartnerCTAProps) => {
-  // moving_help is not rendered onsite in v1
-  if (variant === 'moving_help') return null;
-
-  const config = VARIANTS[variant];
   const impressionFired = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const isRentReporting = variant === 'rent_reporting';
+  const config = isRentReporting ? VARIANTS.rent_reporting : null;
 
   useEffect(() => {
     const el = containerRef.current;
