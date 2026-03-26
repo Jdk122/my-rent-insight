@@ -30,8 +30,11 @@ import { getBuildingRange } from '@/lib/buildingRange';
 import { calculateCompositeTrend } from '@/lib/compositeTrend';
 import FairnessScoreGauge, { ComponentSourceInfo } from './FairnessScoreGauge';
 import MarketSnapshot from './MarketSnapshot';
-import NextStepsSection from './NextStepsSection';
+import NextStepsSection, { ListingsBlock } from './NextStepsSection';
 import { useRentcastListings } from '@/hooks/useRentcastListings';
+import IntentFork from './IntentFork';
+import PartnerCTA from './PartnerCTA';
+import MoveCTA from './MoveCTA';
 import ExitIntentModal from './ExitIntentModal';
 import MobileScrollPrompt from './MobileScrollPrompt';
 import PostConversionFlow from './PostConversionFlow';
@@ -77,8 +80,25 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   });
   const [reportUrl, setReportUrl] = useState<string | null>(null);
   const [dismissedRentWarning, setDismissedRentWarning] = useState(false);
+  const [selectedIntent, setSelectedIntent] = useState<'stay' | 'move' | null>(null);
   const analysisLogged = useRef(isDuplicateAnalysis);
   const gateViewedRef = useRef(false);
+
+  // Rehydrate user_intent from analyses on mount
+  useEffect(() => {
+    if (!analysisId) return;
+    supabase
+      .from('analyses')
+      .select('user_intent' as any)
+      .eq('id', analysisId)
+      .single()
+      .then(({ data }) => {
+        const intent = (data as any)?.user_intent;
+        if (intent === 'stay' || intent === 'move') {
+          setSelectedIntent(intent);
+        }
+      });
+  }, [analysisId]);
 
   const increaseAmount = formData.rentIncrease
     ? formData.increaseIsPercent
@@ -1527,6 +1547,76 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   belowFmrHighIncrease={isBelowFmrHighIncrease}
                 />
               </motion.section>
+            )}
+
+            {/* ━━━ Intent Fork + Contextual CTA (above-market path) ━━━ */}
+            {hasIncrease && isAboveMarket && capturedEmail && (
+              <section className="pt-6 pb-4 space-y-4">
+                <IntentFork
+                  analysisId={analysisId}
+                  verdict={verdictLabel}
+                  toolUsed="renewal"
+                  city={city}
+                  zip={rentData.zip}
+                  placement="post_letter"
+                  selectedIntent={selectedIntent}
+                  onIntentSelected={setSelectedIntent}
+                />
+                {selectedIntent === 'stay' && (
+                  <PartnerCTA
+                    variant="rent_reporting"
+                    analysisId={analysisId}
+                    verdict={verdictLabel}
+                    toolUsed="renewal"
+                    city={city}
+                    zip={rentData.zip}
+                    placement="post_letter"
+                  />
+                )}
+                {selectedIntent === 'move' && (
+                  <MoveCTA
+                    city={city}
+                    zip={rentData.zip}
+                    hasListings={(rentcastListings.data?.listings ?? []).length >= 2}
+                    placement="post_letter"
+                  />
+                )}
+              </section>
+            )}
+
+            {/* ━━━ Intent Fork + Contextual CTA (fair/below-market path) ━━━ */}
+            {hasIncrease && !isAboveMarket && capturedEmail && (
+              <section className="pt-6 pb-4 space-y-4">
+                <IntentFork
+                  analysisId={analysisId}
+                  verdict={verdictLabel}
+                  toolUsed="renewal"
+                  city={city}
+                  zip={rentData.zip}
+                  placement="post_verdict"
+                  selectedIntent={selectedIntent}
+                  onIntentSelected={setSelectedIntent}
+                />
+                {selectedIntent === 'stay' && (
+                  <PartnerCTA
+                    variant="rent_reporting"
+                    analysisId={analysisId}
+                    verdict={verdictLabel}
+                    toolUsed="renewal"
+                    city={city}
+                    zip={rentData.zip}
+                    placement="post_verdict"
+                  />
+                )}
+                {selectedIntent === 'move' && (
+                  <MoveCTA
+                    city={city}
+                    zip={rentData.zip}
+                    hasListings={(rentcastListings.data?.listings ?? []).length >= 2}
+                    placement="post_verdict"
+                  />
+                )}
+              </section>
             )}
 
             {/* ━━━ Post-conversion flow ━━━ */}

@@ -104,6 +104,7 @@ export type Database = {
           session_id: string | null
           state: string | null
           tool_type: string
+          user_intent: string | null
           utm_campaign: string | null
           utm_medium: string | null
           utm_source: string | null
@@ -142,6 +143,7 @@ export type Database = {
           session_id?: string | null
           state?: string | null
           tool_type?: string
+          user_intent?: string | null
           utm_campaign?: string | null
           utm_medium?: string | null
           utm_source?: string | null
@@ -180,6 +182,7 @@ export type Database = {
           session_id?: string | null
           state?: string | null
           tool_type?: string
+          user_intent?: string | null
           utm_campaign?: string | null
           utm_medium?: string | null
           utm_source?: string | null
@@ -762,24 +765,30 @@ export type Database = {
           analysis_id: string | null
           created_at: string
           email: string | null
+          event_type: string | null
           id: string
           link_type: string
+          placement: string | null
           zip: string | null
         }
         Insert: {
           analysis_id?: string | null
           created_at?: string
           email?: string | null
+          event_type?: string | null
           id?: string
           link_type: string
+          placement?: string | null
           zip?: string | null
         }
         Update: {
           analysis_id?: string | null
           created_at?: string
           email?: string | null
+          event_type?: string | null
           id?: string
           link_type?: string
+          placement?: string | null
           zip?: string | null
         }
         Relationships: [
