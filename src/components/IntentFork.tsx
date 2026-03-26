@@ -38,9 +38,11 @@ const IntentFork = ({
       supabase
         .from('referral_clicks')
         .insert({
+          event_type: 'intent_selected',
           link_type: intent === 'stay' ? 'intent_stay' : 'intent_move',
           analysis_id: analysisId,
           zip,
+          placement,
         } as any)
         .then(() => {});
 
