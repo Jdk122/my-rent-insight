@@ -80,8 +80,25 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   });
   const [reportUrl, setReportUrl] = useState<string | null>(null);
   const [dismissedRentWarning, setDismissedRentWarning] = useState(false);
+  const [selectedIntent, setSelectedIntent] = useState<'stay' | 'move' | null>(null);
   const analysisLogged = useRef(isDuplicateAnalysis);
   const gateViewedRef = useRef(false);
+
+  // Rehydrate user_intent from analyses on mount
+  useEffect(() => {
+    if (!analysisId) return;
+    supabase
+      .from('analyses')
+      .select('user_intent' as any)
+      .eq('id', analysisId)
+      .single()
+      .then(({ data }) => {
+        const intent = (data as any)?.user_intent;
+        if (intent === 'stay' || intent === 'move') {
+          setSelectedIntent(intent);
+        }
+      });
+  }, [analysisId]);
 
   const increaseAmount = formData.rentIncrease
     ? formData.increaseIsPercent
