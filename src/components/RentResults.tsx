@@ -1503,7 +1503,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   <MoveCTA
                     city={city}
                     zip={rentData.zip}
-                    hasListings={(rentcastListings.data?.listings ?? []).length >= 2}
+                    hasListingsAbove={(rentcastListings.data?.listings ?? []).length >= 1}
                     placement="post_verdict"
                   />
                 )}
