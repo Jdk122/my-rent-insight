@@ -38,9 +38,11 @@ const PartnerCTA = ({
   const isRentReporting = variant === 'rent_reporting';
   const config = isRentReporting ? VARIANTS.rent_reporting : null;
 
+  const linkType = config?.linkType ?? 'partner_rent_reporting';
+
   useEffect(() => {
     const el = containerRef.current;
-    if (!el) return;
+    if (!el || !isRentReporting) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
