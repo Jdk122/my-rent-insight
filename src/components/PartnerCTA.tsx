@@ -59,10 +59,12 @@ const PartnerCTA = ({
             supabase
               .from('referral_clicks')
               .insert({
-                link_type: linkType,
-                analysis_id: analysisId,
-                zip,
-              } as any)
+              event_type: 'affiliate_impression',
+              link_type: linkType,
+              analysis_id: analysisId,
+              zip,
+              placement,
+            } as any)
               .then(() => {});
           }
 
