@@ -63,12 +63,12 @@ const IntentFork = ({
           onClick={() => handleSelect('stay')}
           className={`flex-1 rounded-lg border px-5 py-4 text-left transition-all ${
             selectedIntent === 'stay'
-              ? 'border-l-[3px] bg-accent/60 shadow-sm'
+              ? 'border-l-[3px] bg-muted/30'
               : selectedIntent === 'move'
-              ? 'border-border opacity-40'
-              : 'border-border hover:bg-muted/50'
+              ? 'border-border opacity-60'
+              : 'border-border hover:bg-muted/20'
           }`}
-          style={selectedIntent === 'stay' ? { borderLeftColor: 'hsl(var(--accent-green, 151 50% 38%))' } : { borderLeftColor: 'hsl(var(--accent-green, 151 50% 38%))', borderLeftWidth: '2px' }}
+          style={{ borderLeftColor: 'hsl(var(--accent-green, 151 50% 38%))', borderLeftWidth: selectedIntent === 'stay' ? '3px' : '2px' }}
         >
           <p className="text-[13px] font-semibold text-foreground">I want to stay</p>
           <p className="text-[11px] text-muted-foreground mt-0.5">Negotiate your renewal</p>
@@ -77,12 +77,12 @@ const IntentFork = ({
           onClick={() => handleSelect('move')}
           className={`flex-1 rounded-lg border px-5 py-4 text-left transition-all ${
             selectedIntent === 'move'
-              ? 'border-l-[3px] bg-primary/10 shadow-sm'
+              ? 'border-l-[3px] bg-muted/30'
               : selectedIntent === 'stay'
-              ? 'border-border opacity-40'
-              : 'border-border hover:bg-muted/50'
+              ? 'border-border opacity-60'
+              : 'border-border hover:bg-muted/20'
           }`}
-          style={selectedIntent === 'move' ? { borderLeftColor: 'hsl(var(--primary))' } : { borderLeftColor: 'hsl(var(--primary))', borderLeftWidth: '2px' }}
+          style={{ borderLeftColor: 'hsl(var(--primary))', borderLeftWidth: selectedIntent === 'move' ? '3px' : '2px' }}
         >
           <p className="text-[13px] font-semibold text-foreground">I want to move</p>
           <p className="text-[11px] text-muted-foreground mt-0.5">See what else is out there</p>
