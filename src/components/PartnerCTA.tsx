@@ -137,9 +137,6 @@ const PartnerCTA = ({
       >
         {config.buttonLabel}
       </a>
-      <p className="text-[10px] text-muted-foreground/60 mt-2">
-        RenewalReply may earn a commission from this partner.
-      </p>
     </div>
   );
 };
