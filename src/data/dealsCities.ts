@@ -15,8 +15,8 @@ export const DEAL_CITIES: DealCity[] = [
   // NYC
   { slug: 'east-village', name: 'East Village', neighborhood: 'East Village', state: 'new-york', stateAbbr: 'NY', zips: ['10003', '10009'], metroCities: ['new york', 'manhattan'] },
   { slug: 'chelsea-nyc', name: 'Chelsea', neighborhood: 'Chelsea', state: 'new-york', stateAbbr: 'NY', zips: ['10001', '10011'], metroCities: ['new york', 'manhattan'] },
-  { slug: 'brooklyn-heights', name: 'Brooklyn Heights', neighborhood: 'Brooklyn Heights', state: 'new-york', stateAbbr: 'NY', zips: ['11201'], metroCities: ['new york', 'brooklyn'] },
-  { slug: 'astoria', name: 'Astoria', neighborhood: 'Astoria', state: 'new-york', stateAbbr: 'NY', zips: ['11101', '11102', '11106'], metroCities: ['new york', 'queens', 'long island city'] },
+  { slug: 'brooklyn-heights', name: 'Brooklyn Heights', neighborhood: 'Brooklyn Heights', state: 'new-york', stateAbbr: 'NY', metroLabel: 'Brooklyn, NY', zips: ['11201'], metroCities: ['new york', 'brooklyn'] },
+  { slug: 'astoria', name: 'Astoria', neighborhood: 'Astoria', state: 'new-york', stateAbbr: 'NY', metroLabel: 'Queens, NY', zips: ['11101', '11102', '11106'], metroCities: ['new york', 'queens', 'long island city'] },
   // NJ
   { slug: 'jersey-city', name: 'Jersey City', neighborhood: 'Jersey City', state: 'new-jersey', stateAbbr: 'NJ', zips: ['07302', '07304', '07306'], metroCities: ['jersey city'] },
   // Miami
