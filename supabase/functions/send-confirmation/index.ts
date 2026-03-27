@@ -19,8 +19,10 @@ function emailFooter(cityLabel: string, unsubUrl: string) {
     : "";
   return `
     <hr style="border:none;border-top:1px solid #eee;margin:32px 0 16px" />
-    <p style="font-size:11px;color:#999;line-height:1.4;margin:0">
-      You received this because you used RenewalReply for ${cityLabel}.${unsubLine ? `<br/>${unsubLine}` : ""}
+    <p style="font-size:11px;color:#999;line-height:1.6;margin:0;text-align:center;">
+      RenewalReply | PacketOps LLC<br/>
+      971 US Highway 202N, Suite N, Branchburg, NJ 08876<br/><br/>
+      You received this because you used the RenewalReply rent analysis tool for ${cityLabel}.${unsubLine ? `<br/>${unsubLine}` : ""}
     </p>
   `;
 }
