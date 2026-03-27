@@ -17,13 +17,6 @@ const COMPONENT_LABELS = [
   { key: 'momentum' as const, label: 'Market Direction', max: 15 },
 ];
 
-const SERVICES = [
-  { icon: '🛡', title: 'Renters Insurance', sub: 'From $5/mo', accent: 'hsl(var(--primary))', href: '#' },
-  { icon: '✓', title: 'Need a Guarantor?', sub: 'Get approved fast', accent: '#7c3aed', href: '#' },
-  { icon: '📦', title: 'Moving Help', sub: 'Compare movers', accent: '#ea580c', href: 'https://www.hireahelper.com/?affil=32303039' },
-  { icon: '📊', title: 'Build Credit', sub: 'Report rent free', accent: 'hsl(var(--accent-green))', href: 'https://prf.hn/click/camref:1110lBJ34' },
-];
-
 const DealAnalysis = () => {
   const { shortId } = useParams<{ shortId: string }>();
   const [analysis, setAnalysis] = useState<any>(null);
@@ -260,31 +253,6 @@ const DealAnalysis = () => {
           >
             Check your current rent →
           </Link>
-        </section>
-
-        {/* Section 7: Renter services */}
-        <section className="mb-8">
-          <h2 className="font-display text-base font-normal text-foreground mb-3">Moving soon?</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {SERVICES.map((svc) => (
-              <a
-                key={svc.title}
-                href={svc.href}
-                className="flex gap-3 items-center p-3 bg-card rounded-lg border border-border hover:border-primary/30 transition-colors no-underline"
-              >
-                <div
-                  className="w-9 h-9 rounded-md flex items-center justify-center text-base shrink-0"
-                  style={{ background: `${svc.accent}14` }}
-                >
-                  {svc.icon}
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-foreground">{svc.title}</div>
-                  <div className="text-xs text-muted-foreground">{svc.sub}</div>
-                </div>
-              </a>
-            ))}
-          </div>
         </section>
 
         {/* Footer */}
