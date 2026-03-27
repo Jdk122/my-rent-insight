@@ -112,6 +112,9 @@ const Privacy = () => {
                 <a href="mailto:privacy@renewalreply.com" className="text-primary hover:underline">privacy@renewalreply.com</a>.
               </li>
               <li>You can disable analytics cookies through your browser settings.</li>
+              <li>You can opt out of Google Analytics tracking by installing the{' '}
+                <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Google Analytics Opt-out Browser Add-on</a>.
+              </li>
             </ul>
           </section>
 
