@@ -47,7 +47,7 @@ const SEOFooter = React.forwardRef<HTMLElement, SEOFooterProps>(({ onContactClic
           <ul className="space-y-1.5">
             <li><Link to="/" className={linkClass}>Check My Increase</Link></li>
             <li><Link to="/what-should-i-pay" className={linkClass}>Check Asking Price</Link></li>
-            <li><Link to="/deals" className={linkClass}>Apartment Deals</Link></li>
+            
           </ul>
         </div>
 
