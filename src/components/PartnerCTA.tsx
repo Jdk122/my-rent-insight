@@ -47,7 +47,7 @@ const PartnerCTA = ({
 
   useEffect(() => {
     const el = containerRef.current;
-    if (!el || !isRentReporting) return;
+    if (!el) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
