@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { DealCity } from '@/data/dealsCities';
 import { AFFILIATE_LINKS } from '@/lib/affiliateConfig';
+import { supabase } from '@/integrations/supabase/client';
 
 const fmt = (n: number) => n.toLocaleString('en-US');
 
@@ -89,7 +90,8 @@ const DealsSidebar = ({ city, medianRent1BR, yoyChange, activeListings }: DealsS
       {/* Affiliate services */}
       <SideCard title="Renter tools">
         {[
-          { icon: '📊', title: 'Build Credit', sub: 'Report rent free', accent: 'hsl(var(--accent-green))', href: AFFILIATE_LINKS.rent_reporting },
+          { icon: '📊', title: 'Build Credit', sub: 'Report rent free', accent: 'hsl(var(--accent-green))', href: AFFILIATE_LINKS.rent_reporting, linkType: 'partner_rent_reporting' },
+          { icon: '🚚', title: 'Compare Movers', sub: 'Get instant quotes', accent: 'hsl(var(--primary))', href: AFFILIATE_LINKS.moving_help, linkType: 'partner_moving_help' },
         ].map((svc) => (
           <a
             key={svc.title}
@@ -97,6 +99,9 @@ const DealsSidebar = ({ city, medianRent1BR, yoyChange, activeListings }: DealsS
             target="_blank"
             rel="sponsored noopener noreferrer"
             className="flex gap-2 items-center py-1.5 no-underline hover:opacity-70 transition-opacity"
+            onClick={() => {
+              supabase.from('referral_clicks').insert({ link_type: svc.linkType, placement: 'deals_sidebar', event_type: 'affiliate_click' }).then(() => {});
+            }}
           >
             <div
               className="w-7 h-7 rounded-md flex items-center justify-center text-[13px] shrink-0"
