@@ -61,11 +61,11 @@ const Privacy = () => {
           <section>
            <h2 className="text-lg font-semibold text-foreground mb-2">Information We Collect Automatically</h2>
             <p>
-              We use Google Analytics 4 to collect anonymized usage data such as pages visited, time on site,
-              and general tool usage patterns. We also use Google Ads conversion tracking to measure the
-              effectiveness of our advertising campaigns — this tells us when someone who clicked one of
-              our ads uses the tool, but does not share your personal information with advertisers.
-              We use cookies to enable these functions.
+              We use analytics tools to collect anonymized usage data such as pages visited, time on site,
+              and general tool usage patterns. We also use advertising conversion tracking to measure the
+              effectiveness of our campaigns. We use cookies and similar technologies to enable these functions.
+              For more information about how our analytics provider collects and processes data, see{' '}
+              <a href="https://google.com/policies/privacy/partners" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">"How Google uses data when you use our partners' sites or apps"</a>.
             </p>
           </section>
 
@@ -112,15 +112,39 @@ const Privacy = () => {
                 <a href="mailto:privacy@renewalreply.com" className="text-primary hover:underline">privacy@renewalreply.com</a>.
               </li>
               <li>You can disable analytics cookies through your browser settings.</li>
+              <li>You can opt out of Google Analytics tracking by installing the{' '}
+                <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Google Analytics Opt-out Browser Add-on</a>.
+              </li>
             </ul>
           </section>
 
           <section>
             <h2 className="text-lg font-semibold text-foreground mb-2">Cookies</h2>
             <p>
-              We use essential cookies for site functionality, analytics cookies (GA4) for usage data,
-              and Google Ads conversion tracking cookies to measure advertising effectiveness.
+              We use essential cookies for site functionality, analytics cookies for usage data,
+              and advertising conversion tracking cookies to measure campaign effectiveness.
               No personal information is shared with advertisers.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-foreground mb-2">Do Not Track</h2>
+            <p>
+              We do not respond to Do Not Track (DNT) browser signals.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-foreground mb-2">Third-Party Links</h2>
+            <p>
+              Our site may contain links to third-party websites or services. We are not responsible for the privacy practices or content of those sites. We encourage you to review the privacy policy of any third-party site you visit.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-foreground mb-2">Data Breach Notification</h2>
+            <p>
+              In the event of a data breach affecting your personal information, we will notify affected users and applicable authorities as required by law.
             </p>
           </section>
 
