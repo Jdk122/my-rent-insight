@@ -56,7 +56,7 @@ const IntentFork = ({
 
   return (
     <div className="border-t border-border pt-6 text-center">
-      <p className="text-[15px] font-medium text-foreground">What's your next step?</p>
+      <h3 className="text-lg font-semibold text-foreground">What's your next step?</h3>
       <p className="text-[13px] text-muted-foreground mt-1 mb-4">We'll show you what to do next.</p>
       <div className="flex gap-3">
         <button
