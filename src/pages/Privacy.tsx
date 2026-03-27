@@ -78,6 +78,8 @@ const Privacy = () => {
               <li>Improve our tools and data accuracy</li>
               <li>Produce anonymized, aggregated market reports and analytics</li>
               <li>Support our business operations</li>
+              <li>Send you information about third-party products and services that we believe may be relevant to your housing situation, which may include renters insurance, rent reporting services, moving assistance, guarantor services, rental listings, or other housing-related offerings</li>
+              <li>Display or deliver content that contains affiliate or referral links to third-party products and services — when you click on or purchase through such links, we may receive compensation from the third-party provider at no additional cost to you, and such compensation does not influence our rent analysis, fairness determinations, or any other information we provide to you</li>
             </ul>
           </section>
 
