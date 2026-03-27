@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { DealCity } from '@/data/dealsCities';
+import { AFFILIATE_LINKS } from '@/lib/affiliateConfig';
 
 const fmt = (n: number) => n.toLocaleString('en-US');
 
