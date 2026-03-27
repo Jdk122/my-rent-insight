@@ -14,10 +14,6 @@ const emailHeader = `
   <div style="height:2px;background:#168eca;margin:0 0 24px;"></div>
 `;
 
-function buildButton(label: string, href: string, color: string) {
-  return `<a href="${href}" style="display:inline-block;padding:12px 20px;background:${color};color:#fff;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-right:8px;margin-bottom:8px;">${label}</a>`;
-}
-
 const badVerdicts = ["Moderate", "Unfair", "Excessive", "Above Market"];
 
 function getEmailHtml(lead: any): { subject: string; html: string } {
@@ -26,23 +22,21 @@ function getEmailHtml(lead: any): { subject: string; html: string } {
   const isAbove = (score != null && score < 60) || (verdict != null && badVerdicts.includes(verdict));
   const isGood = score != null && score >= 80;
 
-  const agreedUrl = `${BASE_URL}/outcome?id=${lead.id}&result=agreed`;
-  const noResponseUrl = `${BASE_URL}/outcome?id=${lead.id}&result=no_response`;
-  const movingUrl = `${BASE_URL}/outcome?id=${lead.id}&result=moving`;
+  const reportUrl = lead.zip ? `${BASE_URL}/rent/${lead.zip}` : BASE_URL;
   const unsubUrl = `${BASE_URL}/outcome?id=${lead.id}&result=unsubscribe`;
 
   let subject: string;
   let intro: string;
 
   if (isAbove) {
-    subject = "Did your negotiation work?";
-    intro = `Hey — you used RenewalReply recently to check your rent increase. I'm the founder, and I'm curious: did you end up negotiating with your landlord? Let me know with one click:`;
+    subject = "Did you send the letter?";
+    intro = `Hey — you checked your rent increase a couple days ago and it came in above market. I built you a negotiation letter with the data behind it. If you haven't sent it yet, now is a good time — the longer you wait, the harder it is to push back.`;
   } else if (isGood) {
-    subject = "How did your renewal go?";
-    intro = `Hey — you used RenewalReply recently and your rent looked like a good deal. I'm the founder, and I'm curious: did you renew? Let me know with one click:`;
+    subject = "Have you locked in your renewal yet?";
+    intro = `Hey — you checked your rent increase a couple days ago and it looks like a solid deal. If you haven't signed yet, it might be worth locking it in before your landlord changes the terms. You could also ask for extras like a longer lease or a unit upgrade.`;
   } else {
-    subject = "How did your renewal go?";
-    intro = `Hey — you used RenewalReply recently to check your rent increase. I'm the founder, and I'm curious: how did the renewal go? Let me know with one click:`;
+    subject = "Have you replied to your landlord yet?";
+    intro = `Hey — you checked your rent increase a couple days ago. Even though your increase is in line with the market, it's still worth responding. Most landlords expect a conversation, and avoiding turnover is worth more to them than a few percent.`;
   }
 
   const html = `
@@ -50,13 +44,8 @@ function getEmailHtml(lead: any): { subject: string; html: string } {
       ${emailHeader}
       <p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 24px;">${intro}</p>
       <div style="margin-bottom:16px;">
-        ${buildButton("I negotiated successfully ✓", agreedUrl, "#2d6a4f")}
-        ${buildButton("I'm still deciding", noResponseUrl, "#6b7280")}
-        ${buildButton("I moved instead", movingUrl, "#b8860b")}
+        <a href="${reportUrl}" style="display:inline-block;padding:12px 20px;background:#168eca;color:#fff;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;">View your report →</a>
       </div>
-      <p style="font-size:15px;color:#555;line-height:1.7;margin:24px 0 0;">
-        Your feedback helps me make the tool better for other renters. Either way, I appreciate it.
-      </p>
       <p style="font-family:'DM Sans',Arial,sans-serif;font-size:15px;color:#555;margin-top:20px;">— James</p>
       <hr style="border:none;border-top:1px solid #eee;margin:32px 0 16px;" />
       <p style="font-size:11px;color:#999;text-align:center;">
@@ -88,10 +77,10 @@ Deno.serve(async (req) => {
   const supabase = createClient(supabaseUrl, serviceKey);
   const now = new Date();
 
-  const dayAgo7 = new Date(now);
-  dayAgo7.setDate(dayAgo7.getDate() - 7);
-  const dayAgo5 = new Date(now);
-  dayAgo5.setDate(dayAgo5.getDate() - 5);
+  const dayAgo3 = new Date(now);
+  dayAgo3.setDate(dayAgo3.getDate() - 3);
+  const dayAgo2 = new Date(now);
+  dayAgo2.setDate(dayAgo2.getDate() - 2);
 
   const { data: leads, error } = await supabase
     .from("leads")
@@ -99,8 +88,8 @@ Deno.serve(async (req) => {
     .eq("tool_type", "renewal")
     .is("founder_followup_sent_at", null)
     .not("email", "is", null)
-    .gte("created_at", dayAgo7.toISOString())
-    .lte("created_at", dayAgo5.toISOString())
+    .gte("created_at", dayAgo3.toISOString())
+    .lte("created_at", dayAgo2.toISOString())
     .or("unsubscribed.is.null,unsubscribed.eq.false");
 
   if (error) {
@@ -117,7 +106,6 @@ Deno.serve(async (req) => {
   let skippedUnsub = 0;
 
   for (const lead of eligible) {
-    // Double-check unsubscribe at email level (another row may be unsubscribed)
     const normalizedEmail = lead.email.trim().toLowerCase();
     const { data: unsubRows } = await supabase
       .from("leads")
@@ -198,7 +186,7 @@ Deno.serve(async (req) => {
     }
   }
 
-  console.log(`Founder followup: ${sent} sent, ${failed} failed, ${skippedUnsub} skipped (unsub), ${eligible.length} eligible`);
+  console.log(`Day 2-3 followup: ${sent} sent, ${failed} failed, ${skippedUnsub} skipped (unsub), ${eligible.length} eligible`);
 
   return new Response(
     JSON.stringify({ sent, failed, skipped_unsubscribed: skippedUnsub, eligible: eligible.length }),
