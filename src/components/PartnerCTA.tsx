@@ -21,6 +21,13 @@ const VARIANTS = {
     buttonLabel: 'Start reporting rent →',
     linkType: 'partner_rent_reporting' as const,
   },
+  moving_help: {
+    headline: 'Moving? Save on your move.',
+    subtext:
+      'Compare local movers and get instant quotes. Real reviews, transparent pricing, and help when you need it.',
+    buttonLabel: 'Compare movers →',
+    linkType: 'partner_moving_help' as const,
+  },
 } as const;
 
 const PartnerCTA = ({
@@ -34,12 +41,12 @@ const PartnerCTA = ({
 }: PartnerCTAProps) => {
   const impressionFired = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const isRentReporting = variant === 'rent_reporting';
-  const linkType = isRentReporting ? VARIANTS.rent_reporting.linkType : 'partner_rent_reporting';
+  const config = VARIANTS[variant];
+  const linkType = config?.linkType ?? 'partner_rent_reporting';
 
   useEffect(() => {
     const el = containerRef.current;
-    if (!el || !isRentReporting) return;
+    if (!el) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -76,7 +83,7 @@ const PartnerCTA = ({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [analysisId, verdict, toolUsed, city, zip, placement, linkType, isRentReporting]);
+  }, [analysisId, verdict, toolUsed, city, zip, placement, linkType]);
 
   const handleClick = useCallback(() => {
     trackEvent('affiliate_click', {
@@ -102,17 +109,18 @@ const PartnerCTA = ({
     }
   }, [analysisId, verdict, toolUsed, city, zip, placement, linkType]);
 
-  // moving_help is not rendered onsite in v1
-  if (!isRentReporting) return null;
+  if (!config) return null;
 
-  const config = VARIANTS.rent_reporting;
   const href = AFFILIATE_LINKS[variant];
+  const isMovingHelp = variant === 'moving_help';
+  const borderColor = isMovingHelp ? 'hsl(var(--primary))' : 'hsl(var(--accent-green, 151 50% 38%))';
+  const btnColor = isMovingHelp ? 'hsl(var(--primary))' : 'hsl(var(--accent-green, 151 50% 38%))';
 
   return (
     <div
       ref={containerRef}
       className="border-l-[3px] rounded-r-lg bg-secondary pl-4 pr-4 py-4"
-      style={{ borderLeftColor: 'hsl(var(--accent-green, 151 50% 38%))' }}
+      style={{ borderLeftColor: borderColor }}
     >
       <p className="text-[11px] text-muted-foreground/60 mb-3 leading-relaxed">
         Disclosure: Some services and listings below include affiliate or referral links. If you use them, RenewalReply may receive compensation at no additional cost to you. Affiliate relationships never influence our rent analysis, fairness scores, or advice.
@@ -125,7 +133,7 @@ const PartnerCTA = ({
         rel="sponsored noopener noreferrer"
         onClick={handleClick}
         className="mt-3 inline-block rounded-md px-3.5 py-1.5 text-[12px] font-semibold text-white transition-opacity hover:opacity-90"
-        style={{ backgroundColor: 'hsl(var(--accent-green, 151 50% 38%))' }}
+        style={{ backgroundColor: btnColor }}
       >
         {config.buttonLabel}
       </a>
