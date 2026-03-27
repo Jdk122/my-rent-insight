@@ -21,6 +21,13 @@ const VARIANTS = {
     buttonLabel: 'Start reporting rent →',
     linkType: 'partner_rent_reporting' as const,
   },
+  moving_help: {
+    headline: 'Moving? Save on your move.',
+    subtext:
+      'Compare local movers and get instant quotes. Real reviews, transparent pricing, and help when you need it.',
+    buttonLabel: 'Compare movers →',
+    linkType: 'partner_moving_help' as const,
+  },
 } as const;
 
 const PartnerCTA = ({
