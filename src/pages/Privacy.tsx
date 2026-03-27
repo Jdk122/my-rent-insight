@@ -20,7 +20,7 @@ const Privacy = () => {
       <noscript>
         <div style={{ maxWidth: 620, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
           <h1>Privacy Policy — RenewalReply</h1>
-          <p>Last updated: March 2026</p>
+          <p>Last updated: March 27, 2026</p>
           <h2>What RenewalReply Does</h2>
           <p>RenewalReply is a free tool that helps renters understand whether their rent increase is in line with market rates.</p>
           <h2>Information You Provide</h2>

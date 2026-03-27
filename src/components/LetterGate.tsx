@@ -277,9 +277,11 @@ const LetterGate = ({ children, leadContext, onEmailCaptured, prefilledEmail, ve
 
                 <div className="mt-3 space-y-1">
                   <SocialProofLine />
-                  <p className="text-[11px] text-muted-foreground/60">
-                    No spam. See our{' '}
-                    <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
+                  <p className="text-[10px] text-muted-foreground/60 text-center mt-1.5">
+                    By entering your email, you agree to our{' '}
+                    <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>{' '}
+                    and{' '}
+                    <Link to="/terms" className="underline hover:text-foreground transition-colors">Terms of Service</Link>.
                   </p>
                 </div>
               </div>

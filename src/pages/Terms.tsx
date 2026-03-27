@@ -121,7 +121,7 @@ const Terms = () => {
           <section>
             <h2 className="text-lg font-semibold text-foreground mb-2">Contact</h2>
             <p>
-              Questions about these terms? Email{' '}
+              RenewalReply is operated by PacketOps LLC, 971 US Highway 202N, Suite N, Branchburg, NJ 08876. Questions about these terms? Email{' '}
               <a href="mailto:privacy@renewalreply.com" className="text-primary hover:underline">
                 privacy@renewalreply.com
               </a>.
