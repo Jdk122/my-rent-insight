@@ -141,7 +141,7 @@ const Privacy = () => {
               <strong>Categories of personal information we collect:</strong> identifiers (email address, IP address), internet activity (pages visited, tool usage), approximate geolocation derived from IP address, and user-provided property information (ZIP code, bedroom count, rent amounts).
             </p>
             <p className="mt-3">
-              <strong>Third parties we share data with:</strong> cloud infrastructure providers (Supabase, Netlify), analytics (Google Analytics), advertising platforms (Google Ads — conversion data only, no personal information shared), and data API providers (anonymized queries only).
+              <strong>Third parties we share data with:</strong> cloud infrastructure providers, analytics providers, advertising platforms (conversion data only, no personal information shared), and data API providers (anonymized queries only).
             </p>
             <p className="mt-3">
               To exercise your rights, email{' '}
