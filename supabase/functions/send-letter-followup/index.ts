@@ -127,8 +127,10 @@ function buildDay14Html(lead: any, affiliateHtml: string) {
       ${affiliateHtml}
       <p style="font-family:'DM Sans',Arial,sans-serif;font-size:15px;color:#555;margin-top:28px;">— James</p>
       <hr style="border:none;border-top:1px solid #eee;margin:32px 0 16px;" />
-      <p style="font-size:11px;color:#999;text-align:center;">
-        You received this because you used RenewalReply.<br/>
+      <p style="font-size:11px;color:#999;text-align:center;line-height:1.6;">
+        RenewalReply | PacketOps LLC<br/>
+        971 US Highway 202N, Suite N, Branchburg, NJ 08876<br/><br/>
+        You received this because you used the RenewalReply rent analysis tool.<br/>
         <a href="${unsubUrl}" style="color:#999;text-decoration:underline;">Unsubscribe</a>
       </p>
     </div>
@@ -161,8 +163,10 @@ function buildDay30Html(lead: any, affiliateHtml: string) {
       ${affiliateHtml}
       <p style="font-family:'DM Sans',Arial,sans-serif;font-size:15px;color:#555;margin-top:28px;">— James</p>
       <hr style="border:none;border-top:1px solid #eee;margin:32px 0 16px;" />
-      <p style="font-size:11px;color:#999;text-align:center;">
-        You received this because you used RenewalReply.<br/>
+      <p style="font-size:11px;color:#999;text-align:center;line-height:1.6;">
+        RenewalReply | PacketOps LLC<br/>
+        971 US Highway 202N, Suite N, Branchburg, NJ 08876<br/><br/>
+        You received this because you used the RenewalReply rent analysis tool.<br/>
         <a href="${unsubUrl}" style="color:#999;text-decoration:underline;">Unsubscribe</a>
       </p>
     </div>
