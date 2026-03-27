@@ -600,9 +600,8 @@ const RentByCity = () => {
         </div>
 
         {/* Disclaimer + freshness */}
-        <DataPageFreshness freshness={freshness} />
         <p className="text-xs text-muted-foreground/60 italic mt-2">
-          Data reflects HUD FY{hudFY} fair market rent benchmarks and market data from Apartment List and Zillow. Actual rents vary by unit condition, building type, and lease terms. This is general market information, not legal or financial advice.
+          Market data updated monthly from public and third-party sources. Actual rents vary by unit, building, and lease terms. For informational purposes only — not legal or financial advice. <Link to="/methodology" className="underline hover:text-muted-foreground">See methodology →</Link>
         </p>
       </main>
 
