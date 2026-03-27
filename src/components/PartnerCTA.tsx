@@ -84,7 +84,7 @@ const PartnerCTA = ({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [analysisId, verdict, toolUsed, city, zip, placement, linkType, isRentReporting]);
+  }, [analysisId, verdict, toolUsed, city, zip, placement, linkType]);
 
   const handleClick = useCallback(() => {
     trackEvent('affiliate_click', {
