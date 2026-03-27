@@ -1500,12 +1500,23 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   />
                 )}
                 {selectedIntent === 'move' && (
-                  <MoveCTA
-                    city={city}
-                    zip={rentData.zip}
-                    hasListingsAbove={(rentcastListings.data?.listings ?? []).length >= 1}
-                    placement="post_verdict"
-                  />
+                  <>
+                    <PartnerCTA
+                      variant="moving_help"
+                      analysisId={analysisId}
+                      verdict={verdictLabel}
+                      toolUsed="renewal"
+                      city={city}
+                      zip={rentData.zip}
+                      placement="post_verdict"
+                    />
+                    <MoveCTA
+                      city={city}
+                      zip={rentData.zip}
+                      hasListingsAbove={(rentcastListings.data?.listings ?? []).length >= 1}
+                      placement="post_verdict"
+                    />
+                  </>
                 )}
               </section>
             )}
