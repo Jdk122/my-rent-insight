@@ -133,6 +133,7 @@ const DealsHub: React.FC = () => {
                 })}
               </div>
             </section>
+        )}
 
         {/* Cross-sell */}
         <section className="max-w-4xl mx-auto px-5 pb-12">
