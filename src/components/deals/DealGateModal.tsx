@@ -47,8 +47,10 @@ const DealGateModal = ({ listing, cityName, cityStateAbbr, cityZip, onClose, onE
     if (skipGate) {
       onAnalysisViewed?.();
       if (!submitted) {
-        trackEvent('deals_free_analysis_viewed', { address: listing.address, score: listing.score });
+        trackEvent('deals_free_analysis_viewed', { address: listing.address, score: listing.score, gated: false });
       }
+    } else {
+      trackEvent('gate_viewed', { source: 'deals_page', gated_listing_id: listing.address });
     }
   }, [skipGate]);
 
