@@ -29,7 +29,7 @@ const Terms = () => {
           <section>
             <h2 className="text-lg font-semibold text-foreground mb-2">About RenewalReply</h2>
             <p>
-              RenewalReply ("we," "us," "our") provides a free online tool that helps renters evaluate
+              RenewalReply ("we," "us," "our") is operated by PacketOps LLC, a New Jersey limited liability company, with its registered office at 971 US Highway 202N, Suite N, Branchburg, NJ 08876. We provide a free online tool that helps renters evaluate
               whether their rent increase is in line with local market conditions. By using this website,
               you agree to these Terms of Service.
             </p>
