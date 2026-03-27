@@ -133,6 +133,27 @@ const Privacy = () => {
           </section>
 
           <section>
+            <h2 className="text-lg font-semibold text-foreground mb-2">Your Privacy Rights</h2>
+            <p>
+              <strong>California Residents (CCPA/CPRA):</strong> If you are a California resident, you have the right to know what personal information we collect, request its deletion, and opt out of the sale of your information. We do not sell your personal information to third parties. We do not share personal information for cross-context behavioral advertising.
+            </p>
+            <p className="mt-3">
+              <strong>Categories of personal information we collect:</strong> identifiers (email address, IP address), internet activity (pages visited, tool usage), approximate geolocation derived from IP address, and user-provided property information (ZIP code, bedroom count, rent amounts).
+            </p>
+            <p className="mt-3">
+              <strong>Third parties we share data with:</strong> cloud infrastructure providers (Supabase, Netlify), analytics (Google Analytics), advertising platforms (Google Ads — conversion data only, no personal information shared), and data API providers (anonymized queries only).
+            </p>
+            <p className="mt-3">
+              To exercise your rights, email{' '}
+              <a href="mailto:privacy@renewalreply.com" className="text-primary hover:underline">privacy@renewalreply.com</a>. We will respond within 45 days.
+            </p>
+            <p className="mt-3">
+              <strong>Other States:</strong> Residents of Virginia, Colorado, Connecticut, Utah, Texas, Oregon, Montana, and other states with consumer privacy laws have similar rights to access, delete, and opt out of certain data processing. Contact{' '}
+              <a href="mailto:privacy@renewalreply.com" className="text-primary hover:underline">privacy@renewalreply.com</a> to exercise them.
+            </p>
+          </section>
+
+          <section>
             <h2 className="text-lg font-semibold text-foreground mb-2">Security</h2>
             <p>
               We use industry-standard security measures to protect your data, including encrypted
