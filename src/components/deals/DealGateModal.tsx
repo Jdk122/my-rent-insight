@@ -142,6 +142,7 @@ const DealGateModal = ({ listing, cityName, cityStateAbbr, cityZip, onClose, onE
 
     onEmailCaptured(trimmed);
     trackEvent('email_captured', { gate: 'deals_gate', tool: 'wsip', verdict: listing.verdict, address: listing.address });
+    trackEvent('gate_to_email_submit', { address: listing.address, score: listing.score });
     trackAdsConversion('wsip', trimmed);
     setSubmitted(true);
     setLoading(false);

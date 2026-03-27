@@ -39,7 +39,7 @@ const Deals = () => {
   const [freeListingId, setFreeListingId] = useState<string | null>(() => {
     try { return localStorage.getItem('rr_deals_free_listing_id'); } catch { return null; }
   });
-  const [emailCaptured, setEmailCaptured] = useState(false);
+  const [emailCaptured, setEmailCaptured] = useState(() => !!getRememberedEmail());
 
   // Market context
   const [marketByZip, setMarketByZip] = useState<Record<string, any>>({});
