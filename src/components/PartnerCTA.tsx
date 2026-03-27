@@ -42,8 +42,7 @@ const PartnerCTA = ({
   const impressionFired = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const config = VARIANTS[variant];
-  if (!config) return null;
-  const linkType = config.linkType;
+  const linkType = config?.linkType ?? 'partner_rent_reporting';
 
   useEffect(() => {
     const el = containerRef.current;
