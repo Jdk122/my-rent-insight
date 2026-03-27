@@ -184,7 +184,7 @@ interface CardProps {
 
 const NeighborhoodCard: React.FC<CardProps> = ({ city }) => {
   const accent = METRO_ACCENT[city.stateAbbr] ?? 'border-l-border';
-  const metroLabel = METRO_CONTEXT[city.stateAbbr] ?? city.stateAbbr;
+  const metroLabel = city.metroLabel ?? METRO_CONTEXT[city.stateAbbr] ?? city.stateAbbr;
   const zipCount = city.zips.length;
 
   return (
