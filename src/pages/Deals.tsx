@@ -373,7 +373,6 @@ const Deals = () => {
           />
         );
       })()}
-      )}
 
       {/* Hero */}
       <header className="max-w-[1020px] mx-auto px-5 pt-6 pb-5">
