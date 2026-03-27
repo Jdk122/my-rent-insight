@@ -34,7 +34,7 @@ const COMPONENT_LABELS = [
   { key: 'momentum' as const, label: 'Market Direction' },
 ];
 
-const DealGateModal = ({ listing, cityName, cityStateAbbr, cityZip, onClose, onEmailCaptured, skipGate, onAnalysisViewed }: DealGateModalProps) => {
+const DealGateModal = ({ listing, cityName, cityStateAbbr, cityZip, onClose, onEmailCaptured, skipGate, isFreeView, onAnalysisViewed }: DealGateModalProps) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
