@@ -109,6 +109,8 @@ const PartnerCTA = ({
     }
   }, [analysisId, verdict, toolUsed, city, zip, placement, linkType]);
 
+  if (!config) return null;
+
   const href = AFFILIATE_LINKS[variant];
   const isMovingHelp = variant === 'moving_help';
   const borderColor = isMovingHelp ? 'hsl(var(--primary))' : 'hsl(var(--accent-green, 151 50% 38%))';
