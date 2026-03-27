@@ -529,6 +529,10 @@ function DashboardContent() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
               {referralSummary.map((s) => {
                 const labelMap: Record<string, string> = {
+                  intent_stay: '🏠 Intent: Stay',
+                  intent_move: '🚚 Intent: Move',
+                  rent_reporter: '📊 RentReporter',
+                  internal_click: '🔗 Internal Click',
                   agent_matching: '🏠 Agent Matching',
                   moving_quotes: '🚚 Moving Quotes',
                   mortgage_check: '🔑 Mortgage Check',
@@ -569,34 +573,42 @@ function DashboardContent() {
               <div className="border border-border rounded-lg overflow-x-auto bg-card">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-border bg-muted/50">
+                     <tr className="border-b border-border bg-muted/50">
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Date</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Event</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Link Type</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Placement</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Email</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Zip</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Analysis</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {referralClicks.slice(0, 50).map((c: any) => {
-                      const labelMap: Record<string, string> = {
-                        agent_matching: '🏠 Agent',
-                        moving_quotes: '🚚 Movers',
-                        mortgage_check: '🔑 Mortgage',
-                        renters_insurance: '🛡️ Insurance',
-                        mortgage_banner: '🏦 Mortgage Banner',
-                        listing_click: '🏘️ Listing',
-                      };
-                      return (
-                        <tr key={c.id} className="border-b border-border/50 hover:bg-muted/30">
-                          <td className="px-3 py-2 whitespace-nowrap text-xs">{new Date(c.created_at).toLocaleString()}</td>
-                          <td className="px-3 py-2 whitespace-nowrap text-xs">{labelMap[c.link_type] || c.link_type}</td>
-                          <td className="px-3 py-2 text-xs max-w-[160px] truncate" title={c.email || ''}>{c.email || '—'}</td>
-                          <td className="px-3 py-2 whitespace-nowrap text-xs">{c.zip || '—'}</td>
-                          <td className="px-3 py-2 whitespace-nowrap text-xs font-mono">{c.analysis_id ? c.analysis_id.slice(0, 8) : '—'}</td>
-                        </tr>
-                      );
-                    })}
+                     </tr>
+                   </thead>
+                   <tbody>
+                     {referralClicks.slice(0, 50).map((c: any) => {
+                       const labelMap: Record<string, string> = {
+                         intent_stay: '🏠 Stay',
+                         intent_move: '🚚 Move',
+                         rent_reporter: '📊 RentReporter',
+                         internal_click: '🔗 Internal',
+                         agent_matching: '🏠 Agent',
+                         moving_quotes: '🚚 Movers',
+                         mortgage_check: '🔑 Mortgage',
+                         renters_insurance: '🛡️ Insurance',
+                         mortgage_banner: '🏦 Mortgage Banner',
+                         listing_click: '🏘️ Listing',
+                       };
+                       return (
+                         <tr key={c.id} className="border-b border-border/50 hover:bg-muted/30">
+                           <td className="px-3 py-2 whitespace-nowrap text-xs">{new Date(c.created_at).toLocaleString()}</td>
+                           <td className="px-3 py-2 whitespace-nowrap text-xs">{c.event_type || '—'}</td>
+                           <td className="px-3 py-2 whitespace-nowrap text-xs">{labelMap[c.link_type] || c.link_type}</td>
+                           <td className="px-3 py-2 whitespace-nowrap text-xs">{c.placement || '—'}</td>
+                           <td className="px-3 py-2 text-xs max-w-[160px] truncate" title={c.email || ''}>{c.email || '—'}</td>
+                           <td className="px-3 py-2 whitespace-nowrap text-xs">{c.zip || '—'}</td>
+                           <td className="px-3 py-2 whitespace-nowrap text-xs font-mono">{c.analysis_id ? c.analysis_id.slice(0, 8) : '—'}</td>
+                         </tr>
+                       );
+                     })}
                   </tbody>
                 </table>
               </div>

@@ -187,7 +187,7 @@ Deno.serve(async (req) => {
       case "referral_clicks": {
         const { data: rows, error } = await supabase
           .from("referral_clicks")
-          .select("id, analysis_id, email, link_type, zip, created_at")
+          .select("id, analysis_id, email, link_type, event_type, placement, zip, created_at")
           .order("created_at", { ascending: false })
           .limit(500);
         if (error) throw error;
