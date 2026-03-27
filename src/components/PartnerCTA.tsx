@@ -110,11 +110,10 @@ const PartnerCTA = ({
     }
   }, [analysisId, verdict, toolUsed, city, zip, placement, linkType]);
 
-  // moving_help is not rendered onsite in v1
-  if (!isRentReporting) return null;
-
-  const config = VARIANTS.rent_reporting;
   const href = AFFILIATE_LINKS[variant];
+  const isMovingHelp = variant === 'moving_help';
+  const borderColor = isMovingHelp ? 'hsl(var(--primary))' : 'hsl(var(--accent-green, 151 50% 38%))';
+  const btnColor = isMovingHelp ? 'hsl(var(--primary))' : 'hsl(var(--accent-green, 151 50% 38%))';
 
   return (
     <div
