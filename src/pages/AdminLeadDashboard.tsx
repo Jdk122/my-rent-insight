@@ -529,6 +529,10 @@ function DashboardContent() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
               {referralSummary.map((s) => {
                 const labelMap: Record<string, string> = {
+                  intent_stay: '🏠 Intent: Stay',
+                  intent_move: '🚚 Intent: Move',
+                  rent_reporter: '📊 RentReporter',
+                  internal_click: '🔗 Internal Click',
                   agent_matching: '🏠 Agent Matching',
                   moving_quotes: '🚚 Moving Quotes',
                   mortgage_check: '🔑 Mortgage Check',
