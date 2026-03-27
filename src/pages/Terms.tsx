@@ -23,7 +23,7 @@ const Terms = () => {
         <h1 className="font-display text-[28px] font-semibold tracking-tight mb-2" style={{ letterSpacing: '-0.02em' }}>
           Terms of Service
         </h1>
-        <p className="text-sm text-muted-foreground mb-8">Last updated: March 2026</p>
+        <p className="text-sm text-muted-foreground mb-8">Last updated: March 27, 2026</p>
 
         <div className="space-y-8 text-[15px] leading-relaxed text-muted-foreground">
           <section>
