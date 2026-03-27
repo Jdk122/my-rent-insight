@@ -102,6 +102,22 @@ const Terms = () => {
           </section>
 
           <section>
+            <h2 className="text-lg font-semibold text-foreground mb-2">Third-Party Products, Services, and Affiliate Relationships</h2>
+            <p>
+              RenewalReply may display, recommend, or provide links to products and services offered by third parties, including but not limited to renters insurance providers, rent reporting services, moving companies, guarantor services, and rental listing platforms. Some of these links are affiliate or referral links, meaning that RenewalReply may receive compensation from the third-party provider if you click on, sign up for, or purchase a product or service through such link.
+            </p>
+            <p className="mt-3">
+              Affiliate and referral relationships do not influence our rent analysis, fairness scores, market data, negotiation letters, or any other tools or information provided through the Service. All content containing affiliate or referral links will be identified as such in accordance with applicable Federal Trade Commission guidelines.
+            </p>
+            <p className="mt-3">
+              RenewalReply does not endorse, warrant, or guarantee any third-party product or service, and is not responsible for the accuracy, quality, safety, legality, or suitability of any third-party offering. Your use of any third-party product or service is governed by that provider's own terms and conditions and privacy policy. RenewalReply shall not be liable for any loss, damage, or claim arising from your use of or reliance on any third-party product or service accessed through the Service.
+            </p>
+            <p className="mt-3">
+              Any third-party trademarks, service marks, or trade names referenced on the Service are the property of their respective owners and are used solely for identification purposes.
+            </p>
+          </section>
+
+          <section>
             <h2 className="text-lg font-semibold text-foreground mb-2">Privacy</h2>
             <p>
               Your use of RenewalReply is also governed by our{' '}

@@ -91,6 +91,16 @@ async function getAffiliateSection(
   return null;
 }
 
+const AFFILIATE_DISCLOSURE = `
+  <table role="presentation" width="100%" style="border-collapse:collapse;">
+    <tr>
+      <td style="padding: 12px 0 8px 0; font-size: 11px; color: #888; line-height: 1.5; border-top: 1px solid #eee;">
+        <strong>Disclosure:</strong> Some links below are affiliate or referral links to third-party services. If you use them, RenewalReply may receive compensation at no additional cost to you. Affiliate relationships never influence our rent analysis, fairness scores, or advice. <a href="https://www.renewalreply.com/privacy" style="color: #888; text-decoration: underline;">Privacy Policy</a>
+      </td>
+    </tr>
+  </table>
+`;
+
 function buildAffiliateSectionHtml(section: AffiliateSection | null): string {
   if (!section) return "";
 
@@ -98,8 +108,13 @@ function buildAffiliateSectionHtml(section: AffiliateSection | null): string {
     ? `<p style="font-size:11px;color:#999;margin:8px 0 0;">${section.disclosure}</p>`
     : "";
 
+  // Show FTC-compliant disclosure above affiliate content
+  const hasAffiliateLink = !!section.disclosure;
+  const disclosureBlock = hasAffiliateLink ? AFFILIATE_DISCLOSURE : "";
+
   return `
     <hr style="border:none;border-top:1px solid #eee;margin:28px 0 20px;" />
+    ${disclosureBlock}
     <p style="font-size:14px;color:#555;line-height:1.6;margin:0 0 12px;">${section.text}</p>
     ${buildButton(section.buttonLabel, section.buttonUrl, "#168eca")}
     ${disclosureHtml}

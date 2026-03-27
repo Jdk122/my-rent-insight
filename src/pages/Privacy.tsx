@@ -110,6 +110,9 @@ const Privacy = () => {
             <ul className="list-disc pl-5 space-y-1">
               <li>You can use the rent check tool without providing any personal contact information.</li>
               <li>If you provide your email, every message includes a one-click unsubscribe link.</li>
+              <li>You may opt out of receiving emails containing third-party product recommendations or affiliate offers while continuing to receive your rent analysis results, market updates, and renewal reminders. To do so, reply to any email with "unsubscribe recommendations" or contact us at{' '}
+                <a href="mailto:privacy@renewalreply.com" className="text-primary hover:underline">privacy@renewalreply.com</a>. We will process your request within ten (10) business days.
+              </li>
               <li>You can request deletion of your data at any time by emailing{' '}
                 <a href="mailto:privacy@renewalreply.com" className="text-primary hover:underline">privacy@renewalreply.com</a>.
               </li>

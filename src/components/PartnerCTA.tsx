@@ -114,6 +114,9 @@ const PartnerCTA = ({
       className="border-l-[3px] rounded-r-lg bg-secondary pl-4 pr-4 py-4"
       style={{ borderLeftColor: 'hsl(var(--accent-green, 151 50% 38%))' }}
     >
+      <p className="text-[11px] text-muted-foreground/60 mb-3 leading-relaxed">
+        Disclosure: Some services and listings below include affiliate or referral links. If you use them, RenewalReply may receive compensation at no additional cost to you. Affiliate relationships never influence our rent analysis, fairness scores, or advice.
+      </p>
       <p className="text-[13px] font-semibold text-foreground">{config.headline}</p>
       <p className="text-[12px] text-muted-foreground mt-1 leading-relaxed">{config.subtext}</p>
       <a
