@@ -258,7 +258,7 @@ const Methodology = () => {
                     { source: 'Apartment List', updated: 'February 2026', dateTime: '2026-02' },
                     { source: 'Zillow ZORI', updated: 'February 2026', dateTime: '2026-02' },
                     { source: 'Zillow ZHVI', updated: 'February 2026', dateTime: '2026-02' },
-                    { source: 'Live market comps', updated: 'Real-time (cached 24 hours)', dateTime: undefined },
+                    { source: 'Live market comps', updated: 'Real-time', dateTime: undefined },
                     { source: 'Census ACS', updated: '2022 (5-year estimates)', dateTime: '2022' },
                   ].map(({ source, updated, dateTime }) => (
                     <div key={source} className="flex justify-between items-center py-1.5 border-b border-border/30 last:border-0">
