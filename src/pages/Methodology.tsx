@@ -256,8 +256,8 @@ const Methodology = () => {
                   {[
                     { source: 'HUD FMR & 50th Percentile', updated: 'FY2026 (effective October 2025)', dateTime: '2025-10' },
                     { source: 'Apartment List', updated: 'February 2026', dateTime: '2026-02' },
-                    { source: 'Zillow ZORI', updated: 'January 2026', dateTime: '2026-01' },
-                    { source: 'Zillow ZHVI', updated: 'January 2026', dateTime: '2026-01' },
+                    { source: 'Zillow ZORI', updated: 'February 2026', dateTime: '2026-02' },
+                    { source: 'Zillow ZHVI', updated: 'February 2026', dateTime: '2026-02' },
                     { source: 'Live market comps', updated: 'Real-time (cached 24 hours)', dateTime: undefined },
                     { source: 'Census ACS', updated: '2022 (5-year estimates)', dateTime: '2022' },
                   ].map(({ source, updated, dateTime }) => (
