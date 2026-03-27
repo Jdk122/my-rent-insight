@@ -5,6 +5,8 @@ export interface DealCity {
   state: string;
   stateAbbr: string;
   zips: string[];
+  /** Override metro label shown on hub cards (e.g. "Queens, NY") */
+  metroLabel?: string;
   /** City names whose rent-data pages should cross-link to this neighborhood */
   metroCities: string[];
 }
