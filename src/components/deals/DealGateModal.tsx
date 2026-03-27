@@ -21,6 +21,7 @@ interface DealGateModalProps {
   onClose: () => void;
   onEmailCaptured: (email: string) => void;
   skipGate?: boolean;
+  isFreeView?: boolean;
   onAnalysisViewed?: () => void;
 }
 
@@ -33,7 +34,7 @@ const COMPONENT_LABELS = [
   { key: 'momentum' as const, label: 'Market Direction' },
 ];
 
-const DealGateModal = ({ listing, cityName, cityStateAbbr, cityZip, onClose, onEmailCaptured, skipGate, onAnalysisViewed }: DealGateModalProps) => {
+const DealGateModal = ({ listing, cityName, cityStateAbbr, cityZip, onClose, onEmailCaptured, skipGate, isFreeView, onAnalysisViewed }: DealGateModalProps) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -46,8 +47,10 @@ const DealGateModal = ({ listing, cityName, cityStateAbbr, cityZip, onClose, onE
     if (skipGate) {
       onAnalysisViewed?.();
       if (!submitted) {
-        trackEvent('deals_free_analysis_viewed', { address: listing.address, score: listing.score });
+        trackEvent('deals_free_analysis_viewed', { address: listing.address, score: listing.score, gated: false });
       }
+    } else {
+      trackEvent('gate_viewed', { source: 'deals_page', gated_listing_id: listing.address });
     }
   }, [skipGate]);
 
@@ -141,6 +144,7 @@ const DealGateModal = ({ listing, cityName, cityStateAbbr, cityZip, onClose, onE
 
     onEmailCaptured(trimmed);
     trackEvent('email_captured', { gate: 'deals_gate', tool: 'wsip', verdict: listing.verdict, address: listing.address });
+    trackEvent('gate_to_email_submit', { address: listing.address, score: listing.score });
     trackAdsConversion('wsip', trimmed);
     setSubmitted(true);
     setLoading(false);
@@ -359,6 +363,15 @@ const DealGateModal = ({ listing, cityName, cityStateAbbr, cityZip, onClose, onE
               <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
                 Full report sent to your email.
               </p>
+            ) : isFreeView ? (
+              <>
+                <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
+                  Want analysis for every listing? Enter your email on the next one.
+                </p>
+                <p className="text-[10px] text-muted-foreground/40 text-center mt-3">
+                  1 of 1 free analysis used
+                </p>
+              </>
             ) : (
               <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
                 Want reports for every listing? Enter your email on the next one.

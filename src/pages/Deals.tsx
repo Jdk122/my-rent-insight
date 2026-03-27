@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { getRememberedEmail } from '@/lib/emailMemory';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { findDealCity } from '@/data/dealsCities';
@@ -31,9 +32,14 @@ const Deals = () => {
   const [cleanOnly, setCleanOnly] = useState(false);
   const [selected, setSelected] = useState<DealListing | null>(null);
 
-  // Gate state: first analysis free, gate on second click
-  const [freeViewUsed, setFreeViewUsed] = useState(false);
-  const [emailCaptured, setEmailCaptured] = useState(false);
+  // Gate state: first analysis free, gate on second distinct listing
+  const [freeViewUsed, setFreeViewUsed] = useState(() => {
+    try { return localStorage.getItem('rr_deals_free_used') === 'true'; } catch { return false; }
+  });
+  const [freeListingId, setFreeListingId] = useState<string | null>(() => {
+    try { return localStorage.getItem('rr_deals_free_listing_id'); } catch { return null; }
+  });
+  const [emailCaptured, setEmailCaptured] = useState(() => !!getRememberedEmail());
 
   // Market context
   const [marketByZip, setMarketByZip] = useState<Record<string, any>>({});
@@ -335,20 +341,39 @@ const Deals = () => {
 
       <PageNav ctaText="Check My Rent →" />
 
-      {selected && (
-        <DealGateModal
-          listing={selected}
-          cityName={city.name}
-          cityStateAbbr={city.stateAbbr}
-          cityZip={primaryZip}
-          onClose={() => setSelected(null)}
-          onEmailCaptured={handleEmailCaptured}
-          skipGate={!freeViewUsed || emailCaptured}
-          onAnalysisViewed={() => {
-            if (!freeViewUsed) setFreeViewUsed(true);
-          }}
-        />
-      )}
+      {selected && (() => {
+        const listingId = selected.address;
+        const isFreeEligible = !freeViewUsed || listingId === freeListingId;
+        const shouldSkipGate = emailCaptured || isFreeEligible;
+        const isReopenedFree = freeViewUsed && listingId === freeListingId;
+
+        return (
+          <DealGateModal
+            listing={selected}
+            cityName={city.name}
+            cityStateAbbr={city.stateAbbr}
+            cityZip={primaryZip}
+            onClose={() => setSelected(null)}
+            onEmailCaptured={handleEmailCaptured}
+            skipGate={shouldSkipGate}
+            isFreeView={isFreeEligible && !emailCaptured}
+            onAnalysisViewed={() => {
+              if (!freeViewUsed) {
+                setFreeViewUsed(true);
+                setFreeListingId(listingId);
+                try {
+                  localStorage.setItem('rr_deals_free_used', 'true');
+                  localStorage.setItem('rr_deals_free_listing_id', listingId);
+                } catch {}
+                trackEvent('deals_free_analysis_viewed', { address: selected.address, score: selected.score, gated: false });
+              }
+              if (!isReopenedFree && freeViewUsed && !emailCaptured && listingId !== freeListingId) {
+                trackEvent('free_analysis_to_gate_attempt', { free_listing_id: freeListingId || '', gated_listing_id: listingId });
+              }
+            }}
+          />
+        );
+      })()}
 
       {/* Hero */}
       <header className="max-w-[1020px] mx-auto px-5 pt-6 pb-5">
