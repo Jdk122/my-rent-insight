@@ -88,9 +88,6 @@ const DealsSidebar = ({ city, medianRent1BR, yoyChange, activeListings }: DealsS
 
       {/* Affiliate services */}
       <SideCard title="Renter tools">
-        <p className="text-[11px] text-muted-foreground/60 mb-3 leading-relaxed">
-          Disclosure: Some services and listings below include affiliate or referral links. If you use them, RenewalReply may receive compensation at no additional cost to you. Affiliate relationships never influence our rent analysis, fairness scores, or advice.
-        </p>
         {[
           { icon: '📊', title: 'Build Credit', sub: 'Report rent free', accent: 'hsl(var(--accent-green))', href: AFFILIATE_LINKS.rent_reporting },
         ].map((svc) => (
@@ -114,6 +111,10 @@ const DealsSidebar = ({ city, medianRent1BR, yoyChange, activeListings }: DealsS
             <span className="text-[11px] font-semibold" style={{ color: svc.accent }}>→</span>
           </a>
         ))}
+        <p className="text-[10px] text-muted-foreground/40 mt-2">
+          May include affiliate links.{' '}
+          <a href="/privacy" className="underline hover:text-muted-foreground">Learn more</a>
+        </p>
       </SideCard>
     </aside>
   );
