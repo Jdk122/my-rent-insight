@@ -61,11 +61,11 @@ const Privacy = () => {
           <section>
            <h2 className="text-lg font-semibold text-foreground mb-2">Information We Collect Automatically</h2>
             <p>
-              We use Google Analytics 4 to collect anonymized usage data such as pages visited, time on site,
-              and general tool usage patterns. We also use Google Ads conversion tracking to measure the
-              effectiveness of our advertising campaigns — this tells us when someone who clicked one of
-              our ads uses the tool, but does not share your personal information with advertisers.
-              We use cookies to enable these functions.
+              We use analytics tools to collect anonymized usage data such as pages visited, time on site,
+              and general tool usage patterns. We also use advertising conversion tracking to measure the
+              effectiveness of our campaigns. We use cookies and similar technologies to enable these functions.
+              For more information about how our analytics provider collects and processes data, see{' '}
+              <a href="https://google.com/policies/privacy/partners" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">"How Google uses data when you use our partners' sites or apps"</a>.
             </p>
           </section>
 
