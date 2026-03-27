@@ -119,7 +119,7 @@ const PartnerCTA = ({
     <div
       ref={containerRef}
       className="border-l-[3px] rounded-r-lg bg-secondary pl-4 pr-4 py-4"
-      style={{ borderLeftColor: 'hsl(var(--accent-green, 151 50% 38%))' }}
+      style={{ borderLeftColor: borderColor }}
     >
       <p className="text-[11px] text-muted-foreground/60 mb-3 leading-relaxed">
         Disclosure: Some services and listings below include affiliate or referral links. If you use them, RenewalReply may receive compensation at no additional cost to you. Affiliate relationships never influence our rent analysis, fairness scores, or advice.
