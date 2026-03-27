@@ -31,8 +31,13 @@ const Deals = () => {
   const [cleanOnly, setCleanOnly] = useState(false);
   const [selected, setSelected] = useState<DealListing | null>(null);
 
-  // Gate state: first analysis free, gate on second click
-  const [freeViewUsed, setFreeViewUsed] = useState(false);
+  // Gate state: first analysis free, gate on second distinct listing
+  const [freeViewUsed, setFreeViewUsed] = useState(() => {
+    try { return localStorage.getItem('rr_deals_free_used') === 'true'; } catch { return false; }
+  });
+  const [freeListingId, setFreeListingId] = useState<string | null>(() => {
+    try { return localStorage.getItem('rr_deals_free_listing_id'); } catch { return null; }
+  });
   const [emailCaptured, setEmailCaptured] = useState(false);
 
   // Market context
