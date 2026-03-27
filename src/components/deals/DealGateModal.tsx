@@ -21,6 +21,7 @@ interface DealGateModalProps {
   onClose: () => void;
   onEmailCaptured: (email: string) => void;
   skipGate?: boolean;
+  isFreeView?: boolean;
   onAnalysisViewed?: () => void;
 }
 
