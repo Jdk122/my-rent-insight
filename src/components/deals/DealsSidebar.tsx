@@ -89,7 +89,7 @@ const DealsSidebar = ({ city, medianRent1BR, yoyChange, activeListings }: DealsS
       {/* Affiliate services */}
       <SideCard title="Renter tools">
         {[
-          { icon: '📊', title: 'Build Credit', sub: 'Report rent free', accent: 'hsl(var(--accent-green))', href: 'https://prf.hn/click/camref:1110lBJ34' },
+          { icon: '📊', title: 'Build Credit', sub: 'Report rent free', accent: 'hsl(var(--accent-green))', href: AFFILIATE_LINKS.rent_reporting },
         ].map((svc) => (
           <a
             key={svc.title}
