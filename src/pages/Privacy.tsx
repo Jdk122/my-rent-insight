@@ -78,6 +78,8 @@ const Privacy = () => {
               <li>Improve our tools and data accuracy</li>
               <li>Produce anonymized, aggregated market reports and analytics</li>
               <li>Support our business operations</li>
+              <li>Send you information about third-party products and services that we believe may be relevant to your housing situation, which may include renters insurance, rent reporting services, moving assistance, guarantor services, rental listings, or other housing-related offerings</li>
+              <li>Display or deliver content that contains affiliate or referral links to third-party products and services — when you click on or purchase through such links, we may receive compensation from the third-party provider at no additional cost to you, and such compensation does not influence our rent analysis, fairness determinations, or any other information we provide to you</li>
             </ul>
           </section>
 
@@ -92,10 +94,10 @@ const Privacy = () => {
               perform their function.
             </p>
             <p className="mt-3">
-              If we introduce features that connect you with housing professionals (such as rental agents
-              or moving services), we will clearly present this as a choice. Your information will only be
-              shared with a professional if you take a specific action requesting that connection. You are
-              never opted in automatically.
+              We may present you with recommendations, advertisements, or links to third-party products and services that we believe are relevant to your housing situation. Some of these may be affiliate or referral links, meaning we may receive compensation from the third-party provider if you click on, sign up for, or purchase a product or service through such link. Such compensation is received from the third-party provider, not from you. The presence of affiliate or referral relationships does not influence our rent analysis, fairness scores, market data, negotiation letters, or any other information or tools we provide. We do not share your name, email address, or other personal information with affiliate partners unless you independently and affirmatively choose to provide such information directly to the third-party provider (for example, by clicking through to their website and submitting your information on their platform).
+            </p>
+            <p className="mt-3">
+              We may in the future offer features that connect you directly with licensed real estate professionals, brokers, or other housing service providers. In such cases, your contact information will only be shared with a specific professional or provider if you take an affirmative action requesting that connection (such as clicking a "Connect Me" button or submitting a contact request form). You will never be automatically opted in to receiving contact from third-party professionals without your express, informed consent. At such time as we offer these features, this Privacy Policy will be updated to reflect the specific information shared and the purposes for which it is shared.
             </p>
             <p className="mt-3">
               We may share anonymized, aggregated data (such as average rent trends by zip code) for research,
@@ -108,6 +110,9 @@ const Privacy = () => {
             <ul className="list-disc pl-5 space-y-1">
               <li>You can use the rent check tool without providing any personal contact information.</li>
               <li>If you provide your email, every message includes a one-click unsubscribe link.</li>
+              <li>You may opt out of receiving emails containing third-party product recommendations or affiliate offers while continuing to receive your rent analysis results, market updates, and renewal reminders. To do so, reply to any email with "unsubscribe recommendations" or contact us at{' '}
+                <a href="mailto:privacy@renewalreply.com" className="text-primary hover:underline">privacy@renewalreply.com</a>. We will process your request within ten (10) business days.
+              </li>
               <li>You can request deletion of your data at any time by emailing{' '}
                 <a href="mailto:privacy@renewalreply.com" className="text-primary hover:underline">privacy@renewalreply.com</a>.
               </li>
