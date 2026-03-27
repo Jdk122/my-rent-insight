@@ -360,6 +360,15 @@ const DealGateModal = ({ listing, cityName, cityStateAbbr, cityZip, onClose, onE
               <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
                 Full report sent to your email.
               </p>
+            ) : isFreeView ? (
+              <>
+                <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
+                  Want analysis for every listing? Enter your email on the next one.
+                </p>
+                <p className="text-[10px] text-muted-foreground/40 text-center mt-3">
+                  1 of 1 free analysis used
+                </p>
+              </>
             ) : (
               <p className="text-[11px] text-muted-foreground/60 text-center mt-2">
                 Want reports for every listing? Enter your email on the next one.

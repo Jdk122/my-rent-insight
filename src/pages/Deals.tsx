@@ -340,19 +340,39 @@ const Deals = () => {
 
       <PageNav ctaText="Check My Rent →" />
 
-      {selected && (
-        <DealGateModal
-          listing={selected}
-          cityName={city.name}
-          cityStateAbbr={city.stateAbbr}
-          cityZip={primaryZip}
-          onClose={() => setSelected(null)}
-          onEmailCaptured={handleEmailCaptured}
-          skipGate={!freeViewUsed || emailCaptured}
-          onAnalysisViewed={() => {
-            if (!freeViewUsed) setFreeViewUsed(true);
-          }}
-        />
+      {selected && (() => {
+        const listingId = selected.address;
+        const isFreeEligible = !freeViewUsed || listingId === freeListingId;
+        const shouldSkipGate = emailCaptured || isFreeEligible;
+        const isReopenedFree = freeViewUsed && listingId === freeListingId;
+
+        return (
+          <DealGateModal
+            listing={selected}
+            cityName={city.name}
+            cityStateAbbr={city.stateAbbr}
+            cityZip={primaryZip}
+            onClose={() => setSelected(null)}
+            onEmailCaptured={handleEmailCaptured}
+            skipGate={shouldSkipGate}
+            isFreeView={isFreeEligible && !emailCaptured}
+            onAnalysisViewed={() => {
+              if (!freeViewUsed) {
+                setFreeViewUsed(true);
+                setFreeListingId(listingId);
+                try {
+                  localStorage.setItem('rr_deals_free_used', 'true');
+                  localStorage.setItem('rr_deals_free_listing_id', listingId);
+                } catch {}
+                trackEvent('deals_free_analysis_viewed', { address: selected.address, score: selected.score, gated: false });
+              }
+              if (!isReopenedFree && freeViewUsed && !emailCaptured && listingId !== freeListingId) {
+                trackEvent('free_analysis_to_gate_attempt', { free_listing_id: freeListingId || '', gated_listing_id: listingId });
+              }
+            }}
+          />
+        );
+      })()}
       )}
 
       {/* Hero */}
