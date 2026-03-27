@@ -112,29 +112,7 @@ const DealsHub: React.FC = () => {
           </section>
         ) : (
           <>
-            {/* Quick picks */}
-            <section className="max-w-4xl mx-auto px-5 pt-4 pb-6">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2.5">Popular neighborhoods</p>
-              <div className="flex gap-2 flex-wrap">
-                {QUICK_PICKS.map(slug => {
-                  const c = chipCity(slug);
-                  if (!c) return null;
-                  const dotColor = METRO_CHIP_ACCENT[c.stateAbbr] ?? 'bg-muted-foreground';
-                  return (
-                    <Link
-                      key={slug}
-                      to={`/deals/${slug}`}
-                      className="flex items-center gap-1.5 shrink-0 px-3.5 py-1.5 rounded-full border border-border text-[13px] font-medium text-foreground/80 hover:border-primary/50 hover:text-primary transition-colors"
-                    >
-                      <span className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
-                      {c.neighborhood || c.name}
-                    </Link>
-                  );
-                })}
-              </div>
-            </section>
-
-            {/* Metro sections */}
+          <>
             <section className="max-w-4xl mx-auto px-5 pb-12">
               <div className="space-y-0">
                 {METRO_ORDER.map((metro, idx) => {
