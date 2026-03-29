@@ -116,10 +116,10 @@ function getGateCopy(
         };
       case 'at-market':
         return {
-          heading: 'Your rent is fair, but you still have leverage. Here\'s the proof.',
-          bulletA: compsCount > 0 ? `${compsCount} comparable units showing exactly where you stand` : 'Comparable units showing exactly where you stand',
-          bulletB: 'A ready-to-send renewal response that protects your position',
-          bulletC: 'Browse available apartments in your area',
+          heading: 'Your rent is fair. You still have leverage.',
+          bulletA: compsCount > 0 ? `${compsCount} nearby apartments showing where you stand` : 'Nearby apartments showing where you stand',
+          bulletB: 'A reply you can send today',
+          bulletC: 'Apartments near you right now',
           cta: 'Email me my full report →',
         };
       case 'below':
