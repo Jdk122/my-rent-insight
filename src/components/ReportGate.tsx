@@ -148,7 +148,7 @@ function getGateCopy(
       heading: `This unit looks overpriced by ~$${fmt(monthlySavings)}/month`,
           bulletA: 'See the apartments behind this price',
           bulletB: 'A lower price you can ask for',
-          bulletC: 'Cheaper apartments near you',
+           bulletC: 'Cheaper apartments available near you',
           cta: 'Email me my negotiation plan →',
           valueAnchor: `This could help you save ~$${fmt(monthlySavings * 12)}/year on your renewal.`,
         };
