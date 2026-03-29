@@ -214,7 +214,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
         {/* Zip Code — shown standalone when toggled */}
         {showZipOnly && (
           <div className="space-y-1.5 animate-fade-in" ref={addressRef}>
-            <Label className="text-sm md:text-[13px] font-medium text-foreground">Zip Code <span className="text-destructive">*</span></Label>
+            <Label className="text-[13px] sm:text-sm md:text-[13px] font-medium text-foreground">Zip Code <span className="text-destructive">*</span></Label>
             <Input
               type="text"
               inputMode="numeric"
@@ -225,7 +225,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
                 setZip(v);
                 clearError('address');
               }}
-              className={`h-12 md:h-10 text-sm md:text-[14px] bg-background ${errorClass('address')}`}
+              className={`h-10 sm:h-12 md:h-10 text-sm md:text-[14px] bg-background ${errorClass('address')}`}
               required
               maxLength={5}
             />
