@@ -203,7 +203,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
             <button
               type="button"
               onClick={() => setShowZipOnly(true)}
-              className="text-xs text-muted-foreground/80 hover:text-foreground transition-colors underline underline-offset-2"
+              className="text-xs text-muted-foreground/80 hover:text-foreground transition-colors underline underline-offset-2 -mt-0.5"
             >
               Or just enter your zip code →
             </button>
