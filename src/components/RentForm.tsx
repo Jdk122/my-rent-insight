@@ -267,7 +267,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
 
         {/* Current rent */}
         <div className="space-y-1.5" ref={rentRef}>
-          <Label className="text-sm md:text-[13px] font-medium text-foreground">Current Monthly Rent</Label>
+          <Label className="text-[13px] sm:text-sm md:text-[13px] font-medium text-foreground">Current Monthly Rent</Label>
           <div className="relative">
             <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm md:text-[13px] text-muted-foreground">$</span>
             <Input
@@ -276,7 +276,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
               placeholder="2,500"
               value={currentRent}
               onChange={(e) => { setCurrentRent(fmtInput(e.target.value)); clearError('currentRent'); }}
-              className={`h-12 md:h-10 pl-8 font-mono text-lg md:text-[15px] bg-background ${errorClass('currentRent')}`}
+              className={`h-10 sm:h-12 md:h-10 pl-8 font-mono text-lg md:text-[15px] bg-background ${errorClass('currentRent')}`}
               required
             />
           </div>
