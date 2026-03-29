@@ -79,7 +79,7 @@ function getGateCopy(
         heading,
         bulletA: 'Why this increase is too high',
         bulletB: 'A reply that pushes back on the increase',
-        bulletC: 'Cheaper apartments near you',
+        bulletC: 'Cheaper apartments available near you',
         cta: 'Email me my negotiation plan →',
       };
     }
@@ -88,9 +88,9 @@ function getGateCopy(
         if (monthlyOverpayment && monthlyOverpayment > 0) {
           return {
     heading: `Your landlord is asking ~$${fmt(monthlyOverpayment)}/month above market. Here's the evidence.`,
-            bulletA: compsCount > 0 ? `${compsCount} nearby apartments showing you pay too much` : 'Nearby apartments showing you pay too much',
+            bulletA: compsCount > 0 ? `${compsCount} nearby apartments showing your increase is too high` : 'Nearby apartments showing your increase is too high',
             bulletB: 'A counter-offer letter you can send today',
-            bulletC: 'Cheaper apartments near you',
+            bulletC: 'Cheaper apartments available near you',
             cta: 'Email me my counter-offer →',
             valueAnchor: `This could help you save ~$${fmt(monthlyOverpayment * 12)}/year on your renewal.`,
           };
@@ -103,7 +103,7 @@ function getGateCopy(
             heading: `Your landlord wants ${increaseText}% — the market moved ${marketText}%. Here's what to send them.`,
             bulletA: compsCount > 0 ? `${compsCount} nearby apartments showing local rent prices` : 'Nearby apartments showing local rent prices',
             bulletB: 'A letter you can send today',
-            bulletC: 'Cheaper apartments near you',
+            bulletC: 'Cheaper apartments available near you',
             cta: 'Email me my counter-offer →',
           };
         }
@@ -111,7 +111,7 @@ function getGateCopy(
           heading: 'Your increase exceeds the local market. Here\'s what to send your landlord.',
           bulletA: compsCount > 0 ? `${compsCount} nearby apartments showing local rent prices` : 'Nearby apartments showing local rent prices',
           bulletB: 'A letter you can send today',
-          bulletC: 'Cheaper apartments near you',
+          bulletC: 'Cheaper apartments available near you',
           cta: 'Email me my counter-offer →',
         };
       case 'at-market':
@@ -148,7 +148,7 @@ function getGateCopy(
       heading: `This unit looks overpriced by ~$${fmt(monthlySavings)}/month`,
           bulletA: 'See the apartments behind this price',
           bulletB: 'A lower price you can ask for',
-          bulletC: 'Cheaper apartments near you',
+           bulletC: 'Cheaper apartments available near you',
           cta: 'Email me my negotiation plan →',
           valueAnchor: `This could help you save ~$${fmt(monthlySavings * 12)}/year on your renewal.`,
         };
@@ -157,7 +157,7 @@ function getGateCopy(
         heading: 'This asking rent is above market. Here\'s the proof.',
           bulletA: 'See the apartments behind this price',
           bulletB: 'A lower price you can ask for',
-          bulletC: 'Cheaper apartments near you',
+          bulletC: 'Cheaper apartments available near you',
         cta: 'Email me my negotiation plan →',
       };
     case 'fair':
