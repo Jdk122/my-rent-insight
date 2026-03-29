@@ -354,7 +354,6 @@ const ReportGate = ({
 
   return (
     <div ref={gateRef} className="rounded-xl border border-primary/20 px-5 sm:px-8 py-5 sm:py-9 text-center" style={{ background: 'hsl(var(--primary) / 0.04)' }}>
-      {toolType === 'renewal' && <SocialProofCounter />}
       <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-2 sm:mb-3" style={{ letterSpacing: '-0.015em' }}>
         {copy.heading}
       </h2>
@@ -392,6 +391,7 @@ const ReportGate = ({
       <p className="text-xs sm:text-sm text-muted-foreground mt-2 sm:mt-3 font-medium">
         Free · Instant delivery · Unsubscribe anytime
       </p>
+      {toolType === 'renewal' && <SocialProofCounter />}
       <p className="text-[10px] text-muted-foreground/60 text-center mt-1.5">
         By entering your email, you agree to our{' '}
         <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>{' '}
