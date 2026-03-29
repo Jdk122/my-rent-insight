@@ -178,9 +178,9 @@ function getGateCopy(
     default: // 'none' or fallback
       return {
         heading: 'Your fair rent range is ready',
-        bulletA: 'Comparable rentals near you',
-        bulletB: 'A fair price range to negotiate with confidence',
-        bulletC: 'Browse available apartments in your area',
+          bulletA: 'Nearby apartments for comparison',
+          bulletB: 'A fair price range you can use',
+          bulletC: 'Apartments near you right now',
         cta: 'Email me my market report →',
       };
   }
