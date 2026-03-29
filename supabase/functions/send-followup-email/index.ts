@@ -34,45 +34,38 @@ function getEmailHtml(lead: any): { subject: string; html: string } {
 
   if (isAbove) {
     subject = "Did you send the letter?";
-    intro = `Hey — you checked your rent increase a couple days ago and it came in above market. I built you a negotiation letter with the data behind it. If you haven't sent it yet, now is a good time — the longer you wait, the harder it is to push back.`;
+    intro = `Most renters never respond to their landlord's increase. Most landlords take that as a yes. You already have the negotiation letter with the comps behind it. The hard part is done.`;
     affiliateBlock = `
       <p style="font-size:13px;color:#555;line-height:1.6;margin:0 0 4px;">
-        If you do decide to move, it helps to get quotes early. Compare local movers with real reviews and transparent pricing.
+        If you do end up moving, it helps to get quotes early. You can compare local movers with real reviews and transparent pricing.
       </p>
-      <p style="margin:4px 0 0;">
+      <p style="margin:8px 0 0;">
         <a href="${HIREAHELPER_URL}" style="font-size:13px;color:#168eca;text-decoration:none;font-weight:600;">Compare movers →</a>
       </p>
     `;
   } else if (isGood) {
     subject = "Have you locked in your renewal yet?";
-    intro = `Hey — you checked your rent increase a couple days ago and it looks like a solid deal. If you haven't signed yet, it might be worth locking it in before your landlord changes the terms. You could also ask for extras like a longer lease or a unit upgrade.`;
+    intro = `Your renewal came in below market. That's worth locking in before your landlord changes the terms. If you haven't signed yet, this is also a good time to ask for something extra. A longer lease, a unit upgrade, a repair you've been waiting on. Landlords are more flexible when they know you're staying.`;
     affiliateBlock = `
       <p style="font-size:13px;color:#555;line-height:1.6;margin:0 0 4px;">
-        Staying put? Your monthly rent payments may help build your credit — most renters don't know this is an option.
+        Staying put? Your monthly rent payments may help build your credit. Most renters don't know this is an option.
       </p>
-      <p style="margin:4px 0 0;">
+      <p style="margin:8px 0 0;">
         <a href="${RENT_REPORTERS_URL}" style="font-size:13px;color:#168eca;text-decoration:none;font-weight:600;">Start reporting rent →</a>
       </p>
     `;
   } else {
     subject = "Have you replied to your landlord yet?";
-    intro = `Hey — you checked your rent increase a couple days ago. Even though your increase is in line with the market, it's still worth responding. Most landlords expect a conversation, and avoiding turnover is worth more to them than a few percent.`;
+    intro = `Even when the increase is fair, responding is worth it. Most landlords expect a conversation, and avoiding turnover is worth more to them than the difference between their ask and yours. A short reply puts you in a stronger position than silence.`;
     affiliateBlock = `
       <p style="font-size:13px;color:#555;line-height:1.6;margin:0 0 4px;">
-        One thing worth doing while you're renewing — your rent payments may help build your credit.
+        One thing worth doing while you're renewing. Your rent payments may help build your credit.
       </p>
-      <p style="margin:4px 0 0;">
+      <p style="margin:8px 0 0;">
         <a href="${RENT_REPORTERS_URL}" style="font-size:13px;color:#168eca;text-decoration:none;font-weight:600;">Start reporting rent →</a>
       </p>
     `;
   }
-
-  const disclosure = `
-    <p style="font-size:10px;color:#999;margin:12px 0 0;">
-      RenewalReply may earn a commission at no cost to you.
-      <a href="${BASE_URL}/privacy" style="color:#999;text-decoration:underline;">Learn more</a>
-    </p>
-  `;
 
   const html = `
     <div style="font-family:'DM Sans',Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
@@ -83,14 +76,10 @@ function getEmailHtml(lead: any): { subject: string; html: string } {
       </div>
       <hr style="border:none;border-top:1px solid #eee;margin:24px 0 16px;" />
       ${affiliateBlock}
-      ${disclosure}
       <p style="font-family:'DM Sans',Arial,sans-serif;font-size:15px;color:#555;margin-top:20px;">— James</p>
       <hr style="border:none;border-top:1px solid #eee;margin:32px 0 16px;" />
-      <p style="font-size:11px;color:#999;text-align:center;line-height:1.6;">
-        RenewalReply | PacketOps LLC<br/>
-        971 US Highway 202N, Suite N, Branchburg, NJ 08876<br/><br/>
-        You received this because you used the RenewalReply rent analysis tool.<br/>
-        <a href="${unsubUrl}" style="color:#999;text-decoration:underline;">Unsubscribe</a>
+      <p style="font-size:10px;color:#bbb;text-align:center;line-height:1.5;">
+        971 US Hwy 202N Ste N, Branchburg NJ 08876 · <a href="${BASE_URL}/privacy" style="color:#bbb;text-decoration:underline;">Details</a> · <a href="${unsubUrl}" style="color:#bbb;text-decoration:underline;">Unsubscribe</a>
       </p>
     </div>
   `;
