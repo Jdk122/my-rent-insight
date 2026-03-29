@@ -17,7 +17,6 @@ const emailHeader = `
 const badVerdicts = ["Moderate", "Unfair", "Excessive", "Above Market"];
 
 const RENT_REPORTERS_URL = "https://prf.hn/click/camref:1110lBJ34";
-const HIREAHELPER_URL = "https://www.hireahelper.com/?affil=32303039";
 
 function getEmailHtml(lead: any): { subject: string; html: string } {
   const score = lead.fairness_score;
@@ -34,13 +33,13 @@ function getEmailHtml(lead: any): { subject: string; html: string } {
 
   if (isAbove) {
     subject = "Did you send the letter?";
-    intro = `Most renters never respond to their landlord's increase. Most landlords take that as a yes. You already have the negotiation letter with the comps behind it. The hard part is done.`;
+    intro = `Most renters accept the increase or push back without any data. You have the comps and a negotiation letter ready to go. That puts you ahead of almost everyone.`;
     affiliateBlock = `
       <p style="font-size:13px;color:#555;line-height:1.6;margin:0 0 4px;">
-        If you do end up moving, it helps to get quotes early. You can compare local movers with real reviews and transparent pricing.
+        Whether you stay or move, your rent payments may help build your credit. Most renters don't realize this is an option.
       </p>
       <p style="margin:8px 0 0;">
-        <a href="${HIREAHELPER_URL}" style="font-size:13px;color:#168eca;text-decoration:none;font-weight:600;">Compare movers →</a>
+        <a href="${RENT_REPORTERS_URL}" style="font-size:13px;color:#168eca;text-decoration:none;font-weight:600;">Start reporting rent →</a>
       </p>
     `;
   } else if (isGood) {
@@ -59,7 +58,7 @@ function getEmailHtml(lead: any): { subject: string; html: string } {
     intro = `Even when the increase is fair, responding is worth it. Most landlords expect a conversation, and avoiding turnover is worth more to them than the difference between their ask and yours. A short reply puts you in a stronger position than silence.`;
     affiliateBlock = `
       <p style="font-size:13px;color:#555;line-height:1.6;margin:0 0 4px;">
-        One thing worth doing while you're renewing. Your rent payments may help build your credit.
+        One thing worth doing while you're renewing: your rent payments may help build your credit.
       </p>
       <p style="margin:8px 0 0;">
         <a href="${RENT_REPORTERS_URL}" style="font-size:13px;color:#168eca;text-decoration:none;font-weight:600;">Start reporting rent →</a>
@@ -79,7 +78,10 @@ function getEmailHtml(lead: any): { subject: string; html: string } {
       <p style="font-family:'DM Sans',Arial,sans-serif;font-size:15px;color:#555;margin-top:20px;">— James</p>
       <hr style="border:none;border-top:1px solid #eee;margin:32px 0 16px;" />
       <p style="font-size:10px;color:#bbb;text-align:center;line-height:1.5;">
-        971 US Hwy 202N Ste N, Branchburg NJ 08876 · <a href="${BASE_URL}/privacy" style="color:#bbb;text-decoration:underline;">Details</a> · <a href="${unsubUrl}" style="color:#bbb;text-decoration:underline;">Unsubscribe</a>
+        RenewalReply may earn a commission from some links at no cost to you ·
+        971 US Hwy 202N Ste N, Branchburg NJ 08876 ·
+        <a href="${BASE_URL}/privacy" style="color:#bbb;text-decoration:underline;">Privacy</a> ·
+        <a href="${unsubUrl}" style="color:#bbb;text-decoration:underline;">Unsubscribe</a>
       </p>
     </div>
   `;
