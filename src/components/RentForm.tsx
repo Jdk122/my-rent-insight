@@ -174,7 +174,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
         {/* Address — primary input */}
         {!showZipOnly && (
           <div className="space-y-1.5" ref={addressRef}>
-            <Label className="text-sm md:text-[13px] font-medium text-foreground">Your Address</Label>
+            <Label className="text-[13px] sm:text-sm md:text-[13px] font-medium text-foreground">Your Address</Label>
             <AddressAutocomplete
               className={`h-12 md:h-10 text-sm md:text-[14px] bg-background ${errorClass('address')}`}
               placeholder="Start typing your address..."
