@@ -111,7 +111,7 @@ function getGateCopy(
           heading: 'Your increase exceeds the local market. Here\'s what to send your landlord.',
           bulletA: compsCount > 0 ? `${compsCount} nearby apartments showing local rent prices` : 'Nearby apartments showing local rent prices',
           bulletB: 'A letter you can send today',
-          bulletC: 'Cheaper apartments near you',
+          bulletC: 'Cheaper apartments available near you',
           cta: 'Email me my counter-offer →',
         };
       case 'at-market':
