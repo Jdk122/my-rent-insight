@@ -101,9 +101,9 @@ function getGateCopy(
           const marketText = Math.abs(marketYoy) < 1 ? marketYoy.toFixed(1) : Math.round(marketYoy).toString();
           return {
             heading: `Your landlord wants ${increaseText}% — the market moved ${marketText}%. Here's what to send them.`,
-            bulletA: compsCount > 0 ? `${compsCount} comparable units showing what your neighbors actually pay` : 'Comparable units showing what your neighbors actually pay',
-            bulletB: 'A landlord-ready negotiation letter you can send this week',
-            bulletC: 'See available apartments nearby that could save you money',
+            bulletA: compsCount > 0 ? `${compsCount} nearby apartments showing local rent prices` : 'Nearby apartments showing local rent prices',
+            bulletB: 'A letter you can send today',
+            bulletC: 'Cheaper apartments near you',
             cta: 'Email me my counter-offer →',
           };
         }
