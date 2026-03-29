@@ -285,7 +285,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
 
         {/* Proposed increase */}
         <div className="space-y-1.5" ref={increaseRef}>
-          <Label className="text-sm md:text-[13px] font-medium text-foreground">Proposed Increase</Label>
+          <Label className="text-[13px] sm:text-sm md:text-[13px] font-medium text-foreground">Proposed Increase</Label>
           <div className="flex gap-2">
             <div className="relative flex-1">
               {!increaseIsPercent && (
