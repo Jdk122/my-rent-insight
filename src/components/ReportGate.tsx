@@ -171,8 +171,8 @@ function getGateCopy(
     case 'below':
       return {
         heading: 'This looks like a good deal. See why before you move fast.',
-        bulletA: 'See the comps showing your rent advantage',
-        bulletB: 'Get the full market breakdown before you sign',
+          bulletA: 'See the apartments behind your good deal',
+          bulletB: 'Full market breakdown before you sign',
         cta: 'Email me the full breakdown →',
       };
     default: // 'none' or fallback
