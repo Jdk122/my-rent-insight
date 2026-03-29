@@ -346,7 +346,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
               : NaN;
             const rentVal = parseFloat(parseFormatted(currentRent));
             if (isNaN(incVal) || incVal <= 0) return (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground hidden sm:block">
                 The amount your landlord wants to raise your rent by.
               </p>
             );
