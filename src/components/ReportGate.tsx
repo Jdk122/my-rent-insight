@@ -163,9 +163,9 @@ function getGateCopy(
     case 'fair':
       return {
         heading: 'Fair price confirmed. Get the full breakdown before you sign.',
-        bulletA: 'See the nearby comps behind this result',
-        bulletB: 'Get the full market context before you decide',
-        bulletC: 'Browse available apartments in your area',
+          bulletA: 'See the apartments behind this result',
+          bulletB: 'Full market context before you sign',
+          bulletC: 'Apartments near you right now',
         cta: 'Email me the full breakdown →',
       };
     case 'below':
