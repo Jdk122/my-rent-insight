@@ -16,7 +16,7 @@ const SocialProofCounter = forwardRef<HTMLDivElement>((_, ref) => {
     <div ref={ref} className="flex items-center gap-2 py-2 w-fit">
       <span className="text-primary text-sm">🔍</span>
       <p className="text-[13px] md:text-[14px] text-muted-foreground">
-        <span className="font-semibold text-foreground tabular-nums">{count.toLocaleString()}</span> renewals analyzed so far
+        <span className="font-semibold text-foreground tabular-nums">{count.toLocaleString()}</span> renewals analyzed
       </p>
     </div>
   );
