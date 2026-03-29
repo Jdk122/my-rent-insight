@@ -103,7 +103,7 @@ function getGateCopy(
             heading: `Your landlord wants ${increaseText}% — the market moved ${marketText}%. Here's what to send them.`,
             bulletA: compsCount > 0 ? `${compsCount} nearby apartments showing local rent prices` : 'Nearby apartments showing local rent prices',
             bulletB: 'A letter you can send today',
-            bulletC: 'Cheaper apartments near you',
+            bulletC: 'Cheaper apartments available near you',
             cta: 'Email me my counter-offer →',
           };
         }
