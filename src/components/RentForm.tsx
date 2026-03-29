@@ -165,7 +165,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} noValidate className="border border-border/80 rounded-2xl p-4 pb-3 sm:p-6 sm:pb-4 md:p-5 md:pb-4 bg-card space-y-3 sm:space-y-5 md:space-y-3 shadow-sm">
+      <form onSubmit={handleSubmit} noValidate className="border border-border/80 rounded-2xl p-4 pb-3 sm:p-6 sm:pb-4 md:p-5 md:pb-4 bg-card space-y-2.5 sm:space-y-5 md:space-y-3 shadow-sm">
         {prefill && (
           <p className="text-[13px] text-muted-foreground pl-3 border-l-2 border-primary/40 leading-relaxed">
             Welcome back! We've pre-filled your info from last year. Just enter your new proposed rent.
@@ -174,9 +174,9 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
         {/* Address — primary input */}
         {!showZipOnly && (
           <div className="space-y-1.5" ref={addressRef}>
-            <Label className="text-sm md:text-[13px] font-medium text-foreground">Your Address</Label>
+            <Label className="text-[13px] sm:text-sm md:text-[13px] font-medium text-foreground">Your Address</Label>
             <AddressAutocomplete
-              className={`h-12 md:h-10 text-sm md:text-[14px] bg-background ${errorClass('address')}`}
+              className={`h-10 sm:h-12 md:h-10 text-sm md:text-[14px] bg-background ${errorClass('address')}`}
               placeholder="Start typing your address..."
               onSelect={(addr) => {
                 if (addr.zip) setZip(addr.zip);
@@ -203,7 +203,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
             <button
               type="button"
               onClick={() => setShowZipOnly(true)}
-              className="text-xs text-muted-foreground/80 hover:text-foreground transition-colors underline underline-offset-2"
+              className="text-xs text-muted-foreground/80 hover:text-foreground transition-colors underline underline-offset-2 -mt-0.5"
             >
               Or just enter your zip code →
             </button>
@@ -214,7 +214,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
         {/* Zip Code — shown standalone when toggled */}
         {showZipOnly && (
           <div className="space-y-1.5 animate-fade-in" ref={addressRef}>
-            <Label className="text-sm md:text-[13px] font-medium text-foreground">Zip Code <span className="text-destructive">*</span></Label>
+            <Label className="text-[13px] sm:text-sm md:text-[13px] font-medium text-foreground">Zip Code <span className="text-destructive">*</span></Label>
             <Input
               type="text"
               inputMode="numeric"
@@ -225,7 +225,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
                 setZip(v);
                 clearError('address');
               }}
-              className={`h-12 md:h-10 text-sm md:text-[14px] bg-background ${errorClass('address')}`}
+              className={`h-10 sm:h-12 md:h-10 text-sm md:text-[14px] bg-background ${errorClass('address')}`}
               required
               maxLength={5}
             />
@@ -251,12 +251,12 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
 
         {/* Bedrooms — native select for reliability */}
         <div className="space-y-1.5">
-          <Label htmlFor="bedrooms-select" className="text-sm md:text-[13px] font-medium text-foreground">Bedrooms</Label>
+          <Label htmlFor="bedrooms-select" className="text-[13px] sm:text-sm md:text-[13px] font-medium text-foreground">Bedrooms</Label>
           <select
             id="bedrooms-select"
             value={bedrooms}
             onChange={(e) => setBedrooms(e.target.value as BedroomType)}
-            className="flex h-11 md:h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm md:text-[14px] ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 appearance-none"
+            className="flex h-10 sm:h-11 md:h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm md:text-[14px] ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 appearance-none"
             style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
           >
             {Object.entries(bedroomLabels).map(([key, label]) => (
@@ -267,7 +267,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
 
         {/* Current rent */}
         <div className="space-y-1.5" ref={rentRef}>
-          <Label className="text-sm md:text-[13px] font-medium text-foreground">Current Monthly Rent</Label>
+          <Label className="text-[13px] sm:text-sm md:text-[13px] font-medium text-foreground">Current Monthly Rent</Label>
           <div className="relative">
             <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm md:text-[13px] text-muted-foreground">$</span>
             <Input
@@ -276,7 +276,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
               placeholder="2,500"
               value={currentRent}
               onChange={(e) => { setCurrentRent(fmtInput(e.target.value)); clearError('currentRent'); }}
-              className={`h-12 md:h-10 pl-8 font-mono text-lg md:text-[15px] bg-background ${errorClass('currentRent')}`}
+              className={`h-10 sm:h-12 md:h-10 pl-8 font-mono text-lg md:text-[15px] bg-background ${errorClass('currentRent')}`}
               required
             />
           </div>
@@ -285,7 +285,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
 
         {/* Proposed increase */}
         <div className="space-y-1.5" ref={increaseRef}>
-          <Label className="text-sm md:text-[13px] font-medium text-foreground">Proposed Increase</Label>
+          <Label className="text-[13px] sm:text-sm md:text-[13px] font-medium text-foreground">Proposed Increase</Label>
           <div className="flex gap-2">
             <div className="relative flex-1">
               {!increaseIsPercent && (
@@ -305,7 +305,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
                   clearError('rentIncrease');
                   setIncreaseTouched(true);
                 }}
-                className={`h-12 md:h-10 font-mono text-lg md:text-[15px] bg-background ${!increaseIsPercent ? 'pl-8' : 'pl-3.5'} ${errorClass('rentIncrease')}`}
+                className={`h-10 sm:h-12 md:h-10 font-mono text-lg md:text-[15px] bg-background ${!increaseIsPercent ? 'pl-8' : 'pl-3.5'} ${errorClass('rentIncrease')}`}
                 min={0}
                 step={increaseIsPercent ? 0.1 : undefined}
               />
@@ -313,7 +313,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
             <div className="flex rounded-lg border border-border overflow-hidden">
               <button
                 type="button"
-                className={`h-12 md:h-10 w-11 text-sm font-mono flex items-center justify-center transition-colors ${
+                className={`h-10 sm:h-12 md:h-10 w-11 text-sm font-mono flex items-center justify-center transition-colors ${
                   !increaseIsPercent
                     ? 'bg-foreground text-background font-bold'
                     : 'bg-background text-muted-foreground hover:bg-secondary'
@@ -324,7 +324,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
               </button>
               <button
                 type="button"
-                className={`h-12 md:h-10 w-11 text-sm font-mono flex items-center justify-center transition-colors ${
+                className={`h-10 sm:h-12 md:h-10 w-11 text-sm font-mono flex items-center justify-center transition-colors ${
                   increaseIsPercent
                     ? 'bg-foreground text-background font-bold'
                     : 'bg-background text-muted-foreground hover:bg-secondary'
@@ -337,7 +337,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
           </div>
           {(() => {
             if (!increaseTouched) return (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground hidden sm:block">
                 The amount your landlord wants to raise your rent by.
               </p>
             );
@@ -346,7 +346,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
               : NaN;
             const rentVal = parseFloat(parseFormatted(currentRent));
             if (isNaN(incVal) || incVal <= 0) return (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground hidden sm:block">
                 The amount your landlord wants to raise your rent by.
               </p>
             );
@@ -368,7 +368,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
               );
             }
             return (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground hidden sm:block">
                 The amount your landlord wants to raise your rent by.
               </p>
             );
