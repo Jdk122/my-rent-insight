@@ -146,9 +146,9 @@ function getGateCopy(
       if (monthlySavings && monthlySavings > 0) {
         return {
       heading: `This unit looks overpriced by ~$${fmt(monthlySavings)}/month`,
-          bulletA: 'See the comps behind that estimate',
-          bulletB: 'Get a data-backed plan before you negotiate',
-          bulletC: 'See available apartments nearby that could save you money',
+          bulletA: 'See the apartments behind this price',
+          bulletB: 'A lower price you can ask for',
+          bulletC: 'Cheaper apartments near you',
           cta: 'Email me my negotiation plan →',
           valueAnchor: `This could help you save ~$${fmt(monthlySavings * 12)}/year on your renewal.`,
         };
