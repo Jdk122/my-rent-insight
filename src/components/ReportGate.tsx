@@ -88,9 +88,9 @@ function getGateCopy(
         if (monthlyOverpayment && monthlyOverpayment > 0) {
           return {
     heading: `Your landlord is asking ~$${fmt(monthlyOverpayment)}/month above market. Here's the evidence.`,
-            bulletA: compsCount > 0 ? `${compsCount} comparable units showing your landlord is charging above market` : 'Comparable units showing your landlord is charging above market',
-            bulletB: 'A send-ready negotiation letter with your exact counter-offer built in',
-            bulletC: 'See available apartments nearby that could save you money',
+            bulletA: compsCount > 0 ? `${compsCount} nearby apartments showing you pay too much` : 'Nearby apartments showing you pay too much',
+            bulletB: 'A counter-offer letter you can send today',
+            bulletC: 'Cheaper apartments near you',
             cta: 'Email me my counter-offer →',
             valueAnchor: `This could help you save ~$${fmt(monthlyOverpayment * 12)}/year on your renewal.`,
           };
