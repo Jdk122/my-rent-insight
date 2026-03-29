@@ -392,6 +392,7 @@ const ReportGate = ({
       <p className="text-xs sm:text-sm text-muted-foreground mt-2 sm:mt-3 font-medium">
         Free · Instant delivery · Unsubscribe anytime
       </p>
+      {toolType === 'renewal' && <SocialProofCounter />}
       <p className="text-[10px] text-muted-foreground/60 text-center mt-1.5">
         By entering your email, you agree to our{' '}
         <Link to="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>{' '}
