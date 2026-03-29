@@ -77,9 +77,9 @@ function getGateCopy(
 
       return {
         heading,
-        bulletA: 'See the comps showing your rent is already fair and why the increase isn\'t',
-        bulletB: 'Get a landlord-ready letter that says yes to renewing but no to the increase',
-        bulletC: 'See available apartments nearby that could save you money',
+        bulletA: 'Why this increase is too high',
+        bulletB: 'A reply that pushes back on the increase',
+        bulletC: 'Cheaper apartments near you',
         cta: 'Email me my negotiation plan →',
       };
     }
@@ -88,9 +88,9 @@ function getGateCopy(
         if (monthlyOverpayment && monthlyOverpayment > 0) {
           return {
     heading: `Your landlord is asking ~$${fmt(monthlyOverpayment)}/month above market. Here's the evidence.`,
-            bulletA: compsCount > 0 ? `${compsCount} comparable units showing your landlord is charging above market` : 'Comparable units showing your landlord is charging above market',
-            bulletB: 'A send-ready negotiation letter with your exact counter-offer built in',
-            bulletC: 'See available apartments nearby that could save you money',
+            bulletA: compsCount > 0 ? `${compsCount} nearby apartments showing you pay too much` : 'Nearby apartments showing you pay too much',
+            bulletB: 'A counter-offer letter you can send today',
+            bulletC: 'Cheaper apartments near you',
             cta: 'Email me my counter-offer →',
             valueAnchor: `This could help you save ~$${fmt(monthlyOverpayment * 12)}/year on your renewal.`,
           };
@@ -101,40 +101,40 @@ function getGateCopy(
           const marketText = Math.abs(marketYoy) < 1 ? marketYoy.toFixed(1) : Math.round(marketYoy).toString();
           return {
             heading: `Your landlord wants ${increaseText}% — the market moved ${marketText}%. Here's what to send them.`,
-            bulletA: compsCount > 0 ? `${compsCount} comparable units showing what your neighbors actually pay` : 'Comparable units showing what your neighbors actually pay',
-            bulletB: 'A landlord-ready negotiation letter you can send this week',
-            bulletC: 'See available apartments nearby that could save you money',
+            bulletA: compsCount > 0 ? `${compsCount} nearby apartments showing local rent prices` : 'Nearby apartments showing local rent prices',
+            bulletB: 'A letter you can send today',
+            bulletC: 'Cheaper apartments near you',
             cta: 'Email me my counter-offer →',
           };
         }
         return {
           heading: 'Your increase exceeds the local market. Here\'s what to send your landlord.',
-          bulletA: compsCount > 0 ? `${compsCount} comparable units showing what your neighbors actually pay` : 'Comparable units showing what your neighbors actually pay',
-          bulletB: 'A landlord-ready negotiation letter you can send this week',
-          bulletC: 'See available apartments nearby that could save you money',
+          bulletA: compsCount > 0 ? `${compsCount} nearby apartments showing local rent prices` : 'Nearby apartments showing local rent prices',
+          bulletB: 'A letter you can send today',
+          bulletC: 'Cheaper apartments near you',
           cta: 'Email me my counter-offer →',
         };
       case 'at-market':
         return {
-          heading: 'Your rent is fair, but you still have leverage. Here\'s the proof.',
-          bulletA: compsCount > 0 ? `${compsCount} comparable units showing exactly where you stand` : 'Comparable units showing exactly where you stand',
-          bulletB: 'A ready-to-send renewal response that protects your position',
-          bulletC: 'Browse available apartments in your area',
+          heading: 'Your rent is fair. You still have leverage.',
+          bulletA: compsCount > 0 ? `${compsCount} nearby apartments showing where you stand` : 'Nearby apartments showing where you stand',
+          bulletB: 'A reply you can send today',
+          bulletC: 'Apartments near you right now',
           cta: 'Email me my full report →',
         };
       case 'below':
         return {
           heading: 'Your rent is a good deal. Here\'s what to ask for at renewal.',
-          bulletA: compsCount > 0 ? `See how much less you pay than ${compsCount} nearby units` : 'See how much less you pay than nearby units',
+          bulletA: compsCount > 0 ? `See how much less you pay than ${compsCount} nearby apartments` : 'See how much less you pay than nearby apartments',
           bulletB: 'Get a renewal response to lock in your rate or ask for extras like repairs, upgrades, or a lease extension',
           cta: 'Email me my renewal plan →',
         };
       default: // 'none' or fallback
         return {
           heading: 'Your rent isn\'t going up. Do you know what you\'d pay if you moved?',
-          bulletA: compsCount > 0 ? `See how your current rent stacks up against ${compsCount} nearby listings` : 'See how your current rent stacks up against nearby listings',
-          bulletB: 'A market snapshot to keep in your back pocket for next year\'s renewal',
-          bulletC: 'Browse available apartments in your area',
+          bulletA: compsCount > 0 ? `See how your rent compares with ${compsCount} nearby apartments` : 'See how your rent compares with nearby apartments',
+          bulletB: 'A market snapshot before you reply',
+          bulletC: 'Apartments near you right now',
           cta: 'Email me my market report →',
         };
     }
@@ -146,41 +146,41 @@ function getGateCopy(
       if (monthlySavings && monthlySavings > 0) {
         return {
       heading: `This unit looks overpriced by ~$${fmt(monthlySavings)}/month`,
-          bulletA: 'See the comps behind that estimate',
-          bulletB: 'Get a data-backed plan before you negotiate',
-          bulletC: 'See available apartments nearby that could save you money',
+          bulletA: 'See the apartments behind this price',
+          bulletB: 'A lower price you can ask for',
+          bulletC: 'Cheaper apartments near you',
           cta: 'Email me my negotiation plan →',
           valueAnchor: `This could help you save ~$${fmt(monthlySavings * 12)}/year on your renewal.`,
         };
       }
       return {
         heading: 'This asking rent is above market. Here\'s the proof.',
-        bulletA: 'See the comps showing fair market rent',
-        bulletB: 'Get a negotiation plan to get a better price',
-        bulletC: 'See available apartments nearby that could save you money',
+          bulletA: 'See the apartments behind this price',
+          bulletB: 'A lower price you can ask for',
+          bulletC: 'Cheaper apartments near you',
         cta: 'Email me my negotiation plan →',
       };
     case 'fair':
       return {
         heading: 'Fair price confirmed. Get the full breakdown before you sign.',
-        bulletA: 'See the nearby comps behind this result',
-        bulletB: 'Get the full market context before you decide',
-        bulletC: 'Browse available apartments in your area',
+          bulletA: 'See the apartments behind this result',
+          bulletB: 'Full market context before you sign',
+          bulletC: 'Apartments near you right now',
         cta: 'Email me the full breakdown →',
       };
     case 'below':
       return {
         heading: 'This looks like a good deal. See why before you move fast.',
-        bulletA: 'See the comps showing your rent advantage',
-        bulletB: 'Get the full market breakdown before you sign',
+          bulletA: 'See the apartments behind your good deal',
+          bulletB: 'Full market breakdown before you sign',
         cta: 'Email me the full breakdown →',
       };
     default: // 'none' or fallback
       return {
         heading: 'Your fair rent range is ready',
-        bulletA: 'Comparable rentals near you',
-        bulletB: 'A fair price range to negotiate with confidence',
-        bulletC: 'Browse available apartments in your area',
+          bulletA: 'Nearby apartments for comparison',
+          bulletB: 'A fair price range you can use',
+          bulletC: 'Apartments near you right now',
         cta: 'Email me my market report →',
       };
   }
