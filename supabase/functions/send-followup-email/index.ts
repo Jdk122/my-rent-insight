@@ -16,6 +16,9 @@ const emailHeader = `
 
 const badVerdicts = ["Moderate", "Unfair", "Excessive", "Above Market"];
 
+const RENT_REPORTERS_URL = "https://prf.hn/click/camref:1110lBJ34";
+const HIREAHELPER_URL = "https://www.hireahelper.com/?affil=32303039";
+
 function getEmailHtml(lead: any): { subject: string; html: string } {
   const score = lead.fairness_score;
   const verdict = lead.verdict;
@@ -27,17 +30,49 @@ function getEmailHtml(lead: any): { subject: string; html: string } {
 
   let subject: string;
   let intro: string;
+  let affiliateBlock = "";
 
   if (isAbove) {
     subject = "Did you send the letter?";
     intro = `Hey — you checked your rent increase a couple days ago and it came in above market. I built you a negotiation letter with the data behind it. If you haven't sent it yet, now is a good time — the longer you wait, the harder it is to push back.`;
+    affiliateBlock = `
+      <p style="font-size:13px;color:#555;line-height:1.6;margin:0 0 4px;">
+        If you do decide to move, it helps to get quotes early. Compare local movers with real reviews and transparent pricing.
+      </p>
+      <p style="margin:4px 0 0;">
+        <a href="${HIREAHELPER_URL}" style="font-size:13px;color:#168eca;text-decoration:none;font-weight:600;">Compare movers →</a>
+      </p>
+    `;
   } else if (isGood) {
     subject = "Have you locked in your renewal yet?";
     intro = `Hey — you checked your rent increase a couple days ago and it looks like a solid deal. If you haven't signed yet, it might be worth locking it in before your landlord changes the terms. You could also ask for extras like a longer lease or a unit upgrade.`;
+    affiliateBlock = `
+      <p style="font-size:13px;color:#555;line-height:1.6;margin:0 0 4px;">
+        Staying put? Your monthly rent payments may help build your credit — most renters don't know this is an option.
+      </p>
+      <p style="margin:4px 0 0;">
+        <a href="${RENT_REPORTERS_URL}" style="font-size:13px;color:#168eca;text-decoration:none;font-weight:600;">Start reporting rent →</a>
+      </p>
+    `;
   } else {
     subject = "Have you replied to your landlord yet?";
     intro = `Hey — you checked your rent increase a couple days ago. Even though your increase is in line with the market, it's still worth responding. Most landlords expect a conversation, and avoiding turnover is worth more to them than a few percent.`;
+    affiliateBlock = `
+      <p style="font-size:13px;color:#555;line-height:1.6;margin:0 0 4px;">
+        One thing worth doing while you're renewing — your rent payments may help build your credit.
+      </p>
+      <p style="margin:4px 0 0;">
+        <a href="${RENT_REPORTERS_URL}" style="font-size:13px;color:#168eca;text-decoration:none;font-weight:600;">Start reporting rent →</a>
+      </p>
+    `;
   }
+
+  const disclosure = `
+    <p style="font-size:10px;color:#999;margin:12px 0 0;">
+      RenewalReply may earn a commission at no cost to you.
+      <a href="${BASE_URL}/privacy" style="color:#999;text-decoration:underline;">Learn more</a>
+    </p>
+  `;
 
   const html = `
     <div style="font-family:'DM Sans',Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
@@ -46,6 +81,9 @@ function getEmailHtml(lead: any): { subject: string; html: string } {
       <div style="margin-bottom:16px;">
         <a href="${reportUrl}" style="display:inline-block;padding:12px 20px;background:#168eca;color:#fff;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;">View your report →</a>
       </div>
+      <hr style="border:none;border-top:1px solid #eee;margin:24px 0 16px;" />
+      ${affiliateBlock}
+      ${disclosure}
       <p style="font-family:'DM Sans',Arial,sans-serif;font-size:15px;color:#555;margin-top:20px;">— James</p>
       <hr style="border:none;border-top:1px solid #eee;margin:32px 0 16px;" />
       <p style="font-size:11px;color:#999;text-align:center;line-height:1.6;">
