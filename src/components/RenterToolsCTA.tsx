@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import RenewalReminderModal from './RenewalReminderModal';
 import { findDealsNeighborhoodByZip, findDealsNeighborhoodsByCity, findDealsNeighborhoodsByState } from '@/data/dealsMatch';
+import { AFFILIATE_LINKS } from '@/lib/affiliateConfig';
+import { trackEvent } from '@/lib/analytics';
 
 interface RenterToolsCTAProps {
   zip?: string;
@@ -9,14 +11,45 @@ interface RenterToolsCTAProps {
   stateName?: string;
   stateAbbr?: string;
   pageType?: 'zip' | 'city' | 'state' | 'tool';
+  showAffiliate?: boolean;
 }
 
-const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool' }: RenterToolsCTAProps) => {
+const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool', showAffiliate = false }: RenterToolsCTAProps) => {
   const [reminderOpen, setReminderOpen] = useState(false);
   const renewalLink = '/';
   const wsipLink = '/what-should-i-pay';
 
-  type CardDef = { title: string; sub: string; cta: string; to?: string; scroll?: string; action?: 'reminder' };
+  const affiliateRef = useRef<HTMLDivElement>(null);
+  const impressionFired = useRef(false);
+
+  useEffect(() => {
+    if (!showAffiliate) return;
+    const el = affiliateRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !impressionFired.current) {
+          impressionFired.current = true;
+          trackEvent('affiliate_impression', {
+            link_type: 'partner_rent_reporting',
+            placement: 'seo_renter_tools',
+            page_type: pageType,
+            city: city || '',
+            state_abbr: stateAbbr || '',
+            experiment: 'seo_renter_tools_rr_v1',
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.25 },
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [showAffiliate, pageType, city, stateAbbr]);
+
+  type CardDef = { title: string; sub: string; cta: string; to?: string; scroll?: string; action?: 'reminder'; href?: string; isAffiliate?: boolean };
 
   /** Resolve a contextual deals card. Returns null when there is no real match. */
   const getDealsCard = (): CardDef | null => {
@@ -38,9 +71,11 @@ const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool' }: 
 
   const getCards = (): CardDef[] => {
     const dealsCard = getDealsCard();
+    let baseCards: CardDef[];
+
     switch (pageType) {
       case 'zip':
-        return [
+        baseCards = [
           {
             title: 'Is This Listing Fair?',
             sub: 'Compare any asking rent to real market data.',
@@ -55,8 +90,9 @@ const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool' }: 
           },
           ...(dealsCard ? [dealsCard] : []),
         ];
+        break;
       case 'city':
-        return [
+        baseCards = [
           {
             title: `Compare Rent in ${city || 'This City'}`,
             sub: 'See if an asking rent is fair based on local data.',
@@ -76,8 +112,9 @@ const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool' }: 
             scroll: 'section-zipcodes',
           }]),
         ];
+        break;
       case 'state':
-        return [
+        baseCards = [
           ...(dealsCard ? [dealsCard] : []),
           {
             title: `Explore Cities in ${stateName || 'This State'}`,
@@ -92,8 +129,9 @@ const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool' }: 
             to: renewalLink,
           },
         ];
+        break;
       default:
-        return [
+        baseCards = [
           {
             title: 'Got a Rent Increase?',
             sub: 'See if your landlord is overcharging. In 60 seconds.',
@@ -113,21 +151,59 @@ const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool' }: 
             action: 'reminder',
           },
         ];
+        break;
     }
+
+    if (showAffiliate) {
+      return [
+        ...baseCards,
+        {
+          title: 'Build Credit With Rent',
+          sub: "Your monthly rent payments may help build your credit. Most renters don't know this is an option.",
+          cta: 'Start Reporting Rent →',
+          href: AFFILIATE_LINKS.rent_reporting,
+          isAffiliate: true,
+        },
+      ];
+    }
+
+    return baseCards;
   };
 
   const cards = getCards();
-  const gridCols = cards.length === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2';
+  const hasAffiliateCard = cards.some(c => c.isAffiliate);
+  const gridCols = cards.length === 3 ? 'sm:grid-cols-3' : cards.length === 4 ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-2';
 
   return (
     <section className="mb-12">
       <h2 className="font-display text-2xl text-foreground mb-5 tracking-tight">Renter Tools</h2>
       <div className={`grid grid-cols-1 ${gridCols} gap-4`}>
         {cards.map((t, i) => (
-          <div key={i} className="rounded-xl border border-border bg-card p-5 flex flex-col shadow-sm">
+          <div
+            key={i}
+            ref={t.isAffiliate ? affiliateRef : undefined}
+            className="rounded-xl border border-border bg-card p-5 flex flex-col shadow-sm"
+          >
             <h3 className="font-semibold text-foreground text-[15px] mb-1">{t.title}</h3>
             <p className="text-xs text-muted-foreground leading-relaxed mb-4 flex-1">{t.sub}</p>
-            {t.action === 'reminder' ? (
+            {t.href ? (
+              <a
+                href={t.href}
+                target="_blank"
+                rel="noopener noreferrer sponsored"
+                onClick={() => trackEvent('affiliate_click', {
+                  link_type: 'partner_rent_reporting',
+                  placement: 'seo_renter_tools',
+                  page_type: pageType,
+                  city: city || '',
+                  state_abbr: stateAbbr || '',
+                  experiment: 'seo_renter_tools_rr_v1',
+                })}
+                className="inline-flex items-center justify-center bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
+              >
+                {t.cta}
+              </a>
+            ) : t.action === 'reminder' ? (
               <button
                 onClick={() => setReminderOpen(true)}
                 className="inline-flex items-center justify-center bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
@@ -152,6 +228,12 @@ const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool' }: 
           </div>
         ))}
       </div>
+      {hasAffiliateCard && (
+        <p className="text-[10px] text-muted-foreground/60 mt-2">
+          RenewalReply may earn a commission from some links at no cost to you.{' '}
+          <Link to="/privacy" className="underline hover:text-muted-foreground">Privacy</Link>
+        </p>
+      )}
       <RenewalReminderModal open={reminderOpen} onOpenChange={setReminderOpen} zip={zip} />
     </section>
   );
