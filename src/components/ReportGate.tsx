@@ -79,7 +79,7 @@ function getGateCopy(
         heading,
         bulletA: 'Why this increase is too high',
         bulletB: 'A reply that pushes back on the increase',
-        bulletC: 'Cheaper apartments near you',
+        bulletC: 'Cheaper apartments available near you',
         cta: 'Email me my negotiation plan →',
       };
     }
