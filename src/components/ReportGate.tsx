@@ -155,9 +155,9 @@ function getGateCopy(
       }
       return {
         heading: 'This asking rent is above market. Here\'s the proof.',
-        bulletA: 'See the comps showing fair market rent',
-        bulletB: 'Get a negotiation plan to get a better price',
-        bulletC: 'See available apartments nearby that could save you money',
+          bulletA: 'See the apartments behind this price',
+          bulletB: 'A lower price you can ask for',
+          bulletC: 'Cheaper apartments near you',
         cta: 'Email me my negotiation plan →',
       };
     case 'fair':
