@@ -76,12 +76,6 @@ const DealCard = ({ listing, index, onSelect }: DealCardProps) => {
               <span>{listing.sqft}ft²</span>
             </>
           )}
-          <span className="opacity-30">·</span>
-          {listing.cleanBuilding ? (
-            <span className="text-accent font-medium">✓ Clean</span>
-          ) : (
-            <span className="text-amber-600 font-medium">{listing.issues} issue{listing.issues !== 1 && 's'}</span>
-          )}
           {listing.daysOnMarket !== null && (
             <>
               <span className="opacity-30">·</span>

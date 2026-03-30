@@ -37,7 +37,7 @@ const DealsSidebar = ({ city, medianRent1BR, yoyChange, activeListings }: DealsS
       <SideCard title="Scores">
         {[
           { label: 'Great Deal', range: '80+', desc: 'Well below market', className: 'bg-accent' },
-          { label: 'Good Deal', range: '75–79', desc: 'Below market', className: 'bg-primary' },
+          { label: 'Good Deal', range: '68–79', desc: 'Below market', className: 'bg-primary' },
         ].map((t) => (
           <div key={t.label} className="flex items-center gap-1.5 mb-2">
             <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${t.className}`} />
@@ -48,7 +48,7 @@ const DealsSidebar = ({ city, medianRent1BR, yoyChange, activeListings }: DealsS
           </div>
         ))}
         <p className="text-[11px] text-muted-foreground leading-snug pt-1.5 border-t border-border">
-          Only listings scoring 75+ appear here.
+          Only listings scoring 68+ appear here.
         </p>
       </SideCard>
 

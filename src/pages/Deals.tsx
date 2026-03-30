@@ -31,7 +31,7 @@ const Deals = () => {
   usePrerenderReady(!loading);
   const [beds, setBeds] = useState<BedFilter>('All');
   const [sort, setSort] = useState<SortKey>('score');
-  const [cleanOnly, setCleanOnly] = useState(false);
+  
   const [selected, setSelected] = useState<DealListing | null>(null);
 
   // Gate state: first analysis free, gate on second distinct listing
@@ -262,7 +262,7 @@ const Deals = () => {
           daysOnMarket: l.daysOnMarket,
           ...result,
           listingUrl: l.listingUrl || null,
-          cleanBuilding: true, // TODO: integrate HPD violations data in v2
+          cleanBuilding: false,
           issues: 0,
         } as DealListing;
       })
@@ -276,7 +276,6 @@ const Deals = () => {
       const bedNum = beds === 'S' ? 0 : parseInt(beds);
       r = r.filter(d => d.beds === bedNum);
     }
-    if (cleanOnly) r = r.filter(d => d.cleanBuilding);
 
     if (sort === 'score') r.sort((a, b) => b.score - a.score);
     else if (sort === 'price') r.sort((a, b) => a.rent - b.rent);
@@ -284,7 +283,7 @@ const Deals = () => {
     else if (sort === 'new') r.sort((a, b) => (a.daysOnMarket ?? 999) - (b.daysOnMarket ?? 999));
 
     return r.slice(0, 15);
-  }, [deals, beds, sort, cleanOnly]);
+  }, [deals, beds, sort]);
 
   const handleEmailCaptured = useCallback((email: string) => {
     setEmailCaptured(true);
@@ -434,17 +433,6 @@ const Deals = () => {
                 {l}
               </button>
             ))}
-            <div className="w-px h-4 bg-border mx-1" />
-            <button
-              onClick={() => setCleanOnly(!cleanOnly)}
-              className={`px-3 py-1 rounded-md text-xs font-medium border transition-colors ${
-                cleanOnly
-                  ? 'border-primary bg-primary/5 text-primary font-semibold'
-                  : 'border-border bg-card text-muted-foreground hover:border-primary/50'
-              }`}
-            >
-              Clean buildings
-            </button>
             <div className="flex-1" />
             <select
               value={sort}
