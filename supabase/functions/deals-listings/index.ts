@@ -87,8 +87,15 @@ serve(async (req) => {
     if (cached) {
       const age = Date.now() - new Date(cached.fetched_at).getTime();
       if (age < CACHE_TTL_MS) {
+        const cachedData = cached.response_data as any;
         return new Response(
-          JSON.stringify({ ...(cached.response_data as any), cacheHit: true }),
+          JSON.stringify({
+            listings: cachedData.listings ?? [],
+            totalScanned: cachedData.totalScanned ?? 0,
+            walkScores: cachedData.walkScores ?? {},
+            refreshedAt: cachedData.refreshedAt ?? null,
+            cacheHit: true,
+          }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } },
         );
       }
@@ -132,8 +139,15 @@ serve(async (req) => {
 
     // Stale cache fallback
     if (allListings.length === 0 && cached) {
+      const cachedData = cached.response_data as any;
       return new Response(
-        JSON.stringify({ ...(cached.response_data as any), cacheHit: true }),
+        JSON.stringify({
+          listings: cachedData.listings ?? [],
+          totalScanned: cachedData.totalScanned ?? 0,
+          walkScores: cachedData.walkScores ?? {},
+          refreshedAt: cachedData.refreshedAt ?? null,
+          cacheHit: true,
+        }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
@@ -155,8 +169,8 @@ serve(async (req) => {
         ? Math.max(0, Math.round((Date.now() - new Date(l.listedDate).getTime()) / 86400000))
         : null);
 
-      // Filter out stale listings (>90 days)
-      if (daysOnMarket != null && daysOnMarket > 90) continue;
+      // Filter out stale listings (>45 days)
+      if (daysOnMarket != null && daysOnMarket > 45) continue;
 
       seen.set(normAddr, {
         formattedAddress: addr,
