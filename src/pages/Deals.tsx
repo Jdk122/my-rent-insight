@@ -265,6 +265,9 @@ const Deals = () => {
           listingUrl: l.listingUrl || null,
           cleanBuilding: false,
           issues: 0,
+          city: l.city || '',
+          state: l.state || '',
+          zipCode: l.zipCode || '',
         } as DealListing;
       })
       .filter((d): d is DealListing => d !== null);

@@ -189,9 +189,10 @@ export function computeBatchIQR(
 }
 
 /** Build a Zillow search URL from a formatted address */
-export function zillowUrl(address: string, zip = '10003'): string {
-  const slug = address
-    .replace(/[,#]/g, '')
-    .replace(/\s+/g, '-');
-  return `https://www.zillow.com/homes/${slug}-New-York-NY-${zip}_rb/`;
+export function zillowUrl(address: string, city = '', state = '', zip = ''): string {
+  const addrSlug = address.replace(/[,#]/g, '').replace(/\s+/g, '-');
+  const citySlug = city.replace(/\s+/g, '-');
+  const stateSlug = state.replace(/\s+/g, '-');
+  const parts = [addrSlug, citySlug, stateSlug, zip].filter(Boolean).join('-');
+  return `https://www.zillow.com/homes/${parts}_rb/`;
 }
