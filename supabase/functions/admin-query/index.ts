@@ -195,6 +195,34 @@ Deno.serve(async (req) => {
         break;
       }
 
+      case "referral_clicks": {
+        const { data: clicks, error: rcErr } = await supabase
+          .from("referral_clicks")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(500);
+        if (rcErr) throw rcErr;
+
+        // Enrich with lead emails by joining on analysis_id
+        const analysisIds = [...new Set((clicks || []).map((c: any) => c.analysis_id).filter(Boolean))];
+        let emailMap: Record<string, string> = {};
+        if (analysisIds.length > 0) {
+          const { data: leadRows } = await supabase
+            .from("leads")
+            .select("analysis_id, email")
+            .in("analysis_id", analysisIds);
+          for (const l of (leadRows || [])) {
+            if (l.analysis_id && l.email) emailMap[l.analysis_id] = l.email;
+          }
+        }
+
+        data = (clicks || []).map((c: any) => ({
+          ...c,
+          email: c.email || (c.analysis_id ? emailMap[c.analysis_id] || null : null),
+        }));
+        break;
+      }
+
       case "dashboard_stats": {
         const { data: result, error } = await supabase.rpc("admin_dashboard_stats");
         if (error) throw error;
