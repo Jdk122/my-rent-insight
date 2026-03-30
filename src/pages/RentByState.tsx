@@ -17,9 +17,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
-import {
-  Accordion, AccordionContent, AccordionItem, AccordionTrigger,
-} from '@/components/ui/accordion';
 
 const RentByState = () => {
   const { stateSlug } = useParams<{ stateSlug: string }>();
