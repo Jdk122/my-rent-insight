@@ -182,6 +182,9 @@ const RentByCity = () => {
   // Metro name for context
   const metroName = zips[0]?.raw.m || '';
 
+  const maxFmr1br = Math.max(...zips.map(z => z.raw.f[1]));
+  const answerBlock = `The average 1-bedroom fair market rent in ${city}, ${state} is ${fmt(avgFmr[1])}/month as of ${dataYear}, based on HUD data across ${zips.length} ZIP codes.${trendYoY !== null ? ` Rents have changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year over year (${trendAttribution}), so an increase above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local trend.` : ''} Rents range from ${fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to ${fmt(maxFmr1br)}.`;
+
   // Compute affordable income threshold
   const affordableIncome = Math.round(avgFmr[1] * 12 / 0.3);
 
@@ -284,7 +287,7 @@ const RentByCity = () => {
       <noscript>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
           <h1>{`Average Rent in ${city}, ${state} (${dataYear})`}</h1>
-          <p>{`The average 1-bedroom rent in ${city} is ${fmt(avgFmr[1])}/month based on HUD Fair Market Rent data across ${zips.length} zip codes.`}{trendYoY !== null ? ` Rents changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year (${trendHeroSource}).` : ''}</p>
+          <p>{answerBlock}</p>
           {trendYoY !== null && <p>{`Based on ${trendAttribution} data, a fair rent increase in ${city}, ${state} is approximately ${Math.abs(trendYoY).toFixed(1)}% for ${dataYear}. An increase above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.`}</p>}
           {freshestFormatted && <p>{`Data through: ${freshestFormatted}`}</p>}
           <p><a href="https://www.renewalreply.com/">{`Check if your rent increase is fair →`}</a></p>
@@ -325,12 +328,9 @@ const RentByCity = () => {
             <ShareDataButton />
           </div>
 
-          {/* Quick summary — optimized for Google featured snippet extraction */}
+          {/* Quick summary — optimized for AI answer extraction */}
           <p className="mt-4 text-base text-foreground/80 leading-relaxed">
-            The average rent for a 1-bedroom in {city}, {state} is {fmt(avgFmr[1])}/month based on {dataYear} data.
-            {trendYoY !== null
-              ? ` Rents have changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year based on ${trendAttribution}.`
-              : ''}
+            {answerBlock}
           </p>
 
           <div className="mt-6 flex flex-wrap items-end gap-6">

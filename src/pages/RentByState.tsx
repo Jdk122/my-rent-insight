@@ -89,7 +89,8 @@ const RentByState = () => {
 
   const { stateName, stateAbbr, cities, avgFmr1br, totalZips } = data;
 
-  // ─── OG-optimized meta ───
+  const answerBlock = `The average 1-bedroom fair market rent in ${stateName} is ${fmt(avgFmr1br)}/month as of ${dataYear}, covering ${cities.length} cities and ${totalZips.toLocaleString()} ZIP codes.${stateYoY !== null ? ` Rents statewide have changed ${stateYoY > 0 ? '+' : ''}${stateYoY.toFixed(1)}% year over year, so an increase above ${Math.abs(stateYoY).toFixed(1)}% exceeds the statewide trend.` : ''} Data source: HUD Small Area Fair Market Rents FY${hudFY}.`;
+
   const ogTitle = `Average Rent in ${stateName} — ${fmt(avgFmr1br)}/mo (${dataYear})`;
   const metaTitle = `Average Rent in ${stateName} (${dataYear}) | Rent Data by City`;
   const metaDesc = `1-BR rents in ${stateName} are ${fmt(avgFmr1br)}/mo${stateYoY !== null ? `, ${stateYoY > 0 ? 'up' : 'down'} ${Math.abs(stateYoY).toFixed(1)}% YoY` : ''}. See rent data for ${cities.length} cities across ${totalZips.toLocaleString()} zip codes.`;
@@ -179,7 +180,7 @@ const RentByState = () => {
       <noscript>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
           <h1>{`Rent Data for ${stateName} — Average Rent by City (${dataYear})`}</h1>
-          <p>{`The average 1-BR HUD Fair Market Rent in ${stateName} is ${fmt(avgFmr1br)}/month. Browse rent data for ${cities.length} cities across ${totalZips.toLocaleString()} zip codes.`}</p>
+          <p>{answerBlock}</p>
           <p><a href="https://www.renewalreply.com/">{`Check if your rent increase is fair →`}</a></p>
           <h2>{`Cities in ${stateName}`}</h2>
           <table style={{ borderCollapse: 'collapse', width: '100%' }}>
@@ -217,9 +218,9 @@ const RentByState = () => {
             <ShareDataButton />
           </div>
 
-          {/* Quick summary — optimized for Google featured snippet extraction */}
+          {/* Quick summary — optimized for AI answer extraction */}
           <p className="mt-4 text-base text-foreground/80 leading-relaxed">
-            {stateName} has {totalZips.toLocaleString()} zip codes with rent data. The statewide average 1-bedroom fair market rent is {fmt(avgFmr1br)}/month.
+            {answerBlock}
           </p>
 
           <div className="mt-6 flex flex-wrap items-end gap-6">
