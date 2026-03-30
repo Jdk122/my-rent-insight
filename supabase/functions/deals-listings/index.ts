@@ -139,8 +139,15 @@ serve(async (req) => {
 
     // Stale cache fallback
     if (allListings.length === 0 && cached) {
+      const cachedData = cached.response_data as any;
       return new Response(
-        JSON.stringify({ ...(cached.response_data as any), cacheHit: true }),
+        JSON.stringify({
+          listings: cachedData.listings ?? [],
+          totalScanned: cachedData.totalScanned ?? 0,
+          walkScores: cachedData.walkScores ?? {},
+          refreshedAt: cachedData.refreshedAt ?? null,
+          cacheHit: true,
+        }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
