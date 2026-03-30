@@ -210,6 +210,17 @@ const Index = () => {
                 }
               }
             ]
+          },
+          {
+            "@type": "Organization",
+            "name": "RenewalReply",
+            "url": "https://www.renewalreply.com",
+            "logo": "https://www.renewalreply.com/renewalreply-logo-square.png",
+            "description": "Free rent fairness analysis and apartment deal scoring for renters across 38,600+ US zip codes.",
+            "sameAs": [
+              "https://www.tiktok.com/@rentfacts",
+              "https://www.instagram.com/rentfacts"
+            ]
           }
         ]}
       />

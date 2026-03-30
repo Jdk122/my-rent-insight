@@ -71,6 +71,21 @@ const DealsHub: React.FC = () => {
         title="Apartment Deals by Neighborhood — Scored Below Market | RenewalReply"
         description="Browse apartment deals across curated neighborhoods in NYC, Miami, Chicago, Austin, and San Francisco. Every listing scored against local market data."
         canonical="/deals"
+        jsonLd={[
+          {
+            '@type': 'ItemList',
+            name: 'Apartment Deals by Neighborhood',
+            description: 'Browse scored apartment deals across curated neighborhoods. Every listing scored against local market data.',
+            url: 'https://www.renewalreply.com/deals',
+            numberOfItems: DEAL_CITIES.length,
+            itemListElement: DEAL_CITIES.map((city, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              name: `Apartment Deals in ${city.neighborhood || city.name}`,
+              url: `https://www.renewalreply.com/deals/${city.slug}`,
+            })),
+          },
+        ]}
       />
 
       <PageNav ctaText="Check My Rent →" />
