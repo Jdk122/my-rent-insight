@@ -21,9 +21,6 @@ import { Input } from '@/components/ui/input';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
-import {
-  Accordion, AccordionContent, AccordionItem, AccordionTrigger,
-} from '@/components/ui/accordion';
 
 const BEDROOM_LABELS = ['Studio', '1-Bedroom', '2-Bedroom', '3-Bedroom', '4-Bedroom'];
 
@@ -190,40 +187,24 @@ const RentByCity = () => {
 
   const faqItems = [
     {
-      q: `What is a fair rent increase in ${city}, ${state}?`,
+      q: `What is the average 1-bedroom rent in ${city}, ${state}?`,
+      a: `The average 1-bedroom fair market rent in ${city}, ${state} is ${fmt(avgFmr[1])}/month as of ${dataYear}, based on HUD rent data across ${zips.length} ZIP codes in the city.`,
+    },
+    {
+      q: `What is a fair rent increase in ${city}?`,
       a: trendYoY !== null
-        ? `Based on ${trendAttribution} data, a fair rent increase in ${city} is approximately ${Math.abs(trendYoY).toFixed(1)}% for ${dataYear}. The average 1-bedroom rent is ${fmt(avgFmr[1])}/month. An increase above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend.`
-        : `Local trend data is not available for ${city}. The national average rent increase is approximately 3.2% year-over-year. Use RenewalReply to check your specific rent increase.`,
+        ? `A rent increase up to about ${Math.abs(trendYoY).toFixed(1)}% is broadly in line with the recent market trend in ${city}. Increases above that level are above trend and should be tested against neighborhood-level pricing and comparable rentals.`
+        : `When local trend data is limited, a fair rent increase in ${city} is better judged against the current city rent benchmark and ZIP-level differences rather than a single trend percentage.`,
     },
     {
-      q: `What is the average rent in ${city}, ${state}?`,
-      a: `Based on HUD Fair Market Rent data, the average rent for a 1-bedroom in ${city} is ${fmt(avgFmr[1])}/month. Studios average ${fmt(avgFmr[0])}, and 2-bedrooms average ${fmt(avgFmr[2])}.${cityHud50?.[1] ? ` The HUD 50th percentile (median) rent for a 1-bedroom is ${fmt(cityHud50[1])}/mo.` : ''}`,
-    },
-    {
-      q: `Can I afford to rent in ${city}?`,
-      a: `Using the 30% affordability rule, a household needs to earn at least ${fmt(affordableIncome)}/year to afford the average 1-bedroom rent of ${fmt(avgFmr[1])}/month without being cost-burdened.${censusMedianRent ? ` The estimated median rent in ${city} is ${fmt(censusMedianRent)}/mo.` : ''}`,
-    },
-    {
-      q: `How much has rent changed in ${city}?`,
+      q: `Are rents going up or down in ${city}?`,
       a: trendYoY !== null
-        ? `Rents in ${city} changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year based on ${trendAttribution} data. ${Math.abs(trendYoY - 3.2) > 1 ? `This is ${trendYoY > 3.2 ? 'above' : 'below'} the national average of approximately 3.2%.` : 'This is roughly in line with the national average of approximately 3.2%.'}`
-        : `Year-over-year rent change data is not currently available for ${city}.`,
+        ? `Rents in ${city} have changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year over year based on the trend measure shown on this page.`
+        : `This page has limited trend visibility for ${city}, so it emphasizes current rent benchmarks and cross-ZIP differences more than year-over-year movement.`,
     },
     {
-      q: `What is the cheapest zip code in ${city}?`,
-      a: cheapestZip
-        ? `The most affordable zip code in ${city} is ${cheapestZip.zip} with a 1-bedroom HUD Fair Market Rent of ${fmt(cheapestZip.fmr1br)}/month.${avgFmr[1] > cheapestZip.fmr1br ? ` That's ${Math.round(((avgFmr[1] - cheapestZip.fmr1br) / avgFmr[1]) * 100)}% below the city average.` : ''}`
-        : `Zip-level affordability data is not available for ${city}.`,
-    },
-    {
-      q: `How does ${city} compare to the metro area?`,
-      a: metroName
-        ? `${city} is part of the ${metroName} metropolitan area. The city's average 1-bedroom FMR is ${fmt(avgFmr[1])}/month. ${nearby.length > 0 ? `Nearby cities like ${nearby.slice(0, 2).map(n => `${n.city} (${fmt(n.avgFmr[1])})`).join(' and ')} offer points of comparison.` : ''}`
-        : `Metro-level comparison data is not available for ${city}.`,
-    },
-    {
-      q: `What should rent cost in ${city}?`,
-      a: `A 1-bedroom in ${city} typically rents for ${fmt(avgFmr[1])} – ${fmt(cityHud50?.[1] ?? Math.round(avgFmr[1] * 1.15))}, based on HUD FMR and median rent data.`,
+      q: `How much do rents vary across ${city}?`,
+      a: `1-bedroom rents across ${city} range from ${fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to ${fmt(Math.max(...zips.map(z => z.raw.f[1])))} on this page, showing that rent can vary materially across ZIP codes within the same city.`,
     },
   ];
 
@@ -560,15 +541,15 @@ const RentByCity = () => {
 
         {/* ═══ FAQ ═══ */}
         <section className="mb-12">
-          <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Frequently Asked Questions</h2>
-          <Accordion type="multiple" className="space-y-2">
+          <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Questions about rent in {city}</h2>
+          <div className="space-y-6">
             {faqItems.map((f, i) => (
-              <AccordionItem key={i} value={`faq-${i}`} className="border border-border rounded-lg px-4">
-                <AccordionTrigger className="text-left text-sm font-medium">{f.q}</AccordionTrigger>
-                <AccordionContent className="text-sm text-muted-foreground">{f.a}</AccordionContent>
-              </AccordionItem>
+              <div key={i}>
+                <h3 className="text-sm font-medium text-foreground">{f.q}</h3>
+                <p className="text-sm text-muted-foreground mt-1">{f.a}</p>
+              </div>
             ))}
-          </Accordion>
+          </div>
         </section>
 
         {/* ═══ Renter Tools CTA ═══ */}
