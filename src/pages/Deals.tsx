@@ -396,6 +396,23 @@ const Deals = () => {
             )}
           </div>
         )}
+
+        {!loading && refreshedAt && (() => {
+          const d = new Date(refreshedAt);
+          const now = new Date();
+          const diffMs = now.getTime() - d.getTime();
+          const diffH = Math.floor(diffMs / 3600000);
+          const diffM = Math.floor(diffMs / 60000);
+          let label: string;
+          if (diffM < 60) label = `Updated ${diffM} minutes ago`;
+          else if (diffH < 24) label = `Updated ${diffH} hour${diffH !== 1 ? 's' : ''} ago`;
+          else {
+            const timeStr = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' });
+            const isToday = d.toDateString() === now.toDateString();
+            label = isToday ? `Updated today at ${timeStr} ET` : `Updated ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} at ${timeStr} ET`;
+          }
+          return <p className="text-[11px] text-muted-foreground mt-1">{label}</p>;
+        })()}
       </header>
 
       {/* Main content */}
