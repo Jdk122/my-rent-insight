@@ -325,12 +325,9 @@ const RentByCity = () => {
             <ShareDataButton />
           </div>
 
-          {/* Quick summary — optimized for Google featured snippet extraction */}
+          {/* Quick summary — optimized for AI answer extraction */}
           <p className="mt-4 text-base text-foreground/80 leading-relaxed">
-            The average rent for a 1-bedroom in {city}, {state} is {fmt(avgFmr[1])}/month based on {dataYear} data.
-            {trendYoY !== null
-              ? ` Rents have changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year based on ${trendAttribution}.`
-              : ''}
+            {answerBlock}
           </p>
 
           <div className="mt-6 flex flex-wrap items-end gap-6">
