@@ -217,9 +217,9 @@ const RentByState = () => {
             <ShareDataButton />
           </div>
 
-          {/* Quick summary — optimized for Google featured snippet extraction */}
+          {/* Quick summary — optimized for AI answer extraction */}
           <p className="mt-4 text-base text-foreground/80 leading-relaxed">
-            {stateName} has {totalZips.toLocaleString()} zip codes with rent data. The statewide average 1-bedroom fair market rent is {fmt(avgFmr1br)}/month.
+            {answerBlock}
           </p>
 
           <div className="mt-6 flex flex-wrap items-end gap-6">

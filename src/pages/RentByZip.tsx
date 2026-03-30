@@ -212,6 +212,10 @@ const RentByZip = () => {
   const ogTitle = `Average Rent in ${zip} — ${fmt(heroRent)}/mo (${dataYear})`;
   const metaDesc = `1-BR rents in ${zip} are ${fmt(heroRent)}/mo${trendYoY !== null ? `, ${trendYoY > 0 ? 'up' : 'down'} ${Math.abs(trendYoY).toFixed(1)}% year-over-year` : ''}. See federal benchmarks, trends, and nearby data for ${city}, ${state}.`;
 
+  const answerBlock = dataConfidence === 'limited'
+    ? `The HUD Fair Market Rent for a 1-bedroom in ${zip} (${city}, ${state}) is ${fmt(heroRent)}/month for FY${hudFY}. Limited market trend data is available for this area. Studio: ${fmt(raw.f[0])}. 2-bedroom: ${fmt(raw.f[2])}.`
+    : `The typical 1-bedroom rent in ${zip} (${city}, ${state}) is ${fmt(heroRent)}/month as of ${dataYear}, based on ${dataSourceCount} data sources.${trendYoY !== null ? ` Rents have ${trendYoY >= 0 ? 'risen' : 'fallen'} ${Math.abs(trendYoY).toFixed(1)}% year over year, so an increase above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend.` : ''} Studio: ${fmt(raw.f[0])}. 2-bedroom: ${fmt(raw.f[2])}.`;
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {shouldNoindex && <NoIndexMeta />}
