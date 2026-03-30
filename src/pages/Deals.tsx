@@ -494,7 +494,7 @@ const Deals = () => {
           )}
 
           {/* Mobile cross-sell — sidebar is hidden on mobile */}
-          <div className="md:hidden space-y-3 mt-6 mb-8 px-1">
+          <div className="lg:hidden space-y-3 mt-6 mb-8 px-1">
             <Link to="/" className="block rounded-xl border border-border bg-card p-4 hover:border-primary/40 transition-all">
               <p className="font-semibold text-foreground text-[14px]">Already renting here?</p>
               <p className="text-xs text-muted-foreground mt-0.5">Check if your rent increase is fair.</p>
@@ -509,6 +509,35 @@ const Deals = () => {
               <p className="font-semibold text-foreground text-[14px]">Rent data for {primaryZip}</p>
               <p className="text-xs text-muted-foreground mt-0.5">HUD benchmarks, trends, and nearby comparisons.</p>
             </Link>
+            <a
+              href={AFFILIATE_LINKS.rent_reporting}
+              target="_blank"
+              rel="sponsored noopener noreferrer"
+              className="block rounded-xl border border-border bg-card p-4 hover:border-primary/40 transition-all"
+              onClick={() => {
+                supabase.from('referral_clicks').insert({ link_type: 'partner_rent_reporting', placement: 'deals_mobile', event_type: 'affiliate_click' }).then(() => {});
+              }}
+            >
+              <p className="font-semibold text-foreground text-[14px]">📊 Build Credit</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Report your rent payments to build your credit score</p>
+              <span className="text-xs text-accent font-medium mt-1.5 inline-block">Learn more →</span>
+            </a>
+            <a
+              href={AFFILIATE_LINKS.moving_help}
+              target="_blank"
+              rel="sponsored noopener noreferrer"
+              className="block rounded-xl border border-border bg-card p-4 hover:border-primary/40 transition-all"
+              onClick={() => {
+                supabase.from('referral_clicks').insert({ link_type: 'partner_moving_help', placement: 'deals_mobile', event_type: 'affiliate_click' }).then(() => {});
+              }}
+            >
+              <p className="font-semibold text-foreground text-[14px]">🚚 Compare Movers</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Get instant moving quotes for your area</p>
+              <span className="text-xs text-primary font-medium mt-1.5 inline-block">Get quotes →</span>
+            </a>
+            <p className="text-[10px] text-muted-foreground/40">
+              May include <a href="/privacy" className="underline hover:text-muted-foreground">affiliate links</a>.
+            </p>
           </div>
         </main>
 
