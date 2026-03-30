@@ -541,15 +541,15 @@ const RentByCity = () => {
 
         {/* ═══ FAQ ═══ */}
         <section className="mb-12">
-          <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Frequently Asked Questions</h2>
-          <Accordion type="multiple" className="space-y-2">
+          <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Questions about rent in {city}</h2>
+          <div className="space-y-6">
             {faqItems.map((f, i) => (
-              <AccordionItem key={i} value={`faq-${i}`} className="border border-border rounded-lg px-4">
-                <AccordionTrigger className="text-left text-sm font-medium">{f.q}</AccordionTrigger>
-                <AccordionContent className="text-sm text-muted-foreground">{f.a}</AccordionContent>
-              </AccordionItem>
+              <div key={i}>
+                <h3 className="text-sm font-medium text-foreground">{f.q}</h3>
+                <p className="text-sm text-muted-foreground mt-1">{f.a}</p>
+              </div>
             ))}
-          </Accordion>
+          </div>
         </section>
 
         {/* ═══ Renter Tools CTA ═══ */}

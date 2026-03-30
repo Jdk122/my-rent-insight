@@ -547,69 +547,39 @@ const RentByZip = () => {
 
         {/* ═══ FAQ ═══ */}
         <section className="mb-12">
-          <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Frequently Asked Questions About Rent in {zip}</h2>
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="avg">
-              <AccordionTrigger>What is the typical rent in {zip}?</AccordionTrigger>
-              <AccordionContent>
-                <p className="text-muted-foreground leading-relaxed">
-                  The {heroRentLabel.toLowerCase()} for a 1-bedroom in {zip} is {fmt(heroRent)}/month ({heroRentSource}).
-                  {hud50?.f50 && ` The HUD estimated rent is ${fmt(hud50.f50[1])}/mo, while the Fair Market Rent is ${fmt(fmr1br)}/mo.`}
-                  {metroAvgFmr1br !== fmr1br && ` Across the ${raw.m} metro area, the average 1-bedroom FMR is ${fmt(metroAvgFmr1br)}/mo — making ${zip} ${fmr1br > metroAvgFmr1br ? `${Math.round(((fmr1br - metroAvgFmr1br) / metroAvgFmr1br) * 100)}% above` : `${Math.round(((metroAvgFmr1br - fmr1br) / metroAvgFmr1br) * 100)}% below`} the metro average.`}
-                  {' '}For current asking rents from nearby listings, see the market data section above.
-                </p>
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="afford">
-              <AccordionTrigger>Can I afford rent in {zip}?</AccordionTrigger>
-              <AccordionContent>
-                <p className="text-muted-foreground leading-relaxed">
-                  {raw.i && raw.i >= 10000
-                    ? `The median household income in this area is approximately ${fmt(raw.i)}/year. Using the 30% affordability rule, a household earning the median income can afford up to ${fmt(Math.round((raw.i * 0.3) / 12))}/month in rent without being cost-burdened. ${heroRent > (raw.i * 0.3) / 12 ? `At ${fmt(heroRent)}/mo, the typical 1-bedroom here exceeds the affordable threshold by ${fmt(Math.round(heroRent - (raw.i * 0.3) / 12))}/mo.` : `At ${fmt(heroRent)}/mo, the typical 1-bedroom here falls within the affordable range.`}`
-                    : `The standard affordability guideline is the 30% rule: housing costs should not exceed 30% of gross household income. For a 1-bedroom at ${fmt(heroRent)}/mo, a household would need to earn at least ${fmt(Math.round(heroRent * 12 / 0.3))}/year to stay within this threshold.`}
-                </p>
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="cost">
-              <AccordionTrigger>What should rent cost in {zip}?</AccordionTrigger>
-              <AccordionContent>
-                <p className="text-muted-foreground leading-relaxed">
-                  A 1-bedroom in {zip} typically rents for {fmt(raw.f[1])} – {fmt(hud50?.f50?.[1] ?? Math.round(raw.f[1] * 1.15))} based on HUD data.
-                  {metroAvgFmr1br !== fmr1br && ` For comparison, the metro-wide average is ${fmt(metroAvgFmr1br)}/mo.`}
-                  {' '}See the "What Should Rent Cost" section above for all bedroom sizes.
-                </p>
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="trend">
-              <AccordionTrigger>How much has rent increased in {city} ({zip})?</AccordionTrigger>
-              <AccordionContent>
-                <p className="text-muted-foreground leading-relaxed">
-                  {trendYoY !== null
-                    ? `Rents in ${city} changed approximately ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year-over-year based on ${trendAttribution} data. The national average is approximately ${NATIONAL_AVG_YOY}%. ${Math.abs(trendYoY) > Math.abs(NATIONAL_AVG_YOY) + 1 ? `This means ${city} rents are growing ${trendYoY > NATIONAL_AVG_YOY ? 'faster' : 'slower'} than the national average.` : `This is roughly in line with the national average.`}`
-                    : `Year-over-year rent trend data is not currently available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}%.`}
-                </p>
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="fmr">
-              <AccordionTrigger>What is the HUD Fair Market Rent for a 1-bedroom in {zip}?</AccordionTrigger>
-              <AccordionContent>
-                <p className="text-muted-foreground leading-relaxed">
-                  The HUD Fair Market Rent for a 1-bedroom in zip code {zip} is {fmt(fmr1br)} for FY{hudFY}. This is the federal rent benchmark for this area. Other bedroom sizes: Studio {fmt(raw.f[0])}, 2-BR {fmt(raw.f[2])}, 3-BR {fmt(raw.f[3])}, 4-BR {fmt(raw.f[4])}.
-                  {raw.p[1] > 0 && ` Last year's FMR was ${fmt(raw.p[1])}, a change of ${((fmr1br - raw.p[1]) / raw.p[1] * 100).toFixed(1)}%.`}
-                </p>
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="control">
-              <AccordionTrigger>Is {city} rent controlled?</AccordionTrigger>
-              <AccordionContent>
-                <p className="text-muted-foreground leading-relaxed">
-                  {cap
-                    ? `Yes. ${cap.jurisdiction} has rent increase protections.${cap.maxIncreaseFormula ? ` The cap is generally ${cap.maxIncreaseFormula}.` : ''}${cap.applicability ? ` This applies to: ${cap.applicability}.` : ''}`
-                    : `No. There are no specific rent control laws covering ${city}, ${state} at this time. Landlords can raise rent by any amount with proper notice.`}
-                </p>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+          <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Questions about rent in {zip}</h2>
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-sm font-medium text-foreground">What is the average 1-bedroom rent in {zip}?</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                {dataConfidence === 'limited'
+                  ? `The HUD Fair Market Rent for a 1-bedroom in ${zip} (${city}, ${state}) is ${fmt(heroRent)}/month for FY${hudFY}. This page also shows benchmark rents for studios and 2-bedroom apartments in the same area.`
+                  : `The typical 1-bedroom rent in ${zip} (${city}, ${state}) is ${fmt(heroRent)}/month as of ${dataYear}. This page also shows nearby bedroom benchmarks, including studio rent at ${fmt(raw.f[0])} and 2-bedroom rent at ${fmt(raw.f[2])}.`}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-foreground">What is a fair rent increase in {zip}?</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                {trendYoY !== null
+                  ? `A rent increase up to about ${Math.abs(trendYoY).toFixed(1)}% is in line with the recent local market trend in ${zip}. An increase above that level is above trend and may justify a closer review against local pricing and comparable apartments.`
+                  : `A precise fair rent increase threshold is harder to estimate in ${zip} because local trend data is limited. In that case, use the current 1-bedroom benchmark and nearby comparable listings as the main reference point.`}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-foreground">Are rents going up or down in {zip}?</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                {trendYoY !== null
+                  ? `Rents in ${zip} have ${trendYoY >= 0 ? 'risen' : 'fallen'} ${Math.abs(trendYoY).toFixed(1)}% year over year based on the local trend data used on this page.`
+                  : `This area has limited local trend coverage, so the page relies more heavily on benchmark rent data than on a strong year-over-year trend signal.`}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-foreground">How much do studios and 2-bedrooms cost in {zip}?</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                {`On this page, studio rent in ${zip} is ${fmt(raw.f[0])}/month and 2-bedroom rent is ${fmt(raw.f[2])}/month. These figures help show whether your current or proposed rent fits the broader local bedroom mix.`}
+              </p>
+            </div>
+          </div>
         </section>
 
         {/* ═══ Renter Tools CTA ═══ */}
