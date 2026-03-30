@@ -307,8 +307,8 @@ const Deals = () => {
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Deals', item: 'https://renewalreply.com/deals' },
-          { '@type': 'ListItem', position: 2, name: city.stateAbbr, item: 'https://renewalreply.com/deals' },
+          { '@type': 'ListItem', position: 1, name: 'Deals', item: 'https://www.renewalreply.com/deals' },
+          { '@type': 'ListItem', position: 2, name: city.stateAbbr, item: 'https://www.renewalreply.com/deals' },
           { '@type': 'ListItem', position: 3, name: displayName },
         ],
       },
