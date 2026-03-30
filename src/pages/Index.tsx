@@ -167,7 +167,6 @@ const Index = () => {
             "author": { "@type": "Organization", "name": "RenewalReply" }
           },
           {
-            "@context": "https://schema.org",
             "@type": "FAQPage",
             "mainEntity": [
               {
