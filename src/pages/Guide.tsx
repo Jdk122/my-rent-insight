@@ -59,7 +59,6 @@ const Guide = () => {
     .filter(Boolean);
 
   const articleJsonLd = {
-    '@context': 'https://schema.org',
     '@type': 'Article',
     headline: article.title,
     description: article.metaDescription,
