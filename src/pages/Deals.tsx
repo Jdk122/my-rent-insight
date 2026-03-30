@@ -317,8 +317,7 @@ const Deals = () => {
         description: `${deals.length} apartments in ${displayName} (${primaryZip}) scored below market rent.`,
         url: `https://renewalreply.com/deals/${city.slug}`,
       },
-    ],
-  };
+  ];
 
   return (
     <div className="min-h-screen bg-background font-body">
