@@ -59,7 +59,6 @@ const Guide = () => {
     .filter(Boolean);
 
   const articleJsonLd = {
-    '@context': 'https://schema.org',
     '@type': 'Article',
     headline: article.title,
     description: article.metaDescription,
@@ -72,7 +71,6 @@ const Guide = () => {
 
   const faqJsonLd = article.faqItems?.length
     ? {
-        '@context': 'https://schema.org',
         '@type': 'FAQPage',
         mainEntity: article.faqItems.map((f) => ({
           '@type': 'Question',
@@ -84,7 +82,6 @@ const Guide = () => {
 
   const howToJsonLd = article.slug === 'how-to-negotiate-rent-increase'
     ? {
-        '@context': 'https://schema.org',
         '@type': 'HowTo',
         name: 'How to Negotiate a Rent Increase',
         description: 'A step-by-step guide to negotiating your rent increase using market data, comparable listings, and a professional counter-offer email.',
@@ -131,7 +128,6 @@ const Guide = () => {
 
   const itemListJsonLd = article.slug === 'how-to-check-rent-fair'
     ? {
-        '@context': 'https://schema.org',
         '@type': 'ItemList',
         name: 'How to Check If Your Rent Is Fair: 5 Methods Compared',
         description: 'A comparison of five methods renters can use to check whether their rent or rent increase is fair, including free tools, paid services, and manual research.',

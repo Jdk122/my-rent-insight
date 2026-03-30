@@ -158,7 +158,6 @@ const WhatShouldIPay = () => {
           : 'Find out what you should actually pay for rent. Compare asking prices to market data, nearby listings, and HUD benchmarks.'}
         canonical="/what-should-i-pay"
         jsonLd={{
-          '@context': 'https://schema.org',
           '@type': 'WebApplication',
           name: 'What Should I Pay? — Fair Rent Calculator',
           url: 'https://www.renewalreply.com/what-should-i-pay',

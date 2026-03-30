@@ -234,7 +234,6 @@ const RentByCity = () => {
         ogImage="/og-image.png"
         jsonLd={[
           {
-            '@context': 'https://schema.org',
             '@type': 'BreadcrumbList',
             itemListElement: [
               { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.renewalreply.com/' },
@@ -244,7 +243,6 @@ const RentByCity = () => {
             ],
           },
           {
-            '@context': 'https://schema.org',
             '@type': 'WebPage',
             name: ogTitle,
             description: metaDesc,
@@ -253,13 +251,11 @@ const RentByCity = () => {
             publisher: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
           },
           {
-            '@context': 'https://schema.org',
             '@type': 'Place',
             name: `${city}, ${state}`,
             address: { '@type': 'PostalAddress', addressLocality: city, addressRegion: state, addressCountry: 'US' },
           },
           {
-            '@context': 'https://schema.org',
             '@type': 'Dataset',
             name: `Rent Data for ${city}, ${state}`,
             description: `Fair market rent data and market trends for ${city}, ${state} across ${zips.length} zip codes.`,
@@ -267,9 +263,13 @@ const RentByCity = () => {
             creator: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
             license: 'https://creativecommons.org/licenses/by/4.0/',
             temporalCoverage: dataYear,
+            spatialCoverage: { '@type': 'Place', name: `${city}, ${state}` },
+            variablesMeasured: ['Fair Market Rent', 'Median Rent', 'Year-over-Year Rent Change', 'Rent by Bedroom Count', 'Apartment List Rent Estimate', 'Zillow Observed Rent Index'],
+            measurementTechnique: 'Aggregated from HUD Fair Market Rent (SAFMR 50th percentile), Zillow Observed Rent Index (ZORI), and Apartment List rent estimates',
+            isAccessibleForFree: true,
+            keywords: ['rent data', 'fair market rent', 'rent trends', 'rental prices'],
           },
           {
-            '@context': 'https://schema.org',
             '@type': 'FAQPage',
             mainEntity: faqItems.map(f => ({
               '@type': 'Question',

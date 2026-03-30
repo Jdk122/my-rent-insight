@@ -150,7 +150,6 @@ const Index = () => {
         canonical="/"
         jsonLd={[
           {
-            "@context": "https://schema.org",
             "@type": "WebApplication",
             "name": "RenewalReply Rent Increase Tool",
             "url": "https://www.renewalreply.com",
@@ -168,7 +167,6 @@ const Index = () => {
             "author": { "@type": "Organization", "name": "RenewalReply" }
           },
           {
-            "@context": "https://schema.org",
             "@type": "FAQPage",
             "mainEntity": [
               {
@@ -211,6 +209,17 @@ const Index = () => {
                   "text": "RenewalReply covers 38,600+ US zip codes using real nearby listings, Zillow rent trends, and HUD Fair Market Rent data, making it one of the most comprehensive rent fairness tools available."
                 }
               }
+            ]
+          },
+          {
+            "@type": "Organization",
+            "name": "RenewalReply",
+            "url": "https://www.renewalreply.com",
+            "logo": "https://www.renewalreply.com/renewalreply-logo-square.png",
+            "description": "Free rent fairness analysis and apartment deal scoring for renters across 38,600+ US zip codes.",
+            "sameAs": [
+              "https://www.tiktok.com/@rentfacts",
+              "https://www.instagram.com/rentfacts"
             ]
           }
         ]}

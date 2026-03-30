@@ -106,7 +106,6 @@ const RentData = () => {
         ogImage="/og-image.png"
         jsonLd={[
           {
-            '@context': 'https://schema.org',
             '@type': 'WebPage',
             name: 'U.S. Rent Data by Location',
             description: `Free fair market rent data for over ${totalZips > 0 ? totalZips.toLocaleString() : '38,600'} U.S. zip codes from HUD, Apartment List, and Zillow.`,
@@ -114,7 +113,6 @@ const RentData = () => {
             publisher: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
           },
           {
-            '@context': 'https://schema.org',
             '@type': 'BreadcrumbList',
             itemListElement: [
               { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.renewalreply.com/' },
@@ -122,7 +120,6 @@ const RentData = () => {
             ],
           },
           {
-            '@context': 'https://schema.org',
             '@type': 'Dataset',
             name: 'U.S. Fair Market Rent Data',
             description: `HUD Fair Market Rent benchmarks and market rent trends for ${totalZips > 0 ? totalZips.toLocaleString() : '38,600'}+ U.S. zip codes, updated for FY${freshness ? getHudFiscalYear(freshness) : '2026'}.`,
@@ -131,6 +128,10 @@ const RentData = () => {
             license: 'https://creativecommons.org/licenses/by/4.0/',
             temporalCoverage: freshness ? getDataYear(freshness) : '2026',
             spatialCoverage: { '@type': 'Place', name: 'United States' },
+            variablesMeasured: ['Fair Market Rent', 'Median Rent', 'Year-over-Year Rent Change', 'Rent by Bedroom Count', 'Apartment List Rent Estimate', 'Zillow Observed Rent Index'],
+            measurementTechnique: 'Aggregated from HUD Fair Market Rent (SAFMR 50th percentile), Zillow Observed Rent Index (ZORI), and Apartment List rent estimates',
+            isAccessibleForFree: true,
+            keywords: ['rent data', 'fair market rent', 'rent trends', 'rental prices'],
           },
         ]}
       />
