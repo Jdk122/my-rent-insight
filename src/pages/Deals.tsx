@@ -142,36 +142,8 @@ const Deals = () => {
     })();
   }, [primaryZip]);
 
-  // Fetch Walk Scores for listings with coordinates
-  useEffect(() => {
-    if (!rawListings.length) return;
-
-    (async () => {
-      const scores: Record<string, number> = {};
-      const withCoords = rawListings
-        .filter((l: any) => l.latitude != null && l.longitude != null)
-        .slice(0, 20);
-
-      for (let i = 0; i < withCoords.length; i += 5) {
-        const batch = withCoords.slice(i, i + 5);
-        await Promise.all(batch.map(async (l: any) => {
-          try {
-            const { data } = await supabase.functions.invoke('walkscore-lookup', {
-              body: { address: l.formattedAddress, lat: l.latitude, lon: l.longitude },
-            });
-            if (data?.walkscore != null) {
-              const key = (l.formattedAddress || '').toLowerCase().trim();
-              scores[key] = data.walkscore;
-            }
-          } catch (err) {
-            console.error('Walk score fetch failed:', err);
-          }
-        }));
-      }
-
-      setWalkScores(scores);
-    })();
-  }, [rawListings]);
+  // Walk scores are now provided by the deals-refresh-cron via cached response.
+  // No client-side Walk Score API calls needed.
 
   // Fetch DHCR rent stabilization data (NYC only)
   useEffect(() => {
