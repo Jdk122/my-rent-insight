@@ -82,7 +82,6 @@ const Guide = () => {
 
   const howToJsonLd = article.slug === 'how-to-negotiate-rent-increase'
     ? {
-        '@context': 'https://schema.org',
         '@type': 'HowTo',
         name: 'How to Negotiate a Rent Increase',
         description: 'A step-by-step guide to negotiating your rent increase using market data, comparable listings, and a professional counter-offer email.',
