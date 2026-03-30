@@ -298,10 +298,7 @@ const RentByZip = () => {
       <noscript>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
           <h1>{hasMarketData ? `Typical Rent in ${zip} — ${city}, ${state}` : `Fair Market Rent in ${zip} — ${city}, ${state}`}</h1>
-          <p>{dataConfidence === 'limited'
-            ? `Federal rent benchmarks suggest a 1-bedroom in ${zip} is approximately ${fmt(heroRent)}/month. Limited market trend data is available for this area.`
-            : `The typical rent for a 1-bedroom in ${zip} (${city}, ${state}) is ${fmt(heroRent)}/month.${trendYoY !== null ? ` Rents in this area have ${trendYoY >= 0 ? 'increased' : 'decreased'} ${Math.abs(trendYoY).toFixed(1)}% over the past year (${trendAttribution}).` : ''}`
-          }</p>
+          <p>{answerBlock}</p>
           {dataConfidence === 'high' && <p><small>{`Based on ${dataSourceCount} independent data sources including local market trends and nearby listings.`}</small></p>}
           {dataConfidence === 'moderate' && <p><small>{`Based on federal benchmarks and ${dataSourceCount - 1} additional market source${dataSourceCount - 1 !== 1 ? 's' : ''}.`}</small></p>}
           <p>{`Data through: ${freshestFormatted}`}</p>
