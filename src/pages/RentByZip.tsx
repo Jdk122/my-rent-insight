@@ -355,17 +355,9 @@ const RentByZip = () => {
             <ShareDataButton />
           </div>
 
-          {/* Quick summary — optimized for Google featured snippet extraction */}
+          {/* Quick summary — optimized for AI answer extraction */}
           <p className="mt-4 text-base text-foreground/80 leading-relaxed">
-            {dataConfidence === 'limited'
-              ? `Federal rent benchmarks suggest a 1-bedroom in ${zip} is approximately ${fmt(heroRent)}/month. Limited market trend data is available for this area.`
-              : <>
-                  The typical rent for a 1-bedroom in {zip} ({city}, {state}) is {fmt(heroRent)}/month.
-                  {trendYoY !== null
-                    ? ` Rents in this area have ${trendYoY >= 0 ? 'increased' : 'decreased'} ${Math.abs(trendYoY).toFixed(1)}% over the past year (${trendAttribution}).`
-                    : ''}
-                </>
-            }
+            {answerBlock}
           </p>
 
           {/* Verdict sentence — hidden on limited pages */}
