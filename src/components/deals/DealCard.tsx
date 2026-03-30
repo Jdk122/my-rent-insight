@@ -27,6 +27,9 @@ export interface DealListing {
   // Legacy fields
   cleanBuilding: boolean;
   issues: number;
+  city: string;
+  state: string;
+  zipCode: string;
 }
 
 const VERDICT_STYLES = {

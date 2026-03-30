@@ -179,7 +179,7 @@ const DealGateModal = ({ listing, cityName, cityStateAbbr, cityZip, onClose, onE
     })();
   };
 
-  const listingHref = listing.listingUrl || zillowUrl(listing.address);
+  const listingHref = listing.listingUrl || zillowUrl(listing.address, listing.city || '', listing.state || '', listing.zipCode || '');
 
   return (
     <div
