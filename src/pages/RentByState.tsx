@@ -89,7 +89,8 @@ const RentByState = () => {
 
   const { stateName, stateAbbr, cities, avgFmr1br, totalZips } = data;
 
-  // ─── OG-optimized meta ───
+  const answerBlock = `The average 1-bedroom fair market rent in ${stateName} is ${fmt(avgFmr1br)}/month as of ${dataYear}, covering ${cities.length} cities and ${totalZips.toLocaleString()} ZIP codes.${stateYoY !== null ? ` Rents statewide have changed ${stateYoY > 0 ? '+' : ''}${stateYoY.toFixed(1)}% year over year, so an increase above ${Math.abs(stateYoY).toFixed(1)}% exceeds the statewide trend.` : ''} Data source: HUD Small Area Fair Market Rents FY${hudFY}.`;
+
   const ogTitle = `Average Rent in ${stateName} — ${fmt(avgFmr1br)}/mo (${dataYear})`;
   const metaTitle = `Average Rent in ${stateName} (${dataYear}) | Rent Data by City`;
   const metaDesc = `1-BR rents in ${stateName} are ${fmt(avgFmr1br)}/mo${stateYoY !== null ? `, ${stateYoY > 0 ? 'up' : 'down'} ${Math.abs(stateYoY).toFixed(1)}% YoY` : ''}. See rent data for ${cities.length} cities across ${totalZips.toLocaleString()} zip codes.`;
