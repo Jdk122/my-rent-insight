@@ -316,7 +316,7 @@ const Deals = () => {
         '@type': 'WebPage',
         name: `Apartment Deals in ${displayName}, ${city.stateAbbr}`,
         description: `${deals.length} apartments in ${displayName} (${primaryZip}) scored below market rent.`,
-        url: `https://renewalreply.com/deals/${city.slug}`,
+        url: `https://www.renewalreply.com/deals/${city.slug}`,
       },
   ];
 

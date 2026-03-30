@@ -38,7 +38,7 @@ export async function generateSharedReport(
       console.error('[shared-report] insert failed:', error.message);
       return null;
     }
-    return `https://renewalreply.com/report/${shortId}`;
+    return `https://www.renewalreply.com/report/${shortId}`;
   } catch (err) {
     console.error('[shared-report] unexpected error:', err);
     return null;
