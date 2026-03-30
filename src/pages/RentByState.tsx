@@ -94,30 +94,24 @@ const RentByState = () => {
 
   const faqItems = [
     {
-      q: `What is the average rent in ${stateName}?`,
-      a: `The average HUD Fair Market Rent for a 1-bedroom in ${stateName} is ${fmt(avgFmr1br)}/month according to HUD FY${hudFY} data, based on ${totalZips.toLocaleString()} zip codes across ${cities.length} cities.${stateYoY !== null ? ` Rents have changed ${stateYoY > 0 ? '+' : ''}${stateYoY.toFixed(1)}% year-over-year.` : ''}`,
+      q: `What is the average 1-bedroom rent in ${stateName}?`,
+      a: `The average 1-bedroom fair market rent in ${stateName} is ${fmt(avgFmr1br)}/month as of ${dataYear}, based on statewide coverage across ${cities.length} cities and ${totalZips.toLocaleString()} ZIP codes.`,
     },
     {
-      q: `Which city in ${stateName} has the cheapest rent?`,
-      a: (() => {
-        const cheapest = [...cities].sort((a, b) => a.avgFmr[1] - b.avgFmr[1])[0];
-        return cheapest
-          ? `${cheapest.city} has the lowest average 1-bedroom HUD Fair Market Rent in ${stateName} at ${fmt(cheapest.avgFmr[1])}/month.`
-          : `City-level rent comparison data is not currently available for ${stateName}.`;
-      })(),
+      q: `What is a fair rent increase in ${stateName}?`,
+      a: stateYoY !== null
+        ? `A rent increase up to about ${Math.abs(stateYoY).toFixed(1)}% is roughly in line with the recent statewide trend in ${stateName}. A larger increase is above trend and should be checked against local city and ZIP data.`
+        : `Without a strong statewide trend signal, a fair rent increase in ${stateName} should be judged using the most local available data, especially city and ZIP rent benchmarks.`,
     },
     {
-      q: `Which city in ${stateName} has the most expensive rent?`,
-      a: (() => {
-        const expensive = [...cities].sort((a, b) => b.avgFmr[1] - a.avgFmr[1])[0];
-        return expensive
-          ? `${expensive.city} has the highest average 1-bedroom HUD Fair Market Rent in ${stateName} at ${fmt(expensive.avgFmr[1])}/month.`
-          : `City-level rent comparison data is not currently available for ${stateName}.`;
-      })(),
+      q: `Are rents going up or down in ${stateName}?`,
+      a: stateYoY !== null
+        ? `Statewide rents in ${stateName} have changed ${stateYoY > 0 ? '+' : ''}${stateYoY.toFixed(1)}% year over year based on the trend shown on this page.`
+        : `This page has limited statewide trend coverage, so it should be read mainly as a benchmark view of current fair market rent levels across the state.`,
     },
     {
-      q: `How many zip codes have rent data in ${stateName}?`,
-      a: `RenewalReply covers ${totalZips.toLocaleString()} zip codes across ${cities.length} cities in ${stateName}, using HUD Fair Market Rent benchmarks updated for FY${hudFY}.`,
+      q: `How broad is the rent coverage in ${stateName}?`,
+      a: `This page summarizes rent benchmarks across ${cities.length} cities and ${totalZips.toLocaleString()} ZIP codes in ${stateName}, giving a broad statewide view before drilling down into city and ZIP-level pages.`,
     },
   ];
 
