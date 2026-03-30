@@ -1,0 +1,56 @@
+# RenewalReply
+
+Last updated: 2026-03-29
+
+> Free rent fairness analysis and apartment deal scoring for renters across 38,600+ US ZIP codes. Compares rent increases and asking prices against HUD Fair Market Rent, Zillow ZORI, Apartment List estimates, and real comparable listings. Produces a Fairness Score (0–100), a fair rent range, and a negotiation letter.
+
+RenewalReply is an independent platform focused on rent transparency. It is not affiliated with any landlord, property management company, or listing service.
+
+## Data Sources
+
+- **HUD Fair Market Rent (SAFMR 50th Percentile):** Government benchmark rents by ZIP code, updated annually by HUD. Covers all 38,600+ US ZIP codes. Current data: FY2026.
+- **Zillow Observed Rent Index (ZORI):** Market-observed rent trends from active listings, covering 5,883 ZIP codes with monthly year-over-year changes. Current data through February 2026.
+- **Apartment List Rent Estimates:** Transacted rent estimates based on lease data, covering 10,036 ZIP codes with monthly and annual trends. Current data through February 2026.
+- **Rentcast Listings API:** Active rental listings with price, bedrooms, bathrooms, square footage, days on market, and coordinates. Used for comparable property analysis and deal scoring. 24-hour cache.
+- **Walk Score API:** Walkability scores for listed properties.
+- **DHCR Rent Stabilization Data:** New York City rent stabilization status by address.
+
+## Tools
+
+- [Rent Fairness Checker](https://www.renewalreply.com/): Enter ZIP code, bedrooms, current rent, and proposed increase. Returns a Fairness Score, market comparison, and negotiation letter. Email required to save full report.
+- [What Should I Pay?](https://www.renewalreply.com/what-should-i-pay): Enter an apartment listing address and asking rent to check if the price is fair relative to local market data.
+- [Apartment Deals](https://www.renewalreply.com/deals): Apartment listings scored against local market data across 17 neighborhoods in NYC, NJ, Miami, Chicago, Austin, and San Francisco.
+
+## Rent Data Pages
+
+- [US Rent Data Hub](https://www.renewalreply.com/rent-data): Rent data for all 50 states, 28,600+ cities, and 38,600+ ZIP codes.
+- ZIP code pages: `https://www.renewalreply.com/rent/{zip}` — e.g., [Hoboken NJ 07030](https://www.renewalreply.com/rent/07030)
+- City pages: `https://www.renewalreply.com/rent-data/{state}/{city}` — e.g., [Jersey City NJ](https://www.renewalreply.com/rent-data/new-jersey/jersey-city)
+- State pages: `https://www.renewalreply.com/rent-data/{state}` — e.g., [New Jersey](https://www.renewalreply.com/rent-data/new-jersey)
+
+## Methodology
+
+- [Full Methodology](https://www.renewalreply.com/methodology): The Fairness Score uses a weighted multi-source approach combining area rent trends (Apartment List, ZORI, HUD year-over-year changes), comparable nearby listings (Rentcast), increase reasonableness relative to live market data, and market momentum signals. Score range: 0 (very unfair) to 100 (excellent value). Composite trend is calculated by blending available sources weighted by geographic precision and recency.
+
+## Guides
+
+- [How to Check If Your Rent Is Fair](https://www.renewalreply.com/guides/how-to-check-rent-fair)
+- [How to Negotiate a Rent Increase](https://www.renewalreply.com/guides/how-to-negotiate-rent-increase)
+- [Rent Increase Laws by State](https://www.renewalreply.com/guides/rent-increase-laws-by-state)
+- [What Should I Pay for Rent?](https://www.renewalreply.com/guides/what-should-i-pay-for-rent)
+
+## Key Facts
+
+- Coverage: 38,600+ US ZIP codes, 28,600+ cities, 50 states + DC + Puerto Rico
+- Update cadence: HUD annually, ZORI monthly, Apartment List monthly, Rentcast daily
+- Fairness Score: 0–100 (higher = more fair for the renter)
+- Fair range: Based on 25th–75th percentile of comparable rents
+- Deal Score: 0–100 for apartment listings
+- Operated by PacketOps LLC
+
+## Optional
+
+- [About](https://www.renewalreply.com/about)
+- [Contact](https://www.renewalreply.com/contact)
+- [Privacy Policy](https://www.renewalreply.com/privacy)
+- [Terms of Service](https://www.renewalreply.com/terms)
