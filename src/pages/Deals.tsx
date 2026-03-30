@@ -433,17 +433,6 @@ const Deals = () => {
                 {l}
               </button>
             ))}
-            <div className="w-px h-4 bg-border mx-1" />
-            <button
-              onClick={() => setCleanOnly(!cleanOnly)}
-              className={`px-3 py-1 rounded-md text-xs font-medium border transition-colors ${
-                cleanOnly
-                  ? 'border-primary bg-primary/5 text-primary font-semibold'
-                  : 'border-border bg-card text-muted-foreground hover:border-primary/50'
-              }`}
-            >
-              Clean buildings
-            </button>
             <div className="flex-1" />
             <select
               value={sort}

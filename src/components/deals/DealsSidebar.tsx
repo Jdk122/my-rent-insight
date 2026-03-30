@@ -48,7 +48,7 @@ const DealsSidebar = ({ city, medianRent1BR, yoyChange, activeListings }: DealsS
           </div>
         ))}
         <p className="text-[11px] text-muted-foreground leading-snug pt-1.5 border-t border-border">
-          Only listings scoring 75+ appear here.
+          Only listings scoring 68+ appear here.
         </p>
       </SideCard>
 
