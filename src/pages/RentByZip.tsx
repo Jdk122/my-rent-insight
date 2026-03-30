@@ -22,9 +22,6 @@ import ContactModal from '@/components/ContactModal';
 import PageNav from '@/components/PageNav';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
-  Accordion, AccordionContent, AccordionItem, AccordionTrigger,
-} from '@/components/ui/accordion';
-import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
 
