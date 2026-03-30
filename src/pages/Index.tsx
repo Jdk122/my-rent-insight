@@ -150,7 +150,6 @@ const Index = () => {
         canonical="/"
         jsonLd={[
           {
-            "@context": "https://schema.org",
             "@type": "WebApplication",
             "name": "RenewalReply Rent Increase Tool",
             "url": "https://www.renewalreply.com",
