@@ -71,7 +71,6 @@ const Guide = () => {
 
   const faqJsonLd = article.faqItems?.length
     ? {
-        '@context': 'https://schema.org',
         '@type': 'FAQPage',
         mainEntity: article.faqItems.map((f) => ({
           '@type': 'Question',
