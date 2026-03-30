@@ -150,7 +150,7 @@ const ShareHub = ({
   // ── Neighbor message content ──
   const brLabel = bedroomNum === 0 ? 'Studio' : bedroomNum === 1 ? '1-bedroom' : bedroomNum === 2 ? '2-bedroom' : bedroomNum === 3 ? '3-bedroom' : '4-bedroom';
   const marketSign = marketYoy > 0 ? '+' : '';
-  const shareUrl = reportUrl || `https://renewalreply.com/?utm_source=share&utm_medium=building&utm_campaign=viral_loop&utm_content=${zipCode}`;
+  const shareUrl = reportUrl || `https://www.renewalreply.com/?utm_source=share&utm_medium=building&utm_campaign=viral_loop&utm_content=${zipCode}`;
 
   const smsBody = `Hey — I just checked our building's rent increase against market data. ${brLabel} rents in ${zipCode} moved ${marketSign}${marketYoy}% this year. My landlord wants ${increasePct}%. Check yours: ${shareUrl}`;
   const whatsappBody = `Did you get your renewal letter yet? 👀\n\n${brLabel} rents in ${zipCode} moved ${marketSign}${marketYoy}% this year. My landlord is asking for ${increasePct}%.\n\nCheck yours: ${shareUrl}`;

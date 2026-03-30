@@ -168,7 +168,7 @@ const RentByState = () => {
             license: 'https://creativecommons.org/licenses/by/4.0/',
             temporalCoverage: dataYear,
             spatialCoverage: { '@type': 'Place', name: stateName },
-            variablesMeasured: ['Fair Market Rent', 'Median Rent', 'Year-over-Year Rent Change', 'Rent by Bedroom Count'],
+            variableMeasured: ['Fair Market Rent', 'Median Rent', 'Year-over-Year Rent Change', 'Rent by Bedroom Count'],
             measurementTechnique: 'Aggregated from HUD Fair Market Rent (SAFMR 50th percentile), Zillow Observed Rent Index (ZORI), and Apartment List rent estimates',
             isAccessibleForFree: true,
           },

@@ -14,6 +14,7 @@ import DealAlerts from '@/components/deals/DealAlerts';
 import DealsSidebar from '@/components/deals/DealsSidebar';
 import type { DealListing } from '@/components/deals/DealCard';
 import { trackEvent } from '@/lib/analytics';
+import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 
 const fmt = (n: number) => n.toLocaleString('en-US');
 
@@ -27,6 +28,7 @@ const Deals = () => {
   const [rawListings, setRawListings] = useState<any[]>([]);
   const [totalScanned, setTotalScanned] = useState(0);
   const [loading, setLoading] = useState(true);
+  usePrerenderReady(!loading);
   const [beds, setBeds] = useState<BedFilter>('All');
   const [sort, setSort] = useState<SortKey>('score');
   const [cleanOnly, setCleanOnly] = useState(false);
@@ -306,8 +308,8 @@ const Deals = () => {
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Deals', item: 'https://renewalreply.com/deals' },
-          { '@type': 'ListItem', position: 2, name: city.stateAbbr, item: 'https://renewalreply.com/deals' },
+          { '@type': 'ListItem', position: 1, name: 'Deals', item: 'https://www.renewalreply.com/deals' },
+          { '@type': 'ListItem', position: 2, name: city.stateAbbr, item: 'https://www.renewalreply.com/deals' },
           { '@type': 'ListItem', position: 3, name: displayName },
         ],
       },
@@ -315,7 +317,7 @@ const Deals = () => {
         '@type': 'WebPage',
         name: `Apartment Deals in ${displayName}, ${city.stateAbbr}`,
         description: `${deals.length} apartments in ${displayName} (${primaryZip}) scored below market rent.`,
-        url: `https://renewalreply.com/deals/${city.slug}`,
+        url: `https://www.renewalreply.com/deals/${city.slug}`,
       },
   ];
 
