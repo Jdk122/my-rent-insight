@@ -136,7 +136,6 @@ const RentByState = () => {
         ogImage="/og-image.png"
         jsonLd={[
           {
-            '@context': 'https://schema.org',
             '@type': 'BreadcrumbList',
             itemListElement: [
               { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.renewalreply.com/' },
@@ -145,7 +144,6 @@ const RentByState = () => {
             ],
           },
           {
-            '@context': 'https://schema.org',
             '@type': 'WebPage',
             name: ogTitle,
             description: metaDesc,
@@ -154,13 +152,25 @@ const RentByState = () => {
             publisher: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
           },
           {
-            '@context': 'https://schema.org',
             '@type': 'FAQPage',
             mainEntity: faqItems.map(f => ({
               '@type': 'Question',
               name: f.q,
               acceptedAnswer: { '@type': 'Answer', text: f.a },
             })),
+          },
+          {
+            '@type': 'Dataset',
+            name: `Rent Data for ${stateName}`,
+            description: `Fair market rent data and trends across ${cities.length} cities in ${stateName}.`,
+            url: `https://www.renewalreply.com/rent-data/${stateSlug}`,
+            creator: { '@type': 'Organization', name: 'RenewalReply', url: 'https://www.renewalreply.com' },
+            license: 'https://creativecommons.org/licenses/by/4.0/',
+            temporalCoverage: dataYear,
+            spatialCoverage: { '@type': 'Place', name: stateName },
+            variablesMeasured: ['Fair Market Rent', 'Median Rent', 'Year-over-Year Rent Change', 'Rent by Bedroom Count'],
+            measurementTechnique: 'Aggregated from HUD Fair Market Rent (SAFMR 50th percentile), Zillow Observed Rent Index (ZORI), and Apartment List rent estimates',
+            isAccessibleForFree: true,
           },
         ]}
       />

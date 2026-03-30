@@ -34,7 +34,6 @@ const Methodology = () => {
         canonical="/methodology"
         jsonLd={[
           {
-            '@context': 'https://schema.org',
             '@type': 'TechArticle',
             headline: 'How RenewalReply Works — Methodology & Data Sources',
             description: 'Learn how RenewalReply\'s Fairness Score analyzes rent increases using HUD rents, Apartment List trends, Zillow ZORI, and live market comps.',

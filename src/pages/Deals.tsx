@@ -302,9 +302,7 @@ const Deals = () => {
   const heroTrend = trendResult?.compositeTrend ?? null;
   const displayName = city.neighborhood || city.name;
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@graph': [
+  const jsonLd = [
       {
         '@type': 'BreadcrumbList',
         itemListElement: [

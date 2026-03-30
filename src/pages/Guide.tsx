@@ -128,7 +128,6 @@ const Guide = () => {
 
   const itemListJsonLd = article.slug === 'how-to-check-rent-fair'
     ? {
-        '@context': 'https://schema.org',
         '@type': 'ItemList',
         name: 'How to Check If Your Rent Is Fair: 5 Methods Compared',
         description: 'A comparison of five methods renters can use to check whether their rent or rent increase is fair, including free tools, paid services, and manual research.',

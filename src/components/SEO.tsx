@@ -108,15 +108,35 @@ const SEO = ({
     if (jsonLd) {
       const schemas = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
       const prefix = `seo-jsonld-${fullCanonical.replace(/\W/g, '-')}`;
-      schemas.forEach((schema, i) => {
-        const id = `${prefix}-${i}`;
+
+      if (schemas.length > 1) {
+        // Wrap multiple schemas into a single @graph, stripping individual @context
+        const id = `${prefix}-graph`;
         ids.push(id);
         const el = document.createElement('script');
         el.type = 'application/ld+json';
         el.id = id;
-        el.text = JSON.stringify(schema);
+        const stripped = schemas.map(s => {
+          const { '@context': _, ...rest } = s as Record<string, unknown>;
+          return rest;
+        });
+        el.text = JSON.stringify({ '@context': 'https://schema.org', '@graph': stripped });
         document.head.appendChild(el);
-      });
+      } else {
+        const id = `${prefix}-0`;
+        ids.push(id);
+        const el = document.createElement('script');
+        el.type = 'application/ld+json';
+        el.id = id;
+        // For single schema, ensure @context is present
+        const schema = schemas[0] as Record<string, unknown>;
+        if (!schema['@context']) {
+          el.text = JSON.stringify({ '@context': 'https://schema.org', ...schema });
+        } else {
+          el.text = JSON.stringify(schema);
+        }
+        document.head.appendChild(el);
+      }
     }
     jsonLdIdsRef.current = ids;
 
