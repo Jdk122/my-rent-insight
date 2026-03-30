@@ -37,7 +37,7 @@ const DealsSidebar = ({ city, medianRent1BR, yoyChange, activeListings }: DealsS
       <SideCard title="Scores">
         {[
           { label: 'Great Deal', range: '80+', desc: 'Well below market', className: 'bg-accent' },
-          { label: 'Good Deal', range: '75–79', desc: 'Below market', className: 'bg-primary' },
+          { label: 'Good Deal', range: '68–79', desc: 'Below market', className: 'bg-primary' },
         ].map((t) => (
           <div key={t.label} className="flex items-center gap-1.5 mb-2">
             <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${t.className}`} />
