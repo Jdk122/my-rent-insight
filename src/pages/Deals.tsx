@@ -28,6 +28,7 @@ const Deals = () => {
 
   const [rawListings, setRawListings] = useState<any[]>([]);
   const [totalScanned, setTotalScanned] = useState(0);
+  const [refreshedAt, setRefreshedAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   usePrerenderReady(!loading);
   const [beds, setBeds] = useState<BedFilter>('All');
@@ -77,6 +78,12 @@ const Deals = () => {
         }
         setRawListings(data.listings);
         setTotalScanned(data.totalScanned || data.listings.length);
+        setRefreshedAt(data.refreshedAt || null);
+
+        // Use cached walk scores from cron refresh
+        if (data.walkScores && typeof data.walkScores === 'object') {
+          setWalkScores(data.walkScores);
+        }
       } catch (err) {
         console.error('deals-listings fetch failed:', err);
         setRawListings([]);
@@ -135,36 +142,8 @@ const Deals = () => {
     })();
   }, [primaryZip]);
 
-  // Fetch Walk Scores for listings with coordinates
-  useEffect(() => {
-    if (!rawListings.length) return;
-
-    (async () => {
-      const scores: Record<string, number> = {};
-      const withCoords = rawListings
-        .filter((l: any) => l.latitude != null && l.longitude != null)
-        .slice(0, 20);
-
-      for (let i = 0; i < withCoords.length; i += 5) {
-        const batch = withCoords.slice(i, i + 5);
-        await Promise.all(batch.map(async (l: any) => {
-          try {
-            const { data } = await supabase.functions.invoke('walkscore-lookup', {
-              body: { address: l.formattedAddress, lat: l.latitude, lon: l.longitude },
-            });
-            if (data?.walkscore != null) {
-              const key = (l.formattedAddress || '').toLowerCase().trim();
-              scores[key] = data.walkscore;
-            }
-          } catch (err) {
-            console.error('Walk score fetch failed:', err);
-          }
-        }));
-      }
-
-      setWalkScores(scores);
-    })();
-  }, [rawListings]);
+  // Walk scores are now provided by the deals-refresh-cron via cached response.
+  // No client-side Walk Score API calls needed.
 
   // Fetch DHCR rent stabilization data (NYC only)
   useEffect(() => {
@@ -417,6 +396,23 @@ const Deals = () => {
             )}
           </div>
         )}
+
+        {!loading && refreshedAt && (() => {
+          const d = new Date(refreshedAt);
+          const now = new Date();
+          const diffMs = now.getTime() - d.getTime();
+          const diffH = Math.floor(diffMs / 3600000);
+          const diffM = Math.floor(diffMs / 60000);
+          let label: string;
+          if (diffM < 60) label = `Updated ${diffM} minutes ago`;
+          else if (diffH < 24) label = `Updated ${diffH} hour${diffH !== 1 ? 's' : ''} ago`;
+          else {
+            const timeStr = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' });
+            const isToday = d.toDateString() === now.toDateString();
+            label = isToday ? `Updated today at ${timeStr} ET` : `Updated ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} at ${timeStr} ET`;
+          }
+          return <p className="text-[11px] text-muted-foreground mt-1">{label}</p>;
+        })()}
       </header>
 
       {/* Main content */}
