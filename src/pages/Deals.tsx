@@ -31,7 +31,7 @@ const Deals = () => {
   usePrerenderReady(!loading);
   const [beds, setBeds] = useState<BedFilter>('All');
   const [sort, setSort] = useState<SortKey>('score');
-  const [cleanOnly, setCleanOnly] = useState(false);
+  
   const [selected, setSelected] = useState<DealListing | null>(null);
 
   // Gate state: first analysis free, gate on second distinct listing
