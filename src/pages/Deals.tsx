@@ -28,6 +28,7 @@ const Deals = () => {
 
   const [rawListings, setRawListings] = useState<any[]>([]);
   const [totalScanned, setTotalScanned] = useState(0);
+  const [refreshedAt, setRefreshedAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   usePrerenderReady(!loading);
   const [beds, setBeds] = useState<BedFilter>('All');
