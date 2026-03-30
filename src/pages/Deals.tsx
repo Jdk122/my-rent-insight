@@ -276,7 +276,6 @@ const Deals = () => {
       const bedNum = beds === 'S' ? 0 : parseInt(beds);
       r = r.filter(d => d.beds === bedNum);
     }
-    if (cleanOnly) r = r.filter(d => d.cleanBuilding);
 
     if (sort === 'score') r.sort((a, b) => b.score - a.score);
     else if (sort === 'price') r.sort((a, b) => a.rent - b.rent);
@@ -284,7 +283,7 @@ const Deals = () => {
     else if (sort === 'new') r.sort((a, b) => (a.daysOnMarket ?? 999) - (b.daysOnMarket ?? 999));
 
     return r.slice(0, 15);
-  }, [deals, beds, sort, cleanOnly]);
+  }, [deals, beds, sort]);
 
   const handleEmailCaptured = useCallback((email: string) => {
     setEmailCaptured(true);
