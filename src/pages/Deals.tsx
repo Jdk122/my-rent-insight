@@ -14,6 +14,7 @@ import DealAlerts from '@/components/deals/DealAlerts';
 import DealsSidebar from '@/components/deals/DealsSidebar';
 import type { DealListing } from '@/components/deals/DealCard';
 import { trackEvent } from '@/lib/analytics';
+import { AFFILIATE_LINKS } from '@/lib/affiliateConfig';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 
 const fmt = (n: number) => n.toLocaleString('en-US');
