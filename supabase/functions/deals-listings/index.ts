@@ -162,8 +162,8 @@ serve(async (req) => {
         ? Math.max(0, Math.round((Date.now() - new Date(l.listedDate).getTime()) / 86400000))
         : null);
 
-      // Filter out stale listings (>90 days)
-      if (daysOnMarket != null && daysOnMarket > 90) continue;
+      // Filter out stale listings (>45 days)
+      if (daysOnMarket != null && daysOnMarket > 45) continue;
 
       seen.set(normAddr, {
         formattedAddress: addr,
