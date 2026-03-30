@@ -78,6 +78,12 @@ const Deals = () => {
         }
         setRawListings(data.listings);
         setTotalScanned(data.totalScanned || data.listings.length);
+        setRefreshedAt(data.refreshedAt || null);
+
+        // Use cached walk scores from cron refresh
+        if (data.walkScores && typeof data.walkScores === 'object') {
+          setWalkScores(data.walkScores);
+        }
       } catch (err) {
         console.error('deals-listings fetch failed:', err);
         setRawListings([]);
