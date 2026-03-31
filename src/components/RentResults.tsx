@@ -1570,21 +1570,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </motion.section>
             )}
 
-            {/* ━━━ Soft email capture — post-letter (when gate is off, email not yet captured, and has letter) ━━━ */}
-            {!EMAIL_GATE_ENABLED && !capturedEmail && hasIncrease && (
-              <EmailReportPrompt
-                analysisId={analysisId}
-                leadContext={leadContext}
-                verdictLabel={verdictLabel}
-                zip={rentData.zip}
-                city={city}
-                onEmailCaptured={setCapturedEmail}
-                toolType="renewal"
-                shareReportPayload={shareReportPayload}
-                onReportGenerated={(url) => { setReportUrl(url); }}
-                placement="post_letter"
-              />
-            )}
 
             {/* ━━━ Moving help CTA (above-market, after listings) ━━━ */}
             {hasIncrease && isAboveMarket && isUnlocked && (
