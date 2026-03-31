@@ -112,29 +112,24 @@ const PartnerCTA = ({
   if (!config) return null;
 
   const href = AFFILIATE_LINKS[variant];
-  const isMovingHelp = variant === 'moving_help';
-  const borderColor = isMovingHelp ? 'hsl(var(--primary))' : 'hsl(var(--accent-green, 151 50% 38%))';
-  const btnColor = isMovingHelp ? 'hsl(var(--primary))' : 'hsl(var(--accent-green, 151 50% 38%))';
 
   return (
     <div
       ref={containerRef}
-      className="border-l-[3px] rounded-r-lg bg-secondary pl-4 pr-4 py-4"
-      style={{ borderLeftColor: borderColor }}
+      className="rounded-lg border border-border bg-secondary/50 px-4 py-4"
     >
-      <p className="text-[13px] font-semibold text-foreground">{config.headline}</p>
+      <p className="text-[14px] font-medium text-foreground">{config.headline}</p>
       <p className="text-[12px] text-muted-foreground mt-1 leading-relaxed">{config.subtext}</p>
       <a
         href={href}
         target="_blank"
         rel="sponsored noopener noreferrer"
         onClick={handleClick}
-        className="mt-3 inline-block rounded-md px-3.5 py-1.5 text-[12px] font-semibold text-white transition-opacity hover:opacity-90"
-        style={{ backgroundColor: btnColor }}
+        className="mt-2 inline-block text-[13px] font-medium text-primary hover:underline"
       >
         {config.buttonLabel}
       </a>
-      <p className="text-[10px] text-muted-foreground/60 mt-2">
+      <p className="text-[10px] text-muted-foreground/40 mt-2">
         RenewalReply may earn a commission.{' '}
         <a href="/privacy" className="underline hover:text-muted-foreground">Learn more</a>
       </p>
