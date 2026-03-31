@@ -760,7 +760,7 @@ const WsipResults = ({
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <div className="w-full bg-card">
         <div className="max-w-[620px] mx-auto px-5 sm:px-6">
-        {capturedEmail && (
+        {isUnlocked && (
           <>
             {/* ━━━ MARKET CONDITIONS ━━━ */}
             <motion.section id="section-market" {...fade(0.05)} className="pt-10 pb-8">
