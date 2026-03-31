@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, Info } from 'lucide-react';
 import { RentLookupResult, bedroomLabels, BedroomType } from '@/data/rentData';
 import { DEAL_CITIES } from '@/data/dealsCities';
 import { useRentcast } from '@/hooks/useRentcast';
