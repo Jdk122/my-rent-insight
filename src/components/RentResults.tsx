@@ -678,7 +678,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       sections.push({ id: 'section-share', label: 'Share' });
     }
     return sections;
-  }, [capturedEmail, hasIncrease, medianCompRent, hasEnoughComps, calc, hasRentControl]);
+  }, [isUnlocked, capturedEmail, hasIncrease, medianCompRent, hasEnoughComps, calc, hasRentControl]);
 
   const shareReportPayload = useMemo(() => ({
     zip: rentData.zip,
