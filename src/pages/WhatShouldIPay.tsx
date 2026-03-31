@@ -222,7 +222,7 @@ const WhatShouldIPay = () => {
               <span className="sm:hidden">All comps →</span>
             </button>
           )}
-          {results && capturedEmail && (
+          {results && isUnlocked && (
             <button
               onClick={() => {
                 document.getElementById('section-share')?.scrollIntoView({ behavior: 'smooth' });

@@ -1001,15 +1001,33 @@ const WsipResults = ({
               </motion.section>
             )}
 
-            {/* ━━━ Post-conversion flow ━━━ */}
-            <section className="pb-4 pt-2">
-              <WsipPostConversion
-                email={capturedEmail}
+            {/* ━━━ Soft email capture — post-letter (when gate is off and email not yet captured) ━━━ */}
+            {!EMAIL_GATE_ENABLED && !capturedEmail && (
+              <EmailReportPrompt
+                analysisId={analysisId}
                 leadContext={leadContext}
                 verdictLabel={verdictLabel}
                 zip={zip}
+                city={city}
+                onEmailCaptured={onEmailCaptured}
+                toolType="wsip"
+                shareReportPayload={shareReportPayload}
+                onReportGenerated={(url) => { setReportUrl(url); }}
+                placement="post_letter"
               />
-            </section>
+            )}
+
+            {/* ━━━ Post-conversion flow ━━━ */}
+            {capturedEmail && (
+              <section className="pb-4 pt-2">
+                <WsipPostConversion
+                  email={capturedEmail}
+                  leadContext={leadContext}
+                  verdictLabel={verdictLabel}
+                  zip={zip}
+                />
+              </section>
+            )}
 
             {/* ━━━ Deals cross-link ━━━ */}
             {(() => {

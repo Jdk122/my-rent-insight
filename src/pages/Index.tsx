@@ -289,7 +289,7 @@ const Index = () => {
               <span className="sm:hidden">Save results →</span>
             </button>
           )}
-          {results && !(hasIncrease && isAboveMarket) && capturedEmail && (
+          {results && !(hasIncrease && isAboveMarket) && isUnlocked && (
             <button
               onClick={() => {
                 document.getElementById('section-share')?.scrollIntoView({ behavior: 'smooth' });
