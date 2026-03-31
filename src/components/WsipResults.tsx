@@ -280,7 +280,7 @@ const WsipResults = ({
 
   // ━━━ Analytics ━━━
   useEffect(() => {
-    trackEvent('analysis_completed', { tool: 'wsip', zip, bedrooms: bedroomNum, has_asking_rent: !!askingRent });
+    trackEvent('analysis_completed', { tool: 'wsip', zip, bedrooms: bedroomNum, has_asking_rent: !!askingRent, gate_variant: GATE_VARIANT });
   }, []);
 
   // ━━━ Log analysis to DB ━━━
