@@ -623,32 +623,7 @@ const WsipResults = ({
               </motion.div>
             )}
 
-            {/* PreGateCompPreview — DESKTOP only above gate */}
-            <div className="hidden md:block">
-              <PreGateCompPreview compsWithRent={compsWithRent} capturedEmail={capturedEmail} fmt={fmt} />
-            </div>
 
-            {/* ── Email gate — DESKTOP position (after comp preview) ── */}
-            {!isUnlocked && (
-              <section id="section-gate-desktop" className="py-8 hidden md:block">
-                <ReportGate
-                  toolType="wsip"
-                  compsCount={compsWithRent.length}
-                  verdictLabel={verdictLabel}
-                  isHighPain={isHighPain}
-                  leadContext={leadContext}
-                  analysisId={analysisId}
-                  zip={zip}
-                  city={city}
-                  onEmailCaptured={onEmailCaptured}
-                  prefilledEmail={capturedEmail}
-                  shareReportPayload={shareReportPayload}
-                  onReportGenerated={(url) => { setReportUrl(url); }}
-                  marketYoy={marketYoy}
-                  monthlySavings={savings}
-                />
-              </section>
-            )}
 
             {/* ── MOBILE: stat cards + comp teaser + preview BELOW gate ── */}
             <div className="block md:hidden w-full">
