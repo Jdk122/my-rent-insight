@@ -601,7 +601,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   // ━━━ Lazy-update analysis record ━━━
   const updateAnalysis = useCallback((fields: Record<string, any>) => {
     if (!analysisId || isDemo) return;
-    supabase.from('analyses').update(fields as any).eq('id', analysisId).then(() => {});
+    supabase.rpc('safe_update_analysis' as any, {
+      p_id: analysisId,
+      ...Object.fromEntries(Object.entries(fields).map(([k, v]) => [`p_${k}`, v])),
+    }).then(() => {});
   }, [analysisId, isDemo]);
 
   useEffect(() => {
