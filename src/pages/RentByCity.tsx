@@ -212,6 +212,16 @@ const RentByCity = () => {
       q: `How much do rents vary across ${city}?`,
       a: `1-bedroom rents across ${city} range from ${fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to ${fmt(Math.max(...zips.map(z => z.raw.f[1])))} on this page, showing that rent can vary materially across ZIP codes within the same city.`,
     },
+    {
+      q: `Can my landlord raise my rent in ${city}?`,
+      a: rentControlInfo
+        ? `In ${city}, rent increases are regulated under ${rentControlInfo.jurisdiction} protections.${rentControlInfo.maxIncreaseFormula ? ` The maximum increase is generally ${rentControlInfo.maxIncreaseFormula}.` : ''} Landlords must also follow applicable state notice requirements.`
+        : `We could not identify a city-specific rent cap for ${city}. Landlords must still follow applicable state and local notice rules before raising rent at lease renewal. Check your state's requirements for specifics.`,
+    },
+    {
+      q: `How much should I spend on rent in ${city}?`,
+      a: `The general guideline is to spend no more than 30% of your gross income on rent. With average 1-bedroom rent in ${city} at ${fmt(avgFmr[1])}/month, a household would need approximately ${fmt(affordableIncome)}/year to afford this comfortably.`,
+    },
   ];
 
 
