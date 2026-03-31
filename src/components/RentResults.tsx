@@ -1638,9 +1638,42 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               />
             )}
 
-            {/* ━━━ Intent Fork + Contextual CTA (above-market path) ━━━ */}
+            {/* ━━━ Moving help CTA (above-market, after listings) ━━━ */}
             {hasIncrease && isAboveMarket && isUnlocked && (
-              <section className="pt-6 pb-4 space-y-3">
+              <section className="py-4 space-y-3">
+                <PartnerCTA
+                  variant="moving_help"
+                  analysisId={analysisId}
+                  verdict={verdictLabel}
+                  toolUsed="renewal"
+                  city={city}
+                  zip={rentData.zip}
+                  placement="post_listings"
+                />
+                {(() => {
+                  const matchedCity = DEAL_CITIES.find(c => c.zips.includes(rentData.zip));
+                  const dealsHref = matchedCity ? `/deals/${matchedCity.slug}` : '/deals';
+                  const dealsLabel = matchedCity
+                    ? `Browse more apartments in ${matchedCity.neighborhood || matchedCity.name} →`
+                    : 'Browse more apartments in your area →';
+                  return (
+                    <div className="text-center">
+                      <Link
+                        to={dealsHref}
+                        onClick={() => trackEvent('internal_click', { link_type: 'browse_deals', city, zip: rentData.zip, placement: 'post_listings' })}
+                        className="text-xs text-primary hover:underline font-medium"
+                      >
+                        {dealsLabel}
+                      </Link>
+                    </div>
+                  );
+                })()}
+              </section>
+            )}
+
+            {/* ━━━ Intent Fork — data collection only (above-market path) ━━━ */}
+            {hasIncrease && isAboveMarket && isUnlocked && (
+              <section className="pt-6 pb-4">
                 <IntentFork
                   analysisId={analysisId}
                   verdict={verdictLabel}
@@ -1651,36 +1684,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   selectedIntent={selectedIntent}
                   onIntentSelected={setSelectedIntent}
                 />
-                {selectedIntent === 'stay' && (
-                  <PartnerCTA
-                    variant="rent_reporting"
-                    analysisId={analysisId}
-                    verdict={verdictLabel}
-                    toolUsed="renewal"
-                    city={city}
-                    zip={rentData.zip}
-                    placement="post_letter"
-                  />
-                )}
-                {selectedIntent === 'move' && (
-                  <>
-                    <PartnerCTA
-                      variant="moving_help"
-                      analysisId={analysisId}
-                      verdict={verdictLabel}
-                      toolUsed="renewal"
-                      city={city}
-                      zip={rentData.zip}
-                      placement="post_letter"
-                    />
-                    <MoveCTA
-                      city={city}
-                      zip={rentData.zip}
-                      hasListingsAbove={(rentcastListings.data?.listings ?? []).length >= 1}
-                      placement="post_letter"
-                    />
-                  </>
-                )}
               </section>
             )}
 
