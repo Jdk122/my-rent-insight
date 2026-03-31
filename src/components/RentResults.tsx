@@ -1534,18 +1534,32 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </section>
             )}
 
-            {/* ━━━ Know Your Rights ━━━ */}
+            {/* ━━━ Know Your Rights (accordion) ━━━ */}
             {hasRentControl && (
               <motion.section id="section-rights" {...fade(0.17)} className="pt-8 pb-4">
-                <div className="evidence-card">
-                  <RentControlCard
-                    state={rentData.state}
-                    city={rentData.city}
-                    zip={rentData.zip}
-                    increasePct={increasePct}
-                    address={formData.fullAddress}
-                  />
-                </div>
+                <Accordion type="single" collapsible>
+                  <AccordionItem value="rights" className="border-none">
+                    <AccordionTrigger className="hover:no-underline py-3 px-4 rounded-lg border border-border bg-card">
+                      <div className="flex items-center gap-2 text-left">
+                        <span className="text-base">⚖️</span>
+                        <span className="text-[13px] font-semibold text-foreground">
+                          Your area has rent regulations that may apply
+                        </span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="pt-3 pb-0">
+                      <div className="evidence-card">
+                        <RentControlCard
+                          state={rentData.state}
+                          city={rentData.city}
+                          zip={rentData.zip}
+                          increasePct={increasePct}
+                          address={formData.fullAddress}
+                        />
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </motion.section>
             )}
 
