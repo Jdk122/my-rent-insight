@@ -968,6 +968,25 @@ export type Database = {
           zip_code: string
         }[]
       }
+      safe_update_analysis: {
+        Args: {
+          p_comp_median_rent?: number
+          p_comps_count?: number
+          p_comps_position?: string
+          p_dollar_overpayment?: number
+          p_fairness_score?: number
+          p_gate_variant?: string
+          p_hud_fmr_value?: number
+          p_id: string
+          p_letter_generated?: boolean
+          p_letter_tone?: string
+          p_rent_stabilized?: boolean
+          p_results_shared?: boolean
+          p_user_intent?: string
+          p_verdict_label?: string
+        }
+        Returns: undefined
+      }
       update_lead_outcome: {
         Args: { p_lead_id: string; p_outcome: string; p_testimonial?: string }
         Returns: undefined

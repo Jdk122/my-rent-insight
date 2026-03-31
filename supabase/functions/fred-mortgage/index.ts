@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -6,12 +7,44 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+function getClientIp(req: Request): string {
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0].trim();
+  return req.headers.get("x-real-ip") || "unknown";
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // --- Rate limiting (20/5min) ---
+    const ip = getClientIp(req);
+    const fnName = "fred-mortgage";
+    const rlClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+    const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const { count: recentCount } = await rlClient
+      .from("function_request_log")
+      .select("*", { count: "exact", head: true })
+      .eq("function_name", fnName)
+      .eq("ip_address", ip)
+      .gte("created_at", fiveMinAgo);
+
+    if ((recentCount ?? 0) >= 20) {
+      return new Response(JSON.stringify({ error: "Too many requests" }), {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    await rlClient.from("function_request_log").insert({
+      function_name: fnName, ip_address: ip,
+    });
+
     const FRED_API_KEY = Deno.env.get("FRED_API_KEY");
     if (!FRED_API_KEY) {
       return new Response(

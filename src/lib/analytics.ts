@@ -48,9 +48,6 @@ export function trackAdsConversion(
   toolType: 'renewal' | 'wsip' = 'renewal',
   userEmail?: string,
 ) {
-  // DEBUG — remove after confirming conversions record
-  console.log('[ads-debug] trackAdsConversion called', { toolType, userEmail: userEmail ? '***' : undefined, gtagExists: typeof window.gtag === 'function' });
-
   try {
     // Enhanced Conversions — send hashed email
     if (userEmail) {
@@ -67,9 +64,8 @@ export function trackAdsConversion(
       value: 1.0,
       currency: 'USD',
     });
-    console.log('[ads-debug] conversion event queued', { conversionLabel });
-  } catch (err) {
-    console.warn('[ads-debug] conversion error', err);
+  } catch {
+    // silent
   }
   try {
     (window as any).uetq?.push('event', 'lead_capture', {

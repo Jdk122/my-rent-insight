@@ -27,8 +27,6 @@ import MobileScrollPrompt from './MobileScrollPrompt';
 import SocialProofLine from './SocialProofLine';
 import ShareHub from './ShareHub';
 import WsipCompsList from './WsipCompsList';
-import ReportGate from './ReportGate';
-import PreGateCompPreview from './PreGateCompPreview';
 import FeedbackWidget from './FeedbackWidget';
 
 import PartnerCTA from './PartnerCTA';
@@ -316,7 +314,7 @@ const WsipResults = ({
       if (error) {
         console.error('[WsipResults] Analysis insert failed:', error.message, error);
       } else {
-        console.log('[WsipResults] Analysis logged:', analysisId);
+        // Analysis logged successfully
       }
     });
   }, []);
@@ -564,36 +562,7 @@ const WsipResults = ({
               )}
             </div>
 
-            {/* ── MOBILE: proof cue + gate BEFORE stat cards ── */}
-            {!isUnlocked && (
-              <div className="block md:hidden w-full">
-                <div className="text-center mt-2 mb-1">
-                  <p className="text-xs text-muted-foreground">
-                    {compsWithRent.length > 0
-                      ? `Based on ${compsWithRent.length} nearby comps and current market data.`
-                      : 'Based on local market data and rent trends.'}
-                  </p>
-                </div>
-                <section id="section-gate" className="py-3">
-                  <ReportGate
-                    toolType="wsip"
-                    compsCount={compsWithRent.length}
-                    verdictLabel={verdictLabel}
-                    isHighPain={isHighPain}
-                    leadContext={leadContext}
-                    analysisId={analysisId}
-                    zip={zip}
-                    city={city}
-                    onEmailCaptured={onEmailCaptured}
-                    prefilledEmail={capturedEmail}
-                    shareReportPayload={shareReportPayload}
-                    onReportGenerated={(url) => { setReportUrl(url); }}
-                    marketYoy={marketYoy}
-                    monthlySavings={savings}
-                  />
-                </section>
-              </div>
-            )}
+
 
             {/* Stat cards — DESKTOP: show above gate. MOBILE: show below gate */}
             <div className="hidden md:grid w-full grid-cols-4 gap-4 max-w-[540px]">
@@ -654,32 +623,7 @@ const WsipResults = ({
               </motion.div>
             )}
 
-            {/* PreGateCompPreview — DESKTOP only above gate */}
-            <div className="hidden md:block">
-              <PreGateCompPreview compsWithRent={compsWithRent} capturedEmail={capturedEmail} fmt={fmt} />
-            </div>
 
-            {/* ── Email gate — DESKTOP position (after comp preview) ── */}
-            {!isUnlocked && (
-              <section id="section-gate-desktop" className="py-8 hidden md:block">
-                <ReportGate
-                  toolType="wsip"
-                  compsCount={compsWithRent.length}
-                  verdictLabel={verdictLabel}
-                  isHighPain={isHighPain}
-                  leadContext={leadContext}
-                  analysisId={analysisId}
-                  zip={zip}
-                  city={city}
-                  onEmailCaptured={onEmailCaptured}
-                  prefilledEmail={capturedEmail}
-                  shareReportPayload={shareReportPayload}
-                  onReportGenerated={(url) => { setReportUrl(url); }}
-                  marketYoy={marketYoy}
-                  monthlySavings={savings}
-                />
-              </section>
-            )}
 
             {/* ── MOBILE: stat cards + comp teaser + preview BELOW gate ── */}
             <div className="block md:hidden w-full">
@@ -735,7 +679,7 @@ const WsipResults = ({
                 </div>
               )}
 
-              <PreGateCompPreview compsWithRent={compsWithRent} capturedEmail={capturedEmail} fmt={fmt} />
+              
 
               {/* Rent control note — mobile position (below gate) */}
               {rentControlCap && rentControlCap.maxIncreaseFormula && buildingEligibility !== 'ineligible' && (
