@@ -1565,7 +1565,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
             {/* ━━━ NEGOTIATION LETTER — fully visible ━━━ */}
             {hasIncrease && calc && (isAboveMarket || isFair || isBelowMarket) && (
-              <motion.section id="section-letter" {...fade(0.19)} className="pt-8 pb-8">
+              <motion.section id="section-letter" {...fade(0.19)} className="pt-5 pb-4 sm:pt-8 sm:pb-8">
                 {isFair && !isAboveMarket && !isBelowMarket && (
                   <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">
                     Even a fair increase is worth negotiating. Landlords expect it, and avoiding turnover is worth more to them than $50-100/month.
