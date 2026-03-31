@@ -315,7 +315,7 @@ const WsipResults = ({
       if (error) {
         console.error('[WsipResults] Analysis insert failed:', error.message, error);
       } else {
-        console.log('[WsipResults] Analysis logged:', analysisId);
+        // Analysis logged successfully
       }
     });
   }, []);

@@ -89,6 +89,7 @@ RULES:
 - Structure: Opening (acknowledge fair terms, express appreciation) → Tenant Value (reliability, turnover cost avoidance) → Primary Strategic Ask (one specific, data-driven proposal) → Open Door (brief, casual mention of flexibility for other arrangements) → Closing (happy to discuss, sign promptly).`;
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }

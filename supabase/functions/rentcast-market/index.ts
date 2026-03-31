@@ -28,6 +28,7 @@ function getCorsHeaders(req: Request) {
 const CACHE_DAYS = 1; // 24-hour TTL
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }

@@ -576,7 +576,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       if (error) {
         console.error('[RentResults] Analysis insert failed:', error.message, error);
       } else {
-        console.log('[RentResults] Analysis logged:', analysisId);
+        // Analysis logged successfully
         supabase.functions.invoke('notify-submission', {
           body: {
             zip: rentData.zip, city: rentData.city, state: rentData.state,
