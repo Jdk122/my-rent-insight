@@ -71,6 +71,7 @@ const fade = (delay: number) => ({
 const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop, capturedEmail: externalEmail, onEmailCaptured: externalOnEmail, onVerdictReady, isDemo = false }: RentResultsProps) => {
   const [internalEmail, setInternalEmail] = useState('');
   const capturedEmail = externalEmail ?? internalEmail;
+  const isUnlocked = !!capturedEmail || !EMAIL_GATE_ENABLED;
   const setCapturedEmail = (email: string) => {
     setInternalEmail(email);
     externalOnEmail?.(email);
