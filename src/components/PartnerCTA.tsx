@@ -125,7 +125,7 @@ const PartnerCTA = ({
         target="_blank"
         rel="sponsored noopener noreferrer"
         onClick={handleClick}
-        className="mt-2 inline-block text-[13px] font-medium text-primary hover:underline"
+        className="mt-2 inline-block text-sm font-semibold text-primary hover:underline"
       >
         {config.buttonLabel}
       </a>
