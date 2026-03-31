@@ -928,8 +928,8 @@ const WsipResults = ({
             )}
 
             {askingRent && (
-              <motion.section id="section-nextsteps" {...fade(0.19)} className="pt-8 pb-8">
-                <h2 className="results-section-header mb-6">Your Next Steps</h2>
+              <motion.section id="section-nextsteps" {...fade(0.19)} className="pt-5 pb-4 sm:pt-8 sm:pb-8">
+                <h2 className="results-section-header">Your Next Steps</h2>
 
                 <div className="evidence-card space-y-4">
                   {/* NEGOTIATION (overpriced by area OR building range) */}
