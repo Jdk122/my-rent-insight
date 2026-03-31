@@ -22,6 +22,7 @@ import { lookupRentData, loadFredTrend, RentLookupResult } from '@/data/rentData
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
 import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
+import { EMAIL_GATE_ENABLED } from '@/lib/featureFlags';
 import SEO from '@/components/SEO';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
 import { getDemoData } from '@/data/demoData';
@@ -88,6 +89,7 @@ const Index = () => {
   const [isAboveMarket, setIsAboveMarket] = useState(false);
 
   const hasIncrease = !!(results && results.formData.rentIncrease && results.formData.rentIncrease > 0);
+  const isUnlocked = !!capturedEmail || !EMAIL_GATE_ENABLED;
 
   const handleSubmit = async (data: RentFormData) => {
     setIsLoading(true);
@@ -248,7 +250,7 @@ const Index = () => {
               ← New check
             </button>
           )}
-          {results && hasIncrease && isAboveMarket && !capturedEmail && (
+          {results && hasIncrease && isAboveMarket && !isUnlocked && (
             <button
               onClick={() => {
                 document.getElementById('section-gate')?.scrollIntoView({ behavior: 'smooth' });
@@ -259,7 +261,7 @@ const Index = () => {
               <span className="sm:hidden">Get letter →</span>
             </button>
           )}
-          {results && hasIncrease && isAboveMarket && capturedEmail && (
+          {results && hasIncrease && isAboveMarket && isUnlocked && (
             <button
               onClick={() => {
                 document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' });
@@ -276,7 +278,7 @@ const Index = () => {
               <span className="sm:hidden">Copy letter →</span>
             </button>
           )}
-          {results && !(hasIncrease && isAboveMarket) && !capturedEmail && (
+          {results && !(hasIncrease && isAboveMarket) && !isUnlocked && (
             <button
               onClick={() => {
                 document.getElementById('section-gate')?.scrollIntoView({ behavior: 'smooth' });
@@ -287,7 +289,7 @@ const Index = () => {
               <span className="sm:hidden">Save results →</span>
             </button>
           )}
-          {results && !(hasIncrease && isAboveMarket) && capturedEmail && (
+          {results && !(hasIncrease && isAboveMarket) && isUnlocked && (
             <button
               onClick={() => {
                 document.getElementById('section-share')?.scrollIntoView({ behavior: 'smooth' });

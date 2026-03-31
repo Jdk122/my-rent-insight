@@ -6,6 +6,7 @@ import { lookupRentData, loadFredTrend, RentLookupResult, BedroomType } from '@/
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
 import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
+import { EMAIL_GATE_ENABLED } from '@/lib/featureFlags';
 import { getWsipDemoData } from '@/data/demoData';
 import SEO from '@/components/SEO';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
@@ -52,6 +53,7 @@ const WhatShouldIPay = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [navScrolled, setNavScrolled] = useState(false);
   const [capturedEmail, setCapturedEmailRaw] = useState(() => searchParams.get('demo') ? '' : getRememberedEmail());
+  const isUnlocked = !!capturedEmail || !EMAIL_GATE_ENABLED;
   const setCapturedEmail = (email: string) => {
     setCapturedEmailRaw(email);
     if (email) rememberEmail(email);
@@ -204,7 +206,7 @@ const WhatShouldIPay = () => {
           >
             Check My Increase →
           </Link>
-          {results && !capturedEmail && (
+          {results && !isUnlocked && (
             <button
               onClick={() => {
                 const target = document.getElementById('section-comps')
@@ -221,7 +223,7 @@ const WhatShouldIPay = () => {
               <span className="sm:hidden">All comps →</span>
             </button>
           )}
-          {results && capturedEmail && (
+          {results && isUnlocked && (
             <button
               onClick={() => {
                 document.getElementById('section-share')?.scrollIntoView({ behavior: 'smooth' });

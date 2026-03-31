@@ -30,6 +30,8 @@ import WsipCompsList from './WsipCompsList';
 import ReportGate from './ReportGate';
 import PreGateCompPreview from './PreGateCompPreview';
 import FeedbackWidget from './FeedbackWidget';
+import EmailReportPrompt from './EmailReportPrompt';
+import { EMAIL_GATE_ENABLED, GATE_VARIANT } from '@/lib/featureFlags';
 import type { LeadContext } from './EmailCapture';
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -63,6 +65,7 @@ const WsipResults = ({
   onEmailCaptured,
   onReset,
 }: WsipResultsProps) => {
+  const isUnlocked = !!capturedEmail || !EMAIL_GATE_ENABLED;
   const [{ analysisId, isDuplicateAnalysis }] = useState(() => {
     const brNum = bedrooms === 'studio' ? 0 : bedrooms === 'oneBr' ? 1 : bedrooms === 'twoBr' ? 2 : bedrooms === 'threeBr' ? 3 : 4;
     const result = checkAnalysisDedup(fullAddress, zip, brNum, askingRent ?? rentData.fmr, 'wsip');
@@ -264,7 +267,7 @@ const WsipResults = ({
     const sections = [
       { id: 'section-verdict', label: 'Verdict' },
     ];
-    if (!capturedEmail) {
+    if (!isUnlocked) {
       sections.push({ id: 'section-gate', label: 'Report' });
     } else {
       sections.push({ id: 'section-market', label: 'Market' });
@@ -273,11 +276,11 @@ const WsipResults = ({
       sections.push({ id: 'section-share', label: 'Share' });
     }
     return sections;
-  }, [capturedEmail, compsWithRent.length, askingRent]);
+  }, [isUnlocked, capturedEmail, compsWithRent.length, askingRent]);
 
   // ━━━ Analytics ━━━
   useEffect(() => {
-    trackEvent('analysis_completed', { tool: 'wsip', zip, bedrooms: bedroomNum, has_asking_rent: !!askingRent });
+    trackEvent('analysis_completed', { tool: 'wsip', zip, bedrooms: bedroomNum, has_asking_rent: !!askingRent, gate_variant: GATE_VARIANT });
   }, []);
 
   // ━━━ Log analysis to DB ━━━
@@ -560,7 +563,7 @@ const WsipResults = ({
             </div>
 
             {/* ── MOBILE: proof cue + gate BEFORE stat cards ── */}
-            {!capturedEmail && (
+            {!isUnlocked && (
               <div className="block md:hidden w-full">
                 <div className="text-center mt-2 mb-1">
                   <p className="text-xs text-muted-foreground">
@@ -655,7 +658,7 @@ const WsipResults = ({
             </div>
 
             {/* ── Email gate — DESKTOP position (after comp preview) ── */}
-            {!capturedEmail && (
+            {!isUnlocked && (
               <section id="section-gate-desktop" className="py-8 hidden md:block">
                 <ReportGate
                   toolType="wsip"
@@ -757,7 +760,7 @@ const WsipResults = ({
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <div className="w-full bg-card">
         <div className="max-w-[620px] mx-auto px-5 sm:px-6">
-        {capturedEmail && (
+        {isUnlocked && (
           <>
             {/* ━━━ MARKET CONDITIONS ━━━ */}
             <motion.section id="section-market" {...fade(0.05)} className="pt-10 pb-8">
@@ -852,6 +855,22 @@ const WsipResults = ({
                 </motion.div>
               </div>
             </motion.section>
+
+            {/* ━━━ Soft email capture — post-evidence (when gate is off and email not yet captured) ━━━ */}
+            {!EMAIL_GATE_ENABLED && !capturedEmail && (
+              <EmailReportPrompt
+                analysisId={analysisId}
+                leadContext={leadContext}
+                verdictLabel={verdictLabel}
+                zip={zip}
+                city={city}
+                onEmailCaptured={onEmailCaptured}
+                toolType="wsip"
+                shareReportPayload={shareReportPayload}
+                onReportGenerated={(url) => { setReportUrl(url); }}
+                placement="post_evidence"
+              />
+            )}
 
             {/* ━━━ COMPARABLE LISTINGS — fully visible ━━━ */}
             {compsWithRent.length > 0 && (
@@ -998,15 +1017,33 @@ const WsipResults = ({
               </motion.section>
             )}
 
-            {/* ━━━ Post-conversion flow ━━━ */}
-            <section className="pb-4 pt-2">
-              <WsipPostConversion
-                email={capturedEmail}
+            {/* ━━━ Soft email capture — post-letter (when gate is off and email not yet captured) ━━━ */}
+            {!EMAIL_GATE_ENABLED && !capturedEmail && (
+              <EmailReportPrompt
+                analysisId={analysisId}
                 leadContext={leadContext}
                 verdictLabel={verdictLabel}
                 zip={zip}
+                city={city}
+                onEmailCaptured={onEmailCaptured}
+                toolType="wsip"
+                shareReportPayload={shareReportPayload}
+                onReportGenerated={(url) => { setReportUrl(url); }}
+                placement="post_letter"
               />
-            </section>
+            )}
+
+            {/* ━━━ Post-conversion flow ━━━ */}
+            {capturedEmail && (
+              <section className="pb-4 pt-2">
+                <WsipPostConversion
+                  email={capturedEmail}
+                  leadContext={leadContext}
+                  verdictLabel={verdictLabel}
+                  zip={zip}
+                />
+              </section>
+            )}
 
             {/* ━━━ Deals cross-link ━━━ */}
             {(() => {

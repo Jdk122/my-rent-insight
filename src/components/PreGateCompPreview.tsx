@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { RentcastComparable } from '@/hooks/useRentcast';
 import { compAgeLabel } from '@/lib/compDisplay';
+import { EMAIL_GATE_ENABLED } from '@/lib/featureFlags';
 
 interface PreGateCompPreviewProps {
   compsWithRent: RentcastComparable[];
@@ -11,7 +12,7 @@ interface PreGateCompPreviewProps {
 
 const PreGateCompPreview = ({ compsWithRent, capturedEmail, fmt }: PreGateCompPreviewProps) => {
   const previewComp = useMemo(() => {
-    if (capturedEmail || compsWithRent.length < 3) return null;
+    if (!EMAIL_GATE_ENABLED || capturedEmail || compsWithRent.length < 3) return null;
     const best =
       compsWithRent.find(c => c.isSameUnitLine && c.rent && c.rent > 0) ||
       compsWithRent.find(c => c.isSameBuilding && c.rent && c.rent > 0) ||
