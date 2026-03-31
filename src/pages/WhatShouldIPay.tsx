@@ -53,6 +53,7 @@ const WhatShouldIPay = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [navScrolled, setNavScrolled] = useState(false);
   const [capturedEmail, setCapturedEmailRaw] = useState(() => searchParams.get('demo') ? '' : getRememberedEmail());
+  const isUnlocked = !!capturedEmail || !EMAIL_GATE_ENABLED;
   const setCapturedEmail = (email: string) => {
     setCapturedEmailRaw(email);
     if (email) rememberEmail(email);
