@@ -1430,7 +1430,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
                 {utilityNote && (
                   <p className="text-xs text-muted-foreground mb-4 px-4 flex items-start gap-1.5">
-                    <span className="shrink-0 mt-0.5">ℹ️</span>
+                    <Info className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0 mt-0.5" />
                     {utilityNote}
                   </p>
                 )}
