@@ -1477,7 +1477,21 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </motion.section>
             )}
 
-            {/* ━━━ YOUR NEXT STEPS ━━━ */}
+            {/* ━━━ Universal rent reporting CTA ━━━ */}
+            {isUnlocked && (
+              <section className="py-4">
+                <PartnerCTA
+                  variant="rent_reporting"
+                  analysisId={analysisId}
+                  verdict={verdictLabel}
+                  toolUsed="renewal"
+                  city={city}
+                  zip={rentData.zip}
+                  placement="post_comps_universal"
+                />
+              </section>
+            )}
+
             {hasIncrease && (
               <NextStepsSection
                 isAboveMarket={isAboveMarket}
