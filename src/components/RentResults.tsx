@@ -1128,7 +1128,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
 
 
-              {capturedEmail && compsWithRent.length > 0 && (
+              {isUnlocked && compsWithRent.length > 0 && (
                 <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
                   <span className="text-sm font-medium text-foreground">{compsWithRent.length} matched comps support your result</span>
                   <span className="text-sm font-semibold text-primary mt-0.5">Your negotiation letter is ready ↓</span>
