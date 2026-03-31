@@ -14,7 +14,7 @@ const PageNav = ({ ctaLink = '/', ctaText = 'Check Your Rent Increase →', hide
     `${linkBase} ${pathname.startsWith(prefix) ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}`;
 
   return (
-    <nav className="sticky top-0 z-[60] flex items-center justify-between gap-3 px-4 sm:px-6 py-3 sm:py-4 bg-card" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+    <nav className="sticky top-0 z-[60] flex items-center justify-between gap-3 px-4 sm:px-6 py-3 sm:py-4 bg-card/80 backdrop-blur-md border-b border-border/50">
       <Link to="/" className="shrink-0" onClick={() => window.scrollTo({ top: 0 })}>
         <img src="/renewalreply-wordmark.png" alt="RenewalReply" className="h-7 sm:h-8 w-auto object-contain" />
       </Link>
