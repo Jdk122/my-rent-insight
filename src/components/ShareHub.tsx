@@ -180,46 +180,6 @@ const ShareHub = ({
 
   return (
     <div className="w-full max-w-[540px]">
-      {/* Share with landlord button */}
-      <button
-        onClick={handleShareLandlord}
-        disabled={generating}
-        className="w-full inline-flex items-center justify-center gap-2 border border-border px-5 py-3 rounded-lg text-sm font-medium text-foreground hover:border-foreground transition-colors disabled:opacity-50"
-      >
-        <Link2 size={16} />
-        {generating ? 'Generating…' : copied ? 'Link copied!' : landlordLabel}
-      </button>
-
-      {/* Context line */}
-      <p className="text-[12px] text-muted-foreground/70 text-center mt-2.5">
-        Generate a shareable link to your full analysis — comps, market data, and fair offer.
-      </p>
-
-      {/* Landlord: show copied URL */}
-      {activePanel === 'landlord' && reportUrl && (
-        <div className="mt-4 flex items-center gap-2 justify-center">
-          <div className="flex items-center gap-2 bg-secondary rounded-lg px-4 py-2.5 text-sm text-foreground/80 max-w-[280px] overflow-hidden">
-            <Link2 size={14} className="shrink-0 text-muted-foreground" />
-            <span className="truncate">{reportUrl}</span>
-          </div>
-          <button
-            onClick={async () => {
-              const ok = await copyToClipboard(reportUrl);
-              if (ok) {
-                setCopied(true);
-                setTimeout(() => setCopied(false), 2500);
-                toast.success('Link copied!');
-              } else {
-                toast.error('Copy failed — long-press the link to copy.');
-              }
-            }}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:brightness-90 transition-all shadow-sm shadow-primary/20"
-          >
-            {copied ? <><Check size={14} /> Copied!</> : <><Copy size={14} /> Copy</>}
-          </button>
-        </div>
-      )}
-
       {/* Neighbors: sharing channels — always visible */}
       <div className="mt-4">
         <p className="text-[12px] text-muted-foreground mb-2 text-center">{neighborsLabel}</p>
