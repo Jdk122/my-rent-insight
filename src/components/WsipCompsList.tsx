@@ -33,7 +33,7 @@ const CompRow = ({ comp, idx, offset }: { comp: RentcastComparable; idx: number;
         <div className="flex-1 min-w-0">
         <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
           <p className="text-sm font-medium text-foreground truncate max-w-full sm:max-w-none">
-            {comp.formattedAddress}
+            {trimAddress(comp.formattedAddress)}
           </p>
           {comp.isBedroomFallback && (
             <span className="shrink-0 text-[10px] font-medium tracking-wider px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border">
