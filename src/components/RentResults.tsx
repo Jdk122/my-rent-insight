@@ -1648,29 +1648,31 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             )}
 
             {/* ━━━ Footer zone — compact, utility-level spacing ━━━ */}
-            <div className="mt-2 space-y-2">
-              <p className="text-[11px] text-muted-foreground/60 text-center">
+            <div className="mt-2 space-y-1">
+              <p className="text-[11px] text-muted-foreground/60 text-center mb-1">
                 See something that doesn't look right?{' '}
                 <a href="mailto:james@renewalreply.com?subject=Data%20issue%20report&body=Address%3A%20%0AZip%3A%20%0AWhat%20looks%20wrong%3A%20" className="underline hover:text-muted-foreground transition-colors">
                   Report a data issue
                 </a>
               </p>
 
-              <FeedbackWidget
-                analysisId={analysisId}
-                page="renewal_results"
-                verdictSnapshot={verdictLabel}
-                scoreSnapshot={fairnessScore?.total ?? null}
-                confidenceSnapshot={effectiveConfidence.level}
-              />
+              <div className="py-1 mb-1">
+                <FeedbackWidget
+                  analysisId={analysisId}
+                  page="renewal_results"
+                  verdictSnapshot={verdictLabel}
+                  scoreSnapshot={fairnessScore?.total ?? null}
+                  confidenceSnapshot={effectiveConfidence.level}
+                />
+              </div>
 
-              <p className="text-[11px] text-muted-foreground/60 text-center leading-relaxed">
+              <p className="text-[11px] text-muted-foreground/60 text-center leading-relaxed mb-3">
                 This analysis is for informational purposes only and does not constitute legal, financial, or real estate advice.{' '}
                 <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
               </p>
 
-              <section id="section-share" className="pt-2 pb-2">
-                <h2 className="text-[16px] font-semibold text-foreground tracking-tight mb-3">
+              <section id="section-share" className="pb-2">
+                <h2 className="text-[15px] font-medium text-foreground mb-2">
                   {isAboveMarket ? 'Share Your Analysis' : 'Share This Tool'}
                 </h2>
                 <div className="flex justify-center">
