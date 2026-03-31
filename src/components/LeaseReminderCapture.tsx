@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
 import { sendConfirmationEmail } from '@/lib/sendConfirmationEmail';
+import { generateSharedReport, SharedReportPayload } from '@/lib/generateSharedReport';
 import { notifySubmission } from '@/lib/notifySubmission';
 import { rememberEmail } from '@/lib/emailMemory';
 import { GATE_VARIANT } from '@/lib/featureFlags';
@@ -25,6 +26,8 @@ interface LeaseReminderCaptureProps {
   city: string;
   onEmailCaptured: (email: string) => void;
   toolType: 'renewal' | 'wsip';
+  shareReportPayload?: SharedReportPayload;
+  onReportGenerated?: (url: string) => void;
 }
 
 const LeaseReminderCapture = ({
@@ -34,6 +37,8 @@ const LeaseReminderCapture = ({
   city,
   onEmailCaptured,
   toolType,
+  shareReportPayload,
+  onReportGenerated,
 }: LeaseReminderCaptureProps) => {
   const [email, setEmail] = useState('');
   const [leaseMonth, setLeaseMonth] = useState('');
@@ -85,6 +90,11 @@ const LeaseReminderCapture = ({
         p_bedrooms: leadContext?.bedrooms ?? null,
         p_current_rent: leadContext?.currentRent ?? null,
         p_proposed_rent: leadContext?.proposedRent ?? null,
+        p_increase_pct: leadContext?.increasePct ?? null,
+        p_market_trend_pct: leadContext?.marketTrendPct ?? null,
+        p_fair_counter_offer: leadContext?.fairCounterOffer || null,
+        p_comps_position: leadContext?.compsPosition || null,
+        p_letter_generated: leadContext?.letterGenerated ?? false,
         p_fairness_score: leadContext?.fairnessScore ?? null,
         p_comp_median_rent: leadContext?.compMedianRent ?? null,
         p_hud_fmr_value: leadContext?.hudFmrValue ?? null,
@@ -124,44 +134,56 @@ const LeaseReminderCapture = ({
     });
     trackAdsConversion(toolType, trimmed);
 
-    // Fire-and-forget
-    sendConfirmationEmail({
-      email: trimmed,
-      city: city || null,
-      state: leadContext?.state || null,
-      zip: zip || null,
-      bedrooms: leadContext?.bedrooms ?? null,
-      toolType,
-      fairnessScore: leadContext?.fairnessScore ?? null,
-      verdictLabel: verdictLabel || null,
-    }).catch(() => {});
-
-    notifySubmission({
-      email: trimmed,
-      zip,
-      city,
-      capture_source: 'lease_reminder',
-      verdict: verdictLabel,
-      tool_type: toolType,
-      analysis_id: leadContext?.analysisId || null,
-    }, 'lease_reminder').catch(() => {});
-
     setSaved(true);
     setSubmitting(false);
-    toast.success('Reminder saved — we\'ll be in touch.');
+    toast.success('Report sent — and we\'ll remind you 90 days before your renewal.');
+
+    // Non-blocking: generate report + send email + notify
+    (async () => {
+      let reportUrl: string | null = null;
+      if (shareReportPayload) {
+        reportUrl = await generateSharedReport(shareReportPayload, leadContext?.analysisId, trimmed);
+        if (reportUrl) onReportGenerated?.(reportUrl);
+      }
+      sendConfirmationEmail({
+        email: trimmed,
+        city: city || null,
+        state: leadContext?.state || null,
+        zip: zip || null,
+        bedrooms: leadContext?.bedrooms ?? null,
+        toolType,
+        fairnessScore: leadContext?.fairnessScore ?? null,
+        verdictLabel: verdictLabel || null,
+        reportUrl,
+      }).catch(() => {});
+      notifySubmission({
+        email: trimmed,
+        zip,
+        city,
+        capture_source: 'lease_reminder',
+        verdict: verdictLabel,
+        tool_type: toolType,
+        analysis_id: leadContext?.analysisId || null,
+      }, 'lease_reminder').catch(() => {});
+    })();
   };
 
   if (saved) {
     return (
-      <div className="flex items-center gap-2 py-3">
-        <Check className="w-4 h-4 text-verdict-good" />
-        <span className="text-sm text-muted-foreground">
-          {leaseMonth && leaseYear
-            ? `We'll send your market report 90 days before ${leaseMonth} ${leaseYear}.`
-            : leaseMonth
-            ? `We'll send your market report 90 days before ${leaseMonth}.`
-            : "You're all set."}
-        </span>
+      <div className="rounded-lg border border-verdict-good/30 bg-verdict-good/5 px-4 py-3 flex items-center gap-3">
+        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-verdict-good/10 shrink-0">
+          <Check className="w-4 h-4 text-verdict-good" />
+        </div>
+        <div>
+          <p className="text-sm font-medium text-foreground">Report sent — and we'll remind you 90 days before your renewal.</p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {leaseMonth && leaseYear
+              ? `Fresh market data will arrive before ${leaseMonth} ${leaseYear}.`
+              : leaseMonth
+              ? `Fresh market data will arrive before ${leaseMonth}.`
+              : "You're all set."}
+          </p>
+        </div>
       </div>
     );
   }
@@ -171,10 +193,10 @@ const LeaseReminderCapture = ({
       <div className="space-y-1.5">
         <div className="flex items-center gap-2">
           <CalendarDays className="w-4 h-4 text-primary shrink-0" />
-          <p className="text-sm font-semibold text-foreground">Not ready to act today? We'll remind you.</p>
+          <p className="text-sm font-semibold text-foreground">Save your report and set a renewal reminder</p>
         </div>
         <p className="text-[13px] text-muted-foreground leading-relaxed">
-          Enter your renewal month and we'll send you a free market report 90 days before your lease ends, with fresh comps and a ready-to-send letter.
+          We'll email you this full report now, and send a fresh market update 90 days before your lease ends.
         </p>
       </div>
       <div className="flex flex-wrap gap-2 max-w-[520px]">
@@ -208,13 +230,13 @@ const LeaseReminderCapture = ({
         <button
           onClick={handleSubmit}
           disabled={submitting}
-          className="px-4 py-2.5 rounded-lg text-sm font-medium border border-border text-foreground hover:bg-muted transition-colors whitespace-nowrap disabled:opacity-50"
+          className="px-4 py-2.5 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity whitespace-nowrap disabled:opacity-50 shadow-sm shadow-primary/20"
         >
-          {submitting ? 'Saving…' : 'Set reminder'}
+          {submitting ? 'Saving…' : 'Send & remind me'}
         </button>
       </div>
       <p className="text-[11px] text-muted-foreground/50">
-        One email, 90 days before renewal. That's it.
+        One report now. One reminder later. No spam.
       </p>
     </div>
   );
