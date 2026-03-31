@@ -1101,37 +1101,37 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 Here's how your current rent of <strong className="text-foreground">${fmt(formData.currentRent)}/mo</strong> compares to what similar {brLabel} apartments are going for in {city}.
               </p>
 
-              <div className={`mt-6 w-full grid grid-cols-2 gap-3 max-w-[400px] ${!isUnlocked ? 'order-[4] md:order-none' : ''}`}>
-                <div className="text-center rounded-lg border border-border/80 bg-card px-3 py-3" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your Rent</p>
+              <div className={`mt-6 w-full grid grid-cols-2 gap-2 sm:gap-3 max-w-[400px] ${!isUnlocked ? 'order-[4] md:order-none' : ''}`}>
+                <div className="text-center rounded-lg bg-secondary/50 px-3 py-2.5 sm:py-3.5">
+                  <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your Rent</p>
                   <p className="font-display text-[22px] sm:text-[26px] tracking-tight text-foreground" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>${fmt(formData.currentRent)}</p>
                 </div>
-                <div className="text-center rounded-lg border border-border/80 bg-card px-3 py-3" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Area Trend</p>
+                <div className="text-center rounded-lg bg-secondary/50 px-3 py-2.5 sm:py-3.5">
+                  <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Area Trend</p>
                   <p className={`font-display text-[22px] sm:text-[26px] tracking-tight ${marketYoy > 0 ? 'text-destructive' : marketYoy < 0 ? 'text-verdict-good' : 'text-foreground'}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
                     {marketYoy > 0 ? '+' : ''}{marketYoy}%
                   </p>
                 </div>
               </div>
 
+              {/* CTA button for no-increase */}
+              {isUnlocked && (
+                <button
+                  onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="w-full mt-4 py-3.5 rounded-lg bg-foreground text-background text-[15px] font-semibold tracking-tight hover:opacity-90 transition-opacity max-w-[400px]"
+                >
+                  See full market data ↓
+                </button>
+              )}
+
               <p className={`text-[13px] text-muted-foreground/70 mt-4 max-w-[440px] leading-relaxed ${!isUnlocked ? 'order-[4] md:order-none' : ''}`}>
                 {marketYoy > 3
-                  ? `Rents in ${city} went up ${marketYoy}% this year. Staying flat is a win. Scroll down to see the full market data.`
+                  ? `Rents in ${city} went up ${marketYoy}% this year. Staying flat is a win.`
                   : marketYoy > 0
                   ? `Rents in ${city} are up ${marketYoy}% this year. Your landlord keeping your rent flat means you're getting a better deal over time.`
                   : `Rents in ${city} are ${marketYoy < 0 ? `down ${Math.abs(marketYoy)}%` : 'flat'} this year. Your rent is holding steady with the market.`
                 }
               </p>
-
-
-
-              {isUnlocked && compsWithRent.length > 0 && (
-                <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
-                  <span className="text-sm font-medium text-foreground">{compsWithRent.length} matched comps support your result</span>
-                  <span className="text-sm font-semibold text-primary mt-0.5">Your negotiation letter is ready ↓</span>
-                  <span className="text-xs text-muted-foreground mt-0.5">Full comps, counter-offer guidance, and market data below.</span>
-                </div>
-              )}
 
 
               {/* ── Email gate (no-increase path) ── */}
