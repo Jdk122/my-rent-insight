@@ -4,6 +4,7 @@ import RenewalReminderModal from './RenewalReminderModal';
 import { findDealsNeighborhoodByZip, findDealsNeighborhoodsByCity, findDealsNeighborhoodsByState } from '@/data/dealsMatch';
 import { AFFILIATE_LINKS } from '@/lib/affiliateConfig';
 import { trackEvent } from '@/lib/analytics';
+import { supabase } from '@/integrations/supabase/client';
 
 interface RenterToolsCTAProps {
   zip?: string;
@@ -174,6 +175,27 @@ const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool', sh
   const hasAffiliateCard = cards.some(c => c.isAffiliate);
   const gridCols = cards.length === 3 ? 'sm:grid-cols-3' : cards.length === 4 ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-2';
 
+  const handleAffiliateClick = () => {
+    trackEvent('affiliate_click', {
+      link_type: 'partner_rent_reporting',
+      placement: 'seo_renter_tools',
+      page_type: pageType,
+      city: city || '',
+      state_abbr: stateAbbr || '',
+      experiment: 'seo_renter_tools_rr_v1',
+    });
+
+    supabase
+      .from('referral_clicks')
+      .insert({
+        event_type: 'affiliate_click',
+        link_type: 'partner_rent_reporting',
+        placement: 'seo_renter_tools',
+        zip: zip || null,
+      })
+      .then(() => {});
+  };
+
   return (
     <section className="mb-12">
       <h2 className="font-display text-2xl text-foreground mb-5 tracking-tight">Renter Tools</h2>
@@ -191,14 +213,7 @@ const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool', sh
                 href={t.href}
                 target="_blank"
                 rel="noopener noreferrer sponsored"
-                onClick={() => trackEvent('affiliate_click', {
-                  link_type: 'partner_rent_reporting',
-                  placement: 'seo_renter_tools',
-                  page_type: pageType,
-                  city: city || '',
-                  state_abbr: stateAbbr || '',
-                  experiment: 'seo_renter_tools_rr_v1',
-                })}
+                onClick={handleAffiliateClick}
                 className="inline-flex items-center justify-center bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
               >
                 {t.cta}
