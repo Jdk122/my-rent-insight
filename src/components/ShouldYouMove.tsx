@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin } from 'lucide-react';
 import { RentcastComparable } from '@/hooks/useRentcast';
 import { BedroomType } from '@/data/rentData';
 import { compAgeLabel } from '@/lib/compDisplay';
@@ -98,115 +97,109 @@ function CompsWithRentLine({
   if (idx !== -1) refIndex = idx;
 
   const rentLine = (
-    <div className="flex items-center gap-3 px-4 py-2">
-      <div className="flex-1 h-px bg-destructive" />
-      <span className="text-[13px] text-destructive font-semibold whitespace-nowrap">
-        Your proposed rent: ${fmt(proposedRent)}/mo
-      </span>
-      <div className="flex-1 h-px bg-destructive" />
+    <div className="relative my-2">
+      <div className="border-t border-border" />
+      <div className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <span className="text-[11px] font-medium text-muted-foreground bg-background px-3 py-1 rounded-full border border-border/60">
+          Your rent: ${fmt(proposedRent)}/mo
+        </span>
+      </div>
     </div>
   );
 
   // User's unit row (highlighted)
   const userUnitRow = userUnit && (userUnit.bedrooms != null || userUnit.squareFootage != null) ? (
-    <div className="px-4 py-3 rounded-md border border-primary/20 bg-primary/5">
+    <div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-foreground truncate flex items-center gap-1.5">
-            <MapPin className="w-3 h-3 text-primary flex-shrink-0" />
+          <p className="text-[14px] font-medium text-foreground truncate">
             Your unit{userUnit.address ? ` — ${userUnit.address.split(',')[0]}` : ''}
           </p>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="text-[12px] text-muted-foreground mt-0.5">
             {userUnit.bedrooms !== null && userUnit.bedrooms !== undefined && `${userUnit.bedrooms === 0 ? 'Studio' : `${userUnit.bedrooms}BR`}`}
             {userUnit.bathrooms !== null && userUnit.bathrooms !== undefined && ` · ${userUnit.bathrooms}BA`}
             {userUnit.squareFootage !== null && userUnit.squareFootage !== undefined && ` · ${fmt(userUnit.squareFootage)} sqft`}
           </p>
         </div>
-        <span className="text-sm font-semibold text-foreground whitespace-nowrap">
-          ${fmt(proposedRent)}/mo
+        <span className="text-[16px] font-semibold text-foreground whitespace-nowrap tabular-nums">
+          ${fmt(proposedRent)}
         </span>
       </div>
     </div>
   ) : null;
 
-  const matchLabel = (corr: number | null) => {
-    if (corr === null) return null;
-    if (corr > 0.8) return 'Strong match';
-    if (corr >= 0.5) return 'Good match';
-    return 'Weak match';
-  };
-  const matchColor = (corr: number | null) => {
-    if (corr === null) return '';
-    if (corr > 0.8) return 'text-verdict-good';
-    if (corr >= 0.5) return 'text-accent-amber';
-    return 'text-muted-foreground/60';
-  };
-
   return (
-    <div className="space-y-1">
-      {userUnitRow && <div className="mb-2">{userUnitRow}</div>}
-      {sorted.map((comp, i) => (
-        <div key={i}>
-          {!hideRentLine && i === refIndex && rentLine}
-          <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.04, duration: 0.3 }}
-            className={`flex items-start justify-between gap-4 px-4 py-3 rounded-md ${i % 2 === 0 ? 'bg-muted/40' : ''}`}
-          >
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate flex items-center gap-1.5">
-                <MapPin className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-                {trimAddress(comp.formattedAddress)}
-                {comp.isSameUnitLine && (
-                  <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
-                    Same line
-                  </span>
-                )}
-                {comp.isSameBuilding && !comp.isSameUnitLine && (
-                  <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-green-500/10 text-green-700 border border-green-500/20">
-                    Same building
-                  </span>
-                )}
-              </p>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
-                {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
-                {comp.squareFootage !== null && comp.squareFootage > 0 && ` · ${fmt(comp.squareFootage)} sqft`}
-                {comp.rent != null && comp.squareFootage != null && comp.squareFootage > 0 && ` · $${(comp.rent / comp.squareFootage).toFixed(2)}/sqft`}
-                {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
-                {(() => {
-                  const age = compAgeLabel(comp.daysOld);
-                  if (!age) return null;
-                  return (
-                    <>
-                      {' · '}<span className={age.className}>{age.text}</span>
-                      {comp.daysOld !== null && comp.daysOld > 90 && (
-                        <span className="text-amber-600 ml-0.5" title="Older listing — pricing may have changed">⚠</span>
-                      )}
-                    </>
-                  );
-                })()}
-                {matchLabel(comp.correlation) && (
-                  <span className={`ml-1 ${matchColor(comp.correlation)}`}> · {matchLabel(comp.correlation)}</span>
-                )}
-              </p>
-            </div>
-            {comp.rent !== null && (
-              <div className="flex flex-col items-end shrink-0">
-                <span className="text-sm font-semibold text-foreground whitespace-nowrap">
-                  ${fmt(comp.rent)}/mo
-                </span>
-                {comp.seasonallyAdjusted && comp.seasonalRent != null && (
-                  <span className="text-[10px] text-muted-foreground/70" title="Adjusted for seasonal pricing differences">
-                    adj. ${fmt(comp.seasonalRent)}
+    <div className="space-y-2">
+      {userUnitRow && <div className="mb-1">{userUnitRow}</div>}
+      {sorted.map((comp, i) => {
+        const isBuildingComp = comp.isSameBuilding || comp.isSameUnitLine;
+        const age = compAgeLabel(comp.daysOld);
+
+        return (
+          <div key={i}>
+            {!hideRentLine && i === refIndex && rentLine}
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.04, duration: 0.3 }}
+              className={`rounded-lg border bg-card px-4 py-3 ${
+                isBuildingComp
+                  ? 'border-l-2 border-l-primary/40 border-t-border/60 border-r-border/60 border-b-border/60'
+                  : 'border-border/60'
+              }`}
+            >
+              {/* Line 1: Address + Rent */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0 flex flex-wrap items-center gap-1.5">
+                  <p className="text-[14px] font-medium text-foreground truncate">
+                    {trimAddress(comp.formattedAddress)}
+                  </p>
+                  {comp.isSameUnitLine && (
+                    <span className="shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded bg-primary/10 text-primary">
+                      Same unit
+                    </span>
+                  )}
+                  {comp.isSameBuilding && !comp.isSameUnitLine && (
+                    <span className="shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded bg-primary/10 text-primary">
+                      Building
+                    </span>
+                  )}
+                </div>
+                {comp.rent !== null && (
+                  <span className="text-[16px] font-semibold text-foreground whitespace-nowrap tabular-nums shrink-0">
+                    ${fmt(comp.rent)}
                   </span>
                 )}
               </div>
-            )}
-          </motion.div>
-        </div>
-      ))}
+
+              {/* Line 2: Metadata */}
+              <p className="text-[12px] text-muted-foreground mt-1">
+                {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
+                {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
+                {comp.squareFootage !== null && comp.squareFootage > 0 && ` · ${fmt(comp.squareFootage)} sqft`}
+                {comp.rent != null && comp.squareFootage != null && comp.squareFootage > 0 && (
+                  <span className="hidden sm:inline"> · ${(comp.rent / comp.squareFootage).toFixed(2)}/sqft</span>
+                )}
+                {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
+              </p>
+
+              {/* Freshness */}
+              {age && (
+                <p className={`text-[11px] mt-0.5 ${
+                  comp.daysOld !== null && comp.daysOld <= 30
+                    ? 'text-accent-green'
+                    : 'text-muted-foreground/60'
+                }`}>
+                  {age.text}
+                  {comp.daysOld !== null && comp.daysOld > 90 && (
+                    <span className="text-accent-amber ml-1" title="Older listing — pricing may have changed">⚠</span>
+                  )}
+                </p>
+              )}
+            </motion.div>
+          </div>
+        );
+      })}
       {!hideRentLine && refIndex === sorted.length && rentLine}
     </div>
   );
@@ -231,17 +224,6 @@ export const CompsList = ({
   const isAtMedian = proposedRent === medianCompRent;
   const difference = Math.abs(proposedRent - medianCompRent);
 
-  const belowComps = useMemo(() => {
-    return comparables.filter(c => c.rent !== null && c.rent > 0 && c.rent < proposedRent);
-  }, [comparables, proposedRent]);
-
-  const belowMedian = useMemo(() => {
-    if (belowComps.length === 0) return null;
-    const rents = belowComps.map(c => c.rent!).sort((a, b) => a - b);
-    const mid = Math.floor(rents.length / 2);
-    return rents.length % 2 === 0 ? Math.round((rents[mid - 1] + rents[mid]) / 2) : rents[mid];
-  }, [belowComps]);
-
   const browseLinks = buildBrowseLinks(zip, city, state, bedrooms);
 
   // SAFMR context note: show when comp median is 50%+ above HUD SAFMR
@@ -251,64 +233,56 @@ export const CompsList = ({
     <div>
       {/* Summary callout */}
       {isAboveMedian ? (
-        <div className="px-4 py-3 rounded-md border text-sm font-medium text-foreground bg-destructive/10 border-destructive/20">
+        <div className="px-4 py-3 rounded-lg border text-sm font-medium text-foreground bg-destructive/10 border-destructive/20">
           Your proposed rent of ${fmt(proposedRent)}/mo is{' '}
           <span className="font-bold text-destructive">${fmt(difference)} above</span>{' '}
           the area median of ${fmt(medianCompRent)} for similar units.
         </div>
       ) : isAtMedian ? (
-        <div className="px-4 py-3 rounded-md border text-sm font-medium text-foreground bg-muted border-border">
+        <div className="px-4 py-3 rounded-lg border text-sm font-medium text-foreground bg-muted border-border">
           Your proposed rent of ${fmt(proposedRent)}/mo is <span className="font-bold">at the area median</span> for similar units.
         </div>
       ) : (
-        <div className="px-4 py-3 rounded-md border text-sm font-medium text-foreground bg-verdict-good/10 border-verdict-good/20">
+        <div className="px-4 py-3 rounded-lg border text-sm font-medium text-foreground bg-verdict-good/10 border-verdict-good/20">
           Even after the increase, your proposed rent of ${fmt(proposedRent)}/mo is{' '}
           <span className="font-bold text-verdict-good">${fmt(difference)} below</span>{' '}
           the area median of ${fmt(medianCompRent)} for similar units.
         </div>
       )}
 
-      {/* Below-rent anchor line */}
-      {isAboveMedian && belowComps.length > 0 && belowMedian && (
-        <p className="text-sm text-muted-foreground mt-3">
-          {belowComps.length} comparable {belowComps.length === 1 ? 'unit' : 'units'} found below your proposed rent — median: <span className="font-semibold text-foreground">${fmt(belowMedian)}/mo</span>.
-        </p>
-      )}
-
-      {/* Comp listings with orange line */}
+      {/* Comp listings */}
       <div className="mt-6">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 text-center">
-          Nearby Comparable Listings
-        </p>
         <CompsWithRentLine comparables={comparables} proposedRent={proposedRent} userUnit={userUnit} hideRentLine={gated} />
 
         {/* Furnished comps (excluded from median, shown for transparency) */}
         {furnishedComps.length > 0 && (
-          <div className="mt-3 space-y-1">
+          <div className="mt-3 space-y-2">
             {furnishedComps.map((comp, i) => (
               <div
                 key={`furnished-${i}`}
-                className="flex items-start justify-between gap-4 px-4 py-3 rounded-md opacity-60"
+                className="rounded-lg border border-border/40 bg-card px-4 py-3 opacity-60"
               >
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-muted-foreground truncate flex items-center gap-1.5">
-                    <MapPin className="w-3 h-3 text-muted-foreground/40 flex-shrink-0" />
-                    {trimAddress(comp.formattedAddress)}
-                    <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-muted text-muted-foreground border border-border">
-                      Furnished — not directly comparable
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0 flex flex-wrap items-center gap-1.5">
+                    <p className="text-[14px] font-medium text-muted-foreground truncate">
+                      {trimAddress(comp.formattedAddress)}
+                    </p>
+                    <span className="shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border">
+                      Furnished
                     </span>
-                  </p>
-                  <p className="text-xs text-muted-foreground/60 mt-0.5">
-                    {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
-                    {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
-                    {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
-                  </p>
+                  </div>
+                  {comp.rent !== null && (
+                    <span className="text-[16px] font-semibold text-muted-foreground whitespace-nowrap tabular-nums shrink-0">
+                      ${fmt(comp.rent)}
+                    </span>
+                  )}
                 </div>
-                {comp.rent !== null && (
-                  <span className="text-sm font-semibold text-muted-foreground whitespace-nowrap">
-                    ${fmt(comp.rent)}/mo
-                  </span>
-                )}
+                <p className="text-[12px] text-muted-foreground/60 mt-1">
+                  {comp.bedrooms !== null && `${comp.bedrooms === 0 ? 'Studio' : `${comp.bedrooms}BR`}`}
+                  {comp.bathrooms !== null && ` · ${comp.bathrooms}BA`}
+                  {comp.distance !== null && ` · ${comp.distance.toFixed(1)} mi`}
+                  <span className="ml-1">· Not directly comparable</span>
+                </p>
               </div>
             ))}
           </div>
@@ -317,11 +291,10 @@ export const CompsList = ({
 
       {/* SAFMR context note */}
       {showSafmrNote && (
-        <p className="text-xs text-muted-foreground mt-4 px-4 py-3 rounded-md bg-muted/50 border border-border">
+        <p className="text-xs text-muted-foreground mt-4 px-4 py-3 rounded-lg bg-muted/50 border border-border">
           Note: Nearby listings are significantly above the federal rent benchmark for this area. This is common in high-cost neighborhoods where local market rents exceed national standards.
         </p>
       )}
-
 
       <p className="text-[10px] text-muted-foreground/60 mt-3 text-center">
         Market data sources include MLS, public records & proprietary datasets.

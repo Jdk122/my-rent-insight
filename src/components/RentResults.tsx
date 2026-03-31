@@ -1377,7 +1377,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             {hasIncrease && medianCompRent && hasEnoughComps && (
               <motion.section id="section-comps" {...fade(0.15)} className="py-6 sm:py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>
                 <h2 className="results-section-header mb-2">
-                  How Your Rent Compares to Nearby Units
+                  Nearby comps
                 </h2>
                 <p className="text-[12px] text-muted-foreground text-center mb-4 sm:mb-6">
                   Showing {allComps.length} comparable rental{allComps.length !== 1 ? 's' : ''}{compRadius.label ? ` ${compRadius.label}` : ''}, sorted by relevance.
