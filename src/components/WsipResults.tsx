@@ -912,7 +912,21 @@ const WsipResults = ({
               </motion.section>
             )}
 
-            {/* ━━━ YOUR NEXT STEPS — fully visible ━━━ */}
+            {/* ━━━ Universal rent reporting CTA ━━━ */}
+            {isUnlocked && (
+              <section className="py-4">
+                <PartnerCTA
+                  variant="rent_reporting"
+                  analysisId={analysisId}
+                  verdict={verdictLabel}
+                  toolUsed="wsip"
+                  city={city}
+                  zip={zip}
+                  placement="post_comps_universal"
+                />
+              </section>
+            )}
+
             {askingRent && (
               <motion.section id="section-nextsteps" {...fade(0.19)} className="pt-8 pb-8">
                 <h2 className="results-section-header mb-6">Your Next Steps</h2>
