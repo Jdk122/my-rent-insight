@@ -5,6 +5,10 @@ import { RentcastComparable } from '@/hooks/useRentcast';
 import { BedroomType } from '@/data/rentData';
 import { compAgeLabel } from '@/lib/compDisplay';
 
+/** Trim city/state/zip from a full address, keeping only street + unit */
+const trimAddress = (addr: string) =>
+  addr.replace(/,\s*[A-Z][a-zA-Z\s]+,\s*[A-Z]{2}\s*\d{0,5}$/, '').trim();
+
 
 interface UserUnit {
   address?: string | null;
