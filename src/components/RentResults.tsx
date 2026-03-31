@@ -956,17 +956,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             Area rents moved {marketYoy}% this year.
                           </p>
                         )}
-                        {isUnlocked && isNycZip(rentData.zip) && hasIncrease && (
-                          <p className="text-xs text-muted-foreground/70 mt-2">
-                            Live in a rent-stabilized apartment? Your increase may be legally capped.{' '}
-                            <button
-                              onClick={() => document.getElementById('section-rights')?.scrollIntoView({ behavior: 'smooth' })}
-                              className="underline hover:text-muted-foreground transition-colors"
-                            >
-                              check your rights below
-                            </button>.
-                          </p>
-                        )}
+                        
                         {rentcast.data?.detectedBedrooms != null && rentcast.data.detectedBedrooms !== bedroomNum && (
                           <p className="text-[11px] text-muted-foreground/60 mt-2 italic">
                             Our data suggests this may be a {rentcast.data.detectedBedrooms === 0 ? 'studio' : `${rentcast.data.detectedBedrooms}-bedroom`} unit. Results are based on your selection.
