@@ -943,7 +943,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <>Rents in {city} moved {marketYoy}% this year. Your landlord keeping your rent at ${fmt(formData.currentRent)}/mo means you're coming out ahead.</>
                           )}
                         </p>
-                        {!capturedEmail && isAboveMarket && Math.abs(increasePct - marketYoy) < 2 && (
+                        {!isUnlocked && isAboveMarket && Math.abs(increasePct - marketYoy) < 2 && (
                           <p className="text-sm text-muted-foreground mt-2">
                             Even if your increase matches area trends, your starting rent may already be above comparable units.
                           </p>
