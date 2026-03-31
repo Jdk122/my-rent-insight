@@ -114,9 +114,9 @@ const FeedbackWidget = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex items-center justify-center gap-3"
+            className="flex items-center justify-center gap-2"
           >
-            <span className="text-sm text-muted-foreground">Was this analysis helpful?</span>
+            <span className="text-[13px] text-muted-foreground">Was this analysis helpful?</span>
             <button
               onClick={() => submitRating('positive')}
               className="p-1.5 rounded-md hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"

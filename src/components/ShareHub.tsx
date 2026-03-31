@@ -142,8 +142,8 @@ const ShareHub = ({
   return (
     <div className="w-full max-w-[540px]">
       {/* Neighbors: sharing channels — always visible */}
-      <div className="mt-2">
-        <p className="text-[13px] text-muted-foreground mb-2 text-center">Know someone dealing with a rent increase?</p>
+      <div>
+        <p className="text-[13px] text-muted-foreground mb-1.5 text-center">Know someone dealing with a rent increase?</p>
         <div className="grid grid-cols-4 gap-2">
           <button onClick={handleSMS} className="flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-full border border-border text-[12px] font-medium text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
             <MessageCircle size={13} /> Text
