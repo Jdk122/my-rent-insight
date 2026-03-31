@@ -410,7 +410,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   // Gate viewed analytics — fires once per analysis
   useEffect(() => {
-    if (capturedEmail || gateViewedRef.current) return;
+    if (!EMAIL_GATE_ENABLED || capturedEmail || gateViewedRef.current) return;
     const el = document.getElementById('section-gate');
     if (!el) return;
     const observer = new IntersectionObserver(
@@ -420,6 +420,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           trackEvent('gate_viewed', {
             verdict_type: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
             analysis_version: 'gated_results_v1',
+            gate_variant: GATE_VARIANT,
           });
           observer.disconnect();
         }
@@ -435,7 +436,14 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     if (capturedEmail) {
       trackEvent('report_unlocked', {
         verdict_type: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
-        analysis_version: 'gated_results_v1',
+        analysis_version: EMAIL_GATE_ENABLED ? 'gated_results_v1' : 'ungated_v1',
+        gate_variant: GATE_VARIANT,
+      });
+    } else if (!EMAIL_GATE_ENABLED) {
+      trackEvent('report_shown_ungated', {
+        verdict_type: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
+        analysis_version: 'ungated_v1',
+        gate_variant: GATE_VARIANT,
       });
     }
   }, [capturedEmail]);
