@@ -1373,21 +1373,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </div>
             </section>
 
-            {/* ━━━ Soft email capture — post-evidence (when gate is off and email not yet captured) ━━━ */}
-            {!EMAIL_GATE_ENABLED && !capturedEmail && (
-              <EmailReportPrompt
-                analysisId={analysisId}
-                leadContext={leadContext}
-                verdictLabel={verdictLabel}
-                zip={rentData.zip}
-                city={city}
-                onEmailCaptured={setCapturedEmail}
-                toolType="renewal"
-                shareReportPayload={shareReportPayload}
-                onReportGenerated={(url) => { setReportUrl(url); }}
-                placement="post_evidence"
-              />
-            )}
 
             {hasIncrease && medianCompRent && hasEnoughComps && (
               <motion.section id="section-comps" {...fade(0.15)} className="py-6 sm:py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>

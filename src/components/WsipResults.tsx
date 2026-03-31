@@ -863,21 +863,6 @@ const WsipResults = ({
               </div>
             </motion.section>
 
-            {/* ━━━ Soft email capture — post-evidence (when gate is off and email not yet captured) ━━━ */}
-            {!EMAIL_GATE_ENABLED && !capturedEmail && (
-              <EmailReportPrompt
-                analysisId={analysisId}
-                leadContext={leadContext}
-                verdictLabel={verdictLabel}
-                zip={zip}
-                city={city}
-                onEmailCaptured={onEmailCaptured}
-                toolType="wsip"
-                shareReportPayload={shareReportPayload}
-                onReportGenerated={(url) => { setReportUrl(url); }}
-                placement="post_evidence"
-              />
-            )}
 
             {/* ━━━ COMPARABLE LISTINGS — fully visible ━━━ */}
             {compsWithRent.length > 0 && (
