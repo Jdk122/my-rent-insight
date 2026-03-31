@@ -6,6 +6,7 @@ import { lookupRentData, loadFredTrend, RentLookupResult, BedroomType } from '@/
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
 import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
+import { EMAIL_GATE_ENABLED } from '@/lib/featureFlags';
 import { getWsipDemoData } from '@/data/demoData';
 import SEO from '@/components/SEO';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
