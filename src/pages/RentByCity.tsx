@@ -389,6 +389,56 @@ const RentByCity = () => {
           )}
         </section>
 
+        {/* ═══ AEO: Query-matching answer sections ═══ */}
+        <section className="mb-12 space-y-8">
+          <div>
+            <h2 className="font-display text-xl text-foreground mb-2 tracking-tight">
+              How much is rent in {city}, {state}?
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              The average 1-bedroom rent in {city}, {state} is {fmt(avgFmr[1])}/month as of {dataYear}, based on HUD data across {zips.length} ZIP codes.
+              {cheapestZip && maxFmr1br > (cheapestZip.fmr1br ?? avgFmr[1]) + 100
+                ? ` Rents range from ${fmt(cheapestZip.fmr1br ?? avgFmr[1])} to ${fmt(maxFmr1br)} depending on neighborhood — a ${fmt(maxFmr1br - (cheapestZip.fmr1br ?? avgFmr[1]))}/month spread.`
+                : ` Rents across ${city} are relatively uniform, clustering around ${fmt(avgFmr[1])}/month.`}
+              {` To afford this at the 30% rule, a household would need approximately ${fmt(affordableIncome)}/year.`}
+            </p>
+          </div>
+
+          {trendYoY !== null && (
+            <div>
+              <h2 className="font-display text-xl text-foreground mb-2 tracking-tight">
+                Is rent going up in {city}?
+              </h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {trendYoY >= 0
+                  ? `Rents in ${city} have increased ${trendYoY.toFixed(1)}% year over year based on ${trendAttribution} data.`
+                  : `Rents in ${city} have decreased ${Math.abs(trendYoY).toFixed(1)}% year over year based on ${trendAttribution} data.`}
+                {trendYoY > 5
+                  ? ` This is a notably high rate of increase, indicating strong upward rent pressure in ${city}.`
+                  : trendYoY > 0
+                  ? ` This suggests a relatively stable rental market.`
+                  : ` Declining rents may give renters leverage when negotiating renewals.`}
+              </p>
+            </div>
+          )}
+
+          <div>
+            <h2 className="font-display text-xl text-foreground mb-2 tracking-tight">
+              What is a fair rent increase in {city}?
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {trendYoY !== null
+                ? `Based on ${trendAttribution} data, a rent increase around ${Math.abs(trendYoY).toFixed(1)}% is in line with the ${city} market for ${dataYear}. An increase above that level exceeds the local trend and may be worth pushing back on.`
+                : `Without strong local trend data for ${city}, a fair increase is best judged against the current 1-bedroom benchmark of ${fmt(avgFmr[1])}/month and comparable listings in your ZIP code.`}
+              {rentControlInfo
+                ? ` Note: ${rentControlInfo.jurisdiction} has rent increase protections${rentControlInfo.maxIncreaseFormula ? ` — the cap is generally ${rentControlInfo.maxIncreaseFormula}` : ''}.`
+                : ''}
+              {' '}Check your specific increase with RenewalReply's{' '}
+              <Link to="/" className="text-primary hover:underline">free rent analysis tool</Link>.
+            </p>
+          </div>
+        </section>
+
         {/* ═══ Section B: Rent Trends ═══ */}
         {hasMarketData && (
           <section className="mb-12">
