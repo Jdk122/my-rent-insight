@@ -1138,7 +1138,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
 
               {/* ── Email gate (no-increase path) ── */}
-              {!capturedEmail && (
+              {!isUnlocked && (
                 <section id="section-gate" className="py-8">
                   <ReportGate
                     toolType="renewal"
