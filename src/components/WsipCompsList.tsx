@@ -4,6 +4,12 @@ import { compAgeLabel } from '@/lib/compDisplay';
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 const fmtSqft = (n: number) => n.toFixed(2);
 
+/** Trim city/state/zip from a full address, keeping only street + unit */
+const trimAddress = (addr: string) => {
+  // Match patterns like ", City, ST 12345" or ", City, ST"
+  return addr.replace(/,\s*[A-Z][a-zA-Z\s]+,\s*[A-Z]{2}\s*\d{0,5}$/, '').trim();
+};
+
 interface WsipCompsListProps {
   comparables: RentcastComparable[];
   askingRent?: number | null;
