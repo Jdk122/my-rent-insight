@@ -1640,7 +1640,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
             {/* ━━━ Moving help CTA (above-market, after listings) ━━━ */}
             {hasIncrease && isAboveMarket && isUnlocked && (
-              <section className="py-4 space-y-3">
+              <section className="py-3 sm:py-4 space-y-2 sm:space-y-3">
                 <PartnerCTA
                   variant="moving_help"
                   analysisId={analysisId}
