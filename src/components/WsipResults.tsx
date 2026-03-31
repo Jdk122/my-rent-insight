@@ -28,7 +28,6 @@ import SocialProofLine from './SocialProofLine';
 import ShareHub from './ShareHub';
 import WsipCompsList from './WsipCompsList';
 import FeedbackWidget from './FeedbackWidget';
-import FeedbackWidget from './FeedbackWidget';
 
 import PartnerCTA from './PartnerCTA';
 import LeaseReminderCapture from './LeaseReminderCapture';
