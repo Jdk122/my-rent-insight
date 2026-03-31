@@ -106,7 +106,7 @@ const FeedbackWidget = ({
   if (phase === 'hidden') return null;
 
   return (
-    <div className="py-4">
+    <div className="py-1">
       <AnimatePresence mode="wait">
         {phase === 'idle' && (
           <motion.div
