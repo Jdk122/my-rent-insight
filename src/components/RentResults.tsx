@@ -44,7 +44,6 @@ import SocialProofLine from './SocialProofLine';
 import ReportGate from './ReportGate';
 import PreGateCompPreview from './PreGateCompPreview';
 import { EMAIL_GATE_ENABLED, GATE_VARIANT } from '@/lib/featureFlags';
-import { EMAIL_GATE_ENABLED, GATE_VARIANT } from '@/lib/featureFlags';
 import { DEAL_CITIES } from '@/data/dealsCities';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { demoRentcast } from '@/data/demoData';
