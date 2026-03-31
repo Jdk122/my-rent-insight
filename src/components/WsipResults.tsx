@@ -31,6 +31,8 @@ import ReportGate from './ReportGate';
 import PreGateCompPreview from './PreGateCompPreview';
 import FeedbackWidget from './FeedbackWidget';
 import EmailReportPrompt from './EmailReportPrompt';
+import PartnerCTA from './PartnerCTA';
+import LeaseReminderCapture from './LeaseReminderCapture';
 import { EMAIL_GATE_ENABLED, GATE_VARIANT } from '@/lib/featureFlags';
 import type { LeadContext } from './EmailCapture';
 
