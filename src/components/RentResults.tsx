@@ -1745,7 +1745,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
             {/* ━━━ Share ━━━ */}
             <motion.section id="section-share" {...fade(0.23)} className="pt-4 pb-6 sm:pb-10">
-              <h2 className="results-section-header mb-6">
+              <h2 className="results-section-header">
                 {isAboveMarket ? 'Share Your Analysis' : 'Share This Tool'}
               </h2>
               <div className="flex justify-center">
