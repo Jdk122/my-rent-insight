@@ -207,7 +207,7 @@
   /* Results page section headers */
   .results-section-header {
     font-family: var(--font-display);
-    @apply text-[22px] sm:text-[24px] md:text-[28px] font-bold text-foreground tracking-tight mb-4 sm:mb-6;
+    @apply text-[20px] sm:text-[24px] md:text-[28px] font-bold text-foreground tracking-tight mb-4 sm:mb-6;
     letter-spacing: -0.02em;
   }
 
