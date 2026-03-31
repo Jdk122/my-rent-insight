@@ -562,36 +562,7 @@ const WsipResults = ({
               )}
             </div>
 
-            {/* ── MOBILE: proof cue + gate BEFORE stat cards ── */}
-            {!isUnlocked && (
-              <div className="block md:hidden w-full">
-                <div className="text-center mt-2 mb-1">
-                  <p className="text-xs text-muted-foreground">
-                    {compsWithRent.length > 0
-                      ? `Based on ${compsWithRent.length} nearby comps and current market data.`
-                      : 'Based on local market data and rent trends.'}
-                  </p>
-                </div>
-                <section id="section-gate" className="py-3">
-                  <ReportGate
-                    toolType="wsip"
-                    compsCount={compsWithRent.length}
-                    verdictLabel={verdictLabel}
-                    isHighPain={isHighPain}
-                    leadContext={leadContext}
-                    analysisId={analysisId}
-                    zip={zip}
-                    city={city}
-                    onEmailCaptured={onEmailCaptured}
-                    prefilledEmail={capturedEmail}
-                    shareReportPayload={shareReportPayload}
-                    onReportGenerated={(url) => { setReportUrl(url); }}
-                    marketYoy={marketYoy}
-                    monthlySavings={savings}
-                  />
-                </section>
-              </div>
-            )}
+
 
             {/* Stat cards — DESKTOP: show above gate. MOBILE: show below gate */}
             <div className="hidden md:grid w-full grid-cols-4 gap-4 max-w-[540px]">
