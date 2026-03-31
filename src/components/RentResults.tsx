@@ -1605,11 +1605,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     ? `Browse curated apartment deals in ${matchedCity.neighborhood || matchedCity.name} →`
                     : 'Browse curated apartment deals near you →';
                   return (
-                    <div className="text-center">
+                    <div className="text-center mt-2">
                       <Link
                         to={dealsHref}
                         onClick={() => trackEvent('internal_click', { link_type: 'browse_deals', city, zip: rentData.zip, placement: 'post_listings' })}
-                        className="text-xs text-primary hover:underline font-medium"
+                        className="inline-block w-full rounded-lg border border-primary/30 bg-primary/5 px-5 py-3 text-[14px] font-semibold text-primary hover:bg-primary/10 transition-colors"
                       >
                         {dealsLabel}
                       </Link>
