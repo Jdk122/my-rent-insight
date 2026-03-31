@@ -1697,18 +1697,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 />
               </div>
 
-              <div>
-                <h2 className="text-[13px] font-medium text-muted-foreground mb-2 text-center">Related guides</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <Link to="/guides/how-to-negotiate-rent-increase" className="rounded-lg border border-border bg-card px-4 py-3 hover:border-primary/30 transition-colors">
-                    <p className="text-[13px] font-semibold text-foreground">How to Negotiate a Rent Increase</p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">Counter-offer math, email template, and scripts</p>
-                  </Link>
-                  <Link to="/guides/rent-increase-laws-by-state" className="rounded-lg border border-border bg-card px-4 py-3 hover:border-primary/30 transition-colors">
-                    <p className="text-[13px] font-semibold text-foreground">Rent Increase Laws by State</p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">Caps, notice periods, and your rights</p>
-                  </Link>
-                </div>
+              <div className="flex flex-col gap-1 items-center">
+                <Link to="/guides/how-to-negotiate-rent-increase" className="text-[12px] text-primary hover:underline">
+                  How to negotiate a rent increase →
+                </Link>
+                <Link to="/guides/rent-increase-laws-by-state" className="text-[12px] text-primary hover:underline">
+                  Rent increase laws by state →
+                </Link>
               </div>
 
               {isAboveMarket && (
