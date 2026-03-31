@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Check, Copy, MessageCircle, Mail, Facebook } from 'lucide-react';
+import { Check, Copy, MessageCircle, Mail } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { generateShortId } from '@/lib/shortId';
 import { trackEvent } from '@/lib/analytics';
