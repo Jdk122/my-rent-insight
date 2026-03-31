@@ -1542,7 +1542,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   <AccordionItem value="rights" className="border-none">
                     <AccordionTrigger className="hover:no-underline py-3 px-4 rounded-lg border border-border bg-card">
                       <div className="flex items-center gap-2 text-left">
-                        <span className="text-base">⚖️</span>
+                        <Scale className="w-4 h-4 text-muted-foreground/70 shrink-0" />
                         <span className="text-[13px] font-semibold text-foreground">
                           Your area has rent regulations that may apply
                         </span>
