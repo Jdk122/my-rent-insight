@@ -1616,8 +1616,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   const matchedCity = DEAL_CITIES.find(c => c.zips.includes(rentData.zip));
                   const dealsHref = matchedCity ? `/deals/${matchedCity.slug}` : '/deals';
                   const dealsLabel = matchedCity
-                    ? `Browse more apartments in ${matchedCity.neighborhood || matchedCity.name} →`
-                    : 'Browse more apartments in your area →';
+                    ? `Browse curated apartment deals in ${matchedCity.neighborhood || matchedCity.name} →`
+                    : 'Browse curated apartment deals near you →';
                   return (
                     <div className="text-center">
                       <Link
