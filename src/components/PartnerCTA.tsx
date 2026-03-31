@@ -15,9 +15,9 @@ interface PartnerCTAProps {
 
 const VARIANTS = {
   rent_reporting: {
-    headline: 'Staying? Make your rent work for you.',
+    headline: 'Your rent could also be building your credit.',
     subtext:
-      'Every month you pay rent, it could be building your credit. Rent reporting sends your payment history to the credit bureaus — the same ones landlords check on you.',
+      'Every month you pay rent, it could be reported to the credit bureaus — the same ones landlords check on you. Start building credit from rent you already pay.',
     buttonLabel: 'Start reporting rent →',
     linkType: 'partner_rent_reporting' as const,
   },
