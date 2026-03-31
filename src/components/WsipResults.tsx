@@ -30,6 +30,8 @@ import WsipCompsList from './WsipCompsList';
 import ReportGate from './ReportGate';
 import PreGateCompPreview from './PreGateCompPreview';
 import FeedbackWidget from './FeedbackWidget';
+import EmailReportPrompt from './EmailReportPrompt';
+import { EMAIL_GATE_ENABLED, GATE_VARIANT } from '@/lib/featureFlags';
 import type { LeadContext } from './EmailCapture';
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
