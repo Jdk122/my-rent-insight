@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link2, Check, Copy, Share2, MessageCircle, Mail, Facebook } from 'lucide-react';
+import { Check, Copy, MessageCircle, Mail, Facebook } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { generateShortId } from '@/lib/shortId';
 import { trackEvent } from '@/lib/analytics';
@@ -50,11 +50,8 @@ interface ShareHubProps {
   verdict?: 'above' | 'fair' | 'below' | 'none';
   headline: string;
   stats: { label: string; value: string; color?: string }[];
-  landlordLabel?: string;
   neighborsLabel?: string;
 }
-
-type ActivePanel = null | 'landlord' | 'neighbors';
 
 const ShareHub = ({
   reportPayload,
@@ -68,15 +65,11 @@ const ShareHub = ({
   increasePct,
   marketYoy,
   verdict = 'above',
-  landlordLabel = 'Share with landlord',
   neighborsLabel = 'Share with neighbors',
 }: ShareHubProps) => {
-  const [activePanel, setActivePanel] = useState<ActivePanel>(null);
-
-  // ── Report link state (shared by both paths) ──
+  // ── Report link state ──
   const [reportUrl, setReportUrl] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   // ── Neighbors: copy state ──
   const [neighborCopied, setNeighborCopied] = useState(false);
@@ -112,40 +105,8 @@ const ShareHub = ({
     }
   };
 
-  const handleShareLandlord = async () => {
-    trackEvent('report_shared', { method: 'landlord', zip: zipCode, verdict });
-    const url = reportUrl || await generateReportLink();
-    if (url) {
-      // Try native share on mobile first
-      if (navigator.share) {
-        try {
-          await navigator.share({ title: 'My Rent Analysis', text: 'Here\'s my rent increase analysis:', url });
-          setActivePanel('landlord');
-          return;
-        } catch (e) {
-          if ((e as Error).name === 'AbortError') return;
-          // Fall through to copy
-        }
-      }
-      const ok = await copyToClipboard(url);
-      if (ok) {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2500);
-        toast.success('Link copied — send it to your landlord!');
-      } else {
-        toast.error('Copy failed — long-press the link to copy.');
-      }
-      setActivePanel('landlord');
-    }
-  };
 
-  const handleShareNeighbors = async () => {
-    trackEvent('report_shared', { method: 'neighbors', zip: zipCode, verdict });
-    const url = reportUrl || await generateReportLink();
-    if (url) {
-      setActivePanel('neighbors');
-    }
-  };
+
 
   // ── Neighbor message content ──
   const brLabel = bedroomNum === 0 ? 'Studio' : bedroomNum === 1 ? '1-bedroom' : bedroomNum === 2 ? '2-bedroom' : bedroomNum === 3 ? '3-bedroom' : '4-bedroom';

@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { Info } from 'lucide-react';
+import { Info, Building2, Scale } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -858,7 +858,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             if (rentControlCap.maxIncreasePct != null && increasePct > rentControlCap.maxIncreasePct) {
                               return (
                                 <p className="text-[12px] font-medium text-destructive">
-                                  ⚠️ {rentControlCap.jurisdiction} limits annual rent increases to {approxPrefix}{rentControlCap.maxIncreasePct}%. Your increase of {increasePct}%{likelyWord} exceeds this limit.{softNote}
+                                  {rentControlCap.jurisdiction} limits annual rent increases to {approxPrefix}{rentControlCap.maxIncreasePct}%. Your increase of {increasePct}%{likelyWord} exceeds this limit.{softNote}
                                 </p>
                               );
                             } else if (rentControlCap.maxIncreasePct != null) {
@@ -956,17 +956,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             Area rents moved {marketYoy}% this year.
                           </p>
                         )}
-                        {isUnlocked && isNycZip(rentData.zip) && hasIncrease && (
-                          <p className="text-xs text-muted-foreground/70 mt-2">
-                            Live in a rent-stabilized apartment? Your increase may be legally capped.{' '}
-                            <button
-                              onClick={() => document.getElementById('section-rights')?.scrollIntoView({ behavior: 'smooth' })}
-                              className="underline hover:text-muted-foreground transition-colors"
-                            >
-                              check your rights below
-                            </button>.
-                          </p>
-                        )}
+                        
                         {rentcast.data?.detectedBedrooms != null && rentcast.data.detectedBedrooms !== bedroomNum && (
                           <p className="text-[11px] text-muted-foreground/60 mt-2 italic">
                             Our data suggests this may be a {rentcast.data.detectedBedrooms === 0 ? 'studio' : `${rentcast.data.detectedBedrooms}-bedroom`} unit. Results are based on your selection.
@@ -987,32 +977,25 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
-                className={`mt-2 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 max-w-[540px] ${!isUnlocked ? 'order-[4] md:order-none' : ''}`}
+                className={`mt-2 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 max-w-[540px] ${!isUnlocked ? 'order-[4] md:order-none' : ''}`}
               >
-                {!isUnlocked && (
-                  <p className="md:hidden col-span-2 text-[9px] font-semibold uppercase tracking-widest text-muted-foreground text-center mb-1">
-                    Your full report
-                  </p>
-                )}
                 {(() => {
                   const increaseIsHighGap = increasePct > marketYoy * 2 && increasePct > 0 && marketYoy > 0;
                   return [
-                    { label: 'Current rent', value: `$${fmt(formData.currentRent)}`, color: 'text-foreground', sub: null, highlight: false },
-                    { label: 'Proposed rent', value: `$${fmt(newRent)}`, color: isAboveMarket ? 'text-destructive' : isBelowMarket ? 'text-verdict-good' : 'text-foreground', sub: null, highlight: false },
-                    { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%`, color: 'text-foreground', sub: null, highlight: false },
-                    { label: 'Your increase', value: `${increasePct}%`, color: verdictColor, sub: null, highlight: increaseIsHighGap },
+                    { label: 'Current rent', value: `$${fmt(formData.currentRent)}`, color: 'text-foreground', highlight: false },
+                    { label: 'Proposed rent', value: `$${fmt(newRent)}`, color: isAboveMarket ? 'text-destructive' : isBelowMarket ? 'text-verdict-good' : 'text-foreground', highlight: false },
+                    { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%`, color: 'text-foreground', highlight: false },
+                    { label: 'Your increase', value: `${increasePct}%`, color: verdictColor, highlight: increaseIsHighGap },
                   ];
                 })().map((stat) => (
                     <div
                       key={stat.label}
-                      className={`text-center rounded-lg border px-2 sm:px-3 py-2.5 sm:py-4 flex flex-col items-center min-h-[68px] sm:min-h-[84px] ${stat.highlight ? 'border-destructive/30 bg-destructive/5' : 'border-border/60 sm:border-border/80 bg-card'}`}
-                      style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
+                      className={`text-center rounded-lg px-2 sm:px-3 py-2.5 sm:py-3.5 flex flex-col items-center justify-center ${stat.highlight ? 'bg-destructive/5' : 'bg-secondary/50'}`}
                     >
-                      <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1 min-h-[24px] flex items-end">{stat.label}</p>
-                      <p className={`font-display text-[20px] sm:text-[24px] md:text-[28px] tracking-tight tabular-nums mt-auto ${stat.color}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
+                      <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">{stat.label}</p>
+                      <p className={`font-display text-[20px] sm:text-[24px] md:text-[28px] tracking-tight tabular-nums ${stat.color}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
                         {stat.value}
                       </p>
-                      <span className="block h-[14px] shrink-0" />
                     </div>
                 ))}
               </motion.div>
@@ -1020,12 +1003,23 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
 
 
-               {isUnlocked && compsWithRent.length > 0 && (
-                <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
-                  <span className="text-sm font-medium text-foreground">{compsWithRent.length} matched comps support your result</span>
-                  <span className="text-sm font-semibold text-primary mt-0.5">Your negotiation letter is ready ↓</span>
-                  <span className="text-xs text-muted-foreground mt-0.5">Full comps, counter-offer guidance, and market data below.</span>
-                </div>
+              {/* ── Primary CTA button ── */}
+              {isUnlocked && hasIncrease && (
+                <button
+                  onClick={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="w-full mt-4 py-3.5 rounded-lg bg-foreground text-background text-[15px] font-semibold tracking-tight hover:opacity-90 transition-opacity"
+                >
+                  {isAboveMarket ? 'Your negotiation letter is ready \u2193' : isBelowMarket ? 'Protect this rate \u2193' : 'Review your negotiation letter \u2193'}
+                </button>
+              )}
+              {isUnlocked && hasIncrease && (
+                <p className="text-[11px] text-muted-foreground/60 mt-1.5 text-center">
+                  {isAboveMarket
+                    ? `Based on ${compsWithRent.length} nearby comp${compsWithRent.length !== 1 ? 's' : ''}`
+                    : isBelowMarket
+                    ? 'Use our letter to negotiate extras or lock in a longer lease.'
+                    : 'Even a fair increase is worth a conversation.'}
+                </p>
               )}
 
 
@@ -1107,37 +1101,37 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 Here's how your current rent of <strong className="text-foreground">${fmt(formData.currentRent)}/mo</strong> compares to what similar {brLabel} apartments are going for in {city}.
               </p>
 
-              <div className={`mt-6 w-full grid grid-cols-2 gap-3 max-w-[400px] ${!isUnlocked ? 'order-[4] md:order-none' : ''}`}>
-                <div className="text-center rounded-lg border border-border/80 bg-card px-3 py-3" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your Rent</p>
+              <div className={`mt-6 w-full grid grid-cols-2 gap-2 sm:gap-3 max-w-[400px] ${!isUnlocked ? 'order-[4] md:order-none' : ''}`}>
+                <div className="text-center rounded-lg bg-secondary/50 px-3 py-2.5 sm:py-3.5">
+                  <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your Rent</p>
                   <p className="font-display text-[22px] sm:text-[26px] tracking-tight text-foreground" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>${fmt(formData.currentRent)}</p>
                 </div>
-                <div className="text-center rounded-lg border border-border/80 bg-card px-3 py-3" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Area Trend</p>
+                <div className="text-center rounded-lg bg-secondary/50 px-3 py-2.5 sm:py-3.5">
+                  <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Area Trend</p>
                   <p className={`font-display text-[22px] sm:text-[26px] tracking-tight ${marketYoy > 0 ? 'text-destructive' : marketYoy < 0 ? 'text-verdict-good' : 'text-foreground'}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
                     {marketYoy > 0 ? '+' : ''}{marketYoy}%
                   </p>
                 </div>
               </div>
 
+              {/* CTA button for no-increase */}
+              {isUnlocked && (
+                <button
+                  onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="w-full mt-4 py-3.5 rounded-lg bg-foreground text-background text-[15px] font-semibold tracking-tight hover:opacity-90 transition-opacity max-w-[400px]"
+                >
+                  See full market data ↓
+                </button>
+              )}
+
               <p className={`text-[13px] text-muted-foreground/70 mt-4 max-w-[440px] leading-relaxed ${!isUnlocked ? 'order-[4] md:order-none' : ''}`}>
                 {marketYoy > 3
-                  ? `Rents in ${city} went up ${marketYoy}% this year. Staying flat is a win. Scroll down to see the full market data.`
+                  ? `Rents in ${city} went up ${marketYoy}% this year. Staying flat is a win.`
                   : marketYoy > 0
                   ? `Rents in ${city} are up ${marketYoy}% this year. Your landlord keeping your rent flat means you're getting a better deal over time.`
                   : `Rents in ${city} are ${marketYoy < 0 ? `down ${Math.abs(marketYoy)}%` : 'flat'} this year. Your rent is holding steady with the market.`
                 }
               </p>
-
-
-
-              {isUnlocked && compsWithRent.length > 0 && (
-                <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
-                  <span className="text-sm font-medium text-foreground">{compsWithRent.length} matched comps support your result</span>
-                  <span className="text-sm font-semibold text-primary mt-0.5">Your negotiation letter is ready ↓</span>
-                  <span className="text-xs text-muted-foreground mt-0.5">Full comps, counter-offer guidance, and market data below.</span>
-                </div>
-              )}
 
 
               {/* ── Email gate (no-increase path) ── */}
@@ -1255,7 +1249,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   </p>
                   {utilityNote && (
                     <p className="text-sm text-muted-foreground mb-4 flex items-start gap-1.5">
-                      <span className="shrink-0 mt-0.5">ℹ️</span>
+                      <Info className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0 mt-0.5" />
                       {utilityNote}
                     </p>
                   )}
@@ -1359,7 +1353,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   )}
                   {bldg.hasBuildingData && (
                     <p className="text-sm text-muted-foreground mt-3 flex items-start gap-1.5">
-                      <span className="shrink-0 mt-0.5">🏢</span>
+                      <Building2 className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0 mt-0.5" />
                       Other {bldg.bedroomFilterLabel ? `${bldg.bedroomFilterLabel} ` : ''}units in this building rent for ${fmt(bldg.buildingLow)}
                       {bldg.buildingLow !== bldg.buildingHigh && ` – $${fmt(bldg.buildingHigh)}`}/month
                     </p>
@@ -1436,7 +1430,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
                 {utilityNote && (
                   <p className="text-xs text-muted-foreground mb-4 px-4 flex items-start gap-1.5">
-                    <span className="shrink-0 mt-0.5">ℹ️</span>
+                    <Info className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0 mt-0.5" />
                     {utilityNote}
                   </p>
                 )}
@@ -1548,7 +1542,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   <AccordionItem value="rights" className="border-none">
                     <AccordionTrigger className="hover:no-underline py-3 px-4 rounded-lg border border-border bg-card">
                       <div className="flex items-center gap-2 text-left">
-                        <span className="text-base">⚖️</span>
+                        <Scale className="w-4 h-4 text-muted-foreground/70 shrink-0" />
                         <span className="text-[13px] font-semibold text-foreground">
                           Your area has rent regulations that may apply
                         </span>
