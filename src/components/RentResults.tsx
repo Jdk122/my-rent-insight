@@ -1518,9 +1518,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               />
             )}
 
-            {/* ━━━ Intent Fork + Contextual CTA (fair/below-market path) ━━━ */}
+            {/* ━━━ Intent Fork — data collection only (fair/below-market path) ━━━ */}
             {hasIncrease && !isAboveMarket && isUnlocked && (
-              <section className="pt-6 pb-4 space-y-3">
+              <section className="pt-6 pb-4">
                 <IntentFork
                   analysisId={analysisId}
                   verdict={verdictLabel}
@@ -1531,36 +1531,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   selectedIntent={selectedIntent}
                   onIntentSelected={setSelectedIntent}
                 />
-                {selectedIntent === 'stay' && (
-                  <PartnerCTA
-                    variant="rent_reporting"
-                    analysisId={analysisId}
-                    verdict={verdictLabel}
-                    toolUsed="renewal"
-                    city={city}
-                    zip={rentData.zip}
-                    placement="post_verdict"
-                  />
-                )}
-                {selectedIntent === 'move' && (
-                  <>
-                    <PartnerCTA
-                      variant="moving_help"
-                      analysisId={analysisId}
-                      verdict={verdictLabel}
-                      toolUsed="renewal"
-                      city={city}
-                      zip={rentData.zip}
-                      placement="post_verdict"
-                    />
-                    <MoveCTA
-                      city={city}
-                      zip={rentData.zip}
-                      hasListingsAbove={(rentcastListings.data?.listings ?? []).length >= 1}
-                      placement="post_verdict"
-                    />
-                  </>
-                )}
               </section>
             )}
 
