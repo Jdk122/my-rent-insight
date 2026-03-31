@@ -1118,7 +1118,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               {isUnlocked && (
                 <button
                   onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="w-full mt-4 py-3.5 rounded-lg bg-foreground text-background text-[15px] font-semibold tracking-tight hover:opacity-90 transition-opacity max-w-[400px]"
+                  className="w-full mt-4 py-3.5 rounded-lg bg-primary text-primary-foreground text-[15px] font-semibold tracking-tight hover:brightness-95 transition-all shadow-sm shadow-primary/20 max-w-[400px]"
                 >
                   See full market data ↓
                 </button>
