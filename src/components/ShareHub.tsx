@@ -53,8 +53,6 @@ interface ShareHubProps {
   neighborsLabel?: string;
 }
 
-type ActivePanel = null | 'landlord' | 'neighbors';
-
 const ShareHub = ({
   reportPayload,
   onLinkGenerated,
@@ -67,15 +65,11 @@ const ShareHub = ({
   increasePct,
   marketYoy,
   verdict = 'above',
-  landlordLabel = 'Share with landlord',
   neighborsLabel = 'Share with neighbors',
 }: ShareHubProps) => {
-  const [activePanel, setActivePanel] = useState<ActivePanel>(null);
-
-  // ── Report link state (shared by both paths) ──
+  // ── Report link state ──
   const [reportUrl, setReportUrl] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   // ── Neighbors: copy state ──
   const [neighborCopied, setNeighborCopied] = useState(false);
