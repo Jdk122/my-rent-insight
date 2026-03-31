@@ -276,7 +276,7 @@ const WsipResults = ({
       sections.push({ id: 'section-share', label: 'Share' });
     }
     return sections;
-  }, [capturedEmail, compsWithRent.length, askingRent]);
+  }, [isUnlocked, capturedEmail, compsWithRent.length, askingRent]);
 
   // ━━━ Analytics ━━━
   useEffect(() => {
