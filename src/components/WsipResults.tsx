@@ -597,7 +597,7 @@ const WsipResults = ({
 
             {/* Stat cards — DESKTOP: show above gate. MOBILE: show below gate */}
             <div className="hidden md:grid w-full grid-cols-4 gap-4 max-w-[540px]">
-              <div className="text-center rounded-lg border border-border/80 bg-card px-2 sm:px-3 py-3 sm:py-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+              <div className="text-center rounded-lg bg-secondary/50 px-2 sm:px-3 py-3 sm:py-4">
                 <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">
                   {bldg.hasBuildingData ? 'Range' : 'Fair Range'}
                 </p>
@@ -617,19 +617,19 @@ const WsipResults = ({
                   </p>
                 )}
               </div>
-              <div className="text-center rounded-lg border border-border/80 bg-card px-2 sm:px-3 py-3 sm:py-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+              <div className="text-center rounded-lg bg-secondary/50 px-2 sm:px-3 py-3 sm:py-4">
                 <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Area Trend</p>
                 <p className={`font-display text-[18px] sm:text-[22px] tracking-tight tabular-nums ${marketYoy > 0 ? 'text-destructive' : marketYoy < 0 ? 'text-verdict-good' : 'text-foreground'}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
                   {marketYoy > 0 ? '+' : ''}{marketYoy}%
                 </p>
               </div>
-              <div className="text-center rounded-lg border border-border/80 bg-card px-2 sm:px-3 py-3 sm:py-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+              <div className="text-center rounded-lg bg-secondary/50 px-2 sm:px-3 py-3 sm:py-4">
                 <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Vacancy Rate</p>
                 <p className="font-display text-[18px] sm:text-[22px] tracking-tight text-foreground tabular-nums" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
                   {rentData.alVacancy !== null ? `${rentData.alVacancy.toFixed(1)}%` : '—'}
                 </p>
               </div>
-              <div className="text-center rounded-lg border border-border/80 bg-card px-2 sm:px-3 py-3 sm:py-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+              <div className="text-center rounded-lg bg-secondary/50 px-2 sm:px-3 py-3 sm:py-4">
                 <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Days on Market</p>
                 <p className="font-display text-[18px] sm:text-[22px] tracking-tight text-foreground tabular-nums" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
                   {rcMarket.rcAvgDaysOnMarket !== null ? Math.round(rcMarket.rcAvgDaysOnMarket) : '—'}
