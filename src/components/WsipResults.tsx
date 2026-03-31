@@ -889,8 +889,9 @@ const WsipResults = ({
                   Showing {allComps.length} comparable rental{allComps.length !== 1 ? 's' : ''}{compRadius.label ? ` ${compRadius.label}` : ''}.
                 </p>
                 {utilityNote && (
-                  <p className="text-[11px] text-muted-foreground/70 text-center mb-6 max-w-[480px] mx-auto italic">
-                    💡 {utilityNote}
+                  <p className="text-[11px] text-muted-foreground/70 text-center mb-6 max-w-[480px] mx-auto italic flex items-center justify-center gap-1.5">
+                    <Info className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" />
+                    {utilityNote}
                   </p>
                 )}
 
