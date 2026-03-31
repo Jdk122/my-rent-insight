@@ -1648,7 +1648,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             )}
 
             {/* ━━━ Footer zone — compact utility area ━━━ */}
-            <div className="mt-1 border-t border-border pt-3 space-y-2">
+            <div className="mt-1 border-t border-border pt-3 space-y-3">
               <FeedbackWidget
                 analysisId={analysisId}
                 page="renewal_results"
