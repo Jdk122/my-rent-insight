@@ -1119,8 +1119,8 @@ const WsipResults = ({
             </motion.div>
 
             {/* ━━━ SHARE + CROSS-LINK ━━━ */}
-            <motion.section id="section-share" {...fade(0.23)} className="pt-4 pb-10">
-              <h2 className="results-section-header mb-6">Share This Analysis</h2>
+            <motion.section id="section-share" {...fade(0.23)} className="pt-4 pb-6 sm:pb-10">
+              <h2 className="results-section-header">Share This Analysis</h2>
               <div className="flex justify-center">
                 <ShareHub
                   reportPayload={shareReportPayload}
