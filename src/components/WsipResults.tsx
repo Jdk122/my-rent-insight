@@ -765,8 +765,8 @@ const WsipResults = ({
         {isUnlocked && (
           <>
             {/* ━━━ MARKET CONDITIONS ━━━ */}
-            <motion.section id="section-market" {...fade(0.05)} className="pt-10 pb-8">
-              <h2 className="results-section-header mb-6">Market Conditions in {city}</h2>
+            <motion.section id="section-market" {...fade(0.05)} className="pt-6 sm:pt-10 pb-4 sm:pb-8">
+              <h2 className="results-section-header">Market Conditions in {city}</h2>
 
               <div className="space-y-6">
                 <div className="evidence-card">
