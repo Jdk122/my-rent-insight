@@ -1003,12 +1003,23 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
 
 
-               {isUnlocked && compsWithRent.length > 0 && (
-                <div className="sm:hidden flex flex-col items-center justify-center mt-3 mx-2 py-2.5 px-4 rounded-lg border border-primary/15 bg-primary/5 text-center">
-                  <span className="text-sm font-medium text-foreground">{compsWithRent.length} matched comps support your result</span>
-                  <span className="text-sm font-semibold text-primary mt-0.5">Your negotiation letter is ready ↓</span>
-                  <span className="text-xs text-muted-foreground mt-0.5">Full comps, counter-offer guidance, and market data below.</span>
-                </div>
+              {/* ── Primary CTA button ── */}
+              {isUnlocked && hasIncrease && (
+                <button
+                  onClick={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="w-full mt-4 py-3.5 rounded-lg bg-foreground text-background text-[15px] font-semibold tracking-tight hover:opacity-90 transition-opacity"
+                >
+                  {isAboveMarket ? 'Your negotiation letter is ready \u2193' : isBelowMarket ? 'Protect this rate \u2193' : 'Review your negotiation letter \u2193'}
+                </button>
+              )}
+              {isUnlocked && hasIncrease && (
+                <p className="text-[11px] text-muted-foreground/60 mt-1.5 text-center">
+                  {isAboveMarket
+                    ? `Based on ${compsWithRent.length} nearby comp${compsWithRent.length !== 1 ? 's' : ''}`
+                    : isBelowMarket
+                    ? 'Use our letter to negotiate extras or lock in a longer lease.'
+                    : 'Even a fair increase is worth a conversation.'}
+                </p>
               )}
 
 
