@@ -1,4 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
+import { getRentControlByStateCity, getApplicableCap } from '@/data/rentControlData';
 import { useEffect, useState, useMemo } from 'react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { NoIndexMeta } from '@/components/NoIndexMeta';
