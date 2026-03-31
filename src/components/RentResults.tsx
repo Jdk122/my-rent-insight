@@ -1536,7 +1536,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
             {/* ━━━ Know Your Rights (accordion) ━━━ */}
             {hasRentControl && (
-              <motion.section id="section-rights" {...fade(0.17)} className="pt-8 pb-4">
+              <motion.section id="section-rights" {...fade(0.17)} className="pt-4 sm:pt-8 pb-2 sm:pb-4">
                 <Accordion type="single" collapsible>
                   <AccordionItem value="rights" className="border-none">
                     <AccordionTrigger className="hover:no-underline py-3 px-4 rounded-lg border border-border bg-card">
