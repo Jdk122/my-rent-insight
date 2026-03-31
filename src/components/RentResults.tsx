@@ -1621,8 +1621,24 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </motion.section>
             )}
 
+            {/* ━━━ Soft email capture — post-letter (when gate is off and email not yet captured) ━━━ */}
+            {!EMAIL_GATE_ENABLED && !capturedEmail && (
+              <EmailReportPrompt
+                analysisId={analysisId}
+                leadContext={leadContext}
+                verdictLabel={verdictLabel}
+                zip={rentData.zip}
+                city={city}
+                onEmailCaptured={setCapturedEmail}
+                toolType="renewal"
+                shareReportPayload={shareReportPayload}
+                onReportGenerated={(url) => { setReportUrl(url); }}
+                placement="post_letter"
+              />
+            )}
+
             {/* ━━━ Intent Fork + Contextual CTA (above-market path) ━━━ */}
-            {hasIncrease && isAboveMarket && capturedEmail && (
+            {hasIncrease && isAboveMarket && isUnlocked && (
               <section className="pt-6 pb-4 space-y-3">
                 <IntentFork
                   analysisId={analysisId}
