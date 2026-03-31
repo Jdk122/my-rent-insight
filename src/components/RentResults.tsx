@@ -1117,7 +1117,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </div>
               </div>
 
-              <p className={`text-[13px] text-muted-foreground/70 mt-4 max-w-[440px] leading-relaxed ${!capturedEmail ? 'order-[4] md:order-none' : ''}`}>
+              <p className={`text-[13px] text-muted-foreground/70 mt-4 max-w-[440px] leading-relaxed ${!isUnlocked ? 'order-[4] md:order-none' : ''}`}>
                 {marketYoy > 3
                   ? `Rents in ${city} went up ${marketYoy}% this year. Staying flat is a win. Scroll down to see the full market data.`
                   : marketYoy > 0
