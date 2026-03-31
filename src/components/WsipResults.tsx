@@ -30,7 +30,7 @@ import WsipCompsList from './WsipCompsList';
 import ReportGate from './ReportGate';
 import PreGateCompPreview from './PreGateCompPreview';
 import FeedbackWidget from './FeedbackWidget';
-import EmailReportPrompt from './EmailReportPrompt';
+
 import PartnerCTA from './PartnerCTA';
 import LeaseReminderCapture from './LeaseReminderCapture';
 import { EMAIL_GATE_ENABLED, GATE_VARIANT } from '@/lib/featureFlags';
@@ -1024,21 +1024,6 @@ const WsipResults = ({
               </motion.section>
             )}
 
-            {/* ━━━ Soft email capture — post-letter (when gate is off and email not yet captured) ━━━ */}
-            {!EMAIL_GATE_ENABLED && !capturedEmail && (
-              <EmailReportPrompt
-                analysisId={analysisId}
-                leadContext={leadContext}
-                verdictLabel={verdictLabel}
-                zip={zip}
-                city={city}
-                onEmailCaptured={onEmailCaptured}
-                toolType="wsip"
-                shareReportPayload={shareReportPayload}
-                onReportGenerated={(url) => { setReportUrl(url); }}
-                placement="post_letter"
-              />
-            )}
 
             {/* ━━━ Lease reminder — universal, utility-first ━━━ */}
             {isUnlocked && (
@@ -1058,6 +1043,8 @@ const WsipResults = ({
                     city={city}
                     onEmailCaptured={onEmailCaptured}
                     toolType="wsip"
+                    shareReportPayload={shareReportPayload}
+                    onReportGenerated={(url) => { setReportUrl(url); }}
                   />
                 )}
               </section>
