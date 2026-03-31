@@ -65,6 +65,7 @@ const WsipResults = ({
   onEmailCaptured,
   onReset,
 }: WsipResultsProps) => {
+  const isUnlocked = !!capturedEmail || !EMAIL_GATE_ENABLED;
   const [{ analysisId, isDuplicateAnalysis }] = useState(() => {
     const brNum = bedrooms === 'studio' ? 0 : bedrooms === 'oneBr' ? 1 : bedrooms === 'twoBr' ? 2 : bedrooms === 'threeBr' ? 3 : 4;
     const result = checkAnalysisDedup(fullAddress, zip, brNum, askingRent ?? rentData.fmr, 'wsip');
