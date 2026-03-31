@@ -1353,7 +1353,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   )}
                   {bldg.hasBuildingData && (
                     <p className="text-sm text-muted-foreground mt-3 flex items-start gap-1.5">
-                      <span className="shrink-0 mt-0.5">🏢</span>
+                      <Building2 className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0 mt-0.5" />
                       Other {bldg.bedroomFilterLabel ? `${bldg.bedroomFilterLabel} ` : ''}units in this building rent for ${fmt(bldg.buildingLow)}
                       {bldg.buildingLow !== bldg.buildingHigh && ` – $${fmt(bldg.buildingHigh)}`}/month
                     </p>
