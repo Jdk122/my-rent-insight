@@ -1215,15 +1215,15 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             {/* Action Insight removed — verdict callout is now at end of evidence section */}
 
             {/* ━━━ EVIDENCE SECTION ━━━ */}
-            <section id="section-evidence" className="pt-10 pb-8">
-              <motion.h2 {...fade(0.05)} className="results-section-header mb-6">
+            <section id="section-evidence" className="pt-6 sm:pt-10 pb-4 sm:pb-8">
+              <motion.h2 {...fade(0.05)} className="results-section-header">
                 {hasIncrease ? 'The Evidence' : 'What the Market Says'}
               </motion.h2>
 
 
 
 
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Property Profile Card */}
                 {propertyData && (
                   <motion.div {...fade(0.06)} className="evidence-card">
@@ -1412,11 +1412,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             )}
 
             {hasIncrease && medianCompRent && hasEnoughComps && (
-              <motion.section id="section-comps" {...fade(0.15)} className="py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>
+              <motion.section id="section-comps" {...fade(0.15)} className="py-6 sm:py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>
                 <h2 className="results-section-header mb-2">
                   How Your Rent Compares to Nearby Units
                 </h2>
-                <p className="text-[12px] text-muted-foreground text-center mb-6">
+                <p className="text-[12px] text-muted-foreground text-center mb-4 sm:mb-6">
                   Showing {allComps.length} comparable rental{allComps.length !== 1 ? 's' : ''}{compRadius.label ? ` ${compRadius.label}` : ''}, sorted by relevance.
                   <span className="text-muted-foreground/60"> (Source: Real-time market listings)</span>
                 </p>
@@ -1479,7 +1479,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
             {/* ━━━ Universal rent reporting CTA ━━━ */}
             {isUnlocked && (
-              <section className="py-4">
+              <section className="py-3 sm:py-4">
                 <PartnerCTA
                   variant="rent_reporting"
                   analysisId={analysisId}
@@ -1520,7 +1520,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
             {/* ━━━ Intent Fork — data collection only (fair/below-market path) ━━━ */}
             {hasIncrease && !isAboveMarket && isUnlocked && (
-              <section className="pt-6 pb-4">
+              <section className="pt-4 sm:pt-6 pb-2 sm:pb-4">
                 <IntentFork
                   analysisId={analysisId}
                   verdict={verdictLabel}
@@ -1536,7 +1536,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
             {/* ━━━ Know Your Rights (accordion) ━━━ */}
             {hasRentControl && (
-              <motion.section id="section-rights" {...fade(0.17)} className="pt-8 pb-4">
+              <motion.section id="section-rights" {...fade(0.17)} className="pt-4 sm:pt-8 pb-2 sm:pb-4">
                 <Accordion type="single" collapsible>
                   <AccordionItem value="rights" className="border-none">
                     <AccordionTrigger className="hover:no-underline py-3 px-4 rounded-lg border border-border bg-card">
@@ -1565,7 +1565,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
             {/* ━━━ NEGOTIATION LETTER — fully visible ━━━ */}
             {hasIncrease && calc && (isAboveMarket || isFair || isBelowMarket) && (
-              <motion.section id="section-letter" {...fade(0.19)} className="pt-8 pb-8">
+              <motion.section id="section-letter" {...fade(0.19)} className="pt-5 pb-4 sm:pt-8 sm:pb-8">
                 {isFair && !isAboveMarket && !isBelowMarket && (
                   <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">
                     Even a fair increase is worth negotiating. Landlords expect it, and avoiding turnover is worth more to them than $50-100/month.
@@ -1640,7 +1640,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
             {/* ━━━ Moving help CTA (above-market, after listings) ━━━ */}
             {hasIncrease && isAboveMarket && isUnlocked && (
-              <section className="py-4 space-y-3">
+              <section className="py-3 sm:py-4 space-y-2 sm:space-y-3">
                 <PartnerCTA
                   variant="moving_help"
                   analysisId={analysisId}
@@ -1673,7 +1673,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
             {/* ━━━ Intent Fork — data collection only (above-market path) ━━━ */}
             {hasIncrease && isAboveMarket && isUnlocked && (
-              <section className="pt-6 pb-4">
+              <section className="pt-4 sm:pt-6 pb-2 sm:pb-4">
                 <IntentFork
                   analysisId={analysisId}
                   verdict={verdictLabel}
@@ -1744,8 +1744,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             </motion.div>
 
             {/* ━━━ Share ━━━ */}
-            <motion.section id="section-share" {...fade(0.23)} className="pt-4 pb-10">
-              <h2 className="results-section-header mb-6">
+            <motion.section id="section-share" {...fade(0.23)} className="pt-4 pb-6 sm:pb-10">
+              <h2 className="results-section-header">
                 {isAboveMarket ? 'Share Your Analysis' : 'Share This Tool'}
               </h2>
               <div className="flex justify-center">

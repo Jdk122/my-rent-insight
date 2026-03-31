@@ -765,10 +765,10 @@ const WsipResults = ({
         {isUnlocked && (
           <>
             {/* ━━━ MARKET CONDITIONS ━━━ */}
-            <motion.section id="section-market" {...fade(0.05)} className="pt-10 pb-8">
-              <h2 className="results-section-header mb-6">Market Conditions in {city}</h2>
+            <motion.section id="section-market" {...fade(0.05)} className="pt-6 sm:pt-10 pb-4 sm:pb-8">
+              <h2 className="results-section-header">Market Conditions in {city}</h2>
 
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 <div className="evidence-card">
                   <h3 className="evidence-card-header">What the Market Says</h3>
                   <p className="text-xs text-muted-foreground mb-4">
@@ -876,7 +876,7 @@ const WsipResults = ({
 
             {/* ━━━ COMPARABLE LISTINGS — fully visible ━━━ */}
             {compsWithRent.length > 0 && (
-              <motion.section id="section-comps" {...fade(0.15)} className="py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>
+              <motion.section id="section-comps" {...fade(0.15)} className="py-6 sm:py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>
                 <h2 className="results-section-header mb-2">
                   What Similar Units Actually Rent For
                 </h2>
@@ -914,7 +914,7 @@ const WsipResults = ({
 
             {/* ━━━ Universal rent reporting CTA ━━━ */}
             {isUnlocked && (
-              <section className="py-4">
+              <section className="py-3 sm:py-4">
                 <PartnerCTA
                   variant="rent_reporting"
                   analysisId={analysisId}
@@ -928,8 +928,8 @@ const WsipResults = ({
             )}
 
             {askingRent && (
-              <motion.section id="section-nextsteps" {...fade(0.19)} className="pt-8 pb-8">
-                <h2 className="results-section-header mb-6">Your Next Steps</h2>
+              <motion.section id="section-nextsteps" {...fade(0.19)} className="pt-5 pb-4 sm:pt-8 sm:pb-8">
+                <h2 className="results-section-header">Your Next Steps</h2>
 
                 <div className="evidence-card space-y-4">
                   {/* NEGOTIATION (overpriced by area OR building range) */}
@@ -1119,8 +1119,8 @@ const WsipResults = ({
             </motion.div>
 
             {/* ━━━ SHARE + CROSS-LINK ━━━ */}
-            <motion.section id="section-share" {...fade(0.23)} className="pt-4 pb-10">
-              <h2 className="results-section-header mb-6">Share This Analysis</h2>
+            <motion.section id="section-share" {...fade(0.23)} className="pt-4 pb-6 sm:pb-10">
+              <h2 className="results-section-header">Share This Analysis</h2>
               <div className="flex justify-center">
                 <ShareHub
                   reportPayload={shareReportPayload}
