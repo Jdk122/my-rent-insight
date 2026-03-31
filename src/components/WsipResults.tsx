@@ -1024,21 +1024,6 @@ const WsipResults = ({
               </motion.section>
             )}
 
-            {/* ━━━ Soft email capture — post-letter (when gate is off and email not yet captured) ━━━ */}
-            {!EMAIL_GATE_ENABLED && !capturedEmail && (
-              <EmailReportPrompt
-                analysisId={analysisId}
-                leadContext={leadContext}
-                verdictLabel={verdictLabel}
-                zip={zip}
-                city={city}
-                onEmailCaptured={onEmailCaptured}
-                toolType="wsip"
-                shareReportPayload={shareReportPayload}
-                onReportGenerated={(url) => { setReportUrl(url); }}
-                placement="post_letter"
-              />
-            )}
 
             {/* ━━━ Lease reminder — universal, utility-first ━━━ */}
             {isUnlocked && (
