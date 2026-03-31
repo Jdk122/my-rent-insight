@@ -89,6 +89,7 @@ const Index = () => {
   const [isAboveMarket, setIsAboveMarket] = useState(false);
 
   const hasIncrease = !!(results && results.formData.rentIncrease && results.formData.rentIncrease > 0);
+  const isUnlocked = !!capturedEmail || !EMAIL_GATE_ENABLED;
 
   const handleSubmit = async (data: RentFormData) => {
     setIsLoading(true);
