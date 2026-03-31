@@ -181,7 +181,7 @@ const RentByCity = () => {
   const metroName = zips[0]?.raw.m || '';
 
   const maxFmr1br = Math.max(...zips.map(z => z.raw.f[1]));
-  const answerBlock = `The average 1-bedroom fair market rent in ${city}, ${state} is ${fmt(avgFmr[1])}/month as of ${dataYear}, based on HUD data across ${zips.length} ZIP codes.${trendYoY !== null ? ` Rents have changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year over year (${trendAttribution}), so an increase above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local trend.` : ''} Rents range from ${fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to ${fmt(maxFmr1br)}.`;
+  const answerBlock = `The average 1-bedroom rent in ${city}, ${state} is ${fmt(avgFmr[1])}/month as of ${dataYear}, based on HUD data across ${zips.length} ZIP codes.${trendYoY !== null ? ` Rents have changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year over year.` : ''} Rents range from ${fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to ${fmt(maxFmr1br)}.`;
 
   // Compute affordable income threshold
   const affordableIncome = Math.round(avgFmr[1] * 12 / 0.3);
