@@ -54,8 +54,8 @@ const EmailReportPrompt = ({
 
   const heading = isCompact ? 'Save your analysis?' : 'Want a copy of this report?';
   const subtext = isCompact
-    ? "Get this report emailed to you so you have it when you talk to your landlord."
-    : "We'll email you everything — comps, letter, and market data — so you have it when you need it.";
+    ? "Get this report emailed to you for your next conversation with your landlord."
+    : "We'll send you the full report so you have your comps, letter, and market data ready.";
 
   const captureSource = `soft_${placement}`;
 
