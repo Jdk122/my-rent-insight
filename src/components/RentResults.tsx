@@ -663,7 +663,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   const navSections = useMemo(() => {
     const sections = [{ id: 'section-verdict', label: 'Verdict' }];
-    if (!capturedEmail) {
+    if (!isUnlocked) {
       sections.push({ id: 'section-gate', label: 'Report' });
     } else {
       if (hasIncrease && medianCompRent && hasEnoughComps) {
