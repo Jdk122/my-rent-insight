@@ -1671,8 +1671,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
               </p>
 
-              <section id="section-share" className="pb-2">
-                <h2 className="text-[15px] font-medium text-foreground mb-2">
+              <section id="section-share" className="py-6 sm:py-12">
+                <h2 className="results-section-header mb-2">
                   {isAboveMarket ? 'Share Your Analysis' : 'Share This Tool'}
                 </h2>
                 <div className="flex justify-center">
