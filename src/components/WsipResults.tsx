@@ -876,7 +876,7 @@ const WsipResults = ({
 
             {/* ━━━ COMPARABLE LISTINGS — fully visible ━━━ */}
             {compsWithRent.length > 0 && (
-              <motion.section id="section-comps" {...fade(0.15)} className="py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>
+              <motion.section id="section-comps" {...fade(0.15)} className="py-6 sm:py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>
                 <h2 className="results-section-header mb-2">
                   What Similar Units Actually Rent For
                 </h2>
