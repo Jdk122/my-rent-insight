@@ -1620,20 +1620,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             )}
 
             {/* ━━━ Intent Fork — data collection only (above-market path) ━━━ */}
-            {hasIncrease && isAboveMarket && isUnlocked && (
-              <section className="pt-4 sm:pt-6 pb-2 sm:pb-4">
-                <IntentFork
-                  analysisId={analysisId}
-                  verdict={verdictLabel}
-                  toolUsed="renewal"
-                  city={city}
-                  zip={rentData.zip}
-                  placement="post_letter"
-                  selectedIntent={selectedIntent}
-                  onIntentSelected={setSelectedIntent}
-                />
-              </section>
-            )}
 
 
 
