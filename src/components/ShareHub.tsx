@@ -121,12 +121,6 @@ const ShareHub = ({
   const handleSMS = () => { trackEvent('report_shared', { method: 'sms' }); window.open(`sms:?&body=${encodeURIComponent(smsBody)}`); };
   const handleWhatsApp = () => { trackEvent('report_shared', { method: 'whatsapp' }); window.open(`https://wa.me/?text=${encodeURIComponent(whatsappBody)}`); };
   const handleNeighborEmail = () => { trackEvent('report_shared', { method: 'email' }); window.open(`mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`); };
-  const handleTwitter = () => {
-    trackEvent('report_shared', { method: 'twitter' });
-    const tweetText = `Just checked — ${brLabel} rents in ${zipCode} (${city}) moved ${marketSign}${marketYoy}% this year. My landlord wants ${increasePct}%. Free tool:`;
-    window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
-  };
-  const handleFacebook = () => { trackEvent('report_shared', { method: 'facebook' }); window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank'); };
   const handleNeighborCopy = async () => {
     trackEvent('report_shared', { method: 'copy_link' });
     const ok = await copyToClipboard(shareUrl);
