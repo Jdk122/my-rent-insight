@@ -705,7 +705,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   return (
     <>
-      {capturedEmail && <SectionNav sections={navSections} />}
+      {isUnlocked && <SectionNav sections={navSections} />}
 
       {/* Exit Intent Modal (desktop only) — safety net */}
       <ExitIntentModal
