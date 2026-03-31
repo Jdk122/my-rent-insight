@@ -261,7 +261,7 @@ const Index = () => {
               <span className="sm:hidden">Get letter →</span>
             </button>
           )}
-          {results && hasIncrease && isAboveMarket && capturedEmail && (
+          {results && hasIncrease && isAboveMarket && isUnlocked && (
             <button
               onClick={() => {
                 document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' });
