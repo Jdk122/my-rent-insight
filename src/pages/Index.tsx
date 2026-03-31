@@ -22,6 +22,7 @@ import { lookupRentData, loadFredTrend, RentLookupResult } from '@/data/rentData
 import { usePropertyLookup } from '@/hooks/usePropertyLookup';
 import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
+import { EMAIL_GATE_ENABLED } from '@/lib/featureFlags';
 import SEO from '@/components/SEO';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
 import { getDemoData } from '@/data/demoData';
