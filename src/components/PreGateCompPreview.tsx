@@ -12,7 +12,7 @@ interface PreGateCompPreviewProps {
 
 const PreGateCompPreview = ({ compsWithRent, capturedEmail, fmt }: PreGateCompPreviewProps) => {
   const previewComp = useMemo(() => {
-    if (capturedEmail || compsWithRent.length < 3) return null;
+    if (!EMAIL_GATE_ENABLED || capturedEmail || compsWithRent.length < 3) return null;
     const best =
       compsWithRent.find(c => c.isSameUnitLine && c.rent && c.rent > 0) ||
       compsWithRent.find(c => c.isSameBuilding && c.rent && c.rent > 0) ||
