@@ -278,7 +278,7 @@ const Index = () => {
               <span className="sm:hidden">Copy letter →</span>
             </button>
           )}
-          {results && !(hasIncrease && isAboveMarket) && !capturedEmail && (
+          {results && !(hasIncrease && isAboveMarket) && !isUnlocked && (
             <button
               onClick={() => {
                 document.getElementById('section-gate')?.scrollIntoView({ behavior: 'smooth' });
