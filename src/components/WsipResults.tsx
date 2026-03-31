@@ -779,9 +779,14 @@ const WsipResults = ({
                     <span className="context-label">{city} rents this year</span>
                     <span className="context-value">
                       {marketYoy > 0 ? '+' : ''}{marketYoy}%
-                      <span className="context-sub"> ({compositeTrendResult.sourceCount >= 2
-                        ? 'composite: ' + compositeTrendResult.sources.map(s => s.label).join(', ')
-                        : compositeTrendResult.primarySource})</span>
+                      <span className="context-sub">
+                        <span className="hidden sm:inline">
+                          ({compositeTrendResult.sourceCount >= 2 ? 'composite: ' + compositeTrendResult.sources.map(s => s.label).join(', ') : compositeTrendResult.primarySource})
+                        </span>
+                        <span className="sm:hidden">
+                          ({compositeTrendResult.sourceCount >= 2 ? 'composite' : compositeTrendResult.primarySource})
+                        </span>
+                      </span>
                     </span>
                   </div>
 
