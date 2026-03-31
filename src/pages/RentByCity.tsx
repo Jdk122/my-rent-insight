@@ -186,6 +186,11 @@ const RentByCity = () => {
   // Compute affordable income threshold
   const affordableIncome = Math.round(avgFmr[1] * 12 / 0.3);
 
+  const rentControlInfo = useMemo(() => {
+    const rc = getRentControlByStateCity(state, city);
+    return rc ? getApplicableCap(rc) : null;
+  }, [state, city]);
+
   const faqItems = [
     {
       q: `What is the average 1-bedroom rent in ${city}, ${state}?`,
