@@ -205,7 +205,7 @@ const WhatShouldIPay = () => {
           >
             Check My Increase →
           </Link>
-          {results && !capturedEmail && (
+          {results && !isUnlocked && (
             <button
               onClick={() => {
                 const target = document.getElementById('section-comps')
