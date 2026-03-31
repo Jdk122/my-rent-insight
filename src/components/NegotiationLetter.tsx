@@ -401,10 +401,6 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
 
   return (
     <div>
-      {/* Disclaimer above letter */}
-      <p className="text-[12px] text-muted-foreground/70 mt-4 mb-3 leading-relaxed">
-        This letter is a suggested starting point for negotiation based on market data. Review and personalize before sending.
-      </p>
 
       {/* Letter container */}
       <div
