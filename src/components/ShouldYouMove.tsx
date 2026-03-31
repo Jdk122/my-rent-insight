@@ -157,7 +157,7 @@ function CompsWithRentLine({
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-foreground truncate flex items-center gap-1.5">
                 <MapPin className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-                {comp.formattedAddress}
+                {trimAddress(comp.formattedAddress)}
                 {comp.isSameUnitLine && (
                   <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
                     Same line
