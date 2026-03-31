@@ -1648,14 +1648,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             )}
 
             {/* ━━━ Footer zone — compact utility area ━━━ */}
-            <div className="mt-6 border-t border-border pt-4 space-y-4">
-              <p className="text-[11px] text-muted-foreground/60 text-center">
-                See something that doesn't look right?{' '}
-                <a href="mailto:james@renewalreply.com?subject=Data%20issue%20report&body=Address%3A%20%0AZip%3A%20%0AWhat%20looks%20wrong%3A%20" className="underline hover:text-muted-foreground transition-colors">
-                  Report a data issue
-                </a>
-              </p>
-
+            <div className="mt-6 border-t border-border pt-4 space-y-3">
               <FeedbackWidget
                 analysisId={analysisId}
                 page="renewal_results"
@@ -1663,11 +1656,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 scoreSnapshot={fairnessScore?.total ?? null}
                 confidenceSnapshot={effectiveConfidence.level}
               />
-
-              <p className="text-[11px] text-muted-foreground/60 text-center leading-relaxed">
-                This analysis is for informational purposes only and does not constitute legal, financial, or real estate advice.{' '}
-                <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
-              </p>
 
               <div id="section-share" className="flex justify-center">
                 <ShareHub
@@ -1731,6 +1719,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   </Link>
                 </p>
               )}
+
+              <p className="text-[11px] text-muted-foreground/50 text-center pt-1 pb-2">
+                <a href="mailto:james@renewalreply.com?subject=Data%20issue%20report&body=Address%3A%20%0AZip%3A%20%0AWhat%20looks%20wrong%3A%20" className="underline hover:text-muted-foreground transition-colors">
+                  Report a data issue
+                </a>{' · '}
+                <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">Methodology</Link>
+              </p>
             </div>
           </>
         )}
