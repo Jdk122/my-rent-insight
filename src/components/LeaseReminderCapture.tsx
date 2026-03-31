@@ -174,7 +174,7 @@ const LeaseReminderCapture = ({
           <p className="text-sm font-semibold text-foreground">Not ready to act today? We'll remind you.</p>
         </div>
         <p className="text-[13px] text-muted-foreground leading-relaxed">
-          Enter your renewal month and we'll send you one free market report 90 days before your lease ends — with fresh comps and a ready-to-send letter.
+          Enter your renewal month and we'll send you a free market report 90 days before your lease ends, with fresh comps and a ready-to-send letter.
         </p>
       </div>
       <div className="flex flex-wrap gap-2 max-w-[520px]">
