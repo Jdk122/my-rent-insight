@@ -1412,7 +1412,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             )}
 
             {hasIncrease && medianCompRent && hasEnoughComps && (
-              <motion.section id="section-comps" {...fade(0.15)} className="py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>
+              <motion.section id="section-comps" {...fade(0.15)} className="py-6 sm:py-12 -mx-2 px-2 rounded-2xl" style={{ background: 'hsl(var(--comps-bg))' }}>
                 <h2 className="results-section-header mb-2">
                   How Your Rent Compares to Nearby Units
                 </h2>
