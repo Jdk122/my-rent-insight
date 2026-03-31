@@ -1687,14 +1687,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
 
             {/* ━━━ Post-conversion flow ━━━ */}
-            <section className="pb-4 pt-2">
-              <PostConversionFlow
-                email={capturedEmail}
-                leadContext={leadContext}
-                verdictLabel={verdictLabel}
-                zip={rentData.zip}
-              />
-            </section>
+            {capturedEmail && (
+              <section className="pb-4 pt-2">
+                <PostConversionFlow
+                  email={capturedEmail}
+                  leadContext={leadContext}
+                  verdictLabel={verdictLabel}
+                  zip={rentData.zip}
+                />
+              </section>
+            )}
 
             <p className="text-[11px] text-muted-foreground/60 text-center mb-2">
               See something that doesn't look right?{' '}
