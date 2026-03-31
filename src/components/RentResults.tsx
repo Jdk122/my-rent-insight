@@ -496,7 +496,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   // ━━━ Analytics tracking ━━━
   useEffect(() => {
-    trackEvent('analysis_completed', { tool: 'renewal', zip: rentData.zip, verdict: verdictLabel, score: fairnessScore?.total ?? null });
+    trackEvent('analysis_completed', { tool: 'renewal', zip: rentData.zip, verdict: verdictLabel, score: fairnessScore?.total ?? null, gate_variant: GATE_VARIANT });
   }, []);
 
   // Reset rent warning dismissal on new analysis
