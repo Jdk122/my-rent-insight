@@ -184,16 +184,6 @@ Deno.serve(async (req) => {
         break;
       }
 
-      case "referral_clicks": {
-        const { data: rows, error } = await supabase
-          .from("referral_clicks")
-          .select("id, analysis_id, email, link_type, event_type, placement, zip, created_at")
-          .order("created_at", { ascending: false })
-          .limit(500);
-        if (error) throw error;
-        data = rows;
-        break;
-      }
 
       case "referral_clicks": {
         const { data: clicks, error: rcErr } = await supabase
