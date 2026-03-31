@@ -257,6 +257,29 @@ const RentByState = () => {
           </p>
         </section>
 
+        {/* ═══ AEO: Query-matching answer sections ═══ */}
+        <section className="mb-12 space-y-8">
+          <div>
+            <h2 className="font-display text-xl text-foreground mb-2 tracking-tight">
+              How much is rent in {stateName}?
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {`The average 1-bedroom rent in ${stateName} is ${fmt(avgFmr1br)}/month as of ${dataYear}, based on HUD Fair Market Rent data across ${cities.length} cities and ${totalZips.toLocaleString()} ZIP codes.${stateYoY !== null ? ` Rents statewide have changed ${stateYoY > 0 ? '+' : ''}${stateYoY.toFixed(1)}% year over year.` : ''} Rents vary widely by city — see the table below for a breakdown.`}
+            </p>
+          </div>
+
+          {stateYoY !== null && (
+            <div>
+              <h2 className="font-display text-xl text-foreground mb-2 tracking-tight">
+                What is a fair rent increase in {stateName}?
+              </h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {`Based on market data, a rent increase around ${Math.abs(stateYoY).toFixed(1)}% is broadly in line with the ${stateName} statewide trend for ${dataYear}. Increases above this level exceed the statewide average, though local conditions vary significantly. Check city and ZIP-level pages for your specific area.`}
+              </p>
+            </div>
+          )}
+        </section>
+
         {/* RenterToolsCTA moved below FAQ */}
 
         {/* Search */}

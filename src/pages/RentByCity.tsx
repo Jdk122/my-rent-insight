@@ -1,4 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
+import { getRentControlByStateCity, getApplicableCap } from '@/data/rentControlData';
 import { useEffect, useState, useMemo } from 'react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { NoIndexMeta } from '@/components/NoIndexMeta';
@@ -126,6 +127,12 @@ const RentByCity = () => {
     return { fmrVaries: fmrVar, hasZipLevelYoY: hasYoY, displayedZips: displayed, hasMoreZips: more };
   }, [data, alData, zipSearch]);
 
+  const rentControlInfo = useMemo(() => {
+    if (!data) return null;
+    const rc = getRentControlByStateCity(data.state, data.city);
+    return rc ? getApplicableCap(rc) : null;
+  }, [data]);
+
   usePrerenderReady(!loading);
 
   if (loading) return <LoadingSkeleton stateSlug={stateSlug} citySlug={citySlug} />;
@@ -180,7 +187,7 @@ const RentByCity = () => {
   const metroName = zips[0]?.raw.m || '';
 
   const maxFmr1br = Math.max(...zips.map(z => z.raw.f[1]));
-  const answerBlock = `The average 1-bedroom fair market rent in ${city}, ${state} is ${fmt(avgFmr[1])}/month as of ${dataYear}, based on HUD data across ${zips.length} ZIP codes.${trendYoY !== null ? ` Rents have changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year over year (${trendAttribution}), so an increase above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local trend.` : ''} Rents range from ${fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to ${fmt(maxFmr1br)}.`;
+  const answerBlock = `The average 1-bedroom rent in ${city}, ${state} is ${fmt(avgFmr[1])}/month as of ${dataYear}, based on HUD data across ${zips.length} ZIP codes.${trendYoY !== null ? ` Rents have changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year over year.` : ''} Rents range from ${fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to ${fmt(maxFmr1br)}.`;
 
   // Compute affordable income threshold
   const affordableIncome = Math.round(avgFmr[1] * 12 / 0.3);
@@ -205,6 +212,16 @@ const RentByCity = () => {
     {
       q: `How much do rents vary across ${city}?`,
       a: `1-bedroom rents across ${city} range from ${fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to ${fmt(Math.max(...zips.map(z => z.raw.f[1])))} on this page, showing that rent can vary materially across ZIP codes within the same city.`,
+    },
+    {
+      q: `Can my landlord raise my rent in ${city}?`,
+      a: rentControlInfo
+        ? `In ${city}, rent increases are regulated under ${rentControlInfo.jurisdiction} protections.${rentControlInfo.maxIncreaseFormula ? ` The maximum increase is generally ${rentControlInfo.maxIncreaseFormula}.` : ''} Landlords must also follow applicable state notice requirements.`
+        : `We could not identify a city-specific rent cap for ${city}. Landlords must still follow applicable state and local notice rules before raising rent at lease renewal. Check your state's requirements for specifics.`,
+    },
+    {
+      q: `How much should I spend on rent in ${city}?`,
+      a: `The general guideline is to spend no more than 30% of your gross income on rent. With average 1-bedroom rent in ${city} at ${fmt(avgFmr[1])}/month, a household would need approximately ${fmt(affordableIncome)}/year to afford this comfortably.`,
     },
   ];
 
@@ -371,6 +388,56 @@ const RentByCity = () => {
               📊 Market trend data is limited for this area. The analysis below uses federal rent benchmarks.
             </p>
           )}
+        </section>
+
+        {/* ═══ AEO: Query-matching answer sections ═══ */}
+        <section className="mb-12 space-y-8">
+          <div>
+            <h2 className="font-display text-xl text-foreground mb-2 tracking-tight">
+              How much is rent in {city}, {state}?
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              The average 1-bedroom rent in {city}, {state} is {fmt(avgFmr[1])}/month as of {dataYear}, based on HUD data across {zips.length} ZIP codes.
+              {cheapestZip && maxFmr1br > (cheapestZip.fmr1br ?? avgFmr[1]) + 100
+                ? ` Rents range from ${fmt(cheapestZip.fmr1br ?? avgFmr[1])} to ${fmt(maxFmr1br)} depending on neighborhood — a ${fmt(maxFmr1br - (cheapestZip.fmr1br ?? avgFmr[1]))}/month spread.`
+                : ` Rents across ${city} are relatively uniform, clustering around ${fmt(avgFmr[1])}/month.`}
+              {` To afford this at the 30% rule, a household would need approximately ${fmt(affordableIncome)}/year.`}
+            </p>
+          </div>
+
+          {trendYoY !== null && (
+            <div>
+              <h2 className="font-display text-xl text-foreground mb-2 tracking-tight">
+                Is rent going up in {city}?
+              </h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {trendYoY >= 0
+                  ? `Rents in ${city} have increased ${trendYoY.toFixed(1)}% year over year based on ${trendAttribution} data.`
+                  : `Rents in ${city} have decreased ${Math.abs(trendYoY).toFixed(1)}% year over year based on ${trendAttribution} data.`}
+                {trendYoY > 5
+                  ? ` This is a notably high rate of increase, indicating strong upward rent pressure in ${city}.`
+                  : trendYoY > 0
+                  ? ` This suggests a relatively stable rental market.`
+                  : ` Declining rents may give renters leverage when negotiating renewals.`}
+              </p>
+            </div>
+          )}
+
+          <div>
+            <h2 className="font-display text-xl text-foreground mb-2 tracking-tight">
+              What is a fair rent increase in {city}?
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {trendYoY !== null
+                ? `Based on ${trendAttribution} data, a rent increase around ${Math.abs(trendYoY).toFixed(1)}% is in line with the ${city} market for ${dataYear}. An increase above that level exceeds the local trend and may be worth pushing back on.`
+                : `Without strong local trend data for ${city}, a fair increase is best judged against the current 1-bedroom benchmark of ${fmt(avgFmr[1])}/month and comparable listings in your ZIP code.`}
+              {rentControlInfo
+                ? ` Note: ${rentControlInfo.jurisdiction} has rent increase protections${rentControlInfo.maxIncreaseFormula ? ` — the cap is generally ${rentControlInfo.maxIncreaseFormula}` : ''}.`
+                : ''}
+              {' '}Check your specific increase with RenewalReply's{' '}
+              <Link to="/" className="text-primary hover:underline">free rent analysis tool</Link>.
+            </p>
+          </div>
         </section>
 
         {/* ═══ Section B: Rent Trends ═══ */}
