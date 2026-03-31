@@ -1622,8 +1622,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </motion.section>
             )}
 
-            {/* ━━━ Soft email capture — post-letter (when gate is off and email not yet captured) ━━━ */}
-            {!EMAIL_GATE_ENABLED && !capturedEmail && (
+            {/* ━━━ Soft email capture — post-letter (when gate is off, email not yet captured, and has letter) ━━━ */}
+            {!EMAIL_GATE_ENABLED && !capturedEmail && hasIncrease && (
               <EmailReportPrompt
                 analysisId={analysisId}
                 leadContext={leadContext}
