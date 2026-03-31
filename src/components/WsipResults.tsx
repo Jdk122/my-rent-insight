@@ -563,7 +563,7 @@ const WsipResults = ({
             </div>
 
             {/* ── MOBILE: proof cue + gate BEFORE stat cards ── */}
-            {!capturedEmail && (
+            {!isUnlocked && (
               <div className="block md:hidden w-full">
                 <div className="text-center mt-2 mb-1">
                   <p className="text-xs text-muted-foreground">
