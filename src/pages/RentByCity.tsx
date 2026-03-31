@@ -187,9 +187,10 @@ const RentByCity = () => {
   const affordableIncome = Math.round(avgFmr[1] * 12 / 0.3);
 
   const rentControlInfo = useMemo(() => {
-    const rc = getRentControlByStateCity(state, city);
+    if (!data) return null;
+    const rc = getRentControlByStateCity(data.state, data.city);
     return rc ? getApplicableCap(rc) : null;
-  }, [state, city]);
+  }, [data]);
 
   const faqItems = [
     {
