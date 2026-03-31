@@ -83,15 +83,17 @@ const PartnerCTA = ({
       placement,
     });
 
+    const row: Record<string, string | null> = {
+      event_type: 'affiliate_click',
+      link_type: linkType,
+      zip,
+      placement,
+    };
+    if (analysisId) row.analysis_id = analysisId;
+
     supabase
       .from('referral_clicks')
-      .insert({
-        event_type: 'affiliate_click',
-        link_type: linkType,
-        analysis_id: analysisId || null,
-        zip,
-        placement,
-      } as any)
+      .insert(row as any)
       .then(() => {});
   }, [analysisId, verdict, toolUsed, city, zip, placement, linkType]);
 
