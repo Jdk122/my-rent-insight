@@ -1049,15 +1049,26 @@ const WsipResults = ({
               />
             )}
 
-            {/* ━━━ Post-conversion flow ━━━ */}
-            {capturedEmail && (
+            {/* ━━━ Lease reminder — universal, utility-first ━━━ */}
+            {isUnlocked && (
               <section className="pb-4 pt-2">
-                <WsipPostConversion
-                  email={capturedEmail}
-                  leadContext={leadContext}
-                  verdictLabel={verdictLabel}
-                  zip={zip}
-                />
+                {capturedEmail ? (
+                  <WsipPostConversion
+                    email={capturedEmail}
+                    leadContext={leadContext}
+                    verdictLabel={verdictLabel}
+                    zip={zip}
+                  />
+                ) : (
+                  <LeaseReminderCapture
+                    leadContext={leadContext}
+                    verdictLabel={verdictLabel}
+                    zip={zip}
+                    city={city}
+                    onEmailCaptured={onEmailCaptured}
+                    toolType="wsip"
+                  />
+                )}
               </section>
             )}
 
