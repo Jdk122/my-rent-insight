@@ -918,7 +918,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                                 isUnlocked
                                   ? <>Other units in your building rent for ${fmt(bldg.buildingLow)}{bldg.buildingLow !== bldg.buildingHigh ? `–$${fmt(bldg.buildingHigh)}` : ''}/month. At ${fmt(newRent)}/mo, your rent is {newRent > bldg.buildingHigh ? 'above' : 'at the top of'} this range.</>
                                   : <>Comparable units near you rent for less than your proposed price.</>
-                              ) : capturedEmail
+                              ) : isUnlocked
                                 ? <>Rents moved {marketYoy}%. Your landlord wants {increasePct}%. That's ${fmt(increaseAmount * 12)} more per year.</>
                                 : <>Rents moved {marketYoy}%. Your landlord wants {increasePct}%.</>
                           ) : isFair ? (
