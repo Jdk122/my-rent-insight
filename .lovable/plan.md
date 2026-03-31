@@ -1,25 +1,48 @@
 
 
-## Problem
+# Email Gate → Feature Flag (Toggleable)
 
-The current migration approach has a fundamental flaw: fetching `https://www.huduser.gov/portal/datasets/fmr/fmr2026/fy2026_erap_fmrs.xlsx` directly from the browser will be blocked by CORS (HUD doesn't set `Access-Control-Allow-Origin` headers). Even if it worked, the Coverage tab only shows county data after the migration button is clicked AND the file is uploaded to storage.
+## Overview
+Wrap the existing email gate in a feature flag so it can be toggled off (default: off). When off, all report content is immediately visible. Two soft, non-blocking inline email capture cards appear as optional capture points. No code is deleted — everything is wrapped in conditionals.
 
-## Plan: Edge Function Proxy + Streaming Approach
+## Files
 
-Since the previous edge function OOM'd trying to parse the full XLSX in memory, we'll use a **hybrid approach**:
+### 1. `src/lib/featureFlags.ts` — NEW
+Feature flag constant `EMAIL_GATE_ENABLED` (reads `VITE_EMAIL_GATE_ENABLED`, defaults to `false`) and `GATE_VARIANT` string for analytics tagging.
 
-1. **Create a lightweight edge function** (`proxy-hud-xlsx`) that simply proxies/streams the HUD XLSX file back to the client, bypassing CORS. No parsing on the server — just a pass-through fetch.
+### 2. `src/components/EmailReportPrompt.tsx` — NEW
+Non-blocking inline email capture card with two placement variants (`post_evidence` and `post_letter`). Design: card with mail icon, headline, subtext, inline email input + "Send" button. After submit: green checkmark + confirmation message. Follows the exact same lead capture pipeline as existing EmailCapture/ReportGate (upsert_lead RPC, lead_events insert, rememberEmail, trackEvent, trackAdsConversion, generateSharedReport, sendConfirmationEmail, notifySubmission).
 
-2. **Keep client-side XLSX parsing** — the browser has plenty of memory for a 6MB file. The migration button will:
-   - Fetch via the edge function proxy (no CORS issue)
-   - Parse with SheetJS in browser
-   - Upload result to `temp-data` storage bucket
+### 3. `src/components/RentResults.tsx` — MODIFY (~40 changes)
+- Add `isUnlocked = !!capturedEmail || !EMAIL_GATE_ENABLED`
+- Replace ~15 `!capturedEmail` gate conditionals with `!isUnlocked`
+- Replace ~15 `capturedEmail &&` post-gate conditionals with `isUnlocked &&`
+- Update `capturedEmail ?` ternaries in verdict subtitles to `isUnlocked ?`
+- Update navSections memo: `!capturedEmail` → `!isUnlocked`, add to deps
+- Update rentcast listings trigger: `!!capturedEmail` → `isUnlocked`
+- Gate analytics: skip gate_viewed when flag is off; add `report_shown_ungated` event
+- Add `gate_variant: GATE_VARIANT` to directly-fired trackEvent calls
+- Insert two `<EmailReportPrompt>` placements (post_evidence, post_letter) — only shown when gate off and no email captured
+- Wrap PostConversionFlow in `{capturedEmail && ...}` (only shows after actual email capture)
 
-3. **Auto-refresh Coverage tab** after migration completes by invalidating the county data cache.
+### 4. `src/components/WsipResults.tsx` — MODIFY (~15 changes)
+Same pattern: `isUnlocked` variable, conditional replacements for mobile gate, desktop gate, Phase 3 wrapper, navSections. Two soft capture placements. Wrap WsipPostConversion. Add `gate_variant` to direct trackEvent calls.
 
-### Files to create/edit:
-- **Create** `supabase/functions/proxy-hud-xlsx/index.ts` — simple proxy that fetches the HUD URL and returns the binary response
-- **Edit** `src/pages/AdminDataQuality.tsx` — change the ERAP fetch URL to use the edge function proxy instead of direct HUD URL
+### 5. `src/components/PreGateCompPreview.tsx` — MODIFY (1 line)
+Add `!EMAIL_GATE_ENABLED` to the early-return condition so preview hides when gate is off (full comps already visible).
 
-The edge function will be ~15 lines: fetch the HUD URL server-side and pipe the response back with proper CORS headers. No XLSX parsing on the server.
+### 6. `src/pages/Index.tsx` — MODIFY (4 nav CTA conditionals)
+Add `isUnlocked` variable, swap nav button conditionals from `capturedEmail`/`!capturedEmail` to `isUnlocked`/`!isUnlocked`.
+
+### 7. `src/pages/WhatShouldIPay.tsx` — MODIFY (2 nav CTA conditionals)
+Same pattern as Index.tsx.
+
+## What stays untouched
+- ReportGate.tsx, LetterGate.tsx, ExitIntentModal.tsx, MobileScrollPrompt.tsx — not modified
+- No Supabase tables, RPCs, edge functions, or email infrastructure changes
+- No scoring logic, affiliate config, or layout reordering
+- No child component modifications (ShareHub, NegotiationLetter, IntentFork, PartnerCTA, MoveCTA)
+- `capturedEmail` state variable preserved — still used for soft capture
+
+**7 files total. 2 new, 5 modified. 0 deleted.**
 
