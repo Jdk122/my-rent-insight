@@ -986,7 +986,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 transition={{ delay: 0.2, duration: 0.5 }}
                 className={`mt-2 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 max-w-[540px] ${!isUnlocked ? 'order-[4] md:order-none' : ''}`}
               >
-                {!capturedEmail && (
+                {!isUnlocked && (
                   <p className="md:hidden col-span-2 text-[9px] font-semibold uppercase tracking-widest text-muted-foreground text-center mb-1">
                     Your full report
                   </p>
