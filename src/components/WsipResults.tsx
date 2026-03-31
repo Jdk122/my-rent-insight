@@ -679,7 +679,7 @@ const WsipResults = ({
                 </div>
               )}
 
-              <PreGateCompPreview compsWithRent={compsWithRent} capturedEmail={capturedEmail} fmt={fmt} />
+              
 
               {/* Rent control note — mobile position (below gate) */}
               {rentControlCap && rentControlCap.maxIncreaseFormula && buildingEligibility !== 'ineligible' && (

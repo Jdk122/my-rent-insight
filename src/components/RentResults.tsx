@@ -1071,60 +1071,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </p>
 
 
-              {/* ── Email gate (no-increase path) ── */}
-              {!isUnlocked && (
-                <section id="section-gate" className="py-8">
-                  <ReportGate
-                    toolType="renewal"
-                    compsCount={compsWithRent.length}
-                    verdictLabel={verdictLabel}
-                    isHighPain={false}
-                    verdict="none"
-                    leadContext={leadContext}
-                    analysisId={analysisId}
-                    zip={rentData.zip}
-                    city={city}
-                    onEmailCaptured={setCapturedEmail}
-                    prefilledEmail={capturedEmail}
-                    shareReportPayload={shareReportPayload}
-                    onReportGenerated={(url) => { setReportUrl(url); }}
-                    marketYoy={marketYoy}
-                  />
-
-                  {/* Blurred skeleton preview below gate */}
-                  <div className="mt-4 w-full max-w-[540px] mx-auto relative" aria-hidden="true">
-                    <div className="rounded-lg border border-border/60 bg-card p-4 space-y-3" style={{ filter: 'blur(5px)', userSelect: 'none', pointerEvents: 'none' }}>
-                      <div className="flex justify-between items-center py-2 border-b border-border/40">
-                        <div className="flex flex-col gap-1">
-                          <div className="h-3.5 w-40 bg-muted-foreground/20 rounded" />
-                          <div className="h-3 w-24 bg-muted-foreground/10 rounded" />
-                        </div>
-                        <div className="h-4 w-20 bg-muted-foreground/20 rounded" />
-                      </div>
-                      <div className="flex justify-between items-center py-2 border-b border-border/40">
-                        <div className="flex flex-col gap-1">
-                          <div className="h-3.5 w-36 bg-muted-foreground/20 rounded" />
-                          <div className="h-3 w-28 bg-muted-foreground/10 rounded" />
-                        </div>
-                        <div className="h-4 w-20 bg-muted-foreground/20 rounded" />
-                      </div>
-                      <div className="flex justify-between items-center py-2">
-                        <div className="flex flex-col gap-1">
-                          <div className="h-3.5 w-44 bg-muted-foreground/20 rounded" />
-                          <div className="h-3 w-20 bg-muted-foreground/10 rounded" />
-                        </div>
-                        <div className="h-4 w-20 bg-muted-foreground/20 rounded" />
-                      </div>
-                    </div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-sm font-semibold text-muted-foreground bg-background/80 px-4 py-2 rounded-full border border-border/60">
-                        Enter your email above to unlock
-                      </span>
-                    </div>
-                  </div>
-                </section>
-              )}
-
               <div className={`mt-4 flex flex-col items-center gap-2 ${!isUnlocked ? 'order-[6] md:order-none' : ''}`}>
                 <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
                   ← Check a different address
