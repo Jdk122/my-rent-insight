@@ -401,7 +401,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     rentData.zip,
     bedroomNum,
     analysisId,
-    !!capturedEmail && effectiveVerdict !== 'below',
+    isUnlocked && effectiveVerdict !== 'below',
   );
 
   useEffect(() => {
