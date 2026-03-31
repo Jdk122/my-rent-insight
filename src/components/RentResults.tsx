@@ -1207,7 +1207,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <div className="w-full bg-card">
         <div className="max-w-[620px] mx-auto px-5 sm:px-6">
-        {capturedEmail && (
+        {isUnlocked && (
           <>
             {/* Action Insight removed — verdict callout is now at end of evidence section */}
 
