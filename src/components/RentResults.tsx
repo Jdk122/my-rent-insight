@@ -1690,15 +1690,26 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
 
 
-            {/* ━━━ Post-conversion flow ━━━ */}
-            {capturedEmail && (
+            {/* ━━━ Lease reminder — universal, utility-first ━━━ */}
+            {isUnlocked && (
               <section className="pb-4 pt-2">
-                <PostConversionFlow
-                  email={capturedEmail}
-                  leadContext={leadContext}
-                  verdictLabel={verdictLabel}
-                  zip={rentData.zip}
-                />
+                {capturedEmail ? (
+                  <PostConversionFlow
+                    email={capturedEmail}
+                    leadContext={leadContext}
+                    verdictLabel={verdictLabel}
+                    zip={rentData.zip}
+                  />
+                ) : (
+                  <LeaseReminderCapture
+                    leadContext={leadContext}
+                    verdictLabel={verdictLabel}
+                    zip={rentData.zip}
+                    city={city}
+                    onEmailCaptured={setCapturedEmail}
+                    toolType="renewal"
+                  />
+                )}
               </section>
             )}
 
