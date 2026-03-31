@@ -267,7 +267,7 @@ const WsipResults = ({
     const sections = [
       { id: 'section-verdict', label: 'Verdict' },
     ];
-    if (!capturedEmail) {
+    if (!isUnlocked) {
       sections.push({ id: 'section-gate', label: 'Report' });
     } else {
       sections.push({ id: 'section-market', label: 'Market' });
