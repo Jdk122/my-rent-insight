@@ -915,7 +915,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             counterExceedsProposed
                               ? <>Based on market data, your proposed rent may be more reasonable than the increase rate suggests.</>
                               : bldg.hasBuildingData && bldg.buildingComps.length >= 3 ? (
-                                capturedEmail
+                                isUnlocked
                                   ? <>Other units in your building rent for ${fmt(bldg.buildingLow)}{bldg.buildingLow !== bldg.buildingHigh ? `–$${fmt(bldg.buildingHigh)}` : ''}/month. At ${fmt(newRent)}/mo, your rent is {newRent > bldg.buildingHigh ? 'above' : 'at the top of'} this range.</>
                                   : <>Comparable units near you rent for less than your proposed price.</>
                               ) : capturedEmail
