@@ -105,40 +105,8 @@ const ShareHub = ({
     }
   };
 
-  const handleShareLandlord = async () => {
-    trackEvent('report_shared', { method: 'landlord', zip: zipCode, verdict });
-    const url = reportUrl || await generateReportLink();
-    if (url) {
-      // Try native share on mobile first
-      if (navigator.share) {
-        try {
-          await navigator.share({ title: 'My Rent Analysis', text: 'Here\'s my rent increase analysis:', url });
-          setActivePanel('landlord');
-          return;
-        } catch (e) {
-          if ((e as Error).name === 'AbortError') return;
-          // Fall through to copy
-        }
-      }
-      const ok = await copyToClipboard(url);
-      if (ok) {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2500);
-        toast.success('Link copied — send it to your landlord!');
-      } else {
-        toast.error('Copy failed — long-press the link to copy.');
-      }
-      setActivePanel('landlord');
-    }
-  };
 
-  const handleShareNeighbors = async () => {
-    trackEvent('report_shared', { method: 'neighbors', zip: zipCode, verdict });
-    const url = reportUrl || await generateReportLink();
-    if (url) {
-      setActivePanel('neighbors');
-    }
-  };
+
 
   // ── Neighbor message content ──
   const brLabel = bedroomNum === 0 ? 'Studio' : bedroomNum === 1 ? '1-bedroom' : bedroomNum === 2 ? '2-bedroom' : bedroomNum === 3 ? '3-bedroom' : '4-bedroom';
