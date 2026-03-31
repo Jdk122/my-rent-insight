@@ -858,7 +858,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             if (rentControlCap.maxIncreasePct != null && increasePct > rentControlCap.maxIncreasePct) {
                               return (
                                 <p className="text-[12px] font-medium text-destructive">
-                                  ⚠️ {rentControlCap.jurisdiction} limits annual rent increases to {approxPrefix}{rentControlCap.maxIncreasePct}%. Your increase of {increasePct}%{likelyWord} exceeds this limit.{softNote}
+                                  {rentControlCap.jurisdiction} limits annual rent increases to {approxPrefix}{rentControlCap.maxIncreasePct}%. Your increase of {increasePct}%{likelyWord} exceeds this limit.{softNote}
                                 </p>
                               );
                             } else if (rentControlCap.maxIncreasePct != null) {
