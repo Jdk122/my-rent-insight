@@ -5,6 +5,10 @@ import { RentcastComparable } from '@/hooks/useRentcast';
 import { BedroomType } from '@/data/rentData';
 import { compAgeLabel } from '@/lib/compDisplay';
 
+/** Trim city/state/zip from a full address, keeping only street + unit */
+const trimAddress = (addr: string) =>
+  addr.replace(/,\s*[A-Z][a-zA-Z\s]+,\s*[A-Z]{2}\s*\d{0,5}$/, '').trim();
+
 
 interface UserUnit {
   address?: string | null;
@@ -153,7 +157,7 @@ function CompsWithRentLine({
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-foreground truncate flex items-center gap-1.5">
                 <MapPin className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-                {comp.formattedAddress}
+                {trimAddress(comp.formattedAddress)}
                 {comp.isSameUnitLine && (
                   <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
                     Same line
@@ -289,7 +293,7 @@ export const CompsList = ({
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-muted-foreground truncate flex items-center gap-1.5">
                     <MapPin className="w-3 h-3 text-muted-foreground/40 flex-shrink-0" />
-                    {comp.formattedAddress}
+                    {trimAddress(comp.formattedAddress)}
                     <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-muted text-muted-foreground border border-border">
                       Furnished — not directly comparable
                     </span>

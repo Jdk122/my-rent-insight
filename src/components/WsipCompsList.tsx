@@ -4,6 +4,12 @@ import { compAgeLabel } from '@/lib/compDisplay';
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 const fmtSqft = (n: number) => n.toFixed(2);
 
+/** Trim city/state/zip from a full address, keeping only street + unit */
+const trimAddress = (addr: string) => {
+  // Match patterns like ", City, ST 12345" or ", City, ST"
+  return addr.replace(/,\s*[A-Z][a-zA-Z\s]+,\s*[A-Z]{2}\s*\d{0,5}$/, '').trim();
+};
+
 interface WsipCompsListProps {
   comparables: RentcastComparable[];
   askingRent?: number | null;
@@ -27,7 +33,7 @@ const CompRow = ({ comp, idx, offset }: { comp: RentcastComparable; idx: number;
         <div className="flex-1 min-w-0">
         <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
           <p className="text-sm font-medium text-foreground truncate max-w-full sm:max-w-none">
-            {comp.formattedAddress}
+            {trimAddress(comp.formattedAddress)}
           </p>
           {comp.isBedroomFallback && (
             <span className="shrink-0 text-[10px] font-medium tracking-wider px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border">
