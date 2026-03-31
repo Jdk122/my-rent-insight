@@ -1056,7 +1056,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               )}
 
               {/* Blurred skeleton preview below gate */}
-              {!capturedEmail && (
+               {!isUnlocked && (
                 <div className="mt-4 w-full max-w-[540px] mx-auto relative order-[5] md:order-none" aria-hidden="true">
                   <div className="rounded-lg border border-border/60 bg-card p-4 space-y-3" style={{ filter: 'blur(5px)', userSelect: 'none', pointerEvents: 'none' }}>
                     <div className="flex justify-between items-center py-2 border-b border-border/40">
