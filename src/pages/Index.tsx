@@ -250,7 +250,7 @@ const Index = () => {
               ← New check
             </button>
           )}
-          {results && hasIncrease && isAboveMarket && !capturedEmail && (
+          {results && hasIncrease && isAboveMarket && !isUnlocked && (
             <button
               onClick={() => {
                 document.getElementById('section-gate')?.scrollIntoView({ behavior: 'smooth' });
