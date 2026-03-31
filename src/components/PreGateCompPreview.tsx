@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { RentcastComparable } from '@/hooks/useRentcast';
 import { compAgeLabel } from '@/lib/compDisplay';
+import { EMAIL_GATE_ENABLED } from '@/lib/featureFlags';
 
 interface PreGateCompPreviewProps {
   compsWithRent: RentcastComparable[];
