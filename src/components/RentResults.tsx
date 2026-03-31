@@ -1381,7 +1381,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </h2>
                 <p className="text-[12px] text-muted-foreground text-center mb-4 sm:mb-6">
                   Showing {allComps.length} comparable rental{allComps.length !== 1 ? 's' : ''}{compRadius.label ? ` ${compRadius.label}` : ''}, sorted by relevance.
-                  <span className="text-muted-foreground/60"> (Source: Real-time market listings)</span>
                 </p>
 
                 {consistencyNote && (
