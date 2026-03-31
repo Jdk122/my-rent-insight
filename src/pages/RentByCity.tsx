@@ -127,6 +127,12 @@ const RentByCity = () => {
     return { fmrVaries: fmrVar, hasZipLevelYoY: hasYoY, displayedZips: displayed, hasMoreZips: more };
   }, [data, alData, zipSearch]);
 
+  const rentControlInfo = useMemo(() => {
+    if (!data) return null;
+    const rc = getRentControlByStateCity(data.state, data.city);
+    return rc ? getApplicableCap(rc) : null;
+  }, [data]);
+
   usePrerenderReady(!loading);
 
   if (loading) return <LoadingSkeleton stateSlug={stateSlug} citySlug={citySlug} />;
@@ -185,12 +191,6 @@ const RentByCity = () => {
 
   // Compute affordable income threshold
   const affordableIncome = Math.round(avgFmr[1] * 12 / 0.3);
-
-  const rentControlInfo = useMemo(() => {
-    if (!data) return null;
-    const rc = getRentControlByStateCity(data.state, data.city);
-    return rc ? getApplicableCap(rc) : null;
-  }, [data]);
 
   const faqItems = [
     {
