@@ -83,18 +83,18 @@ const PartnerCTA = ({
       placement,
     });
 
-    if (analysisId) {
-      supabase
-        .from('referral_clicks')
-        .insert({
-        event_type: 'affiliate_click',
-        link_type: linkType,
-        analysis_id: analysisId,
-        zip,
-        placement,
-      } as any)
-        .then(() => {});
-    }
+    const row: Record<string, string | null> = {
+      event_type: 'affiliate_click',
+      link_type: linkType,
+      zip,
+      placement,
+    };
+    if (analysisId) row.analysis_id = analysisId;
+
+    supabase
+      .from('referral_clicks')
+      .insert(row as any)
+      .then(() => {});
   }, [analysisId, verdict, toolUsed, city, zip, placement, linkType]);
 
   if (!config) return null;
