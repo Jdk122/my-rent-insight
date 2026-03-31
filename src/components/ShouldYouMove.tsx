@@ -293,7 +293,7 @@ export const CompsList = ({
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-muted-foreground truncate flex items-center gap-1.5">
                     <MapPin className="w-3 h-3 text-muted-foreground/40 flex-shrink-0" />
-                    {comp.formattedAddress}
+                    {trimAddress(comp.formattedAddress)}
                     <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-muted text-muted-foreground border border-border">
                       Furnished — not directly comparable
                     </span>

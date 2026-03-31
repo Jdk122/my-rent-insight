@@ -1422,7 +1422,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     {outlierResult.outliers.map((comp, i) => (
                       <div key={`outlier-${i}`} className="flex items-start justify-between gap-4 px-4 py-2 rounded-md opacity-50">
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-muted-foreground truncate">{comp.formattedAddress}</p>
+                          <p className="text-xs text-muted-foreground truncate">{comp.formattedAddress.replace(/,\s*[A-Z][a-zA-Z\s]+,\s*[A-Z]{2}\s*\d{0,5}$/, '').trim()}</p>
                           <p className="text-[10px] text-muted-foreground/60">
                             Excluded from analysis: {comp.rent !== null && medianCompRent && comp.rent > medianCompRent ? 'significantly above' : 'significantly below'} local median
                           </p>
