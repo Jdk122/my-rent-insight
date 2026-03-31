@@ -1647,8 +1647,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </section>
             )}
 
-            {/* ━━━ Footer zone — compact, utility-level spacing ━━━ */}
-            <div className="mt-2 space-y-3">
+            {/* ━━━ Footer zone — compact utility area ━━━ */}
+            <div className="mt-6 border-t border-border pt-4 space-y-4">
               <p className="text-[11px] text-muted-foreground/60 text-center">
                 See something that doesn't look right?{' '}
                 <a href="mailto:james@renewalreply.com?subject=Data%20issue%20report&body=Address%3A%20%0AZip%3A%20%0AWhat%20looks%20wrong%3A%20" className="underline hover:text-muted-foreground transition-colors">
@@ -1656,64 +1656,60 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </a>
               </p>
 
-              <div className="py-1">
-                <FeedbackWidget
-                  analysisId={analysisId}
-                  page="renewal_results"
-                  verdictSnapshot={verdictLabel}
-                  scoreSnapshot={fairnessScore?.total ?? null}
-                  confidenceSnapshot={effectiveConfidence.level}
-                />
-              </div>
+              <FeedbackWidget
+                analysisId={analysisId}
+                page="renewal_results"
+                verdictSnapshot={verdictLabel}
+                scoreSnapshot={fairnessScore?.total ?? null}
+                confidenceSnapshot={effectiveConfidence.level}
+              />
 
               <p className="text-[11px] text-muted-foreground/60 text-center leading-relaxed">
                 This analysis is for informational purposes only and does not constitute legal, financial, or real estate advice.{' '}
                 <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
               </p>
 
-              <section id="section-share" className="pt-1 pb-2">
-                <div className="flex justify-center">
-                  <ShareHub
-                    reportPayload={shareReportPayload}
-                    onLinkGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
-                    analysisId={analysisId}
-                    leadEmail={capturedEmail || undefined}
-                    zipCode={rentData.zip}
-                    city={rentData.city}
-                    state={rentData.state}
-                    bedroomNum={bedroomNum}
-                    increasePct={hasIncrease ? increasePct : 0}
-                    marketYoy={marketYoy}
-                    verdict={isAboveMarket ? 'above' : isFair ? 'fair' : isBelowMarket ? 'below' : 'none'}
-                    headline={
-                      isAboveMarket && isPath1
-                        ? `My landlord is asking for $${fmt(newRent - (counterOffer?.counterHigh ?? 0))}/mo more than the market supports.`
-                        : isAboveMarket
-                        ? `Rents near me moved ${marketYoy}% but my landlord wants ${increasePct}%.`
-                        : isFair
-                        ? `My rent increase is right at market.`
-                        : isBelowMarket
-                        ? `My rent is below market, even with a ${increasePct}% increase.`
-                        : `My rent isn't going up — and rents in ${city} moved ${marketYoy}%.`
-                    }
-                    stats={
-                      hasIncrease
-                        ? [
-                            { label: 'Current rent', value: `$${fmt(formData.currentRent)}` },
-                            { label: 'Proposed rent', value: `$${fmt(newRent)}`, color: isAboveMarket ? 'hsl(0, 72%, 51%)' : isBelowMarket ? 'hsl(151, 50%, 38%)' : undefined },
-                            { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
-                            { label: 'Your increase', value: `${increasePct}%`, color: isAboveMarket ? 'hsl(0, 72%, 51%)' : isFair ? 'hsl(45, 80%, 45%)' : 'hsl(151, 50%, 38%)' },
-                          ]
-                        : [
-                            { label: 'Current rent', value: `$${fmt(formData.currentRent)}` },
-                            { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
-                          ]
-                    }
-                  />
-                </div>
-              </section>
+              <div id="section-share" className="flex justify-center">
+                <ShareHub
+                  reportPayload={shareReportPayload}
+                  onLinkGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
+                  analysisId={analysisId}
+                  leadEmail={capturedEmail || undefined}
+                  zipCode={rentData.zip}
+                  city={rentData.city}
+                  state={rentData.state}
+                  bedroomNum={bedroomNum}
+                  increasePct={hasIncrease ? increasePct : 0}
+                  marketYoy={marketYoy}
+                  verdict={isAboveMarket ? 'above' : isFair ? 'fair' : isBelowMarket ? 'below' : 'none'}
+                  headline={
+                    isAboveMarket && isPath1
+                      ? `My landlord is asking for $${fmt(newRent - (counterOffer?.counterHigh ?? 0))}/mo more than the market supports.`
+                      : isAboveMarket
+                      ? `Rents near me moved ${marketYoy}% but my landlord wants ${increasePct}%.`
+                      : isFair
+                      ? `My rent increase is right at market.`
+                      : isBelowMarket
+                      ? `My rent is below market, even with a ${increasePct}% increase.`
+                      : `My rent isn't going up — and rents in ${city} moved ${marketYoy}%.`
+                  }
+                  stats={
+                    hasIncrease
+                      ? [
+                          { label: 'Current rent', value: `$${fmt(formData.currentRent)}` },
+                          { label: 'Proposed rent', value: `$${fmt(newRent)}`, color: isAboveMarket ? 'hsl(0, 72%, 51%)' : isBelowMarket ? 'hsl(151, 50%, 38%)' : undefined },
+                          { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
+                          { label: 'Your increase', value: `${increasePct}%`, color: isAboveMarket ? 'hsl(0, 72%, 51%)' : isFair ? 'hsl(45, 80%, 45%)' : 'hsl(151, 50%, 38%)' },
+                        ]
+                      : [
+                          { label: 'Current rent', value: `$${fmt(formData.currentRent)}` },
+                          { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%` },
+                        ]
+                  }
+                />
+              </div>
 
-              <section>
+              <div>
                 <h2 className="text-[13px] font-medium text-muted-foreground mb-2 text-center">Related guides</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <Link to="/guides/how-to-negotiate-rent-increase" className="rounded-lg border border-border bg-card px-4 py-3 hover:border-primary/30 transition-colors">
@@ -1725,10 +1721,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     <p className="text-[11px] text-muted-foreground mt-0.5">Caps, notice periods, and your rights</p>
                   </Link>
                 </div>
-              </section>
+              </div>
 
               {isAboveMarket && (
-                <p className="text-[12px] text-muted-foreground text-center">
+                <p className="text-[12px] text-muted-foreground text-center pb-2">
                   Thinking about moving?{' '}
                   <Link to="/what-should-i-pay" className="text-primary font-medium hover:underline">
                     Check what you'd pay somewhere else →
