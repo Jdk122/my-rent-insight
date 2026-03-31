@@ -1215,7 +1215,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             {/* Action Insight removed — verdict callout is now at end of evidence section */}
 
             {/* ━━━ EVIDENCE SECTION ━━━ */}
-            <section id="section-evidence" className="pt-10 pb-8">
+            <section id="section-evidence" className="pt-6 sm:pt-10 pb-4 sm:pb-8">
               <motion.h2 {...fade(0.05)} className="results-section-header mb-6">
                 {hasIncrease ? 'The Evidence' : 'What the Market Says'}
               </motion.h2>
