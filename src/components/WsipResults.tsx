@@ -658,7 +658,7 @@ const WsipResults = ({
             </div>
 
             {/* ── Email gate — DESKTOP position (after comp preview) ── */}
-            {!capturedEmail && (
+            {!isUnlocked && (
               <section id="section-gate-desktop" className="py-8 hidden md:block">
                 <ReportGate
                   toolType="wsip"
