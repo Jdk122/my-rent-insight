@@ -42,6 +42,8 @@ import FeedbackWidget from './FeedbackWidget';
 import SocialProofLine from './SocialProofLine';
 import ReportGate from './ReportGate';
 import PreGateCompPreview from './PreGateCompPreview';
+import EmailReportPrompt from './EmailReportPrompt';
+import { EMAIL_GATE_ENABLED, GATE_VARIANT } from '@/lib/featureFlags';
 import { demoRentcast } from '@/data/demoData';
 
 interface RentResultsProps {
