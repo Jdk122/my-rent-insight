@@ -1648,15 +1648,15 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             )}
 
             {/* ━━━ Footer zone — compact, utility-level spacing ━━━ */}
-            <div className="mt-2 space-y-1">
-              <p className="text-[11px] text-muted-foreground/60 text-center mb-1">
+            <div className="mt-2 space-y-3">
+              <p className="text-[11px] text-muted-foreground/60 text-center">
                 See something that doesn't look right?{' '}
                 <a href="mailto:james@renewalreply.com?subject=Data%20issue%20report&body=Address%3A%20%0AZip%3A%20%0AWhat%20looks%20wrong%3A%20" className="underline hover:text-muted-foreground transition-colors">
                   Report a data issue
                 </a>
               </p>
 
-              <div className="py-1 mb-1">
+              <div className="py-1">
                 <FeedbackWidget
                   analysisId={analysisId}
                   page="renewal_results"
@@ -1666,15 +1666,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 />
               </div>
 
-              <p className="text-[11px] text-muted-foreground/60 text-center leading-relaxed mb-3">
+              <p className="text-[11px] text-muted-foreground/60 text-center leading-relaxed">
                 This analysis is for informational purposes only and does not constitute legal, financial, or real estate advice.{' '}
                 <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
               </p>
 
-              <section id="section-share" className="pt-3 pb-4">
-                <h2 className="text-[15px] font-medium text-foreground mb-2">
-                  {isAboveMarket ? 'Share Your Analysis' : 'Share This Tool'}
-                </h2>
+              <section id="section-share" className="pt-1 pb-2">
                 <div className="flex justify-center">
                   <ShareHub
                     reportPayload={shareReportPayload}
@@ -1716,14 +1713,14 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </div>
               </section>
 
-              <section className="pb-4">
-                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 text-center">Related Guides</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <Link to="/guides/how-to-negotiate-rent-increase" className="rounded-lg border border-border bg-card p-4 hover:border-primary/30 transition-colors">
+              <section>
+                <h2 className="text-[13px] font-medium text-muted-foreground mb-2 text-center">Related guides</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <Link to="/guides/how-to-negotiate-rent-increase" className="rounded-lg border border-border bg-card px-4 py-3 hover:border-primary/30 transition-colors">
                     <p className="text-[13px] font-semibold text-foreground">How to Negotiate a Rent Increase</p>
                     <p className="text-[11px] text-muted-foreground mt-0.5">Counter-offer math, email template, and scripts</p>
                   </Link>
-                  <Link to="/guides/rent-increase-laws-by-state" className="rounded-lg border border-border bg-card p-4 hover:border-primary/30 transition-colors">
+                  <Link to="/guides/rent-increase-laws-by-state" className="rounded-lg border border-border bg-card px-4 py-3 hover:border-primary/30 transition-colors">
                     <p className="text-[13px] font-semibold text-foreground">Rent Increase Laws by State</p>
                     <p className="text-[11px] text-muted-foreground mt-0.5">Caps, notice periods, and your rights</p>
                   </Link>
@@ -1731,15 +1728,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </section>
 
               {isAboveMarket && (
-                <div className="pb-4 text-center">
-                  <p className="text-sm text-muted-foreground mb-1">Thinking about moving?</p>
-                  <Link
-                    to="/what-should-i-pay"
-                    className="text-sm text-primary font-semibold hover:underline"
-                  >
+                <p className="text-[12px] text-muted-foreground text-center">
+                  Thinking about moving?{' '}
+                  <Link to="/what-should-i-pay" className="text-primary font-medium hover:underline">
                     Check what you'd pay somewhere else →
                   </Link>
-                </div>
+                </p>
               )}
             </div>
           </>
