@@ -1223,7 +1223,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
 
 
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Property Profile Card */}
                 {propertyData && (
                   <motion.div {...fade(0.06)} className="evidence-card">
