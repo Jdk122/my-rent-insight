@@ -977,32 +977,25 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
-                className={`mt-2 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 max-w-[540px] ${!isUnlocked ? 'order-[4] md:order-none' : ''}`}
+                className={`mt-2 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 max-w-[540px] ${!isUnlocked ? 'order-[4] md:order-none' : ''}`}
               >
-                {!isUnlocked && (
-                  <p className="md:hidden col-span-2 text-[9px] font-semibold uppercase tracking-widest text-muted-foreground text-center mb-1">
-                    Your full report
-                  </p>
-                )}
                 {(() => {
                   const increaseIsHighGap = increasePct > marketYoy * 2 && increasePct > 0 && marketYoy > 0;
                   return [
-                    { label: 'Current rent', value: `$${fmt(formData.currentRent)}`, color: 'text-foreground', sub: null, highlight: false },
-                    { label: 'Proposed rent', value: `$${fmt(newRent)}`, color: isAboveMarket ? 'text-destructive' : isBelowMarket ? 'text-verdict-good' : 'text-foreground', sub: null, highlight: false },
-                    { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%`, color: 'text-foreground', sub: null, highlight: false },
-                    { label: 'Your increase', value: `${increasePct}%`, color: verdictColor, sub: null, highlight: increaseIsHighGap },
+                    { label: 'Current rent', value: `$${fmt(formData.currentRent)}`, color: 'text-foreground', highlight: false },
+                    { label: 'Proposed rent', value: `$${fmt(newRent)}`, color: isAboveMarket ? 'text-destructive' : isBelowMarket ? 'text-verdict-good' : 'text-foreground', highlight: false },
+                    { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%`, color: 'text-foreground', highlight: false },
+                    { label: 'Your increase', value: `${increasePct}%`, color: verdictColor, highlight: increaseIsHighGap },
                   ];
                 })().map((stat) => (
                     <div
                       key={stat.label}
-                      className={`text-center rounded-lg border px-2 sm:px-3 py-2.5 sm:py-4 flex flex-col items-center min-h-[68px] sm:min-h-[84px] ${stat.highlight ? 'border-destructive/30 bg-destructive/5' : 'border-border/60 sm:border-border/80 bg-card'}`}
-                      style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
+                      className={`text-center rounded-lg px-2 sm:px-3 py-2.5 sm:py-3.5 flex flex-col items-center justify-center ${stat.highlight ? 'bg-destructive/5' : 'bg-secondary/50'}`}
                     >
-                      <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1 min-h-[24px] flex items-end">{stat.label}</p>
-                      <p className={`font-display text-[20px] sm:text-[24px] md:text-[28px] tracking-tight tabular-nums mt-auto ${stat.color}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
+                      <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">{stat.label}</p>
+                      <p className={`font-display text-[20px] sm:text-[24px] md:text-[28px] tracking-tight tabular-nums ${stat.color}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
                         {stat.value}
                       </p>
-                      <span className="block h-[14px] shrink-0" />
                     </div>
                 ))}
               </motion.div>
