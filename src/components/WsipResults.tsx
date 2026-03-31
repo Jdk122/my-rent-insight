@@ -31,6 +31,8 @@ import ReportGate from './ReportGate';
 import PreGateCompPreview from './PreGateCompPreview';
 import FeedbackWidget from './FeedbackWidget';
 import EmailReportPrompt from './EmailReportPrompt';
+import PartnerCTA from './PartnerCTA';
+import LeaseReminderCapture from './LeaseReminderCapture';
 import { EMAIL_GATE_ENABLED, GATE_VARIANT } from '@/lib/featureFlags';
 import type { LeadContext } from './EmailCapture';
 
@@ -910,7 +912,21 @@ const WsipResults = ({
               </motion.section>
             )}
 
-            {/* ━━━ YOUR NEXT STEPS — fully visible ━━━ */}
+            {/* ━━━ Universal rent reporting CTA ━━━ */}
+            {isUnlocked && (
+              <section className="py-4">
+                <PartnerCTA
+                  variant="rent_reporting"
+                  analysisId={analysisId}
+                  verdict={verdictLabel}
+                  toolUsed="wsip"
+                  city={city}
+                  zip={zip}
+                  placement="post_comps_universal"
+                />
+              </section>
+            )}
+
             {askingRent && (
               <motion.section id="section-nextsteps" {...fade(0.19)} className="pt-8 pb-8">
                 <h2 className="results-section-header mb-6">Your Next Steps</h2>
@@ -1033,15 +1049,26 @@ const WsipResults = ({
               />
             )}
 
-            {/* ━━━ Post-conversion flow ━━━ */}
-            {capturedEmail && (
+            {/* ━━━ Lease reminder — universal, utility-first ━━━ */}
+            {isUnlocked && (
               <section className="pb-4 pt-2">
-                <WsipPostConversion
-                  email={capturedEmail}
-                  leadContext={leadContext}
-                  verdictLabel={verdictLabel}
-                  zip={zip}
-                />
+                {capturedEmail ? (
+                  <WsipPostConversion
+                    email={capturedEmail}
+                    leadContext={leadContext}
+                    verdictLabel={verdictLabel}
+                    zip={zip}
+                  />
+                ) : (
+                  <LeaseReminderCapture
+                    leadContext={leadContext}
+                    verdictLabel={verdictLabel}
+                    zip={zip}
+                    city={city}
+                    onEmailCaptured={onEmailCaptured}
+                    toolType="wsip"
+                  />
+                )}
               </section>
             )}
 

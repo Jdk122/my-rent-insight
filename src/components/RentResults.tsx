@@ -38,12 +38,15 @@ import MoveCTA from './MoveCTA';
 import ExitIntentModal from './ExitIntentModal';
 import MobileScrollPrompt from './MobileScrollPrompt';
 import PostConversionFlow from './PostConversionFlow';
+import LeaseReminderCapture from './LeaseReminderCapture';
 import FeedbackWidget from './FeedbackWidget';
 import SocialProofLine from './SocialProofLine';
 import ReportGate from './ReportGate';
 import PreGateCompPreview from './PreGateCompPreview';
 import EmailReportPrompt from './EmailReportPrompt';
 import { EMAIL_GATE_ENABLED, GATE_VARIANT } from '@/lib/featureFlags';
+import { DEAL_CITIES } from '@/data/dealsCities';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { demoRentcast } from '@/data/demoData';
 
 interface RentResultsProps {
@@ -1474,7 +1477,21 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </motion.section>
             )}
 
-            {/* ━━━ YOUR NEXT STEPS ━━━ */}
+            {/* ━━━ Universal rent reporting CTA ━━━ */}
+            {isUnlocked && (
+              <section className="py-4">
+                <PartnerCTA
+                  variant="rent_reporting"
+                  analysisId={analysisId}
+                  verdict={verdictLabel}
+                  toolUsed="renewal"
+                  city={city}
+                  zip={rentData.zip}
+                  placement="post_comps_universal"
+                />
+              </section>
+            )}
+
             {hasIncrease && (
               <NextStepsSection
                 isAboveMarket={isAboveMarket}
@@ -1501,9 +1518,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               />
             )}
 
-            {/* ━━━ Intent Fork + Contextual CTA (fair/below-market path) ━━━ */}
+            {/* ━━━ Intent Fork — data collection only (fair/below-market path) ━━━ */}
             {hasIncrease && !isAboveMarket && isUnlocked && (
-              <section className="pt-6 pb-4 space-y-3">
+              <section className="pt-6 pb-4">
                 <IntentFork
                   analysisId={analysisId}
                   verdict={verdictLabel}
@@ -1514,51 +1531,35 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   selectedIntent={selectedIntent}
                   onIntentSelected={setSelectedIntent}
                 />
-                {selectedIntent === 'stay' && (
-                  <PartnerCTA
-                    variant="rent_reporting"
-                    analysisId={analysisId}
-                    verdict={verdictLabel}
-                    toolUsed="renewal"
-                    city={city}
-                    zip={rentData.zip}
-                    placement="post_verdict"
-                  />
-                )}
-                {selectedIntent === 'move' && (
-                  <>
-                    <PartnerCTA
-                      variant="moving_help"
-                      analysisId={analysisId}
-                      verdict={verdictLabel}
-                      toolUsed="renewal"
-                      city={city}
-                      zip={rentData.zip}
-                      placement="post_verdict"
-                    />
-                    <MoveCTA
-                      city={city}
-                      zip={rentData.zip}
-                      hasListingsAbove={(rentcastListings.data?.listings ?? []).length >= 1}
-                      placement="post_verdict"
-                    />
-                  </>
-                )}
               </section>
             )}
 
-            {/* ━━━ Know Your Rights ━━━ */}
+            {/* ━━━ Know Your Rights (accordion) ━━━ */}
             {hasRentControl && (
               <motion.section id="section-rights" {...fade(0.17)} className="pt-8 pb-4">
-                <div className="evidence-card">
-                  <RentControlCard
-                    state={rentData.state}
-                    city={rentData.city}
-                    zip={rentData.zip}
-                    increasePct={increasePct}
-                    address={formData.fullAddress}
-                  />
-                </div>
+                <Accordion type="single" collapsible>
+                  <AccordionItem value="rights" className="border-none">
+                    <AccordionTrigger className="hover:no-underline py-3 px-4 rounded-lg border border-border bg-card">
+                      <div className="flex items-center gap-2 text-left">
+                        <span className="text-base">⚖️</span>
+                        <span className="text-[13px] font-semibold text-foreground">
+                          Your area has rent regulations that may apply
+                        </span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="pt-3 pb-0">
+                      <div className="evidence-card">
+                        <RentControlCard
+                          state={rentData.state}
+                          city={rentData.city}
+                          zip={rentData.zip}
+                          increasePct={increasePct}
+                          address={formData.fullAddress}
+                        />
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </motion.section>
             )}
 
@@ -1621,8 +1622,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </motion.section>
             )}
 
-            {/* ━━━ Soft email capture — post-letter (when gate is off and email not yet captured) ━━━ */}
-            {!EMAIL_GATE_ENABLED && !capturedEmail && (
+            {/* ━━━ Soft email capture — post-letter (when gate is off, email not yet captured, and has letter) ━━━ */}
+            {!EMAIL_GATE_ENABLED && !capturedEmail && hasIncrease && (
               <EmailReportPrompt
                 analysisId={analysisId}
                 leadContext={leadContext}
@@ -1637,9 +1638,42 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               />
             )}
 
-            {/* ━━━ Intent Fork + Contextual CTA (above-market path) ━━━ */}
+            {/* ━━━ Moving help CTA (above-market, after listings) ━━━ */}
             {hasIncrease && isAboveMarket && isUnlocked && (
-              <section className="pt-6 pb-4 space-y-3">
+              <section className="py-4 space-y-3">
+                <PartnerCTA
+                  variant="moving_help"
+                  analysisId={analysisId}
+                  verdict={verdictLabel}
+                  toolUsed="renewal"
+                  city={city}
+                  zip={rentData.zip}
+                  placement="post_listings"
+                />
+                {(() => {
+                  const matchedCity = DEAL_CITIES.find(c => c.zips.includes(rentData.zip));
+                  const dealsHref = matchedCity ? `/deals/${matchedCity.slug}` : '/deals';
+                  const dealsLabel = matchedCity
+                    ? `Browse more apartments in ${matchedCity.neighborhood || matchedCity.name} →`
+                    : 'Browse more apartments in your area →';
+                  return (
+                    <div className="text-center">
+                      <Link
+                        to={dealsHref}
+                        onClick={() => trackEvent('internal_click', { link_type: 'browse_deals', city, zip: rentData.zip, placement: 'post_listings' })}
+                        className="text-xs text-primary hover:underline font-medium"
+                      >
+                        {dealsLabel}
+                      </Link>
+                    </div>
+                  );
+                })()}
+              </section>
+            )}
+
+            {/* ━━━ Intent Fork — data collection only (above-market path) ━━━ */}
+            {hasIncrease && isAboveMarket && isUnlocked && (
+              <section className="pt-6 pb-4">
                 <IntentFork
                   analysisId={analysisId}
                   verdict={verdictLabel}
@@ -1650,51 +1684,32 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   selectedIntent={selectedIntent}
                   onIntentSelected={setSelectedIntent}
                 />
-                {selectedIntent === 'stay' && (
-                  <PartnerCTA
-                    variant="rent_reporting"
-                    analysisId={analysisId}
-                    verdict={verdictLabel}
-                    toolUsed="renewal"
-                    city={city}
-                    zip={rentData.zip}
-                    placement="post_letter"
-                  />
-                )}
-                {selectedIntent === 'move' && (
-                  <>
-                    <PartnerCTA
-                      variant="moving_help"
-                      analysisId={analysisId}
-                      verdict={verdictLabel}
-                      toolUsed="renewal"
-                      city={city}
-                      zip={rentData.zip}
-                      placement="post_letter"
-                    />
-                    <MoveCTA
-                      city={city}
-                      zip={rentData.zip}
-                      hasListingsAbove={(rentcastListings.data?.listings ?? []).length >= 1}
-                      placement="post_letter"
-                    />
-                  </>
-                )}
               </section>
             )}
 
 
 
 
-            {/* ━━━ Post-conversion flow ━━━ */}
-            {capturedEmail && (
+            {/* ━━━ Lease reminder — universal, utility-first ━━━ */}
+            {isUnlocked && (
               <section className="pb-4 pt-2">
-                <PostConversionFlow
-                  email={capturedEmail}
-                  leadContext={leadContext}
-                  verdictLabel={verdictLabel}
-                  zip={rentData.zip}
-                />
+                {capturedEmail ? (
+                  <PostConversionFlow
+                    email={capturedEmail}
+                    leadContext={leadContext}
+                    verdictLabel={verdictLabel}
+                    zip={rentData.zip}
+                  />
+                ) : (
+                  <LeaseReminderCapture
+                    leadContext={leadContext}
+                    verdictLabel={verdictLabel}
+                    zip={rentData.zip}
+                    city={city}
+                    onEmailCaptured={setCapturedEmail}
+                    toolType="renewal"
+                  />
+                )}
               </section>
             )}
 
