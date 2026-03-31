@@ -213,12 +213,12 @@
 
   /* Evidence cards — subtle shadow for depth */
   .evidence-card {
-    @apply p-6 md:p-8 rounded-xl border border-border bg-card;
+    @apply p-4 sm:p-6 md:p-8 rounded-xl border border-border bg-card;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   }
 
   .evidence-card-header {
-    @apply text-[18px] md:text-[20px] text-foreground mb-4;
+    @apply text-[16px] sm:text-[18px] md:text-[20px] text-foreground mb-3 sm:mb-4;
     font-weight: 500;
     letter-spacing: -0.01em;
   }
