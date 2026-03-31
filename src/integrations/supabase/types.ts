@@ -791,15 +791,7 @@ export type Database = {
           placement?: string | null
           zip?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "referral_clicks_analysis_id_fkey"
-            columns: ["analysis_id"]
-            isOneToOne: false
-            referencedRelation: "analyses"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       rentcast_cache: {
         Row: {

@@ -1,0 +1,1 @@
+ALTER TABLE public.referral_clicks DROP CONSTRAINT IF EXISTS referral_clicks_analysis_id_fkey;
