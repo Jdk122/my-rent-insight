@@ -806,7 +806,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 }
 
                 return (
-                  <div className={!isUnlocked ? '[&_[data-score-details]]:max-md:hidden [&_[data-score-basis]]:max-md:hidden [&_[data-score-label]]:max-md:hidden' : ''}>
+                  <div className={!isUnlocked ? '[&_[data-score-details]]:hidden [&_[data-score-basis]]:hidden [&_[data-score-label]]:hidden' : '[&_[data-score-details]]:hidden [&_[data-score-basis]]:hidden [&_[data-score-label]]:hidden'}>
                   <FairnessScoreGauge
                     topNote={isBelowFmrHighIncrease ? (
                       <div className="rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900/50 dark:bg-blue-950/20 p-3">
@@ -1007,7 +1007,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               {isUnlocked && hasIncrease && (
                 <button
                   onClick={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="w-full mt-4 py-3.5 rounded-lg bg-primary text-primary-foreground text-[15px] font-semibold tracking-tight hover:bg-primary/90 transition-colors"
+                  className="w-full mt-4 py-3.5 rounded-lg bg-foreground text-background text-[15px] font-semibold tracking-tight hover:opacity-90 transition-opacity border-0"
                 >
                   {isAboveMarket ? 'Your negotiation letter is ready \u2193' : isBelowMarket ? 'Protect this rate \u2193' : 'Review your negotiation letter \u2193'}
                 </button>
