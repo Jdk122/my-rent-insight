@@ -1609,7 +1609,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       <Link
                         to={dealsHref}
                         onClick={() => trackEvent('internal_click', { link_type: 'browse_deals', city, zip: rentData.zip, placement: 'post_listings' })}
-                        className="inline-block w-full rounded-lg border border-primary/30 bg-primary/5 px-5 py-3 text-[14px] font-semibold text-primary hover:bg-primary/10 transition-colors"
+                        className="text-sm text-primary hover:underline font-semibold"
                       >
                         {dealsLabel}
                       </Link>
