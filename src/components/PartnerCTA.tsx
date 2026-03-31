@@ -62,18 +62,6 @@ const PartnerCTA = ({
             placement,
           });
 
-          if (analysisId) {
-            supabase
-              .from('referral_clicks')
-              .insert({
-              event_type: 'affiliate_impression',
-              link_type: linkType,
-              analysis_id: analysisId,
-              zip,
-              placement,
-            } as any)
-              .then(() => {});
-          }
 
           observer.disconnect();
         }
