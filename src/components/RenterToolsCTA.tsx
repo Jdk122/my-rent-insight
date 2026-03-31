@@ -175,7 +175,9 @@ const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool', sh
   const hasAffiliateCard = cards.some(c => c.isAffiliate);
   const gridCols = cards.length === 3 ? 'sm:grid-cols-3' : cards.length === 4 ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-2';
 
-  const handleAffiliateClick = () => {
+  const handleAffiliateClick = (href: string) => {
+    window.open(href, '_blank', 'noopener,noreferrer');
+
     trackEvent('affiliate_click', {
       link_type: 'partner_rent_reporting',
       placement: 'seo_renter_tools',
@@ -209,15 +211,13 @@ const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool', sh
             <h3 className="font-semibold text-foreground text-[15px] mb-1">{t.title}</h3>
             <p className="text-xs text-muted-foreground leading-relaxed mb-4 flex-1">{t.sub}</p>
             {t.href ? (
-              <a
-                href={t.href}
-                target="_blank"
-                rel="noopener noreferrer sponsored"
-                onClick={handleAffiliateClick}
+              <button
+                type="button"
+                onClick={() => handleAffiliateClick(t.href!)}
                 className="inline-flex items-center justify-center bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
               >
                 {t.cta}
-              </a>
+              </button>
             ) : t.action === 'reminder' ? (
               <button
                 onClick={() => setReminderOpen(true)}
