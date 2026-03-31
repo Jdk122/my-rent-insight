@@ -1118,7 +1118,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               {isUnlocked && (
                 <button
                   onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="w-full mt-4 py-3.5 rounded-lg bg-foreground text-background text-[15px] font-semibold tracking-tight hover:opacity-90 transition-opacity max-w-[400px]"
+                  className="w-full mt-4 py-3.5 rounded-lg bg-primary text-primary-foreground text-[15px] font-semibold tracking-tight hover:brightness-95 transition-all shadow-sm shadow-primary/20 max-w-[400px]"
                 >
                   See full market data ↓
                 </button>
@@ -1671,8 +1671,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 <Link to="/methodology" className="underline hover:text-muted-foreground transition-colors">See methodology</Link>
               </p>
 
-              <section id="section-share" className="py-6 sm:py-12">
-                <h2 className="results-section-header mb-2">
+              <section id="section-share" className="pt-3 pb-4">
+                <h2 className="text-[15px] font-medium text-foreground mb-2">
                   {isAboveMarket ? 'Share Your Analysis' : 'Share This Tool'}
                 </h2>
                 <div className="flex justify-center">
