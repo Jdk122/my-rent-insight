@@ -768,7 +768,7 @@ const WsipResults = ({
             <motion.section id="section-market" {...fade(0.05)} className="pt-6 sm:pt-10 pb-4 sm:pb-8">
               <h2 className="results-section-header">Market Conditions in {city}</h2>
 
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 <div className="evidence-card">
                   <h3 className="evidence-card-header">What the Market Says</h3>
                   <p className="text-xs text-muted-foreground mb-4">
