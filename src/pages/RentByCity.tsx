@@ -412,8 +412,8 @@ const RentByCity = () => {
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {trendYoY >= 0
-                  ? `Rents in ${city} have increased ${trendYoY.toFixed(1)}% year over year based on ${trendAttribution} data.`
-                  : `Rents in ${city} have decreased ${Math.abs(trendYoY).toFixed(1)}% year over year based on ${trendAttribution} data.`}
+                  ? `Rents in ${city} have increased ${trendYoY.toFixed(1)}% year over year based on ${trendAttribution}.`
+                  : `Rents in ${city} have decreased ${Math.abs(trendYoY).toFixed(1)}% year over year based on ${trendAttribution}.`}
                 {trendYoY > 5
                   ? ` This is a notably high rate of increase, indicating strong upward rent pressure in ${city}.`
                   : trendYoY > 0
