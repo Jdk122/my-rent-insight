@@ -112,7 +112,7 @@ const DealsSidebar = ({ city, medianRent1BR, yoyChange, activeListings }: DealsS
               <div className="text-[11px] text-muted-foreground">{svc.sub}</div>
             </div>
             <span className="text-[11px] font-semibold" style={{ color: svc.accent }}>→</span>
-          </a>
+          </button>
         ))}
         <p className="text-[10px] text-muted-foreground/40 mt-2">
           May include affiliate links.{' '}
