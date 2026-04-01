@@ -11,6 +11,7 @@ interface PartnerCTAProps {
   city: string;
   zip: string;
   placement: string;
+  email?: string | null;
 }
 
 const VARIANTS = {
