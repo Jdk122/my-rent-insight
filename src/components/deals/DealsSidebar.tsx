@@ -103,7 +103,7 @@ const DealsSidebar = ({ city, medianRent1BR, yoyChange, activeListings }: DealsS
             }}
           >
             <div
-              className="w-7 h-7 rounded-md flex items-center justify-center text-[13px] shrink-0"
+              className="w-7 h-7 rounded-md flex items-center justify-center shrink-0"
               style={{ background: `${svc.accent}14` }}
             >
               {svc.icon}
