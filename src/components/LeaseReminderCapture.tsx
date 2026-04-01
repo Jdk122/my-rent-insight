@@ -205,12 +205,12 @@ const LeaseReminderCapture = ({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@email.com"
-          className="flex-1 min-w-[160px] px-3 py-2.5 text-sm border border-border rounded-lg bg-card text-foreground placeholder:text-muted-foreground outline-none focus:border-foreground transition-colors"
+          className="flex-1 min-w-[160px] px-3 py-2.5 text-base md:text-sm border border-border rounded-lg bg-card text-foreground placeholder:text-muted-foreground outline-none focus:border-foreground transition-colors"
         />
         <select
           value={leaseMonth}
           onChange={(e) => setLeaseMonth(e.target.value)}
-          className="w-[110px] px-3 py-2.5 text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
+          className="w-[110px] px-3 py-2.5 text-base md:text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
         >
           <option disabled value="">Month</option>
           {months.map((m) => (
@@ -220,7 +220,7 @@ const LeaseReminderCapture = ({
         <select
           value={leaseYear}
           onChange={(e) => setLeaseYear(e.target.value)}
-          className="w-[80px] px-3 py-2.5 text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
+          className="w-[80px] px-3 py-2.5 text-base md:text-sm border border-border rounded-lg bg-card text-muted-foreground outline-none focus:border-foreground focus:text-foreground transition-colors cursor-pointer appearance-none"
         >
           <option disabled value="">Year</option>
           {years.map((y) => (

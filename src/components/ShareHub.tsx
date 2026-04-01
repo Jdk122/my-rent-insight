@@ -139,16 +139,16 @@ const ShareHub = ({
       <div>
         <p className="text-[13px] text-muted-foreground mb-1.5 text-center">Know someone dealing with a rent increase?</p>
         <div className="grid grid-cols-4 gap-2">
-          <button onClick={handleSMS} className="flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-full border border-border text-[12px] font-medium text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+          <button onClick={handleSMS} className="flex min-h-11 items-center justify-center gap-1.5 px-3 rounded-full border border-border text-[12px] font-medium text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
             <MessageCircle size={13} /> Text
           </button>
-          <button onClick={handleWhatsApp} className="flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-full border border-border text-[12px] font-medium text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+          <button onClick={handleWhatsApp} className="flex min-h-11 items-center justify-center gap-1.5 px-3 rounded-full border border-border text-[12px] font-medium text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
             <MessageCircle size={13} /> WhatsApp
           </button>
-          <button onClick={handleNeighborEmail} className="flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-full border border-border text-[12px] font-medium text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+          <button onClick={handleNeighborEmail} className="flex min-h-11 items-center justify-center gap-1.5 px-3 rounded-full border border-border text-[12px] font-medium text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
             <Mail size={13} /> Email
           </button>
-          <button onClick={handleNeighborCopy} className="flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-full border border-border text-[12px] font-medium text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+          <button onClick={handleNeighborCopy} className="flex min-h-11 items-center justify-center gap-1.5 px-3 rounded-full border border-border text-[12px] font-medium text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
             {neighborCopied ? <><Check size={13} /> Copied!</> : <><Copy size={13} /> Copy</>}
           </button>
         </div>

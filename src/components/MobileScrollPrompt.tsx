@@ -228,7 +228,8 @@ const MobileScrollPrompt = ({
 
       {/* Bottom sheet */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-[100] bg-card rounded-t-2xl border-t border-border shadow-2xl px-5 pb-8 pt-5 animate-in slide-in-from-bottom duration-300"
+        className="fixed bottom-0 left-0 right-0 z-[100] bg-card rounded-t-2xl border-t border-border shadow-2xl px-5 pt-5 animate-in slide-in-from-bottom duration-300"
+        style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom, 2rem))' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Handle bar */}
