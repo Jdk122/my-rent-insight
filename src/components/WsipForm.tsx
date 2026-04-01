@@ -3,6 +3,7 @@ import { BedroomType, bedroomLabels } from '@/data/rentData';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
+import { Lightbulb } from 'lucide-react';
 
 export interface WsipFormData {
   zip: string;
