@@ -12,24 +12,51 @@ interface PartnerCTAProps {
   zip: string;
   placement: string;
   email?: string | null;
+  currentRent?: number | null;
+  proposedRent?: number | null;
 }
 
-const VARIANTS = {
-  rent_reporting: {
-    headline: 'Your rent could also be building your credit.',
-    subtext:
-      'Every month you pay rent, it could be reported to the credit bureaus — the same ones landlords check on you. Start building credit from rent you already pay.',
+function getRentReportingCopy(verdict: string, currentRent?: number | null, proposedRent?: number | null) {
+  const v = verdict.toLowerCase();
+  const rentStr = proposedRent ? `$${proposedRent.toLocaleString('en-US', { maximumFractionDigits: 0 })}/mo` : (currentRent ? `$${currentRent.toLocaleString('en-US', { maximumFractionDigits: 0 })}/mo` : null);
+
+  if (v.includes('overpaying') || v.includes('above market')) {
+    return {
+      headline: "You're overpaying — at least make it count.",
+      subtext: rentStr
+        ? `Your ${rentStr} in rent could be building your credit score. Report payments to all 3 bureaus — the same ones your next landlord will check.`
+        : 'Your rent could be building your credit score. Report payments to all 3 bureaus — the same ones your next landlord will check.',
+      buttonLabel: 'Start reporting rent →',
+    };
+  }
+  if (v.includes('at market') || v.includes('moderate')) {
+    return {
+      headline: 'Your rent is fair. Now make it work harder.',
+      subtext: rentStr
+        ? `Every month you pay ${rentStr} in rent, it could be reported to the credit bureaus. Start building credit from the rent you already pay.`
+        : 'Every month you pay rent, it could be reported to the credit bureaus. Start building credit from the rent you already pay.',
+      buttonLabel: 'Start reporting rent →',
+    };
+  }
+  if (v.includes('good deal') || v.includes('below')) {
+    return {
+      headline: 'Great deal. Lock in even more value.',
+      subtext: "You're already saving on rent. Report your payments to all 3 credit bureaus and build your score while you're at it.",
+      buttonLabel: 'Start reporting rent →',
+    };
+  }
+  return {
+    headline: 'Your rent could be building your credit.',
+    subtext: 'Every month you pay rent, it could be reported to the credit bureaus — the same ones landlords check. Start building credit from rent you already pay.',
     buttonLabel: 'Start reporting rent →',
-    linkType: 'partner_rent_reporting' as const,
-  },
-  moving_help: {
-    headline: 'Moving? Save on your move.',
-    subtext:
-      'Compare local movers and get instant quotes. Real reviews, transparent pricing, and help when you need it.',
-    buttonLabel: 'Compare movers →',
-    linkType: 'partner_moving_help' as const,
-  },
-} as const;
+  };
+}
+
+const MOVING_HELP_COPY = {
+  headline: 'Moving? Save on your move.',
+  subtext: 'Compare local movers and get instant quotes. Real reviews, transparent pricing, and help when you need it.',
+  buttonLabel: 'Compare movers →',
+};
 
 const PartnerCTA = ({
   variant,
@@ -40,11 +67,16 @@ const PartnerCTA = ({
   zip,
   placement,
   email,
+  currentRent,
+  proposedRent,
 }: PartnerCTAProps) => {
   const impressionFired = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const config = VARIANTS[variant];
-  const linkType = config?.linkType ?? 'partner_rent_reporting';
+  const linkType = variant === 'moving_help' ? 'partner_moving_help' as const : 'partner_rent_reporting' as const;
+
+  const copy = variant === 'moving_help'
+    ? MOVING_HELP_COPY
+    : getRentReportingCopy(verdict, currentRent, proposedRent);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -63,7 +95,6 @@ const PartnerCTA = ({
             zip,
             placement,
           });
-
 
           observer.disconnect();
         }
@@ -101,32 +132,29 @@ const PartnerCTA = ({
       .insert(row as any)
       .then(() => {});
 
-    // Open after insert is queued so the write isn't cancelled by navigation
     window.open(AFFILIATE_LINKS[variant], '_blank', 'noopener,noreferrer');
   }, [analysisId, verdict, toolUsed, city, zip, placement, linkType, variant, email]);
-
-  if (!config) return null;
 
   const href = AFFILIATE_LINKS[variant];
 
   return (
     <div
       ref={containerRef}
-      className="rounded-lg border border-border bg-secondary/50 px-4 py-4"
+      className="rounded-lg border border-border border-l-[3px] border-l-primary bg-secondary/50 px-4 py-4"
     >
-      <p className="text-[14px] font-medium text-foreground">{config.headline}</p>
-      <p className="text-[12px] text-muted-foreground mt-1 leading-relaxed">{config.subtext}</p>
+      <p className="text-[14px] font-medium text-foreground">{copy.headline}</p>
+      <p className="text-[12px] text-muted-foreground mt-1 leading-relaxed">{copy.subtext}</p>
       <a
         href={href}
         target="_blank"
         rel="sponsored noopener noreferrer"
         onClick={handleClick}
-        className="mt-2 inline-block text-sm font-semibold text-primary hover:underline"
+        className="mt-2 inline-block rounded-md bg-primary/10 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/20 transition-colors"
       >
-        {config.buttonLabel}
+        {copy.buttonLabel}
       </a>
       <p className="text-[10px] text-muted-foreground/40 mt-2">
-        RenewalReply may earn a commission.{' '}
+        RenewalReply may earn a commission at no cost to you.{' '}
         <a href="/privacy" className="underline hover:text-muted-foreground">Learn more</a>
       </p>
     </div>

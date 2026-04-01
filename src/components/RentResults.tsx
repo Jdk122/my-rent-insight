@@ -1334,6 +1334,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   zip={rentData.zip}
                   placement="post_comps_universal"
                   email={capturedEmail}
+                  currentRent={formData.currentRent}
+                  proposedRent={formData.rentIncrease != null ? (formData.increaseIsPercent ? formData.currentRent * (1 + formData.rentIncrease / 100) : formData.currentRent + formData.rentIncrease) : undefined}
                 />
               </section>
             )}
@@ -1467,6 +1469,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   zip={rentData.zip}
                   placement="post_listings"
                   email={capturedEmail}
+                  currentRent={formData.currentRent}
+                  proposedRent={formData.rentIncrease != null ? (formData.increaseIsPercent ? formData.currentRent * (1 + formData.rentIncrease / 100) : formData.currentRent + formData.rentIncrease) : undefined}
                 />
                 {(() => {
                   const matchedCity = DEAL_CITIES.find(c => c.zips.includes(rentData.zip));

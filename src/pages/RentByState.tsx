@@ -11,6 +11,7 @@ import SEOFooter from '@/components/SEOFooter';
 import ContactModal from '@/components/ContactModal';
 import PageNav from '@/components/PageNav';
 import RenterToolsCTA from '@/components/RenterToolsCTA';
+import RentReportingCTA from '@/components/RentReportingCTA';
 import ShareDataButton from '@/components/ShareDataButton';
 import DataPageFreshness from '@/components/DataPageFreshness';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -349,8 +350,13 @@ const RentByState = () => {
           </div>
         </section>
 
+        {/* ═══ Rent Reporting CTA ═══ */}
+        <div className="mt-6 mb-8">
+          <RentReportingCTA zip={cities[0]?.zips[0]?.zip} stateAbbr={stateAbbr} stateName={stateName} pageType="state" />
+        </div>
+
         {/* ═══ Renter Tools CTA ═══ */}
-        <RenterToolsCTA zip={cities[0]?.zips[0]?.zip} stateName={stateName} stateAbbr={stateAbbr} pageType="state" showAffiliate />
+        <RenterToolsCTA zip={cities[0]?.zips[0]?.zip} stateName={stateName} stateAbbr={stateAbbr} pageType="state" />
 
         {/* ═══ Renter Guides ═══ */}
         <section className="mb-12">

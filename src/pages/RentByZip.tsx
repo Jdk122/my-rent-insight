@@ -10,6 +10,7 @@ import { getDataFreshness, getFreshestDate, formatFreshnessDate, getHudFiscalYea
 import RentcastMarketSection from '@/components/RentcastMarketSection';
 import DhcrAlertSection from '@/components/DhcrAlertSection';
 import RenterToolsCTA from '@/components/RenterToolsCTA';
+import RentReportingCTA from '@/components/RentReportingCTA';
 import RentTrendSummary, { getDisplayTrend } from '@/components/RentTrendSummary';
 import WhatShouldRentCost from '@/components/WhatShouldRentCost';
 import ShareDataButton from '@/components/ShareDataButton';
@@ -581,6 +582,11 @@ const RentByZip = () => {
             </div>
           </div>
         </section>
+
+        {/* ═══ Rent Reporting CTA ═══ */}
+        <div className="mt-6">
+          <RentReportingCTA zip={zip} city={city} stateAbbr={state} pageType="zip" />
+        </div>
 
         {/* ═══ Renter Tools CTA ═══ */}
         <RenterToolsCTA zip={zip} stateAbbr={state} pageType="zip" />
