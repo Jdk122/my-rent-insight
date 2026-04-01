@@ -271,7 +271,7 @@ const RentByZip = () => {
               {
                 '@type': 'Question',
                 name: `How much has rent increased in ${city} (${zip})?`,
-                acceptedAnswer: { '@type': 'Answer', text: trendYoY !== null ? `Rents in ${city} changed approximately ${trendYoY > 0 ? '+' : ''}${Math.abs(trendYoY).toFixed(1)}% year-over-year based on ${trendAttribution} data.` : `Year-over-year rent trend data is not currently available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}%.` },
+                acceptedAnswer: { '@type': 'Answer', text: trendYoY !== null ? `Rents in ${city} changed approximately ${trendYoY > 0 ? '+' : ''}${Math.abs(trendYoY).toFixed(1)}% year-over-year based on ${trendAttribution}.` : `Year-over-year rent trend data is not currently available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}%.` },
               },
               {
                 '@type': 'Question',
@@ -287,7 +287,7 @@ const RentByZip = () => {
                 '@type': 'Question',
                 name: `What is a fair rent increase in ${city} (${zip})?`,
                 acceptedAnswer: { '@type': 'Answer', text: trendYoY !== null
-                  ? `Based on ${trendAttribution} data, a fair rent increase in ${city} (${zip}) is approximately ${Math.abs(trendYoY).toFixed(1)}% for ${dataYear}. The typical 1-bedroom rent is ${fmt(heroRent)}/month. Any increase above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend. Use RenewalReply's free Fairness Score tool to check your specific rent increase.`
+                  ? `Based on ${trendAttribution}, a fair rent increase in ${city} (${zip}) is approximately ${Math.abs(trendYoY).toFixed(1)}% for ${dataYear}. The typical 1-bedroom rent is ${fmt(heroRent)}/month. Any increase above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend. Use RenewalReply's free Fairness Score tool to check your specific rent increase.`
                   : `Local trend data is not available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}% year-over-year. Use RenewalReply's free tool to check your specific rent increase against local comparable listings and federal benchmarks.` },
               },
             ],
@@ -316,7 +316,7 @@ const RentByZip = () => {
           {nearby.length > 0 && (<><h2>Nearby Areas</h2><ul>{nearby.map(({ zip: nZip, raw: nRaw }) => (<li key={nZip}><a href={`https://www.renewalreply.com/rent/${nZip}`}>{nZip} — {nRaw.c || 'Unknown'}, {nRaw.s} — 1-BR: {fmt(nRaw.f[1])}</a></li>))}</ul></>)}
           <p><a href={`https://www.renewalreply.com/rent-data/${stateSlug}/${citySlug}`}>{`← ${city}, ${state} rent data`}</a></p>
           <p>{trendYoY !== null
-            ? `Based on ${trendAttribution} data, a fair rent increase in ${city} (${zip}) is approximately ${Math.abs(trendYoY).toFixed(1)}% for ${dataYear}. The typical 1-bedroom rent is ${fmt(heroRent)}/month. Any increase significantly above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.`
+            ? `Based on ${trendAttribution}, a fair rent increase in ${city} (${zip}) is approximately ${Math.abs(trendYoY).toFixed(1)}% for ${dataYear}. The typical 1-bedroom rent is ${fmt(heroRent)}/month. Any increase significantly above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.`
             : `The national average rent increase is approximately ${NATIONAL_AVG_YOY}% year-over-year. Without local trend data for ${zip}, increases significantly above ${NATIONAL_AVG_YOY}% may warrant further research.`
           }</p>
           {dataConfidence === 'limited'
@@ -419,7 +419,7 @@ const RentByZip = () => {
           {/* GEO: Direct answer to "what is a fair rent increase in [ZIP]?" */}
           <p className="mt-4 text-sm text-foreground/80 leading-relaxed">
             {trendYoY !== null
-              ? `Based on ${trendAttribution} data, a fair rent increase in ${city} (${zip}) is approximately ${Math.abs(trendYoY).toFixed(1)}% for ${dataYear}. The typical 1-bedroom rent is ${fmt(heroRent)}/month. Any increase significantly above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.`
+              ? `Based on ${trendAttribution}, a fair rent increase in ${city} (${zip}) is approximately ${Math.abs(trendYoY).toFixed(1)}% for ${dataYear}. The typical 1-bedroom rent is ${fmt(heroRent)}/month. Any increase significantly above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.`
               : `The national average rent increase is approximately ${NATIONAL_AVG_YOY}% year-over-year. Without local trend data for ${zip}, increases significantly above ${NATIONAL_AVG_YOY}% may warrant further research.`
             }
           </p>

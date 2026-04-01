@@ -286,7 +286,7 @@ const RentByCity = () => {
         <div style={{ maxWidth: 800, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
           <h1>{`Average Rent in ${city}, ${state} (${dataYear})`}</h1>
           <p>{answerBlock}</p>
-          {trendYoY !== null && <p>{`Based on ${trendAttribution} data, a fair rent increase in ${city}, ${state} is approximately ${Math.abs(trendYoY).toFixed(1)}% for ${dataYear}. An increase above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.`}</p>}
+          {trendYoY !== null && <p>{trendYoY !== null && <p>{`Based on ${trendAttribution}, a fair rent increase in ${city}, ${state} is approximately ${Math.abs(trendYoY).toFixed(1)}% for ${dataYear}. An increase above ${Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.`}</p>}</p>}
           {freshestFormatted && <p>{`Data through: ${freshestFormatted}`}</p>}
           <p><a href="https://www.renewalreply.com/">{`Check if your rent increase is fair →`}</a></p>
           <h2>{`Rent by Zip Code in ${city}`}</h2>
@@ -371,7 +371,7 @@ const RentByCity = () => {
             </p>
             {trendYoY !== null && (
               <p>
-                Based on {trendAttribution} data, a fair rent increase in {city}, {state} is approximately {Math.abs(trendYoY).toFixed(1)}% for {dataYear}. An increase above {Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.
+                Based on {trendAttribution}, a fair rent increase in {city}, {state} is approximately {Math.abs(trendYoY).toFixed(1)}% for {dataYear}. An increase above {Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.
               </p>
             )}
           </div>
@@ -412,8 +412,8 @@ const RentByCity = () => {
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {trendYoY >= 0
-                  ? `Rents in ${city} have increased ${trendYoY.toFixed(1)}% year over year based on ${trendAttribution} data.`
-                  : `Rents in ${city} have decreased ${Math.abs(trendYoY).toFixed(1)}% year over year based on ${trendAttribution} data.`}
+                  ? `Rents in ${city} have increased ${trendYoY.toFixed(1)}% year over year based on ${trendAttribution}.`
+                  : `Rents in ${city} have decreased ${Math.abs(trendYoY).toFixed(1)}% year over year based on ${trendAttribution}.`}
                 {trendYoY > 5
                   ? ` This is a notably high rate of increase, indicating strong upward rent pressure in ${city}.`
                   : trendYoY > 0
@@ -429,7 +429,7 @@ const RentByCity = () => {
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
               {trendYoY !== null
-                ? `Based on ${trendAttribution} data, a rent increase around ${Math.abs(trendYoY).toFixed(1)}% is in line with the ${city} market for ${dataYear}. An increase above that level exceeds the local trend and may be worth pushing back on.`
+                ? `Based on ${trendAttribution}, a rent increase around ${Math.abs(trendYoY).toFixed(1)}% is in line with the ${city} market for ${dataYear}. An increase above that level exceeds the local trend and may be worth pushing back on.`
                 : `Without strong local trend data for ${city}, a fair increase is best judged against the current 1-bedroom benchmark of ${fmt(avgFmr[1])}/month and comparable listings in your ZIP code.`}
               {rentControlInfo
                 ? ` Note: ${rentControlInfo.jurisdiction} has rent increase protections${rentControlInfo.maxIncreaseFormula ? ` — the cap is generally ${rentControlInfo.maxIncreaseFormula}` : ''}.`
