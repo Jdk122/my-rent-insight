@@ -208,7 +208,7 @@ const DealAnalysis = () => {
               <p><TrendingUp className="w-4 h-4 inline-block mr-1" /> Market trend: <span className="font-semibold text-foreground">{a.trend_context}</span></p>
             )}
             {a.days_on_market != null && (
-              <p>📅 Listed <span className="font-semibold text-foreground">{a.days_on_market} days ago</span></p>
+              <p><CalendarDays className="w-4 h-4 inline-block mr-1" /> Listed <span className="font-semibold text-foreground">{a.days_on_market} days ago</span></p>
             )}
             {a.walk_score != null && (
               <p>
