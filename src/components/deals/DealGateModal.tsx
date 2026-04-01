@@ -241,7 +241,7 @@ const DealGateModal = ({ listing, cityName, cityStateAbbr, cityZip, onClose, onE
                 placeholder="you@email.com"
                 autoFocus
                 autoComplete="email"
-                className={`flex-1 min-w-0 px-3.5 py-3 rounded-lg text-sm outline-none bg-muted/30 transition-colors placeholder:text-muted-foreground/50 ${
+                className={`flex-1 min-w-0 px-3.5 py-3 rounded-lg text-base md:text-sm outline-none bg-muted/30 transition-colors placeholder:text-muted-foreground/50 ${
                   error ? 'border-2 border-destructive' : 'border-[1.5px] border-border focus:border-primary'
                 }`}
               />
