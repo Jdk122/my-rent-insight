@@ -527,7 +527,7 @@ const Deals = () => {
                 window.open(AFFILIATE_LINKS.moving_help, '_blank', 'noopener,noreferrer');
               }}
             >
-              <p className="font-semibold text-foreground text-[14px]">🚚 Compare Movers</p>
+              <p className="font-semibold text-foreground text-[14px] flex items-center gap-1.5"><Truck className="w-4 h-4" style={{ color: 'hsl(var(--primary))' }} /> Compare Movers</p>
               <p className="text-xs text-muted-foreground mt-0.5">Get instant moving quotes for your area</p>
               <span className="text-xs text-primary font-medium mt-1.5 inline-block">Get quotes →</span>
             </button>
