@@ -205,7 +205,7 @@ const DealAnalysis = () => {
           <h2 className="font-display text-base font-normal text-foreground mb-3">Market context</h2>
           <div className="bg-card rounded-lg border border-border p-4 space-y-2 text-sm text-muted-foreground">
             {a.trend_context && (
-              <p>📈 Market trend: <span className="font-semibold text-foreground">{a.trend_context}</span></p>
+              <p><TrendingUp className="w-4 h-4 inline-block mr-1" /> Market trend: <span className="font-semibold text-foreground">{a.trend_context}</span></p>
             )}
             {a.days_on_market != null && (
               <p>📅 Listed <span className="font-semibold text-foreground">{a.days_on_market} days ago</span></p>
