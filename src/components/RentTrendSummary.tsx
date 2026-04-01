@@ -1,5 +1,6 @@
 import { calculateCompositeTrend, type CompositeTrendResult } from '@/lib/compositeTrend';
 
+
 interface RentTrendSummaryProps {
   location: string;
   trendYoY: number | null;
