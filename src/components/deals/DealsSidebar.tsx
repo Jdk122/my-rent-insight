@@ -1,3 +1,4 @@
+import { BarChart3, Truck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { DealCity } from '@/data/dealsCities';
 import { AFFILIATE_LINKS } from '@/lib/affiliateConfig';
