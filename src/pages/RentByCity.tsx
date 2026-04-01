@@ -371,7 +371,7 @@ const RentByCity = () => {
             </p>
             {trendYoY !== null && (
               <p>
-                Based on {trendAttribution} data, a fair rent increase in {city}, {state} is approximately {Math.abs(trendYoY).toFixed(1)}% for {dataYear}. An increase above {Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.
+                Based on {trendAttribution}, a fair rent increase in {city}, {state} is approximately {Math.abs(trendYoY).toFixed(1)}% for {dataYear}. An increase above {Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.
               </p>
             )}
           </div>
