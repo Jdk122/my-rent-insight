@@ -31,6 +31,7 @@ const DemoIndex = lazy(() => import("./pages/DemoIndex"));
 const Deals = lazy(() => import("./pages/Deals"));
 const DealsHub = lazy(() => import("./pages/DealsHub"));
 const DealAnalysis = lazy(() => import("./pages/DealAnalysis"));
+const RentIncreaseCalculator = lazy(() => import("./pages/RentIncreaseCalculator"));
 
 const queryClient = new QueryClient();
 
