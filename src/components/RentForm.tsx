@@ -195,7 +195,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
                     placeholder="e.g. #4B"
                     value={unit}
                     onChange={(e) => setUnit(e.target.value)}
-                    className="h-10 text-sm bg-background w-32"
+                    className="h-10 text-base md:text-sm bg-background w-32"
                   />
                 </div>
               </div>
