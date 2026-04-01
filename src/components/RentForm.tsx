@@ -225,7 +225,7 @@ const RentForm = ({ onSubmit, isLoading, prefill }: RentFormProps) => {
                 setZip(v);
                 clearError('address');
               }}
-              className={`h-10 sm:h-12 md:h-10 text-sm md:text-[14px] bg-background ${errorClass('address')}`}
+              className={`h-10 sm:h-12 md:h-10 text-base md:text-[14px] bg-background ${errorClass('address')}`}
               required
               maxLength={5}
             />
