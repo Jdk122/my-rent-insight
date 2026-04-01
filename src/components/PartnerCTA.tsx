@@ -39,6 +39,7 @@ const PartnerCTA = ({
   city,
   zip,
   placement,
+  email,
 }: PartnerCTAProps) => {
   const impressionFired = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
