@@ -101,7 +101,7 @@ const DealCard = ({ listing, index, onSelect }: DealCardProps) => {
                 listing.walkScore >= 50 ? 'bg-muted text-muted-foreground' :
                 'bg-muted text-muted-foreground/60'
               }`}>
-                🚶 {listing.walkScore}
+                <Footprints className="w-3 h-3 inline-block mr-0.5" /> {listing.walkScore}
               </span>
             </>
           )}
