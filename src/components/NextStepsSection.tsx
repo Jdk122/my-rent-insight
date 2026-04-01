@@ -229,9 +229,6 @@ const NextStepsSection = ({
     } as any).then(() => {});
   }, [analysisId, capturedEmail, zip]);
 
-  // Don't render if no email captured
-  if (!capturedEmail) return null;
-
   // Don't render empty states — only render when we have listings to show (or are loading)
   if (!listingsLoading) {
     const compSet = new Set(

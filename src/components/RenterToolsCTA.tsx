@@ -220,7 +220,7 @@ const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool', sh
                 className="inline-flex items-center justify-center bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
               >
                 {t.cta}
-              </button>
+              </a>
             ) : t.action === 'reminder' ? (
               <button
                 onClick={() => setReminderOpen(true)}
