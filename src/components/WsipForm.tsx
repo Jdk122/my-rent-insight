@@ -178,7 +178,7 @@ const WsipForm = ({ onSubmit, isLoading, prefill }: WsipFormProps) => {
                 setZip(v);
                 clearError('address');
               }}
-              className={`h-12 text-sm bg-background ${errorClass('address')}`}
+              className={`h-12 text-base md:text-sm bg-background ${errorClass('address')}`}
               required
               maxLength={5}
             />
