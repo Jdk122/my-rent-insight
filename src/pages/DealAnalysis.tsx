@@ -65,7 +65,7 @@ const DealAnalysis = () => {
         <SEO title="Analysis Not Found | RenewalReply" description="This analysis is no longer available." noindex />
         <PageNav ctaText="Check My Rent →" />
         <div className="max-w-[480px] mx-auto px-5 pt-20 text-center">
-          <div className="text-4xl mb-4">📊</div>
+          <BarChart3 className="w-10 h-10 text-muted-foreground mx-auto mb-4" />
           <h1 className="font-display text-xl font-normal text-foreground mb-3">
             This analysis is no longer available
           </h1>
