@@ -1466,6 +1466,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   city={city}
                   zip={rentData.zip}
                   placement="post_listings"
+                  email={capturedEmail}
                 />
                 {(() => {
                   const matchedCity = DEAL_CITIES.find(c => c.zips.includes(rentData.zip));

@@ -103,7 +103,7 @@ const PartnerCTA = ({
 
     // Open after insert is queued so the write isn't cancelled by navigation
     window.open(AFFILIATE_LINKS[variant], '_blank', 'noopener,noreferrer');
-  }, [analysisId, verdict, toolUsed, city, zip, placement, linkType, variant]);
+  }, [analysisId, verdict, toolUsed, city, zip, placement, linkType, variant, email]);
 
   if (!config) return null;
 
