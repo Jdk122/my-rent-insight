@@ -220,7 +220,7 @@ const DealAnalysis = () => {
               </p>
             )}
             {a.is_rent_stabilized && (
-              <p className="text-primary font-medium">🏛 Rent Stabilized Building</p>
+              <p className="text-primary font-medium"><Landmark className="w-4 h-4 inline-block mr-1" /> Rent Stabilized Building</p>
             )}
           </div>
         </section>

@@ -324,7 +324,7 @@ const DealGateModal = ({ listing, cityName, cityStateAbbr, cityZip, onClose, onE
                 </p>
               )}
               {listing.isRentStabilized && (
-                <p className="text-primary font-medium">🏛 Rent Stabilized</p>
+                <p className="text-primary font-medium"><Landmark className="w-4 h-4 inline-block mr-1" /> Rent Stabilized</p>
               )}
             </div>
 
