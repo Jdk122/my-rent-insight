@@ -858,6 +858,7 @@ const WsipResults = ({
                   city={city}
                   zip={zip}
                   placement="post_comps_universal"
+                  email={capturedEmail}
                 />
               </section>
             )}

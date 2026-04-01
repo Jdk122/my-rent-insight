@@ -11,6 +11,7 @@ interface PartnerCTAProps {
   city: string;
   zip: string;
   placement: string;
+  email?: string | null;
 }
 
 const VARIANTS = {
@@ -38,6 +39,7 @@ const PartnerCTA = ({
   city,
   zip,
   placement,
+  email,
 }: PartnerCTAProps) => {
   const impressionFired = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -92,6 +94,7 @@ const PartnerCTA = ({
       placement,
     };
     if (analysisId) row.analysis_id = analysisId;
+    if (email) row.email = email;
 
     supabase
       .from('referral_clicks')
@@ -100,7 +103,7 @@ const PartnerCTA = ({
 
     // Open after insert is queued so the write isn't cancelled by navigation
     window.open(AFFILIATE_LINKS[variant], '_blank', 'noopener,noreferrer');
-  }, [analysisId, verdict, toolUsed, city, zip, placement, linkType, variant]);
+  }, [analysisId, verdict, toolUsed, city, zip, placement, linkType, variant, email]);
 
   if (!config) return null;
 

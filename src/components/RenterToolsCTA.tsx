@@ -175,8 +175,8 @@ const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool', sh
   const hasAffiliateCard = cards.some(c => c.isAffiliate);
   const gridCols = cards.length === 3 ? 'sm:grid-cols-3' : cards.length === 4 ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-2';
 
-  const handleAffiliateClick = (href: string) => {
-    window.open(href, '_blank', 'noopener,noreferrer');
+  const handleAffiliateClick = (e: React.MouseEvent) => {
+    e.preventDefault();
 
     trackEvent('affiliate_click', {
       link_type: 'partner_rent_reporting',
@@ -184,7 +184,6 @@ const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool', sh
       page_type: pageType,
       city: city || '',
       state_abbr: stateAbbr || '',
-      experiment: 'seo_renter_tools_rr_v1',
     });
 
     supabase
@@ -194,8 +193,10 @@ const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool', sh
         link_type: 'partner_rent_reporting',
         placement: 'seo_renter_tools',
         zip: zip || null,
-      })
+      } as any)
       .then(() => {});
+
+    window.open(AFFILIATE_LINKS.rent_reporting, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -211,13 +212,15 @@ const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool', sh
             <h3 className="font-semibold text-foreground text-[15px] mb-1">{t.title}</h3>
             <p className="text-xs text-muted-foreground leading-relaxed mb-4 flex-1">{t.sub}</p>
             {t.href ? (
-              <button
-                type="button"
-                onClick={() => handleAffiliateClick(t.href!)}
+              <a
+                href={t.href}
+                target="_blank"
+                rel="sponsored noopener noreferrer"
+                onClick={handleAffiliateClick}
                 className="inline-flex items-center justify-center bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-semibold hover:brightness-90 transition-all duration-150 shadow-sm shadow-primary/20"
               >
                 {t.cta}
-              </button>
+              </a>
             ) : t.action === 'reminder' ? (
               <button
                 onClick={() => setReminderOpen(true)}
