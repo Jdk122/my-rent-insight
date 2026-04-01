@@ -62,15 +62,15 @@ const DealCard = ({ listing, index, onSelect }: DealCardProps) => {
       <DealScoreRing score={listing.score} />
 
       <div className="min-w-0">
-        <div className="flex items-center gap-2 mb-0.5">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-2 mb-0.5">
           <span className="text-sm font-semibold text-foreground truncate">
             {listing.address}
           </span>
-          <span className={`shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold border ${v.className}`}>
+          <span className={`self-start shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold border ${v.className}`}>
             {v.label}
           </span>
         </div>
-        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
           <span className="font-medium text-foreground/80">{beds}</span>
           <span className="opacity-30">·</span>
           <span>{listing.baths}ba</span>
