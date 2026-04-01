@@ -1334,6 +1334,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   zip={rentData.zip}
                   placement="post_comps_universal"
                   email={capturedEmail}
+                  currentRent={formData.currentRent}
+                  proposedRent={formData.proposedRent}
                 />
               </section>
             )}
