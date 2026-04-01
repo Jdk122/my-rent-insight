@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { BarChart3, TrendingUp, CalendarDays, Footprints, Landmark } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import SEO from '@/components/SEO';
 import PageNav from '@/components/PageNav';
