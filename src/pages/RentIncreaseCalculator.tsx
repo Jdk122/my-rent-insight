@@ -236,7 +236,9 @@ const RentIncreaseCalculator = () => {
               formData={results.formData}
               rentData={results.rentData}
               propertyData={propertyLookup.data}
-              onStartOver={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              propertyLoading={propertyLookup.loading}
+              propertyError={propertyLookup.error}
+              onReset={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               onScrollToTop={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               capturedEmail={capturedEmail}
               onEmailCaptured={setCapturedEmail}
