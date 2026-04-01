@@ -11,6 +11,7 @@ import SEOFooter from '@/components/SEOFooter';
 import ContactModal from '@/components/ContactModal';
 import PageNav from '@/components/PageNav';
 import RenterToolsCTA from '@/components/RenterToolsCTA';
+import RentReportingCTA from '@/components/RentReportingCTA';
 import ShareDataButton from '@/components/ShareDataButton';
 import DataPageFreshness from '@/components/DataPageFreshness';
 import { Skeleton } from '@/components/ui/skeleton';

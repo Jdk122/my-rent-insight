@@ -10,6 +10,7 @@ import { getDataFreshness, getFreshestDate, formatFreshnessDate, getHudFiscalYea
 import RentcastMarketSection from '@/components/RentcastMarketSection';
 import DhcrAlertSection from '@/components/DhcrAlertSection';
 import RenterToolsCTA from '@/components/RenterToolsCTA';
+import RentReportingCTA from '@/components/RentReportingCTA';
 import RentTrendSummary, { getDisplayTrend } from '@/components/RentTrendSummary';
 import WhatShouldRentCost from '@/components/WhatShouldRentCost';
 import ShareDataButton from '@/components/ShareDataButton';

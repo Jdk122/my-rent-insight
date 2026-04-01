@@ -10,6 +10,7 @@ import SEO from '@/components/SEO';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
 import { getRememberedEmail, rememberEmail } from '@/lib/emailMemory';
 import PageNav from '@/components/PageNav';
+import RentReportingCTA from '@/components/RentReportingCTA';
 
 const RentResults = lazy(() => import('@/components/RentResults'));
 const SEOFooter = lazy(() => import('@/components/SEOFooter'));
