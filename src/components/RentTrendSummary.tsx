@@ -9,6 +9,7 @@ interface RentTrendSummaryProps {
   zoriSource?: 'zip' | 'county' | 'metro' | null;
   vacancyRate?: number | null;
   showHeadline?: boolean;
+  precomputedResult?: CompositeTrendResult | null;
 }
 
 function fmtPct(n: number) {
