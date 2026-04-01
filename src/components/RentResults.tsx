@@ -1340,6 +1340,42 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </section>
             )}
 
+            {/* ━━━ Moving help CTA (above-market only) ━━━ */}
+            {isAboveMarket && (
+              <section className="py-3 sm:py-4 space-y-2 sm:space-y-3">
+                <PartnerCTA
+                  variant="moving_help"
+                  analysisId={analysisId}
+                  verdict={verdictLabel}
+                  toolUsed="renewal"
+                  city={city}
+                  zip={rentData.zip}
+                  placement="post_comps"
+                  email={capturedEmail}
+                  currentRent={formData.currentRent}
+                  proposedRent={formData.rentIncrease != null ? (formData.increaseIsPercent ? formData.currentRent * (1 + formData.rentIncrease / 100) : formData.currentRent + formData.rentIncrease) : undefined}
+                />
+                {(() => {
+                  const matchedCity = DEAL_CITIES.find(c => c.zips.includes(rentData.zip));
+                  const dealsHref = matchedCity ? `/deals/${matchedCity.slug}` : '/deals';
+                  const dealsLabel = matchedCity
+                    ? `Browse curated apartment deals in ${matchedCity.neighborhood || matchedCity.name} →`
+                    : 'Browse curated apartment deals near you →';
+                  return (
+                    <div className="text-center mt-2">
+                      <Link
+                        to={dealsHref}
+                        onClick={() => trackEvent('internal_click', { link_type: 'browse_deals', city, zip: rentData.zip, placement: 'post_comps' })}
+                        className="text-sm text-primary hover:underline font-semibold"
+                      >
+                        {dealsLabel}
+                      </Link>
+                    </div>
+                  );
+                })()}
+              </section>
+            )}
+
             {hasIncrease && (
               <NextStepsSection
                 isAboveMarket={isAboveMarket}
@@ -1457,41 +1493,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             )}
 
 
-            {/* ━━━ Moving help CTA (above-market, after listings) ━━━ */}
-            {hasIncrease && isAboveMarket && isUnlocked && (
-              <section className="py-3 sm:py-4 space-y-2 sm:space-y-3">
-                <PartnerCTA
-                  variant="moving_help"
-                  analysisId={analysisId}
-                  verdict={verdictLabel}
-                  toolUsed="renewal"
-                  city={city}
-                  zip={rentData.zip}
-                  placement="post_listings"
-                  email={capturedEmail}
-                  currentRent={formData.currentRent}
-                  proposedRent={formData.rentIncrease != null ? (formData.increaseIsPercent ? formData.currentRent * (1 + formData.rentIncrease / 100) : formData.currentRent + formData.rentIncrease) : undefined}
-                />
-                {(() => {
-                  const matchedCity = DEAL_CITIES.find(c => c.zips.includes(rentData.zip));
-                  const dealsHref = matchedCity ? `/deals/${matchedCity.slug}` : '/deals';
-                  const dealsLabel = matchedCity
-                    ? `Browse curated apartment deals in ${matchedCity.neighborhood || matchedCity.name} →`
-                    : 'Browse curated apartment deals near you →';
-                  return (
-                    <div className="text-center mt-2">
-                      <Link
-                        to={dealsHref}
-                        onClick={() => trackEvent('internal_click', { link_type: 'browse_deals', city, zip: rentData.zip, placement: 'post_listings' })}
-                        className="text-sm text-primary hover:underline font-semibold"
-                      >
-                        {dealsLabel}
-                      </Link>
-                    </div>
-                  );
-                })()}
-              </section>
-            )}
+
 
             {/* ━━━ Intent Fork — data collection only (above-market path) ━━━ */}
 
