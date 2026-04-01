@@ -1536,7 +1536,20 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 confidenceSnapshot={effectiveConfidence.level}
               />
 
-              <div id="section-share" className="flex justify-center">
+              <div id="section-share" className="flex flex-col items-center gap-3">
+                <ShareCard
+                  score={fairnessScore?.total ?? 0}
+                  tierLabel={verdictLabel}
+                  verdict={isAboveMarket ? 'above' : isFair ? 'fair' : isBelowMarket ? 'below' : 'none'}
+                  increasePct={hasIncrease ? increasePct : 0}
+                  marketYoy={marketYoy}
+                  currentRent={formData.currentRent}
+                  newRent={newRent}
+                  city={city}
+                  state={rentData.state}
+                  zip={rentData.zip}
+                  hasIncrease={hasIncrease}
+                />
                 <ShareHub
                   reportPayload={shareReportPayload}
                   onLinkGenerated={(url) => { setReportUrl(url); handleResultsShared(); }}
