@@ -1,3 +1,4 @@
+import { ClipboardCopy } from 'lucide-react';
 import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
 import { LandlordCostEstimate } from '@/data/landlordCosts';
