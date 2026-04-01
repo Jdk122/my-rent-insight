@@ -16,7 +16,7 @@ const emailHeader = `
 
 const badVerdicts = ["Moderate", "Unfair", "Excessive", "Above Market"];
 
-const RENT_REPORTERS_URL = "https://prf.hn/click/camref:1110lBJ34";
+const RENT_REPORTERS_URL = "https://prf.hn/click/camref:1110lBJ34?utm_source=email&utm_medium=followup&utm_campaign=rent_reporting";
 
 function getEmailHtml(lead: any): { subject: string; html: string } {
   const score = lead.fairness_score;

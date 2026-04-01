@@ -83,7 +83,7 @@ async function getAffiliateSection(
     return {
       text: "Need help with the move? Compare movers in your area.",
       buttonLabel: "Compare movers →",
-      buttonUrl: "https://www.hireahelper.com/?affil=32303039",
+      buttonUrl: "https://www.hireahelper.com/?affil=32303039&utm_source=email&utm_medium=letter_followup&utm_campaign=moving_help",
       disclosure: "RenewalReply may earn a commission from this partner.",
     };
   }
