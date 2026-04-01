@@ -63,7 +63,7 @@ const DealCard = ({ listing, index, onSelect }: DealCardProps) => {
 
       <div className="min-w-0">
         <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-2 mb-0.5">
-          <span className="text-sm font-semibold text-foreground truncate">
+          <span className="min-w-0 flex-1 text-sm font-semibold text-foreground truncate">
             {listing.address}
           </span>
           <span className={`self-start shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold border ${v.className}`}>
