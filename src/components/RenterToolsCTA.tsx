@@ -175,8 +175,8 @@ const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool', sh
   const hasAffiliateCard = cards.some(c => c.isAffiliate);
   const gridCols = cards.length === 3 ? 'sm:grid-cols-3' : cards.length === 4 ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-2';
 
-  const handleAffiliateClick = (href: string) => {
-    window.open(href, '_blank', 'noopener,noreferrer');
+  const handleAffiliateClick = (e: React.MouseEvent) => {
+    e.preventDefault();
 
     trackEvent('affiliate_click', {
       link_type: 'partner_rent_reporting',
@@ -184,7 +184,6 @@ const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool', sh
       page_type: pageType,
       city: city || '',
       state_abbr: stateAbbr || '',
-      experiment: 'seo_renter_tools_rr_v1',
     });
 
     supabase
@@ -194,8 +193,10 @@ const RenterToolsCTA = ({ zip, city, stateName, stateAbbr, pageType = 'tool', sh
         link_type: 'partner_rent_reporting',
         placement: 'seo_renter_tools',
         zip: zip || null,
-      })
+      } as any)
       .then(() => {});
+
+    window.open(AFFILIATE_LINKS.rent_reporting, '_blank', 'noopener,noreferrer');
   };
 
   return (
