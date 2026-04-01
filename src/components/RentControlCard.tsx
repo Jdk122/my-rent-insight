@@ -1,4 +1,4 @@
-import { ExternalLink, Loader2, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { ExternalLink, Loader2, ShieldCheck, CheckCircle2, Zap } from 'lucide-react';
 import { getRentControlByStateCity, getApplicableCap, getNoticeRequirement, RentControlResult } from '@/data/rentControlData';
 import { useHcrLookup } from '@/hooks/useHcrLookup';
 
@@ -78,7 +78,7 @@ const RentControlCard = ({ state, city, zip, increasePct, address }: RentControl
           {!address && cap.jurisdiction === 'New York City' && (
             <div className="px-4 py-3 rounded-lg border border-primary/30 bg-primary/5 mb-4">
               <p className="text-sm font-medium text-foreground">
-                ⚡ Is your apartment rent-stabilized?
+                <Zap className="w-4 h-4 inline-block mr-1 text-primary" /> Is your apartment rent-stabilized?
               </p>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                 Add your full address above and we'll check automatically. Or{' '}

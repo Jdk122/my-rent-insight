@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, BarChart3, Building2, Handshake } from 'lucide-react';
+import { X, BarChart3, Building2, Handshake, Landmark } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
@@ -324,7 +324,7 @@ const DealGateModal = ({ listing, cityName, cityStateAbbr, cityZip, onClose, onE
                 </p>
               )}
               {listing.isRentStabilized && (
-                <p className="text-primary font-medium">🏛 Rent Stabilized</p>
+                <p className="text-primary font-medium"><Landmark className="w-4 h-4 inline-block mr-1" /> Rent Stabilized</p>
               )}
             </div>
 

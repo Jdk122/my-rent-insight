@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { BarChart3, TrendingUp, CalendarDays, Footprints, Landmark } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import SEO from '@/components/SEO';
 import PageNav from '@/components/PageNav';
@@ -64,7 +65,7 @@ const DealAnalysis = () => {
         <SEO title="Analysis Not Found | RenewalReply" description="This analysis is no longer available." noindex />
         <PageNav ctaText="Check My Rent →" />
         <div className="max-w-[480px] mx-auto px-5 pt-20 text-center">
-          <div className="text-4xl mb-4">📊</div>
+          <BarChart3 className="w-10 h-10 text-muted-foreground mx-auto mb-4" />
           <h1 className="font-display text-xl font-normal text-foreground mb-3">
             This analysis is no longer available
           </h1>
@@ -204,14 +205,14 @@ const DealAnalysis = () => {
           <h2 className="font-display text-base font-normal text-foreground mb-3">Market context</h2>
           <div className="bg-card rounded-lg border border-border p-4 space-y-2 text-sm text-muted-foreground">
             {a.trend_context && (
-              <p>📈 Market trend: <span className="font-semibold text-foreground">{a.trend_context}</span></p>
+              <p><TrendingUp className="w-4 h-4 inline-block mr-1" /> Market trend: <span className="font-semibold text-foreground">{a.trend_context}</span></p>
             )}
             {a.days_on_market != null && (
-              <p>📅 Listed <span className="font-semibold text-foreground">{a.days_on_market} days ago</span></p>
+              <p><CalendarDays className="w-4 h-4 inline-block mr-1" /> Listed <span className="font-semibold text-foreground">{a.days_on_market} days ago</span></p>
             )}
             {a.walk_score != null && (
               <p>
-                🚶 Walk Score: <span className="font-semibold text-foreground">{a.walk_score}</span>
+                <Footprints className="w-4 h-4 inline-block mr-1" /> Walk Score: <span className="font-semibold text-foreground">{a.walk_score}</span>
                 {' '}{a.walk_score >= 90 ? "— Walker's Paradise" :
                   a.walk_score >= 70 ? '— Very Walkable' :
                   a.walk_score >= 50 ? '— Somewhat Walkable' :
@@ -219,7 +220,7 @@ const DealAnalysis = () => {
               </p>
             )}
             {a.is_rent_stabilized && (
-              <p className="text-primary font-medium">🏛 Rent Stabilized Building</p>
+              <p className="text-primary font-medium"><Landmark className="w-4 h-4 inline-block mr-1" /> Rent Stabilized Building</p>
             )}
           </div>
         </section>

@@ -13,6 +13,7 @@ import PageNav from '@/components/PageNav';
 import RenterToolsCTA from '@/components/RenterToolsCTA';
 import RentReportingCTA from '@/components/RentReportingCTA';
 import RentTrendSummary, { getDisplayTrend } from '@/components/RentTrendSummary';
+import { BarChart3 } from 'lucide-react';
 import WhatShouldRentCost from '@/components/WhatShouldRentCost';
 import ShareDataButton from '@/components/ShareDataButton';
 import DataPageFreshness from '@/components/DataPageFreshness';
@@ -386,7 +387,7 @@ const RentByCity = () => {
           {/* HUD-only note */}
           {!hasMarketData && (
             <p className="mt-3 text-sm text-muted-foreground bg-muted/40 border border-border rounded-lg px-4 py-3">
-              📊 Market trend data is limited for this area. The analysis below uses federal rent benchmarks.
+              <BarChart3 className="w-4 h-4 inline-block mr-1 text-muted-foreground" /> Market trend data is limited for this area. The analysis below uses federal rent benchmarks.
             </p>
           )}
         </section>

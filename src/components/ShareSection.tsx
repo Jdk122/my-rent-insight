@@ -1,3 +1,4 @@
+import { ClipboardCopy } from 'lucide-react';
 import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
 import { LandlordCostEstimate } from '@/data/landlordCosts';
@@ -55,7 +56,7 @@ const ShareSection = ({ increasePct, marketPct, excessAnnual, multiplier, landlo
         onClick={handleCopy}
         className="inline-flex items-center gap-2 px-5 py-2.5 border border-border rounded text-[13px] font-medium text-muted-foreground hover:border-foreground hover:text-foreground transition-colors"
       >
-        📋 Copy link to share
+        <ClipboardCopy className="w-4 h-4 inline-block mr-1" /> Copy link to share
       </button>
     </div>
   );

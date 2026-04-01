@@ -1,3 +1,4 @@
+import { Landmark } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -31,7 +32,7 @@ export default function DhcrAlertSection({ zip, city }: { zip: string; city: str
     <section className="mb-12">
       <div className="rounded-lg border border-primary/30 bg-primary/5 p-6">
         <div className="flex items-start gap-3">
-          <span className="text-xl mt-0.5">🏛️</span>
+          <Landmark className="w-5 h-5 text-primary mt-0.5 shrink-0" />
           <div>
             <h3 className="font-display text-lg font-semibold text-foreground tracking-tight">
               Rent Stabilization in {zip}
