@@ -35,7 +35,7 @@ This guide gives you the exact process: what data to gather, how to calculate a 
 
 ## If You Only Do Three Things
 
-1. **Check the market trend.** If rents in your area grew 3% and your landlord wants 8%, that's a 5-point gap you can point to directly. This is usually your strongest argument.
+1. **Check the market trend.** Use our [rent increase calculator](/rent-increase-calculator) to see exactly how your increase compares to the local market. If rents in your area grew 3% and your landlord wants 8%, that's a 5-point gap you can point to directly. This is usually your strongest argument.
 2. **Pull comps.** Find what similar units near you are renting for *right now*. If your post-increase rent is above the median, you have a data-backed case.
 3. **Counter with a specific number.** Don't say "that's too much." Say "$2,496, matching the 4% local trend." A specific number anchored to data is what gets taken seriously.
 
