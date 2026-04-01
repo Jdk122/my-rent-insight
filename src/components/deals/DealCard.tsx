@@ -129,3 +129,4 @@ const DealCard = ({ listing, index, onSelect }: DealCardProps) => {
 };
 
 export default DealCard;
+
