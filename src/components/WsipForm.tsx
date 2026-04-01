@@ -125,7 +125,7 @@ const WsipForm = ({ onSubmit, isLoading, prefill }: WsipFormProps) => {
           <div className="space-y-1.5" ref={addressRef}>
             <Label className="text-sm font-medium text-foreground">Address or ZIP Code</Label>
             <AddressAutocomplete
-              className={`h-12 text-sm bg-background ${errorClass('address')}`}
+              className={`h-12 text-base md:text-sm bg-background ${errorClass('address')}`}
               placeholder="Start typing an address..."
               onSelect={(addr) => {
                 if (addr.zip) setZip(addr.zip);
