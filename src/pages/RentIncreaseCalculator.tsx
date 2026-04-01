@@ -115,7 +115,7 @@ const RentIncreaseCalculator = () => {
                 name: 'How do I calculate my rent increase percentage?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: "Subtract your current rent from the proposed rent, divide by your current rent, and multiply by 100. For example, if your rent goes from $2,000 to $2,100, the increase is ($2,100 - $2,000) / $2,000 × 100 = 5%. RenewalReply's calculator does this automatically and compares it to your local market trend.",
+                  text: 'Subtract your current rent from the proposed rent, divide by your current rent, and multiply by 100. For example, if your rent goes from $2,000 to $2,100, the increase is 5%. This calculator does it automatically and compares your increase to the local market trend.',
                 },
               },
               {
@@ -123,7 +123,7 @@ const RentIncreaseCalculator = () => {
                 name: 'What is a normal rent increase?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: "A fair rent increase depends on your local market. RenewalReply compares your specific increase to year-over-year rent trends in your ZIP code using data from Zillow, Apartment List, and HUD. Enter your details above to see how your increase compares to the local trend.",
+                  text: 'It depends on your local market. RenewalReply compares your specific increase to year-over-year rent trends in your ZIP code using federal benchmarks and commercial market data. Enter your details to see how your increase compares.',
                 },
               },
               {
