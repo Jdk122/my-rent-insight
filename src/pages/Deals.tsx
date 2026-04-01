@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { BarChart3, Truck } from 'lucide-react';
 import { getRememberedEmail } from '@/lib/emailMemory';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -515,7 +516,7 @@ const Deals = () => {
                 window.open(AFFILIATE_LINKS.rent_reporting, '_blank', 'noopener,noreferrer');
               }}
             >
-              <p className="font-semibold text-foreground text-[14px]">📊 Build Credit</p>
+              <p className="font-semibold text-foreground text-[14px] flex items-center gap-1.5"><BarChart3 className="w-4 h-4" style={{ color: 'hsl(var(--accent-green))' }} /> Build Credit</p>
               <p className="text-xs text-muted-foreground mt-0.5">Report your rent payments to build your credit score</p>
               <span className="text-xs text-accent font-medium mt-1.5 inline-block">Learn more →</span>
             </button>
@@ -526,7 +527,7 @@ const Deals = () => {
                 window.open(AFFILIATE_LINKS.moving_help, '_blank', 'noopener,noreferrer');
               }}
             >
-              <p className="font-semibold text-foreground text-[14px]">🚚 Compare Movers</p>
+              <p className="font-semibold text-foreground text-[14px] flex items-center gap-1.5"><Truck className="w-4 h-4" style={{ color: 'hsl(var(--primary))' }} /> Compare Movers</p>
               <p className="text-xs text-muted-foreground mt-0.5">Get instant moving quotes for your area</p>
               <span className="text-xs text-primary font-medium mt-1.5 inline-block">Get quotes →</span>
             </button>
