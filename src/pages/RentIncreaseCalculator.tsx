@@ -101,7 +101,7 @@ const RentIncreaseCalculator = () => {
             '@type': 'WebApplication',
             name: 'Rent Increase Calculator',
             url: 'https://www.renewalreply.com/rent-increase-calculator',
-            description: "Free rent increase calculator that compares your landlord's proposed increase to local market data including HUD Fair Market Rents, Zillow ZORI trends, and real comparable listings.",
+            description: "Free rent increase calculator that compares your landlord's proposed increase to local market data including federal rent benchmarks, market trends, and real comparable listings for 38,600+ US ZIP codes.",
             applicationCategory: 'FinanceApplication',
             operatingSystem: 'Web',
             offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
