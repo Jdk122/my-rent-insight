@@ -1,4 +1,4 @@
-import { ExternalLink, Loader2, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { ExternalLink, Loader2, ShieldCheck, CheckCircle2, Zap } from 'lucide-react';
 import { getRentControlByStateCity, getApplicableCap, getNoticeRequirement, RentControlResult } from '@/data/rentControlData';
 import { useHcrLookup } from '@/hooks/useHcrLookup';
 
