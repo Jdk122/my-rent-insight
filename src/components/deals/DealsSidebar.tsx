@@ -91,8 +91,8 @@ const DealsSidebar = ({ city, medianRent1BR, yoyChange, activeListings }: DealsS
       {/* Affiliate services */}
       <SideCard title="Renter savings">
         {[
-          { icon: '📊', title: 'Build Credit', sub: 'Report rent to build your score', accent: 'hsl(var(--accent-green))', href: AFFILIATE_LINKS.rent_reporting, linkType: 'partner_rent_reporting' },
-          { icon: '🚚', title: 'Compare Movers', sub: 'Get instant quotes', accent: 'hsl(var(--primary))', href: AFFILIATE_LINKS.moving_help, linkType: 'partner_moving_help' },
+          { icon: <BarChart3 className="w-3.5 h-3.5" style={{ color: 'hsl(var(--accent-green))' }} />, title: 'Build Credit', sub: 'Report rent to build your score', accent: 'hsl(var(--accent-green))', href: AFFILIATE_LINKS.rent_reporting, linkType: 'partner_rent_reporting' },
+          { icon: <Truck className="w-3.5 h-3.5" style={{ color: 'hsl(var(--primary))' }} />, title: 'Compare Movers', sub: 'Get instant quotes', accent: 'hsl(var(--primary))', href: AFFILIATE_LINKS.moving_help, linkType: 'partner_moving_help' },
         ].map((svc) => (
           <button
             key={svc.title}
