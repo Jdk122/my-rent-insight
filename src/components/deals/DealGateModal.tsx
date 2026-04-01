@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, BarChart3, Building2, Handshake } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
@@ -221,9 +221,9 @@ const DealGateModal = ({ listing, cityName, cityStateAbbr, cityZip, onClose, onE
 
             <div className="flex flex-col gap-2 mb-5">
               {[
-                { icon: '📊', text: 'How this rent compares to similar apartments nearby' },
-                { icon: '🏢', text: 'Building complaint and violation history' },
-                { icon: '🤝', text: 'Whether you have room to negotiate the price' },
+                { icon: <BarChart3 className="w-4 h-4 text-primary" />, text: 'How this rent compares to similar apartments nearby' },
+                { icon: <Building2 className="w-4 h-4 text-primary" />, text: 'Building complaint and violation history' },
+                { icon: <Handshake className="w-4 h-4 text-primary" />, text: 'Whether you have room to negotiate the price' },
               ].map((item, i) => (
                 <div key={i} className="flex gap-2 items-start">
                   <span className="text-sm shrink-0 mt-0.5">{item.icon}</span>

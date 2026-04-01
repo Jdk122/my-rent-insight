@@ -1,4 +1,4 @@
-import { ExternalLink, Loader2, ShieldCheck } from 'lucide-react';
+import { ExternalLink, Loader2, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { getRentControlByStateCity, getApplicableCap, getNoticeRequirement, RentControlResult } from '@/data/rentControlData';
 import { useHcrLookup } from '@/hooks/useHcrLookup';
 
@@ -61,8 +61,9 @@ const RentControlCard = ({ state, city, zip, increasePct, address }: RentControl
 
           {hcrResult?.found === false && hcrResult.reason === 'no_match' && address && (
             <div className="px-4 py-3 rounded-lg border border-border bg-muted/30 mb-4">
-              <p className="text-sm text-foreground">
-                ✅ Your building was <strong>not found</strong> in the DHCR rent-stabilization registry.
+              <p className="text-sm text-foreground flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-verdict-good shrink-0 mt-0.5" />
+                <span>Your building was <strong>not found</strong> in the DHCR rent-stabilization registry.</span>
               </p>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                 Based on 2024 DHCR registrations. Buildings registered after November 2025 may not appear. The only way to confirm is through HCR directly →{' '}
