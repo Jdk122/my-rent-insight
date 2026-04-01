@@ -250,6 +250,12 @@ const RentIncreaseCalculator = () => {
         </div>
       )}
 
+      {!results && (
+        <div className="max-w-2xl mx-auto mt-8 px-5">
+          <RentReportingCTA pageType="calculator" />
+        </div>
+      )}
+
       <Suspense fallback={null}>
         <SEOFooter onContactClick={() => setContactOpen(true)} />
       </Suspense>
