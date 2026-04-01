@@ -1,3 +1,4 @@
+import { Footprints, Landmark } from 'lucide-react';
 import DealScoreRing from './DealScoreRing';
 import type { DealScoreResult } from '@/lib/dealScore';
 
