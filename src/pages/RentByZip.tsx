@@ -13,6 +13,7 @@ import RenterToolsCTA from '@/components/RenterToolsCTA';
 import RentReportingCTA from '@/components/RentReportingCTA';
 import RentTrendSummary, { getDisplayTrend } from '@/components/RentTrendSummary';
 import WhatShouldRentCost from '@/components/WhatShouldRentCost';
+import { BarChart3 } from 'lucide-react';
 import ShareDataButton from '@/components/ShareDataButton';
 import DataPageFreshness from '@/components/DataPageFreshness';
 
