@@ -1,3 +1,4 @@
+import { Footprints, Landmark } from 'lucide-react';
 import DealScoreRing from './DealScoreRing';
 import type { DealScoreResult } from '@/lib/dealScore';
 
@@ -61,15 +62,15 @@ const DealCard = ({ listing, index, onSelect }: DealCardProps) => {
       <DealScoreRing score={listing.score} />
 
       <div className="min-w-0">
-        <div className="flex items-center gap-2 mb-0.5">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-2 mb-0.5">
           <span className="text-sm font-semibold text-foreground truncate">
             {listing.address}
           </span>
-          <span className={`shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold border ${v.className}`}>
+          <span className={`self-start shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold border ${v.className}`}>
             {v.label}
           </span>
         </div>
-        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
           <span className="font-medium text-foreground/80">{beds}</span>
           <span className="opacity-30">·</span>
           <span>{listing.baths}ba</span>
@@ -100,7 +101,7 @@ const DealCard = ({ listing, index, onSelect }: DealCardProps) => {
                 listing.walkScore >= 50 ? 'bg-muted text-muted-foreground' :
                 'bg-muted text-muted-foreground/60'
               }`}>
-                🚶 {listing.walkScore}
+                <Footprints className="w-3 h-3 inline-block mr-0.5" /> {listing.walkScore}
               </span>
             </>
           )}
@@ -108,7 +109,7 @@ const DealCard = ({ listing, index, onSelect }: DealCardProps) => {
             <>
               <span className="opacity-30">·</span>
               <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-primary/10 text-primary">
-                🏛 Stabilized
+                <Landmark className="w-3 h-3 inline-block mr-0.5" /> Stabilized
               </span>
             </>
           )}
