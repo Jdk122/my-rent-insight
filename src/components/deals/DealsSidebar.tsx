@@ -99,6 +99,7 @@ const DealsSidebar = ({ city, medianRent1BR, yoyChange, activeListings }: DealsS
             key={svc.title}
             className="flex gap-2 items-center py-1.5 no-underline hover:opacity-70 transition-opacity w-full text-left"
             onClick={() => {
+              trackEvent('affiliate_click', { link_type: svc.linkType, placement: 'deals_sidebar' });
               supabase.from('referral_clicks').insert({ link_type: svc.linkType, placement: 'deals_sidebar', event_type: 'affiliate_click' }).then(() => {});
               window.open(svc.href, '_blank', 'noopener,noreferrer');
             }}

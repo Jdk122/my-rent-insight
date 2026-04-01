@@ -109,7 +109,7 @@ const DealCard = ({ listing, index, onSelect }: DealCardProps) => {
             <>
               <span className="opacity-30">·</span>
               <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-primary/10 text-primary">
-                🏛 Stabilized
+                <Landmark className="w-3 h-3 inline-block mr-0.5" /> Stabilized
               </span>
             </>
           )}

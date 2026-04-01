@@ -525,6 +525,7 @@ const Deals = () => {
             <button
               className="block w-full text-left rounded-xl border border-border bg-card p-4 hover:border-primary/40 transition-all"
               onClick={() => {
+                trackEvent('affiliate_click', { link_type: 'partner_moving_help', placement: 'deals_mobile' });
                 supabase.from('referral_clicks').insert({ link_type: 'partner_moving_help', placement: 'deals_mobile', event_type: 'affiliate_click' }).then(() => {});
                 window.open(AFFILIATE_LINKS.moving_help, '_blank', 'noopener,noreferrer');
               }}
