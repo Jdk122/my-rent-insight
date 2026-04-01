@@ -1335,7 +1335,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   placement="post_comps_universal"
                   email={capturedEmail}
                   currentRent={formData.currentRent}
-                  proposedRent={formData.proposedRent}
+                  proposedRent={formData.rentIncrease != null ? (formData.increaseIsPercent ? formData.currentRent * (1 + formData.rentIncrease / 100) : formData.currentRent + formData.rentIncrease) : undefined}
                 />
               </section>
             )}
