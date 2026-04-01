@@ -271,7 +271,7 @@ const RentByZip = () => {
               {
                 '@type': 'Question',
                 name: `How much has rent increased in ${city} (${zip})?`,
-                acceptedAnswer: { '@type': 'Answer', text: trendYoY !== null ? `Rents in ${city} changed approximately ${trendYoY > 0 ? '+' : ''}${Math.abs(trendYoY).toFixed(1)}% year-over-year based on ${trendAttribution} data.` : `Year-over-year rent trend data is not currently available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}%.` },
+                acceptedAnswer: { '@type': 'Answer', text: trendYoY !== null ? `Rents in ${city} changed approximately ${trendYoY > 0 ? '+' : ''}${Math.abs(trendYoY).toFixed(1)}% year-over-year based on ${trendAttribution}.` : `Year-over-year rent trend data is not currently available for ${zip}. The national average rent increase is approximately ${NATIONAL_AVG_YOY}%.` },
               },
               {
                 '@type': 'Question',
