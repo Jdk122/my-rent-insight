@@ -73,7 +73,9 @@ const PartnerCTA = ({
     return () => observer.disconnect();
   }, [analysisId, verdict, toolUsed, city, zip, placement, linkType]);
 
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+
     trackEvent('affiliate_click', {
       link_type: linkType,
       verdict,
@@ -95,7 +97,10 @@ const PartnerCTA = ({
       .from('referral_clicks')
       .insert(row as any)
       .then(() => {});
-  }, [analysisId, verdict, toolUsed, city, zip, placement, linkType]);
+
+    // Open after insert is queued so the write isn't cancelled by navigation
+    window.open(AFFILIATE_LINKS[variant], '_blank', 'noopener,noreferrer');
+  }, [analysisId, verdict, toolUsed, city, zip, placement, linkType, variant]);
 
   if (!config) return null;
 

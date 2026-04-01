@@ -93,14 +93,12 @@ const DealsSidebar = ({ city, medianRent1BR, yoyChange, activeListings }: DealsS
           { icon: '📊', title: 'Build Credit', sub: 'Report rent to build your score', accent: 'hsl(var(--accent-green))', href: AFFILIATE_LINKS.rent_reporting, linkType: 'partner_rent_reporting' },
           { icon: '🚚', title: 'Compare Movers', sub: 'Get instant quotes', accent: 'hsl(var(--primary))', href: AFFILIATE_LINKS.moving_help, linkType: 'partner_moving_help' },
         ].map((svc) => (
-          <a
+          <button
             key={svc.title}
-            href={svc.href}
-            target="_blank"
-            rel="sponsored noopener noreferrer"
-            className="flex gap-2 items-center py-1.5 no-underline hover:opacity-70 transition-opacity"
+            className="flex gap-2 items-center py-1.5 no-underline hover:opacity-70 transition-opacity w-full text-left"
             onClick={() => {
               supabase.from('referral_clicks').insert({ link_type: svc.linkType, placement: 'deals_sidebar', event_type: 'affiliate_click' }).then(() => {});
+              window.open(svc.href, '_blank', 'noopener,noreferrer');
             }}
           >
             <div
@@ -114,7 +112,7 @@ const DealsSidebar = ({ city, medianRent1BR, yoyChange, activeListings }: DealsS
               <div className="text-[11px] text-muted-foreground">{svc.sub}</div>
             </div>
             <span className="text-[11px] font-semibold" style={{ color: svc.accent }}>→</span>
-          </a>
+          </button>
         ))}
         <p className="text-[10px] text-muted-foreground/40 mt-2">
           May include affiliate links.{' '}
