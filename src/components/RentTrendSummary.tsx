@@ -16,8 +16,8 @@ function fmtPct(n: number) {
   return (n > 0 ? '+' : '') + n.toFixed(1) + '%';
 }
 
-const RentTrendSummary = ({ location, trendYoY, alYoY, zoriYoY, zoriSource, vacancyRate, showHeadline = false }: RentTrendSummaryProps) => {
-  const result = calculateCompositeTrend({
+const RentTrendSummary = ({ location, trendYoY, alYoY, zoriYoY, zoriSource, vacancyRate, showHeadline = false, precomputedResult }: RentTrendSummaryProps) => {
+  const result = precomputedResult ?? calculateCompositeTrend({
     alYoY: alYoY ?? null,
     zoriYoY: zoriYoY ?? null,
     zoriSource,
