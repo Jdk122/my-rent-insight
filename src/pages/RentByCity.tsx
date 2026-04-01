@@ -429,7 +429,7 @@ const RentByCity = () => {
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
               {trendYoY !== null
-                ? `Based on ${trendAttribution} data, a rent increase around ${Math.abs(trendYoY).toFixed(1)}% is in line with the ${city} market for ${dataYear}. An increase above that level exceeds the local trend and may be worth pushing back on.`
+                ? `Based on ${trendAttribution}, a rent increase around ${Math.abs(trendYoY).toFixed(1)}% is in line with the ${city} market for ${dataYear}. An increase above that level exceeds the local trend and may be worth pushing back on.`
                 : `Without strong local trend data for ${city}, a fair increase is best judged against the current 1-bedroom benchmark of ${fmt(avgFmr[1])}/month and comparable listings in your ZIP code.`}
               {rentControlInfo
                 ? ` Note: ${rentControlInfo.jurisdiction} has rent increase protections${rentControlInfo.maxIncreaseFormula ? ` — the cap is generally ${rentControlInfo.maxIncreaseFormula}` : ''}.`
