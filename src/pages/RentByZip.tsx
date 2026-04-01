@@ -584,7 +584,7 @@ const RentByZip = () => {
 
         {/* ═══ Rent Reporting CTA ═══ */}
         <div className="mt-6">
-          <RentReportingCTA zip={zip} city={cityName} stateAbbr={state} pageType="zip" />
+          <RentReportingCTA zip={zip} city={city} stateAbbr={state} pageType="zip" />
         </div>
 
         {/* ═══ Renter Tools CTA ═══ */}
