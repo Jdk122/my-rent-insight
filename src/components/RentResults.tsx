@@ -1333,6 +1333,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   city={city}
                   zip={rentData.zip}
                   placement="post_comps_universal"
+                  email={capturedEmail}
                 />
               </section>
             )}
