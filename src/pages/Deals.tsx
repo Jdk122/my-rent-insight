@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { BarChart3, Truck } from 'lucide-react';
+import { trackEvent } from '@/lib/analytics';
 import { getRememberedEmail } from '@/lib/emailMemory';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
