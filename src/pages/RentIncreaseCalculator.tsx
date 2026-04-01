@@ -186,35 +186,35 @@ const RentIncreaseCalculator = () => {
               <div>
                 <h3 className="text-sm font-semibold text-foreground mb-1">How do I calculate my rent increase percentage?</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Subtract your current rent from the proposed rent, divide by your current rent, and multiply by 100. For example, a jump from $2,000 to $2,100 is a 5% increase. This calculator does the math automatically and shows how your increase compares to your local market.
+                  Take the new rent, subtract your current rent, divide by your current rent, multiply by 100. So $2,000 to $2,100 is a 5% increase. The form above does this for you and then tells you whether 5% is high or low for your area.
                 </p>
               </div>
 
               <div>
                 <h3 className="text-sm font-semibold text-foreground mb-1">What is a normal rent increase?</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  It depends entirely on your local market. In some cities rents are falling; in others they're rising 5-8% per year. That's why a flat "3-5% is normal" answer is misleading. Enter your ZIP code above to see the actual trend in your area.
+                  There's no single answer — it depends entirely on where you live. In some cities rents are falling right now. In others they're climbing 5-8% a year. Anyone who tells you "3-5% is normal" without checking your ZIP code is guessing. That's the whole point of this tool.
                 </p>
               </div>
 
               <div>
                 <h3 className="text-sm font-semibold text-foreground mb-1">Can I negotiate my rent increase?</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Yes. If your increase exceeds the local market trend, you have leverage. Landlords expect pushback — and avoiding turnover is worth more to them than $50-100/month. RenewalReply generates a free negotiation letter with your local data built in.
+                  Almost always. Landlords expect some pushback, and replacing you costs them more than you'd think — vacancy, cleaning, listing fees, the risk of a worse tenant. If your increase is above the market trend, you have real leverage. The tool generates a letter with your local numbers built in.
                 </p>
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold text-foreground mb-1">Is this calculator free?</h3>
+                <h3 className="text-sm font-semibold text-foreground mb-1">Is this free?</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Yes. The full analysis including comparable listings, Fairness Score, and negotiation letter is free. No payment required. You may be asked for your email to save your report and set a lease renewal reminder.
+                  Yes. The full analysis — comps, Fairness Score, negotiation letter — costs nothing. You can save your report by entering your email, but it's not required to see your results.
                 </p>
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold text-foreground mb-1">What data sources does this use?</h3>
+                <h3 className="text-sm font-semibold text-foreground mb-1">Where does the data come from?</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  RenewalReply combines HUD Small Area Fair Market Rents (FY2026), Zillow Observed Rent Index (ZORI), Apartment List rent estimates, and real-time comparable rental listings from Rentcast across 38,600+ US ZIP codes.
+                  We combine federal rent benchmarks from HUD, market rent trends from multiple commercial data providers, and real comparable rental listings near your address. Coverage spans 38,600+ US ZIP codes.
                 </p>
               </div>
             </div>
