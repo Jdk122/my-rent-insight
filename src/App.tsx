@@ -89,6 +89,7 @@ const App = () => (
           <Route path="/deals" element={<Suspense fallback={<PageSkeleton />}><DealsHub /></Suspense>} />
           <Route path="/deals/analysis/:shortId" element={<Suspense fallback={<PageSkeleton />}><DealAnalysis /></Suspense>} />
           <Route path="/deals/:citySlug" element={<Suspense fallback={<PageSkeleton />}><Deals /></Suspense>} />
+          <Route path="/rent-increase-calculator" element={<Suspense fallback={<PageSkeleton />}><RentIncreaseCalculator /></Suspense>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<Suspense fallback={<PageSkeleton />}><NotFound /></Suspense>} />
         </Routes>
