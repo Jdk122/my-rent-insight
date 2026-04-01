@@ -162,16 +162,19 @@ const RentIncreaseCalculator = () => {
           <section className="mb-12">
             <h2 className="font-display text-xl font-semibold text-foreground mb-3">How this calculator works</h2>
             <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-              Most rent increase calculators just do basic math — they tell you what percentage your rent went up. This one goes further. After calculating your increase percentage, RenewalReply compares it to real market data for your specific ZIP code:
+              Every other rent increase calculator on the internet does one thing: basic math. You type in two numbers, it tells you the percentage. You could do that on your phone.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+              This one actually tells you whether the number is reasonable. After calculating your increase, it pulls rent data for your specific ZIP code and compares your landlord's ask to what's actually happening in your market:
             </p>
             <div className="text-sm text-muted-foreground leading-relaxed space-y-1 mb-3">
-              <p>· Year-over-year rent trends from Zillow ZORI and Apartment List</p>
-              <p>· HUD Fair Market Rent benchmarks for your bedroom count</p>
-              <p>· Real comparable listings near your address</p>
-              <p>· A Fairness Score (0–100) rating your increase against all of the above</p>
+              <p>· Year-over-year rent trends from multiple market sources</p>
+              <p>· Federal rent benchmarks for your bedroom count</p>
+              <p>· Comparable listings near your address</p>
+              <p>· A Fairness Score (0–100) that weighs all of the above</p>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              If your increase is above the local trend, you get a suggested counter-offer range and a free negotiation letter you can send to your landlord — backed by the data from your area.
+              If your increase is above the local trend, you get a counter-offer range and a negotiation letter you can actually send — not a generic template, but one built from the data in your area.
             </p>
           </section>
 
