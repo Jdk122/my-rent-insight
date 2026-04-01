@@ -221,6 +221,11 @@ const RentIncreaseCalculator = () => {
             </div>
           </section>
 
+          {/* Rent Reporting CTA */}
+          <div className="mb-12">
+            <RentReportingCTA pageType="calculator" />
+          </div>
+
           {/* Cross-links */}
           <section className="mb-8">
             <h2 className="font-display text-xl font-semibold text-foreground mb-3">More renter tools</h2>
@@ -248,12 +253,6 @@ const RentIncreaseCalculator = () => {
               onEmailCaptured={setCapturedEmail}
             />
           </Suspense>
-        </div>
-      )}
-
-      {!results && (
-        <div className="max-w-2xl mx-auto mt-8 px-5">
-          <RentReportingCTA pageType="calculator" />
         </div>
       )}
 
