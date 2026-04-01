@@ -212,7 +212,7 @@ const DealAnalysis = () => {
             )}
             {a.walk_score != null && (
               <p>
-                🚶 Walk Score: <span className="font-semibold text-foreground">{a.walk_score}</span>
+                <Footprints className="w-4 h-4 inline-block mr-1" /> Walk Score: <span className="font-semibold text-foreground">{a.walk_score}</span>
                 {' '}{a.walk_score >= 90 ? "— Walker's Paradise" :
                   a.walk_score >= 70 ? '— Very Walkable' :
                   a.walk_score >= 50 ? '— Somewhat Walkable' :
