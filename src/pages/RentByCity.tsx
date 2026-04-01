@@ -445,7 +445,7 @@ const RentByCity = () => {
           <section className="mb-12">
             <h2 className="font-display text-2xl text-foreground mb-4 tracking-tight">Rent Trends in {city}</h2>
             <div className="rounded-lg border border-border p-6 bg-card">
-              <RentTrendSummary location={city} trendYoY={trendYoY} alYoY={cityAlYoY} zoriYoY={cityZoriYoY} showHeadline />
+              <RentTrendSummary location={city} trendYoY={trendYoY} alYoY={cityAlYoY} zoriYoY={cityZoriYoY} showHeadline precomputedResult={compositeTrendResult} />
             </div>
           </section>
         )}

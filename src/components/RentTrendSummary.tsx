@@ -1,5 +1,6 @@
 import { calculateCompositeTrend, type CompositeTrendResult } from '@/lib/compositeTrend';
 
+
 interface RentTrendSummaryProps {
   location: string;
   trendYoY: number | null;
@@ -8,14 +9,15 @@ interface RentTrendSummaryProps {
   zoriSource?: 'zip' | 'county' | 'metro' | null;
   vacancyRate?: number | null;
   showHeadline?: boolean;
+  precomputedResult?: CompositeTrendResult | null;
 }
 
 function fmtPct(n: number) {
   return (n > 0 ? '+' : '') + n.toFixed(1) + '%';
 }
 
-const RentTrendSummary = ({ location, trendYoY, alYoY, zoriYoY, zoriSource, vacancyRate, showHeadline = false }: RentTrendSummaryProps) => {
-  const result = calculateCompositeTrend({
+const RentTrendSummary = ({ location, trendYoY, alYoY, zoriYoY, zoriSource, vacancyRate, showHeadline = false, precomputedResult }: RentTrendSummaryProps) => {
+  const result = precomputedResult ?? calculateCompositeTrend({
     alYoY: alYoY ?? null,
     zoriYoY: zoriYoY ?? null,
     zoriSource,

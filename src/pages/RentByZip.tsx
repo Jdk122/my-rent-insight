@@ -492,7 +492,7 @@ const RentByZip = () => {
                 <div>
                   <h3 className="font-display text-xl text-foreground mb-4 tracking-tight">Rent Trends in {city}, {state}</h3>
                   <div className="rounded-lg border border-border p-6 bg-card">
-                    <RentTrendSummary location={`${zip} (${city})`} trendYoY={trendYoY} alYoY={al?.aly ?? null} zoriYoY={raw.zy ?? null} vacancyRate={al?.alv ?? null} showHeadline />
+                    <RentTrendSummary location={`${zip} (${city})`} trendYoY={trendYoY} alYoY={al?.aly ?? null} zoriYoY={raw.zy ?? null} vacancyRate={al?.alv ?? null} showHeadline precomputedResult={compositeTrendResult} />
                   </div>
                 </div>
               )}
