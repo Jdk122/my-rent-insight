@@ -94,6 +94,7 @@ const PartnerCTA = ({
       placement,
     };
     if (analysisId) row.analysis_id = analysisId;
+    if (email) row.email = email;
 
     supabase
       .from('referral_clicks')
