@@ -1,9 +1,9 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
 import { Link } from 'react-router-dom';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, Copy } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface CompForLetter {
@@ -273,7 +273,11 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
   const [aiLetter, setAiLetter] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  
+
+  const letterContainerRef = useRef<HTMLDivElement | null>(null);
+  const viewTrackedRef = useRef(false);
+  const viewTimerRef = useRef<number | null>(null);
+
 
   const brLabel = bedroomLabels[bedrooms];
   const increaseAmt = increaseAmount ?? Math.round(newRent - currentRent);
@@ -378,7 +382,58 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
   const handleRegenerate = () => {
     setAiLetter(null);
     generateLetter();
-    trackEvent('letter_used', { action: 'regenerated' });
+    trackEvent('letter_used', { action: 'regenerated', zip, verdict: letterTone });
+  };
+
+  // 3-second view tracking
+  useEffect(() => {
+    if (loading || viewTrackedRef.current) return;
+    const el = letterContainerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          viewTimerRef.current = window.setTimeout(() => {
+            if (!viewTrackedRef.current) {
+              viewTrackedRef.current = true;
+              trackEvent('letter_used', { action: 'viewed_3s', zip });
+              observer.disconnect();
+            }
+          }, 3000);
+        } else {
+          if (viewTimerRef.current) {
+            clearTimeout(viewTimerRef.current);
+            viewTimerRef.current = null;
+          }
+        }
+      },
+      { threshold: 0.5 },
+    );
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      if (viewTimerRef.current) clearTimeout(viewTimerRef.current);
+    };
+  }, [loading, zip]);
+
+  const handleCopyLetter = async () => {
+    try {
+      const letterText = displayLetter;
+      await navigator.clipboard.writeText(letterText);
+      toast.success('Letter copied!');
+      trackEvent('letter_used', { action: 'copied_ungated', zip, verdict: letterTone });
+      supabase.from('lead_events').insert({
+        event_type: 'letter_copied',
+        email: 'anonymous@copy',
+        analysis_id: analysisId ?? undefined,
+        zip,
+        verdict: letterTone,
+      }).then(() => {});
+    } catch (err) {
+      console.error('Copy failed:', err);
+      toast.error('Could not copy letter');
+    }
   };
 
   // ── Loading state ──
@@ -404,6 +459,7 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
 
       {/* Letter container */}
       <div
+        ref={letterContainerRef}
         className="rounded-lg border border-border border-l-[3px] border-l-muted p-6 md:p-8"
         style={{ background: 'hsl(var(--letter-bg))', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
       >
@@ -435,13 +491,22 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
         </div>
       </div>
 
-      {/* Regenerate link */}
-      <p
-        onClick={handleRegenerate}
-        className="text-xs text-muted-foreground hover:text-foreground cursor-pointer mt-3 transition-colors"
-      >
-        Not quite right? Regenerate →
-      </p>
+      {/* Actions */}
+      <div className="flex items-center gap-4 mt-3">
+        <button
+          onClick={handleCopyLetter}
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 cursor-pointer transition-colors"
+        >
+          <Copy size={14} />
+          Copy letter
+        </button>
+        <p
+          onClick={handleRegenerate}
+          className="text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
+        >
+          Not quite right? Regenerate →
+        </p>
+      </div>
 
 
       {/* Legal disclaimer */}
