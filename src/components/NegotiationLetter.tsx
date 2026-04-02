@@ -273,7 +273,11 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
   const [aiLetter, setAiLetter] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  
+
+  const letterContainerRef = useRef<HTMLDivElement | null>(null);
+  const viewTrackedRef = useRef(false);
+  const viewTimerRef = useRef<number | null>(null);
+
 
   const brLabel = bedroomLabels[bedrooms];
   const increaseAmt = increaseAmount ?? Math.round(newRent - currentRent);
