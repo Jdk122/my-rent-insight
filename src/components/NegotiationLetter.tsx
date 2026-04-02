@@ -382,7 +382,58 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
   const handleRegenerate = () => {
     setAiLetter(null);
     generateLetter();
-    trackEvent('letter_used', { action: 'regenerated' });
+    trackEvent('letter_used', { action: 'regenerated', zip, verdict: letterTone });
+  };
+
+  // 3-second view tracking
+  useEffect(() => {
+    if (loading || viewTrackedRef.current) return;
+    const el = letterContainerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          viewTimerRef.current = window.setTimeout(() => {
+            if (!viewTrackedRef.current) {
+              viewTrackedRef.current = true;
+              trackEvent('letter_used', { action: 'viewed_3s', zip });
+              observer.disconnect();
+            }
+          }, 3000);
+        } else {
+          if (viewTimerRef.current) {
+            clearTimeout(viewTimerRef.current);
+            viewTimerRef.current = null;
+          }
+        }
+      },
+      { threshold: 0.5 },
+    );
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      if (viewTimerRef.current) clearTimeout(viewTimerRef.current);
+    };
+  }, [loading, zip]);
+
+  const handleCopyLetter = async () => {
+    try {
+      const letterText = displayLetter;
+      await navigator.clipboard.writeText(letterText);
+      toast.success('Letter copied!');
+      trackEvent('letter_used', { action: 'copied_ungated', zip, verdict: letterTone });
+      supabase.from('lead_events').insert({
+        event_type: 'letter_copied',
+        email: 'anonymous@copy',
+        analysis_id: analysisId ?? undefined,
+        zip,
+        verdict: letterTone,
+      }).then(() => {});
+    } catch (err) {
+      console.error('Copy failed:', err);
+      toast.error('Could not copy letter');
+    }
   };
 
   // ── Loading state ──
