@@ -491,13 +491,22 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
         </div>
       </div>
 
-      {/* Regenerate link */}
-      <p
-        onClick={handleRegenerate}
-        className="text-xs text-muted-foreground hover:text-foreground cursor-pointer mt-3 transition-colors"
-      >
-        Not quite right? Regenerate →
-      </p>
+      {/* Actions */}
+      <div className="flex items-center gap-4 mt-3">
+        <button
+          onClick={handleCopyLetter}
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 cursor-pointer transition-colors"
+        >
+          <Copy size={14} />
+          Copy letter
+        </button>
+        <p
+          onClick={handleRegenerate}
+          className="text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
+        >
+          Not quite right? Regenerate →
+        </p>
+      </div>
 
 
       {/* Legal disclaimer */}
