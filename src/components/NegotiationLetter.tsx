@@ -459,6 +459,7 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
 
       {/* Letter container */}
       <div
+        ref={letterContainerRef}
         className="rounded-lg border border-border border-l-[3px] border-l-muted p-6 md:p-8"
         style={{ background: 'hsl(var(--letter-bg))', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
       >
