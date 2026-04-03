@@ -157,7 +157,7 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
       </button>
 
       {/* Payment methods note */}
-      <p className="text-[10px] text-muted-foreground/40 text-center">
+      <p className="text-xs text-muted-foreground/60 text-center">
         Lawyers charge $225+/hr for lease help. This is $4.99.
       </p>
 
