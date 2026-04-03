@@ -186,7 +186,7 @@ const Index = () => {
     setTimeout(() => {
       document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' });
     }, 300);
-  }, [results, capturedEmail, isAboveMarket]);
+  }, [results, capturedEmail, verdictStr]);
 
   const handleSubmit = async (data: RentFormData) => {
     setIsLoading(true);
