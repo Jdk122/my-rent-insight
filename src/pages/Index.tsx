@@ -28,6 +28,7 @@ import SEO from '@/components/SEO';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
 import { getDemoData } from '@/data/demoData';
 import { getRememberedEmail, rememberEmail } from '@/lib/emailMemory';
+import { getUtmParams } from '@/lib/utm';
 
 // Lazy-load heavy below-fold components to reduce initial bundle
 const RentResults = lazy(() => import('@/components/RentResults'));
