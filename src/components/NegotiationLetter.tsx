@@ -55,7 +55,7 @@ interface NegotiationLetterProps {
   isPaid?: boolean;
   onCheckout?: () => void;
   checkoutLoading?: boolean;
-  onPaid?: () => void;
+  onPaid?: (email?: string) => void;
   expressCheckoutProps?: {
     analysisId?: string | null;
     verdict: string;
@@ -71,7 +71,7 @@ const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 
 function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutProps }: {
   onCheckout?: () => void;
   checkoutLoading?: boolean;
-  onPaid?: () => void;
+  onPaid?: (email?: string) => void;
   expressCheckoutProps?: {
     analysisId?: string | null;
     verdict: string;
@@ -86,8 +86,8 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
     setWalletAvailable(false);
   }, []);
 
-  const handleWalletSuccess = useCallback(() => {
-    onPaid?.();
+  const handleWalletSuccess = useCallback((email?: string) => {
+    onPaid?.(email);
   }, [onPaid]);
 
   return (

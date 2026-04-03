@@ -14,7 +14,7 @@ interface LetterPitchCardProps {
   city: string;
   onCheckout: () => void;
   checkoutLoading: boolean;
-  onPaid?: () => void;
+  onPaid?: (email?: string) => void;
   analysisId?: string | null;
   savings: number;
 }
@@ -59,8 +59,8 @@ const LetterPitchCard = ({
     setWalletAvailable(false);
   }, []);
 
-  const handleWalletSuccess = useCallback(() => {
-    onPaid?.();
+  const handleWalletSuccess = useCallback((email?: string) => {
+    onPaid?.(email);
   }, [onPaid]);
 
   const headline = isAboveMarket

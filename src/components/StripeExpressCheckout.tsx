@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { RefreshCw } from 'lucide-react';
 
 interface ExpressCheckoutProps {
-  onSuccess: () => void;
+  onSuccess: (email?: string) => void;
   onFallbackToRedirect: () => void;
   analysisId?: string | null;
   verdict: string;
@@ -16,7 +16,7 @@ interface ExpressCheckoutProps {
 }
 
 function ExpressCheckoutInner({ onSuccess, onFallbackToRedirect }: {
-  onSuccess: () => void;
+  onSuccess: (email?: string) => void;
   onFallbackToRedirect: () => void;
 }) {
   const stripe = useStripe();
@@ -28,8 +28,10 @@ function ExpressCheckoutInner({ onSuccess, onFallbackToRedirect }: {
     }
   }, [onFallbackToRedirect]);
 
-  const handleConfirm = useCallback(async () => {
+  const handleConfirm = useCallback(async (event: any) => {
     if (!stripe || !elements) return;
+
+    const payerEmail = event?.billingDetails?.email || null;
 
     const { error } = await stripe.confirmPayment({
       elements,
@@ -37,9 +39,10 @@ function ExpressCheckoutInner({ onSuccess, onFallbackToRedirect }: {
     });
 
     if (error) {
+      event?.paymentFailed?.({ reason: 'fail' });
       toast.error(error.message || 'Payment failed. Please try again.');
     } else {
-      onSuccess();
+      onSuccess(payerEmail || undefined);
     }
   }, [stripe, elements, onSuccess]);
 
@@ -50,6 +53,7 @@ function ExpressCheckoutInner({ onSuccess, onFallbackToRedirect }: {
       options={{
         buttonHeight: 48,
         buttonType: { applePay: 'buy', googlePay: 'buy' },
+        emailRequired: true,
       }}
     />
   );

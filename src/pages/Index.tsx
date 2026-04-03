@@ -171,18 +171,36 @@ const Index = () => {
     }
   }, [results]);
 
-  const handlePaid = useCallback(() => {
+  const handlePaid = useCallback((walletEmail?: string) => {
     if (!results) return;
     const fp = getAnalysisFingerprint(results.formData);
     addPaidAnalysis({ sessionId: 'wallet-' + Date.now(), fingerprint: fp, timestamp: Date.now() });
     setIsPaid(true);
+
+    const email = walletEmail || capturedEmail || 'anonymous@checkout';
+
+    if (walletEmail && !capturedEmail) {
+      setCapturedEmailRaw(walletEmail);
+      rememberEmail(walletEmail);
+    }
+
     trackEvent('purchase_completed', { verdict: verdictStr, zip: results.formData.zip });
     supabase.from('lead_events' as any).insert({
       event_type: 'purchase_completed',
-      email: capturedEmail || 'anonymous@checkout',
+      email,
       zip: results.formData.zip,
       verdict: verdictStr,
     }).then(() => {});
+
+    if (walletEmail) {
+      supabase.from('leads' as any).upsert({
+        email: walletEmail,
+        capture_source: 'stripe_express_checkout',
+        zip: results.formData.zip,
+        tool_type: 'renewal',
+      }, { onConflict: 'email' }).then(() => {});
+    }
+
     setTimeout(() => {
       document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' });
     }, 300);
