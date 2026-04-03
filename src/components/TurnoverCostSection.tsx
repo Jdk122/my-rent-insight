@@ -197,7 +197,7 @@ const TurnoverCostSection = ({
         {version === 'B' && (
           <>
             <p className="text-sm text-foreground leading-relaxed">
-              Turnover on a {bedroomLabel.toLowerCase()} in {city} typically costs a property owner an estimated <strong>{fmt(costs.total)}</strong> before accounting for any rent adjustment on the new lease. Your estimated savings from moving — <strong>{fmt(annualSavings)}/yr</strong> — are significant. Whether moving makes financial sense depends on your specific moving costs and how your unit compares to what's available, but the numbers suggest it's worth serious consideration.
+              Turnover on a {bedroomLabel.toLowerCase()} in {city} typically costs a property owner an estimated <strong>{fmt(costs.total)}</strong> before accounting for any rent adjustment on the new lease. Your estimated savings from moving would be <strong>{fmt(annualSavings)}/yr</strong>. Whether moving makes financial sense depends on your specific moving costs and how your unit compares to what's available, but the numbers suggest it's worth serious consideration.
             </p>
             <p className="text-[13px] text-muted-foreground mt-3">
               Either way, negotiating first costs nothing and takes five minutes.

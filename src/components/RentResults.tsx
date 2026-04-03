@@ -1444,7 +1444,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             {isFair && !isAboveMarket && !isPaid && (
               <div className="text-center max-w-[480px] mx-auto pt-4 pb-2">
                 <p className="text-sm text-foreground/80 leading-relaxed">
-                  Your increase tracks the market — but your landlord would still spend thousands to replace you. A polite, data-backed reply costs nothing to try.
+                  Your increase tracks the market, but your landlord would still spend thousands to replace you. A polite, data-backed reply costs nothing to try.
                 </p>
               </div>
             )}

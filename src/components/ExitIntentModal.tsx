@@ -72,7 +72,7 @@ function PaywallContent({
   const [walletAvailable, setWalletAvailable] = useState(true);
 
   const headline = isAboveMarket && savings && savings > 0
-    ? `Your reply is ready — don't leave $${savings.toLocaleString()} on the table`
+    ? `Your reply is ready. Don't leave $${savings.toLocaleString()} on the table.`
     : isAboveMarket
     ? 'You can still push back'
     : 'Keep paying less than neighbors';
