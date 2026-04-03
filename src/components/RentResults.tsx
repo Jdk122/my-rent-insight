@@ -1551,6 +1551,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   onLetterGenerated={handleLetterGenerated}
                   comparables={rentcast.data?.comparables}
                   belowFmrHighIncrease={isBelowFmrHighIncrease}
+                  isPaid={isPaid}
+                  onCheckout={handleCheckout}
+                  checkoutLoading={checkoutLoading}
                 />
               </motion.section>
             )}
