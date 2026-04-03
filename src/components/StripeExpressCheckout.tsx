@@ -55,7 +55,7 @@ function ExpressCheckoutInner({ onSuccess, onFallbackToRedirect, onReady }: {
       onReady={handleReady}
       onConfirm={handleConfirm}
       options={{
-        buttonHeight: 48,
+        buttonHeight: 40,
         buttonType: { applePay: 'buy', googlePay: 'buy' },
         emailRequired: true,
       }}
