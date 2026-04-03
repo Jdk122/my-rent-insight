@@ -460,10 +460,19 @@ function DashboardContent() {
 
         <TabsContent value="overview" className="space-y-8">
 
-      {/* ━━━ Summary Cards ━━━ */}
+      {/* ━━━ Revenue Cards ━━━ */}
       {statsLoading ? (
         <div className="flex items-center gap-2 text-muted-foreground"><Loader2 className="w-4 h-4 animate-spin" /> Loading stats…</div>
       ) : stats ? (
+        <>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <StatCard label="Paywall Clicks" value={`${stats.paywall_clicks ?? 0}`} />
+          <StatCard label="Purchases" value={`${stats.purchases ?? 0}`} />
+          <StatCard label="Revenue" value={`$${((stats.purchases ?? 0) * 4.99).toFixed(2)}`} />
+          <StatCard label="Click → Purchase %" value={stats.paywall_clicks > 0 ? `${Math.round(((stats.purchases ?? 0) / stats.paywall_clicks) * 100)}%` : '0%'} />
+        </div>
+
+        {/* ━━━ Core Stats ━━━ */}
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
           <StatCard label="Total Submissions" value={stats.total_submissions} />
           <StatCard label="Last 30 Days" value={stats.submissions_30d} />
@@ -471,12 +480,15 @@ function DashboardContent() {
           <StatCard label="Unique Zips" value={stats.unique_zips} />
           <StatCard label="% Unfair/Excessive" value={stats.total_submissions > 0 ? `${Math.round((stats.unfair_excessive_count / stats.total_submissions) * 100)}%` : '0%'} />
           <StatCard label="Avg Overpayment" value={fmt(stats.avg_overpayment)} />
-          <StatCard label="% Letter Generated" value={stats.total_submissions > 0 ? `${Math.round((stats.letter_count / stats.total_submissions) * 100)}%` : '0%'} />
+        </div>
+
+        {/* ━━━ Secondary Stats ━━━ */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           <StatCard label="% Shared" value={stats.total_submissions > 0 ? `${Math.round((stats.shared_count / stats.total_submissions) * 100)}%` : '0%'} />
           <StatCard label="Total Leads (email)" value={stats.total_leads} />
           <StatCard label="Emails / Submissions" value={`${stats.total_leads_all} / ${stats.total_submissions}`} />
-          <StatCard label="% Partner Opt-In" value={stats.total_leads_all > 0 ? `${Math.round((stats.partner_optin_count / stats.total_leads_all) * 100)}%` : '0%'} />
         </div>
+        </>
       ) : null}
 
       {/* ━━━ Captures by First-Touch Source ━━━ */}
@@ -502,12 +514,24 @@ function DashboardContent() {
             <FunnelStep label="Tool Completed" count={stats.total_submissions} />
             <FunnelArrow from={stats.total_submissions} to={stats.above_market_count} />
             <FunnelStep label="Above Market" count={stats.above_market_count} />
-            <FunnelArrow from={stats.above_market_count} to={stats.total_leads_all} />
-            <FunnelStep label="Email Captured" count={stats.total_leads_all} />
-            <FunnelArrow from={stats.total_leads_all} to={stats.letter_count} />
-            <FunnelStep label="Letter Generated" count={stats.letter_count} />
-            <FunnelArrow from={stats.total_leads_all} to={stats.shared_count} />
-            <FunnelStep label="Shared" count={stats.shared_count} />
+            <FunnelArrow from={stats.above_market_count} to={stats.paywall_clicks ?? 0} />
+            <FunnelStep label="Paywall Clicked" count={stats.paywall_clicks ?? 0} />
+            <FunnelArrow from={stats.paywall_clicks ?? 0} to={stats.purchases ?? 0} />
+            <FunnelStep label="Purchased" count={stats.purchases ?? 0} />
+          </div>
+          {/* Verdict breakdown */}
+          <div className="mt-3 text-[12px] text-muted-foreground flex flex-wrap gap-x-4 gap-y-1">
+            {(() => {
+              const clicksByVerdict: Record<string, number> = {};
+              const purchasesByVerdict: Record<string, number> = {};
+              for (const v of (stats.paywall_clicks_by_verdict || [])) clicksByVerdict[v.verdict] = v.count;
+              for (const v of (stats.purchases_by_verdict || [])) purchasesByVerdict[v.verdict] = v.count;
+              const verdicts = ['above', 'fair', 'below'];
+              const labels: Record<string, string> = { above: 'Above market', fair: 'Fair', below: 'Below' };
+              return verdicts.map(v => (
+                <span key={v}>{labels[v]}: {clicksByVerdict[v] ?? 0} clicks, {purchasesByVerdict[v] ?? 0} purchases</span>
+              ));
+            })()}
           </div>
         </div>
       )}
