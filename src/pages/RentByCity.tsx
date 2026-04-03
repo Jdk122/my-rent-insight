@@ -366,19 +366,30 @@ const RentByCity = () => {
           {/* Summary */}
           <div className="mt-4 space-y-2 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
             <p>
-              Average rent in {city}, {state} ranges from {fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to {fmt(Math.max(...zips.map(z => z.raw.f[1])))} across {zips.length} ZIP codes.
+              The average 1-bedroom rent in {city}, {state} is {fmt(avgFmr[1])}/month according to HUD FY{hudFY} Fair Market Rent data, covering {zips.length} ZIP codes.
+              {trendYoY !== null ? ` Rents have ${trendYoY > 0 ? 'increased' : 'decreased'} ${Math.abs(trendYoY).toFixed(1)}% year-over-year.` : ''}
+              {nationalAvg > 0 && ` The average 1-bedroom rent in ${city} is ${Math.abs(Math.round(((avgFmr[1] - nationalAvg) / nationalAvg) * 100))}% ${avgFmr[1] >= nationalAvg ? 'above' : 'below'} the national average of ${fmt(nationalAvg)}/month.`}
             </p>
             <p>
-              The average 1-bedroom rent in {city} is {fmt(avgFmr[1])}/month based on HUD Fair Market Rent data.
-              {trendYoY !== null
-                ? ` Year-over-year rent trends in ${city} show a ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% change based on ${trendAttribution}. ${trendYoY < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendYoY.toFixed(1)}% in this area is above the local market trend.`}`
-                : ''}
+              Average rent in {city}, {state} ranges from {fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to {fmt(Math.max(...zips.map(z => z.raw.f[1])))} across {zips.length} ZIP codes.
             </p>
             {trendYoY !== null && (
               <p>
                 Based on {trendAttribution}, a fair rent increase in {city}, {state} is approximately {Math.abs(trendYoY).toFixed(1)}% for {dataYear}. An increase above {Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.
               </p>
             )}
+          </div>
+
+          {/* Key Facts box */}
+          <div className="mt-5 rounded-lg border border-border bg-muted/30 px-5 py-4">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Key Facts</p>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+              <div><span className="text-muted-foreground">Average 1-BR rent:</span> <span className="font-medium text-foreground">{fmt(avgFmr[1])}/mo</span></div>
+              {trendYoY !== null && <div><span className="text-muted-foreground">Year-over-year change:</span> <span className="font-medium text-foreground">{trendYoY > 0 ? '+' : ''}{trendYoY.toFixed(1)}%</span></div>}
+              <div><span className="text-muted-foreground">Coverage:</span> <span className="font-medium text-foreground">{zips.length} ZIP codes</span></div>
+              <div><span className="text-muted-foreground">Data source:</span> <span className="font-medium text-foreground">HUD Small Area FMR FY{hudFY}</span></div>
+              {nationalAvg > 0 && <div><span className="text-muted-foreground">vs. national avg:</span> <span className="font-medium text-foreground">{Math.abs(Math.round(((avgFmr[1] - nationalAvg) / nationalAvg) * 100))}% {avgFmr[1] >= nationalAvg ? 'above' : 'below'} ({fmt(nationalAvg)}/mo)</span></div>}
+            </div>
           </div>
 
           {/* Visible source attribution */}
