@@ -134,6 +134,7 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
           <StripeExpressCheckout
             onSuccess={handleWalletSuccess}
             onFallbackToRedirect={handleFallback}
+            onReady={handleWalletReady}
             analysisId={expressCheckoutProps.analysisId}
             verdict={expressCheckoutProps.verdict}
             zip={expressCheckoutProps.zip}

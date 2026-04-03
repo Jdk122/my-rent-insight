@@ -117,6 +117,7 @@ const StripeExpressCheckout = ({
       <ExpressCheckoutInner
         onSuccess={onSuccess}
         onFallbackToRedirect={onFallbackToRedirect}
+        onReady={onReady}
       />
     </Elements>
   );
