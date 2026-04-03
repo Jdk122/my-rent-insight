@@ -16,7 +16,7 @@ interface ExpressCheckoutProps {
 }
 
 function ExpressCheckoutInner({ onSuccess, onFallbackToRedirect }: {
-  onSuccess: () => void;
+  onSuccess: (email?: string) => void;
   onFallbackToRedirect: () => void;
 }) {
   const stripe = useStripe();
