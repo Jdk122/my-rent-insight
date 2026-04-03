@@ -1452,7 +1452,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             {/* ━━━ NEGOTIATION LETTER ━━━ */}
             {hasIncrease && calc && (isAboveMarket || isFair || isBelowMarket) && (
               <motion.section id="section-letter" {...fade(0.19)} className="pt-5 pb-4 sm:pt-8 sm:pb-8">
-                {isAboveMarket && !isPaid && (
+                {hasIncrease && !isPaid && (
                   <h2 className="results-section-header mb-2">Your Negotiation Reply</h2>
                 )}
                 {isFair && !isAboveMarket && !isBelowMarket && isPaid && (

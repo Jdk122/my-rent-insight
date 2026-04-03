@@ -76,15 +76,6 @@ const LetterPitchCard = ({
         See the evidence ↓
       </button>
 
-      <p className="text-[11px] text-muted-foreground/50 text-left mt-1.5">
-        <button
-          type="button"
-          onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
-          className="hover:underline cursor-pointer"
-        >
-          Continue with free verdict and comps
-        </button>
-      </p>
     </div>
   );
 };
