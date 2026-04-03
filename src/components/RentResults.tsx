@@ -1084,8 +1084,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </motion.div>
 
 
-
-
               {/* ── Primary CTA / Pitch Card ── */}
               {hasIncrease && !isPaid && (
                 <LetterPitchCard
