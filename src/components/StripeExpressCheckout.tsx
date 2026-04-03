@@ -66,6 +66,7 @@ function ExpressCheckoutInner({ onSuccess, onFallbackToRedirect, onReady }: {
 const StripeExpressCheckout = ({
   onSuccess,
   onFallbackToRedirect,
+  onReady,
   analysisId,
   verdict,
   zip,
