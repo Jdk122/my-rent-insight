@@ -1053,8 +1053,21 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
 
 
-              {/* ── Primary CTA button ── */}
-              {isUnlocked && hasIncrease && (
+              {/* ── Primary CTA / Pitch Card ── */}
+              {hasIncrease && !isPaid && (
+                <LetterPitchCard
+                  isAboveMarket={isAboveMarket}
+                  isFair={isFair}
+                  isBelowMarket={isBelowMarket}
+                  increaseAmount={increaseAmount}
+                  compsCount={compsWithRent.length}
+                  verdict={isAboveMarket ? 'above' : isFair ? 'at-market' : 'below'}
+                  zip={rentData.zip}
+                  onCheckout={handleCheckout}
+                  checkoutLoading={checkoutLoading}
+                />
+              )}
+              {isPaid && isUnlocked && hasIncrease && (
                 <button
                   onClick={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
                   className="w-full mt-4 py-3.5 rounded-lg bg-primary text-primary-foreground text-[15px] font-semibold tracking-tight hover:brightness-95 transition-all shadow-sm shadow-primary/20"
@@ -1062,7 +1075,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   {isAboveMarket ? 'Your negotiation letter is ready \u2193' : isBelowMarket ? 'Protect this rate \u2193' : 'Review your negotiation letter \u2193'}
                 </button>
               )}
-              {isUnlocked && hasIncrease && (
+              {isPaid && isUnlocked && hasIncrease && (
                 <p className="text-[11px] text-muted-foreground/60 mt-1.5 text-center">
                   {isAboveMarket
                     ? `Based on ${compsWithRent.length} nearby comp${compsWithRent.length !== 1 ? 's' : ''}`
