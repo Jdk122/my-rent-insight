@@ -99,8 +99,8 @@ const TurnoverCostSection = ({
   const isFallback = vacancy?.isFallback ?? true;
 
   const vacancySublabel = isFallback
-    ? `Based on national average vacancy rate (${vacancyRate}%) — estimated ${costs.vacancyMonths === 1 ? '1 month' : `${costs.vacancyMonths} months`} to re-rent`
-    : `Based on ${stateName}'s ${vacancyRate}% vacancy rate — estimated ${costs.vacancyMonths === 1 ? '1 month' : `${costs.vacancyMonths} months`} to re-rent`;
+    ? `Based on national average vacancy rate (${vacancyRate}%), estimated ${costs.vacancyMonths === 1 ? '1 month' : `${costs.vacancyMonths} months`} to re-rent`
+    : `Based on ${stateName}'s ${vacancyRate}% vacancy rate, estimated ${costs.vacancyMonths === 1 ? '1 month' : `${costs.vacancyMonths} months`} to re-rent`;
 
   return (
     <div className="text-left">
