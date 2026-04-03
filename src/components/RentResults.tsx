@@ -59,7 +59,7 @@ interface RentResultsProps {
   onScrollToTop: () => void;
   capturedEmail?: string;
   onEmailCaptured?: (email: string) => void;
-  onVerdictReady?: (isAboveMarket: boolean) => void;
+  onVerdictReady?: (verdict: 'above' | 'at-market' | 'below') => void;
   isDemo?: boolean;
   isPaid?: boolean;
   onPaid?: () => void;
