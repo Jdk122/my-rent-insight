@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
+import { useState, useRef, useEffect, useMemo, lazy, Suspense, useCallback } from 'react';
 import { ChevronRight, MessageSquareText, Calculator, Building2 } from 'lucide-react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { useSearchParams, Link } from 'react-router-dom';
-
+import { getAnalysisFingerprint, addPaidAnalysis, isAnalysisPaid } from '@/lib/analysisFingerprint';
 import SampleResultCard from '@/components/SampleResultCard';
 const LocationSearch = lazy(() => import('@/components/LocationSearch'));
 const BrowseDealsSection = lazy(() => import('@/components/BrowseDealsSection'));
@@ -52,6 +52,58 @@ const Index = () => {
   const propertyLookup = usePropertyLookup();
   const topRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+  const [isPaid, setIsPaid] = useState(false);
+  const [paidFallbackMsg, setPaidFallbackMsg] = useState<string | null>(null);
+
+  // Handle ?paid=true return from Stripe
+  useEffect(() => {
+    if (!searchParams.has('paid') || searchParams.get('paid') !== 'true') return;
+    const sessionId = searchParams.get('session_id') || '';
+
+    try {
+      const raw = localStorage.getItem('rr_checkout_state');
+      if (raw) {
+        const savedState = JSON.parse(raw);
+        const age = Date.now() - (savedState.timestamp || 0);
+        if (age < 3600000) { // 1 hour
+          setResults({ formData: savedState.formData, rentData: savedState.rentData });
+          if (savedState.capturedEmail) setCapturedEmailRaw(savedState.capturedEmail);
+
+          addPaidAnalysis({
+            sessionId,
+            fingerprint: savedState.analysisFingerprint,
+            timestamp: Date.now(),
+          });
+          setIsPaid(true);
+
+          // Clean URL
+          window.history.replaceState({}, '', window.location.pathname);
+          localStorage.removeItem('rr_checkout_state');
+
+          // GA4 + Supabase events using restored values
+          trackEvent('purchase_completed', { verdict: savedState.verdict, zip: savedState.formData.zip });
+          import('@/integrations/supabase/client').then(({ supabase }) => {
+            supabase.from('lead_events' as any).insert({
+              event_type: 'purchase_completed',
+              email: savedState.capturedEmail || 'anonymous@checkout',
+              zip: savedState.formData.zip,
+              verdict: savedState.verdict,
+            }).then(() => {});
+          });
+
+          // Scroll to letter after short delay
+          setTimeout(() => {
+            document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' });
+          }, 500);
+          return;
+        }
+      }
+    } catch { /* ignore parse errors */ }
+
+    // Fallback: no valid state
+    window.history.replaceState({}, '', window.location.pathname);
+    setPaidFallbackMsg('Payment received! Run your analysis again and your letter will unlock automatically.');
+  }, []);
 
   // Demo mode: ?demo=above|fair|below|none
   useEffect(() => {
@@ -91,8 +143,19 @@ const Index = () => {
   const hasIncrease = !!(results && results.formData.rentIncrease && results.formData.rentIncrease > 0);
   const isUnlocked = !!capturedEmail || !EMAIL_GATE_ENABLED;
 
+  // Check if current analysis matches a previously paid fingerprint
+  useEffect(() => {
+    if (!results) return;
+    const fp = getAnalysisFingerprint(results.formData);
+    if (isAnalysisPaid(fp)) {
+      setIsPaid(true);
+    }
+  }, [results]);
+
   const handleSubmit = async (data: RentFormData) => {
     setIsLoading(true);
+    setIsPaid(false); // Reset paid state for new analysis
+    setPaidFallbackMsg(null);
     setCapturedEmailRaw(getRememberedEmail());
 
     try {
@@ -397,6 +460,11 @@ const Index = () => {
         </main>
       ) : (
         <div ref={resultsRef}>
+          {paidFallbackMsg && (
+            <div className="max-w-md mx-auto mt-4 px-4 py-3 rounded-lg border border-green-300/50 bg-green-50/50 text-center">
+              <p className="text-sm text-green-800">{paidFallbackMsg}</p>
+            </div>
+          )}
           <Suspense fallback={<LoadingAnalysis />}>
           <RentResults
             formData={results.formData}
@@ -405,9 +473,11 @@ const Index = () => {
             propertyData={propertyLookup.data}
             propertyLoading={propertyLookup.loading}
             propertyError={propertyLookup.error}
-            onReset={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            isPaid={isPaid}
+            onReset={() => { setResults(null); setIsPaid(false); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             onScrollToTop={() => {
               setResults(null);
+              setIsPaid(false);
               setFormKey(k => k + 1);
               setCapturedEmailRaw(getRememberedEmail());
               window.scrollTo({ top: 0, behavior: 'smooth' });

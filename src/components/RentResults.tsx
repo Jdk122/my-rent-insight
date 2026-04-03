@@ -42,10 +42,12 @@ import PostConversionFlow from './PostConversionFlow';
 import LeaseReminderCapture from './LeaseReminderCapture';
 import FeedbackWidget from './FeedbackWidget';
 import SocialProofLine from './SocialProofLine';
+import LetterPitchCard from './LetterPitchCard';
 import { EMAIL_GATE_ENABLED, GATE_VARIANT } from '@/lib/featureFlags';
 import { DEAL_CITIES } from '@/data/dealsCities';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { demoRentcast } from '@/data/demoData';
+import { getAnalysisFingerprint } from '@/lib/analysisFingerprint';
 
 interface RentResultsProps {
   formData: RentFormData;
@@ -59,6 +61,7 @@ interface RentResultsProps {
   onEmailCaptured?: (email: string) => void;
   onVerdictReady?: (isAboveMarket: boolean) => void;
   isDemo?: boolean;
+  isPaid?: boolean;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -69,7 +72,7 @@ const fade = (delay: number) => ({
   transition: { duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] as const },
 });
 
-const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop, capturedEmail: externalEmail, onEmailCaptured: externalOnEmail, onVerdictReady, isDemo = false }: RentResultsProps) => {
+const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop, capturedEmail: externalEmail, onEmailCaptured: externalOnEmail, onVerdictReady, isDemo = false, isPaid = false }: RentResultsProps) => {
   const [internalEmail, setInternalEmail] = useState('');
   const capturedEmail = externalEmail ?? internalEmail;
   const isUnlocked = !!capturedEmail || !EMAIL_GATE_ENABLED;
@@ -87,6 +90,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const [selectedIntent, setSelectedIntent] = useState<'stay' | 'move' | null>(null);
   const analysisLogged = useRef(isDuplicateAnalysis);
   const gateViewedRef = useRef(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   // Rehydrate user_intent from analyses on mount
   useEffect(() => {
@@ -621,6 +625,51 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     updateAnalysis({ results_shared: true });
   }, [updateAnalysis]);
 
+  const handleCheckout = useCallback(async () => {
+    const verdictStr = isAboveMarket ? 'above' : isFair ? 'at-market' : 'below';
+    const savings = increaseAmount * 12;
+    trackEvent('toolkit_click', { verdict: verdictStr, savings, placement: 'verdict_area', zip: rentData.zip });
+
+    supabase.from('lead_events' as any).insert({
+      event_type: 'toolkit_click',
+      email: capturedEmail || 'anonymous@checkout',
+      analysis_id: analysisId ?? undefined,
+      zip: rentData.zip,
+      verdict: verdictStr,
+    }).then(() => {});
+
+    const fingerprint = getAnalysisFingerprint(formData);
+    const checkoutState = {
+      formData,
+      rentData,
+      capturedEmail,
+      analysisFingerprint: fingerprint,
+      verdict: verdictStr,
+      timestamp: Date.now(),
+    };
+    localStorage.setItem('rr_checkout_state', JSON.stringify(checkoutState));
+
+    setCheckoutLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        body: {
+          analysisId,
+          verdict: verdictStr,
+          zip: rentData.zip,
+          city: rentData.city,
+          savings,
+          returnUrl: window.location.origin + window.location.pathname,
+        },
+      });
+      if (error || !data?.url) throw new Error(error?.message || 'No checkout URL returned');
+      window.location.href = data.url;
+    } catch (err) {
+      console.error('Checkout failed:', err);
+      toast.error('Something went wrong. Please try again.');
+      setCheckoutLoading(false);
+    }
+  }, [isAboveMarket, isFair, increaseAmount, rentData, capturedEmail, analysisId, formData]);
+
   const leadContext = useMemo(() => ({
     analysisId,
     address: formData.fullAddress,
@@ -1004,8 +1053,21 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
 
 
-              {/* ── Primary CTA button ── */}
-              {isUnlocked && hasIncrease && (
+              {/* ── Primary CTA / Pitch Card ── */}
+              {hasIncrease && !isPaid && (
+                <LetterPitchCard
+                  isAboveMarket={isAboveMarket}
+                  isFair={isFair}
+                  isBelowMarket={isBelowMarket}
+                  increaseAmount={increaseAmount}
+                  compsCount={compsWithRent.length}
+                  verdict={isAboveMarket ? 'above' : isFair ? 'at-market' : 'below'}
+                  zip={rentData.zip}
+                  onCheckout={handleCheckout}
+                  checkoutLoading={checkoutLoading}
+                />
+              )}
+              {isPaid && isUnlocked && hasIncrease && (
                 <button
                   onClick={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
                   className="w-full mt-4 py-3.5 rounded-lg bg-primary text-primary-foreground text-[15px] font-semibold tracking-tight hover:brightness-95 transition-all shadow-sm shadow-primary/20"
@@ -1013,7 +1075,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   {isAboveMarket ? 'Your negotiation letter is ready \u2193' : isBelowMarket ? 'Protect this rate \u2193' : 'Review your negotiation letter \u2193'}
                 </button>
               )}
-              {isUnlocked && hasIncrease && (
+              {isPaid && isUnlocked && hasIncrease && (
                 <p className="text-[11px] text-muted-foreground/60 mt-1.5 text-center">
                   {isAboveMarket
                     ? `Based on ${compsWithRent.length} nearby comp${compsWithRent.length !== 1 ? 's' : ''}`
@@ -1489,6 +1551,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   onLetterGenerated={handleLetterGenerated}
                   comparables={rentcast.data?.comparables}
                   belowFmrHighIncrease={isBelowFmrHighIncrease}
+                  isPaid={isPaid}
+                  onCheckout={handleCheckout}
+                  checkoutLoading={checkoutLoading}
                 />
               </motion.section>
             )}

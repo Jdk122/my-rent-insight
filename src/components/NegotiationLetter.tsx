@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
 import { Link } from 'react-router-dom';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
-import { RefreshCw, Copy } from 'lucide-react';
+import { RefreshCw, Copy, Lock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface CompForLetter {
@@ -51,6 +51,9 @@ interface NegotiationLetterProps {
   belowFmrHighIncrease?: boolean;
   onLetterGenerated?: () => void;
   comparables?: CompForLetter[];
+  isPaid?: boolean;
+  onCheckout?: () => void;
+  checkoutLoading?: boolean;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -435,6 +438,62 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
       toast.error('Could not copy letter');
     }
   };
+
+  const isPaid = props.isPaid ?? true;
+
+  // ── Locked state (unpaid) ──
+  if (!isPaid) {
+    const previewParagraphs = fallbackLetter.split('\n\n').slice(0, 3);
+    return (
+      <div className="mt-4">
+        <div
+          className="rounded-lg border border-border border-l-[3px] border-l-muted p-6 md:p-8 relative overflow-hidden"
+          style={{ background: 'hsl(var(--letter-bg))', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
+        >
+          {/* Header row */}
+          <div className="text-xs text-muted-foreground mb-4 pb-4 border-b border-border flex items-center justify-between">
+            <div className="flex gap-4">
+              <span>To: Your landlord</span>
+              <span>Re: Lease renewal</span>
+            </div>
+            <span className="inline-flex items-center gap-1 text-[10px] bg-muted text-muted-foreground px-2 py-0.5 rounded-full font-medium">
+              <Lock size={9} /> Locked
+            </span>
+          </div>
+
+          {/* Preview paragraphs */}
+          <div className="space-y-4">
+            {previewParagraphs.map((para, i) => (
+              <p key={i} className="text-sm text-foreground/80 leading-[1.7] whitespace-pre-line">{para}</p>
+            ))}
+          </div>
+
+          {/* Gradient overlay */}
+          <div
+            className="absolute inset-x-0 bottom-0 pointer-events-none"
+            style={{
+              height: '120px',
+              background: 'linear-gradient(to bottom, transparent, hsl(var(--letter-bg)))',
+            }}
+          />
+        </div>
+
+        {/* Unlock CTA below the card */}
+        <div className="flex flex-col items-center gap-2 mt-4">
+          <Lock size={20} className="text-muted-foreground" />
+          <p className="text-[13px] text-muted-foreground">Your analysis is complete. One step left.</p>
+          <button
+            onClick={() => props.onCheckout?.()}
+            disabled={props.checkoutLoading}
+            className="py-3 px-6 rounded-lg bg-primary text-primary-foreground text-[14px] font-semibold hover:brightness-95 transition-all disabled:opacity-70"
+          >
+            {props.checkoutLoading ? 'Opening checkout...' : 'Unlock my full letter — $4.99'}
+          </button>
+          <p className="text-[11px] text-muted-foreground/60">Apple Pay · Google Pay · Card</p>
+        </div>
+      </div>
+    );
+  }
 
   // ── Loading state ──
   if (loading) {
