@@ -22,10 +22,10 @@ function getRentReportingCopy(verdict: string, currentRent?: number | null, prop
 
   if (v.includes('overpaying') || v.includes('above market')) {
     return {
-      headline: "You're overpaying — at least make it count.",
+      headline: "You're overpaying. At least make it count.",
       subtext: rentStr
-        ? `Your ${rentStr} in rent could be building your credit score. Report payments to all 3 bureaus — the same ones your next landlord will check.`
-        : 'Your rent could be building your credit score. Report payments to all 3 bureaus — the same ones your next landlord will check.',
+        ? `Your ${rentStr} in rent could be building your credit score. Report payments to all 3 bureaus. Those are the same ones your next landlord checks.`
+        : 'Your rent could be building your credit score. Report payments to all 3 bureaus. Those are the same ones your next landlord checks.',
       buttonLabel: 'Start reporting rent →',
     };
   }
@@ -47,7 +47,7 @@ function getRentReportingCopy(verdict: string, currentRent?: number | null, prop
   }
   return {
     headline: 'Your rent could be building your credit.',
-    subtext: 'Every month you pay rent, it could be reported to the credit bureaus — the same ones landlords check. Start building credit from rent you already pay.',
+    subtext: 'Every month you pay rent, it could be building your credit. Landlords check the same bureaus. Start building credit from rent you already pay.',
     buttonLabel: 'Start reporting rent →',
   };
 }

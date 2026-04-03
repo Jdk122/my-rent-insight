@@ -249,8 +249,8 @@ const NextStepsSection = ({
 
   const heading = isAboveMarket
     ? overpaymentDisplay
-      ? `You're paying ~$${fmt(overpaymentDisplay)}/mo above market — here are your options`
-      : `Your rent is above market — here are your options`
+      ? `You're paying about $${fmt(overpaymentDisplay)}/mo more than similar places nearby. Here's what's available.`
+      : `Your rent is above market. Here's what's available nearby.`
     : `See what else is available in your area`;
 
   return (

@@ -35,9 +35,9 @@ const MarketSnapshot = ({ rcTotalListings, rcNewListings, rcAvgDaysOnMarket, alV
   const sentences: string[] = [];
   if (hasDaysOnMarket) {
     if (rcAvgDaysOnMarket > 35) {
-      sentences.push('Rentals in your area are taking longer than average to lease — your landlord may be more open to negotiation.');
+      sentences.push('Rentals near you are taking longer to fill. Your landlord may be more open to negotiating.');
     } else if (rcAvgDaysOnMarket < 20) {
-      sentences.push('Units in your area are leasing quickly — your landlord has less pressure to negotiate on price.');
+      sentences.push('Units near you are leasing fast. Your landlord has less pressure to negotiate.');
     }
   }
   if (hasListings && rcTotalListings > 30) {
