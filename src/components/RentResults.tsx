@@ -42,10 +42,12 @@ import PostConversionFlow from './PostConversionFlow';
 import LeaseReminderCapture from './LeaseReminderCapture';
 import FeedbackWidget from './FeedbackWidget';
 import SocialProofLine from './SocialProofLine';
+import LetterPitchCard from './LetterPitchCard';
 import { EMAIL_GATE_ENABLED, GATE_VARIANT } from '@/lib/featureFlags';
 import { DEAL_CITIES } from '@/data/dealsCities';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { demoRentcast } from '@/data/demoData';
+import { getAnalysisFingerprint } from '@/lib/analysisFingerprint';
 
 interface RentResultsProps {
   formData: RentFormData;
