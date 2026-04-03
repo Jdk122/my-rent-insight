@@ -59,6 +59,7 @@ interface RentResultsProps {
   onEmailCaptured?: (email: string) => void;
   onVerdictReady?: (isAboveMarket: boolean) => void;
   isDemo?: boolean;
+  isPaid?: boolean;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
