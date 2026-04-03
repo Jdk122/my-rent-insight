@@ -86,12 +86,13 @@ const RentIncreaseCalculator = () => {
 
   const isAboveMarket = results ? (() => {
     const currentRent = results.formData.currentRent;
-    const proposedIncrease = results.formData.increaseType === 'percent'
-      ? currentRent * (results.formData.proposedIncrease / 100)
-      : results.formData.proposedIncrease;
+    const increase = results.formData.rentIncrease ?? 0;
+    const proposedIncrease = results.formData.increaseIsPercent
+      ? currentRent * (increase / 100)
+      : increase;
     const newRent = currentRent + proposedIncrease;
-    const medianRent = results.rentData.medianRent;
-    return medianRent ? newRent > medianRent : false;
+    const median = results.rentData.median;
+    return median ? newRent > median : false;
   })() : false;
 
   const handlePaid = useCallback(() => {
