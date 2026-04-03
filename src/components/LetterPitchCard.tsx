@@ -70,16 +70,16 @@ const LetterPitchCard = ({
     : 'Paying less than neighbors — keep it that way';
 
   const subtext = isAboveMarket
-    ? `Backed by ${compsCount} rent${compsCount !== 1 ? 's' : ''} near you.`
+    ? `Uses ${compsCount} rent${compsCount !== 1 ? 's' : ''} near you. Ready before you reply.`
     : isFair
     ? 'Your letter gives you exactly what to say.'
     : 'Ask for a longer lease or extra perks.';
 
   const ctaText = isAboveMarket
-    ? 'Get my negotiation letter — $4.99'
+    ? 'Get the exact reply to send — $4.99'
     : isFair
-    ? 'Get my letter — $4.99'
-    : 'Get my renewal letter — $4.99';
+    ? 'Get my reply — $4.99'
+    : 'Keep my rent low — $4.99';
 
   const secondaryCtaText = 'Or pay with card — $4.99';
 
@@ -90,6 +90,11 @@ const LetterPitchCard = ({
     >
       <p className="text-[18px] font-bold text-foreground text-left tracking-tight">{headline}</p>
       <p className="text-[13px] text-muted-foreground mt-1 text-left">{subtext}</p>
+      {isAboveMarket && (
+        <p className="text-[12px] text-muted-foreground italic mt-1 text-left">
+          The worst they can say is no. The best? You save ${(increaseAmount * 12).toLocaleString()}.
+        </p>
+      )}
       <div className="mt-2 text-[11px] text-muted-foreground/60 text-left">
         <SocialProofLine />
       </div>
