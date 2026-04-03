@@ -123,7 +123,7 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
           </li>
           <li className="flex items-start gap-2">
             <span className="text-primary mt-0.5">✓</span>
-            <span>Professional tone that makes it easy to say yes</span>
+            <span>Ready to copy, paste, and send tonight</span>
           </li>
         </ul>
       </div>
