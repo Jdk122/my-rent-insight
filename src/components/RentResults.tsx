@@ -1437,7 +1437,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             {isAboveMarket && !isPaid && (
               <div className="text-center max-w-[480px] mx-auto pt-4 pb-2">
                 <p className="text-sm text-foreground/80 leading-relaxed">
-                  Renters who respond with market data get better outcomes. Your reply uses {compsWithRent.length} local rents and HUD fair market data to make your case — exactly what a landlord needs to see before agreeing to lower terms.
+                  Renters who respond with market data get better outcomes. Your reply uses {compsWithRent.length} local rents and HUD fair market data to make your case. That's exactly what a landlord needs to see before agreeing to lower terms.
                 </p>
               </div>
             )}
