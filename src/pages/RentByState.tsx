@@ -99,23 +99,23 @@ const RentByState = () => {
   const faqItems = [
     {
       q: `What is the average 1-bedroom rent in ${stateName}?`,
-      a: `The average 1-bedroom fair market rent in ${stateName} is ${fmt(avgFmr1br)}/month as of ${dataYear}, based on statewide coverage across ${cities.length} cities and ${totalZips.toLocaleString()} ZIP codes.`,
+      a: `The average 1-bedroom fair market rent in ${stateName} is ${fmt(avgFmr1br)}/month as of ${dataYear}, based on statewide coverage across ${cities.length} cities and ${totalZips.toLocaleString()} ZIP codes.${nationalAvg > 0 ? ` This is ${Math.abs(Math.round(((avgFmr1br - nationalAvg) / nationalAvg) * 100))}% ${avgFmr1br >= nationalAvg ? 'above' : 'below'} the national average of ${fmt(nationalAvg)}/month.` : ''}`,
     },
     {
       q: `What is a fair rent increase in ${stateName}?`,
       a: stateYoY !== null
-        ? `A rent increase up to about ${Math.abs(stateYoY).toFixed(1)}% is roughly in line with the recent statewide trend in ${stateName}. A larger increase is above trend and should be checked against local city and ZIP data.`
-        : `Without a strong statewide trend signal, a fair rent increase in ${stateName} should be judged using the most local available data, especially city and ZIP rent benchmarks.`,
+        ? `A rent increase up to about ${Math.abs(stateYoY).toFixed(1)}% is roughly in line with the recent statewide trend in ${stateName}. A larger increase is above trend and should be checked against local city and ZIP data. The statewide average 1-BR rent is ${fmt(avgFmr1br)}/month — your specific city may differ significantly.`
+        : `Without a strong statewide trend signal, a fair rent increase in ${stateName} should be judged using the most local available data, especially city and ZIP rent benchmarks. The average 1-BR fair market rent across the state is ${fmt(avgFmr1br)}/month.`,
     },
     {
       q: `Are rents going up or down in ${stateName}?`,
       a: stateYoY !== null
-        ? `Statewide rents in ${stateName} have changed ${stateYoY > 0 ? '+' : ''}${stateYoY.toFixed(1)}% year over year based on the trend shown on this page.`
-        : `This page has limited statewide trend coverage, so it should be read mainly as a benchmark view of current fair market rent levels across the state.`,
+        ? `Statewide rents in ${stateName} have ${stateYoY > 0 ? 'increased' : 'decreased'} ${Math.abs(stateYoY).toFixed(1)}% year over year based on the trend shown on this page. This is based on Apartment List data covering multiple cities and ZIP codes across the state.`
+        : `This page has limited statewide trend coverage, so it should be read mainly as a benchmark view of current fair market rent levels across the state. The average 1-BR FMR is ${fmt(avgFmr1br)}/month across ${totalZips.toLocaleString()} ZIP codes.`,
     },
     {
       q: `How broad is the rent coverage in ${stateName}?`,
-      a: `This page summarizes rent benchmarks across ${cities.length} cities and ${totalZips.toLocaleString()} ZIP codes in ${stateName}, giving a broad statewide view before drilling down into city and ZIP-level pages.`,
+      a: `This page summarizes rent benchmarks across ${cities.length} cities and ${totalZips.toLocaleString()} ZIP codes in ${stateName}, giving a broad statewide view before drilling down into city and ZIP-level pages. Data is sourced from HUD Small Area Fair Market Rents (FY${hudFY}) and supplemented with Apartment List trend data where available.`,
     },
   ];
 

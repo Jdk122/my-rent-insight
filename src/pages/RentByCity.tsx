@@ -45,11 +45,12 @@ const RentByCity = () => {
     let cancelled = false;
     (async () => {
       setLoading(true);
-      const [cityData, al, h50, fresh] = await Promise.all([
+      const [cityData, al, h50, fresh, natAvg] = await Promise.all([
         getCityData(stateSlug, citySlug),
         getApartmentListData(),
         getHud50Data(),
         getDataFreshness(),
+        getNationalAvgFmr1br(),
       ]);
       if (cancelled) return;
       if (!cityData) { setNotFound(true); setLoading(false); return; }
@@ -57,6 +58,7 @@ const RentByCity = () => {
       setAlData(al);
       setHud50Data(h50);
       setFreshness(fresh);
+      setNationalAvg(natAvg);
       setLoading(false);
 
       const metro = cityData.zips[0]?.raw.m;
