@@ -4,6 +4,7 @@ import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { useSearchParams, Link } from 'react-router-dom';
 import { getAnalysisFingerprint, addPaidAnalysis, isAnalysisPaid } from '@/lib/analysisFingerprint';
 import SampleResultCard from '@/components/SampleResultCard';
+import { supabase } from '@/integrations/supabase/client';
 const LocationSearch = lazy(() => import('@/components/LocationSearch'));
 const BrowseDealsSection = lazy(() => import('@/components/BrowseDealsSection'));
 
