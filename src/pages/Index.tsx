@@ -156,7 +156,8 @@ const Index = () => {
 
   usePrerenderReady(!isLoading);
 
-  const [isAboveMarket, setIsAboveMarket] = useState(false);
+  const [verdictStr, setVerdictStr] = useState<'above' | 'at-market' | 'below'>('at-market');
+  const isAboveMarket = verdictStr === 'above';
 
   const hasIncrease = !!(results && results.formData.rentIncrease && results.formData.rentIncrease > 0);
   const isUnlocked = !!capturedEmail || !EMAIL_GATE_ENABLED;
@@ -175,17 +176,17 @@ const Index = () => {
     const fp = getAnalysisFingerprint(results.formData);
     addPaidAnalysis({ sessionId: 'wallet-' + Date.now(), fingerprint: fp, timestamp: Date.now() });
     setIsPaid(true);
-    trackEvent('purchase_completed', { verdict: isAboveMarket ? 'above' : 'at-market', zip: results.formData.zip });
+    trackEvent('purchase_completed', { verdict: verdictStr, zip: results.formData.zip });
     supabase.from('lead_events' as any).insert({
       event_type: 'purchase_completed',
       email: capturedEmail || 'anonymous@checkout',
       zip: results.formData.zip,
-      verdict: isAboveMarket ? 'above' : 'at-market',
+      verdict: verdictStr,
     }).then(() => {});
     setTimeout(() => {
       document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' });
     }, 300);
-  }, [results, capturedEmail, isAboveMarket]);
+  }, [results, capturedEmail, verdictStr]);
 
   const handleSubmit = async (data: RentFormData) => {
     setIsLoading(true);
@@ -520,7 +521,7 @@ const Index = () => {
             }}
             capturedEmail={capturedEmail}
             onEmailCaptured={setCapturedEmail}
-            onVerdictReady={setIsAboveMarket}
+            onVerdictReady={setVerdictStr}
           />
           </Suspense>
         </div>

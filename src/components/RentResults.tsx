@@ -59,7 +59,7 @@ interface RentResultsProps {
   onScrollToTop: () => void;
   capturedEmail?: string;
   onEmailCaptured?: (email: string) => void;
-  onVerdictReady?: (isAboveMarket: boolean) => void;
+  onVerdictReady?: (verdict: 'above' | 'at-market' | 'below') => void;
   isDemo?: boolean;
   isPaid?: boolean;
   onPaid?: () => void;
@@ -411,7 +411,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   );
 
   useEffect(() => {
-    if (effectiveVerdict) onVerdictReady?.(isAboveMarket);
+    if (effectiveVerdict) onVerdictReady?.(effectiveVerdict as 'above' | 'at-market' | 'below');
   }, [effectiveVerdict]);
 
   // Gate viewed analytics — fires once per analysis
