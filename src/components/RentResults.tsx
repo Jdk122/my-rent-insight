@@ -761,7 +761,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     <>
       {isUnlocked && <SectionNav sections={navSections} />}
 
-      {/* Exit Intent Modal (desktop only) — safety net */}
+      {/* Exit Intent Modal — paywall pitch / share / email capture */}
       <ExitIntentModal
         capturedEmail={capturedEmail}
         leadContext={leadContext}
@@ -771,6 +771,20 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         onEmailCaptured={setCapturedEmail}
         shareReportPayload={shareReportPayload}
         onReportGenerated={(url) => { setReportUrl(url); }}
+        isPaid={isPaid}
+        isAboveMarket={isAboveMarket}
+        onPaid={onPaid}
+        onCheckout={handleCheckout}
+        checkoutLoading={checkoutLoading}
+        savings={increaseAmount * 12}
+        analysisId={analysisId}
+        expressCheckoutProps={hasIncrease ? {
+          analysisId,
+          verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
+          zip: rentData.zip,
+          city: rentData.city,
+          savings: increaseAmount * 12,
+        } : undefined}
       />
 
       {/* Mobile Scroll Prompt (mobile only) — re-engagement */}

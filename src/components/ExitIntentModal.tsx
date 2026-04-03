@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent, trackAdsConversion } from '@/lib/analytics';
 import { getUtmParams } from '@/lib/utm';
@@ -8,7 +8,7 @@ import { notifySubmission } from '@/lib/notifySubmission';
 import { toast } from 'sonner';
 import { X, MessageCircle, Mail, Link2 } from 'lucide-react';
 import type { LeadContext } from './EmailCapture';
-import { Link } from 'react-router-dom';
+import StripeExpressCheckout from './StripeExpressCheckout';
 
 interface ExitIntentModalProps {
   capturedEmail: string;
@@ -20,43 +20,318 @@ interface ExitIntentModalProps {
   toolType?: 'renewal' | 'wsip';
   shareReportPayload?: SharedReportPayload;
   onReportGenerated?: (url: string) => void;
+  isPaid?: boolean;
+  isAboveMarket?: boolean;
+  onPaid?: (email?: string) => void;
+  onCheckout?: () => void;
+  checkoutLoading?: boolean;
+  savings?: number;
+  analysisId?: string | null;
+  expressCheckoutProps?: {
+    analysisId?: string | null;
+    verdict: string;
+    zip: string;
+    city: string;
+    savings: number;
+  };
 }
 
 const SESSION_KEY = 'rr_exit_intent_shown';
 
-const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, onEmailCaptured, toolType = 'renewal', shareReportPayload, onReportGenerated }: ExitIntentModalProps) => {
+type ModalMode = 'share' | 'paywall' | 'capture';
+
+function getMode(isPaid: boolean, expressCheckoutProps: ExitIntentModalProps['expressCheckoutProps'], capturedEmail: string): ModalMode {
+  if (isPaid) return 'share';
+  if (expressCheckoutProps) return 'paywall';
+  if (!capturedEmail) return 'capture';
+  return 'share';
+}
+
+/* ─── Paywall content (Mode 2) ─── */
+function PaywallContent({
+  isAboveMarket,
+  savings,
+  expressCheckoutProps,
+  onPaid,
+  onCheckout,
+  checkoutLoading,
+  onDismiss,
+  verdictLabel,
+  zip,
+}: {
+  isAboveMarket?: boolean;
+  savings?: number;
+  expressCheckoutProps: NonNullable<ExitIntentModalProps['expressCheckoutProps']>;
+  onPaid?: (email?: string) => void;
+  onCheckout?: () => void;
+  checkoutLoading?: boolean;
+  onDismiss: () => void;
+  verdictLabel: string;
+  zip: string;
+}) {
+  const [walletAvailable, setWalletAvailable] = useState(true);
+
+  const headline = isAboveMarket && savings && savings > 0
+    ? `You're about to leave $${savings.toLocaleString()} on the table`
+    : isAboveMarket
+    ? 'You can still push back'
+    : 'Keep paying less than neighbors';
+
+  const subtext = isAboveMarket && savings && savings > 0
+    ? 'Your negotiation letter is ready. Uses local rents near you.'
+    : isAboveMarket
+    ? 'Your letter gives you exactly what to say.'
+    : 'Lock in your rate or ask for extra perks.';
+
+  const handleWalletSuccess = useCallback((email?: string) => {
+    trackEvent('purchase_completed', { verdict: verdictLabel, zip, method: 'exit_intent_wallet' });
+    onPaid?.(email);
+  }, [onPaid, verdictLabel, zip]);
+
+  const handleFallback = useCallback(() => {
+    setWalletAvailable(false);
+  }, []);
+
+  const handleCardClick = () => {
+    trackEvent('toolkit_click', { placement: 'exit_intent', verdict: verdictLabel, zip });
+    onCheckout?.();
+  };
+
+  return (
+    <div className="text-center space-y-4">
+      <h3 className="font-display text-lg font-semibold text-foreground">
+        {headline}
+      </h3>
+      <p className="text-sm text-muted-foreground">{subtext}</p>
+
+      <div className="space-y-3">
+        {walletAvailable && (
+          <StripeExpressCheckout
+            onSuccess={handleWalletSuccess}
+            onFallbackToRedirect={handleFallback}
+            analysisId={expressCheckoutProps.analysisId}
+            verdict={expressCheckoutProps.verdict}
+            zip={expressCheckoutProps.zip}
+            city={expressCheckoutProps.city}
+            savings={expressCheckoutProps.savings}
+          />
+        )}
+
+        <button
+          onClick={handleCardClick}
+          disabled={checkoutLoading}
+          className="w-full bg-primary text-primary-foreground px-4 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-60"
+        >
+          {checkoutLoading ? 'Loading…' : 'Pay with card — $4.99'}
+        </button>
+      </div>
+
+      <button onClick={onDismiss} className="text-xs text-muted-foreground hover:text-foreground transition-colors underline">
+        No thanks, I'll handle it myself
+      </button>
+    </div>
+  );
+}
+
+/* ─── Share content (Mode 1) ─── */
+function ShareContent({
+  toolType,
+  onShare,
+}: {
+  toolType: 'renewal' | 'wsip';
+  onShare: (method: string) => void;
+}) {
+  return (
+    <div className="text-center space-y-4">
+      <h3 className="font-display text-lg font-semibold text-foreground">
+        {toolType === 'wsip'
+          ? 'Know anyone else browsing apartments?'
+          : 'Know someone dealing with a rent increase?'}
+      </h3>
+      <p className="text-sm text-muted-foreground">
+        {toolType === 'wsip'
+          ? 'Share this tool. Most listings are $100-300/mo above market.'
+          : 'Share this tool. Most renters overpay $50-150/mo.'}
+      </p>
+      <div className="flex flex-col gap-2 max-w-[280px] mx-auto">
+        <button onClick={() => onShare('text')} className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors">
+          <MessageCircle className="w-4 h-4" /> Share via Text
+        </button>
+        <button onClick={() => onShare('email')} className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors">
+          <Mail className="w-4 h-4" /> Share via Email
+        </button>
+        <button onClick={() => onShare('copy')} className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors">
+          <Link2 className="w-4 h-4" /> Copy Link
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Email capture content (Mode 3) ─── */
+function CaptureContent({
+  toolType,
+  onSubmit,
+  onDismiss,
+  loading,
+  email,
+  setEmail,
+  error,
+  setError,
+}: {
+  toolType: 'renewal' | 'wsip';
+  onSubmit: (e: React.FormEvent) => void;
+  onDismiss: () => void;
+  loading: boolean;
+  email: string;
+  setEmail: (v: string) => void;
+  error: string;
+  setError: (v: string) => void;
+}) {
+  return (
+    <div className="text-center space-y-4">
+      <h3 className="font-display text-lg font-semibold text-foreground">
+        {toolType === 'wsip'
+          ? "Don't sign a lease without the data."
+          : "Don't negotiate without your data."}
+      </h3>
+      <p className="text-sm text-muted-foreground">
+        {toolType === 'wsip'
+          ? "We'll email your full market comparison so you have it when you tour."
+          : "We'll email your full analysis and negotiation letter so you have it when you're ready."}
+      </p>
+      <form onSubmit={onSubmit} className="space-y-2">
+        <div className="flex gap-2">
+          <input
+            type="email"
+            placeholder="you@email.com"
+            value={email}
+            onChange={(e) => { setEmail(e.target.value); if (error) setError(''); }}
+            autoFocus
+            autoComplete="email"
+            className={`flex-1 min-w-0 px-4 py-3 text-base md:text-sm border rounded-lg bg-card text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 ${
+              error ? 'border-destructive' : 'border-border focus:border-foreground'
+            }`}
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-primary text-primary-foreground px-4 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap disabled:opacity-60"
+          >
+            {loading ? 'Sending…' : 'Send my analysis →'}
+          </button>
+        </div>
+        {error && <p className="text-xs text-destructive">{error}</p>}
+      </form>
+      <button onClick={onDismiss} className="text-xs text-muted-foreground hover:text-foreground transition-colors underline">
+        No thanks
+      </button>
+    </div>
+  );
+}
+
+/* ─── Main component ─── */
+const ExitIntentModal = ({
+  capturedEmail,
+  leadContext,
+  verdictLabel,
+  zip,
+  city,
+  onEmailCaptured,
+  toolType = 'renewal',
+  shareReportPayload,
+  onReportGenerated,
+  isPaid = false,
+  isAboveMarket,
+  onPaid,
+  onCheckout,
+  checkoutLoading,
+  savings,
+  analysisId,
+  expressCheckoutProps,
+}: ExitIntentModalProps) => {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const firedRef = useRef(false);
 
+  const mode = getMode(isPaid, expressCheckoutProps, capturedEmail);
+
   useEffect(() => {
-    // Only desktop, only once per session
     if (typeof window === 'undefined') return;
-    if (window.innerWidth < 768) return;
     if (sessionStorage.getItem(SESSION_KEY)) return;
 
-    const handleMouseLeave = (e: MouseEvent) => {
-      if (e.clientY > 10) return; // Only when leaving toward top
-      if (firedRef.current) return;
-      firedRef.current = true;
-      sessionStorage.setItem(SESSION_KEY, '1');
-      setOpen(true);
+    const isMobile = window.innerWidth < 768;
 
-      if (capturedEmail) {
-        trackEvent('prompt_shown', { prompt: 'exit_intent', tool: toolType, verdict: verdictLabel, zip, type: 'share' });
-      } else {
-        trackEvent('prompt_shown', { prompt: 'exit_intent', tool: toolType, verdict: verdictLabel, zip, type: 'capture' });
-      }
-    };
+    if (!isMobile) {
+      // Desktop: mouse leave toward top
+      const handleMouseLeave = (e: MouseEvent) => {
+        if (e.clientY > 10) return;
+        if (firedRef.current) return;
+        firedRef.current = true;
+        sessionStorage.setItem(SESSION_KEY, '1');
+        setOpen(true);
+        trackEvent('prompt_shown', {
+          prompt: 'exit_intent',
+          type: isPaid ? 'share' : expressCheckoutProps ? 'paywall' : 'capture',
+          tool: toolType,
+          verdict: verdictLabel,
+          zip,
+        });
+      };
+      document.addEventListener('mouseleave', handleMouseLeave);
+      return () => document.removeEventListener('mouseleave', handleMouseLeave);
+    } else {
+      // Mobile: scroll-up after deep scroll
+      let maxScroll = 0;
+      const handleScroll = () => {
+        if (firedRef.current) return;
+        const scrollY = window.scrollY;
+        const pageHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPct = pageHeight > 0 ? scrollY / pageHeight : 0;
 
-    document.addEventListener('mouseleave', handleMouseLeave);
-    return () => document.removeEventListener('mouseleave', handleMouseLeave);
-  }, [capturedEmail, verdictLabel, zip]);
+        if (scrollY > maxScroll) maxScroll = scrollY;
+
+        if (scrollPct < 0.6 && maxScroll / pageHeight > 0.6 && (maxScroll - scrollY) > 300) {
+          firedRef.current = true;
+          sessionStorage.setItem(SESSION_KEY, '1');
+          setOpen(true);
+          trackEvent('prompt_shown', {
+            prompt: 'exit_intent_mobile',
+            type: isPaid ? 'share' : expressCheckoutProps ? 'paywall' : 'capture',
+            tool: toolType,
+            verdict: verdictLabel,
+            zip,
+          });
+        }
+      };
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, [capturedEmail, verdictLabel, zip, isPaid, savings, expressCheckoutProps, toolType]);
 
   const handleDismiss = () => {
-    trackEvent('prompt_dismissed', { prompt: 'exit_intent', zip });
+    trackEvent('prompt_dismissed', { prompt: 'exit_intent', type: mode, zip });
+    setOpen(false);
+  };
+
+  const handleShare = (method: string) => {
+    const isWsip = toolType === 'wsip';
+    const url = isWsip ? 'https://www.renewalreply.com/what-should-i-pay' : 'https://www.renewalreply.com';
+    const text = isWsip
+      ? 'Check if that apartment listing is fairly priced. Most are $100-300/mo above market.'
+      : 'Check if your rent increase is fair. Most renters overpay $50-150/mo.';
+    const subject = isWsip ? 'Is that apartment fairly priced?' : 'Is your rent increase fair?';
+    if (method === 'text') {
+      window.open(`sms:?body=${encodeURIComponent(text + ' ' + url)}`, '_blank');
+    } else if (method === 'email') {
+      window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text + '\n\n' + url)}`, '_blank');
+    } else if (method === 'copy') {
+      navigator.clipboard.writeText(url);
+      toast.success('Link copied!');
+    }
+    trackEvent('report_shared', { method, tool: toolType });
     setOpen(false);
   };
 
@@ -131,7 +406,6 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
     setOpen(false);
     toast.success('Sent to your email!');
 
-    // Generate report + send email + re-notify in parallel (non-blocking)
     (async () => {
       let reportUrl: string | null = null;
       if (shareReportPayload) {
@@ -149,7 +423,6 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
         verdictLabel,
         reportUrl,
       });
-      // Re-notify with captured email
       await notifySubmission({
         email: normalizedEmail,
         zip: leadContext?.zip || zip,
@@ -169,24 +442,10 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
     })();
   };
 
-  const handleShare = (method: string) => {
-    const isWsip = toolType === 'wsip';
-    const url = isWsip ? 'https://www.renewalreply.com/what-should-i-pay' : 'https://www.renewalreply.com';
-    const text = isWsip
-      ? 'Check if that apartment listing is fairly priced. Most are $100-300/mo above market.'
-      : 'Check if your rent increase is fair. Most renters overpay $50-150/mo.';
-    const subject = isWsip ? 'Is that apartment fairly priced?' : 'Is your rent increase fair?';
-    if (method === 'text') {
-      window.open(`sms:?body=${encodeURIComponent(text + ' ' + url)}`, '_blank');
-    } else if (method === 'email') {
-      window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text + '\n\n' + url)}`, '_blank');
-    } else if (method === 'copy') {
-      navigator.clipboard.writeText(url);
-      toast.success('Link copied!');
-    }
-    trackEvent('report_shared', { method, tool: toolType });
+  const handlePaidFromModal = useCallback((walletEmail?: string) => {
+    onPaid?.(walletEmail);
     setOpen(false);
-  };
+  }, [onPaid]);
 
   if (!open) return null;
 
@@ -201,71 +460,31 @@ const ExitIntentModal = ({ capturedEmail, leadContext, verdictLabel, zip, city, 
           <X className="w-5 h-5" />
         </button>
 
-        {capturedEmail ? (
-          // Share prompt
-          <div className="text-center space-y-4">
-            <h3 className="font-display text-lg font-semibold text-foreground">
-              {toolType === 'wsip'
-                ? 'Know anyone else browsing apartments?'
-                : 'Know someone dealing with a rent increase?'}
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              {toolType === 'wsip'
-                ? 'Share this tool. Most listings are $100-300/mo above market.'
-                : 'Share this tool. Most renters overpay $50-150/mo.'}
-            </p>
-            <div className="flex flex-col gap-2 max-w-[280px] mx-auto">
-              <button onClick={() => handleShare('text')} className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors">
-                <MessageCircle className="w-4 h-4" /> Share via Text
-              </button>
-              <button onClick={() => handleShare('email')} className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors">
-                <Mail className="w-4 h-4" /> Share via Email
-              </button>
-              <button onClick={() => handleShare('copy')} className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors">
-                <Link2 className="w-4 h-4" /> Copy Link
-              </button>
-            </div>
-          </div>
+        {mode === 'paywall' && expressCheckoutProps ? (
+          <PaywallContent
+            isAboveMarket={isAboveMarket}
+            savings={savings}
+            expressCheckoutProps={expressCheckoutProps}
+            onPaid={handlePaidFromModal}
+            onCheckout={onCheckout}
+            checkoutLoading={checkoutLoading}
+            onDismiss={handleDismiss}
+            verdictLabel={verdictLabel}
+            zip={zip}
+          />
+        ) : mode === 'share' ? (
+          <ShareContent toolType={toolType} onShare={handleShare} />
         ) : (
-          // Email capture
-          <div className="text-center space-y-4">
-            <h3 className="font-display text-lg font-semibold text-foreground">
-              {toolType === 'wsip'
-                ? 'Don\'t sign a lease without the data.'
-                : 'Don\'t negotiate without your data.'}
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              {toolType === 'wsip'
-                ? 'We\'ll email your full market comparison so you have it when you tour.'
-                : 'We\'ll email your full analysis and negotiation letter so you have it when you\'re ready.'}
-            </p>
-            <form onSubmit={handleSubmit} className="space-y-2">
-              <div className="flex gap-2">
-                <input
-                  type="email"
-                  placeholder="you@email.com"
-                  value={email}
-                  onChange={(e) => { setEmail(e.target.value); if (error) setError(''); }}
-                  autoFocus
-                  autoComplete="email"
-                  className={`flex-1 min-w-0 px-4 py-3 text-base md:text-sm border rounded-lg bg-card text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 ${
-                    error ? 'border-destructive' : 'border-border focus:border-foreground'
-                  }`}
-                />
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="bg-primary text-primary-foreground px-4 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap disabled:opacity-60"
-                >
-                  {loading ? 'Sending…' : 'Send my analysis →'}
-                </button>
-              </div>
-              {error && <p className="text-xs text-destructive">{error}</p>}
-            </form>
-            <button onClick={handleDismiss} className="text-xs text-muted-foreground hover:text-foreground transition-colors underline">
-              No thanks
-            </button>
-          </div>
+          <CaptureContent
+            toolType={toolType}
+            onSubmit={handleSubmit}
+            onDismiss={handleDismiss}
+            loading={loading}
+            email={email}
+            setEmail={setEmail}
+            error={error}
+            setError={setError}
+          />
         )}
       </div>
     </div>
