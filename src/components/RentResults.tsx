@@ -1084,20 +1084,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </motion.div>
 
 
-
-
-              {/* ── Primary CTA / Pitch Card ── */}
               {hasIncrease && !isPaid && (
-                <LetterPitchCard
-                  isAboveMarket={isAboveMarket}
-                  isFair={isFair}
-                  isBelowMarket={isBelowMarket}
-                  increaseAmount={increaseAmount}
-                  compsCount={compsWithRent.length}
-                  verdict={isAboveMarket ? 'above' : isFair ? 'at-market' : 'below'}
-                  zip={rentData.zip}
-                  city={rentData.city}
-                />
+                <div className="mt-3 text-[11px] text-muted-foreground/60 text-center">
+                  <SocialProofLine />
+                </div>
               )}
               {isPaid && isUnlocked && hasIncrease && (
                 <button
