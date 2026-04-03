@@ -229,8 +229,8 @@ const NextStepsSection = ({
     } as any).then(() => {});
   }, [analysisId, capturedEmail, zip]);
 
-  // Don't render empty states — only render when we have listings to show (or are loading)
-  if (!listingsLoading) {
+  const noListings = (() => {
+    if (listingsLoading) return false;
     const compSet = new Set(
       (compAddresses ?? [])
         .filter(Boolean)
@@ -242,8 +242,10 @@ const NextStepsSection = ({
     const filteredListings = isAboveMarket
       ? dedupedListings.filter(l => l.rent < proposedRent)
       : dedupedListings;
-    if (filteredListings.length === 0) return null;
-  }
+    return filteredListings.length === 0;
+  })();
+
+  if (noListings && !isAboveMarket) return null;
 
   const overpaymentDisplay = dollarOverpayment && dollarOverpayment > 0 ? dollarOverpayment : null;
 
@@ -259,18 +261,30 @@ const NextStepsSection = ({
         <h2 className="text-xl font-semibold text-foreground tracking-tight">{heading}</h2>
       </div>
 
-      <div className="space-y-3">
-        <ListingsBlock
-          listings={listings ?? []}
-          listingsLoading={!!listingsLoading}
-          proposedRent={proposedRent}
-          zip={zip}
-          capturedEmail={capturedEmail}
-          compAddresses={compAddresses}
-          onLogReferral={logReferralClick}
-          isAboveMarket={isAboveMarket}
-        />
-      </div>
+      {noListings && isAboveMarket ? (
+        <div className="py-4 text-center">
+          <p className="text-[13px] text-muted-foreground">
+            We couldn't find cheaper listings near you right now. They may still exist — check{' '}
+            <a href={`https://www.zillow.com/homes/for_rent/${zip}_rb/`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Zillow</a>
+            {' or '}
+            <a href={`https://www.apartments.com/${zip}/`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Apartments.com</a>
+            {' for the latest.'}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <ListingsBlock
+            listings={listings ?? []}
+            listingsLoading={!!listingsLoading}
+            proposedRent={proposedRent}
+            zip={zip}
+            capturedEmail={capturedEmail}
+            compAddresses={compAddresses}
+            onLogReferral={logReferralClick}
+            isAboveMarket={isAboveMarket}
+          />
+        </div>
+      )}
     </motion.section>
   );
 };
