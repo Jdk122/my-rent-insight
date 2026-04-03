@@ -124,7 +124,7 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
   }, [onPaid]);
 
   return (
-    <div className="flex flex-col items-center gap-3 mt-6 mb-2">
+    <div ref={ctaRef} className="flex flex-col items-center gap-3 mt-6 mb-2">
       {/* Persuasion headline */}
       <p className="text-[17px] font-bold text-foreground text-center tracking-tight max-w-[400px]">
         {isAboveMarket && savings
