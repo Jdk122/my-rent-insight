@@ -64,16 +64,16 @@ const LetterPitchCard = ({
   }, [onPaid]);
 
   const headline = isAboveMarket
-    ? `You're on track to overpay $${savings.toLocaleString()} this year`
+    ? `Overpaying $${(increaseAmount * 12).toLocaleString()}/yr`
     : isFair
-    ? 'You can still push back on this increase'
-    : "You're paying less than people nearby. Keep it that way.";
+    ? 'You can still push back'
+    : 'Paying less than neighbors — keep it that way';
 
   const subtext = isAboveMarket
-    ? `Your letter gives you exactly what to say, using ${compsCount} rent${compsCount !== 1 ? 's' : ''} near you.`
+    ? `Backed by ${compsCount} rent${compsCount !== 1 ? 's' : ''} near you.`
     : isFair
     ? 'Your letter gives you exactly what to say.'
-    : 'Use this letter to ask for a longer renewal or extra perks.';
+    : 'Ask for a longer lease or extra perks.';
 
   const ctaText = isAboveMarket
     ? 'Get my negotiation letter — $4.99'
@@ -88,8 +88,8 @@ const LetterPitchCard = ({
       ref={cardRef}
       className="w-full max-w-[540px] rounded-lg border border-border border-l-[3px] border-l-verdict-good bg-secondary/50 px-4 py-3 mt-4"
     >
-      <p className="text-[17px] font-bold text-foreground text-left tracking-[-0.02em]">{headline}</p>
-      <p className="text-[12px] text-muted-foreground mt-2 leading-relaxed text-left">{subtext}</p>
+      <p className="text-[18px] font-bold text-foreground text-left tracking-tight">{headline}</p>
+      <p className="text-[13px] text-muted-foreground mt-1 text-left">{subtext}</p>
       <div className="mt-2 text-[11px] text-muted-foreground/60 text-left">
         <SocialProofLine />
       </div>
