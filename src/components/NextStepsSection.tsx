@@ -229,8 +229,8 @@ const NextStepsSection = ({
     } as any).then(() => {});
   }, [analysisId, capturedEmail, zip]);
 
-  // Don't render empty states — only render when we have listings to show (or are loading)
-  if (!listingsLoading) {
+  const noListings = (() => {
+    if (listingsLoading) return false;
     const compSet = new Set(
       (compAddresses ?? [])
         .filter(Boolean)
@@ -242,8 +242,10 @@ const NextStepsSection = ({
     const filteredListings = isAboveMarket
       ? dedupedListings.filter(l => l.rent < proposedRent)
       : dedupedListings;
-    if (filteredListings.length === 0) return null;
-  }
+    return filteredListings.length === 0;
+  })();
+
+  if (noListings && !isAboveMarket) return null;
 
   const overpaymentDisplay = dollarOverpayment && dollarOverpayment > 0 ? dollarOverpayment : null;
 
