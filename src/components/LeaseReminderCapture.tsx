@@ -175,7 +175,7 @@ const LeaseReminderCapture = ({
           <Check className="w-4 h-4 text-verdict-good" />
         </div>
         <div>
-          <p className="text-sm font-medium text-foreground">Report sent — and we'll remind you 90 days before your renewal.</p>
+          <p className="text-sm font-medium text-foreground">Report sent. We'll remind you 90 days before your renewal.</p>
           <p className="text-xs text-muted-foreground mt-0.5">
             {leaseMonth && leaseYear
               ? `Fresh market data will arrive before ${leaseMonth} ${leaseYear}.`

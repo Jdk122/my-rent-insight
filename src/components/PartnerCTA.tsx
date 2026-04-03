@@ -47,7 +47,7 @@ function getRentReportingCopy(verdict: string, currentRent?: number | null, prop
   }
   return {
     headline: 'Your rent could be building your credit.',
-    subtext: 'Every month you pay rent, it could be reported to the credit bureaus — the same ones landlords check. Start building credit from rent you already pay.',
+    subtext: 'Every month you pay rent, it could be building your credit. Landlords check the same bureaus. Start building credit from rent you already pay.',
     buttonLabel: 'Start reporting rent →',
   };
 }
