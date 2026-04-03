@@ -262,7 +262,7 @@ const NextStepsSection = ({
       </div>
 
       {noListings && isAboveMarket ? (
-        <div className="py-4 text-center">
+        <div className="py-4 text-left">
           <p className="text-[13px] text-muted-foreground">
             We couldn't find cheaper listings near you right now. They may still exist — check{' '}
             <a href={`https://www.zillow.com/homes/for_rent/${zip}_rb/`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Zillow</a>
