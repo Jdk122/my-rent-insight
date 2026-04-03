@@ -49,7 +49,7 @@ const LetterPitchCard = ({
     ? `Your landlord wants $${(increaseAmount * 12).toLocaleString()} more this year`
     : isFair
     ? 'Your increase tracks the market — but you can still negotiate'
-    : 'You're paying less than your neighbors';
+    : 'You\'re paying less than your neighbors';
 
   const subtext = isAboveMarket
     ? 'See the evidence below — then get the exact reply to send.'
