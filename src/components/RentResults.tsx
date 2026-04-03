@@ -1448,6 +1448,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </p>
               </div>
             )}
+            {isBelowMarket && !isPaid && (
+              <div className="text-center max-w-[480px] mx-auto pt-4 pb-2">
+                <p className="text-sm text-foreground/80 leading-relaxed">
+                  Your rent is already a good deal. Use this reply to lock in your rate or negotiate perks before your landlord reconsiders.
+                </p>
+              </div>
+            )}
 
             {/* ━━━ NEGOTIATION LETTER ━━━ */}
             {hasIncrease && calc && (isAboveMarket || isFair || isBelowMarket) && (
