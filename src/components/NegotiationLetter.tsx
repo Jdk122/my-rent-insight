@@ -115,7 +115,7 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
         <ul className="space-y-1 ml-1">
           <li className="flex items-start gap-2">
             <span className="text-primary mt-0.5">✓</span>
-            <span>Uses real comps your landlord can look up and verify</span>
+            <span>Turns your data into words your landlord will take seriously</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-primary mt-0.5">✓</span>
@@ -123,7 +123,7 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
           </li>
           <li className="flex items-start gap-2">
             <span className="text-primary mt-0.5">✓</span>
-            <span>Professional tone that makes it easy to say yes</span>
+            <span>Ready to copy, paste, and send tonight</span>
           </li>
         </ul>
       </div>
