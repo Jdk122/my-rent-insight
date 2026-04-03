@@ -1,3 +1,6 @@
+/sitemap-cities.xml  https://piwahxgtsxpcrgoyuedy.supabase.co/functions/v1/sitemap-cities  200!
+/sitemap-zips.xml    https://piwahxgtsxpcrgoyuedy.supabase.co/functions/v1/sitemap-zips    200!
+
 # 301 redirect parameterized duplicates to canonical pages
 /  zip=:zip                 /rent/:zip           301!
 /what-should-i-pay  zip=:zip  /what-should-i-pay   301!
