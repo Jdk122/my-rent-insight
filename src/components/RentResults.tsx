@@ -1104,7 +1104,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   onClick={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
                   className="w-full mt-4 py-3.5 rounded-lg bg-primary text-primary-foreground text-[15px] font-semibold tracking-tight hover:brightness-95 transition-all shadow-sm shadow-primary/20"
                 >
-                  {isAboveMarket ? 'Your reply is ready — scroll down ↓' : isBelowMarket ? 'Protect this rate ↓' : 'Your reply is ready — scroll down ↓'}
+                  {isAboveMarket ? 'Your reply is ready. Scroll down ↓' : isBelowMarket ? 'Protect this rate ↓' : 'Your reply is ready. Scroll down ↓'}
                 </button>
               )}
               {isPaid && isUnlocked && hasIncrease && (
