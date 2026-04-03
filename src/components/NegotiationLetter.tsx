@@ -71,7 +71,7 @@ interface NegotiationLetterProps {
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
 // ── Locked letter CTA with Express Checkout support ──
-function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutProps }: {
+function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutProps, isAboveMarket, savings, compsCount }: {
   onCheckout?: () => void;
   checkoutLoading?: boolean;
   onPaid?: (email?: string) => void;
@@ -82,6 +82,9 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
     city: string;
     savings: number;
   };
+  isAboveMarket?: boolean;
+  savings?: number;
+  compsCount?: number;
 }) {
   const [walletAvailable, setWalletAvailable] = useState<boolean | null>(null);
 
@@ -94,13 +97,36 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
   }, [onPaid]);
 
   return (
-    <div className="flex flex-col items-center gap-2 mt-4">
-      <Lock size={20} className="text-muted-foreground" />
-      <p className="text-[13px] text-muted-foreground">Your analysis is complete. One step left.</p>
+    <div className="flex flex-col items-center gap-3 mt-6 mb-2">
+      {/* Persuasion headline */}
+      <p className="text-[17px] font-bold text-foreground text-center tracking-tight max-w-[400px]">
+        {isAboveMarket && savings
+          ? 'Get the exact reply to send tonight'
+          : 'Get your personalized negotiation reply'}
+      </p>
+
+      {/* What you get */}
+      <div className="text-left text-[13px] text-muted-foreground space-y-1.5 max-w-[360px]">
+        <p>Your $4.99 reply includes:</p>
+        <ul className="space-y-1 ml-1">
+          <li className="flex items-start gap-2">
+            <span className="text-primary mt-0.5">✓</span>
+            <span>A personalized reply with your specific rent data and counter-offer</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-primary mt-0.5">✓</span>
+            <span>Local comps and market evidence your landlord can verify</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-primary mt-0.5">✓</span>
+            <span>Ready to copy, paste, and send tonight via email or text</span>
+          </li>
+        </ul>
+      </div>
 
       {/* Express Checkout wallet buttons */}
       {expressCheckoutProps && walletAvailable !== false && (
-        <div className="w-full max-w-[320px]">
+        <div className="w-full max-w-[320px] mt-1">
           <StripeExpressCheckout
             onSuccess={handleWalletSuccess}
             onFallbackToRedirect={handleFallback}
@@ -113,22 +139,36 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
         </div>
       )}
 
+      {/* Card payment fallback */}
       <button
         onClick={() => onCheckout?.()}
         disabled={checkoutLoading}
-        className={`py-3 px-6 rounded-lg text-[14px] font-semibold transition-all disabled:opacity-70 ${
+        className={`w-full max-w-[320px] py-3.5 rounded-lg text-[14px] font-semibold transition-all disabled:opacity-70 ${
           walletAvailable
             ? 'border border-border bg-background text-foreground hover:bg-muted text-[13px]'
-            : 'bg-primary text-primary-foreground hover:brightness-95'
+            : 'bg-primary text-primary-foreground hover:brightness-95 shadow-sm shadow-primary/20'
         }`}
       >
         {checkoutLoading
           ? 'Opening checkout...'
           : walletAvailable
           ? 'Or pay with card — $4.99'
-          : 'Unlock my full letter — $4.99'}
+          : 'Get my reply — $4.99'}
       </button>
-      <p className="text-[11px] text-muted-foreground/60">Apple Pay · Google Pay · Card</p>
+
+      {/* Payment methods note */}
+      <p className="text-[10px] text-muted-foreground/40 text-center">
+        Apple Pay · Google Pay · Card
+      </p>
+
+      {/* Skip option */}
+      <button
+        type="button"
+        onClick={() => document.getElementById('section-share')?.scrollIntoView({ behavior: 'smooth' })}
+        className="text-[11px] text-muted-foreground/50 hover:underline cursor-pointer"
+      >
+        No thanks, I'll write my own
+      </button>
     </div>
   );
 }
