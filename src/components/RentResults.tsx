@@ -1127,7 +1127,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           ) : (
             <>
               <h1 className="font-display text-[28px] sm:text-[32px] font-semibold text-foreground leading-tight" style={{ letterSpacing: '-0.02em' }}>
-                Good news — <span className="text-verdict-good">your rent isn't going up.</span>
+                Good news: <span className="text-verdict-good">your rent isn't going up.</span>
               </h1>
               <p className="text-[15px] sm:text-base text-muted-foreground mt-3 max-w-[480px] leading-relaxed">
                 Here's how your current rent of <strong className="text-foreground">${fmt(formData.currentRent)}/mo</strong> compares to what similar {brLabel} apartments are going for in {city}.
