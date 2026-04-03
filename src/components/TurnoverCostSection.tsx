@@ -187,7 +187,7 @@ const TurnoverCostSection = ({
         {version === 'A' && (
           <>
             <p className="text-sm text-foreground leading-relaxed">
-              Turnover on a {bedroomLabel.toLowerCase()} in {city} typically costs a property owner an estimated <strong>{fmt(costs.total)}</strong> before accounting for any rent adjustment on the new lease. Your estimated savings from moving would be <strong>{fmt(annualSavings)}/yr</strong>. In most cases, a reasonable compromise on renewal terms costs both sides less than turnover — especially when factoring in your moving costs too.
+              Turnover on a {bedroomLabel.toLowerCase()} in {city} typically costs a property owner an estimated <strong>{fmt(costs.total)}</strong> before accounting for any rent adjustment on the new lease. Your estimated savings from moving would be <strong>{fmt(annualSavings)}/yr</strong>. In most cases, a reasonable compromise on renewal terms costs both sides less than turnover. That goes double when you factor in your moving costs.
             </p>
             <p className="text-[13px] text-muted-foreground mt-3">
               This is one reason experienced property managers prefer to retain good tenants at a fair rate.
