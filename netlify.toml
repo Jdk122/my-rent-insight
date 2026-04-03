@@ -1,5 +1,6 @@
 # Netlify configuration
 
+# Sitemap proxies — MUST be before SPA fallback
 [[redirects]]
   from = "/sitemap-cities.xml"
   to = "https://piwahxgtsxpcrgoyuedy.supabase.co/functions/v1/sitemap-cities"
@@ -11,3 +12,9 @@
   to = "https://piwahxgtsxpcrgoyuedy.supabase.co/functions/v1/sitemap-zips"
   status = 200
   force = true
+
+# SPA fallback — MUST be last
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
