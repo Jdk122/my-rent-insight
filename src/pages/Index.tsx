@@ -460,6 +460,11 @@ const Index = () => {
         </main>
       ) : (
         <div ref={resultsRef}>
+          {paidFallbackMsg && (
+            <div className="max-w-md mx-auto mt-4 px-4 py-3 rounded-lg border border-green-300/50 bg-green-50/50 text-center">
+              <p className="text-sm text-green-800">{paidFallbackMsg}</p>
+            </div>
+          )}
           <Suspense fallback={<LoadingAnalysis />}>
           <RentResults
             formData={results.formData}
@@ -468,9 +473,11 @@ const Index = () => {
             propertyData={propertyLookup.data}
             propertyLoading={propertyLookup.loading}
             propertyError={propertyLookup.error}
-            onReset={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            isPaid={isPaid}
+            onReset={() => { setResults(null); setIsPaid(false); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             onScrollToTop={() => {
               setResults(null);
+              setIsPaid(false);
               setFormKey(k => k + 1);
               setCapturedEmailRaw(getRememberedEmail());
               window.scrollTo({ top: 0, behavior: 'smooth' });
