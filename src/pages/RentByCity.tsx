@@ -200,33 +200,33 @@ const RentByCity = () => {
   const faqItems = [
     {
       q: `What is the average 1-bedroom rent in ${city}, ${state}?`,
-      a: `The average 1-bedroom fair market rent in ${city}, ${state} is ${fmt(avgFmr[1])}/month as of ${dataYear}, based on HUD rent data across ${zips.length} ZIP codes in the city.`,
+      a: `The average 1-bedroom fair market rent in ${city}, ${state} is ${fmt(avgFmr[1])}/month as of ${dataYear}, based on HUD rent data across ${zips.length} ZIP codes in the city.${nationalAvg > 0 ? ` This is ${Math.abs(Math.round(((avgFmr[1] - nationalAvg) / nationalAvg) * 100))}% ${avgFmr[1] >= nationalAvg ? 'above' : 'below'} the national average of ${fmt(nationalAvg)}/month.` : ''} Rents range from ${fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to ${fmt(maxFmr1br)} depending on ZIP code.`,
     },
     {
       q: `What is a fair rent increase in ${city}?`,
       a: trendYoY !== null
-        ? `A rent increase up to about ${Math.abs(trendYoY).toFixed(1)}% is broadly in line with the recent market trend in ${city}. Increases above that level are above trend and should be tested against neighborhood-level pricing and comparable rentals.`
-        : `When local trend data is limited, a fair rent increase in ${city} is better judged against the current city rent benchmark and ZIP-level differences rather than a single trend percentage.`,
+        ? `A rent increase up to about ${Math.abs(trendYoY).toFixed(1)}% is broadly in line with the recent market trend in ${city}. Increases above that level are above trend and should be tested against neighborhood-level pricing and comparable rentals. The current average 1-BR rent is ${fmt(avgFmr[1])}/month.`
+        : `When local trend data is limited, a fair rent increase in ${city} is better judged against the current city rent benchmark of ${fmt(avgFmr[1])}/month and ZIP-level differences rather than a single trend percentage.`,
     },
     {
       q: `Are rents going up or down in ${city}?`,
       a: trendYoY !== null
-        ? `Rents in ${city} have changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year over year based on the trend measure shown on this page.`
-        : `This page has limited trend visibility for ${city}, so it emphasizes current rent benchmarks and cross-ZIP differences more than year-over-year movement.`,
+        ? `Rents in ${city} have ${trendYoY > 0 ? 'increased' : 'decreased'} ${Math.abs(trendYoY).toFixed(1)}% year over year based on ${trendAttribution}. This reflects local market conditions across ${zips.length} ZIP codes in the ${metroName || city} area.`
+        : `This page has limited trend visibility for ${city}, so it emphasizes current rent benchmarks and cross-ZIP differences more than year-over-year movement. The average 1-BR FMR is ${fmt(avgFmr[1])}/month.`,
     },
     {
       q: `How much do rents vary across ${city}?`,
-      a: `1-bedroom rents across ${city} range from ${fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to ${fmt(Math.max(...zips.map(z => z.raw.f[1])))} on this page, showing that rent can vary materially across ZIP codes within the same city.`,
+      a: `1-bedroom rents across ${city} range from ${fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to ${fmt(Math.max(...zips.map(z => z.raw.f[1])))} on this page, a ${fmt(maxFmr1br - (cheapestZip?.fmr1br ?? avgFmr[1]))}/month spread. This shows that rent can vary materially across ZIP codes within the same city, reflecting neighborhood-level differences in housing stock and demand.`,
     },
     {
       q: `Can my landlord raise my rent in ${city}?`,
       a: rentControlInfo
-        ? `In ${city}, rent increases are regulated under ${rentControlInfo.jurisdiction} protections.${rentControlInfo.maxIncreaseFormula ? ` The maximum increase is generally ${rentControlInfo.maxIncreaseFormula}.` : ''} Landlords must also follow applicable state notice requirements.`
-        : `We could not identify a city-specific rent cap for ${city}. Landlords must still follow applicable state and local notice rules before raising rent at lease renewal. Check your state's requirements for specifics.`,
+        ? `In ${city}, rent increases are regulated under ${rentControlInfo.jurisdiction} protections.${rentControlInfo.maxIncreaseFormula ? ` The maximum increase is generally ${rentControlInfo.maxIncreaseFormula}.` : ''} Landlords must also follow applicable state notice requirements before issuing a rent increase.`
+        : `We could not identify a city-specific rent cap for ${city}. Landlords must still follow applicable state and local notice rules before raising rent at lease renewal. Requirements vary — check your state's landlord-tenant statute for specifics on notice periods and timing.`,
     },
     {
       q: `How much should I spend on rent in ${city}?`,
-      a: `The general guideline is to spend no more than 30% of your gross income on rent. With average 1-bedroom rent in ${city} at ${fmt(avgFmr[1])}/month, a household would need approximately ${fmt(affordableIncome)}/year to afford this comfortably.`,
+      a: `The general guideline is to spend no more than 30% of your gross income on rent. With average 1-bedroom rent in ${city} at ${fmt(avgFmr[1])}/month, a household would need approximately ${fmt(affordableIncome)}/year in gross income to afford this comfortably. Many renters in high-cost areas spend above this threshold — our free tool can help you assess whether your specific rent is fair for your ZIP code.`,
     },
   ];
 
