@@ -177,17 +177,17 @@ const TurnoverCostSection = ({
         {version === 'C' && (
           <>
             <p className="text-sm text-foreground leading-relaxed">
-              Your increase is in line with the market. But replacing you still costs your landlord an estimated <strong>{fmt(costs.total)}</strong>. That's your opening.
+              Replacing you would still cost your landlord an estimated <strong>{fmt(costs.total)}</strong>. Even when your increase is reasonable, a short reply gives them a reason to offer something better.
             </p>
             <p className="text-[13px] text-muted-foreground mt-3">
-              A short reply costs nothing to try.
+              A quick reply costs nothing to try.
             </p>
           </>
         )}
         {version === 'A' && (
           <>
             <p className="text-sm text-foreground leading-relaxed">
-              Replacing you costs your landlord an estimated <strong>{fmt(costs.total)}</strong>. You're paying <strong>{fmt(annualSavings)}/yr</strong> more than the market supports. They lose more by letting you go than by negotiating.
+              Replacing you would cost your landlord an estimated <strong>{fmt(costs.total)}</strong>. That's why a short, data-backed reply works. They'd rather negotiate than pay to find someone new.
             </p>
             <p className="text-[13px] text-muted-foreground mt-3">
               That's your leverage.
@@ -197,7 +197,7 @@ const TurnoverCostSection = ({
         {version === 'B' && (
           <>
             <p className="text-sm text-foreground leading-relaxed">
-              Replacing you costs your landlord an estimated <strong>{fmt(costs.total)}</strong>. But you're overpaying by <strong>{fmt(annualSavings)}/yr</strong> above the local trend. Negotiating first costs nothing. If they won't budge, moving makes financial sense.
+              Replacing you would cost your landlord an estimated <strong>{fmt(costs.total)}</strong>, and you're overpaying well beyond that. A reply gives them a reason to meet you halfway. If they won't budge, moving makes financial sense.
             </p>
             <p className="text-[13px] text-muted-foreground mt-3">
               Start with a reply. You can always move later.
