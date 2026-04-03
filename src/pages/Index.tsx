@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
+import { useState, useRef, useEffect, useMemo, lazy, Suspense, useCallback } from 'react';
 import { ChevronRight, MessageSquareText, Calculator, Building2 } from 'lucide-react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { useSearchParams, Link } from 'react-router-dom';
-
+import { getAnalysisFingerprint, addPaidAnalysis, isAnalysisPaid } from '@/lib/analysisFingerprint';
 import SampleResultCard from '@/components/SampleResultCard';
 const LocationSearch = lazy(() => import('@/components/LocationSearch'));
 const BrowseDealsSection = lazy(() => import('@/components/BrowseDealsSection'));
