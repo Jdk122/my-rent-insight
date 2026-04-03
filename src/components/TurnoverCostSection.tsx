@@ -180,7 +180,7 @@ const TurnoverCostSection = ({
               Your increase is in line with the local market. That said, turnover on a {bedroomLabel.toLowerCase()} in {city} still carries an estimated cost of <strong>{fmt(costs.total)}</strong> before accounting for any rent adjustment on the new lease. Even modest negotiations can be worth exploring.
             </p>
             <p className="text-[13px] text-muted-foreground mt-3">
-              You're in a reasonable position — but asking never hurts.
+              You're in a reasonable position. Asking never hurts.
             </p>
           </>
         )}
