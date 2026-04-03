@@ -526,8 +526,8 @@ function DashboardContent() {
               const purchasesByVerdict: Record<string, number> = {};
               for (const v of (stats.paywall_clicks_by_verdict || [])) clicksByVerdict[v.verdict] = v.count;
               for (const v of (stats.purchases_by_verdict || [])) purchasesByVerdict[v.verdict] = v.count;
-              const verdicts = ['above', 'fair', 'below'];
-              const labels: Record<string, string> = { above: 'Above market', fair: 'Fair', below: 'Below' };
+              const verdicts = ['above', 'at-market', 'below'];
+              const labels: Record<string, string> = { above: 'Above market', 'at-market': 'Fair', below: 'Below' };
               return verdicts.map(v => (
                 <span key={v}>{labels[v]}: {clicksByVerdict[v] ?? 0} clicks, {purchasesByVerdict[v] ?? 0} purchases</span>
               ));
