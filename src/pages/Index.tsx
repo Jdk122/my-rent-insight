@@ -143,8 +143,19 @@ const Index = () => {
   const hasIncrease = !!(results && results.formData.rentIncrease && results.formData.rentIncrease > 0);
   const isUnlocked = !!capturedEmail || !EMAIL_GATE_ENABLED;
 
+  // Check if current analysis matches a previously paid fingerprint
+  useEffect(() => {
+    if (!results) return;
+    const fp = getAnalysisFingerprint(results.formData);
+    if (isAnalysisPaid(fp)) {
+      setIsPaid(true);
+    }
+  }, [results]);
+
   const handleSubmit = async (data: RentFormData) => {
     setIsLoading(true);
+    setIsPaid(false); // Reset paid state for new analysis
+    setPaidFallbackMsg(null);
     setCapturedEmailRaw(getRememberedEmail());
 
     try {
