@@ -28,6 +28,7 @@ const RentByState = () => {
   const [notFound, setNotFound] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const [nationalAvg, setNationalAvg] = useState<number>(0);
 
   useEffect(() => {
     if (!stateSlug) { setNotFound(true); setLoading(false); return; }
