@@ -255,10 +255,22 @@ const RentByState = () => {
           )}
 
           <p className="mt-4 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
-            The average 1-bedroom rent in {stateName} is {fmt(avgFmr1br)}/month according to HUD FY{hudFY} Fair Market Rent data.
-            {stateYoY !== null ? ` Rents have changed ${stateYoY > 0 ? '+' : ''}${stateYoY.toFixed(1)}% year-over-year.` : ''}
-            {' '}{stateName} has {cities.length} cities with rent data covering {totalZips.toLocaleString()} zip codes.
+            The average 1-bedroom rent in {stateName} is {fmt(avgFmr1br)}/month according to HUD FY{hudFY} Fair Market Rent data, covering {cities.length} cities and {totalZips.toLocaleString()} ZIP codes.
+            {stateYoY !== null ? ` Rents have ${stateYoY > 0 ? 'increased' : 'decreased'} ${Math.abs(stateYoY).toFixed(1)}% year-over-year.` : ''}
+            {nationalAvg > 0 && ` The average 1-bedroom rent in ${stateName} is ${Math.abs(Math.round(((avgFmr1br - nationalAvg) / nationalAvg) * 100))}% ${avgFmr1br >= nationalAvg ? 'above' : 'below'} the national average of ${fmt(nationalAvg)}/month.`}
           </p>
+
+          {/* Key Facts box */}
+          <div className="mt-5 rounded-lg border border-border bg-muted/30 px-5 py-4">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Key Facts</p>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+              <div><span className="text-muted-foreground">Average 1-BR rent:</span> <span className="font-medium text-foreground">{fmt(avgFmr1br)}/mo</span></div>
+              {stateYoY !== null && <div><span className="text-muted-foreground">Year-over-year change:</span> <span className="font-medium text-foreground">{stateYoY > 0 ? '+' : ''}{stateYoY.toFixed(1)}%</span></div>}
+              <div><span className="text-muted-foreground">Coverage:</span> <span className="font-medium text-foreground">{cities.length} cities, {totalZips.toLocaleString()} ZIP codes</span></div>
+              <div><span className="text-muted-foreground">Data source:</span> <span className="font-medium text-foreground">HUD Small Area FMR FY{hudFY}</span></div>
+              {nationalAvg > 0 && <div><span className="text-muted-foreground">vs. national avg:</span> <span className="font-medium text-foreground">{Math.abs(Math.round(((avgFmr1br - nationalAvg) / nationalAvg) * 100))}% {avgFmr1br >= nationalAvg ? 'above' : 'below'} ({fmt(nationalAvg)}/mo)</span></div>}
+            </div>
+          </div>
         </section>
 
         {/* ═══ AEO: Query-matching answer sections ═══ */}
