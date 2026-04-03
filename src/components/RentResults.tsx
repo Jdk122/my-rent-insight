@@ -90,6 +90,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const [selectedIntent, setSelectedIntent] = useState<'stay' | 'move' | null>(null);
   const analysisLogged = useRef(isDuplicateAnalysis);
   const gateViewedRef = useRef(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   // Rehydrate user_intent from analyses on mount
   useEffect(() => {
