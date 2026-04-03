@@ -55,7 +55,7 @@ interface NegotiationLetterProps {
   isPaid?: boolean;
   onCheckout?: () => void;
   checkoutLoading?: boolean;
-  onPaid?: () => void;
+  onPaid?: (email?: string) => void;
   expressCheckoutProps?: {
     analysisId?: string | null;
     verdict: string;
