@@ -8,6 +8,7 @@ import { RefreshCw } from 'lucide-react';
 interface ExpressCheckoutProps {
   onSuccess: (email?: string) => void;
   onFallbackToRedirect: () => void;
+  onReady?: () => void;
   analysisId?: string | null;
   verdict: string;
   zip: string;
