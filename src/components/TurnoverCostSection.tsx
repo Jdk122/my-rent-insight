@@ -106,7 +106,7 @@ const TurnoverCostSection = ({
     <div className="text-left">
       <h2 className="results-section-header mb-1">The Cost of Turnover</h2>
       <p className="text-[13px] text-muted-foreground mb-8">
-        What it typically costs when a tenant moves out — and what that means for your decision.
+        What it typically costs a landlord when a tenant moves out.
       </p>
 
       {/* Turnover cost summary — collapsible breakdown */}
