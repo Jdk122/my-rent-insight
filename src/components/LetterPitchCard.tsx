@@ -70,16 +70,16 @@ const LetterPitchCard = ({
     : 'Paying less than neighbors — keep it that way';
 
   const subtext = isAboveMarket
-    ? `Backed by ${compsCount} rent${compsCount !== 1 ? 's' : ''} near you.`
+    ? `Uses ${compsCount} rent${compsCount !== 1 ? 's' : ''} near you. Ready before you reply.`
     : isFair
     ? 'Your letter gives you exactly what to say.'
     : 'Ask for a longer lease or extra perks.';
 
   const ctaText = isAboveMarket
-    ? 'Get my negotiation letter — $4.99'
+    ? 'Get the exact reply to send — $4.99'
     : isFair
-    ? 'Get my letter — $4.99'
-    : 'Get my renewal letter — $4.99';
+    ? 'Get my reply — $4.99'
+    : 'Keep my rent low — $4.99';
 
   const secondaryCtaText = 'Or pay with card — $4.99';
 
