@@ -69,6 +69,7 @@ const TurnoverCostSection = ({
   onScrollToLetter,
 }: TurnoverCostSectionProps) => {
   const [vacancy, setVacancy] = useState<VacancyRateResult | null>(null);
+  const [showBreakdown, setShowBreakdown] = useState(false);
 
   useEffect(() => {
     const stateName = stateNameFromAbbr(state);
@@ -108,52 +109,64 @@ const TurnoverCostSection = ({
         What it typically costs when a tenant moves out — and what that means for your decision.
       </p>
 
-      {/* Turnover cost breakdown */}
-      <div className="rounded-xl border border-border bg-card p-5 space-y-0">
-        <div className="context-row context-row-even">
-          <div>
-            <span className="context-label">Estimated lost rent during vacancy</span>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
-              {vacancySublabel}
-            </p>
-          </div>
-          <span className="context-value">{fmt(costs.vacancyCost)}</span>
-        </div>
-        <div className="context-row context-row-odd">
-          <div>
-            <span className="context-label">Unit turnover preparation</span>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
-              Cleaning, painting, and minor repairs for a {bedroomLabel.toLowerCase()}
-            </p>
-          </div>
-          <span className="context-value">{fmt(costs.prepCost)}</span>
-        </div>
-        <div className="context-row context-row-even">
-          <div>
-            <span className="context-label">Listing, marketing, and tenant screening</span>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
-              Advertising, showings, application processing
-            </p>
-          </div>
-          <span className="context-value">{fmt(costs.leasingCost)}</span>
-        </div>
-        <div className="context-row context-row-odd">
-          <div>
-            <span className="context-label">Administrative and processing costs</span>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
-              Lease prep, inspections, key exchange, utility coordination
-            </p>
-          </div>
-          <span className="context-value">{fmt(ADMIN_COST)}</span>
-        </div>
-        <div className="context-row border-t-2 border-border pt-3">
-          <span className="context-label font-medium text-foreground">
-            Estimated total cost to re-rent this unit
+      {/* Turnover cost summary — collapsible breakdown */}
+      <div className="rounded-xl border border-border bg-card p-5">
+        <div className="flex items-center justify-between">
+          <span className="text-[13px] font-medium text-foreground">
+            Estimated cost to re-rent this unit
           </span>
-          <span className="context-value font-bold text-lg">
+          <span className="font-bold text-lg text-foreground">
             {fmt(costs.total)}
           </span>
         </div>
+
+        <button
+          onClick={() => setShowBreakdown(!showBreakdown)}
+          className="text-[12px] text-primary mt-2 hover:underline min-h-11 flex items-center"
+        >
+          {showBreakdown ? 'Hide breakdown' : 'See breakdown'}
+        </button>
+
+        {showBreakdown && (
+          <div className="mt-3 pt-3 border-t border-border space-y-0">
+            <div className="context-row context-row-even">
+              <div>
+                <span className="context-label">Estimated lost rent during vacancy</span>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  {vacancySublabel}
+                </p>
+              </div>
+              <span className="context-value">{fmt(costs.vacancyCost)}</span>
+            </div>
+            <div className="context-row context-row-odd">
+              <div>
+                <span className="context-label">Unit turnover preparation</span>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  Cleaning, painting, and minor repairs for a {bedroomLabel.toLowerCase()}
+                </p>
+              </div>
+              <span className="context-value">{fmt(costs.prepCost)}</span>
+            </div>
+            <div className="context-row context-row-even">
+              <div>
+                <span className="context-label">Listing, marketing, and tenant screening</span>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  Advertising, showings, application processing
+                </p>
+              </div>
+              <span className="context-value">{fmt(costs.leasingCost)}</span>
+            </div>
+            <div className="context-row context-row-odd">
+              <div>
+                <span className="context-label">Administrative and processing costs</span>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  Lease prep, inspections, key exchange, utility coordination
+                </p>
+              </div>
+              <span className="context-value">{fmt(ADMIN_COST)}</span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Conditional insight callout */}
@@ -202,10 +215,7 @@ const TurnoverCostSection = ({
 
       {/* Source citation */}
       <p className="text-[11px] text-muted-foreground mt-6 leading-relaxed">
-        {isFallback
-          ? `Vacancy estimate based on the national average rental vacancy rate (${vacancyRate}%, U.S. Census Bureau via FRED). `
-          : `Vacancy estimate based on ${stateName} rental vacancy rate (${vacancyRate}%, U.S. Census Bureau via FRED, ${dataYear}). `}
-        Turnover and marketing costs estimated from industry benchmarks (National Apartment Association; Zego 2023 Turnover Cost Report, avg. $3,872/unit). These are general estimates, not specific to your building.
+        Sources: U.S. Census Bureau, National Apartment Association. General estimates, not specific to your building.
       </p>
     </div>
   );
