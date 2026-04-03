@@ -488,18 +488,12 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
         </div>
 
         {/* Unlock CTA below the card */}
-        <div className="flex flex-col items-center gap-2 mt-4">
-          <Lock size={20} className="text-muted-foreground" />
-          <p className="text-[13px] text-muted-foreground">Your analysis is complete. One step left.</p>
-          <button
-            onClick={() => props.onCheckout?.()}
-            disabled={props.checkoutLoading}
-            className="py-3 px-6 rounded-lg bg-primary text-primary-foreground text-[14px] font-semibold hover:brightness-95 transition-all disabled:opacity-70"
-          >
-            {props.checkoutLoading ? 'Opening checkout...' : 'Unlock my full letter — $4.99'}
-          </button>
-          <p className="text-[11px] text-muted-foreground/60">Apple Pay · Google Pay · Card</p>
-        </div>
+        <LockedLetterCTA
+          onCheckout={props.onCheckout}
+          checkoutLoading={props.checkoutLoading}
+          onPaid={props.onPaid}
+          expressCheckoutProps={props.expressCheckoutProps}
+        />
       </div>
     );
   }
