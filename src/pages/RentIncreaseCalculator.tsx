@@ -84,6 +84,7 @@ const RentIncreaseCalculator = () => {
     if (isAnalysisPaid(fp)) setIsPaid(true);
   }, [results]);
 
+  // Rough above-market check for verdict tracking (precise logic lives in RentResults)
   const isAboveMarket = results ? (() => {
     const currentRent = results.formData.currentRent;
     const increase = results.formData.rentIncrease ?? 0;
@@ -91,8 +92,7 @@ const RentIncreaseCalculator = () => {
       ? currentRent * (increase / 100)
       : increase;
     const newRent = currentRent + proposedIncrease;
-    const median = results.rentData.median;
-    return median ? newRent > median : false;
+    return newRent > results.rentData.fmr;
   })() : false;
 
   const handlePaid = useCallback(() => {
