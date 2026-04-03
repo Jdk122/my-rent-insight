@@ -1559,6 +1559,14 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   isPaid={isPaid}
                   onCheckout={handleCheckout}
                   checkoutLoading={checkoutLoading}
+                  onPaid={onPaid}
+                  expressCheckoutProps={{
+                    analysisId,
+                    verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
+                    zip: rentData.zip,
+                    city: rentData.city,
+                    savings: increaseAmount * 12,
+                  }}
                 />
               </motion.section>
             )}
