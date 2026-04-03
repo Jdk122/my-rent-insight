@@ -1064,8 +1064,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   compsCount={compsWithRent.length}
                   verdict={isAboveMarket ? 'above' : isFair ? 'at-market' : 'below'}
                   zip={rentData.zip}
+                  city={rentData.city}
                   onCheckout={handleCheckout}
                   checkoutLoading={checkoutLoading}
+                  onPaid={onPaid}
+                  analysisId={analysisId}
+                  savings={increaseAmount * 12}
                 />
               )}
               {isPaid && isUnlocked && hasIncrease && (
