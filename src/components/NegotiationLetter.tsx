@@ -51,6 +51,9 @@ interface NegotiationLetterProps {
   belowFmrHighIncrease?: boolean;
   onLetterGenerated?: () => void;
   comparables?: CompForLetter[];
+  isPaid?: boolean;
+  onCheckout?: () => void;
+  checkoutLoading?: boolean;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
