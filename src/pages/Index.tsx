@@ -474,6 +474,7 @@ const Index = () => {
             propertyLoading={propertyLookup.loading}
             propertyError={propertyLookup.error}
             isPaid={isPaid}
+            onPaid={handlePaid}
             onReset={() => { setResults(null); setIsPaid(false); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             onScrollToTop={() => {
               setResults(null);
