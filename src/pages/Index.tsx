@@ -521,7 +521,7 @@ const Index = () => {
             }}
             capturedEmail={capturedEmail}
             onEmailCaptured={setCapturedEmail}
-            onVerdictReady={setIsAboveMarket}
+            onVerdictReady={setVerdictStr}
           />
           </Suspense>
         </div>

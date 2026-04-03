@@ -411,7 +411,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   );
 
   useEffect(() => {
-    if (effectiveVerdict) onVerdictReady?.(isAboveMarket);
+    if (effectiveVerdict) onVerdictReady?.(effectiveVerdict as 'above' | 'at-market' | 'below');
   }, [effectiveVerdict]);
 
   // Gate viewed analytics — fires once per analysis
