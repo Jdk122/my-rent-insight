@@ -84,23 +84,13 @@ const RentIncreaseCalculator = () => {
     if (isAnalysisPaid(fp)) setIsPaid(true);
   }, [results]);
 
-  // Rough above-market check for verdict tracking (precise logic lives in RentResults)
-  const isAboveMarket = results ? (() => {
-    const currentRent = results.formData.currentRent;
-    const increase = results.formData.rentIncrease ?? 0;
-    const proposedIncrease = results.formData.increaseIsPercent
-      ? currentRent * (increase / 100)
-      : increase;
-    const newRent = currentRent + proposedIncrease;
-    return newRent > results.rentData.fmr;
-  })() : false;
+  const [verdictStr, setVerdictStr] = useState<'above' | 'at-market' | 'below'>('at-market');
 
   const handlePaid = useCallback(() => {
     if (!results) return;
     const fp = getAnalysisFingerprint(results.formData);
     addPaidAnalysis({ sessionId: 'wallet-' + Date.now(), fingerprint: fp, timestamp: Date.now() });
     setIsPaid(true);
-    const verdictStr = isAboveMarket ? 'above' : 'at-market';
     trackEvent('purchase_completed', { verdict: verdictStr, zip: results.formData.zip });
     supabase.from('lead_events' as any).insert({
       event_type: 'purchase_completed',
@@ -109,7 +99,7 @@ const RentIncreaseCalculator = () => {
       verdict: verdictStr,
     }).then(() => {});
     setTimeout(() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' }), 300);
-  }, [results, capturedEmail, isAboveMarket]);
+  }, [results, capturedEmail, verdictStr]);
 
   const prefill = useMemo(() => {
     const zip = searchParams.get('zip');
