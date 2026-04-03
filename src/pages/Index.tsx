@@ -314,7 +314,7 @@ const Index = () => {
             "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
             "featureList": [
               "Compare rent increases to HUD Fair Market Rent",
-              "Generate free negotiation letter",
+              "Generate negotiation reply",
               "Coverage for 38,600+ US zip codes",
               "Uses HUD SAFMR, Zillow ZORI, and real comparable listings"
             ],
