@@ -92,6 +92,10 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
     setWalletAvailable(false);
   }, []);
 
+  const handleWalletReady = useCallback(() => {
+    setWalletAvailable(true);
+  }, []);
+
   const handleWalletSuccess = useCallback((email?: string) => {
     onPaid?.(email);
   }, [onPaid]);
