@@ -78,7 +78,7 @@ function PaywallContent({
     : 'Keep paying less than neighbors';
 
   const subtext = isAboveMarket && savings && savings > 0
-    ? 'Uses local rents and market data. One tap to unlock.'
+    ? 'Built with real comps and a counter-offer your landlord can say yes to.'
     : isAboveMarket
     ? 'Your letter gives you exactly what to say.'
     : 'Lock in your rate or ask for extra perks.';

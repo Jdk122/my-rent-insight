@@ -107,19 +107,19 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
 
       {/* What you get */}
       <div className="text-left text-[13px] text-muted-foreground space-y-1.5 max-w-[360px]">
-        <p>Your $4.99 reply includes:</p>
+        <p>Why this reply works:</p>
         <ul className="space-y-1 ml-1">
           <li className="flex items-start gap-2">
             <span className="text-primary mt-0.5">✓</span>
-            <span>A personalized reply with your specific rent data and counter-offer</span>
+            <span>Uses real comps your landlord can look up and verify</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-primary mt-0.5">✓</span>
-            <span>Local comps and market evidence your landlord can verify</span>
+            <span>Includes a counter-offer range so they can say yes</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-primary mt-0.5">✓</span>
-            <span>Ready to copy, paste, and send tonight via email or text</span>
+            <span>Professional tone that makes it easy to say yes</span>
           </li>
         </ul>
       </div>
