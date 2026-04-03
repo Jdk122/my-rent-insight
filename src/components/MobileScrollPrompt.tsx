@@ -47,6 +47,7 @@ const MobileScrollPrompt = ({
     if (typeof window === 'undefined') return;
     if (window.innerWidth >= 768) return;
     if (sessionStorage.getItem(SESSION_KEY)) return;
+    if (sessionStorage.getItem('rr_exit_intent_shown')) return;
 
     const handleScroll = () => {
       if (firedRef.current) return;
