@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
 import { RefreshCw, Copy, Lock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import StripeExpressCheckout from './StripeExpressCheckout';
 
 interface CompForLetter {
   rent: number | null;
