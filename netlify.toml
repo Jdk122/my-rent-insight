@@ -1,1 +1,13 @@
 # Netlify configuration
+
+[[redirects]]
+  from = "/sitemap-cities.xml"
+  to = "https://piwahxgtsxpcrgoyuedy.supabase.co/functions/v1/sitemap-cities"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/sitemap-zips.xml"
+  to = "https://piwahxgtsxpcrgoyuedy.supabase.co/functions/v1/sitemap-zips"
+  status = 200
+  force = true
