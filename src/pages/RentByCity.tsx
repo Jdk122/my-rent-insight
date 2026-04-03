@@ -3,7 +3,7 @@ import { getRentControlByStateCity, getApplicableCap } from '@/data/rentControlD
 import { useEffect, useState, useMemo } from 'react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { NoIndexMeta } from '@/components/NoIndexMeta';
-import { getCityData, getNearbyCities, fmt, slugify, stateNameFromAbbr, type CityData } from '@/data/cityStateUtils';
+import { getCityData, getNearbyCities, fmt, slugify, stateNameFromAbbr, getNationalAvgFmr1br, type CityData } from '@/data/cityStateUtils';
 import { getApartmentListData, getHud50Data, type ApartmentListZipRaw, type Hud50ZipRaw } from '@/data/dataLoader';
 import { getDataFreshness, getFreshestDate, formatFreshnessDate, getHudFiscalYear, getDataYear, type DataFreshness } from '@/data/dataFreshness';
 import SEO from '@/components/SEO';
