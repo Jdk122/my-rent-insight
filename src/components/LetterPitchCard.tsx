@@ -76,9 +76,9 @@ const LetterPitchCard = ({
     : 'Use this letter to ask for a longer renewal or extra perks.';
 
   const ctaText = isAboveMarket
-    ? 'Lower my rent tonight — $4.99'
+    ? 'Lower my rent today — $4.99'
     : isFair
-    ? 'Get my letter — $4.99'
+    ? 'Get my letter today — $4.99'
     : 'Keep my rent low — $4.99';
 
   const secondaryCtaText = 'Or pay with card — $4.99';
