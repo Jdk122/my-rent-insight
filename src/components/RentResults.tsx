@@ -724,11 +724,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       if (hasIncrease && medianCompRent && hasEnoughComps) {
         sections.push({ id: 'section-comps', label: 'Comps' });
       }
-      if (hasRentControl) {
-        sections.push({ id: 'section-rights', label: 'Rights' });
-      }
       if (hasIncrease && calc) {
         sections.push({ id: 'section-letter', label: 'Letter' });
+      }
+      if (hasRentControl) {
+        sections.push({ id: 'section-rights', label: 'Rights' });
       }
       sections.push({ id: 'section-share', label: 'Share' });
     }
