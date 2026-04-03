@@ -976,7 +976,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                               : <>Your rent increase is <span className="text-verdict-good">below market.</span></>
                             }</>
                           ) : (
-                            <>Good news — <span className="text-verdict-good">your rent isn't going up.</span></>
+                            <>Good news: <span className="text-verdict-good">your rent isn't going up.</span></>
                           )}
                         </h1>
                         <div className="text-center">
