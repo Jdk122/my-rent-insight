@@ -1433,28 +1433,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </section>
             )}
 
-            {/* ━━━ Narrative bridge before letter ━━━ */}
-            {isAboveMarket && !isPaid && (
-              <div className="text-center max-w-[480px] mx-auto pt-4 pb-2">
-                <p className="text-sm text-foreground/80 leading-relaxed">
-                  Renters who respond with market data get better outcomes. Your reply uses {compsWithRent.length} local rents and HUD fair market data to make your case. That's exactly what a landlord needs to see before agreeing to lower terms.
-                </p>
-              </div>
-            )}
-            {isFair && !isAboveMarket && !isPaid && (
-              <div className="text-center max-w-[480px] mx-auto pt-4 pb-2">
-                <p className="text-sm text-foreground/80 leading-relaxed">
-                  Your increase tracks the market, but your landlord would still spend thousands to replace you. A polite, data-backed reply costs nothing to try.
-                </p>
-              </div>
-            )}
-            {isBelowMarket && !isPaid && (
-              <div className="text-center max-w-[480px] mx-auto pt-4 pb-2">
-                <p className="text-sm text-foreground/80 leading-relaxed">
-                  Your rent is already a good deal. Use this reply to lock in your rate or negotiate perks before your landlord reconsiders.
-                </p>
-              </div>
-            )}
 
             {/* ━━━ NEGOTIATION LETTER ━━━ */}
             {hasIncrease && calc && (isAboveMarket || isFair || isBelowMarket) && (
