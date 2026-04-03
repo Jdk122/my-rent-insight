@@ -599,6 +599,9 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
           checkoutLoading={props.checkoutLoading}
           onPaid={props.onPaid}
           expressCheckoutProps={props.expressCheckoutProps}
+          isAboveMarket={props.isAboveMarket}
+          savings={props.savings}
+          compsCount={props.compsCount}
         />
       </div>
     );
