@@ -158,7 +158,7 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
 
       {/* Payment methods note */}
       <p className="text-[10px] text-muted-foreground/40 text-center">
-        Apple Pay · Google Pay · Card
+        Lawyers charge $225+/hr for lease help. This is $4.99.
       </p>
 
       {/* Skip option */}
