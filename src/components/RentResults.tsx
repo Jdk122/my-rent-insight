@@ -70,7 +70,7 @@ const fade = (delay: number) => ({
   transition: { duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] as const },
 });
 
-const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop, capturedEmail: externalEmail, onEmailCaptured: externalOnEmail, onVerdictReady, isDemo = false }: RentResultsProps) => {
+const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop, capturedEmail: externalEmail, onEmailCaptured: externalOnEmail, onVerdictReady, isDemo = false, isPaid = false }: RentResultsProps) => {
   const [internalEmail, setInternalEmail] = useState('');
   const capturedEmail = externalEmail ?? internalEmail;
   const isUnlocked = !!capturedEmail || !EMAIL_GATE_ENABLED;
