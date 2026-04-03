@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { RefreshCw } from 'lucide-react';
 
 interface ExpressCheckoutProps {
-  onSuccess: () => void;
+  onSuccess: (email?: string) => void;
   onFallbackToRedirect: () => void;
   analysisId?: string | null;
   verdict: string;
