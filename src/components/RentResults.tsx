@@ -10,6 +10,7 @@ import ShareCard from './ShareCard';
 
 import { CompsList } from './ShouldYouMove';
 import NegotiationLetter from './NegotiationLetter';
+import TurnoverCostSection from './TurnoverCostSection';
 import RentControlCard from './RentControlCard';
 import { PropertyLookupResult, PropertyLookupError } from '@/hooks/usePropertyLookup';
 import { getRentControlByStateCity, getApplicableCap, isNycZip, checkBuildingEligibility } from '@/data/rentControlData';
@@ -1096,11 +1097,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   verdict={isAboveMarket ? 'above' : isFair ? 'at-market' : 'below'}
                   zip={rentData.zip}
                   city={rentData.city}
-                  onCheckout={handleCheckout}
-                  checkoutLoading={checkoutLoading}
-                  onPaid={onPaid}
-                  analysisId={analysisId}
-                  savings={increaseAmount * 12}
                 />
               )}
               {isPaid && isUnlocked && hasIncrease && (
@@ -1108,7 +1104,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   onClick={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
                   className="w-full mt-4 py-3.5 rounded-lg bg-primary text-primary-foreground text-[15px] font-semibold tracking-tight hover:brightness-95 transition-all shadow-sm shadow-primary/20"
                 >
-                  {isAboveMarket ? 'Your negotiation letter is ready \u2193' : isBelowMarket ? 'Protect this rate \u2193' : 'Review your negotiation letter \u2193'}
+                  {isAboveMarket ? 'Your reply is ready — scroll down ↓' : isBelowMarket ? 'Protect this rate ↓' : 'Your reply is ready — scroll down ↓'}
                 </button>
               )}
               {isPaid && isUnlocked && hasIncrease && (
@@ -1421,128 +1417,52 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </motion.section>
             )}
 
-            {/* ━━━ Universal rent reporting CTA ━━━ */}
-            {isUnlocked && (
-              <section className="py-3 sm:py-4">
-                <PartnerCTA
-                  variant="rent_reporting"
-                  analysisId={analysisId}
-                  verdict={verdictLabel}
-                  toolUsed="renewal"
-                  city={city}
-                  zip={rentData.zip}
-                  placement="post_comps_universal"
-                  email={capturedEmail}
-                  currentRent={formData.currentRent}
-                  proposedRent={formData.rentIncrease != null ? (formData.increaseIsPercent ? formData.currentRent * (1 + formData.rentIncrease / 100) : formData.currentRent + formData.rentIncrease) : undefined}
-                />
-              </section>
-            )}
-
-            {/* ━━━ Moving help CTA (above-market only) ━━━ */}
-            {isAboveMarket && (
-              <section className="py-3 sm:py-4 space-y-2 sm:space-y-3">
-                <PartnerCTA
-                  variant="moving_help"
-                  analysisId={analysisId}
-                  verdict={verdictLabel}
-                  toolUsed="renewal"
-                  city={city}
-                  zip={rentData.zip}
-                  placement="post_comps"
-                  email={capturedEmail}
-                  currentRent={formData.currentRent}
-                  proposedRent={formData.rentIncrease != null ? (formData.increaseIsPercent ? formData.currentRent * (1 + formData.rentIncrease / 100) : formData.currentRent + formData.rentIncrease) : undefined}
-                />
-                {(() => {
-                  const matchedCity = DEAL_CITIES.find(c => c.zips.includes(rentData.zip));
-                  const dealsHref = matchedCity ? `/deals/${matchedCity.slug}` : '/deals';
-                  const dealsLabel = matchedCity
-                    ? `Browse curated apartment deals in ${matchedCity.neighborhood || matchedCity.name} →`
-                    : 'Browse curated apartment deals near you →';
-                  return (
-                    <div className="text-center mt-2">
-                      <Link
-                        to={dealsHref}
-                        onClick={() => trackEvent('internal_click', { link_type: 'browse_deals', city, zip: rentData.zip, placement: 'post_comps' })}
-                        className="text-sm text-primary hover:underline font-semibold"
-                      >
-                        {dealsLabel}
-                      </Link>
-                    </div>
-                  );
-                })()}
-              </section>
-            )}
-
+            {/* ━━━ TurnoverCostSection — between comps and letter ━━━ */}
             {hasIncrease && (
-              <NextStepsSection
-                isAboveMarket={isAboveMarket}
-                fairnessScore={fairnessScore?.total ?? null}
-                verdictLabel={verdictLabel}
-                zip={rentData.zip}
-                bedrooms={bedroomNum}
-                currentRent={formData.currentRent}
-                proposedRent={newRent}
-                propertyType={propertyData?.propertyType}
-                city={city}
-                state={rentData.state}
-                compMedianRent={medianCompRent}
-                dollarOverpayment={excessAnnual > 0 ? Math.round(excessAnnual / 12) : null}
-                brLabel={brLabel}
-                onShareClick={() => {
-                  document.getElementById('section-share')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                analysisId={analysisId}
-                capturedEmail={capturedEmail}
-                listings={rentcastListings.data?.listings ?? []}
-                listingsLoading={rentcastListings.loading}
-                compAddresses={compsWithRent.map(c => c.formattedAddress)}
-              />
+              <section className="pt-4 sm:pt-8 pb-2 sm:pb-4">
+                <TurnoverCostSection
+                  currentRent={formData.currentRent}
+                  bedrooms={bedroomNum}
+                  bedroomLabel={bedroomLabels[formData.bedrooms]}
+                  city={city}
+                  state={rentData.state}
+                  annualSavings={excessAnnual}
+                  proposedRentAboveMedian={isAboveMarket}
+                  onScrollToLetter={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
+                />
+              </section>
             )}
 
-            {/* ━━━ Intent Fork — data collection only (fair/below-market path) ━━━ */}
-
-            {/* ━━━ Know Your Rights (accordion) ━━━ */}
-            {hasRentControl && (
-              <motion.section id="section-rights" {...fade(0.17)} className="pt-4 sm:pt-8 pb-2 sm:pb-4">
-                <Accordion type="single" collapsible>
-                  <AccordionItem value="rights" className="border-none">
-                    <AccordionTrigger className="hover:no-underline py-3 px-4 rounded-lg border border-border bg-card">
-                      <div className="flex items-center gap-2 text-left">
-                        <Scale className="w-4 h-4 text-muted-foreground/70 shrink-0" />
-                        <span className="text-[13px] font-semibold text-foreground">
-                          Your area has rent regulations that may apply
-                        </span>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="pt-3 pb-0">
-                      <div className="evidence-card">
-                        <RentControlCard
-                          state={rentData.state}
-                          city={rentData.city}
-                          zip={rentData.zip}
-                          increasePct={increasePct}
-                          address={formData.fullAddress}
-                        />
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </motion.section>
+            {/* ━━━ Narrative bridge before letter ━━━ */}
+            {isAboveMarket && !isPaid && (
+              <div className="text-center max-w-[480px] mx-auto pt-4 pb-2">
+                <p className="text-sm text-foreground/80 leading-relaxed">
+                  Renters who respond with market data get better outcomes. Your reply uses {compsWithRent.length} local rents and HUD fair market data to make your case — exactly what a landlord needs to see before agreeing to lower terms.
+                </p>
+              </div>
+            )}
+            {isFair && !isAboveMarket && !isPaid && (
+              <div className="text-center max-w-[480px] mx-auto pt-4 pb-2">
+                <p className="text-sm text-foreground/80 leading-relaxed">
+                  Your increase tracks the market — but your landlord would still spend thousands to replace you. A polite, data-backed reply costs nothing to try.
+                </p>
+              </div>
             )}
 
-            {/* ━━━ NEGOTIATION LETTER — fully visible ━━━ */}
+            {/* ━━━ NEGOTIATION LETTER ━━━ */}
             {hasIncrease && calc && (isAboveMarket || isFair || isBelowMarket) && (
               <motion.section id="section-letter" {...fade(0.19)} className="pt-5 pb-4 sm:pt-8 sm:pb-8">
-                {isFair && !isAboveMarket && !isBelowMarket && (
+                {isAboveMarket && !isPaid && (
+                  <h2 className="results-section-header mb-2">Your Negotiation Reply</h2>
+                )}
+                {isFair && !isAboveMarket && !isBelowMarket && isPaid && (
                   <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">
                     Even a fair increase is worth negotiating. Landlords expect it, and avoiding turnover is worth more to them than $50-100/month.
                   </p>
                 )}
                 {isBelowMarket && (
                   <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">
-                    Your landlord is offering below-market terms. That's leverage. Here's how to lock in this rate or negotiate extras like a longer lease, a unit upgrade, or a repair you've been waiting on.
+                    Your landlord is offering below-market terms. That&apos;s leverage. Here&apos;s how to lock in this rate or negotiate extras like a longer lease, a unit upgrade, or a repair you&apos;ve been waiting on.
                   </p>
                 )}
                 <NegotiationLetter
@@ -1598,14 +1518,122 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     city: rentData.city,
                     savings: increaseAmount * 12,
                   }}
+                  isAboveMarket={isAboveMarket}
+                  savings={increaseAmount * 12}
+                  compsCount={compsWithRent.length}
                 />
               </motion.section>
             )}
 
+            {/* ━━━ Know Your Rights (accordion) — after letter ━━━ */}
+            {hasRentControl && (
+              <motion.section id="section-rights" {...fade(0.17)} className="pt-4 sm:pt-8 pb-2 sm:pb-4">
+                <Accordion type="single" collapsible>
+                  <AccordionItem value="rights" className="border-none">
+                    <AccordionTrigger className="hover:no-underline py-3 px-4 rounded-lg border border-border bg-card">
+                      <div className="flex items-center gap-2 text-left">
+                        <Scale className="w-4 h-4 text-muted-foreground/70 shrink-0" />
+                        <span className="text-[13px] font-semibold text-foreground">
+                          Your area has rent regulations that may apply
+                        </span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="pt-3 pb-0">
+                      <div className="evidence-card">
+                        <RentControlCard
+                          state={rentData.state}
+                          city={rentData.city}
+                          zip={rentData.zip}
+                          increasePct={increasePct}
+                          address={formData.fullAddress}
+                        />
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </motion.section>
+            )}
 
+            {/* ━━━ Universal rent reporting CTA — after letter ━━━ */}
+            {isUnlocked && (
+              <section className="py-3 sm:py-4">
+                <PartnerCTA
+                  variant="rent_reporting"
+                  analysisId={analysisId}
+                  verdict={verdictLabel}
+                  toolUsed="renewal"
+                  city={city}
+                  zip={rentData.zip}
+                  placement="post_comps_universal"
+                  email={capturedEmail}
+                  currentRent={formData.currentRent}
+                  proposedRent={formData.rentIncrease != null ? (formData.increaseIsPercent ? formData.currentRent * (1 + formData.rentIncrease / 100) : formData.currentRent + formData.rentIncrease) : undefined}
+                />
+              </section>
+            )}
 
+            {/* ━━━ Moving help CTA (above-market only) — after letter ━━━ */}
+            {isAboveMarket && (
+              <section className="py-3 sm:py-4 space-y-2 sm:space-y-3">
+                <PartnerCTA
+                  variant="moving_help"
+                  analysisId={analysisId}
+                  verdict={verdictLabel}
+                  toolUsed="renewal"
+                  city={city}
+                  zip={rentData.zip}
+                  placement="post_comps"
+                  email={capturedEmail}
+                  currentRent={formData.currentRent}
+                  proposedRent={formData.rentIncrease != null ? (formData.increaseIsPercent ? formData.currentRent * (1 + formData.rentIncrease / 100) : formData.currentRent + formData.rentIncrease) : undefined}
+                />
+                {(() => {
+                  const matchedCity = DEAL_CITIES.find(c => c.zips.includes(rentData.zip));
+                  const dealsHref = matchedCity ? `/deals/${matchedCity.slug}` : '/deals';
+                  const dealsLabel = matchedCity
+                    ? `Browse curated apartment deals in ${matchedCity.neighborhood || matchedCity.name} →`
+                    : 'Browse curated apartment deals near you →';
+                  return (
+                    <div className="text-center mt-2">
+                      <Link
+                        to={dealsHref}
+                        onClick={() => trackEvent('internal_click', { link_type: 'browse_deals', city, zip: rentData.zip, placement: 'post_comps' })}
+                        className="text-sm text-primary hover:underline font-semibold"
+                      >
+                        {dealsLabel}
+                      </Link>
+                    </div>
+                  );
+                })()}
+              </section>
+            )}
 
-            {/* ━━━ Intent Fork — data collection only (above-market path) ━━━ */}
+            {/* ━━━ NextStepsSection — after PartnerCTAs ━━━ */}
+            {hasIncrease && (
+              <NextStepsSection
+                isAboveMarket={isAboveMarket}
+                fairnessScore={fairnessScore?.total ?? null}
+                verdictLabel={verdictLabel}
+                zip={rentData.zip}
+                bedrooms={bedroomNum}
+                currentRent={formData.currentRent}
+                proposedRent={newRent}
+                propertyType={propertyData?.propertyType}
+                city={city}
+                state={rentData.state}
+                compMedianRent={medianCompRent}
+                dollarOverpayment={excessAnnual > 0 ? Math.round(excessAnnual / 12) : null}
+                brLabel={brLabel}
+                onShareClick={() => {
+                  document.getElementById('section-share')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                analysisId={analysisId}
+                capturedEmail={capturedEmail}
+                listings={rentcastListings.data?.listings ?? []}
+                listingsLoading={rentcastListings.loading}
+                compAddresses={compsWithRent.map(c => c.formattedAddress)}
+              />
+            )}
 
 
 
