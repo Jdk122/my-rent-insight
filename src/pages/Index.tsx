@@ -52,6 +52,58 @@ const Index = () => {
   const propertyLookup = usePropertyLookup();
   const topRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+  const [isPaid, setIsPaid] = useState(false);
+  const [paidFallbackMsg, setPaidFallbackMsg] = useState<string | null>(null);
+
+  // Handle ?paid=true return from Stripe
+  useEffect(() => {
+    if (!searchParams.has('paid') || searchParams.get('paid') !== 'true') return;
+    const sessionId = searchParams.get('session_id') || '';
+
+    try {
+      const raw = localStorage.getItem('rr_checkout_state');
+      if (raw) {
+        const savedState = JSON.parse(raw);
+        const age = Date.now() - (savedState.timestamp || 0);
+        if (age < 3600000) { // 1 hour
+          setResults({ formData: savedState.formData, rentData: savedState.rentData });
+          if (savedState.capturedEmail) setCapturedEmailRaw(savedState.capturedEmail);
+
+          addPaidAnalysis({
+            sessionId,
+            fingerprint: savedState.analysisFingerprint,
+            timestamp: Date.now(),
+          });
+          setIsPaid(true);
+
+          // Clean URL
+          window.history.replaceState({}, '', window.location.pathname);
+          localStorage.removeItem('rr_checkout_state');
+
+          // GA4 + Supabase events using restored values
+          trackEvent('purchase_completed', { verdict: savedState.verdict, zip: savedState.formData.zip });
+          import('@/integrations/supabase/client').then(({ supabase }) => {
+            supabase.from('lead_events' as any).insert({
+              event_type: 'purchase_completed',
+              email: savedState.capturedEmail || 'anonymous@checkout',
+              zip: savedState.formData.zip,
+              verdict: savedState.verdict,
+            }).then(() => {});
+          });
+
+          // Scroll to letter after short delay
+          setTimeout(() => {
+            document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' });
+          }, 500);
+          return;
+        }
+      }
+    } catch { /* ignore parse errors */ }
+
+    // Fallback: no valid state
+    window.history.replaceState({}, '', window.location.pathname);
+    setPaidFallbackMsg('Payment received! Run your analysis again and your letter will unlock automatically.');
+  }, []);
 
   // Demo mode: ?demo=above|fair|below|none
   useEffect(() => {
