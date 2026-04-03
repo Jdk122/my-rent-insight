@@ -443,7 +443,7 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
 
   // ── Locked state (unpaid) ──
   if (!isPaid) {
-    const previewParagraphs = fallbackLetter.split('\n\n').slice(0, 3);
+    const previewParagraphs = fallbackLetter.split('\n\n').slice(0, 2);
     return (
       <div className="mt-4">
         <div
