@@ -54,6 +54,14 @@ interface NegotiationLetterProps {
   isPaid?: boolean;
   onCheckout?: () => void;
   checkoutLoading?: boolean;
+  onPaid?: () => void;
+  expressCheckoutProps?: {
+    analysisId?: string | null;
+    verdict: string;
+    zip: string;
+    city: string;
+    savings: number;
+  };
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
