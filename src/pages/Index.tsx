@@ -28,6 +28,7 @@ import SEO from '@/components/SEO';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
 import { getDemoData } from '@/data/demoData';
 import { getRememberedEmail, rememberEmail } from '@/lib/emailMemory';
+import { getUtmParams } from '@/lib/utm';
 
 // Lazy-load heavy below-fold components to reduce initial bundle
 const RentResults = lazy(() => import('@/components/RentResults'));
@@ -193,12 +194,46 @@ const Index = () => {
     }).then(() => {});
 
     if (walletEmail) {
-      supabase.from('leads' as any).upsert({
-        email: walletEmail,
-        capture_source: 'stripe_express_checkout',
-        zip: results.formData.zip,
-        tool_type: 'renewal',
-      }, { onConflict: 'email' }).then(() => {});
+      const utm = getUtmParams();
+      const fd = results.formData;
+      const rd = results.rentData;
+      const increasePct = fd.rentIncrease && fd.currentRent
+        ? fd.increaseIsPercent
+          ? fd.rentIncrease
+          : ((fd.rentIncrease / fd.currentRent) * 100)
+        : null;
+
+      const leadParams = {
+        p_email: walletEmail,
+        p_analysis_id: null,
+        p_capture_source: 'stripe_express_checkout',
+        p_address: fd.fullAddress || null,
+        p_city: rd.city || null,
+        p_state: rd.state || null,
+        p_zip: fd.zip || null,
+        p_bedrooms: fd.bedrooms ?? null,
+        p_current_rent: fd.currentRent ?? null,
+        p_proposed_rent: fd.currentRent && fd.rentIncrease
+          ? fd.increaseIsPercent
+            ? Math.round(fd.currentRent * (1 + fd.rentIncrease / 100))
+            : fd.currentRent + fd.rentIncrease
+          : null,
+        p_increase_pct: increasePct ?? null,
+        p_verdict: verdictStr || null,
+        p_utm_source: utm.utm_source || null,
+        p_utm_medium: utm.utm_medium || null,
+        p_utm_campaign: utm.utm_campaign || null,
+        p_fairness_score: null,
+        p_comp_median_rent: null,
+        p_hud_fmr_value: rd.fmr ?? null,
+        p_tool_type: 'renewal',
+      } as any;
+
+      supabase.rpc('upsert_lead', leadParams).then(({ error: rpcError }) => {
+        if (rpcError) {
+          console.warn('[lead] upsert_lead failed (wallet):', rpcError.message);
+        }
+      });
     }
 
     setTimeout(() => {

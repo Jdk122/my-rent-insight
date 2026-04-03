@@ -261,6 +261,7 @@ const ExitIntentModal = ({
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (sessionStorage.getItem(SESSION_KEY)) return;
+    if (sessionStorage.getItem('rr_mobile_scroll_prompt')) return;
 
     const isMobile = window.innerWidth < 768;
 
