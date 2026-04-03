@@ -106,6 +106,23 @@ const Index = () => {
     setPaidFallbackMsg('Payment received! Run your analysis again and your letter will unlock automatically.');
   }, []);
 
+  // Restore results from checkout state when user returns without paying (back button / cancel)
+  useEffect(() => {
+    if (searchParams.has('paid')) return; // handled above
+    if (results) return; // already have results
+    try {
+      const raw = localStorage.getItem('rr_checkout_state');
+      if (raw) {
+        const savedState = JSON.parse(raw);
+        const age = Date.now() - (savedState.timestamp || 0);
+        if (age < 3600000 && savedState.formData && savedState.rentData) {
+          setResults({ formData: savedState.formData, rentData: savedState.rentData });
+          if (savedState.capturedEmail) setCapturedEmailRaw(savedState.capturedEmail);
+        }
+      }
+    } catch { /* ignore */ }
+  }, []);
+
   // Demo mode: ?demo=above|fair|below|none
   useEffect(() => {
     const demo = searchParams.get('demo');
