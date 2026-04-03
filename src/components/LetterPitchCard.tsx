@@ -76,10 +76,10 @@ const LetterPitchCard = ({
     : 'Use this letter to ask for a longer renewal or extra perks.';
 
   const ctaText = isAboveMarket
-    ? 'Lower my rent today — $4.99'
+    ? 'Get my negotiation letter — $4.99'
     : isFair
-    ? 'Get my letter today — $4.99'
-    : 'Keep my rent low — $4.99';
+    ? 'Get my letter — $4.99'
+    : 'Get my renewal letter — $4.99';
 
   const secondaryCtaText = 'Or pay with card — $4.99';
 
@@ -89,10 +89,10 @@ const LetterPitchCard = ({
       className="w-full max-w-[540px] rounded-lg border border-border border-l-[3px] border-l-verdict-good bg-secondary/50 px-4 py-3 mt-4"
     >
       <p className="text-[17px] font-bold text-foreground text-left tracking-[-0.02em]">{headline}</p>
-      <p className="text-[12px] text-muted-foreground mt-2 leading-relaxed text-left">
-        {subtext}{' '}
-        <span className="text-muted-foreground/60"><SocialProofLine inline /></span>
-      </p>
+      <p className="text-[12px] text-muted-foreground mt-2 leading-relaxed text-left">{subtext}</p>
+      <div className="mt-2 text-[11px] text-muted-foreground/60 text-left">
+        <SocialProofLine />
+      </div>
 
       {/* Express Checkout (wallet buttons) */}
       {walletAvailable !== false && (
