@@ -127,7 +127,7 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
     <div ref={ctaRef} className="flex flex-col items-center gap-3 mt-6 mb-2">
       {/* Persuasion headline */}
       <p className="text-[17px] font-bold text-foreground text-center tracking-tight max-w-[400px]">
-        {isAboveMarket && savings
+        {savings && savings > 0
           ? 'Get the exact reply to send tonight'
           : 'Get your personalized negotiation reply'}
       </p>
