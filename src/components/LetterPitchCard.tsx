@@ -48,14 +48,14 @@ const LetterPitchCard = ({
   const headline = isAboveMarket
     ? `Your landlord wants $${(increaseAmount * 12).toLocaleString()} more this year`
     : isFair
-    ? 'Your increase tracks the market — but you can still negotiate'
+    ? 'Your increase tracks the market, but you can still negotiate'
     : 'You\'re paying less than your neighbors';
 
   const subtext = isAboveMarket
-    ? 'See the evidence below — then get the exact reply to send.'
+    ? 'See the evidence below. Then get the exact reply to send.'
     : isFair
     ? 'See what other renters near you are paying.'
-    : 'See how your rent compares — and how to keep it that way.';
+    : 'See how your rent compares and how to keep it that way.';
 
   return (
     <div

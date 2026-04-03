@@ -976,7 +976,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                               : <>Your rent increase is <span className="text-verdict-good">below market.</span></>
                             }</>
                           ) : (
-                            <>Good news — <span className="text-verdict-good">your rent isn't going up.</span></>
+                            <>Good news: <span className="text-verdict-good">your rent isn't going up.</span></>
                           )}
                         </h1>
                         <div className="text-center">
@@ -1104,7 +1104,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   onClick={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
                   className="w-full mt-4 py-3.5 rounded-lg bg-primary text-primary-foreground text-[15px] font-semibold tracking-tight hover:brightness-95 transition-all shadow-sm shadow-primary/20"
                 >
-                  {isAboveMarket ? 'Your reply is ready — scroll down ↓' : isBelowMarket ? 'Protect this rate ↓' : 'Your reply is ready — scroll down ↓'}
+                  {isAboveMarket ? 'Your reply is ready. Scroll down ↓' : isBelowMarket ? 'Protect this rate ↓' : 'Your reply is ready. Scroll down ↓'}
                 </button>
               )}
               {isPaid && isUnlocked && hasIncrease && (
@@ -1127,7 +1127,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           ) : (
             <>
               <h1 className="font-display text-[28px] sm:text-[32px] font-semibold text-foreground leading-tight" style={{ letterSpacing: '-0.02em' }}>
-                Good news — <span className="text-verdict-good">your rent isn't going up.</span>
+                Good news: <span className="text-verdict-good">your rent isn't going up.</span>
               </h1>
               <p className="text-[15px] sm:text-base text-muted-foreground mt-3 max-w-[480px] leading-relaxed">
                 Here's how your current rent of <strong className="text-foreground">${fmt(formData.currentRent)}/mo</strong> compares to what similar {brLabel} apartments are going for in {city}.
@@ -1437,14 +1437,14 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             {isAboveMarket && !isPaid && (
               <div className="text-center max-w-[480px] mx-auto pt-4 pb-2">
                 <p className="text-sm text-foreground/80 leading-relaxed">
-                  Renters who respond with market data get better outcomes. Your reply uses {compsWithRent.length} local rents and HUD fair market data to make your case — exactly what a landlord needs to see before agreeing to lower terms.
+                  Renters who respond with market data get better outcomes. Your reply uses {compsWithRent.length} local rents and HUD fair market data to make your case. That's exactly what a landlord needs to see before agreeing to lower terms.
                 </p>
               </div>
             )}
             {isFair && !isAboveMarket && !isPaid && (
               <div className="text-center max-w-[480px] mx-auto pt-4 pb-2">
                 <p className="text-sm text-foreground/80 leading-relaxed">
-                  Your increase tracks the market — but your landlord would still spend thousands to replace you. A polite, data-backed reply costs nothing to try.
+                  Your increase tracks the market, but your landlord would still spend thousands to replace you. A polite, data-backed reply costs nothing to try.
                 </p>
               </div>
             )}

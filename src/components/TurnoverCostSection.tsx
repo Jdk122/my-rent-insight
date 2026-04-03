@@ -99,14 +99,14 @@ const TurnoverCostSection = ({
   const isFallback = vacancy?.isFallback ?? true;
 
   const vacancySublabel = isFallback
-    ? `Based on national average vacancy rate (${vacancyRate}%) — estimated ${costs.vacancyMonths === 1 ? '1 month' : `${costs.vacancyMonths} months`} to re-rent`
-    : `Based on ${stateName}'s ${vacancyRate}% vacancy rate — estimated ${costs.vacancyMonths === 1 ? '1 month' : `${costs.vacancyMonths} months`} to re-rent`;
+    ? `Based on national average vacancy rate (${vacancyRate}%), estimated ${costs.vacancyMonths === 1 ? '1 month' : `${costs.vacancyMonths} months`} to re-rent`
+    : `Based on ${stateName}'s ${vacancyRate}% vacancy rate, estimated ${costs.vacancyMonths === 1 ? '1 month' : `${costs.vacancyMonths} months`} to re-rent`;
 
   return (
     <div className="text-left">
       <h2 className="results-section-header mb-1">The Cost of Turnover</h2>
       <p className="text-[13px] text-muted-foreground mb-8">
-        What it typically costs when a tenant moves out — and what that means for your decision.
+        What it typically costs a landlord when a tenant moves out.
       </p>
 
       {/* Turnover cost summary — collapsible breakdown */}
@@ -180,14 +180,14 @@ const TurnoverCostSection = ({
               Your increase is in line with the local market. That said, turnover on a {bedroomLabel.toLowerCase()} in {city} still carries an estimated cost of <strong>{fmt(costs.total)}</strong> before accounting for any rent adjustment on the new lease. Even modest negotiations can be worth exploring.
             </p>
             <p className="text-[13px] text-muted-foreground mt-3">
-              You're in a reasonable position — but asking never hurts.
+              You're in a reasonable position. Asking never hurts.
             </p>
           </>
         )}
         {version === 'A' && (
           <>
             <p className="text-sm text-foreground leading-relaxed">
-              Turnover on a {bedroomLabel.toLowerCase()} in {city} typically costs a property owner an estimated <strong>{fmt(costs.total)}</strong> before accounting for any rent adjustment on the new lease. Your estimated savings from moving would be <strong>{fmt(annualSavings)}/yr</strong>. In most cases, a reasonable compromise on renewal terms costs both sides less than turnover — especially when factoring in your moving costs too.
+              Turnover on a {bedroomLabel.toLowerCase()} in {city} typically costs a property owner an estimated <strong>{fmt(costs.total)}</strong> before accounting for any rent adjustment on the new lease. Your estimated savings from moving would be <strong>{fmt(annualSavings)}/yr</strong>. In most cases, a reasonable compromise on renewal terms costs both sides less than turnover. That goes double when you factor in your moving costs.
             </p>
             <p className="text-[13px] text-muted-foreground mt-3">
               This is one reason experienced property managers prefer to retain good tenants at a fair rate.
@@ -197,7 +197,7 @@ const TurnoverCostSection = ({
         {version === 'B' && (
           <>
             <p className="text-sm text-foreground leading-relaxed">
-              Turnover on a {bedroomLabel.toLowerCase()} in {city} typically costs a property owner an estimated <strong>{fmt(costs.total)}</strong> before accounting for any rent adjustment on the new lease. Your estimated savings from moving — <strong>{fmt(annualSavings)}/yr</strong> — are significant. Whether moving makes financial sense depends on your specific moving costs and how your unit compares to what's available, but the numbers suggest it's worth serious consideration.
+              Turnover on a {bedroomLabel.toLowerCase()} in {city} typically costs a property owner an estimated <strong>{fmt(costs.total)}</strong> before accounting for any rent adjustment on the new lease. Your estimated savings from moving would be <strong>{fmt(annualSavings)}/yr</strong>. Whether moving makes financial sense depends on your specific moving costs and how your unit compares to what's available, but the numbers suggest it's worth serious consideration.
             </p>
             <p className="text-[13px] text-muted-foreground mt-3">
               Either way, negotiating first costs nothing and takes five minutes.
