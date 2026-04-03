@@ -136,7 +136,7 @@ const LeaseReminderCapture = ({
 
     setSaved(true);
     setSubmitting(false);
-    toast.success('Report sent — and we\'ll remind you 90 days before your renewal.');
+    toast.success('Report sent. We\'ll remind you 90 days before your renewal.');
 
     // Non-blocking: generate report + send email + notify
     (async () => {
