@@ -62,6 +62,7 @@ interface RentResultsProps {
   onVerdictReady?: (isAboveMarket: boolean) => void;
   isDemo?: boolean;
   isPaid?: boolean;
+  onPaid?: () => void;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
