@@ -300,7 +300,7 @@ const Index = () => {
     <div className="min-h-screen bg-background flex flex-col overflow-x-hidden" ref={topRef}>
       <SEO
         title="Is Your Rent Increase Fair? Free Rent Check Tool | RenewalReply"
-        description="Check if your rent increase is fair in 10 seconds. Get your counter-offer range, local comps, and a free negotiation letter. 38,600+ ZIP codes covered."
+        description="Check if your rent increase is fair in 10 seconds. Get your counter-offer range, local comps, and market evidence. 38,600+ ZIP codes covered."
         canonical="/"
         jsonLd={[
           {
@@ -314,7 +314,7 @@ const Index = () => {
             "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
             "featureList": [
               "Compare rent increases to HUD Fair Market Rent",
-              "Generate free negotiation letter",
+              "Generate negotiation reply",
               "Coverage for 38,600+ US zip codes",
               "Uses HUD SAFMR, Zillow ZORI, and real comparable listings"
             ],
@@ -352,7 +352,7 @@ const Index = () => {
                 "name": "Is RenewalReply free?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes, RenewalReply is free to use. Enter your email only if you want your full report and negotiation package delivered instantly."
+                  "text": "The rent analysis is completely free, including your fairness score, market evidence, comparable rents, and counter-offer range. A personalized negotiation reply you can send to your landlord is available for $4.99."
                 }
               },
               {
@@ -498,7 +498,7 @@ const Index = () => {
               <div className="mt-3 sm:mt-5 lg:mt-7 flex flex-col gap-1.5 sm:gap-2 lg:gap-3.5 max-w-[600px]">
                 <div className="flex items-start gap-2 lg:gap-3">
                   <span className="text-primary mt-0.5 shrink-0"><MessageSquareText size={15} className="lg:w-[22px] lg:h-[22px]" /></span>
-                  <span className="text-[14px] lg:text-[clamp(17px,1.4vw,21px)] text-muted-foreground lg:text-foreground/55 leading-snug lg:whitespace-nowrap"><strong className="text-foreground font-bold">Negotiation letter</strong> backed by your local data</span>
+                  <span className="text-[14px] lg:text-[clamp(17px,1.4vw,21px)] text-muted-foreground lg:text-foreground/55 leading-snug lg:whitespace-nowrap"><span className="text-[14px] lg:text-[clamp(17px,1.4vw,21px)] text-muted-foreground lg:text-foreground/55 leading-snug lg:whitespace-nowrap"><strong className="text-foreground font-bold">Negotiation reply</strong> you can send to your landlord</span></span>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <span className="text-primary mt-0.5 shrink-0"><Calculator size={15} className="lg:w-[22px] lg:h-[22px]" /></span>

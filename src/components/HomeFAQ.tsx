@@ -9,7 +9,7 @@ import {
 const faqs: { q: string; a: React.ReactNode }[] = [
   {
     q: 'How do I know if my rent increase is fair?',
-    a: 'Enter your address, current rent, and proposed increase. RenewalReply cross-references multiple independent data sources — including real-time comparable listings near you, government rent benchmarks, and actual lease transaction trends — to generate a Fairness Score from 0 to 100. You\u2019ll see how your increase compares across four market dimensions. If your increase scores poorly, we generate a free negotiation letter backed by specific market evidence.',
+    a: 'Enter your address, current rent, and proposed increase. RenewalReply cross-references multiple independent data sources \u2014 including real-time comparable listings near you, government rent benchmarks, and actual lease transaction trends \u2014 to generate a Fairness Score from 0 to 100. You\u2019ll see how your increase compares across four market dimensions. If your increase scores poorly, we generate a negotiation reply backed by specific market evidence.',
   },
   {
     q: 'What is Fair Market Rent (FMR)?',
