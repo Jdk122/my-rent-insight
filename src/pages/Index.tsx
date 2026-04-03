@@ -156,7 +156,8 @@ const Index = () => {
 
   usePrerenderReady(!isLoading);
 
-  const [isAboveMarket, setIsAboveMarket] = useState(false);
+  const [verdictStr, setVerdictStr] = useState<'above' | 'at-market' | 'below'>('at-market');
+  const isAboveMarket = verdictStr === 'above';
 
   const hasIncrease = !!(results && results.formData.rentIncrease && results.formData.rentIncrease > 0);
   const isUnlocked = !!capturedEmail || !EMAIL_GATE_ENABLED;
