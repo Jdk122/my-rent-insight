@@ -62,6 +62,7 @@ interface RentResultsProps {
   onVerdictReady?: (isAboveMarket: boolean) => void;
   isDemo?: boolean;
   isPaid?: boolean;
+  onPaid?: () => void;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -72,7 +73,7 @@ const fade = (delay: number) => ({
   transition: { duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] as const },
 });
 
-const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop, capturedEmail: externalEmail, onEmailCaptured: externalOnEmail, onVerdictReady, isDemo = false, isPaid = false }: RentResultsProps) => {
+const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop, capturedEmail: externalEmail, onEmailCaptured: externalOnEmail, onVerdictReady, isDemo = false, isPaid = false, onPaid }: RentResultsProps) => {
   const [internalEmail, setInternalEmail] = useState('');
   const capturedEmail = externalEmail ?? internalEmail;
   const isUnlocked = !!capturedEmail || !EMAIL_GATE_ENABLED;
@@ -1063,8 +1064,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   compsCount={compsWithRent.length}
                   verdict={isAboveMarket ? 'above' : isFair ? 'at-market' : 'below'}
                   zip={rentData.zip}
+                  city={rentData.city}
                   onCheckout={handleCheckout}
                   checkoutLoading={checkoutLoading}
+                  onPaid={onPaid}
+                  analysisId={analysisId}
+                  savings={increaseAmount * 12}
                 />
               )}
               {isPaid && isUnlocked && hasIncrease && (
@@ -1554,6 +1559,14 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   isPaid={isPaid}
                   onCheckout={handleCheckout}
                   checkoutLoading={checkoutLoading}
+                  onPaid={onPaid}
+                  expressCheckoutProps={{
+                    analysisId,
+                    verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
+                    zip: rentData.zip,
+                    city: rentData.city,
+                    savings: increaseAmount * 12,
+                  }}
                 />
               </motion.section>
             )}

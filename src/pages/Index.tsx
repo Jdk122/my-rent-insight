@@ -4,6 +4,7 @@ import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { useSearchParams, Link } from 'react-router-dom';
 import { getAnalysisFingerprint, addPaidAnalysis, isAnalysisPaid } from '@/lib/analysisFingerprint';
 import SampleResultCard from '@/components/SampleResultCard';
+import { supabase } from '@/integrations/supabase/client';
 const LocationSearch = lazy(() => import('@/components/LocationSearch'));
 const BrowseDealsSection = lazy(() => import('@/components/BrowseDealsSection'));
 
@@ -151,6 +152,23 @@ const Index = () => {
       setIsPaid(true);
     }
   }, [results]);
+
+  const handlePaid = useCallback(() => {
+    if (!results) return;
+    const fp = getAnalysisFingerprint(results.formData);
+    addPaidAnalysis({ sessionId: 'wallet-' + Date.now(), fingerprint: fp, timestamp: Date.now() });
+    setIsPaid(true);
+    trackEvent('purchase_completed', { verdict: isAboveMarket ? 'above' : 'at-market', zip: results.formData.zip });
+    supabase.from('lead_events' as any).insert({
+      event_type: 'purchase_completed',
+      email: capturedEmail || 'anonymous@checkout',
+      zip: results.formData.zip,
+      verdict: isAboveMarket ? 'above' : 'at-market',
+    }).then(() => {});
+    setTimeout(() => {
+      document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' });
+    }, 300);
+  }, [results, capturedEmail, isAboveMarket]);
 
   const handleSubmit = async (data: RentFormData) => {
     setIsLoading(true);
@@ -474,6 +492,7 @@ const Index = () => {
             propertyLoading={propertyLookup.loading}
             propertyError={propertyLookup.error}
             isPaid={isPaid}
+            onPaid={handlePaid}
             onReset={() => { setResults(null); setIsPaid(false); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             onScrollToTop={() => {
               setResults(null);
