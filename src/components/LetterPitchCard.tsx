@@ -14,7 +14,7 @@ interface LetterPitchCardProps {
   city: string;
   onCheckout: () => void;
   checkoutLoading: boolean;
-  onPaid?: () => void;
+  onPaid?: (email?: string) => void;
   analysisId?: string | null;
   savings: number;
 }
