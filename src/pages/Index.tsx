@@ -300,7 +300,7 @@ const Index = () => {
     <div className="min-h-screen bg-background flex flex-col overflow-x-hidden" ref={topRef}>
       <SEO
         title="Is Your Rent Increase Fair? Free Rent Check Tool | RenewalReply"
-        description="Check if your rent increase is fair in 10 seconds. Get your counter-offer range, local comps, and a free negotiation letter. 38,600+ ZIP codes covered."
+        description="Check if your rent increase is fair in 10 seconds. Get your counter-offer range, local comps, and market evidence. 38,600+ ZIP codes covered."
         canonical="/"
         jsonLd={[
           {
