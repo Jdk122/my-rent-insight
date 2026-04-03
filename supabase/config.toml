@@ -53,3 +53,6 @@ verify_jwt = false
 
 [functions.rentcast-listings]
 verify_jwt = false
+
+[functions.indexnow-ping]
+verify_jwt = false
