@@ -324,6 +324,7 @@ const RentIncreaseCalculator = () => {
               onEmailCaptured={setCapturedEmail}
               isPaid={isPaid}
               onPaid={handlePaid}
+              onVerdictReady={setVerdictStr}
             />
           </Suspense>
         </div>
