@@ -86,10 +86,13 @@ const LetterPitchCard = ({
   return (
     <div
       ref={cardRef}
-      className="w-full max-w-[540px] rounded-lg border border-border border-l-[3px] border-l-green-500 bg-secondary/50 px-4 py-4 mt-4"
+      className="w-full max-w-[540px] rounded-lg border border-border border-l-[3px] border-l-verdict-good bg-secondary/50 px-4 py-4 mt-4 overflow-hidden relative"
     >
-      <p className="text-[15px] font-semibold text-foreground">{headline}</p>
-      <p className="text-[12px] text-muted-foreground mt-1 leading-relaxed">{subtext}</p>
+      {/* Top accent line */}
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-verdict-good/60 via-primary/40 to-transparent" />
+
+      <p className="text-[17px] font-bold text-foreground text-center tracking-[-0.02em]">{headline}</p>
+      <p className="text-[12px] text-muted-foreground mt-1 leading-relaxed text-left">{subtext}</p>
 
       {/* Express Checkout (wallet buttons) */}
       {walletAvailable !== false && (
@@ -106,15 +109,20 @@ const LetterPitchCard = ({
         </div>
       )}
 
+      {/* Social proof above CTA */}
+      <div className="mt-3 pt-2.5 border-t border-border/60">
+        <SocialProofLine />
+      </div>
+
       {/* Primary CTA when no wallets, secondary when wallets available */}
       <button
         onClick={onCheckout}
         disabled={checkoutLoading}
-        className={`w-full mt-3 py-3.5 rounded-lg text-[14px] font-semibold transition-all disabled:opacity-70 ${
+        className={`w-full mt-3 py-4 rounded-lg text-[14px] font-semibold transition-all disabled:opacity-70 ${
           walletAvailable === false
-            ? 'bg-primary text-primary-foreground hover:brightness-95'
+            ? 'bg-primary text-primary-foreground hover:brightness-95 shadow-sm shadow-primary/20'
             : walletAvailable === null
-            ? 'bg-primary text-primary-foreground hover:brightness-95'
+            ? 'bg-primary text-primary-foreground hover:brightness-95 shadow-sm shadow-primary/20'
             : 'border border-border bg-background text-foreground hover:bg-muted text-[13px]'
         }`}
       >
@@ -125,11 +133,11 @@ const LetterPitchCard = ({
           : ctaText}
       </button>
 
-      <p className="text-[11px] text-muted-foreground/60 text-center mt-1.5">
+      <p className="text-[10px] text-muted-foreground/40 text-left mt-1.5">
         Apple Pay · Google Pay · Card
       </p>
 
-      <p className="text-[11px] text-muted-foreground text-center mt-2">
+      <p className="text-[11px] text-muted-foreground/50 text-left mt-2">
         <button
           type="button"
           onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
@@ -138,10 +146,6 @@ const LetterPitchCard = ({
           Continue with free verdict and comps
         </button>
       </p>
-
-      <div className="mt-2">
-        <SocialProofLine />
-      </div>
     </div>
   );
 };
