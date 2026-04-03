@@ -498,7 +498,7 @@ const Index = () => {
               <div className="mt-3 sm:mt-5 lg:mt-7 flex flex-col gap-1.5 sm:gap-2 lg:gap-3.5 max-w-[600px]">
                 <div className="flex items-start gap-2 lg:gap-3">
                   <span className="text-primary mt-0.5 shrink-0"><MessageSquareText size={15} className="lg:w-[22px] lg:h-[22px]" /></span>
-                  <span className="text-[14px] lg:text-[clamp(17px,1.4vw,21px)] text-muted-foreground lg:text-foreground/55 leading-snug lg:whitespace-nowrap"><strong className="text-foreground font-bold">Negotiation letter</strong> backed by your local data</span>
+                  <span className="text-[14px] lg:text-[clamp(17px,1.4vw,21px)] text-muted-foreground lg:text-foreground/55 leading-snug lg:whitespace-nowrap"><span className="text-[14px] lg:text-[clamp(17px,1.4vw,21px)] text-muted-foreground lg:text-foreground/55 leading-snug lg:whitespace-nowrap"><strong className="text-foreground font-bold">Negotiation reply</strong> you can send to your landlord</span></span>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <span className="text-primary mt-0.5 shrink-0"><Calculator size={15} className="lg:w-[22px] lg:h-[22px]" /></span>
