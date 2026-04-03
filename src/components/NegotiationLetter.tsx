@@ -92,6 +92,10 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
     setWalletAvailable(false);
   }, []);
 
+  const handleWalletReady = useCallback(() => {
+    setWalletAvailable(true);
+  }, []);
+
   const handleWalletSuccess = useCallback((email?: string) => {
     onPaid?.(email);
   }, [onPaid]);
@@ -130,6 +134,7 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
           <StripeExpressCheckout
             onSuccess={handleWalletSuccess}
             onFallbackToRedirect={handleFallback}
+            onReady={handleWalletReady}
             analysisId={expressCheckoutProps.analysisId}
             verdict={expressCheckoutProps.verdict}
             zip={expressCheckoutProps.zip}

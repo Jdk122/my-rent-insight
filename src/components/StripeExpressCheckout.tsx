@@ -8,6 +8,7 @@ import { RefreshCw } from 'lucide-react';
 interface ExpressCheckoutProps {
   onSuccess: (email?: string) => void;
   onFallbackToRedirect: () => void;
+  onReady?: () => void;
   analysisId?: string | null;
   verdict: string;
   zip: string;
@@ -15,9 +16,10 @@ interface ExpressCheckoutProps {
   savings: number;
 }
 
-function ExpressCheckoutInner({ onSuccess, onFallbackToRedirect }: {
+function ExpressCheckoutInner({ onSuccess, onFallbackToRedirect, onReady }: {
   onSuccess: (email?: string) => void;
   onFallbackToRedirect: () => void;
+  onReady?: () => void;
 }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -25,8 +27,10 @@ function ExpressCheckoutInner({ onSuccess, onFallbackToRedirect }: {
   const handleReady = useCallback(({ availablePaymentMethods }: { availablePaymentMethods: Record<string, boolean> | null }) => {
     if (!availablePaymentMethods || Object.keys(availablePaymentMethods).length === 0) {
       onFallbackToRedirect();
+    } else {
+      onReady?.();
     }
-  }, [onFallbackToRedirect]);
+  }, [onFallbackToRedirect, onReady]);
 
   const handleConfirm = useCallback(async (event: any) => {
     if (!stripe || !elements) return;
@@ -62,6 +66,7 @@ function ExpressCheckoutInner({ onSuccess, onFallbackToRedirect }: {
 const StripeExpressCheckout = ({
   onSuccess,
   onFallbackToRedirect,
+  onReady,
   analysisId,
   verdict,
   zip,
@@ -113,6 +118,7 @@ const StripeExpressCheckout = ({
       <ExpressCheckoutInner
         onSuccess={onSuccess}
         onFallbackToRedirect={onFallbackToRedirect}
+        onReady={onReady}
       />
     </Elements>
   );
