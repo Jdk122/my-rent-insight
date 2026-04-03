@@ -38,6 +38,7 @@ const RentByCity = () => {
   const [notFound, setNotFound] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const [zipSearch, setZipSearch] = useState('');
+  const [nationalAvg, setNationalAvg] = useState<number>(0);
 
   useEffect(() => {
     if (!stateSlug || !citySlug) { setNotFound(true); setLoading(false); return; }
