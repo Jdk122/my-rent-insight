@@ -59,8 +59,8 @@ const LetterPitchCard = ({
     setWalletAvailable(false);
   }, []);
 
-  const handleWalletSuccess = useCallback(() => {
-    onPaid?.();
+  const handleWalletSuccess = useCallback((email?: string) => {
+    onPaid?.(email);
   }, [onPaid]);
 
   const headline = isAboveMarket

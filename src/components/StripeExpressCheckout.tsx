@@ -53,6 +53,7 @@ function ExpressCheckoutInner({ onSuccess, onFallbackToRedirect }: {
       options={{
         buttonHeight: 48,
         buttonType: { applePay: 'buy', googlePay: 'buy' },
+        emailRequired: true,
       }}
     />
   );
