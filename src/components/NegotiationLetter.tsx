@@ -67,6 +67,69 @@ interface NegotiationLetterProps {
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
+// ── Locked letter CTA with Express Checkout support ──
+function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutProps }: {
+  onCheckout?: () => void;
+  checkoutLoading?: boolean;
+  onPaid?: () => void;
+  expressCheckoutProps?: {
+    analysisId?: string | null;
+    verdict: string;
+    zip: string;
+    city: string;
+    savings: number;
+  };
+}) {
+  const [walletAvailable, setWalletAvailable] = useState<boolean | null>(null);
+
+  const handleFallback = useCallback(() => {
+    setWalletAvailable(false);
+  }, []);
+
+  const handleWalletSuccess = useCallback(() => {
+    onPaid?.();
+  }, [onPaid]);
+
+  return (
+    <div className="flex flex-col items-center gap-2 mt-4">
+      <Lock size={20} className="text-muted-foreground" />
+      <p className="text-[13px] text-muted-foreground">Your analysis is complete. One step left.</p>
+
+      {/* Express Checkout wallet buttons */}
+      {expressCheckoutProps && walletAvailable !== false && (
+        <div className="w-full max-w-[320px]">
+          <StripeExpressCheckout
+            onSuccess={handleWalletSuccess}
+            onFallbackToRedirect={handleFallback}
+            analysisId={expressCheckoutProps.analysisId}
+            verdict={expressCheckoutProps.verdict}
+            zip={expressCheckoutProps.zip}
+            city={expressCheckoutProps.city}
+            savings={expressCheckoutProps.savings}
+          />
+        </div>
+      )}
+
+      <button
+        onClick={() => onCheckout?.()}
+        disabled={checkoutLoading}
+        className={`py-3 px-6 rounded-lg text-[14px] font-semibold transition-all disabled:opacity-70 ${
+          walletAvailable
+            ? 'border border-border bg-background text-foreground hover:bg-muted text-[13px]'
+            : 'bg-primary text-primary-foreground hover:brightness-95'
+        }`}
+      >
+        {checkoutLoading
+          ? 'Opening checkout...'
+          : walletAvailable
+          ? 'Or pay with card — $4.99'
+          : 'Unlock my full letter — $4.99'}
+      </button>
+      <p className="text-[11px] text-muted-foreground/60">Apple Pay · Google Pay · Card</p>
+    </div>
+  );
+}
+
 // ── Template fallback (used if AI generation fails) ──
 function buildFallbackLetter(props: {
   currentRent: number; newRent: number; increasePct: number; marketYoy: number;
