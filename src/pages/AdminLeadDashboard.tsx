@@ -492,19 +492,8 @@ function DashboardContent() {
       ) : null}
 
       {/* ━━━ Captures by First-Touch Source ━━━ */}
-      {stats?.capture_by_first_source?.length > 0 && (
-        <div>
-          <h2 className="text-sm font-semibold text-muted-foreground mb-2">Captures by First-Touch Source</h2>
-          <div className="flex flex-wrap gap-2">
-            {stats.capture_by_first_source.map((s: any) => (
-              <div key={s.source} className="border border-border rounded-lg px-3 py-2 bg-card">
-                <div className="text-xs text-muted-foreground">{s.source || 'unknown'}</div>
-                <div className="text-sm font-semibold text-foreground">{s.count} <span className="text-xs font-normal text-muted-foreground">({s.count_30d} last 30d)</span></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+
+
 
       {/* ━━━ Conversion Funnel ━━━ */}
       {stats && (
