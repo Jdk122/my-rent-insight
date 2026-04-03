@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo, lazy, Suspense } from 'react';
+import { useState, useRef, useMemo, useEffect, useCallback, lazy, Suspense } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import RentForm, { RentFormData } from '@/components/RentForm';
@@ -11,6 +11,8 @@ import LoadingAnalysis from '@/components/LoadingAnalysis';
 import { getRememberedEmail, rememberEmail } from '@/lib/emailMemory';
 import PageNav from '@/components/PageNav';
 import RentReportingCTA from '@/components/RentReportingCTA';
+import { getAnalysisFingerprint, addPaidAnalysis, isAnalysisPaid } from '@/lib/analysisFingerprint';
+import { supabase } from '@/integrations/supabase/client';
 
 const RentResults = lazy(() => import('@/components/RentResults'));
 const SEOFooter = lazy(() => import('@/components/SEOFooter'));
@@ -21,6 +23,7 @@ const RentIncreaseCalculator = () => {
   const [results, setResults] = useState<{ formData: RentFormData; rentData: RentLookupResult } | null>(null);
   const [contactOpen, setContactOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isPaid, setIsPaid] = useState(false);
   const [capturedEmail, setCapturedEmailRaw] = useState(() => getRememberedEmail());
   const setCapturedEmail = (email: string) => {
     setCapturedEmailRaw(email);
@@ -29,6 +32,83 @@ const RentIncreaseCalculator = () => {
   const [formKey, setFormKey] = useState(0);
   const propertyLookup = usePropertyLookup();
   const resultsRef = useRef<HTMLDivElement>(null);
+
+  // Handle ?paid=true return from Stripe redirect
+  useEffect(() => {
+    if (searchParams.get('paid') !== 'true') return;
+    try {
+      const raw = localStorage.getItem('rr_checkout_state');
+      if (raw) {
+        const savedState = JSON.parse(raw);
+        if (savedState.formData && savedState.rentData) {
+          setResults({ formData: savedState.formData, rentData: savedState.rentData });
+          if (savedState.capturedEmail) setCapturedEmailRaw(savedState.capturedEmail);
+          addPaidAnalysis({ sessionId: 'stripe-redirect', fingerprint: savedState.analysisFingerprint, timestamp: Date.now() });
+          setIsPaid(true);
+          window.history.replaceState({}, '', window.location.pathname);
+          localStorage.removeItem('rr_checkout_state');
+          trackEvent('purchase_completed', { verdict: savedState.verdict, zip: savedState.formData.zip });
+          supabase.from('lead_events' as any).insert({
+            event_type: 'purchase_completed',
+            email: savedState.capturedEmail || 'anonymous@checkout',
+            zip: savedState.formData.zip,
+            verdict: savedState.verdict,
+          }).then(() => {});
+          setTimeout(() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' }), 500);
+          return;
+        }
+      }
+    } catch { /* ignore */ }
+    window.history.replaceState({}, '', window.location.pathname);
+  }, [searchParams]);
+
+  // Restore checkout state on back-button (no payment)
+  useEffect(() => {
+    if (results || searchParams.get('paid') === 'true') return;
+    try {
+      const raw = localStorage.getItem('rr_checkout_state');
+      if (raw) {
+        const saved = JSON.parse(raw);
+        if (saved.formData && saved.rentData && Date.now() - saved.timestamp < 3600000) {
+          setResults({ formData: saved.formData, rentData: saved.rentData });
+          if (saved.capturedEmail) setCapturedEmailRaw(saved.capturedEmail);
+        }
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  // Check fingerprint when results change
+  useEffect(() => {
+    if (!results) return;
+    const fp = getAnalysisFingerprint(results.formData);
+    if (isAnalysisPaid(fp)) setIsPaid(true);
+  }, [results]);
+
+  const isAboveMarket = results ? (() => {
+    const currentRent = results.formData.currentRent;
+    const proposedIncrease = results.formData.increaseType === 'percent'
+      ? currentRent * (results.formData.proposedIncrease / 100)
+      : results.formData.proposedIncrease;
+    const newRent = currentRent + proposedIncrease;
+    const medianRent = results.rentData.medianRent;
+    return medianRent ? newRent > medianRent : false;
+  })() : false;
+
+  const handlePaid = useCallback(() => {
+    if (!results) return;
+    const fp = getAnalysisFingerprint(results.formData);
+    addPaidAnalysis({ sessionId: 'wallet-' + Date.now(), fingerprint: fp, timestamp: Date.now() });
+    setIsPaid(true);
+    const verdictStr = isAboveMarket ? 'above' : 'at-market';
+    trackEvent('purchase_completed', { verdict: verdictStr, zip: results.formData.zip });
+    supabase.from('lead_events' as any).insert({
+      event_type: 'purchase_completed',
+      email: capturedEmail || 'anonymous@checkout',
+      zip: results.formData.zip,
+      verdict: verdictStr,
+    }).then(() => {});
+    setTimeout(() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' }), 300);
+  }, [results, capturedEmail, isAboveMarket]);
 
   const prefill = useMemo(() => {
     const zip = searchParams.get('zip');
