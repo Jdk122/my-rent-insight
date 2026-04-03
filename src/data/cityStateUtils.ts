@@ -207,3 +207,17 @@ export async function getNearbyCities(city: string, state: string, metro: string
 export function fmt(n: number): string {
   return n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 }
+
+// ─── National average 1-BR FMR (computed from all data) ───
+let nationalAvgCache: number | null = null;
+
+export async function getNationalAvgFmr1br(): Promise<number> {
+  if (nationalAvgCache !== null) return nationalAvgCache;
+  const allData = await getRentData();
+  const vals: number[] = [];
+  for (const raw of Object.values(allData)) {
+    if (raw.f[1] > 0) vals.push(raw.f[1]);
+  }
+  nationalAvgCache = vals.length > 0 ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : 0;
+  return nationalAvgCache;
+}

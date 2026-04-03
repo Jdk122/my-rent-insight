@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { NoIndexMeta } from '@/components/NoIndexMeta';
-import { getStateData, fmt, slugify, type StateData } from '@/data/cityStateUtils';
+import { getStateData, fmt, slugify, getNationalAvgFmr1br, type StateData } from '@/data/cityStateUtils';
 import { getApartmentListData, type ApartmentListZipRaw } from '@/data/dataLoader';
 import { getDataFreshness, getFreshestDate, formatFreshnessDate, getHudFiscalYear, getDataYear, type DataFreshness } from '@/data/dataFreshness';
 import { Input } from '@/components/ui/input';
@@ -28,22 +28,25 @@ const RentByState = () => {
   const [notFound, setNotFound] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const [nationalAvg, setNationalAvg] = useState<number>(0);
 
   useEffect(() => {
     if (!stateSlug) { setNotFound(true); setLoading(false); return; }
     let cancelled = false;
     (async () => {
       setLoading(true);
-      const [stateData, al, fresh] = await Promise.all([
+      const [stateData, al, fresh, natAvg] = await Promise.all([
         getStateData(stateSlug),
         getApartmentListData(),
         getDataFreshness(),
+        getNationalAvgFmr1br(),
       ]);
       if (cancelled) return;
       if (!stateData) { setNotFound(true); setLoading(false); return; }
       setData(stateData);
       setAlData(al);
       setFreshness(fresh);
+      setNationalAvg(natAvg);
       setLoading(false);
     })();
     return () => { cancelled = true; };
@@ -96,23 +99,23 @@ const RentByState = () => {
   const faqItems = [
     {
       q: `What is the average 1-bedroom rent in ${stateName}?`,
-      a: `The average 1-bedroom fair market rent in ${stateName} is ${fmt(avgFmr1br)}/month as of ${dataYear}, based on statewide coverage across ${cities.length} cities and ${totalZips.toLocaleString()} ZIP codes.`,
+      a: `The average 1-bedroom fair market rent in ${stateName} is ${fmt(avgFmr1br)}/month as of ${dataYear}, based on statewide coverage across ${cities.length} cities and ${totalZips.toLocaleString()} ZIP codes.${nationalAvg > 0 ? ` This is ${Math.abs(Math.round(((avgFmr1br - nationalAvg) / nationalAvg) * 100))}% ${avgFmr1br >= nationalAvg ? 'above' : 'below'} the national average of ${fmt(nationalAvg)}/month.` : ''}`,
     },
     {
       q: `What is a fair rent increase in ${stateName}?`,
       a: stateYoY !== null
-        ? `A rent increase up to about ${Math.abs(stateYoY).toFixed(1)}% is roughly in line with the recent statewide trend in ${stateName}. A larger increase is above trend and should be checked against local city and ZIP data.`
-        : `Without a strong statewide trend signal, a fair rent increase in ${stateName} should be judged using the most local available data, especially city and ZIP rent benchmarks.`,
+        ? `A rent increase up to about ${Math.abs(stateYoY).toFixed(1)}% is roughly in line with the recent statewide trend in ${stateName}. A larger increase is above trend and should be checked against local city and ZIP data. The statewide average 1-BR rent is ${fmt(avgFmr1br)}/month — your specific city may differ significantly.`
+        : `Without a strong statewide trend signal, a fair rent increase in ${stateName} should be judged using the most local available data, especially city and ZIP rent benchmarks. The average 1-BR fair market rent across the state is ${fmt(avgFmr1br)}/month.`,
     },
     {
       q: `Are rents going up or down in ${stateName}?`,
       a: stateYoY !== null
-        ? `Statewide rents in ${stateName} have changed ${stateYoY > 0 ? '+' : ''}${stateYoY.toFixed(1)}% year over year based on the trend shown on this page.`
-        : `This page has limited statewide trend coverage, so it should be read mainly as a benchmark view of current fair market rent levels across the state.`,
+        ? `Statewide rents in ${stateName} have ${stateYoY > 0 ? 'increased' : 'decreased'} ${Math.abs(stateYoY).toFixed(1)}% year over year based on the trend shown on this page. This is based on Apartment List data covering multiple cities and ZIP codes across the state.`
+        : `This page has limited statewide trend coverage, so it should be read mainly as a benchmark view of current fair market rent levels across the state. The average 1-BR FMR is ${fmt(avgFmr1br)}/month across ${totalZips.toLocaleString()} ZIP codes.`,
     },
     {
       q: `How broad is the rent coverage in ${stateName}?`,
-      a: `This page summarizes rent benchmarks across ${cities.length} cities and ${totalZips.toLocaleString()} ZIP codes in ${stateName}, giving a broad statewide view before drilling down into city and ZIP-level pages.`,
+      a: `This page summarizes rent benchmarks across ${cities.length} cities and ${totalZips.toLocaleString()} ZIP codes in ${stateName}, giving a broad statewide view before drilling down into city and ZIP-level pages. Data is sourced from HUD Small Area Fair Market Rents (FY${hudFY}) and supplemented with Apartment List trend data where available.`,
     },
   ];
 
@@ -252,10 +255,22 @@ const RentByState = () => {
           )}
 
           <p className="mt-4 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
-            The average 1-bedroom rent in {stateName} is {fmt(avgFmr1br)}/month according to HUD FY{hudFY} Fair Market Rent data.
-            {stateYoY !== null ? ` Rents have changed ${stateYoY > 0 ? '+' : ''}${stateYoY.toFixed(1)}% year-over-year.` : ''}
-            {' '}{stateName} has {cities.length} cities with rent data covering {totalZips.toLocaleString()} zip codes.
+            The average 1-bedroom rent in {stateName} is {fmt(avgFmr1br)}/month according to HUD FY{hudFY} Fair Market Rent data, covering {cities.length} cities and {totalZips.toLocaleString()} ZIP codes.
+            {stateYoY !== null ? ` Rents have ${stateYoY > 0 ? 'increased' : 'decreased'} ${Math.abs(stateYoY).toFixed(1)}% year-over-year.` : ''}
+            {nationalAvg > 0 && ` The average 1-bedroom rent in ${stateName} is ${Math.abs(Math.round(((avgFmr1br - nationalAvg) / nationalAvg) * 100))}% ${avgFmr1br >= nationalAvg ? 'above' : 'below'} the national average of ${fmt(nationalAvg)}/month.`}
           </p>
+
+          {/* Key Facts box */}
+          <div className="mt-5 rounded-lg border border-border bg-muted/30 px-5 py-4">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Key Facts</p>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+              <div><span className="text-muted-foreground">Average 1-BR rent:</span> <span className="font-medium text-foreground">{fmt(avgFmr1br)}/mo</span></div>
+              {stateYoY !== null && <div><span className="text-muted-foreground">Year-over-year change:</span> <span className="font-medium text-foreground">{stateYoY > 0 ? '+' : ''}{stateYoY.toFixed(1)}%</span></div>}
+              <div><span className="text-muted-foreground">Coverage:</span> <span className="font-medium text-foreground">{cities.length} cities, {totalZips.toLocaleString()} ZIP codes</span></div>
+              <div><span className="text-muted-foreground">Data source:</span> <span className="font-medium text-foreground">HUD Small Area FMR FY{hudFY}</span></div>
+              {nationalAvg > 0 && <div><span className="text-muted-foreground">vs. national avg:</span> <span className="font-medium text-foreground">{Math.abs(Math.round(((avgFmr1br - nationalAvg) / nationalAvg) * 100))}% {avgFmr1br >= nationalAvg ? 'above' : 'below'} ({fmt(nationalAvg)}/mo)</span></div>}
+            </div>
+          </div>
         </section>
 
         {/* ═══ AEO: Query-matching answer sections ═══ */}

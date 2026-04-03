@@ -3,7 +3,7 @@ import { getRentControlByStateCity, getApplicableCap } from '@/data/rentControlD
 import { useEffect, useState, useMemo } from 'react';
 import { usePrerenderReady } from '@/hooks/usePrerenderReady';
 import { NoIndexMeta } from '@/components/NoIndexMeta';
-import { getCityData, getNearbyCities, fmt, slugify, stateNameFromAbbr, type CityData } from '@/data/cityStateUtils';
+import { getCityData, getNearbyCities, fmt, slugify, stateNameFromAbbr, getNationalAvgFmr1br, type CityData } from '@/data/cityStateUtils';
 import { getApartmentListData, getHud50Data, type ApartmentListZipRaw, type Hud50ZipRaw } from '@/data/dataLoader';
 import { getDataFreshness, getFreshestDate, formatFreshnessDate, getHudFiscalYear, getDataYear, type DataFreshness } from '@/data/dataFreshness';
 import SEO from '@/components/SEO';
@@ -38,17 +38,19 @@ const RentByCity = () => {
   const [notFound, setNotFound] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const [zipSearch, setZipSearch] = useState('');
+  const [nationalAvg, setNationalAvg] = useState<number>(0);
 
   useEffect(() => {
     if (!stateSlug || !citySlug) { setNotFound(true); setLoading(false); return; }
     let cancelled = false;
     (async () => {
       setLoading(true);
-      const [cityData, al, h50, fresh] = await Promise.all([
+      const [cityData, al, h50, fresh, natAvg] = await Promise.all([
         getCityData(stateSlug, citySlug),
         getApartmentListData(),
         getHud50Data(),
         getDataFreshness(),
+        getNationalAvgFmr1br(),
       ]);
       if (cancelled) return;
       if (!cityData) { setNotFound(true); setLoading(false); return; }
@@ -56,6 +58,7 @@ const RentByCity = () => {
       setAlData(al);
       setHud50Data(h50);
       setFreshness(fresh);
+      setNationalAvg(natAvg);
       setLoading(false);
 
       const metro = cityData.zips[0]?.raw.m;
@@ -197,33 +200,33 @@ const RentByCity = () => {
   const faqItems = [
     {
       q: `What is the average 1-bedroom rent in ${city}, ${state}?`,
-      a: `The average 1-bedroom fair market rent in ${city}, ${state} is ${fmt(avgFmr[1])}/month as of ${dataYear}, based on HUD rent data across ${zips.length} ZIP codes in the city.`,
+      a: `The average 1-bedroom fair market rent in ${city}, ${state} is ${fmt(avgFmr[1])}/month as of ${dataYear}, based on HUD rent data across ${zips.length} ZIP codes in the city.${nationalAvg > 0 ? ` This is ${Math.abs(Math.round(((avgFmr[1] - nationalAvg) / nationalAvg) * 100))}% ${avgFmr[1] >= nationalAvg ? 'above' : 'below'} the national average of ${fmt(nationalAvg)}/month.` : ''} Rents range from ${fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to ${fmt(maxFmr1br)} depending on ZIP code.`,
     },
     {
       q: `What is a fair rent increase in ${city}?`,
       a: trendYoY !== null
-        ? `A rent increase up to about ${Math.abs(trendYoY).toFixed(1)}% is broadly in line with the recent market trend in ${city}. Increases above that level are above trend and should be tested against neighborhood-level pricing and comparable rentals.`
-        : `When local trend data is limited, a fair rent increase in ${city} is better judged against the current city rent benchmark and ZIP-level differences rather than a single trend percentage.`,
+        ? `A rent increase up to about ${Math.abs(trendYoY).toFixed(1)}% is broadly in line with the recent market trend in ${city}. Increases above that level are above trend and should be tested against neighborhood-level pricing and comparable rentals. The current average 1-BR rent is ${fmt(avgFmr[1])}/month.`
+        : `When local trend data is limited, a fair rent increase in ${city} is better judged against the current city rent benchmark of ${fmt(avgFmr[1])}/month and ZIP-level differences rather than a single trend percentage.`,
     },
     {
       q: `Are rents going up or down in ${city}?`,
       a: trendYoY !== null
-        ? `Rents in ${city} have changed ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% year over year based on the trend measure shown on this page.`
-        : `This page has limited trend visibility for ${city}, so it emphasizes current rent benchmarks and cross-ZIP differences more than year-over-year movement.`,
+        ? `Rents in ${city} have ${trendYoY > 0 ? 'increased' : 'decreased'} ${Math.abs(trendYoY).toFixed(1)}% year over year based on ${trendAttribution}. This reflects local market conditions across ${zips.length} ZIP codes in the ${metroName || city} area.`
+        : `This page has limited trend visibility for ${city}, so it emphasizes current rent benchmarks and cross-ZIP differences more than year-over-year movement. The average 1-BR FMR is ${fmt(avgFmr[1])}/month.`,
     },
     {
       q: `How much do rents vary across ${city}?`,
-      a: `1-bedroom rents across ${city} range from ${fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to ${fmt(Math.max(...zips.map(z => z.raw.f[1])))} on this page, showing that rent can vary materially across ZIP codes within the same city.`,
+      a: `1-bedroom rents across ${city} range from ${fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to ${fmt(Math.max(...zips.map(z => z.raw.f[1])))} on this page, a ${fmt(maxFmr1br - (cheapestZip?.fmr1br ?? avgFmr[1]))}/month spread. This shows that rent can vary materially across ZIP codes within the same city, reflecting neighborhood-level differences in housing stock and demand.`,
     },
     {
       q: `Can my landlord raise my rent in ${city}?`,
       a: rentControlInfo
-        ? `In ${city}, rent increases are regulated under ${rentControlInfo.jurisdiction} protections.${rentControlInfo.maxIncreaseFormula ? ` The maximum increase is generally ${rentControlInfo.maxIncreaseFormula}.` : ''} Landlords must also follow applicable state notice requirements.`
-        : `We could not identify a city-specific rent cap for ${city}. Landlords must still follow applicable state and local notice rules before raising rent at lease renewal. Check your state's requirements for specifics.`,
+        ? `In ${city}, rent increases are regulated under ${rentControlInfo.jurisdiction} protections.${rentControlInfo.maxIncreaseFormula ? ` The maximum increase is generally ${rentControlInfo.maxIncreaseFormula}.` : ''} Landlords must also follow applicable state notice requirements before issuing a rent increase.`
+        : `We could not identify a city-specific rent cap for ${city}. Landlords must still follow applicable state and local notice rules before raising rent at lease renewal. Requirements vary — check your state's landlord-tenant statute for specifics on notice periods and timing.`,
     },
     {
       q: `How much should I spend on rent in ${city}?`,
-      a: `The general guideline is to spend no more than 30% of your gross income on rent. With average 1-bedroom rent in ${city} at ${fmt(avgFmr[1])}/month, a household would need approximately ${fmt(affordableIncome)}/year to afford this comfortably.`,
+      a: `The general guideline is to spend no more than 30% of your gross income on rent. With average 1-bedroom rent in ${city} at ${fmt(avgFmr[1])}/month, a household would need approximately ${fmt(affordableIncome)}/year in gross income to afford this comfortably. Many renters in high-cost areas spend above this threshold — our free tool can help you assess whether your specific rent is fair for your ZIP code.`,
     },
   ];
 
@@ -363,19 +366,30 @@ const RentByCity = () => {
           {/* Summary */}
           <div className="mt-4 space-y-2 text-[1.08rem] text-foreground/90 leading-relaxed font-medium">
             <p>
-              Average rent in {city}, {state} ranges from {fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to {fmt(Math.max(...zips.map(z => z.raw.f[1])))} across {zips.length} ZIP codes.
+              The average 1-bedroom rent in {city}, {state} is {fmt(avgFmr[1])}/month according to HUD FY{hudFY} Fair Market Rent data, covering {zips.length} ZIP codes.
+              {trendYoY !== null ? ` Rents have ${trendYoY > 0 ? 'increased' : 'decreased'} ${Math.abs(trendYoY).toFixed(1)}% year-over-year.` : ''}
+              {nationalAvg > 0 && ` The average 1-bedroom rent in ${city} is ${Math.abs(Math.round(((avgFmr[1] - nationalAvg) / nationalAvg) * 100))}% ${avgFmr[1] >= nationalAvg ? 'above' : 'below'} the national average of ${fmt(nationalAvg)}/month.`}
             </p>
             <p>
-              The average 1-bedroom rent in {city} is {fmt(avgFmr[1])}/month based on HUD Fair Market Rent data.
-              {trendYoY !== null
-                ? ` Year-over-year rent trends in ${city} show a ${trendYoY > 0 ? '+' : ''}${trendYoY.toFixed(1)}% change based on ${trendAttribution}. ${trendYoY < 0 ? 'Rents are declining in this area — any increase is above the local market trend.' : `A rent increase above ${trendYoY.toFixed(1)}% in this area is above the local market trend.`}`
-                : ''}
+              Average rent in {city}, {state} ranges from {fmt(cheapestZip?.fmr1br ?? avgFmr[1])} to {fmt(Math.max(...zips.map(z => z.raw.f[1])))} across {zips.length} ZIP codes.
             </p>
             {trendYoY !== null && (
               <p>
                 Based on {trendAttribution}, a fair rent increase in {city}, {state} is approximately {Math.abs(trendYoY).toFixed(1)}% for {dataYear}. An increase above {Math.abs(trendYoY).toFixed(1)}% exceeds the local market trend and may be worth negotiating.
               </p>
             )}
+          </div>
+
+          {/* Key Facts box */}
+          <div className="mt-5 rounded-lg border border-border bg-muted/30 px-5 py-4">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Key Facts</p>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+              <div><span className="text-muted-foreground">Average 1-BR rent:</span> <span className="font-medium text-foreground">{fmt(avgFmr[1])}/mo</span></div>
+              {trendYoY !== null && <div><span className="text-muted-foreground">Year-over-year change:</span> <span className="font-medium text-foreground">{trendYoY > 0 ? '+' : ''}{trendYoY.toFixed(1)}%</span></div>}
+              <div><span className="text-muted-foreground">Coverage:</span> <span className="font-medium text-foreground">{zips.length} ZIP codes</span></div>
+              <div><span className="text-muted-foreground">Data source:</span> <span className="font-medium text-foreground">HUD Small Area FMR FY{hudFY}</span></div>
+              {nationalAvg > 0 && <div><span className="text-muted-foreground">vs. national avg:</span> <span className="font-medium text-foreground">{Math.abs(Math.round(((avgFmr[1] - nationalAvg) / nationalAvg) * 100))}% {avgFmr[1] >= nationalAvg ? 'above' : 'below'} ({fmt(nationalAvg)}/mo)</span></div>}
+            </div>
           </div>
 
           {/* Visible source attribution */}
