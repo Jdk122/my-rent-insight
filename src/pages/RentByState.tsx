@@ -35,16 +35,18 @@ const RentByState = () => {
     let cancelled = false;
     (async () => {
       setLoading(true);
-      const [stateData, al, fresh] = await Promise.all([
+      const [stateData, al, fresh, natAvg] = await Promise.all([
         getStateData(stateSlug),
         getApartmentListData(),
         getDataFreshness(),
+        getNationalAvgFmr1br(),
       ]);
       if (cancelled) return;
       if (!stateData) { setNotFound(true); setLoading(false); return; }
       setData(stateData);
       setAlData(al);
       setFreshness(fresh);
+      setNationalAvg(natAvg);
       setLoading(false);
     })();
     return () => { cancelled = true; };
