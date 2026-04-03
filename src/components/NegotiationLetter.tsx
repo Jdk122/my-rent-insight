@@ -87,6 +87,29 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
   compsCount?: number;
 }) {
   const [walletAvailable, setWalletAvailable] = useState<boolean | null>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const impressionTracked = useRef(false);
+
+  useEffect(() => {
+    const el = ctaRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !impressionTracked.current) {
+          impressionTracked.current = true;
+          trackEvent('toolkit_impression', {
+            verdict: expressCheckoutProps?.verdict || 'unknown',
+            placement: 'locked_letter',
+            zip: expressCheckoutProps?.zip || '',
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.5 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [expressCheckoutProps]);
 
   const handleFallback = useCallback(() => {
     setWalletAvailable(false);
