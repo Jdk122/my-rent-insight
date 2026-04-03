@@ -16,9 +16,10 @@ interface ExpressCheckoutProps {
   savings: number;
 }
 
-function ExpressCheckoutInner({ onSuccess, onFallbackToRedirect }: {
+function ExpressCheckoutInner({ onSuccess, onFallbackToRedirect, onReady }: {
   onSuccess: (email?: string) => void;
   onFallbackToRedirect: () => void;
+  onReady?: () => void;
 }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -26,8 +27,10 @@ function ExpressCheckoutInner({ onSuccess, onFallbackToRedirect }: {
   const handleReady = useCallback(({ availablePaymentMethods }: { availablePaymentMethods: Record<string, boolean> | null }) => {
     if (!availablePaymentMethods || Object.keys(availablePaymentMethods).length === 0) {
       onFallbackToRedirect();
+    } else {
+      onReady?.();
     }
-  }, [onFallbackToRedirect]);
+  }, [onFallbackToRedirect, onReady]);
 
   const handleConfirm = useCallback(async (event: any) => {
     if (!stripe || !elements) return;
