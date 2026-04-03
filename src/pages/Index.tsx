@@ -152,6 +152,23 @@ const Index = () => {
     }
   }, [results]);
 
+  const handlePaid = useCallback(() => {
+    if (!results) return;
+    const fp = getAnalysisFingerprint(results.formData);
+    addPaidAnalysis({ sessionId: 'wallet-' + Date.now(), fingerprint: fp, timestamp: Date.now() });
+    setIsPaid(true);
+    trackEvent('purchase_completed', { verdict: isAboveMarket ? 'above' : 'at-market', zip: results.formData.zip });
+    supabase.from('lead_events' as any).insert({
+      event_type: 'purchase_completed',
+      email: capturedEmail || 'anonymous@checkout',
+      zip: results.formData.zip,
+      verdict: isAboveMarket ? 'above' : 'at-market',
+    }).then(() => {});
+    setTimeout(() => {
+      document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' });
+    }, 300);
+  }, [results, capturedEmail, isAboveMarket]);
+
   const handleSubmit = async (data: RentFormData) => {
     setIsLoading(true);
     setIsPaid(false); // Reset paid state for new analysis
