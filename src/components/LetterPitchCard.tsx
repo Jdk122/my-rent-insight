@@ -86,13 +86,13 @@ const LetterPitchCard = ({
   return (
     <div
       ref={cardRef}
-      className="w-full max-w-[540px] rounded-lg border border-border border-l-[3px] border-l-verdict-good bg-secondary/50 px-4 py-4 mt-4 overflow-hidden relative"
+      className="w-full max-w-[540px] rounded-lg border border-border border-l-[3px] border-l-verdict-good bg-secondary/50 px-4 py-3 mt-4"
     >
-      {/* Top accent line */}
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-verdict-good/60 via-primary/40 to-transparent" />
-
-      <p className="text-[17px] font-bold text-foreground text-center tracking-[-0.02em]">{headline}</p>
-      <p className="text-[12px] text-muted-foreground mt-1 leading-relaxed text-left">{subtext}</p>
+      <p className="text-[17px] font-bold text-foreground text-left tracking-[-0.02em]">{headline}</p>
+      <p className="text-[12px] text-muted-foreground mt-2 leading-relaxed text-left">
+        {subtext}{' '}
+        <span className="text-muted-foreground/60"><SocialProofLine inline /></span>
+      </p>
 
       {/* Express Checkout (wallet buttons) */}
       {walletAvailable !== false && (
@@ -108,11 +108,6 @@ const LetterPitchCard = ({
           />
         </div>
       )}
-
-      {/* Social proof above CTA */}
-      <div className="mt-3 pt-2.5 border-t border-border/60">
-        <SocialProofLine />
-      </div>
 
       {/* Primary CTA when no wallets, secondary when wallets available */}
       <button
@@ -137,7 +132,7 @@ const LetterPitchCard = ({
         Apple Pay · Google Pay · Card
       </p>
 
-      <p className="text-[11px] text-muted-foreground/50 text-left mt-2">
+      <p className="text-[11px] text-muted-foreground/50 text-left mt-1">
         <button
           type="button"
           onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
