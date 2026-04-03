@@ -28,8 +28,10 @@ function ExpressCheckoutInner({ onSuccess, onFallbackToRedirect }: {
     }
   }, [onFallbackToRedirect]);
 
-  const handleConfirm = useCallback(async () => {
+  const handleConfirm = useCallback(async (event: any) => {
     if (!stripe || !elements) return;
+
+    const payerEmail = event?.billingDetails?.email || null;
 
     const { error } = await stripe.confirmPayment({
       elements,
@@ -37,9 +39,10 @@ function ExpressCheckoutInner({ onSuccess, onFallbackToRedirect }: {
     });
 
     if (error) {
+      event?.paymentFailed?.({ reason: 'fail' });
       toast.error(error.message || 'Payment failed. Please try again.');
     } else {
-      onSuccess();
+      onSuccess(payerEmail || undefined);
     }
   }, [stripe, elements, onSuccess]);
 
