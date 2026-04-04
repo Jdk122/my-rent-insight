@@ -134,19 +134,19 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
 
       {/* What you get */}
       <div className="text-left text-[13px] text-muted-foreground space-y-1.5 max-w-[360px]">
-        <p>Why this reply works:</p>
+        <p>Your $4.99 unlock includes:</p>
         <ul className="space-y-1 ml-1">
           <li className="flex items-start gap-2">
             <span className="text-primary mt-0.5">✓</span>
-            <span>Turns your data into words your landlord will take seriously</span>
+            <span>Your exact counter-offer number based on local market data</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-primary mt-0.5">✓</span>
-            <span>Includes a counter-offer range so they can say yes</span>
+            <span>A ready-to-send reply with the right tone and data</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-primary mt-0.5">✓</span>
-            <span><span>No blank page, no awkward tone to figure out</span></span>
+            <span>No blank page, no guessing what to ask for</span>
           </li>
         </ul>
       </div>
