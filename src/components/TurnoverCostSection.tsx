@@ -11,6 +11,7 @@ interface TurnoverCostSectionProps {
   annualSavings: number;
   proposedRentAboveMedian: boolean;
   onScrollToLetter: () => void;
+  hasCounterOffer?: boolean;
 }
 
 const fmt = (n: number) =>
@@ -67,6 +68,7 @@ const TurnoverCostSection = ({
   annualSavings,
   proposedRentAboveMedian,
   onScrollToLetter,
+  hasCounterOffer = false,
 }: TurnoverCostSectionProps) => {
   const [vacancy, setVacancy] = useState<VacancyRateResult | null>(null);
   const [showBreakdown, setShowBreakdown] = useState(false);
@@ -209,7 +211,7 @@ const TurnoverCostSection = ({
           onClick={onScrollToLetter}
           className="mt-4 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
         >
-          Get your reply ↓
+          {hasCounterOffer ? 'Get your counter-offer ↓' : 'Get your reply ↓'}
         </button>
       </div>
 

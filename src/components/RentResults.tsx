@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { Info, Building2, Scale } from 'lucide-react';
+import { Info, Building2, Scale, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -1280,19 +1280,30 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   )}
                   {isAboveMarket && counterOffer && !counterExceedsProposed && (
                     <>
-                      <div className="context-row-highlight mt-2">
-                        <span className="context-label">Fair counter-offer</span>
-                        <span className="context-value text-verdict-good font-bold">
-                          {counterOffer.counterLow === counterOffer.counterHigh
-                            ? `$${fmt(counterOffer.counterLow)}/mo`
-                            : `$${fmt(counterOffer.counterLow)}–$${fmt(counterOffer.counterHigh)}/mo`}
-                        </span>
-                      </div>
-                      {medianCompRent && counterOffer.counterLow > medianCompRent && (
-                        <div className="mt-2 px-3 py-2 rounded-md bg-accent/50 border border-border/50">
-                          <p className="text-[11px] text-muted-foreground leading-relaxed">
-                            Note: Your counter range (${fmt(counterOffer.counterLow)}–${fmt(counterOffer.counterHigh)}) is above the area median of ${fmt(medianCompRent)} for similar units. You may have additional negotiating room.
-                          </p>
+                      {isPaid ? (
+                        <>
+                          <div className="context-row-highlight mt-2">
+                            <span className="context-label">Fair counter-offer</span>
+                            <span className="context-value text-verdict-good font-bold">
+                              {counterOffer.counterLow === counterOffer.counterHigh
+                                ? `$${fmt(counterOffer.counterLow)}/mo`
+                                : `$${fmt(counterOffer.counterLow)}–$${fmt(counterOffer.counterHigh)}/mo`}
+                            </span>
+                          </div>
+                          {medianCompRent && counterOffer.counterLow > medianCompRent && (
+                            <div className="mt-2 px-3 py-2 rounded-md bg-accent/50 border border-border/50">
+                              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                                Note: Your counter range (${fmt(counterOffer.counterLow)}–${fmt(counterOffer.counterHigh)}) is above the area median of ${fmt(medianCompRent)} for similar units. You may have additional negotiating room.
+                              </p>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div className="context-row-highlight mt-2">
+                          <span className="context-label">Your counter-offer</span>
+                          <span className="text-[13px] text-muted-foreground">
+                            Included with your reply below
+                          </span>
                         </div>
                       )}
                     </>
@@ -1419,6 +1430,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   annualSavings={excessAnnual}
                   proposedRentAboveMedian={isAboveMarket}
                   onScrollToLetter={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
+                  hasCounterOffer={!!(isAboveMarket && counterOffer && !counterExceedsProposed && !isPaid)}
                 />
               </section>
             )}
@@ -1428,7 +1440,23 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             {hasIncrease && calc && (isAboveMarket || isFair || isBelowMarket) && (
               <motion.section id="section-letter" {...fade(0.19)} className="pt-5 pb-4 sm:pt-8 sm:pb-8">
                 {hasIncrease && !isPaid && (
-                  <h2 className="results-section-header mb-2">Your Negotiation Reply</h2>
+                  <h2 className="results-section-header mb-2">
+                    {isAboveMarket && counterOffer && !counterExceedsProposed
+                      ? 'Your Counter-Offer & Reply'
+                      : 'Your Negotiation Reply'}
+                  </h2>
+                )}
+                {isAboveMarket && counterOffer && !counterExceedsProposed && !isPaid && (
+                  <div className="rounded-lg border border-border bg-card p-4 mb-4 flex items-center justify-between">
+                    <div>
+                      <p className="text-[13px] font-medium text-foreground">Your market-supported counter-offer</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">Based on {compsWithRent.length} local comps and market trends</p>
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-muted px-3 py-1.5 rounded-full">
+                      <Lock size={12} className="text-muted-foreground" />
+                      <span className="text-[13px] font-bold text-muted-foreground tabular-nums">$X,XXX/mo</span>
+                    </div>
+                  </div>
                 )}
                 {isFair && !isAboveMarket && !isBelowMarket && isPaid && (
                   <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">
