@@ -172,9 +172,20 @@ Deno.serve(async (req) => {
       : "";
 
     const isEmailCapture = !!directEmail;
-    const subject = leadEmail
+    const isPurchase = !!purchase;
+    const subject = isPurchase
+      ? `💰 PURCHASE: ${zip || "unknown"} — ${verdict_label || "N/A"}${leadEmail ? ` — ${leadEmail}` : ''} — $4.99`
+      : leadEmail
       ? `🏠 ${isEmailCapture ? '✉️ EMAIL CAPTURED' : 'New submission'}: ${zip || "unknown"} — ${verdict_label || "N/A"} (Score ${fairness_score ?? "?"}) ✉️ ${leadEmail}`
       : `🏠 New submission: ${zip || "unknown"} — ${verdict_label || "N/A"} (Score ${fairness_score ?? "?"})`;
+
+    const purchaseBanner = isPurchase
+      ? `<div style="background:#d4edda;border:1px solid #28a745;border-radius:8px;padding:16px;margin-bottom:16px;text-align:center">
+           <span style="font-size:24px">💰</span>
+           <h3 style="margin:8px 0 4px;color:#155724;font-size:18px">New Purchase — $4.99</h3>
+           <p style="margin:0;color:#155724;font-size:14px">${leadEmail || 'Anonymous checkout'}</p>
+         </div>`
+      : '';
 
     const html = `
       <div style="font-family:system-ui,sans-serif;max-width:560px;margin:0 auto;padding:24px">
