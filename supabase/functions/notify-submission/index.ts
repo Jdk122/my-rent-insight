@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
       zip, city, state, bedrooms, current_rent, proposed_rent,
       increase_pct, fairness_score, verdict_label, address,
       confidence_level, comp_median_rent, hud_fmr_value,
-      analysis_id, email: directEmail,
+      analysis_id, email: directEmail, purchase,
     } = body;
 
     // Only use directEmail or analysis_id lookup — no ZIP fallback
@@ -172,13 +172,25 @@ Deno.serve(async (req) => {
       : "";
 
     const isEmailCapture = !!directEmail;
-    const subject = leadEmail
+    const isPurchase = !!purchase;
+    const subject = isPurchase
+      ? `💰 PURCHASE: ${zip || "unknown"} — ${verdict_label || "N/A"}${leadEmail ? ` — ${leadEmail}` : ''} — $4.99`
+      : leadEmail
       ? `🏠 ${isEmailCapture ? '✉️ EMAIL CAPTURED' : 'New submission'}: ${zip || "unknown"} — ${verdict_label || "N/A"} (Score ${fairness_score ?? "?"}) ✉️ ${leadEmail}`
       : `🏠 New submission: ${zip || "unknown"} — ${verdict_label || "N/A"} (Score ${fairness_score ?? "?"})`;
 
+    const purchaseBanner = isPurchase
+      ? `<div style="background:#d4edda;border:1px solid #28a745;border-radius:8px;padding:16px;margin-bottom:16px;text-align:center">
+           <span style="font-size:24px">💰</span>
+           <h3 style="margin:8px 0 4px;color:#155724;font-size:18px">New Purchase — $4.99</h3>
+           <p style="margin:0;color:#155724;font-size:14px">${leadEmail || 'Anonymous checkout'}</p>
+         </div>`
+      : '';
+
     const html = `
       <div style="font-family:system-ui,sans-serif;max-width:560px;margin:0 auto;padding:24px">
-        <h2 style="margin:0 0 16px;color:#1a1a1a">New Rent Check Submission</h2>
+        <h2 style="margin:0 0 16px;color:#1a1a1a">${isPurchase ? '💰 New Letter Purchase' : 'New Rent Check Submission'}</h2>
+        ${purchaseBanner}
         <table style="width:100%;border-collapse:collapse;font-size:14px">
           ${emailBadge}
           <tr><td style="padding:6px 12px 6px 0;color:#666;white-space:nowrap">Location</td><td style="padding:6px 0;font-weight:600">${address || "—"}<br/>${city || ""}, ${state || ""} ${zip || ""}</td></tr>

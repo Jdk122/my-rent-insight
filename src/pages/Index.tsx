@@ -5,6 +5,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { getAnalysisFingerprint, addPaidAnalysis, isAnalysisPaid } from '@/lib/analysisFingerprint';
 import SampleResultCard from '@/components/SampleResultCard';
 import { supabase } from '@/integrations/supabase/client';
+import { notifySubmission } from '@/lib/notifySubmission';
 const LocationSearch = lazy(() => import('@/components/LocationSearch'));
 const BrowseDealsSection = lazy(() => import('@/components/BrowseDealsSection'));
 
@@ -92,6 +93,12 @@ const Index = () => {
               verdict: savedState.verdict,
             }).then(() => {});
           });
+          notifySubmission({
+            email: savedState.capturedEmail || null,
+            zip: savedState.formData.zip || null,
+            verdict_label: savedState.verdict || null,
+            purchase: true,
+          }, 'purchase_stripe_redirect');
 
           // Scroll to letter after short delay
           setTimeout(() => {
@@ -192,6 +199,12 @@ const Index = () => {
       zip: results.formData.zip,
       verdict: verdictStr,
     }).then(() => {});
+    notifySubmission({
+      email: email !== 'anonymous@checkout' ? email : null,
+      zip: results.formData.zip || null,
+      verdict_label: verdictStr,
+      purchase: true,
+    }, 'purchase_wallet');
 
     if (walletEmail) {
       const utm = getUtmParams();

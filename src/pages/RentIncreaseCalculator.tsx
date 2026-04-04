@@ -13,6 +13,7 @@ import PageNav from '@/components/PageNav';
 import RentReportingCTA from '@/components/RentReportingCTA';
 import { getAnalysisFingerprint, addPaidAnalysis, isAnalysisPaid } from '@/lib/analysisFingerprint';
 import { supabase } from '@/integrations/supabase/client';
+import { notifySubmission } from '@/lib/notifySubmission';
 
 const RentResults = lazy(() => import('@/components/RentResults'));
 const SEOFooter = lazy(() => import('@/components/SEOFooter'));
@@ -54,6 +55,12 @@ const RentIncreaseCalculator = () => {
             zip: savedState.formData.zip,
             verdict: savedState.verdict,
           }).then(() => {});
+          notifySubmission({
+            email: savedState.capturedEmail || null,
+            zip: savedState.formData.zip || null,
+            verdict_label: savedState.verdict || null,
+            purchase: true,
+          }, 'purchase_stripe_redirect');
           setTimeout(() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' }), 500);
           return;
         }
@@ -106,6 +113,12 @@ const RentIncreaseCalculator = () => {
       zip: results.formData.zip,
       verdict: verdictStr,
     }).then(() => {});
+    notifySubmission({
+      email: email !== 'anonymous@checkout' ? email : null,
+      zip: results.formData.zip || null,
+      verdict_label: verdictStr,
+      purchase: true,
+    }, 'purchase_wallet');
 
     if (walletEmail) {
       supabase.from('leads' as any).upsert({
