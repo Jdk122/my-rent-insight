@@ -131,7 +131,7 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
       </p>
 
       {/* Lawyer anchor — high number before low number */}
-      <p className="text-xs text-muted-foreground/60 text-center">
+      <p className="text-[12px] text-muted-foreground/80 text-center mt-1 mb-1 font-medium">
         Lawyers charge $225+/hr for lease help. This is $4.99.
       </p>
 
