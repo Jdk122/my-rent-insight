@@ -13,6 +13,7 @@ import PageNav from '@/components/PageNav';
 import RentReportingCTA from '@/components/RentReportingCTA';
 import { getAnalysisFingerprint, addPaidAnalysis, isAnalysisPaid } from '@/lib/analysisFingerprint';
 import { supabase } from '@/integrations/supabase/client';
+import { notifySubmission } from '@/lib/notifySubmission';
 
 const RentResults = lazy(() => import('@/components/RentResults'));
 const SEOFooter = lazy(() => import('@/components/SEOFooter'));
