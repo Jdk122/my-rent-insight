@@ -586,7 +586,10 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
 
   // ── Locked state (unpaid) ──
   if (!isPaid) {
-    const previewParagraphs = fallbackLetter.split('\n\n').slice(0, 2);
+    const previewParagraphs = [
+      'Dear Landlord,',
+      'Thank you for the lease renewal notice. I\'ve enjoyed living here and would like to continue. I\'ve done some research on current market conditions and have a few thoughts I\'d like to share.'
+    ];
     return (
       <div className="mt-4">
         <div
