@@ -113,6 +113,12 @@ const RentIncreaseCalculator = () => {
       zip: results.formData.zip,
       verdict: verdictStr,
     }).then(() => {});
+    notifySubmission({
+      email: email !== 'anonymous@checkout' ? email : null,
+      zip: results.formData.zip || null,
+      verdict_label: verdictStr,
+      purchase: true,
+    }, 'purchase_wallet');
 
     if (walletEmail) {
       supabase.from('leads' as any).upsert({
