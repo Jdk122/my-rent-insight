@@ -1280,19 +1280,30 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   )}
                   {isAboveMarket && counterOffer && !counterExceedsProposed && (
                     <>
-                      <div className="context-row-highlight mt-2">
-                        <span className="context-label">Fair counter-offer</span>
-                        <span className="context-value text-verdict-good font-bold">
-                          {counterOffer.counterLow === counterOffer.counterHigh
-                            ? `$${fmt(counterOffer.counterLow)}/mo`
-                            : `$${fmt(counterOffer.counterLow)}–$${fmt(counterOffer.counterHigh)}/mo`}
-                        </span>
-                      </div>
-                      {medianCompRent && counterOffer.counterLow > medianCompRent && (
-                        <div className="mt-2 px-3 py-2 rounded-md bg-accent/50 border border-border/50">
-                          <p className="text-[11px] text-muted-foreground leading-relaxed">
-                            Note: Your counter range (${fmt(counterOffer.counterLow)}–${fmt(counterOffer.counterHigh)}) is above the area median of ${fmt(medianCompRent)} for similar units. You may have additional negotiating room.
-                          </p>
+                      {isPaid ? (
+                        <>
+                          <div className="context-row-highlight mt-2">
+                            <span className="context-label">Fair counter-offer</span>
+                            <span className="context-value text-verdict-good font-bold">
+                              {counterOffer.counterLow === counterOffer.counterHigh
+                                ? `$${fmt(counterOffer.counterLow)}/mo`
+                                : `$${fmt(counterOffer.counterLow)}–$${fmt(counterOffer.counterHigh)}/mo`}
+                            </span>
+                          </div>
+                          {medianCompRent && counterOffer.counterLow > medianCompRent && (
+                            <div className="mt-2 px-3 py-2 rounded-md bg-accent/50 border border-border/50">
+                              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                                Note: Your counter range (${fmt(counterOffer.counterLow)}–${fmt(counterOffer.counterHigh)}) is above the area median of ${fmt(medianCompRent)} for similar units. You may have additional negotiating room.
+                              </p>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div className="context-row-highlight mt-2">
+                          <span className="context-label">Your counter-offer</span>
+                          <span className="text-[13px] text-muted-foreground">
+                            Included with your reply below
+                          </span>
                         </div>
                       )}
                     </>
