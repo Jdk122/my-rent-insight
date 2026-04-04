@@ -1465,11 +1465,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       {excessAnnual > 0 && (
                         <p className="flex items-start gap-2">
                           <span className="text-primary mt-0.5">✓</span>
-                          <span>${excessAnnual.toLocaleString()}/yr above market</span>
+                          <span>Your landlord's ask is well above local trends</span>
                         </p>
                       )}
                     </div>
-                    <p className="text-[11px] text-muted-foreground/70 mt-3 italic">One step left: your exact counter-offer number and reply.</p>
+                    <p className="text-[11px] text-muted-foreground/70 mt-3 italic">One step left: the right number and the right words to deliver it.</p>
                   </div>
                 )}
                 {isFair && !isAboveMarket && !isBelowMarket && isPaid && (
