@@ -1446,6 +1446,32 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       : 'Your Negotiation Reply'}
                   </h2>
                 )}
+                {isAboveMarket && !isPaid && (
+                  <div className="rounded-lg border border-border bg-secondary/30 p-4 mb-4">
+                    <p className="text-[13px] font-semibold text-foreground mb-2">What your analysis found</p>
+                    <div className="space-y-1.5 text-[12px] text-muted-foreground">
+                      {compsWithRent.length > 0 && (
+                        <p className="flex items-start gap-2">
+                          <span className="text-primary mt-0.5">✓</span>
+                          <span>{compsWithRent.length} comparable rents nearby</span>
+                        </p>
+                      )}
+                      {marketYoy !== null && (
+                        <p className="flex items-start gap-2">
+                          <span className="text-primary mt-0.5">✓</span>
+                          <span>Market moved {marketYoy >= 0 ? '+' : ''}{marketYoy.toFixed(1)}%, yours is +{increasePct.toFixed(1)}%</span>
+                        </p>
+                      )}
+                      {excessAnnual > 0 && (
+                        <p className="flex items-start gap-2">
+                          <span className="text-primary mt-0.5">✓</span>
+                          <span>${excessAnnual.toLocaleString()}/yr above market</span>
+                        </p>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-muted-foreground/70 mt-3 italic">One step left: your exact counter-offer number and reply.</p>
+                  </div>
+                )}
                 {isAboveMarket && counterOffer && !counterExceedsProposed && !isPaid && (
                   <div className="rounded-lg border border-border bg-card p-4 mb-4 flex items-center justify-between">
                     <div>
