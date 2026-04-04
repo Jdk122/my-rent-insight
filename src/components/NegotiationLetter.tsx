@@ -204,6 +204,9 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
       >
         No thanks, I'll write my own
       </button>
+      <p className="text-[10px] text-muted-foreground/50 text-center mt-2">
+        Not satisfied? Email us for a full refund. No questions asked.
+      </p>
     </div>
   );
 }
