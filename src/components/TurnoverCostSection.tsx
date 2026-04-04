@@ -11,6 +11,7 @@ interface TurnoverCostSectionProps {
   annualSavings: number;
   proposedRentAboveMedian: boolean;
   onScrollToLetter: () => void;
+  hasCounterOffer?: boolean;
 }
 
 const fmt = (n: number) =>
