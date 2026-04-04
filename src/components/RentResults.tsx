@@ -1465,7 +1465,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       {excessAnnual > 0 && (
                         <p className="flex items-start gap-2">
                           <span className="text-primary mt-0.5">✓</span>
-                          <span>${excessAnnual.toLocaleString()}/yr above market</span>
+                          <span>Your landlord's ask is well above local trends</span>
                         </p>
                       )}
                     </div>
