@@ -1440,7 +1440,23 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             {hasIncrease && calc && (isAboveMarket || isFair || isBelowMarket) && (
               <motion.section id="section-letter" {...fade(0.19)} className="pt-5 pb-4 sm:pt-8 sm:pb-8">
                 {hasIncrease && !isPaid && (
-                  <h2 className="results-section-header mb-2">Your Negotiation Reply</h2>
+                  <h2 className="results-section-header mb-2">
+                    {isAboveMarket && counterOffer && !counterExceedsProposed
+                      ? 'Your Counter-Offer & Reply'
+                      : 'Your Negotiation Reply'}
+                  </h2>
+                )}
+                {isAboveMarket && counterOffer && !counterExceedsProposed && !isPaid && (
+                  <div className="rounded-lg border border-border bg-card p-4 mb-4 flex items-center justify-between">
+                    <div>
+                      <p className="text-[13px] font-medium text-foreground">Your market-supported counter-offer</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">Based on {compsWithRent.length} local comps and market trends</p>
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-muted px-3 py-1.5 rounded-full">
+                      <Lock size={12} className="text-muted-foreground" />
+                      <span className="text-[13px] font-bold text-muted-foreground tabular-nums">$X,XXX/mo</span>
+                    </div>
+                  </div>
                 )}
                 {isFair && !isAboveMarket && !isBelowMarket && isPaid && (
                   <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">

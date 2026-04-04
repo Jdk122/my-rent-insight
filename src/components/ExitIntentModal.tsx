@@ -72,13 +72,13 @@ function PaywallContent({
   const [walletAvailable, setWalletAvailable] = useState(true);
 
   const headline = isAboveMarket && savings && savings > 0
-    ? `Your reply is ready. Don't leave $${savings.toLocaleString()} on the table.`
+    ? `Your counter-offer is ready. Don't leave $${savings.toLocaleString()} on the table.`
     : isAboveMarket
     ? 'You can still push back'
     : 'Keep paying less than neighbors';
 
   const subtext = isAboveMarket && savings && savings > 0
-    ? 'Built with real comps and a counter-offer your landlord can say yes to.'
+    ? 'Your exact number and reply are one tap away.'
     : isAboveMarket
     ? 'Your letter gives you exactly what to say.'
     : 'Lock in your rate or ask for extra perks.';

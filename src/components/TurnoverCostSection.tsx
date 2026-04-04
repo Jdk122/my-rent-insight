@@ -211,7 +211,7 @@ const TurnoverCostSection = ({
           onClick={onScrollToLetter}
           className="mt-4 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
         >
-          Get your reply ↓
+          {hasCounterOffer ? 'Get your counter-offer ↓' : 'Get your reply ↓'}
         </button>
       </div>
 

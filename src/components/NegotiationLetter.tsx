@@ -181,7 +181,7 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
           ? 'Opening checkout...'
           : walletAvailable
           ? 'Or pay with card — $4.99'
-          : 'Get my reply — $4.99'}
+          : 'Get my counter-offer — $4.99'}
       </button>
 
       {/* Payment methods note */}
