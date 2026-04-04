@@ -55,6 +55,12 @@ const RentIncreaseCalculator = () => {
             zip: savedState.formData.zip,
             verdict: savedState.verdict,
           }).then(() => {});
+          notifySubmission({
+            email: savedState.capturedEmail || null,
+            zip: savedState.formData.zip || null,
+            verdict_label: savedState.verdict || null,
+            purchase: true,
+          }, 'purchase_stripe_redirect');
           setTimeout(() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' }), 500);
           return;
         }
