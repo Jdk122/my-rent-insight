@@ -25,7 +25,7 @@ const faqs: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: 'Is RenewalReply really free?',
-    a: 'Yes, RenewalReply is free to use. Enter your email only if you want your full report and negotiation package delivered instantly.',
+    a: 'The rent analysis is free. You get your fairness score, market evidence, and comparable rents at no cost. Your counter-offer number and negotiation reply are $4.99.',
   },
   {
     q: 'What should I do if my rent increase is unfair?',
