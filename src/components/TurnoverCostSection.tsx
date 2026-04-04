@@ -68,6 +68,7 @@ const TurnoverCostSection = ({
   annualSavings,
   proposedRentAboveMedian,
   onScrollToLetter,
+  hasCounterOffer = false,
 }: TurnoverCostSectionProps) => {
   const [vacancy, setVacancy] = useState<VacancyRateResult | null>(null);
   const [showBreakdown, setShowBreakdown] = useState(false);
