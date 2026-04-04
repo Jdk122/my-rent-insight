@@ -127,9 +127,7 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
     <div ref={ctaRef} className="flex flex-col items-center gap-3 mt-6 mb-2">
       {/* Persuasion headline */}
       <p className="text-[17px] font-bold text-foreground text-center tracking-tight max-w-[400px]">
-        {savings && savings > 0
-          ? `Unlock your counter-offer and save up to $${savings.toLocaleString()} this year`
-          : 'Get your counter-offer and negotiation reply'}
+        {'Unlock your counter-offer and reply'}
       </p>
 
       {/* What you get */}
@@ -586,7 +584,10 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
 
   // ── Locked state (unpaid) ──
   if (!isPaid) {
-    const previewParagraphs = fallbackLetter.split('\n\n').slice(0, 2);
+    const previewParagraphs = [
+      'Dear Landlord,',
+      'Thank you for the lease renewal notice. I\'ve enjoyed living here and would like to continue. I\'ve done some research on current market conditions and have a few thoughts I\'d like to share.'
+    ];
     return (
       <div className="mt-4">
         <div
