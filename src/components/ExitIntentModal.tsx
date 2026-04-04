@@ -114,6 +114,7 @@ function PaywallContent({
             zip={expressCheckoutProps.zip}
             city={expressCheckoutProps.city}
             savings={expressCheckoutProps.savings}
+            placement="exit_intent"
           />
         )}
 
