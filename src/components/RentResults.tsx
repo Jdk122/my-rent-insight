@@ -39,6 +39,7 @@ import PartnerCTA from './PartnerCTA';
 import MoveCTA from './MoveCTA';
 import ExitIntentModal from './ExitIntentModal';
 import MobileScrollPrompt from './MobileScrollPrompt';
+import StickyPaywallBar from './StickyPaywallBar';
 import PostConversionFlow from './PostConversionFlow';
 import LeaseReminderCapture from './LeaseReminderCapture';
 import FeedbackWidget from './FeedbackWidget';
@@ -800,6 +801,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         shareReportPayload={shareReportPayload}
         onReportGenerated={(url) => { setReportUrl(url); }}
       />
+
+      {/* Sticky paywall bar (mobile only) — nudge to scroll to paywall */}
+      <StickyPaywallBar isAboveMarket={isAboveMarket} isPaid={isPaid} />
 
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            PHASE 1: FREE CREDIBILITY LAYER
