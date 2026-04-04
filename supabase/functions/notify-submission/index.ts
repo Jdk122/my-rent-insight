@@ -189,7 +189,8 @@ Deno.serve(async (req) => {
 
     const html = `
       <div style="font-family:system-ui,sans-serif;max-width:560px;margin:0 auto;padding:24px">
-        <h2 style="margin:0 0 16px;color:#1a1a1a">New Rent Check Submission</h2>
+        <h2 style="margin:0 0 16px;color:#1a1a1a">${isPurchase ? '💰 New Letter Purchase' : 'New Rent Check Submission'}</h2>
+        ${purchaseBanner}
         <table style="width:100%;border-collapse:collapse;font-size:14px">
           ${emailBadge}
           <tr><td style="padding:6px 12px 6px 0;color:#666;white-space:nowrap">Location</td><td style="padding:6px 0;font-weight:600">${address || "—"}<br/>${city || ""}, ${state || ""} ${zip || ""}</td></tr>
