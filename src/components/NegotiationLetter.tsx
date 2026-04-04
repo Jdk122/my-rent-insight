@@ -128,8 +128,8 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
       {/* Persuasion headline */}
       <p className="text-[17px] font-bold text-foreground text-center tracking-tight max-w-[400px]">
         {savings && savings > 0
-          ? 'Get the exact reply to send tonight'
-          : 'Get your personalized negotiation reply'}
+          ? `Unlock your counter-offer and save up to $${savings.toLocaleString()} this year`
+          : 'Get your counter-offer and negotiation reply'}
       </p>
 
       {/* What you get */}
