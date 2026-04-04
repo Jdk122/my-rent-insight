@@ -130,6 +130,11 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
         {'Unlock your counter-offer and reply'}
       </p>
 
+      {/* Lawyer anchor — high number before low number */}
+      <p className="text-xs text-muted-foreground/60 text-center">
+        Lawyers charge $225+/hr for lease help. This is $4.99.
+      </p>
+
       {/* What you get */}
       <div className="text-left text-[13px] text-muted-foreground space-y-1.5 max-w-[360px]">
         <p>Your $4.99 unlock includes:</p>
@@ -161,13 +166,22 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
             zip={expressCheckoutProps.zip}
             city={expressCheckoutProps.city}
             savings={expressCheckoutProps.savings}
+            placement="locked_letter"
           />
         </div>
       )}
 
       {/* Card payment fallback */}
       <button
-        onClick={() => onCheckout?.()}
+        onClick={() => {
+          trackEvent('checkout_started', {
+            method: 'card_fallback',
+            placement: 'locked_letter',
+            verdict: expressCheckoutProps?.verdict || 'unknown',
+            zip: expressCheckoutProps?.zip || '',
+          });
+          onCheckout?.();
+        }}
         disabled={checkoutLoading}
         className={`w-full max-w-[320px] py-3.5 rounded-lg text-[14px] font-semibold transition-all disabled:opacity-70 ${
           walletAvailable
@@ -181,11 +195,6 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
           ? 'Or pay with card — $4.99'
           : 'Get my counter-offer — $4.99'}
       </button>
-
-      {/* Payment methods note */}
-      <p className="text-xs text-muted-foreground/60 text-center">
-        Lawyers charge $225+/hr for lease help. This is $4.99.
-      </p>
 
       {/* Skip option */}
       <button
