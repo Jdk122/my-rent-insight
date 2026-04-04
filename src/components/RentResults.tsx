@@ -1469,7 +1469,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         </p>
                       )}
                     </div>
-                    <p className="text-[11px] text-muted-foreground/70 mt-3 italic">One step left: your exact counter-offer number and reply.</p>
+                    <p className="text-[11px] text-muted-foreground/70 mt-3 italic">One step left: the right number and the right words to deliver it.</p>
                   </div>
                 )}
                 {isFair && !isAboveMarket && !isBelowMarket && isPaid && (
