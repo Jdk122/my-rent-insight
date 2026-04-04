@@ -185,7 +185,7 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
         disabled={checkoutLoading}
         className={`w-full max-w-[320px] py-3.5 rounded-lg text-[14px] font-semibold transition-all disabled:opacity-70 ${
           walletAvailable
-            ? 'border border-border bg-background text-foreground hover:bg-muted text-[13px]'
+            ? 'w-full h-11 rounded-lg font-semibold text-[14px] bg-foreground/80 text-background hover:bg-foreground/90 transition-colors'
             : 'bg-primary text-primary-foreground hover:brightness-95 shadow-sm shadow-primary/20'
         }`}
       >
