@@ -625,8 +625,8 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
           <div
             className="absolute inset-x-0 bottom-0 pointer-events-none"
             style={{
-              height: '120px',
-              background: 'linear-gradient(to bottom, transparent, hsl(var(--letter-bg)))',
+              height: '160px',
+              background: 'linear-gradient(to bottom, transparent, hsl(var(--letter-bg) / 0.8) 40%, hsl(var(--letter-bg)))',
             }}
           />
         </div>
