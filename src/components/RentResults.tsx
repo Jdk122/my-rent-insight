@@ -1472,18 +1472,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     <p className="text-[11px] text-muted-foreground/70 mt-3 italic">One step left: your exact counter-offer number and reply.</p>
                   </div>
                 )}
-                {isAboveMarket && counterOffer && !counterExceedsProposed && !isPaid && (
-                  <div className="rounded-lg border border-border bg-card p-4 mb-4 flex items-center justify-between">
-                    <div>
-                      <p className="text-[13px] font-medium text-foreground">Your market-supported counter-offer</p>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">Based on {compsWithRent.length} local comps and market trends</p>
-                    </div>
-                    <div className="flex items-center gap-1.5 bg-muted px-3 py-1.5 rounded-full">
-                      <Lock size={12} className="text-muted-foreground" />
-                      <span className="text-[13px] font-bold text-muted-foreground tabular-nums">$X,XXX/mo</span>
-                    </div>
-                  </div>
-                )}
                 {isFair && !isAboveMarket && !isBelowMarket && isPaid && (
                   <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">
                     Even a fair increase is worth negotiating. Landlords expect it, and avoiding turnover is worth more to them than $50-100/month.
