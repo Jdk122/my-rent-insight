@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
       zip, city, state, bedrooms, current_rent, proposed_rent,
       increase_pct, fairness_score, verdict_label, address,
       confidence_level, comp_median_rent, hud_fmr_value,
-      analysis_id, email: directEmail,
+      analysis_id, email: directEmail, purchase,
     } = body;
 
     // Only use directEmail or analysis_id lookup — no ZIP fallback
