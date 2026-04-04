@@ -1447,7 +1447,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   </h2>
                 )}
                 {isAboveMarket && !isPaid && (
-                  <div className="rounded-lg border border-border bg-secondary/30 p-4 mb-4">
+                  <div className="rounded-lg border border-border/50 border-l-[3px] border-l-primary/40 bg-secondary/30 p-4 mb-4">
                     <p className="text-[13px] font-semibold text-foreground mb-2">What your analysis found</p>
                     <div className="space-y-1.5 text-[12px] text-muted-foreground">
                       {compsWithRent.length > 0 && (

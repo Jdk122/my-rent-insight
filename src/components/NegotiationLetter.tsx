@@ -131,7 +131,7 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
       </p>
 
       {/* Lawyer anchor — high number before low number */}
-      <p className="text-xs text-muted-foreground/60 text-center">
+      <p className="text-[12px] text-muted-foreground/80 text-center mt-1 mb-1 font-medium">
         Lawyers charge $225+/hr for lease help. This is $4.99.
       </p>
 
@@ -185,7 +185,7 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
         disabled={checkoutLoading}
         className={`w-full max-w-[320px] py-3.5 rounded-lg text-[14px] font-semibold transition-all disabled:opacity-70 ${
           walletAvailable
-            ? 'border border-border bg-background text-foreground hover:bg-muted text-[13px]'
+            ? 'w-full h-11 rounded-lg font-semibold text-[14px] bg-foreground/80 text-background hover:bg-foreground/90 transition-colors'
             : 'bg-primary text-primary-foreground hover:brightness-95 shadow-sm shadow-primary/20'
         }`}
       >
@@ -625,8 +625,8 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
           <div
             className="absolute inset-x-0 bottom-0 pointer-events-none"
             style={{
-              height: '120px',
-              background: 'linear-gradient(to bottom, transparent, hsl(var(--letter-bg)))',
+              height: '160px',
+              background: 'linear-gradient(to bottom, transparent, hsl(var(--letter-bg) / 0.8) 40%, hsl(var(--letter-bg)))',
             }}
           />
         </div>
