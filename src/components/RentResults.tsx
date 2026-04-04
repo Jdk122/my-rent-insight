@@ -802,6 +802,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         onReportGenerated={(url) => { setReportUrl(url); }}
       />
 
+      {/* Sticky paywall bar (mobile only) — nudge to scroll to paywall */}
+      <StickyPaywallBar isAboveMarket={isAboveMarket} isPaid={isPaid} />
+
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            PHASE 1: FREE CREDIBILITY LAYER
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
