@@ -501,7 +501,7 @@ const Index = () => {
         <main className="max-w-[620px] lg:max-w-[960px] mx-auto px-5 sm:px-6 pt-6 sm:pt-14 lg:pt-[90px] pb-10 sm:pb-14 lg:pb-16">
           <div className="lg:grid lg:grid-cols-[1fr_380px] lg:gap-8 lg:items-start">
             {/* Left column: sales message */}
-            <div>
+            <div className="min-w-0">
               <h1 className="font-display text-[1.85rem] sm:text-[clamp(2rem,5vw,3rem)] lg:text-[clamp(44px,4vw,56px)] text-foreground leading-[1.08] lg:leading-[1.08] tracking-tight font-extrabold" style={{ letterSpacing: '-0.03em' }}>
                 Is your rent increase <span className="text-primary">above&nbsp;market?</span>
               </h1>
