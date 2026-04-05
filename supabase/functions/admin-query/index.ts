@@ -149,7 +149,24 @@ Deno.serve(async (req) => {
 
         const { data: rows, count, error } = await q;
         if (error) throw error;
-        data = { rows, count };
+
+        // Enrich with purchase status from lead_events
+        const analysisIds = (rows || []).map((r: any) => r.id).filter(Boolean);
+        let purchasedIds = new Set<string>();
+        if (analysisIds.length > 0) {
+          const { data: purchaseEvents } = await supabase
+            .from("lead_events")
+            .select("analysis_id")
+            .eq("event_type", "purchase_completed")
+            .in("analysis_id", analysisIds);
+          purchasedIds = new Set((purchaseEvents || []).map((e: any) => e.analysis_id));
+        }
+        const enrichedRows = (rows || []).map((r: any) => ({
+          ...r,
+          purchased: purchasedIds.has(r.id),
+        }));
+
+        data = { rows: enrichedRows, count };
         break;
       }
 
