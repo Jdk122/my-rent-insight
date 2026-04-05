@@ -52,9 +52,9 @@ serve(async (req) => {
         {
           price_data: {
             currency: "usd",
-            unit_amount: 499,
+            unit_amount: 199,
             product_data: {
-              name: "Rent Negotiation Letter",
+              name: "RenewalReply Rent Analysis",
             },
           },
           quantity: 1,

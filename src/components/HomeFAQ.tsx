@@ -25,7 +25,7 @@ const faqs: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: 'Is RenewalReply really free?',
-    a: 'The rent analysis is free. You get your fairness score, market evidence, and comparable rents at no cost. Your counter-offer number and negotiation reply are $4.99.',
+    a: 'Your verdict is completely free. The detailed analysis with comparable rents, counter-offer range, and negotiation letter is $1.99.',
   },
   {
     q: 'What should I do if my rent increase is unfair?',

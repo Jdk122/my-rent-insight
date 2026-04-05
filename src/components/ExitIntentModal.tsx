@@ -71,17 +71,13 @@ function PaywallContent({
 }) {
   const [walletAvailable, setWalletAvailable] = useState(true);
 
-  const headline = isAboveMarket && savings && savings > 0
-    ? `Your counter-offer is ready. Don't leave $${savings.toLocaleString()} on the table.`
-    : isAboveMarket
-    ? 'You can still push back'
-    : 'Keep paying less than neighbors';
+  const headline = isAboveMarket
+    ? 'Your verdict: above market. The full analysis is $1.99.'
+    : 'Your full analysis is just $1.99.';
 
-  const subtext = isAboveMarket && savings && savings > 0
-    ? 'Your exact number and reply are one tap away.'
-    : isAboveMarket
-    ? 'Your letter gives you exactly what to say.'
-    : 'Lock in your rate or ask for extra perks.';
+  const subtext = isAboveMarket
+    ? 'See your counter-offer number, comps, and negotiation letter.'
+    : 'See the comps and evidence behind your verdict.';
 
   const handleWalletSuccess = useCallback((email?: string) => {
     trackEvent('purchase_completed', { verdict: verdictLabel, zip, method: 'exit_intent_wallet' });
@@ -123,7 +119,7 @@ function PaywallContent({
           disabled={checkoutLoading}
           className="w-full bg-primary text-primary-foreground px-4 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-60"
         >
-          {checkoutLoading ? 'Loading…' : 'Pay with card — $4.99'}
+          {checkoutLoading ? 'Loading…' : 'Pay with card — $1.99'}
         </button>
       </div>
 

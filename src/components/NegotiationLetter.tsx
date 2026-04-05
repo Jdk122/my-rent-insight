@@ -3,9 +3,8 @@ import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
 import { Link } from 'react-router-dom';
 import { BedroomType, bedroomLabels } from '@/data/rentData';
-import { RefreshCw, Copy, Lock } from 'lucide-react';
+import { RefreshCw, Copy } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import StripeExpressCheckout from './StripeExpressCheckout';
 
 interface CompForLetter {
   rent: number | null;
@@ -52,156 +51,9 @@ interface NegotiationLetterProps {
   belowFmrHighIncrease?: boolean;
   onLetterGenerated?: () => void;
   comparables?: CompForLetter[];
-  isPaid?: boolean;
-  onCheckout?: () => void;
-  checkoutLoading?: boolean;
-  onPaid?: (email?: string) => void;
-  expressCheckoutProps?: {
-    analysisId?: string | null;
-    verdict: string;
-    zip: string;
-    city: string;
-    savings: number;
-  };
-  isAboveMarket?: boolean;
-  savings?: number;
-  compsCount?: number;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
-
-// ── Locked letter CTA with Express Checkout support ──
-function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutProps, isAboveMarket, savings, compsCount }: {
-  onCheckout?: () => void;
-  checkoutLoading?: boolean;
-  onPaid?: (email?: string) => void;
-  expressCheckoutProps?: {
-    analysisId?: string | null;
-    verdict: string;
-    zip: string;
-    city: string;
-    savings: number;
-  };
-  isAboveMarket?: boolean;
-  savings?: number;
-  compsCount?: number;
-}) {
-  const [walletAvailable, setWalletAvailable] = useState<boolean | null>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
-  const impressionTracked = useRef(false);
-
-  useEffect(() => {
-    const el = ctaRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !impressionTracked.current) {
-          impressionTracked.current = true;
-          trackEvent('toolkit_impression', {
-            verdict: expressCheckoutProps?.verdict || 'unknown',
-            placement: 'locked_letter',
-            zip: expressCheckoutProps?.zip || '',
-          });
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.5 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [expressCheckoutProps]);
-
-  const handleFallback = useCallback(() => {
-    setWalletAvailable(false);
-  }, []);
-
-  const handleWalletReady = useCallback(() => {
-    setWalletAvailable(true);
-  }, []);
-
-  const handleWalletSuccess = useCallback((email?: string) => {
-    onPaid?.(email);
-  }, [onPaid]);
-
-  return (
-    <div ref={ctaRef} className="flex flex-col items-center gap-3 mt-6 mb-2">
-      {/* Persuasion headline */}
-      <p className="text-[17px] font-bold text-foreground text-center tracking-tight max-w-[400px]">
-        {'Unlock your counter-offer and reply'}
-      </p>
-
-      {/* Lawyer anchor — high number before low number */}
-      <p className="text-[12px] text-muted-foreground/80 text-center mt-1 mb-1 font-medium">
-        Lawyers charge $225+/hr for lease help. This is $4.99.
-      </p>
-
-      {/* What you get */}
-      <div className="text-left text-[13px] text-muted-foreground space-y-1.5 max-w-[360px]">
-        <p>Your $4.99 unlock includes:</p>
-        <ul className="space-y-1 ml-1">
-          <li className="flex items-start gap-2">
-            <span className="text-primary mt-0.5">✓</span>
-            <span>Your exact counter-offer number based on local market data</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-primary mt-0.5">✓</span>
-            <span>A ready-to-send reply with the right tone and data</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-primary mt-0.5">✓</span>
-            <span>No blank page, no figuring out how to say it</span>
-          </li>
-        </ul>
-      </div>
-
-      {/* Express Checkout wallet buttons */}
-      {expressCheckoutProps && walletAvailable !== false && (
-        <div className="w-full max-w-[320px] mt-1">
-          <StripeExpressCheckout
-            onSuccess={handleWalletSuccess}
-            onFallbackToRedirect={handleFallback}
-            onReady={handleWalletReady}
-            analysisId={expressCheckoutProps.analysisId}
-            verdict={expressCheckoutProps.verdict}
-            zip={expressCheckoutProps.zip}
-            city={expressCheckoutProps.city}
-            savings={expressCheckoutProps.savings}
-            placement="locked_letter"
-          />
-        </div>
-      )}
-
-      {/* Card payment fallback */}
-      <button
-        onClick={() => {
-          trackEvent('checkout_started', {
-            method: 'card_fallback',
-            placement: 'locked_letter',
-            verdict: expressCheckoutProps?.verdict || 'unknown',
-            zip: expressCheckoutProps?.zip || '',
-          });
-          onCheckout?.();
-        }}
-        disabled={checkoutLoading}
-        className={`w-full max-w-[320px] py-3.5 rounded-lg text-[14px] font-semibold transition-all disabled:opacity-70 ${
-          walletAvailable
-            ? 'w-full h-11 rounded-lg font-semibold text-[14px] bg-foreground/80 text-background hover:bg-foreground/90 transition-colors'
-            : 'bg-primary text-primary-foreground hover:brightness-95 shadow-sm shadow-primary/20'
-        }`}
-      >
-        {checkoutLoading
-          ? 'Opening checkout...'
-          : walletAvailable
-          ? 'Or pay with card — $4.99'
-          : 'Get my counter-offer — $4.99'}
-      </button>
-
-      <p className="text-[10px] text-muted-foreground/50 text-center mt-2">
-        Not satisfied? Email us for a full refund. No questions asked.
-      </p>
-    </div>
-  );
-}
 
 // ── Template fallback (used if AI generation fails) ──
 function buildFallbackLetter(props: {
@@ -584,61 +436,6 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
     }
   };
 
-  const isPaid = props.isPaid ?? true;
-
-  // ── Locked state (unpaid) ──
-  if (!isPaid) {
-    const previewParagraphs = [
-      'Dear Landlord,',
-      'Thank you for the lease renewal notice. I\'ve enjoyed living here and would like to continue. I\'ve done some research on current market conditions and have a few thoughts I\'d like to share.'
-    ];
-    return (
-      <div className="mt-4">
-        <div
-          className="rounded-lg border border-border border-l-[3px] border-l-muted p-6 md:p-8 relative overflow-hidden"
-          style={{ background: 'hsl(var(--letter-bg))', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
-        >
-          {/* Header row */}
-          <div className="text-xs text-muted-foreground mb-4 pb-4 border-b border-border flex items-center justify-between">
-            <div className="flex gap-4">
-              <span>To: Your landlord</span>
-              <span>Re: Lease renewal</span>
-            </div>
-            <span className="inline-flex items-center gap-1 text-[10px] bg-muted text-muted-foreground px-2 py-0.5 rounded-full font-medium">
-              <Lock size={9} /> Locked
-            </span>
-          </div>
-
-          {/* Preview paragraphs */}
-          <div className="space-y-4">
-            {previewParagraphs.map((para, i) => (
-              <p key={i} className="text-sm text-foreground/80 leading-[1.7] whitespace-pre-line">{para}</p>
-            ))}
-          </div>
-
-          {/* Gradient overlay */}
-          <div
-            className="absolute inset-x-0 bottom-0 pointer-events-none"
-            style={{
-              height: '160px',
-              background: 'linear-gradient(to bottom, transparent, hsl(var(--letter-bg) / 0.8) 40%, hsl(var(--letter-bg)))',
-            }}
-          />
-        </div>
-
-        {/* Unlock CTA below the card */}
-        <LockedLetterCTA
-          onCheckout={props.onCheckout}
-          checkoutLoading={props.checkoutLoading}
-          onPaid={props.onPaid}
-          expressCheckoutProps={props.expressCheckoutProps}
-          isAboveMarket={props.isAboveMarket}
-          savings={props.savings}
-          compsCount={props.compsCount}
-        />
-      </div>
-    );
-  }
 
   // ── Loading state ──
   if (loading) {
