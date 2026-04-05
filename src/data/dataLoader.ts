@@ -1,4 +1,5 @@
 import { BedroomType } from './rentData';
+import { getDataFreshness } from './dataFreshness';
 
 // ─── Raw JSON schema (compact keys for file size) ───
 export interface RentZipRaw {
@@ -92,6 +93,8 @@ export interface RentLookupResult {
   // Raw ZORI for composite trend engine
   zoriYoY: number | null;
   zoriGeoLevel: 'zip' | 'county' | 'metro' | null;
+  // Independent HUD bedroom-specific YoY — never uses ZORI
+  hudBrYoY: number | null;
 }
 
 // ─── Bedroom mapping ───
@@ -303,6 +306,12 @@ export async function lookupRentData(
   const fmr = raw.f[brIdx];
   const fmrPrior = raw.p[brIdx];
 
+  // Derive freshness label from data_freshness.json dates (avoid hardcoded months)
+  const freshnessCache = await getDataFreshness();
+  const zoriDateStr = freshnessCache.zillow_zori || '2026-02-28';
+  const zoriDate = new Date(zoriDateStr + 'T00:00:00');
+  const zoriMonthLabel = zoriDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+
   // YoY Priority: (1) ZIP ZORI → (2) County/Metro ZORI → (3) bedroom-specific HUD → (4) pre-computed 1BR
   let yoyChange: number;
   let yoySource: 'zillow' | 'hud';
@@ -319,7 +328,7 @@ export async function lookupRentData(
     yoySource = 'zillow';
     yoyReliability = 'market';
     const cName = raw.c || raw.m.split(',')[0] || `ZIP ${zip}`;
-    yoySourceLabel = `Based on ${cName} market data through Jan 2026`;
+    yoySourceLabel = `Based on ${cName} market data through ${zoriMonthLabel}`;
   } else if (cmZori && cmZori.zy !== undefined && cmZori.zy !== null) {
     // Priority 2: County/Metro ZORI fallback
     yoyChange = cmZori.zy;
@@ -328,8 +337,8 @@ export async function lookupRentData(
     const cName = raw.c || raw.m.split(',')[0] || `ZIP ${zip}`;
     const metroName = raw.m || `ZIP ${zip}`;
     yoySourceLabel = cmZori.src === 'county'
-      ? `Based on ${cName} county market data through Jan 2026`
-      : `Based on ${metroName} metro area data through Jan 2026`;
+      ? `Based on ${cName} county market data through ${zoriMonthLabel}`
+      : `Based on ${metroName} metro area data through ${zoriMonthLabel}`;
     // Populate Zillow fields from county/metro data
     zillowMonthlyOut = cmZori.zm ?? null;
     zillowDirectionOut = cmZori.zd ?? null;
@@ -425,9 +434,14 @@ export async function lookupRentData(
            : (cmZori && cmZori.zy !== undefined && cmZori.zy !== null) ? cmZori.zy
            : null,
     zoriGeoLevel: (raw.zy !== undefined && raw.zy !== null) ? 'zip'
-                : (cmZori && cmZori.zy !== undefined && cmZori.zy !== null)
-                  ? (cmZori.src === 'county' ? 'county' : 'metro')
-                : null,
+                 : (cmZori && cmZori.zy !== undefined && cmZori.zy !== null)
+                   ? (cmZori.src === 'county' ? 'county' : 'metro')
+                 : null,
+    // Independent HUD bedroom-specific YoY — never uses ZORI
+    hudBrYoY: (fmrPrior > 0)
+      ? Math.round(((fmr - fmrPrior) / fmrPrior) * 1000) / 10
+      : (raw.y !== undefined && raw.y !== null) ? raw.y
+      : null,
   };
 }
 

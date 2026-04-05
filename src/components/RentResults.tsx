@@ -132,8 +132,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     alYoY: rentData.alYoY,
     zoriYoY: rentData.zoriYoY,
     zoriSource: rentData.zoriGeoLevel,
-    hudYoY: rentData.yoyChange,
-  }), [rentData.alYoY, rentData.zoriYoY, rentData.zoriGeoLevel, rentData.yoyChange]);
+    hudYoY: rentData.hudBrYoY,
+  }), [rentData.alYoY, rentData.zoriYoY, rentData.zoriGeoLevel, rentData.hudBrYoY]);
 
   const marketYoy = compositeTrendResult.compositeTrend;
   

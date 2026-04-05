@@ -48,6 +48,7 @@ const baseRentData: RentLookupResult = {
   f50: [1800, 2100, 2500, 3200, 3800],
   zoriYoY: 3.2,
   zoriGeoLevel: 'zip',
+  hudBrYoY: 5.0,
 };
 
 const scenarios: Record<DemoScenario, { formData: RentFormData; rentData: RentLookupResult }> = {
@@ -164,6 +165,7 @@ const scenarios: Record<DemoScenario, { formData: RentFormData; rentData: RentLo
       f50: [700, 950, 1100, 1400, 1600],
       zoriYoY: null,
       zoriGeoLevel: null,
+      hudBrYoY: 5.6,
     },
   },
   // Premium Unit: high rent well above FMR, scoring shifts to increase-rate
