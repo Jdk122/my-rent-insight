@@ -27,7 +27,6 @@ import { trackEvent } from '@/lib/analytics';
 import { EMAIL_GATE_ENABLED } from '@/lib/featureFlags';
 import SEO from '@/components/SEO';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
-import MarketTicker from '@/components/MarketTicker';
 import { getDemoData } from '@/data/demoData';
 import { getRememberedEmail, rememberEmail } from '@/lib/emailMemory';
 import { getUtmParams } from '@/lib/utm';
@@ -494,16 +493,15 @@ const Index = () => {
       {/* Spacer for fixed nav */}
       <div className="h-[48px] sm:h-[56px]" />
 
-
       {isLoading ? (
         <LoadingAnalysis />
       ) : !results ? (
         <main className="max-w-[620px] lg:max-w-[960px] mx-auto px-5 sm:px-6 pt-6 sm:pt-14 lg:pt-[90px] pb-10 sm:pb-14 lg:pb-16">
           <div className="lg:grid lg:grid-cols-[1fr_380px] lg:gap-8 lg:items-start">
             {/* Left column: sales message */}
-            <div className="min-w-0">
+            <div>
               <h1 className="font-display text-[1.85rem] sm:text-[clamp(2rem,5vw,3rem)] lg:text-[clamp(44px,4vw,56px)] text-foreground leading-[1.08] lg:leading-[1.08] tracking-tight font-extrabold" style={{ letterSpacing: '-0.03em' }}>
-                Is your rent increase <span className="text-primary">above market?</span>
+                Is your rent increase <span className="text-primary">above&nbsp;market?</span>
               </h1>
               <p className="mt-2 sm:mt-3 lg:mt-5 text-[15px] sm:text-lg lg:text-[clamp(19px,1.7vw,24px)] text-muted-foreground lg:text-foreground/60 max-w-[700px] leading-relaxed font-normal tracking-tight lg:whitespace-nowrap">
                 Find out in 10 seconds. Free, no account needed.
@@ -531,6 +529,14 @@ const Index = () => {
                 <SampleResultCard />
               </div>
 
+              {/* Data source bar — desktop only */}
+              <div className="hidden lg:block mt-5">
+                <div className="border-t border-border/50 pt-4 pb-2 text-center">
+                  <p className="text-[13px] text-muted-foreground/80 tracking-wide whitespace-nowrap">
+                    Powered by: Live Comps · Zillow ZORI · Apartment List · HUD FMR · DHCR
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Right column: form card */}
@@ -543,10 +549,15 @@ const Index = () => {
                   <SocialProofCounter />
                 </div>
               </Suspense>
+              {/* Data source bar — mobile/tablet only */}
+              <div className="mt-4 max-w-[540px] mx-auto lg:hidden">
+                <div className="border-t border-border/40 pt-3 pb-2 px-1 text-center">
+                  <p className="text-[11px] text-muted-foreground/70 tracking-wide">
+                    Live Comps · Zillow ZORI · Apartment List · HUD Fair Market Rent · DHCR
+                  </p>
+                </div>
+              </div>
             </section>
-          </div>
-          <div className="mt-4 sm:mt-6">
-            <MarketTicker />
           </div>
         </main>
       ) : (
