@@ -1135,47 +1135,37 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           ) : (
             <>
               <h1 className="font-display text-[28px] sm:text-[32px] font-semibold text-foreground leading-tight" style={{ letterSpacing: '-0.02em' }}>
-                Good news: <span className="text-verdict-good">your rent isn't going up.</span>
+                Good news — <span className="text-verdict-good">your rent isn't going up.</span>
               </h1>
-              <p className="text-[15px] sm:text-base text-muted-foreground mt-3 max-w-[480px] leading-relaxed">
-                Here's how your current rent of <strong className="text-foreground">${fmt(formData.currentRent)}/mo</strong> compares to what similar {brLabel} apartments are going for in {city}.
+              <p className="text-[15px] text-muted-foreground mt-3">
+                Based on local market data for {city}.
               </p>
 
-              <div className="mt-6 w-full grid grid-cols-2 gap-2 sm:gap-3 max-w-[400px]">
-                <div className="text-center rounded-lg bg-secondary/50 px-3 py-2.5 sm:py-3.5">
-                  <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your Rent</p>
-                  <p className="font-display text-[22px] sm:text-[26px] tracking-tight text-foreground" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>${fmt(formData.currentRent)}</p>
-                </div>
-                <div className="text-center rounded-lg bg-secondary/50 px-3 py-2.5 sm:py-3.5">
-                  <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Area Trend</p>
-                  <p className={`font-display text-[22px] sm:text-[26px] tracking-tight ${marketYoy > 0 ? 'text-destructive' : marketYoy < 0 ? 'text-verdict-good' : 'text-foreground'}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
-                    {marketYoy > 0 ? '+' : ''}{marketYoy}%
-                  </p>
-                </div>
-              </div>
-
-              {/* CTA button for no-increase */}
-              <button
-                onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
-                className="w-full mt-4 py-3.5 rounded-lg bg-primary text-primary-foreground text-[15px] font-semibold tracking-tight hover:brightness-95 transition-all shadow-sm shadow-primary/20 max-w-[400px]"
-              >
-                See full market data ↓
-              </button>
-
-              <p className="text-[13px] text-muted-foreground/70 mt-4 max-w-[440px] leading-relaxed">
-                {marketYoy > 3
-                  ? `Rents in ${city} went up ${marketYoy}% this year. Staying flat is a win.`
-                  : marketYoy > 0
-                  ? `Rents in ${city} are up ${marketYoy}% this year. Your landlord keeping your rent flat means you're getting a better deal over time.`
-                  : `Rents in ${city} are ${marketYoy < 0 ? `down ${Math.abs(marketYoy)}%` : 'flat'} this year. Your rent is holding steady with the market.`
-                }
-              </p>
-
+              {/* ── Check a different address ── */}
               <div className="mt-4 flex flex-col items-center gap-2">
                 <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
                   ← Check a different address
                 </button>
               </div>
+
+              {/* ── Paywall for no-increase users ── */}
+              {!isPaid && (
+                <AnalysisPaywall
+                  verdict="none"
+                  compsCount={compsWithRent.length}
+                  city={city}
+                  onCheckout={handleCheckout}
+                  checkoutLoading={checkoutLoading}
+                  onPaid={onPaid}
+                  expressCheckoutProps={{
+                    analysisId,
+                    verdict: 'none',
+                    zip: rentData.zip,
+                    city: rentData.city,
+                    savings: 0,
+                  }}
+                />
+              )}
             </>
           )}
         </motion.section>
