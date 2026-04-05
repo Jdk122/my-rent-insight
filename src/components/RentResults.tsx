@@ -719,9 +719,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   const navSections = useMemo(() => {
     const sections = [{ id: 'section-verdict', label: 'Verdict' }];
-    if (!isUnlocked) {
-      sections.push({ id: 'section-gate', label: 'Report' });
-    } else {
+    if (isPaid || !hasIncrease) {
       if (hasIncrease && medianCompRent && hasEnoughComps) {
         sections.push({ id: 'section-comps', label: 'Comps' });
       }
@@ -734,7 +732,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       sections.push({ id: 'section-share', label: 'Share' });
     }
     return sections;
-  }, [isUnlocked, capturedEmail, hasIncrease, medianCompRent, hasEnoughComps, calc, hasRentControl]);
+  }, [isPaid, hasIncrease, medianCompRent, hasEnoughComps, calc, hasRentControl]);
 
   const shareReportPayload = useMemo(() => ({
     zip: rentData.zip,
