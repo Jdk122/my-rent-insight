@@ -148,7 +148,11 @@ export default function AnalysisPaywall({
           ? 'Opening checkout...'
           : walletAvailable
           ? 'Or pay with card — $1.99'
-          : 'Unlock full analysis — $1.99'}
+          : isAboveMarket
+          ? 'Get my counter-offer — $1.99'
+          : isFair
+          ? 'See my leverage — $1.99'
+          : 'See my full analysis — $1.99'}
       </button>
 
       <p className="text-[11px] text-muted-foreground/60 text-center mt-3">
