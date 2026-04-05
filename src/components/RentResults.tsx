@@ -842,7 +842,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </div>
           ) : hasIncrease && fairnessScore ? (
             <>
-              {(() => {
+              {/* ── FairnessScoreGauge — only when paid ── */}
+              {isPaid && (() => {
                 const sources: ComponentSourceInfo = {};
                 if (compositeTrendResult.sourceCount >= 2) {
                   sources.rate = `Source: ${compositeTrendResult.sources.map(s => s.label).join(', ')}`;
@@ -875,7 +876,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 }
 
                 return (
-                  <div className={!isUnlocked ? '[&_[data-score-details]]:hidden [&_[data-score-basis]]:hidden [&_[data-score-label]]:hidden' : '[&_[data-score-details]]:hidden [&_[data-score-basis]]:hidden [&_[data-score-label]]:hidden'}>
+                  <div className="[&_[data-score-details]]:hidden [&_[data-score-basis]]:hidden [&_[data-score-label]]:hidden">
                   <FairnessScoreGauge
                     topNote={isBelowFmrHighIncrease ? (
                       <div className="rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900/50 dark:bg-blue-950/20 p-3">
@@ -1032,11 +1033,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <p className="text-[15px] text-muted-foreground">Rents in {city} moved {marketYoy}% this year. Your rent staying flat means you're coming out ahead.</p>
                           )}
                         </div>
-                        {!isUnlocked && isAboveMarket && Math.abs(increasePct - marketYoy) < 2 && (
-                          <p className="text-sm text-muted-foreground mt-2">
-                            Even if your increase matches area trends, your starting rent may already be above comparable units.
-                          </p>
-                        )}
                         {isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !counterExceedsProposed && (
                           <p className="text-xs text-muted-foreground/70 mt-1">
                             Area rents moved {marketYoy}% this year.
@@ -1055,44 +1051,70 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 );
               })()}
 
-
-
-
-              {/* ── Stat dashboard strip ── */}
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                className={`mt-2 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 max-w-[540px] ${!isUnlocked ? 'order-[4] md:order-none' : ''}`}
-              >
-                {(() => {
-                  const increaseIsHighGap = increasePct > marketYoy * 2 && increasePct > 0 && marketYoy > 0;
-                  return [
-                    { label: 'Current rent', value: `$${fmt(formData.currentRent)}`, color: 'text-foreground', highlight: false },
-                    { label: 'Proposed rent', value: `$${fmt(newRent)}`, color: isAboveMarket ? 'text-destructive' : isBelowMarket ? 'text-verdict-good' : 'text-foreground', highlight: false },
-                    { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%`, color: 'text-foreground', highlight: false },
-                    { label: 'Your increase', value: `${increasePct}%`, color: verdictColor, highlight: increaseIsHighGap },
-                  ];
-                })().map((stat) => (
-                    <div
-                      key={stat.label}
-                      className={`text-center rounded-lg px-2 sm:px-3 py-2.5 sm:py-3.5 flex flex-col items-center justify-center ${stat.highlight ? 'bg-destructive/5' : 'bg-secondary/50'}`}
-                    >
-                      <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">{stat.label}</p>
-                      <p className={`font-display text-[20px] sm:text-[24px] md:text-[28px] tracking-tight tabular-nums ${stat.color}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
-                        {stat.value}
-                      </p>
-                    </div>
-                ))}
-              </motion.div>
-
-
-              {hasIncrease && !isPaid && (
-                <div className="mt-3 text-[11px] text-muted-foreground/60 text-center">
-                  <SocialProofLine />
+              {/* ── FREE verdict headline (when unpaid) ── */}
+              {!isPaid && (
+                <div className="text-center space-y-2">
+                  <h1
+                    className="font-display text-[1.35rem] sm:text-[clamp(1.5rem,4.5vw,2.2rem)] text-foreground leading-[1.15] tracking-tight text-balance"
+                    style={{ letterSpacing: '-0.02em' }}
+                  >
+                    {isAboveMarket && calc ? (
+                      <>Your rent increase is <span className="text-destructive">above market.</span></>
+                    ) : isFair ? (
+                      isNuancedAtMarket || (increasePct > marketYoy + 1.5 && medianCompRent && newRent <= medianCompRent) ? (
+                        <>Your rent is <span className="text-verdict-fair">still at market.</span></>
+                      ) : isCompDeficient ? (
+                        <>Your increase <span className="text-verdict-fair">tracks the area trend.</span></>
+                      ) : (
+                        <>Your rent increase is <span className="text-verdict-fair">right at market.</span></>
+                      )
+                    ) : increasePct > 0 ? (
+                      <>{isCompDeficient
+                        ? <>Your increase is <span className="text-verdict-fair">in line with trends.</span></>
+                        : <>Your rent increase is <span className="text-verdict-good">below market.</span></>
+                      }</>
+                    ) : (
+                      <>Good news: <span className="text-verdict-good">your rent isn't going up.</span></>
+                    )}
+                  </h1>
+                  <p className="text-[15px] text-muted-foreground">
+                    Based on {compsWithRent.length > 0 ? `${compsWithRent.length} comparable listings and ` : ''}local market data for {city}.
+                  </p>
                 </div>
               )}
-              {isPaid && isUnlocked && hasIncrease && (
+
+              {/* ── Stat dashboard strip — only when paid ── */}
+              {isPaid && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, duration: 0.5 }}
+                  className="mt-2 sm:mt-4 w-full grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 max-w-[540px]"
+                >
+                  {(() => {
+                    const increaseIsHighGap = increasePct > marketYoy * 2 && increasePct > 0 && marketYoy > 0;
+                    return [
+                      { label: 'Current rent', value: `$${fmt(formData.currentRent)}`, color: 'text-foreground', highlight: false },
+                      { label: 'Proposed rent', value: `$${fmt(newRent)}`, color: isAboveMarket ? 'text-destructive' : isBelowMarket ? 'text-verdict-good' : 'text-foreground', highlight: false },
+                      { label: 'Area trend', value: `${marketYoy > 0 ? '+' : ''}${marketYoy}%`, color: 'text-foreground', highlight: false },
+                      { label: 'Your increase', value: `${increasePct}%`, color: verdictColor, highlight: increaseIsHighGap },
+                    ];
+                  })().map((stat) => (
+                      <div
+                        key={stat.label}
+                        className={`text-center rounded-lg px-2 sm:px-3 py-2.5 sm:py-3.5 flex flex-col items-center justify-center ${stat.highlight ? 'bg-destructive/5' : 'bg-secondary/50'}`}
+                      >
+                        <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">{stat.label}</p>
+                        <p className={`font-display text-[20px] sm:text-[24px] md:text-[28px] tracking-tight tabular-nums ${stat.color}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
+                          {stat.value}
+                        </p>
+                      </div>
+                  ))}
+                </motion.div>
+              )}
+
+              {/* ── Primary CTA — only when paid ── */}
+              {isPaid && hasIncrease && (
                 <button
                   onClick={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
                   className="w-full mt-4 py-3.5 rounded-lg bg-primary text-primary-foreground text-[15px] font-semibold tracking-tight hover:brightness-95 transition-all shadow-sm shadow-primary/20"
@@ -1100,7 +1122,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   {isAboveMarket ? 'Your reply is ready. Scroll down ↓' : isBelowMarket ? 'Protect this rate ↓' : 'Your reply is ready. Scroll down ↓'}
                 </button>
               )}
-              {isPaid && isUnlocked && hasIncrease && (
+              {isPaid && hasIncrease && (
                 <p className="text-[11px] text-muted-foreground/60 mt-1.5 text-center">
                   {isAboveMarket
                     ? `Based on ${compsWithRent.length} nearby comp${compsWithRent.length !== 1 ? 's' : ''}`
@@ -1110,12 +1132,31 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </p>
               )}
 
-
-               <div className={`mt-4 flex flex-col items-center gap-2 ${!isUnlocked ? 'order-[6] md:order-none' : ''}`}>
+              {/* ── Check a different address — always free ── */}
+              <div className="mt-4 flex flex-col items-center gap-2">
                 <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
                   ← Check a different address
                 </button>
               </div>
+
+              {/* ── Analysis Paywall — when unpaid and has increase ── */}
+              {!isPaid && hasIncrease && (
+                <AnalysisPaywall
+                  verdict={isAboveMarket ? 'above' : isFair ? 'at-market' : 'below'}
+                  compsCount={compsWithRent.length}
+                  city={city}
+                  onCheckout={handleCheckout}
+                  checkoutLoading={checkoutLoading}
+                  onPaid={onPaid}
+                  expressCheckoutProps={{
+                    analysisId,
+                    verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
+                    zip: rentData.zip,
+                    city: rentData.city,
+                    savings: increaseAmount * 12,
+                  }}
+                />
+              )}
             </>
           ) : (
             <>
@@ -1126,7 +1167,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 Here's how your current rent of <strong className="text-foreground">${fmt(formData.currentRent)}/mo</strong> compares to what similar {brLabel} apartments are going for in {city}.
               </p>
 
-              <div className={`mt-6 w-full grid grid-cols-2 gap-2 sm:gap-3 max-w-[400px] ${!isUnlocked ? 'order-[4] md:order-none' : ''}`}>
+              <div className="mt-6 w-full grid grid-cols-2 gap-2 sm:gap-3 max-w-[400px]">
                 <div className="text-center rounded-lg bg-secondary/50 px-3 py-2.5 sm:py-3.5">
                   <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your Rent</p>
                   <p className="font-display text-[22px] sm:text-[26px] tracking-tight text-foreground" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>${fmt(formData.currentRent)}</p>
@@ -1140,16 +1181,14 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </div>
 
               {/* CTA button for no-increase */}
-              {isUnlocked && (
-                <button
-                  onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="w-full mt-4 py-3.5 rounded-lg bg-primary text-primary-foreground text-[15px] font-semibold tracking-tight hover:brightness-95 transition-all shadow-sm shadow-primary/20 max-w-[400px]"
-                >
-                  See full market data ↓
-                </button>
-              )}
+              <button
+                onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
+                className="w-full mt-4 py-3.5 rounded-lg bg-primary text-primary-foreground text-[15px] font-semibold tracking-tight hover:brightness-95 transition-all shadow-sm shadow-primary/20 max-w-[400px]"
+              >
+                See full market data ↓
+              </button>
 
-              <p className={`text-[13px] text-muted-foreground/70 mt-4 max-w-[440px] leading-relaxed ${!isUnlocked ? 'order-[4] md:order-none' : ''}`}>
+              <p className="text-[13px] text-muted-foreground/70 mt-4 max-w-[440px] leading-relaxed">
                 {marketYoy > 3
                   ? `Rents in ${city} went up ${marketYoy}% this year. Staying flat is a win.`
                   : marketYoy > 0
@@ -1158,8 +1197,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 }
               </p>
 
-
-              <div className={`mt-4 flex flex-col items-center gap-2 ${!isUnlocked ? 'order-[6] md:order-none' : ''}`}>
+              <div className="mt-4 flex flex-col items-center gap-2">
                 <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
                   ← Check a different address
                 </button>
