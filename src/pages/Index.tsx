@@ -365,7 +365,7 @@ const Index = () => {
                 "name": "Is RenewalReply free?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "The rent analysis is completely free, including your fairness score, market evidence, and comparable rents. Your exact counter-offer number and a personalized negotiation reply are available for $4.99."
+                  "text": "Your verdict is completely free. The detailed analysis with comparable rents, counter-offer range, and negotiation letter is $1.99."
                 }
               },
               {
