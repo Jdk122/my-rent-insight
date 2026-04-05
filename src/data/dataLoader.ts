@@ -92,6 +92,8 @@ export interface RentLookupResult {
   // Raw ZORI for composite trend engine
   zoriYoY: number | null;
   zoriGeoLevel: 'zip' | 'county' | 'metro' | null;
+  // Independent HUD bedroom-specific YoY — never uses ZORI
+  hudBrYoY: number | null;
 }
 
 // ─── Bedroom mapping ───
