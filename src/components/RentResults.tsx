@@ -761,7 +761,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   return (
     <>
-      {isUnlocked && <SectionNav sections={navSections} />}
+      {isPaid && <SectionNav sections={navSections} />}
 
       {/* Exit Intent Modal — paywall pitch / share / email capture */}
       <ExitIntentModal
@@ -789,21 +789,20 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         } : undefined}
       />
 
-      {/* Mobile Scroll Prompt (mobile only) — re-engagement */}
-      <MobileScrollPrompt
-        capturedEmail={capturedEmail}
-        leadContext={leadContext}
-        verdictLabel={verdictLabel}
-        zip={rentData.zip}
-        city={city}
-        onEmailCaptured={setCapturedEmail}
-        toolType="renewal"
-        shareReportPayload={shareReportPayload}
-        onReportGenerated={(url) => { setReportUrl(url); }}
-      />
-
-      {/* Sticky paywall bar (mobile only) — nudge to scroll to paywall */}
-      <StickyPaywallBar isAboveMarket={isAboveMarket} isPaid={isPaid} />
+      {/* Mobile Scroll Prompt (mobile only) — only when paid */}
+      {isPaid && (
+        <MobileScrollPrompt
+          capturedEmail={capturedEmail}
+          leadContext={leadContext}
+          verdictLabel={verdictLabel}
+          zip={rentData.zip}
+          city={city}
+          onEmailCaptured={setCapturedEmail}
+          toolType="renewal"
+          shareReportPayload={shareReportPayload}
+          onReportGenerated={(url) => { setReportUrl(url); }}
+        />
+      )}
 
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            PHASE 1: FREE CREDIBILITY LAYER
