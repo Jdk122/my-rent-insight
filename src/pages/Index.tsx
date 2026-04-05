@@ -122,13 +122,8 @@ const Index = () => {
                 zip: savedState.formData.zip,
                 verdict: savedState.verdict,
               }).then(() => {});
-            });
-            notifySubmission({
-              email: savedState.capturedEmail || null,
-              zip: savedState.formData.zip || null,
-              verdict_label: savedState.verdict || null,
-              purchase: true,
-          }, 'purchase_stripe_redirect');
+          }
+          
 
           // Scroll to letter after short delay
           setTimeout(() => {
