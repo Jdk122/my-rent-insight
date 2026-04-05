@@ -1112,7 +1112,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   verdict={isAboveMarket ? 'above' : isFair ? 'at-market' : isBelowMarket ? 'below' : 'none'}
                   compsCount={compsWithRent.length}
                   city={city}
-                  annualSavings={increaseAmount * 12}
+                  annualSavings={excessAnnual}
                   currentRent={formData.currentRent}
                   onCheckout={handleCheckout}
                   checkoutLoading={checkoutLoading}
@@ -1122,7 +1122,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : isBelowMarket ? 'below' : 'none',
                     zip: rentData.zip,
                     city: rentData.city,
-                    savings: increaseAmount * 12,
+                    savings: excessAnnual,
                   }}
                 />
               )}

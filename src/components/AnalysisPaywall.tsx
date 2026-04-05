@@ -77,7 +77,7 @@ export default function AnalysisPaywall({
 
   /* ── Dream outcome (biggest element) ── */
   const dreamHeadline = isAboveMarket && annualSavings && annualSavings > 0
-    ? `Save $${fmt(annualSavings)} on your rent.`
+    ? `Save $${fmt(annualSavings)}/yr on your rent.`
     : isFair && currentRent
     ? `Your landlord would pay $${fmt(Math.round(currentRent * 3))} to replace you.`
     : isBelowMarket && annualSavings && annualSavings < 0
