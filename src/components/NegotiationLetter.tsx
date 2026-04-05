@@ -51,20 +51,6 @@ interface NegotiationLetterProps {
   belowFmrHighIncrease?: boolean;
   onLetterGenerated?: () => void;
   comparables?: CompForLetter[];
-  isPaid?: boolean;
-  onCheckout?: () => void;
-  checkoutLoading?: boolean;
-  onPaid?: (email?: string) => void;
-  expressCheckoutProps?: {
-    analysisId?: string | null;
-    verdict: string;
-    zip: string;
-    city: string;
-    savings: number;
-  };
-  isAboveMarket?: boolean;
-  savings?: number;
-  compsCount?: number;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
