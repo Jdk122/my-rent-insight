@@ -533,14 +533,6 @@ const Index = () => {
                 <SampleResultCard />
               </div>
 
-              {/* Data source bar — desktop only */}
-              <div className="hidden lg:block mt-5">
-                <div className="border-t border-border/50 pt-4 pb-2 text-center">
-                  <p className="text-[13px] text-muted-foreground/80 tracking-wide whitespace-nowrap">
-                    Powered by: Live Comps · Zillow ZORI · Apartment List · HUD FMR · DHCR
-                  </p>
-                </div>
-              </div>
             </div>
 
             {/* Right column: form card */}
@@ -553,14 +545,8 @@ const Index = () => {
                   <SocialProofCounter />
                 </div>
               </Suspense>
-              {/* Data source bar — mobile/tablet only */}
-              <div className="mt-4 max-w-[540px] mx-auto lg:hidden">
-                <div className="border-t border-border/40 pt-3 pb-2 px-1 text-center">
-                  <p className="text-[11px] text-muted-foreground/70 tracking-wide">
-                    Live Comps · Zillow ZORI · Apartment List · HUD Fair Market Rent · DHCR
-                  </p>
-                </div>
-              </div>
+              {/* Market data ticker — replaces old trust bar */}
+              <MarketTicker />
             </section>
           </div>
         </main>
