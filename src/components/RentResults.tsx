@@ -1529,7 +1529,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             )}
 
             {/* ━━━ Universal rent reporting CTA — after letter ━━━ */}
-            {(isPaid || !hasIncrease) && (
+            {isPaid && (
               <section className="py-3 sm:py-4">
                 <PartnerCTA
                   variant="rent_reporting"
