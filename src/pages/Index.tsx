@@ -498,7 +498,7 @@ const Index = () => {
       {isLoading ? (
         <LoadingAnalysis />
       ) : !results ? (
-        <main className="max-w-[620px] lg:max-w-[960px] mx-auto px-5 sm:px-6 pt-6 sm:pt-14 lg:pt-[90px] pb-10 sm:pb-14 lg:pb-16">
+        <main className="max-w-[620px] lg:max-w-[960px] mx-auto px-5 sm:px-6 pt-6 sm:pt-14 lg:pt-[90px] pb-10 sm:pb-14 lg:pb-16 overflow-hidden">
           <div className="lg:grid lg:grid-cols-[1fr_380px] lg:gap-8 lg:items-start">
             {/* Left column: sales message */}
             <div>
