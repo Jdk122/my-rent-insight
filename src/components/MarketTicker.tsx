@@ -47,7 +47,7 @@ const MarketTicker = () => {
   useEffect(() => {
     if (contentRef.current) {
       const width = contentRef.current.scrollWidth / 2; // we rendered twice
-      setDuration(width / 120);
+      setDuration(width / 200);
     }
   }, []);
 
