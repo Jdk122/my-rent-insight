@@ -1173,11 +1173,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       </div>
 
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           PHASE 3: PAID CONTENT (or no-increase users)
+           PHASE 3: PAID CONTENT
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <div className="w-full bg-card">
         <div className="max-w-[620px] mx-auto px-5 sm:px-6">
-        {(isPaid || !hasIncrease) && (
+        {isPaid && (
           <>
 
             {/* ━━━ EVIDENCE SECTION ━━━ */}
