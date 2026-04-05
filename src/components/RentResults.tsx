@@ -1124,7 +1124,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   onPaid={onPaid}
                   expressCheckoutProps={{
                     analysisId,
-                    verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
+                    verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : isBelowMarket ? 'below' : 'none',
                     zip: rentData.zip,
                     city: rentData.city,
                     savings: increaseAmount * 12,
