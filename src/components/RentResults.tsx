@@ -719,7 +719,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   const navSections = useMemo(() => {
     const sections = [{ id: 'section-verdict', label: 'Verdict' }];
-    if (isPaid || !hasIncrease) {
+    if (isPaid) {
       if (hasIncrease && medianCompRent && hasEnoughComps) {
         sections.push({ id: 'section-comps', label: 'Comps' });
       }
@@ -778,13 +778,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         checkoutLoading={checkoutLoading}
         savings={increaseAmount * 12}
         analysisId={analysisId}
-        expressCheckoutProps={hasIncrease ? {
+        expressCheckoutProps={{
           analysisId,
-          verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
+          verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : isBelowMarket ? 'below' : 'none',
           zip: rentData.zip,
           city: rentData.city,
           savings: increaseAmount * 12,
-        } : undefined}
+        }}
       />
 
       {/* Mobile Scroll Prompt (mobile only) — only when paid */}
@@ -840,8 +840,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </div>
           ) : hasIncrease && fairnessScore ? (
             <>
-              {/* ── FairnessScoreGauge — only when paid ── */}
-              {isPaid && (() => {
+              {/* ── FairnessScoreGauge — visible for all users ── */}
+              {(() => {
                 const sources: ComponentSourceInfo = {};
                 if (compositeTrendResult.sourceCount >= 2) {
                   sources.rate = `Source: ${compositeTrendResult.sources.map(s => s.label).join(', ')}`;
@@ -981,6 +981,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <>Good news: <span className="text-verdict-good">your rent isn't going up.</span></>
                           )}
                         </h1>
+                        {isPaid ? (
                         <div className="text-center">
                           {isAboveMarket && calc ? (
                             counterExceedsProposed ? (
@@ -1031,7 +1032,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <p className="text-[15px] text-muted-foreground">Rents in {city} moved {marketYoy}% this year. Your rent staying flat means you're coming out ahead.</p>
                           )}
                         </div>
-                        {isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !counterExceedsProposed && (
+                        ) : (
+                          <p className="text-[15px] text-muted-foreground">
+                            Based on {compsWithRent.length > 0 ? `${compsWithRent.length} comparable listings and ` : ''}local market data for {city}.
+                          </p>
+                        )}
+                        {isPaid && isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !counterExceedsProposed && (
                           <p className="text-xs text-muted-foreground/70 mt-1">
                             Area rents moved {marketYoy}% this year.
                           </p>
@@ -1049,37 +1055,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 );
               })()}
 
-              {/* ── FREE verdict headline (when unpaid) ── */}
-              {!isPaid && (
-                <div className="text-center space-y-2">
-                  <h1
-                    className="font-display text-[1.35rem] sm:text-[clamp(1.5rem,4.5vw,2.2rem)] text-foreground leading-[1.15] tracking-tight text-balance"
-                    style={{ letterSpacing: '-0.02em' }}
-                  >
-                    {isAboveMarket && calc ? (
-                      <>Your rent increase is <span className="text-destructive">above market.</span></>
-                    ) : isFair ? (
-                      isNuancedAtMarket || (increasePct > marketYoy + 1.5 && medianCompRent && newRent <= medianCompRent) ? (
-                        <>Your rent is <span className="text-verdict-fair">still at market.</span></>
-                      ) : isCompDeficient ? (
-                        <>Your increase <span className="text-verdict-fair">tracks the area trend.</span></>
-                      ) : (
-                        <>Your rent increase is <span className="text-verdict-fair">right at market.</span></>
-                      )
-                    ) : increasePct > 0 ? (
-                      <>{isCompDeficient
-                        ? <>Your increase is <span className="text-verdict-fair">in line with trends.</span></>
-                        : <>Your rent increase is <span className="text-verdict-good">below market.</span></>
-                      }</>
-                    ) : (
-                      <>Good news: <span className="text-verdict-good">your rent isn't going up.</span></>
-                    )}
-                  </h1>
-                  <p className="text-[15px] text-muted-foreground">
-                    Based on {compsWithRent.length > 0 ? `${compsWithRent.length} comparable listings and ` : ''}local market data for {city}.
-                  </p>
-                </div>
-              )}
+              {/* unpaid headline block removed — gauge dynamicMessage handles it */}
 
               {/* ── Stat dashboard strip — only when paid ── */}
               {isPaid && (
@@ -1138,9 +1114,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </div>
 
               {/* ── Analysis Paywall — when unpaid and has increase ── */}
-              {!isPaid && hasIncrease && (
+              {!isPaid && (
                 <AnalysisPaywall
-                  verdict={isAboveMarket ? 'above' : isFair ? 'at-market' : 'below'}
+                  verdict={isAboveMarket ? 'above' : isFair ? 'at-market' : isBelowMarket ? 'below' : 'none'}
                   compsCount={compsWithRent.length}
                   city={city}
                   onCheckout={handleCheckout}
@@ -1148,7 +1124,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   onPaid={onPaid}
                   expressCheckoutProps={{
                     analysisId,
-                    verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
+                    verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : isBelowMarket ? 'below' : 'none',
                     zip: rentData.zip,
                     city: rentData.city,
                     savings: increaseAmount * 12,
@@ -1159,47 +1135,37 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           ) : (
             <>
               <h1 className="font-display text-[28px] sm:text-[32px] font-semibold text-foreground leading-tight" style={{ letterSpacing: '-0.02em' }}>
-                Good news: <span className="text-verdict-good">your rent isn't going up.</span>
+                Good news — <span className="text-verdict-good">your rent isn't going up.</span>
               </h1>
-              <p className="text-[15px] sm:text-base text-muted-foreground mt-3 max-w-[480px] leading-relaxed">
-                Here's how your current rent of <strong className="text-foreground">${fmt(formData.currentRent)}/mo</strong> compares to what similar {brLabel} apartments are going for in {city}.
+              <p className="text-[15px] text-muted-foreground mt-3">
+                Based on local market data for {city}.
               </p>
 
-              <div className="mt-6 w-full grid grid-cols-2 gap-2 sm:gap-3 max-w-[400px]">
-                <div className="text-center rounded-lg bg-secondary/50 px-3 py-2.5 sm:py-3.5">
-                  <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Your Rent</p>
-                  <p className="font-display text-[22px] sm:text-[26px] tracking-tight text-foreground" style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>${fmt(formData.currentRent)}</p>
-                </div>
-                <div className="text-center rounded-lg bg-secondary/50 px-3 py-2.5 sm:py-3.5">
-                  <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Area Trend</p>
-                  <p className={`font-display text-[22px] sm:text-[26px] tracking-tight ${marketYoy > 0 ? 'text-destructive' : marketYoy < 0 ? 'text-verdict-good' : 'text-foreground'}`} style={{ letterSpacing: '-0.02em', lineHeight: 1 }}>
-                    {marketYoy > 0 ? '+' : ''}{marketYoy}%
-                  </p>
-                </div>
-              </div>
-
-              {/* CTA button for no-increase */}
-              <button
-                onClick={() => document.getElementById('section-evidence')?.scrollIntoView({ behavior: 'smooth' })}
-                className="w-full mt-4 py-3.5 rounded-lg bg-primary text-primary-foreground text-[15px] font-semibold tracking-tight hover:brightness-95 transition-all shadow-sm shadow-primary/20 max-w-[400px]"
-              >
-                See full market data ↓
-              </button>
-
-              <p className="text-[13px] text-muted-foreground/70 mt-4 max-w-[440px] leading-relaxed">
-                {marketYoy > 3
-                  ? `Rents in ${city} went up ${marketYoy}% this year. Staying flat is a win.`
-                  : marketYoy > 0
-                  ? `Rents in ${city} are up ${marketYoy}% this year. Your landlord keeping your rent flat means you're getting a better deal over time.`
-                  : `Rents in ${city} are ${marketYoy < 0 ? `down ${Math.abs(marketYoy)}%` : 'flat'} this year. Your rent is holding steady with the market.`
-                }
-              </p>
-
+              {/* ── Check a different address ── */}
               <div className="mt-4 flex flex-col items-center gap-2">
                 <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
                   ← Check a different address
                 </button>
               </div>
+
+              {/* ── Paywall for no-increase users ── */}
+              {!isPaid && (
+                <AnalysisPaywall
+                  verdict="none"
+                  compsCount={compsWithRent.length}
+                  city={city}
+                  onCheckout={handleCheckout}
+                  checkoutLoading={checkoutLoading}
+                  onPaid={onPaid}
+                  expressCheckoutProps={{
+                    analysisId,
+                    verdict: 'none',
+                    zip: rentData.zip,
+                    city: rentData.city,
+                    savings: 0,
+                  }}
+                />
+              )}
             </>
           )}
         </motion.section>
@@ -1207,11 +1173,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       </div>
 
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           PHASE 3: PAID CONTENT (or no-increase users)
+           PHASE 3: PAID CONTENT
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <div className="w-full bg-card">
         <div className="max-w-[620px] mx-auto px-5 sm:px-6">
-        {(isPaid || !hasIncrease) && (
+        {isPaid && (
           <>
 
             {/* ━━━ EVIDENCE SECTION ━━━ */}
@@ -1563,7 +1529,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             )}
 
             {/* ━━━ Universal rent reporting CTA — after letter ━━━ */}
-            {(isPaid || !hasIncrease) && (
+            {isPaid && (
               <section className="py-3 sm:py-4">
                 <PartnerCTA
                   variant="rent_reporting"
@@ -1647,7 +1613,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
 
             {/* ━━━ Lease reminder — universal, utility-first ━━━ */}
-            {(isPaid || !hasIncrease) && (
+            {isPaid && (
               <section className="pb-4 pt-2">
                 {capturedEmail ? (
                   <PostConversionFlow

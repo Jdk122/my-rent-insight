@@ -3,7 +3,7 @@ import StripeExpressCheckout from './StripeExpressCheckout';
 import { trackEvent } from '@/lib/analytics';
 
 interface AnalysisPaywallProps {
-  verdict: 'above' | 'at-market' | 'below';
+  verdict: 'above' | 'at-market' | 'below' | 'none';
   compsCount: number;
   city: string;
   onCheckout: () => void;
@@ -66,8 +66,11 @@ export default function AnalysisPaywall({
 
   const isAboveMarket = verdict === 'above';
   const isBelowMarket = verdict === 'below';
+  const isNoIncrease = verdict === 'none';
 
-  const headline = isAboveMarket
+  const headline = isNoIncrease
+    ? `See how your rent compares to ${compsCount} nearby listings and current market trends.`
+    : isAboveMarket
     ? `Your detailed analysis is ready. See your counter-offer number, ${compsCount} nearby comps, and what it costs your landlord to replace you.`
     : isBelowMarket
     ? 'See exactly how good your deal is.'
