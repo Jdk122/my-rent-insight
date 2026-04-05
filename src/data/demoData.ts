@@ -48,6 +48,7 @@ const baseRentData: RentLookupResult = {
   f50: [1800, 2100, 2500, 3200, 3800],
   zoriYoY: 3.2,
   zoriGeoLevel: 'zip',
+  hudBrYoY: 5.0,
 };
 
 const scenarios: Record<DemoScenario, { formData: RentFormData; rentData: RentLookupResult }> = {
