@@ -71,18 +71,26 @@ export default function AnalysisPaywall({
   const headline = isAboveMarket
     ? 'Get the exact number to counter with.'
     : isFair
-    ? 'See the evidence. Know for sure.'
+    ? 'Your landlord would pay thousands to replace you.'
     : isBelowMarket
-    ? "See how much you're saving."
-    : 'See how your rent compares.';
+    ? 'See exactly how good your deal is.'
+    : 'See how your rent stacks up.';
 
-  const subtext = isAboveMarket
-    ? `Counter-offer · ${compsCount} comps · Negotiation letter`
+  const stackLine1 = isAboveMarket
+    ? `Full market analysis · Counter-offer range · ${compsCount} nearby comps`
     : isFair
-    ? `Market proof · ${compsCount} comps · Negotiation letter`
+    ? `Full market analysis · ${compsCount} nearby comps · Landlord cost breakdown`
     : isBelowMarket
-    ? `Full breakdown · ${compsCount} comps · Market comparison`
-    : `Market data · ${compsCount} comps · Neighborhood trends`;
+    ? `Full market analysis · ${compsCount} nearby comps · Market comparison`
+    : `Full market analysis · ${compsCount} nearby comps · Neighborhood trends`;
+
+  const stackLine2 = isAboveMarket
+    ? 'Landlord replacement cost · Ready-to-send negotiation letter'
+    : isFair
+    ? 'Leverage points · Ready-to-send negotiation letter'
+    : isBelowMarket
+    ? 'Rate-lock strategy · Ready-to-send lease extension letter'
+    : 'Market position · Personalized rent report';
 
   const anchor = isAboveMarket || isFair
     ? 'Lawyers charge $225+/hr for lease help. This is $1.99.'
@@ -94,15 +102,15 @@ export default function AnalysisPaywall({
         {headline}
       </p>
 
-      <p className="text-[13px] text-muted-foreground mt-1.5 mb-4">
-        {subtext}
-      </p>
+      <div className="text-[13px] text-muted-foreground mt-1.5 mb-1 space-y-0.5">
+        <p>{stackLine1}</p>
+        <p>{stackLine2}</p>
+      </div>
 
       <p className="text-[12px] text-muted-foreground/70 mb-5">
         {anchor}
       </p>
 
-      {/* Express Checkout wallet buttons */}
       {walletAvailable !== false && (
         <div className="w-full max-w-[320px] mx-auto mb-3">
           <StripeExpressCheckout
@@ -119,7 +127,6 @@ export default function AnalysisPaywall({
         </div>
       )}
 
-      {/* Card payment fallback */}
       <button
         onClick={() => {
           trackEvent('checkout_started', {
