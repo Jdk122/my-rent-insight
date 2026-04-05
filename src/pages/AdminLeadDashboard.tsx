@@ -744,11 +744,14 @@ function DashboardContent() {
                       <td className="px-2 py-2">{r.increase_pct != null ? `${Number(r.increase_pct).toFixed(1)}%` : '—'}</td>
                       <td className="px-2 py-2">{r.fairness_score ?? '—'}</td>
                       <td className="px-2 py-2">
-                        {r.verdict_label ? (
-                          <span className={`inline-block px-1.5 py-0.5 rounded text-[11px] font-medium border ${verdictColor(r.verdict_label)}`}>
-                            {r.verdict_label}
-                          </span>
-                        ) : '—'}
+                        <span className="flex items-center gap-1">
+                          {r.purchased && <span title="Purchased — $1.99">💰</span>}
+                          {r.verdict_label ? (
+                            <span className={`inline-block px-1.5 py-0.5 rounded text-[11px] font-medium border ${verdictColor(r.verdict_label)}`}>
+                              {r.verdict_label}
+                            </span>
+                          ) : '—'}
+                        </span>
                       </td>
                       <td className="px-2 py-2 whitespace-nowrap">{r.dollar_overpayment != null ? fmt(r.dollar_overpayment) : '—'}</td>
                       <td className="px-2 py-2 text-center">{r.letter_generated ? <Check className="w-3.5 h-3.5 text-emerald-600 inline" /> : <X className="w-3.5 h-3.5 text-muted-foreground/40 inline" />}</td>
