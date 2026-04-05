@@ -1055,37 +1055,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 );
               })()}
 
-              {/* ── FREE verdict headline (when unpaid) ── */}
-              {!isPaid && (
-                <div className="text-center space-y-2">
-                  <h1
-                    className="font-display text-[1.35rem] sm:text-[clamp(1.5rem,4.5vw,2.2rem)] text-foreground leading-[1.15] tracking-tight text-balance"
-                    style={{ letterSpacing: '-0.02em' }}
-                  >
-                    {isAboveMarket && calc ? (
-                      <>Your rent increase is <span className="text-destructive">above market.</span></>
-                    ) : isFair ? (
-                      isNuancedAtMarket || (increasePct > marketYoy + 1.5 && medianCompRent && newRent <= medianCompRent) ? (
-                        <>Your rent is <span className="text-verdict-fair">still at market.</span></>
-                      ) : isCompDeficient ? (
-                        <>Your increase <span className="text-verdict-fair">tracks the area trend.</span></>
-                      ) : (
-                        <>Your rent increase is <span className="text-verdict-fair">right at market.</span></>
-                      )
-                    ) : increasePct > 0 ? (
-                      <>{isCompDeficient
-                        ? <>Your increase is <span className="text-verdict-fair">in line with trends.</span></>
-                        : <>Your rent increase is <span className="text-verdict-good">below market.</span></>
-                      }</>
-                    ) : (
-                      <>Good news: <span className="text-verdict-good">your rent isn't going up.</span></>
-                    )}
-                  </h1>
-                  <p className="text-[15px] text-muted-foreground">
-                    Based on {compsWithRent.length > 0 ? `${compsWithRent.length} comparable listings and ` : ''}local market data for {city}.
-                  </p>
-                </div>
-              )}
+              {/* unpaid headline block removed — gauge dynamicMessage handles it */}
 
               {/* ── Stat dashboard strip — only when paid ── */}
               {isPaid && (
