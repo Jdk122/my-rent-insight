@@ -778,13 +778,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         checkoutLoading={checkoutLoading}
         savings={increaseAmount * 12}
         analysisId={analysisId}
-        expressCheckoutProps={hasIncrease ? {
+        expressCheckoutProps={{
           analysisId,
-          verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
+          verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : isBelowMarket ? 'below' : 'none',
           zip: rentData.zip,
           city: rentData.city,
           savings: increaseAmount * 12,
-        } : undefined}
+        }}
       />
 
       {/* Mobile Scroll Prompt (mobile only) — only when paid */}
