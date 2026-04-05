@@ -981,6 +981,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <>Good news: <span className="text-verdict-good">your rent isn't going up.</span></>
                           )}
                         </h1>
+                        {isPaid ? (
                         <div className="text-center">
                           {isAboveMarket && calc ? (
                             counterExceedsProposed ? (
@@ -1031,6 +1032,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <p className="text-[15px] text-muted-foreground">Rents in {city} moved {marketYoy}% this year. Your rent staying flat means you're coming out ahead.</p>
                           )}
                         </div>
+                        ) : (
+                          <p className="text-[15px] text-muted-foreground">
+                            Based on {compsWithRent.length > 0 ? `${compsWithRent.length} comparable listings and ` : ''}local market data for {city}.
+                          </p>
+                        )}
                         {isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !counterExceedsProposed && (
                           <p className="text-xs text-muted-foreground/70 mt-1">
                             Area rents moved {marketYoy}% this year.
