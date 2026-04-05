@@ -1479,40 +1479,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             {/* ━━━ NEGOTIATION LETTER ━━━ */}
             {hasIncrease && calc && (isAboveMarket || isFair || isBelowMarket) && (
               <motion.section id="section-letter" {...fade(0.19)} className="pt-5 pb-4 sm:pt-8 sm:pb-8">
-                {hasIncrease && !isPaid && (
-                  <h2 className="results-section-header mb-2">
-                    {isAboveMarket && counterOffer && !counterExceedsProposed
-                      ? 'Your Counter-Offer & Reply'
-                      : 'Your Negotiation Reply'}
-                  </h2>
-                )}
-                {isAboveMarket && !isPaid && (
-                  <div className="rounded-lg border border-border/50 border-l-[3px] border-l-primary/40 bg-secondary/30 p-4 mb-4">
-                    <p className="text-[13px] font-semibold text-foreground mb-2">What your analysis found</p>
-                    <div className="space-y-1.5 text-[12px] text-muted-foreground">
-                      {compsWithRent.length > 0 && (
-                        <p className="flex items-start gap-2">
-                          <span className="text-primary mt-0.5">✓</span>
-                          <span>{compsWithRent.length} comparable rents nearby</span>
-                        </p>
-                      )}
-                      {marketYoy !== null && (
-                        <p className="flex items-start gap-2">
-                          <span className="text-primary mt-0.5">✓</span>
-                          <span>Market moved {marketYoy >= 0 ? '+' : ''}{marketYoy.toFixed(1)}%, yours is +{increasePct.toFixed(1)}%</span>
-                        </p>
-                      )}
-                      {excessAnnual > 0 && (
-                        <p className="flex items-start gap-2">
-                          <span className="text-primary mt-0.5">✓</span>
-                          <span>Your landlord's ask is well above local trends</span>
-                        </p>
-                      )}
-                    </div>
-                    <p className="text-[11px] text-muted-foreground/70 mt-3 italic">One step left: the right number and the right words to deliver it.</p>
-                  </div>
-                )}
-                {isFair && !isAboveMarket && !isBelowMarket && isPaid && (
+                {isFair && !isAboveMarket && !isBelowMarket && (
                   <p className="text-sm text-muted-foreground mb-4 text-center max-w-[480px] mx-auto">
                     Even a fair increase is worth negotiating. Landlords expect it, and avoiding turnover is worth more to them than $50-100/month.
                   </p>
@@ -1564,20 +1531,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   onLetterGenerated={handleLetterGenerated}
                   comparables={rentcast.data?.comparables}
                   belowFmrHighIncrease={isBelowFmrHighIncrease}
-                  isPaid={isPaid}
-                  onCheckout={handleCheckout}
-                  checkoutLoading={checkoutLoading}
-                  onPaid={onPaid}
-                  expressCheckoutProps={{
-                    analysisId,
-                    verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : 'below',
-                    zip: rentData.zip,
-                    city: rentData.city,
-                    savings: increaseAmount * 12,
-                  }}
-                  isAboveMarket={isAboveMarket}
-                  savings={increaseAmount * 12}
-                  compsCount={compsWithRent.length}
                 />
               </motion.section>
             )}
