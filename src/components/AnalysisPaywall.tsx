@@ -135,6 +135,8 @@ export default function AnalysisPaywall({
       <div className="text-[12px] text-muted-foreground/70 mt-4 space-y-0.5 text-center">
         <p>{stackLine1}</p>
         <p>{stackLine2}</p>
+        {isAboveMarket && <p>Cheaper apartments nearby</p>}
+        {isFair && <p>Nearby listings comparison</p>}
       </div>
 
       {/* Social proof */}
