@@ -47,7 +47,7 @@ const MarketTicker = () => {
   useEffect(() => {
     if (contentRef.current) {
       const width = contentRef.current.scrollWidth / 2; // we rendered twice
-      setDuration(width / 30);
+      setDuration(width / 60);
     }
   }, []);
 
@@ -64,14 +64,6 @@ const MarketTicker = () => {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* Left label — sm+ only */}
-      <div className="hidden sm:flex items-center gap-1.5 absolute left-0 top-0 bottom-0 z-10 pl-4 pr-6 bg-gradient-to-r from-muted/30 via-muted/30 to-transparent">
-        <span className="w-[6px] h-[6px] rounded-full bg-green-500 animate-[pulse-dot_2s_ease-in-out_infinite] shrink-0" />
-        <span className="text-[10px] text-muted-foreground tracking-widest font-medium uppercase whitespace-nowrap">
-          Market snapshot
-        </span>
-      </div>
-
       {/* Scrolling track */}
       <div
         ref={contentRef}
