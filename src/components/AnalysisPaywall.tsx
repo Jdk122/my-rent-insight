@@ -3,7 +3,7 @@ import StripeExpressCheckout from './StripeExpressCheckout';
 import { trackEvent } from '@/lib/analytics';
 
 interface AnalysisPaywallProps {
-  verdict: 'above' | 'at-market' | 'below';
+  verdict: 'above' | 'at-market' | 'below' | 'none';
   compsCount: number;
   city: string;
   onCheckout: () => void;
