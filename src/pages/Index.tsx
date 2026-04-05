@@ -27,6 +27,7 @@ import { trackEvent } from '@/lib/analytics';
 import { EMAIL_GATE_ENABLED } from '@/lib/featureFlags';
 import SEO from '@/components/SEO';
 import LoadingAnalysis from '@/components/LoadingAnalysis';
+import MarketTicker from '@/components/MarketTicker';
 import { getDemoData } from '@/data/demoData';
 import { getRememberedEmail, rememberEmail } from '@/lib/emailMemory';
 import { getUtmParams } from '@/lib/utm';
