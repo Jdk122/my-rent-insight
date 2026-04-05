@@ -68,7 +68,7 @@ const Index = () => {
       if (raw) {
         const savedState = JSON.parse(raw);
         const age = Date.now() - (savedState.timestamp || 0);
-        if (age < 3600000) { // 1 hour
+        if (age < 3600000) {
           setResults({ formData: savedState.formData, rentData: savedState.rentData });
           if (savedState.capturedEmail) setCapturedEmailRaw(savedState.capturedEmail);
 
@@ -79,28 +79,52 @@ const Index = () => {
           });
           setIsPaid(true);
 
-          // Clean URL
           window.history.replaceState({}, '', window.location.pathname);
           localStorage.removeItem('rr_checkout_state');
 
-          // GA4 + Supabase events using restored values
           trackEvent('purchase_completed', { verdict: savedState.verdict, zip: savedState.formData.zip });
-          import('@/integrations/supabase/client').then(({ supabase }) => {
+
+          // Retrieve Stripe session email and upsert into leads
+          if (sessionId) {
+            supabase.functions.invoke('retrieve-checkout-session', {
+              body: { sessionId },
+            }).then(({ data }) => {
+              if (data?.email) {
+                const stripeEmail = data.email;
+                if (!savedState.capturedEmail) {
+                  setCapturedEmailRaw(stripeEmail);
+                  import('@/lib/emailMemory').then(({ rememberEmail }) => rememberEmail(stripeEmail));
+                }
+                supabase.from('lead_events' as any).insert({
+                  event_type: 'purchase_completed',
+                  email: stripeEmail,
+                  zip: savedState.formData.zip,
+                  verdict: savedState.verdict,
+                }).then(() => {});
+                notifySubmission({
+                  email: stripeEmail,
+                  zip: savedState.formData.zip || null,
+                  verdict_label: savedState.verdict || null,
+                  purchase: true,
+                }, 'purchase_stripe_redirect');
+              }
+            }).catch(() => {});
+          } else {
+            // No session_id — use whatever email we have
             supabase.from('lead_events' as any).insert({
               event_type: 'purchase_completed',
               email: savedState.capturedEmail || 'anonymous@checkout',
               zip: savedState.formData.zip,
               verdict: savedState.verdict,
             }).then(() => {});
-          });
-          notifySubmission({
-            email: savedState.capturedEmail || null,
-            zip: savedState.formData.zip || null,
-            verdict_label: savedState.verdict || null,
-            purchase: true,
-          }, 'purchase_stripe_redirect');
+            notifySubmission({
+              email: savedState.capturedEmail || null,
+              zip: savedState.formData.zip || null,
+              verdict_label: savedState.verdict || null,
+              purchase: true,
+            }, 'purchase_stripe_redirect');
+          }
 
-          // Scroll to letter after short delay
           setTimeout(() => {
             document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' });
           }, 500);
@@ -109,7 +133,6 @@ const Index = () => {
       }
     } catch { /* ignore parse errors */ }
 
-    // Fallback: no valid state
     window.history.replaceState({}, '', window.location.pathname);
     setPaidFallbackMsg('Payment received! Run your analysis again and your letter will unlock automatically.');
   }, []);
