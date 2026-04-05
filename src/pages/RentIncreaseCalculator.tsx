@@ -75,7 +75,7 @@ const RentIncreaseCalculator = () => {
                   purchase: true,
                 }, 'purchase_stripe_redirect');
               }
-            }).catch(() => {});
+            }).catch((err) => console.error('[retrieve-checkout-session] failed:', err));
           } else {
             supabase.from('lead_events' as any).insert({
               event_type: 'purchase_completed',

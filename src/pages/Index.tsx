@@ -108,7 +108,7 @@ const Index = () => {
                   purchase: true,
                 }, 'purchase_stripe_redirect');
               }
-            }).catch(() => {});
+            }).catch((err) => console.error('[retrieve-checkout-session] failed:', err));
           } else {
             // No session_id — use whatever email we have
             supabase.from('lead_events' as any).insert({
