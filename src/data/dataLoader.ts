@@ -305,6 +305,12 @@ export async function lookupRentData(
   const fmr = raw.f[brIdx];
   const fmrPrior = raw.p[brIdx];
 
+  // Derive freshness label from data_freshness.json dates (avoid hardcoded months)
+  const freshnessCache = await getDataFreshness();
+  const zoriDateStr = freshnessCache.zillow_zori || '2026-02-28';
+  const zoriDate = new Date(zoriDateStr + 'T00:00:00');
+  const zoriMonthLabel = zoriDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+
   // YoY Priority: (1) ZIP ZORI → (2) County/Metro ZORI → (3) bedroom-specific HUD → (4) pre-computed 1BR
   let yoyChange: number;
   let yoySource: 'zillow' | 'hud';
