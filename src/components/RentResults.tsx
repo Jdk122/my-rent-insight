@@ -1613,7 +1613,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
 
             {/* ━━━ Lease reminder — universal, utility-first ━━━ */}
-            {(isPaid || !hasIncrease) && (
+            {isPaid && (
               <section className="pb-4 pt-2">
                 {capturedEmail ? (
                   <PostConversionFlow
