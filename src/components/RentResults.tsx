@@ -840,8 +840,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </div>
           ) : hasIncrease && fairnessScore ? (
             <>
-              {/* ── FairnessScoreGauge — only when paid ── */}
-              {isPaid && (() => {
+              {/* ── FairnessScoreGauge — visible for all users ── */}
+              {(() => {
                 const sources: ComponentSourceInfo = {};
                 if (compositeTrendResult.sourceCount >= 2) {
                   sources.rate = `Source: ${compositeTrendResult.sources.map(s => s.label).join(', ')}`;
