@@ -77,20 +77,20 @@ export default function AnalysisPaywall({
     : 'See how your rent stacks up.';
 
   const stackLine1 = isAboveMarket
-    ? `Full market analysis · Counter-offer range · ${compsCount} nearby comps`
+    ? `Counter-offer · ${compsCount} comps · Market data`
     : isFair
-    ? `Full market analysis · ${compsCount} nearby comps · Landlord cost breakdown`
+    ? `${compsCount} comps · Market data · Leverage points`
     : isBelowMarket
-    ? `Full market analysis · ${compsCount} nearby comps · Market comparison`
-    : `Full market analysis · ${compsCount} nearby comps · Neighborhood trends`;
+    ? `${compsCount} comps · Market data · Full breakdown`
+    : `${compsCount} comps · Market data · Trends`;
 
   const stackLine2 = isAboveMarket
-    ? 'Landlord replacement cost · Ready-to-send negotiation letter'
+    ? 'Landlord costs · Negotiation letter'
     : isFair
-    ? 'Leverage points · Ready-to-send negotiation letter'
+    ? 'Landlord costs · Negotiation letter'
     : isBelowMarket
-    ? 'Rate-lock strategy · Ready-to-send lease extension letter'
-    : 'Market position · Personalized rent report';
+    ? 'Market comparison · Extension letter'
+    : 'Market position · Rent report';
 
   const anchor = isAboveMarket || isFair
     ? 'Lawyers charge $225+/hr for lease help. This is $1.99.'
