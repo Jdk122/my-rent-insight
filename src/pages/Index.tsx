@@ -545,14 +545,8 @@ const Index = () => {
                   <SocialProofCounter />
                 </div>
               </Suspense>
-              {/* Data source bar — mobile/tablet only */}
-              <div className="mt-4 max-w-[540px] mx-auto lg:hidden">
-                <div className="border-t border-border/40 pt-3 pb-2 px-1 text-center">
-                  <p className="text-[11px] text-muted-foreground/70 tracking-wide">
-                    Live Comps · Zillow ZORI · Apartment List · HUD Fair Market Rent · DHCR
-                  </p>
-                </div>
-              </div>
+              {/* Market data ticker — replaces old trust bar */}
+              <MarketTicker />
             </section>
           </div>
         </main>

@@ -24,15 +24,15 @@ const TickerItem = ({ item }: { item: typeof MARKET_DATA[number] }) => {
   const arrow = isNegative ? '▼' : '▲';
   const sign = isNegative ? '' : '+';
   return (
-    <span className="inline-flex items-center gap-[6px] shrink-0">
-      <span className="text-foreground font-medium text-[12px] sm:text-[13px]">
-        {item.city} {item.zip}
+    <span className="inline-flex items-center gap-[5px] shrink-0">
+      <span className="text-foreground font-medium text-[11px] sm:text-[12px]">
+        {item.city}
       </span>
-      <span className="text-muted-foreground text-[11px] sm:text-[12px]">{item.bed}</span>
-      <span className="text-foreground font-medium text-[12px] sm:text-[13px]">
+      <span className="text-muted-foreground text-[10px] sm:text-[11px]">{item.zip}</span>
+      <span className="text-foreground text-[11px] sm:text-[12px]">
         ${item.rent.toLocaleString('en-US')}
       </span>
-      <span className={`font-medium text-[12px] sm:text-[13px] ${isNegative ? 'text-green-600' : 'text-red-500'}`}>
+      <span className={`font-medium text-[11px] sm:text-[12px] ${isNegative ? 'text-green-600' : 'text-red-500'}`}>
         {arrow} {sign}{item.pctChange}%
       </span>
     </span>
@@ -46,36 +46,46 @@ const MarketTicker = () => {
 
   useEffect(() => {
     if (contentRef.current) {
-      const width = contentRef.current.scrollWidth / 2; // we rendered twice
-      setDuration(width / 200);
+      const width = contentRef.current.scrollWidth / 2;
+      setDuration(width / 30);
     }
   }, []);
 
   const items = MARKET_DATA.map((item, i) => (
     <span key={i} className="inline-flex items-center shrink-0">
       <TickerItem item={item} />
-      <span className="text-border/50 text-[10px] mx-2">|</span>
+      <span className="text-border/40 text-[9px] mx-1.5 sm:mx-2">|</span>
     </span>
   ));
 
   return (
-    <div
-      className="w-full border-b border-border bg-muted/30 py-2 overflow-hidden relative"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
-      {/* Scrolling track */}
+    <div className="w-full border-t border-border/40">
+      {/* Row 1 — Static source attribution */}
+      <div className="py-1 border-b border-border/40 flex items-center justify-center gap-1.5">
+        <span className="w-[5px] h-[5px] rounded-full bg-green-500 animate-[pulse-dot_2s_ease-in-out_infinite] shrink-0" />
+        <p className="text-[9px] sm:text-[10px] text-muted-foreground tracking-wide">
+          Data from HUD FMR · Zillow ZORI · Apartment List · Rentcast · DHCR
+        </p>
+      </div>
+
+      {/* Row 2 — Scrolling ticker */}
       <div
-        ref={contentRef}
-        className="flex items-center motion-safe:animate-[ticker-scroll_var(--ticker-duration)_linear_infinite]"
-        style={{
-          willChange: 'transform',
-          animationPlayState: paused ? 'paused' : 'running',
-          '--ticker-duration': `${duration}s`,
-        } as React.CSSProperties}
+        className="bg-muted/20 py-1.5 overflow-hidden"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
       >
-        <div className="flex items-center shrink-0">{items}</div>
-        <div className="flex items-center shrink-0" aria-hidden="true">{items}</div>
+        <div
+          ref={contentRef}
+          className="flex items-center motion-safe:animate-[ticker-scroll_var(--ticker-duration)_linear_infinite] motion-reduce:animate-none"
+          style={{
+            willChange: 'transform',
+            animationPlayState: paused ? 'paused' : 'running',
+            '--ticker-duration': `${duration}s`,
+          } as React.CSSProperties}
+        >
+          <div className="flex items-center shrink-0">{items}</div>
+          <div className="flex items-center shrink-0" aria-hidden="true">{items}</div>
+        </div>
       </div>
     </div>
   );
