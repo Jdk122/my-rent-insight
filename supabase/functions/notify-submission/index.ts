@@ -174,7 +174,7 @@ Deno.serve(async (req) => {
     const isEmailCapture = !!directEmail;
     const isPurchase = !!purchase;
     const subject = isPurchase
-      ? `💰 PURCHASE: ${zip || "unknown"} — ${verdict_label || "N/A"}${leadEmail ? ` — ${leadEmail}` : ''} — $4.99`
+      ? `💰 PURCHASE: ${zip || "unknown"} — ${verdict_label || "N/A"}${leadEmail ? ` — ${leadEmail}` : ''} — $1.99`
       : leadEmail
       ? `🏠 ${isEmailCapture ? '✉️ EMAIL CAPTURED' : 'New submission'}: ${zip || "unknown"} — ${verdict_label || "N/A"} (Score ${fairness_score ?? "?"}) ✉️ ${leadEmail}`
       : `🏠 New submission: ${zip || "unknown"} — ${verdict_label || "N/A"} (Score ${fairness_score ?? "?"})`;
