@@ -1,4 +1,5 @@
 import { BedroomType } from './rentData';
+import { getDataFreshness } from './dataFreshness';
 
 // ─── Raw JSON schema (compact keys for file size) ───
 export interface RentZipRaw {
