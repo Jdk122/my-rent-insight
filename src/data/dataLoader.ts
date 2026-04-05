@@ -433,9 +433,14 @@ export async function lookupRentData(
            : (cmZori && cmZori.zy !== undefined && cmZori.zy !== null) ? cmZori.zy
            : null,
     zoriGeoLevel: (raw.zy !== undefined && raw.zy !== null) ? 'zip'
-                : (cmZori && cmZori.zy !== undefined && cmZori.zy !== null)
-                  ? (cmZori.src === 'county' ? 'county' : 'metro')
-                : null,
+                 : (cmZori && cmZori.zy !== undefined && cmZori.zy !== null)
+                   ? (cmZori.src === 'county' ? 'county' : 'metro')
+                 : null,
+    // Independent HUD bedroom-specific YoY — never uses ZORI
+    hudBrYoY: (fmrPrior > 0)
+      ? Math.round(((fmr - fmrPrior) / fmrPrior) * 1000) / 10
+      : (raw.y !== undefined && raw.y !== null) ? raw.y
+      : null,
   };
 }
 

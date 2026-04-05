@@ -168,8 +168,19 @@ const RentByCity = () => {
     ? Math.round((zillowYoYs.reduce((a, b) => a + b, 0) / zillowYoYs.length) * 10) / 10
     : null;
 
-  // ─── Best trend: AL > ZORI > HUD (waterfall) ───
-  const hudYoY = yoyChange ?? null;
+  // ─── Independent city-level HUD YoY — never uses ZORI ───
+  const cityHudYoYs = zips
+    .map(z => {
+      const prior = z.raw.p?.[1];
+      const current = z.raw.f?.[1];
+      return (prior && prior > 0 && current)
+        ? Math.round(((current - prior) / prior) * 1000) / 10
+        : null;
+    })
+    .filter((v): v is number => v !== null);
+  const hudYoY = cityHudYoYs.length > 0
+    ? Math.round((cityHudYoYs.reduce((a, b) => a + b, 0) / cityHudYoYs.length) * 10) / 10
+    : null;
   const compositeTrendResult = getDisplayTrend(cityAlYoY, cityZoriYoY, hudYoY);
   const { yoy: trendYoY, source: trendSource, heroSource: trendHeroSource, sourceCount, primarySource } = compositeTrendResult;
   const trendAttribution = sourceCount >= 2 ? 'local market data' : primarySource || trendHeroSource;
