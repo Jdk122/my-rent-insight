@@ -543,9 +543,10 @@ const Index = () => {
                   <SocialProofCounter />
                 </div>
               </Suspense>
-              {/* Market data ticker — replaces old trust bar */}
-              <MarketTicker />
             </section>
+          </div>
+          <div className="mt-4 sm:mt-6">
+            <MarketTicker />
           </div>
         </main>
       ) : (
