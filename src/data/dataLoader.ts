@@ -321,7 +321,7 @@ export async function lookupRentData(
     yoySource = 'zillow';
     yoyReliability = 'market';
     const cName = raw.c || raw.m.split(',')[0] || `ZIP ${zip}`;
-    yoySourceLabel = `Based on ${cName} market data through Jan 2026`;
+    yoySourceLabel = `Based on ${cName} market data through ${zoriMonthLabel}`;
   } else if (cmZori && cmZori.zy !== undefined && cmZori.zy !== null) {
     // Priority 2: County/Metro ZORI fallback
     yoyChange = cmZori.zy;
@@ -330,8 +330,8 @@ export async function lookupRentData(
     const cName = raw.c || raw.m.split(',')[0] || `ZIP ${zip}`;
     const metroName = raw.m || `ZIP ${zip}`;
     yoySourceLabel = cmZori.src === 'county'
-      ? `Based on ${cName} county market data through Jan 2026`
-      : `Based on ${metroName} metro area data through Jan 2026`;
+      ? `Based on ${cName} county market data through ${zoriMonthLabel}`
+      : `Based on ${metroName} metro area data through ${zoriMonthLabel}`;
     // Populate Zillow fields from county/metro data
     zillowMonthlyOut = cmZori.zm ?? null;
     zillowDirectionOut = cmZori.zd ?? null;
