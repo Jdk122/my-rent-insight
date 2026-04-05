@@ -8,6 +8,7 @@ interface AnalysisPaywallProps {
   compsCount: number;
   city: string;
   annualSavings?: number;
+  currentRent?: number;
   onCheckout: () => void;
   checkoutLoading: boolean;
   onPaid?: (email?: string) => void;
@@ -27,6 +28,7 @@ export default function AnalysisPaywall({
   compsCount,
   city,
   annualSavings,
+  currentRent,
   onCheckout,
   checkoutLoading,
   onPaid,
@@ -73,19 +75,29 @@ export default function AnalysisPaywall({
   const isFair = verdict === 'at-market';
   const isBelowMarket = verdict === 'below';
 
-  // Above-market gets a dream outcome headline + subheadline
+  /* ── Dream outcome (biggest element) ── */
   const dreamHeadline = isAboveMarket && annualSavings && annualSavings > 0
     ? `Save $${fmt(annualSavings)} on your rent.`
-    : null;
-
-  const headline = isAboveMarket
-    ? 'Get the exact number to counter with.'
-    : isFair
-    ? 'Your landlord would pay thousands to replace you.'
+    : isFair && currentRent
+    ? `Your landlord would pay $${fmt(Math.round(currentRent * 3))} to replace you.`
+    : isBelowMarket && annualSavings && annualSavings < 0
+    ? `You're saving $${fmt(Math.abs(annualSavings))} vs. market.`
     : isBelowMarket
     ? 'See exactly how good your deal is.'
-    : 'See how your rent stacks up.';
+    : verdict === 'none'
+    ? 'See how your rent compares.'
+    : null;
 
+  /* ── Mechanism subheadline ── */
+  const mechanism = isAboveMarket
+    ? 'Get the exact number to counter with.'
+    : isFair
+    ? 'See your leverage and get a negotiation letter.'
+    : isBelowMarket
+    ? `Full breakdown with ${compsCount} nearby comps.`
+    : `Full analysis with ${compsCount} nearby comps.`;
+
+  /* ── Value stack ── */
   const stackLine1 = isAboveMarket
     ? `Counter-offer · ${compsCount} comps · Market data`
     : isFair
@@ -102,36 +114,42 @@ export default function AnalysisPaywall({
     ? 'Market comparison · Extension letter'
     : 'Market position · Rent report';
 
+  /* ── Anchor ── */
   const anchor = isAboveMarket || isFair
     ? 'Lawyers charge $225+/hr for lease help. This is $1.99.'
     : 'The full picture for less than a subway swipe.';
 
   return (
-    <div ref={ctaRef} className="border border-border rounded-lg p-6 mt-6 max-w-[480px] mx-auto text-center">
-      {dreamHeadline && (
-        <p className="text-[17px] font-bold text-foreground leading-snug">
-          {dreamHeadline}
-        </p>
-      )}
-      <p className={`${dreamHeadline ? 'text-[14px] text-muted-foreground font-medium mt-1' : 'text-[15px] font-semibold text-foreground leading-snug'}`}>
-        {headline}
+    <div ref={ctaRef} className="rounded-xl border border-border bg-card p-6 sm:p-8 mt-6 max-w-[440px] mx-auto text-center">
+      {/* Dream outcome */}
+      <p className="text-[22px] sm:text-[26px] font-extrabold text-foreground tracking-tight leading-tight">
+        {dreamHeadline}
       </p>
 
-      <div className="text-[13px] text-muted-foreground mt-1.5 mb-1 space-y-0.5 text-center">
+      {/* Mechanism */}
+      <p className="text-[14px] font-medium text-muted-foreground mt-1">
+        {mechanism}
+      </p>
+
+      {/* Value stack */}
+      <div className="text-[12px] text-muted-foreground/70 mt-4 space-y-0.5 text-center">
         <p>{stackLine1}</p>
         <p>{stackLine2}</p>
       </div>
 
-      <div className="my-2">
+      {/* Social proof */}
+      <div className="mt-3">
         <SocialProofLine />
       </div>
 
-      <p className="text-[12px] text-muted-foreground/70 mb-5">
+      {/* Anchor */}
+      <p className="text-[11px] text-muted-foreground/50 mt-3">
         {anchor}
       </p>
 
+      {/* Express Checkout */}
       {walletAvailable !== false && (
-        <div className="w-full max-w-[320px] mx-auto mb-3">
+        <div className="w-full max-w-[320px] mx-auto mt-4 mb-3">
           <StripeExpressCheckout
             onSuccess={handleWalletSuccess}
             onFallbackToRedirect={handleFallback}
@@ -146,6 +164,7 @@ export default function AnalysisPaywall({
         </div>
       )}
 
+      {/* Card fallback */}
       <button
         onClick={() => {
           trackEvent('checkout_started', {
@@ -174,7 +193,8 @@ export default function AnalysisPaywall({
           : 'See my full analysis — $1.99'}
       </button>
 
-      <p className="text-[11px] text-muted-foreground/60 text-center mt-3">
+      {/* Footer */}
+      <p className="text-[11px] text-muted-foreground/50 mt-2">
         One-time. Instant access.
       </p>
     </div>
