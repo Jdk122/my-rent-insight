@@ -1113,6 +1113,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   compsCount={compsWithRent.length}
                   city={city}
                   annualSavings={increaseAmount * 12}
+                  currentRent={formData.currentRent}
                   onCheckout={handleCheckout}
                   checkoutLoading={checkoutLoading}
                   onPaid={onPaid}
