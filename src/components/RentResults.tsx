@@ -1037,7 +1037,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             Based on {compsWithRent.length > 0 ? `${compsWithRent.length} comparable listings and ` : ''}local market data for {city}.
                           </p>
                         )}
-                        {isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !counterExceedsProposed && (
+                        {isPaid && isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !counterExceedsProposed && (
                           <p className="text-xs text-muted-foreground/70 mt-1">
                             Area rents moved {marketYoy}% this year.
                           </p>
