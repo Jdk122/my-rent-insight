@@ -151,12 +151,35 @@ const RentIncreaseCalculator = () => {
     }, 'purchase_wallet');
 
     if (walletEmail) {
-      supabase.from('leads' as any).upsert({
-        email: walletEmail,
-        capture_source: 'stripe_express_checkout',
-        zip: results.formData.zip,
-        tool_type: 'renewal',
-      }, { onConflict: 'email' }).then(() => {});
+      const fd = results.formData;
+      const rd = results.rentData;
+      const increasePct = fd.rentIncrease && fd.currentRent
+        ? fd.increaseIsPercent
+          ? fd.rentIncrease
+          : ((fd.rentIncrease / fd.currentRent) * 100)
+        : null;
+
+      supabase.rpc('upsert_lead', {
+        p_email: walletEmail,
+        p_capture_source: 'stripe_express_checkout',
+        p_address: fd.fullAddress || null,
+        p_city: rd.city || null,
+        p_state: rd.state || null,
+        p_zip: fd.zip || null,
+        p_bedrooms: fd.bedrooms ?? null,
+        p_current_rent: fd.currentRent ?? null,
+        p_proposed_rent: fd.currentRent && fd.rentIncrease
+          ? fd.increaseIsPercent
+            ? Math.round(fd.currentRent * (1 + fd.rentIncrease / 100))
+            : fd.currentRent + fd.rentIncrease
+          : null,
+        p_increase_pct: increasePct ?? null,
+        p_verdict: verdictStr || null,
+        p_hud_fmr_value: rd.fmr ?? null,
+        p_tool_type: 'renewal',
+      } as any).then(({ error: rpcError }) => {
+        if (rpcError) console.warn('[lead] upsert_lead failed (wallet):', rpcError.message);
+      });
     }
 
     setTimeout(() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' }), 300);
