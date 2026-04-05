@@ -719,7 +719,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   const navSections = useMemo(() => {
     const sections = [{ id: 'section-verdict', label: 'Verdict' }];
-    if (isPaid || !hasIncrease) {
+    if (isPaid) {
       if (hasIncrease && medianCompRent && hasEnoughComps) {
         sections.push({ id: 'section-comps', label: 'Comps' });
       }
