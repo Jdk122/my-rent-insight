@@ -436,61 +436,6 @@ const NegotiationLetter = (props: NegotiationLetterProps) => {
     }
   };
 
-  const isPaid = props.isPaid ?? true;
-
-  // ── Locked state (unpaid) ──
-  if (!isPaid) {
-    const previewParagraphs = [
-      'Dear Landlord,',
-      'Thank you for the lease renewal notice. I\'ve enjoyed living here and would like to continue. I\'ve done some research on current market conditions and have a few thoughts I\'d like to share.'
-    ];
-    return (
-      <div className="mt-4">
-        <div
-          className="rounded-lg border border-border border-l-[3px] border-l-muted p-6 md:p-8 relative overflow-hidden"
-          style={{ background: 'hsl(var(--letter-bg))', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
-        >
-          {/* Header row */}
-          <div className="text-xs text-muted-foreground mb-4 pb-4 border-b border-border flex items-center justify-between">
-            <div className="flex gap-4">
-              <span>To: Your landlord</span>
-              <span>Re: Lease renewal</span>
-            </div>
-            <span className="inline-flex items-center gap-1 text-[10px] bg-muted text-muted-foreground px-2 py-0.5 rounded-full font-medium">
-              <Lock size={9} /> Locked
-            </span>
-          </div>
-
-          {/* Preview paragraphs */}
-          <div className="space-y-4">
-            {previewParagraphs.map((para, i) => (
-              <p key={i} className="text-sm text-foreground/80 leading-[1.7] whitespace-pre-line">{para}</p>
-            ))}
-          </div>
-
-          {/* Gradient overlay */}
-          <div
-            className="absolute inset-x-0 bottom-0 pointer-events-none"
-            style={{
-              height: '160px',
-              background: 'linear-gradient(to bottom, transparent, hsl(var(--letter-bg) / 0.8) 40%, hsl(var(--letter-bg)))',
-            }}
-          />
-        </div>
-
-        {/* Unlock CTA below the card */}
-        <LockedLetterCTA
-          onCheckout={props.onCheckout}
-          checkoutLoading={props.checkoutLoading}
-          onPaid={props.onPaid}
-          expressCheckoutProps={props.expressCheckoutProps}
-          isAboveMarket={props.isAboveMarket}
-          savings={props.savings}
-          compsCount={props.compsCount}
-        />
-      </div>
-    );
-  }
 
   // ── Loading state ──
   if (loading) {
