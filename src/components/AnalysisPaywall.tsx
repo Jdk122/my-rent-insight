@@ -65,42 +65,41 @@ export default function AnalysisPaywall({
   }, [onPaid]);
 
   const isAboveMarket = verdict === 'above';
+  const isFair = verdict === 'at-market';
   const isBelowMarket = verdict === 'below';
-  const isNoIncrease = verdict === 'none';
 
-  const headline = isNoIncrease
-    ? `See how your rent compares to ${compsCount} nearby listings and current market trends.`
-    : isAboveMarket
-    ? `Your detailed analysis is ready. See your counter-offer number, ${compsCount} nearby comps, and what it costs your landlord to replace you.`
+  const headline = isAboveMarket
+    ? 'Get the exact number to counter with.'
+    : isFair
+    ? 'See the evidence. Know for sure.'
     : isBelowMarket
-    ? 'See exactly how good your deal is.'
-    : 'See the comps and market evidence behind your verdict.';
+    ? "See how much you're saving."
+    : 'See how your rent compares.';
+
+  const subtext = isAboveMarket
+    ? `Counter-offer · ${compsCount} comps · Negotiation letter`
+    : isFair
+    ? `Market proof · ${compsCount} comps · Negotiation letter`
+    : isBelowMarket
+    ? `Full breakdown · ${compsCount} comps · Market comparison`
+    : `Market data · ${compsCount} comps · Neighborhood trends`;
+
+  const anchor = isAboveMarket || isFair
+    ? 'Lawyers charge $225+/hr for lease help. This is $1.99.'
+    : 'The full picture for less than a subway swipe.';
 
   return (
     <div ref={ctaRef} className="border border-border rounded-lg p-6 mt-6 max-w-[480px] mx-auto text-center">
-      <p className="text-[15px] font-semibold text-foreground leading-snug mb-4">
+      <p className="text-[15px] font-semibold text-foreground leading-snug">
         {headline}
       </p>
 
-      <div className="text-left text-[13px] text-muted-foreground space-y-1.5 max-w-[360px] mx-auto mb-5">
-        <ul className="space-y-1.5">
-          <li className="flex items-start gap-2">
-            <span className="text-primary mt-0.5">✓</span>
-            <span>{compsCount} comparable rents near you</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-primary mt-0.5">✓</span>
-            <span>Your exact counter-offer number and negotiation letter</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-primary mt-0.5">✓</span>
-            <span>What it costs your landlord to replace you</span>
-          </li>
-        </ul>
-      </div>
+      <p className="text-[13px] text-muted-foreground mt-1.5 mb-4">
+        {subtext}
+      </p>
 
-      <p className="text-[13px] text-muted-foreground mb-4">
-        Less than a coffee. Could save you thousands this year.
+      <p className="text-[12px] text-muted-foreground/70 mb-5">
+        {anchor}
       </p>
 
       {/* Express Checkout wallet buttons */}
@@ -146,7 +145,7 @@ export default function AnalysisPaywall({
       </button>
 
       <p className="text-[11px] text-muted-foreground/60 text-center mt-3">
-        Your verdict is free. $1.99 unlocks everything.
+        One-time. Instant access.
       </p>
     </div>
   );
