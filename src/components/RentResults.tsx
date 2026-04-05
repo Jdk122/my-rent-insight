@@ -1209,13 +1209,12 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
       </div>
 
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           PHASE 3: EVERYTHING UNLOCKED (after email)
+           PHASE 3: PAID CONTENT (or no-increase users)
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <div className="w-full bg-card">
         <div className="max-w-[620px] mx-auto px-5 sm:px-6">
-        {isUnlocked && (
+        {(isPaid || !hasIncrease) && (
           <>
-            {/* Action Insight removed — verdict callout is now at end of evidence section */}
 
             {/* ━━━ EVIDENCE SECTION ━━━ */}
             <section id="section-evidence" className="pt-6 sm:pt-10 pb-4 sm:pb-8">
