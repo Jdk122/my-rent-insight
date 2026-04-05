@@ -196,14 +196,6 @@ function LockedLetterCTA({ onCheckout, checkoutLoading, onPaid, expressCheckoutP
           : 'Get my counter-offer — $4.99'}
       </button>
 
-      {/* Skip option */}
-      <button
-        type="button"
-        onClick={() => document.getElementById('section-share')?.scrollIntoView({ behavior: 'smooth' })}
-        className="text-[11px] text-muted-foreground/50 hover:underline cursor-pointer"
-      >
-        No thanks, I'll write my own
-      </button>
       <p className="text-[10px] text-muted-foreground/50 text-center mt-2">
         Not satisfied? Email us for a full refund. No questions asked.
       </p>
