@@ -102,7 +102,7 @@ export default function AnalysisPaywall({
         {headline}
       </p>
 
-      <div className="text-[13px] text-muted-foreground mt-1.5 mb-1 space-y-0.5 text-left">
+      <div className="text-[13px] text-muted-foreground mt-1.5 mb-1 space-y-0.5 text-center">
         <p>{stackLine1}</p>
         <p>{stackLine2}</p>
       </div>
