@@ -494,8 +494,6 @@ const Index = () => {
       {/* Spacer for fixed nav */}
       <div className="h-[48px] sm:h-[56px]" />
 
-      {/* Market ticker — landing page only */}
-      {!results && !isLoading && <MarketTicker />}
 
       {isLoading ? (
         <LoadingAnalysis />
