@@ -1,11 +1,13 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import StripeExpressCheckout from './StripeExpressCheckout';
+import SocialProofLine from './SocialProofLine';
 import { trackEvent } from '@/lib/analytics';
 
 interface AnalysisPaywallProps {
   verdict: 'above' | 'at-market' | 'below' | 'none';
   compsCount: number;
   city: string;
+  annualSavings?: number;
   onCheckout: () => void;
   checkoutLoading: boolean;
   onPaid?: (email?: string) => void;
@@ -18,10 +20,13 @@ interface AnalysisPaywallProps {
   };
 }
 
+const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+
 export default function AnalysisPaywall({
   verdict,
   compsCount,
   city,
+  annualSavings,
   onCheckout,
   checkoutLoading,
   onPaid,
@@ -68,6 +73,11 @@ export default function AnalysisPaywall({
   const isFair = verdict === 'at-market';
   const isBelowMarket = verdict === 'below';
 
+  // Above-market gets a dream outcome headline + subheadline
+  const dreamHeadline = isAboveMarket && annualSavings && annualSavings > 0
+    ? `Save $${fmt(annualSavings)} on your rent.`
+    : null;
+
   const headline = isAboveMarket
     ? 'Get the exact number to counter with.'
     : isFair
@@ -98,13 +108,22 @@ export default function AnalysisPaywall({
 
   return (
     <div ref={ctaRef} className="border border-border rounded-lg p-6 mt-6 max-w-[480px] mx-auto text-center">
-      <p className="text-[15px] font-semibold text-foreground leading-snug">
+      {dreamHeadline && (
+        <p className="text-[17px] font-bold text-foreground leading-snug">
+          {dreamHeadline}
+        </p>
+      )}
+      <p className={`${dreamHeadline ? 'text-[14px] text-muted-foreground font-medium mt-1' : 'text-[15px] font-semibold text-foreground leading-snug'}`}>
         {headline}
       </p>
 
       <div className="text-[13px] text-muted-foreground mt-1.5 mb-1 space-y-0.5 text-center">
         <p>{stackLine1}</p>
         <p>{stackLine2}</p>
+      </div>
+
+      <div className="my-2">
+        <SocialProofLine />
       </div>
 
       <p className="text-[12px] text-muted-foreground/70 mb-5">
