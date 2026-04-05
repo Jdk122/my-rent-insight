@@ -1116,7 +1116,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               {/* ── Analysis Paywall — when unpaid and has increase ── */}
               {!isPaid && (
                 <AnalysisPaywall
-                  verdict={isAboveMarket ? 'above' : isFair ? 'at-market' : 'below'}
+                  verdict={isAboveMarket ? 'above' : isFair ? 'at-market' : isBelowMarket ? 'below' : 'none'}
                   compsCount={compsWithRent.length}
                   city={city}
                   onCheckout={handleCheckout}
