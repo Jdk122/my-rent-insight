@@ -420,7 +420,7 @@ export default function AnalysisPaywall({
         </span>
       </div>
 
-      <h2 className="font-display text-[22px] sm:text-[28px] tracking-tight text-foreground leading-tight text-center mt-4">
+      <h2 className="font-display text-[22px] sm:text-[28px] tracking-tight text-foreground leading-tight text-center mt-3 sm:mt-4">
         {headline}
       </h2>
 
