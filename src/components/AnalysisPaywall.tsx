@@ -353,9 +353,9 @@ export default function AnalysisPaywall({
   const compsLabel = compsCount > 0 ? compsCount : 'several';
 
   const headline = isAbove
-    ? `$${fmt((increaseAmount || 0) * 12)} more this year. Or $4.99 to push back.`
+    ? <>${`$${fmt((increaseAmount || 0) * 12)} more this year.`}{' '}<span className="whitespace-nowrap">Or $4.99 to push back.</span></>
     : isFair
-      ? `Your landlord would spend $${fmt(turnoverCost || Math.round((currentRent || 1500) * 3))} to replace you. $4.99 shows you how to use that.`
+      ? <>{`Your landlord would spend $${fmt(turnoverCost || Math.round((currentRent || 1500) * 3))} to replace you.`}{' '}<span className="whitespace-nowrap">$4.99 shows you how to use that.</span></>
       : isBelow
         ? `You're getting a better deal than most renters in ${city}.`
         : `See how your rent stacks up against ${compsLabel} nearby listings.`;
