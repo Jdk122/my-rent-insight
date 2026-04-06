@@ -1170,6 +1170,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   onCheckout={handleCheckout}
                   checkoutLoading={checkoutLoading}
                   onPaid={onPaid}
+                  sampleComps={compsWithRent.slice(0, 2).map(c => ({
+                    address: c.formattedAddress || c.addressLine1 || c.address || 'Nearby unit',
+                    beds: c.bedrooms ?? 1,
+                    baths: c.bathrooms ?? 1,
+                  }))}
                   expressCheckoutProps={{
                     analysisId,
                     verdict: 'none',
