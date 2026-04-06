@@ -1171,7 +1171,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   checkoutLoading={checkoutLoading}
                   onPaid={onPaid}
                   sampleComps={compsWithRent.slice(0, 2).map(c => ({
-                    address: c.addressLine1 || c.formattedAddress?.split(',').slice(0, 2).join(',') || 'Nearby unit',
+                    address: c.formattedAddress?.split(',').slice(0, 2).join(',').trim() || 'Nearby unit',
                     beds: c.bedrooms ?? 1,
                     baths: c.bathrooms ?? 1,
                   }))}
