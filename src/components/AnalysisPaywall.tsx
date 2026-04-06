@@ -158,7 +158,7 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
         <button
           onClick={handleCardReveal}
           disabled={checkoutLoading || showCardForm}
-          className="w-full max-w-[340px] py-4 rounded-xl text-[16px] sm:text-[17px] font-bold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
+          className="w-full max-w-[340px] py-5 rounded-xl text-[18px] sm:text-[19px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
         >
           {checkoutLoading ? 'Opening checkout...' : ctaText}
         </button>
@@ -204,18 +204,21 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
       )}
 
       {walletAvailable !== false && (
-        <div className="mt-2 sm:mt-3 min-h-[48px]">
-          <ExpressCheckoutElement
-            onReady={handleExpressReady}
-            onConfirm={handleExpressConfirm}
-            onCancel={handleExpressCancel}
-            options={{
-              buttonHeight: 40,
-              buttonType: { applePay: 'buy', googlePay: 'buy' },
-              emailRequired: true,
-            }}
-          />
-        </div>
+        <>
+          <p className="text-[11px] text-muted-foreground text-center mt-4 mb-2">or pay instantly with</p>
+          <div className="min-h-[40px]">
+            <ExpressCheckoutElement
+              onReady={handleExpressReady}
+              onConfirm={handleExpressConfirm}
+              onCancel={handleExpressCancel}
+              options={{
+                buttonHeight: 40,
+                buttonType: { applePay: 'buy', googlePay: 'buy' },
+                emailRequired: true,
+              }}
+            />
+          </div>
+        </>
       )}
     </>
   );
@@ -412,7 +415,7 @@ export default function AnalysisPaywall({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="w-full max-w-[480px] mx-auto mt-4 sm:mt-6 pt-3 sm:pt-6 px-4 min-w-0 overflow-hidden box-border"
+      className="w-full max-w-[480px] mx-auto mt-4 sm:mt-6 pt-2 sm:pt-4 px-4 min-w-0 overflow-hidden box-border"
     >
       <div className="text-center">
         <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/8 text-primary text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest">
@@ -420,7 +423,7 @@ export default function AnalysisPaywall({
         </span>
       </div>
 
-      <h2 className="font-display text-[22px] sm:text-[28px] tracking-tight text-foreground leading-tight text-center mt-3 sm:mt-4">
+      <h2 className="font-display text-[22px] sm:text-[28px] tracking-tight text-foreground leading-tight text-center mt-2 sm:mt-3">
         {headline}
       </h2>
 
@@ -479,7 +482,7 @@ export default function AnalysisPaywall({
           <button
             onClick={handleRedirectFallback}
             disabled={redirectLoading || checkoutLoading}
-            className="w-full max-w-[340px] py-4 rounded-xl text-[16px] sm:text-[17px] font-bold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
+            className="w-full max-w-[340px] py-5 rounded-xl text-[18px] sm:text-[19px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
           >
             {redirectLoading || checkoutLoading ? 'Opening checkout...' : ctaText}
           </button>
@@ -503,7 +506,7 @@ export default function AnalysisPaywall({
         <div className="mt-4 sm:mt-5 flex justify-center">
           <button
             disabled
-            className="w-full max-w-[340px] py-4 rounded-xl text-[16px] sm:text-[17px] font-bold bg-primary text-primary-foreground shadow-md shadow-primary/25 min-h-[56px] opacity-70"
+            className="w-full max-w-[340px] py-5 rounded-xl text-[18px] sm:text-[19px] font-extrabold bg-primary text-primary-foreground shadow-md shadow-primary/25 min-h-[56px] opacity-70"
           >
             <span className="inline-flex items-center justify-center gap-2">
               <RefreshCw className="h-4 w-4 animate-spin" />
