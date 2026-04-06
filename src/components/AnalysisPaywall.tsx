@@ -246,7 +246,10 @@ export default function AnalysisPaywall({
   const [intentFailed, setIntentFailed] = useState(false);
   const [redirectLoading, setRedirectLoading] = useState(false);
   const ctaRef = useRef<HTMLDivElement>(null);
+  const ctaBtnRef = useRef<HTMLDivElement>(null);
   const impressionTracked = useRef(false);
+  const ctaVisibleTracked = useRef(false);
+  const compsViewedTracked = useRef(false);
 
   const { analysisId, verdict: checkoutVerdict, zip, city: checkoutCity, savings } = expressCheckoutProps;
 
