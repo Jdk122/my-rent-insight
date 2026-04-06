@@ -351,17 +351,17 @@ export default function AnalysisPaywall({
   const compsLabel = compsCount > 0 ? compsCount : 'several';
 
   const headline = isAbove
-    ? `We found ${compsLabel} comparable units renting for less than you.`
+    ? `$${fmt((increaseAmount || 0) * 12)} more this year. Or $4.99 to push back.`
     : isFair
-      ? `It would cost your landlord $${fmt(turnoverCost || Math.round((currentRent || 1500) * 3))} to replace you.`
+      ? `Your landlord would spend $${fmt(turnoverCost || Math.round((currentRent || 1500) * 3))} to replace you. $4.99 shows you how to use that.`
       : isBelow
         ? `You're getting a better deal than most renters in ${city}.`
         : `See how your rent stacks up against ${compsLabel} nearby listings.`;
 
-  const agitation = isAbove && increaseAmount && increaseAmount > 0
-    ? `$${fmt(increaseAmount * 12)} more this year. Or $4.99 to push back.`
+  const subline = isAbove
+    ? `We found ${compsLabel} comparable units renting for less than you.`
     : isFair
-      ? `Your landlord would spend $${fmt(turnoverCost || Math.round((currentRent || 1500) * 3))} to replace you. $4.99 shows you how to use that.`
+      ? `We found ${compsLabel} comparable units near you.`
       : null;
 
   const ctaText = isAbove
