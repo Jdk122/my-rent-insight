@@ -533,7 +533,7 @@ export default function AnalysisPaywall({
           >
             <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary shrink-0 mt-0.5" />
             <span className="text-foreground text-left flex-1">{item.text}</span>
-            <span className="text-muted-foreground/60 text-[9px] sm:text-[11px] whitespace-nowrap shrink-0 mt-0.5 hidden min-[360px]:inline">
+            <span className="text-muted-foreground text-[9px] sm:text-[11px] whitespace-nowrap shrink-0 mt-0.5 hidden min-[360px]:inline">
               {item.tag}
             </span>
           </motion.div>
