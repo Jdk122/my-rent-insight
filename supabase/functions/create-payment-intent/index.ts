@@ -33,11 +33,13 @@ serve(async (req) => {
   }
 
   try {
-    const { analysisId, verdict, zip, city, savings } = await req.json();
+    const { analysisId, verdict, zip, city, savings, priceCents } = await req.json();
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2023-10-16",
     });
+
+    const amount = priceCents === 499 ? 499 : 199;
 
     const metadata = {
       analysisId: analysisId || "",
@@ -48,7 +50,7 @@ serve(async (req) => {
     };
 
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 199,
+      amount,
       currency: "usd",
       automatic_payment_methods: { enabled: true },
       metadata,
