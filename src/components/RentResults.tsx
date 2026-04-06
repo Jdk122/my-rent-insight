@@ -1124,14 +1124,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     city: rentData.city,
                     savings: excessAnnual,
                   }}
-                  counterOfferLow={counterOffer?.counterLow}
-                  counterOfferHigh={counterOffer?.counterHigh}
-                  medianCompRent={medianCompRent ?? undefined}
-                  newRent={newRent}
-                  marketYoy={marketYoy}
-                  increasePct={increasePct}
-                  turnoverCost={Math.round(formData.currentRent * 3)}
-                  increaseAmount={increaseAmount}
                 />
               )}
 
@@ -1157,7 +1149,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   verdict="none"
                   compsCount={compsWithRent.length}
                   city={city}
-                  currentRent={formData.currentRent}
                   onCheckout={handleCheckout}
                   checkoutLoading={checkoutLoading}
                   onPaid={onPaid}
@@ -1168,7 +1159,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     city: rentData.city,
                     savings: 0,
                   }}
-                  medianCompRent={medianCompRent ?? undefined}
                 />
               )}
 
