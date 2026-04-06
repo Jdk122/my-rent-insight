@@ -505,7 +505,7 @@ export default function AnalysisPaywall({
         <div className="mt-4 sm:mt-5 flex justify-center">
           <button
             disabled
-            className="w-full max-w-[340px] py-4 rounded-xl text-[16px] sm:text-[17px] font-bold bg-primary text-primary-foreground shadow-md shadow-primary/25 min-h-[56px] opacity-70"
+            className="w-full max-w-[340px] py-5 rounded-xl text-[18px] sm:text-[19px] font-extrabold bg-primary text-primary-foreground shadow-md shadow-primary/25 min-h-[56px] opacity-70"
           >
             <span className="inline-flex items-center justify-center gap-2">
               <RefreshCw className="h-4 w-4 animate-spin" />
