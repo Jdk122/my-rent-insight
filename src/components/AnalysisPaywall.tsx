@@ -400,7 +400,7 @@ function PreviewCard1({
     return (
       <BlurredCard delay={delay}>
         <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">YOUR COUNTER</p>
-        <p className="font-display text-[20px] text-verdict-good font-bold">${fmt(counterOfferLow)} – ${fmt(counterOfferHigh ?? counterOfferLow)}</p>
+        <p className="font-display text-[20px] text-verdict-good font-bold">{counterOfferLow === counterOfferHigh ? `$${fmt(counterOfferLow)}/mo` : `$${fmt(counterOfferLow)} – $${fmt(counterOfferHigh ?? counterOfferLow)}`}</p>
         <p className="text-[10px] text-muted-foreground">based on {compsCount} comps</p>
       </BlurredCard>
     );
