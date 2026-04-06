@@ -356,9 +356,9 @@ export default function AnalysisPaywall({
         : `See how your rent stacks up against ${compsLabel} nearby listings.`;
 
   const agitation = isAbove && increaseAmount && increaseAmount > 0
-    ? `That's $${fmt(increaseAmount)} every month your landlord keeps until you reply.`
+    ? `$${fmt(increaseAmount * 12)} more this year. Or $4.99 to push back.`
     : isFair
-      ? 'Most renters never reply. Landlords know that.'
+      ? `Your landlord would spend $${fmt(turnoverCost || Math.round((currentRent || 1500) * 3))} to replace you. $4.99 shows you how to use that.`
       : null;
 
   const ctaText = isAbove
@@ -425,7 +425,7 @@ export default function AnalysisPaywall({
       </h2>
 
       {agitation && (
-        <p className="mt-2 sm:mt-3 text-center text-[13px] sm:text-[14px] text-muted-foreground/80 italic">
+        <p className="mt-2 sm:mt-3 text-center text-[13px] sm:text-[14px] font-semibold text-foreground">
           {agitation}
         </p>
       )}
