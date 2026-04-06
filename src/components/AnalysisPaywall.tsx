@@ -154,7 +154,7 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
 
   return (
     <>
-      <div className="mt-5 flex justify-center">
+      <div className="mt-4 sm:mt-5 flex justify-center">
         <button
           onClick={handleCardReveal}
           disabled={checkoutLoading || showCardForm}
