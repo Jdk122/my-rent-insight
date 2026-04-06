@@ -32,6 +32,7 @@ interface AnalysisPaywallProps {
   increasePct?: number;
   turnoverCost?: number;
   increaseAmount?: number;
+  sampleComps?: Array<{ address: string; beds: number; baths: number }>;
 }
 
 interface PaywallCheckoutInnerProps {
