@@ -1035,7 +1035,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         ) : (
                           <p className="text-[15px] text-muted-foreground">
                             {isAboveMarket && calc
-                              ? 'See how much you could save — and get the exact reply to send.'
+                              ? 'See how much you could save. Your reply letter is ready.'
                               : isFair
                               ? 'See your leverage and get the reply that keeps your rate fair.'
                               : 'See your full market breakdown and what to do next.'}
