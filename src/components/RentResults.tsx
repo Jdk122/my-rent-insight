@@ -1132,6 +1132,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   increasePct={increasePct}
                   turnoverCost={Math.round(formData.currentRent * 3)}
                   increaseAmount={increaseAmount}
+                  sampleComps={compsWithRent.slice(0, 2).map(c => ({
+                    address: c.formattedAddress || 'Nearby unit',
+                    beds: c.bedrooms ?? 1,
+                    baths: c.bathrooms ?? 1,
+                  }))}
                   expressCheckoutProps={{
                     analysisId,
                     verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : isBelowMarket ? 'below' : 'none',
@@ -1165,6 +1170,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   onCheckout={handleCheckout}
                   checkoutLoading={checkoutLoading}
                   onPaid={onPaid}
+                  sampleComps={compsWithRent.slice(0, 2).map(c => ({
+                    address: c.formattedAddress || 'Nearby unit',
+                    beds: c.bedrooms ?? 1,
+                    baths: c.bathrooms ?? 1,
+                  }))}
                   expressCheckoutProps={{
                     analysisId,
                     verdict: 'none',
