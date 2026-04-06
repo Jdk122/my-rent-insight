@@ -515,7 +515,7 @@ export default function AnalysisPaywall({
         <SocialProofLine />
       </div>
 
-      <p className="mt-2 text-center text-[11px] text-muted-foreground/60 italic">
+      <p className="mt-1.5 sm:mt-2 text-center text-[11px] text-muted-foreground/60 italic">
         Analysis based on data pulled today. Rates shift weekly.
       </p>
 
