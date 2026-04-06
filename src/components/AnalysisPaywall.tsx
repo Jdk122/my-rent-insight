@@ -367,7 +367,7 @@ export default function AnalysisPaywall({
       : null;
 
   const ctaText = isAbove
-    ? `Unlock my counter-offer\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`
+    ? `Get my counter-offer\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`
     : isFair
       ? `See my leverage\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`
       : isBelow
