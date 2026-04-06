@@ -519,7 +519,7 @@ export default function AnalysisPaywall({
         Analysis based on data pulled today. Rates shift weekly.
       </p>
 
-      <p className="mt-3 text-center text-[12px] text-muted-foreground">
+      <p className="mt-2 sm:mt-3 text-center text-[12px] text-muted-foreground">
         Not useful? Email us. Full refund.
       </p>
 
