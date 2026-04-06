@@ -488,6 +488,7 @@ export default function AnalysisPaywall({
       </p>
 
       <div className="border-t border-border/40 pt-3 mt-3 sm:mt-4 space-y-1.5 pb-4">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3">What's inside</p>
         {valueStack.map((item, i) => (
           <motion.div
             key={i}
