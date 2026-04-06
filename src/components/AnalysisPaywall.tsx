@@ -204,7 +204,7 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
       )}
 
       {walletAvailable !== false && (
-        <div className="mt-3 min-h-[48px]">
+        <div className="mt-2 sm:mt-3 min-h-[48px]">
           <ExpressCheckoutElement
             onReady={handleExpressReady}
             onConfirm={handleExpressConfirm}
