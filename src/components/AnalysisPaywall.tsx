@@ -467,7 +467,7 @@ export default function AnalysisPaywall({
       )}
 
       {intentFailed ? (
-        <div className="mt-4 sm:mt-5 flex justify-center">
+        <div ref={ctaBtnRef} className="mt-4 sm:mt-5 flex justify-center">
           <button
             onClick={handleRedirectFallback}
             disabled={redirectLoading || checkoutLoading}
