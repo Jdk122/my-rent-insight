@@ -266,6 +266,14 @@ export default function AnalysisPaywall({
             placement: 'analysis_gate',
             zip,
           });
+          if (!compsViewedTracked.current && sampleComps && sampleComps.length > 0) {
+            compsViewedTracked.current = true;
+            trackEvent('paywall_comps_viewed', {
+              verdict: checkoutVerdict,
+              comps_shown: sampleComps.length,
+              zip,
+            });
+          }
           observer.disconnect();
         }
       },
