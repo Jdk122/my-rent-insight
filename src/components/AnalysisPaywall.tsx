@@ -39,20 +39,18 @@ function BlurredCard({ children, delay }: { children: React.ReactNode; delay: nu
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay, ease: [0.16, 1, 0.3, 1] }}
-      className="relative flex-shrink-0 snap-center overflow-hidden rounded-xl border border-border/60 bg-card min-h-[82px] min-w-[124px] max-w-[138px] sm:min-h-[100px] sm:min-w-0 sm:max-w-none"
+      className="relative flex-shrink-0 snap-center overflow-hidden rounded-xl border border-border/60 bg-card p-3 sm:p-4 min-h-[90px] min-w-[124px] max-w-[138px] sm:min-h-[100px] sm:min-w-0 sm:max-w-none"
       role="listitem"
     >
-      <div className="p-3 sm:p-4">
+      <div aria-hidden="true">
         {children}
       </div>
-      <motion.div
+      <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-card/90 supports-[backdrop-filter]:bg-card/70 supports-[backdrop-filter]:backdrop-blur-[6px]"
-        animate={{ opacity: [0.68, 0.82, 0.68] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute inset-0 z-10 flex items-center justify-center bg-card/80 supports-[backdrop-filter]:backdrop-blur-[6px] supports-[backdrop-filter]:bg-card/60"
       >
-        <Lock size={14} className="text-muted-foreground/40" aria-hidden="true" />
-      </motion.div>
+        <Lock className="h-3.5 w-3.5 text-muted-foreground/40" />
+      </div>
     </motion.div>
   );
 }
