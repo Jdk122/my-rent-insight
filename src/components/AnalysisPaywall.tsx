@@ -308,17 +308,15 @@ export default function AnalysisPaywall({
             onCheckout();
           }}
           disabled={checkoutLoading}
-          className="mx-auto mt-2 block min-h-[44px] w-full max-w-[340px] rounded-xl bg-primary px-4 py-3 text-[15px] font-bold text-primary-foreground shadow-md shadow-primary/25 transition-all hover:brightness-95 disabled:opacity-70 sm:mt-2 sm:min-h-[48px] sm:py-3.5 sm:shadow-none sm:hover:bg-foreground/90 sm:hover:brightness-100"
+          className={walletAvailable
+            ? "mx-auto mt-2 flex min-h-[44px] items-center justify-center text-[12px] text-muted-foreground underline"
+            : "mx-auto mt-3 block min-h-[48px] w-full max-w-[340px] rounded-xl bg-primary px-4 py-4 text-[15px] font-bold text-primary-foreground shadow-md shadow-primary/25 transition-all hover:brightness-95 disabled:opacity-70"
+          }
         >
           {checkoutLoading
             ? 'Opening checkout...'
             : walletAvailable
-              ? (
-                <>
-                  <span className="sm:hidden">{ctaText}</span>
-                  <span className="hidden sm:inline">Or pay with card — $1.99</span>
-                </>
-              )
+              ? 'Pay with card instead'
               : ctaText}
         </button>
       </div>
