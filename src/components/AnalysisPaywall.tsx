@@ -490,7 +490,6 @@ export default function AnalysisPaywall({
         Secured by
         <img src={stripeLogo} alt="Stripe" className="h-[14px] w-auto inline-block opacity-50" />
       </p>
-      </p>
 
       <div className="border-t border-border/40 pt-3 mt-3 sm:mt-4 space-y-1.5 pb-4">
         {valueStack.map((item, i) => (
