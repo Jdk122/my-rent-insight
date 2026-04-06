@@ -154,7 +154,7 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
 
   return (
     <>
-      <div className="mt-5 flex justify-center">
+      <div className="mt-4 sm:mt-5 flex justify-center">
         <button
           onClick={handleCardReveal}
           disabled={checkoutLoading || showCardForm}
@@ -204,7 +204,7 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
       )}
 
       {walletAvailable !== false && (
-        <div className="mt-3 min-h-[48px]">
+        <div className="mt-2 sm:mt-3 min-h-[48px]">
           <ExpressCheckoutElement
             onReady={handleExpressReady}
             onConfirm={handleExpressConfirm}
@@ -412,7 +412,7 @@ export default function AnalysisPaywall({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="w-full max-w-[480px] mx-auto mt-8 pt-6 px-4 min-w-0 overflow-hidden box-border"
+      className="w-full max-w-[480px] mx-auto mt-4 sm:mt-6 pt-3 sm:pt-6 px-4 min-w-0 overflow-hidden box-border"
     >
       <div className="text-center">
         <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/8 text-primary text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest">
@@ -420,18 +420,18 @@ export default function AnalysisPaywall({
         </span>
       </div>
 
-      <h2 className="font-display text-[22px] sm:text-[28px] tracking-tight text-foreground leading-tight text-center mt-4">
+      <h2 className="font-display text-[22px] sm:text-[28px] tracking-tight text-foreground leading-tight text-center mt-3 sm:mt-4">
         {headline}
       </h2>
 
       {agitation && (
-        <p className="mt-3 text-center text-[13px] sm:text-[14px] text-muted-foreground/80 italic">
+        <p className="mt-2 sm:mt-3 text-center text-[13px] sm:text-[14px] text-muted-foreground/80 italic">
           {agitation}
         </p>
       )}
 
-      <div className="mt-5">
-        <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-2 px-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:mx-0 sm:px-0 sm:pb-0" role="list">
+      <div className="mt-4 sm:mt-5">
+        <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-2 px-2 scrollbar-hide sm:grid sm:grid-cols-3 sm:overflow-visible sm:mx-0 sm:px-0 sm:pb-0" role="list">
           {[card1, card2, { label: 'YOUR REPLY', value: null, sub: 'ready to copy and send', color: '' }].map((card, i) => (
             <motion.div
               key={i}
@@ -473,7 +473,7 @@ export default function AnalysisPaywall({
       </div>
 
       {intentFailed ? (
-        <div className="mt-5 flex justify-center">
+        <div className="mt-4 sm:mt-5 flex justify-center">
           <button
             onClick={handleRedirectFallback}
             disabled={redirectLoading || checkoutLoading}
@@ -498,7 +498,7 @@ export default function AnalysisPaywall({
           />
         </Elements>
       ) : (
-        <div className="mt-5 flex justify-center">
+        <div className="mt-4 sm:mt-5 flex justify-center">
           <button
             disabled
             className="w-full max-w-[340px] py-4 rounded-xl text-[16px] sm:text-[17px] font-bold bg-primary text-primary-foreground shadow-md shadow-primary/25 min-h-[56px] opacity-70"
@@ -515,22 +515,22 @@ export default function AnalysisPaywall({
         <SocialProofLine />
       </div>
 
-      <p className="mt-2 text-center text-[11px] text-muted-foreground/60 italic">
+      <p className="mt-1.5 sm:mt-2 text-center text-[11px] text-muted-foreground/60 italic">
         Analysis based on data pulled today. Rates shift weekly.
       </p>
 
-      <p className="mt-3 text-center text-[12px] text-muted-foreground">
+      <p className="mt-2 sm:mt-3 text-center text-[12px] text-muted-foreground">
         Not useful? Email us. Full refund.
       </p>
 
-      <p className="mt-2 text-center text-[11px] text-muted-foreground/50">
+      <p className="mt-1.5 sm:mt-2 text-center text-[11px] text-muted-foreground/50">
         One-time payment · Instant access · No account needed
       </p>
       <p className="text-center text-[11px] text-muted-foreground/50">
         Secured by Stripe
       </p>
 
-      <div className="border-t border-border/40 pt-4 mt-5 space-y-2.5 pb-4">
+      <div className="border-t border-border/40 pt-4 mt-4 sm:mt-5 space-y-2.5 pb-4">
         {valueStack.map((item, i) => (
           <motion.div
             key={i}
@@ -540,8 +540,8 @@ export default function AnalysisPaywall({
             className="flex items-start gap-2.5 text-[12px] sm:text-[13px]"
           >
             <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-            <span className="text-foreground">{item.text}</span>
-            <span className="text-muted-foreground/60 ml-auto text-[10px] sm:text-[11px] whitespace-nowrap hidden min-[360px]:inline">
+            <span className="text-foreground text-left flex-1">{item.text}</span>
+            <span className="text-muted-foreground/60 text-[10px] sm:text-[11px] whitespace-nowrap shrink-0 mt-0.5 hidden min-[360px]:inline">
               {item.tag}
             </span>
           </motion.div>
