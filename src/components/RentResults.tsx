@@ -1034,7 +1034,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         </div>
                         ) : (
                           <p className="text-[15px] text-muted-foreground">
-                            Based on {compsWithRent.length > 0 ? `${compsWithRent.length} comparable listings and ` : ''}local market data for {city}.
+                            {isAboveMarket && calc
+                              ? 'See how much you could save — and get the exact reply to send.'
+                              : isFair
+                              ? 'See your leverage and get the reply that keeps your rate fair.'
+                              : 'See your full market breakdown and what to do next.'}
                           </p>
                         )}
                         {isPaid && isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !counterExceedsProposed && (
