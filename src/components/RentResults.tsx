@@ -824,10 +824,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         </div>
       )}
       <div
-        className="w-full"
+        className="w-full overflow-x-hidden"
         style={{ background: 'hsl(var(--verdict-bg))' }}
       >
-        <div className="max-w-[620px] mx-auto px-5 sm:px-6">
+        <div className="max-w-[620px] mx-auto px-5 sm:px-6 overflow-x-hidden">
           <motion.section
             id="section-verdict"
             {...fade(0)}
@@ -1110,6 +1110,15 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 </p>
               )}
 
+              {/* ── Check a different address — above paywall ── */}
+              {!isPaid && (
+                <div className="mt-4 flex flex-col items-center gap-2">
+                  <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
+                    ← Check a different address
+                  </button>
+                </div>
+              )}
+
               {/* ── Analysis Paywall — when unpaid ── */}
               {!isPaid && (
                 <AnalysisPaywall
@@ -1139,12 +1148,14 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 />
               )}
 
-              {/* ── Check a different address — always free ── */}
-              <div className="mt-4 flex flex-col items-center gap-2">
-                <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
-                  ← Check a different address
-                </button>
-              </div>
+              {/* ── Check a different address — when paid ── */}
+              {isPaid && (
+                <div className="mt-4 flex flex-col items-center gap-2">
+                  <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
+                    ← Check a different address
+                  </button>
+                </div>
+              )}
             </>
           ) : (
             <>
@@ -1176,12 +1187,21 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 />
               )}
 
-              {/* ── Check a different address ── */}
-              <div className="mt-4 flex flex-col items-center gap-2">
-                <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
-                  ← Check a different address
-                </button>
-              </div>
+              {/* ── Check a different address — above no-increase paywall ── */}
+              {!isPaid && (
+                <div className="mt-4 flex flex-col items-center gap-2">
+                  <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
+                    ← Check a different address
+                  </button>
+                </div>
+              )}
+              {isPaid && (
+                <div className="mt-4 flex flex-col items-center gap-2">
+                  <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
+                    ← Check a different address
+                  </button>
+                </div>
+              )}
             </>
           )}
         </motion.section>

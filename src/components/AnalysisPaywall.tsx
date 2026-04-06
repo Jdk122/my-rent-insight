@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Lock, Check } from 'lucide-react';
+import { Check, Lock } from 'lucide-react';
 import StripeExpressCheckout from './StripeExpressCheckout';
 import SocialProofLine from './SocialProofLine';
 import { trackEvent } from '@/lib/analytics';
@@ -32,43 +32,6 @@ interface AnalysisPaywallProps {
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
-
-function BlurredCard({ children, delay }: { children: React.ReactNode; delay: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay, ease: [0.16, 1, 0.3, 1] }}
-      className="relative flex-shrink-0 snap-center overflow-hidden rounded-xl border border-border/60 bg-card p-3 sm:p-4 min-h-[90px] min-w-[124px] max-w-[138px] sm:min-h-[100px] sm:min-w-0 sm:max-w-none"
-      role="listitem"
-    >
-      <div aria-hidden="true">
-        {children}
-      </div>
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 z-10 flex items-center justify-center bg-card/80 supports-[backdrop-filter]:backdrop-blur-[6px] supports-[backdrop-filter]:bg-card/60"
-      >
-        <Lock className="h-3.5 w-3.5 text-muted-foreground/40" />
-      </div>
-    </motion.div>
-  );
-}
-
-function StackLine({ text, tag, delay }: { text: string; tag: string; delay: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: -6 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.3, delay, ease: [0.16, 1, 0.3, 1] }}
-      className="flex min-w-0 items-start gap-2.5 text-[12px] sm:text-[13px]"
-    >
-      <Check size={16} className="mt-0.5 shrink-0 text-primary" />
-      <span className="min-w-0 flex-1 leading-snug text-foreground">{text}</span>
-      <span className="ml-auto hidden shrink-0 text-[10px] text-muted-foreground/60 min-[360px]:inline sm:text-[11px]">{tag}</span>
-    </motion.div>
-  );
-}
 
 export default function AnalysisPaywall({
   verdict,
@@ -123,44 +86,59 @@ export default function AnalysisPaywall({
     onPaid?.(email);
   }, [onPaid]);
 
-  const isAboveMarket = verdict === 'above';
+  const handleCardCheckout = useCallback(() => {
+    trackEvent('checkout_started', {
+      method: 'card_fallback',
+      placement: 'analysis_gate',
+      verdict: expressCheckoutProps.verdict,
+      zip: expressCheckoutProps.zip,
+    });
+    onCheckout();
+  }, [expressCheckoutProps, onCheckout]);
+
+  const isAbove = verdict === 'above';
   const isFair = verdict === 'at-market';
-  const isBelowMarket = verdict === 'below';
+  const isBelow = verdict === 'below';
 
-  const badgeText = isAboveMarket ? 'Your Counter-Offer Kit' : 'Your Rent Analysis Kit';
+  // ── Badge ──
+  const badge = isAbove ? 'Your Counter-Offer Kit' : 'Your Rent Analysis Kit';
 
-  const headline = (() => {
-    if (isAboveMarket) {
-      return <>You&apos;re paying <span className="font-bold text-destructive">more</span> than your neighbors.</>;
-    }
-    if (isFair && turnoverCost) {
-      return (
-        <>
-          It would cost your landlord <span className="font-bold text-foreground">${fmt(turnoverCost)}</span> to replace you.
-        </>
-      );
-    }
-    if (isBelowMarket) {
-      return <>You&apos;re paying less than your neighbors.</>;
-    }
-    return <>See how your rent stacks up.</>;
-  })();
+  // ── Headline (NO dollar amounts for above/below — that's gated) ──
+  const headline = isAbove
+    ? "You're paying more than your neighbors."
+    : isFair
+    ? `It would cost your landlord $${fmt(turnoverCost || Math.round((currentRent || 1500) * 3))} to replace you.`
+    : isBelow
+    ? "You're paying less than your neighbors."
+    : 'See how your rent stacks up.';
 
-  const subline = isAboveMarket
+  // ── Subline ──
+  const subline = isAbove
     ? 'The data is ready. So is your reply letter.'
     : isFair
-      ? 'That number is your leverage. Your reply letter uses it.'
-      : isBelowMarket
-        ? 'Lock this in before your landlord looks at the market.'
-        : 'Full market breakdown. Ready in seconds.';
+    ? 'That number is your leverage. Your reply letter uses it.'
+    : isBelow
+    ? 'Lock this in before your landlord looks at the market.'
+    : `Full market breakdown for ${city}. Ready in seconds.`;
 
-  const agitationLine = isAboveMarket && increaseAmount
+  // ── Agitation (above + at-market only) ──
+  const agitation = isAbove && increaseAmount
     ? `Every month you wait, that's another $${fmt(increaseAmount)} gone.`
     : isFair
-      ? 'Most renters never reply. Landlords know that.'
-      : null;
+    ? "Most renters never reply. Landlords know that."
+    : null;
 
-  const stackLines = isAboveMarket
+  // ── CTA text ──
+  const ctaText = isAbove
+    ? 'Unlock my counter-offer\u2009—\u2009$4.99'
+    : isFair
+    ? 'See my leverage\u2009—\u2009$4.99'
+    : isBelow
+    ? 'See my full breakdown\u2009—\u2009$4.99'
+    : 'Unlock full analysis\u2009—\u2009$4.99';
+
+  // ── Value stack ──
+  const valueStack = isAbove
     ? [
         { text: `Counter-offer range from ${compsCount} nearby comps`, tag: '($200+ value)' },
         { text: 'Landlord turnover cost breakdown', tag: "(data they don't share)" },
@@ -174,20 +152,29 @@ export default function AnalysisPaywall({
         { text: 'Ready-to-send reply letter', tag: '($225+ if a lawyer wrote it)' },
       ];
 
-  const commitmentText = isAboveMarket
-    ? 'Your counter-offer is ready.'
-    : 'Your analysis is ready.';
+  // ── Blurred card data ──
+  const card1 = isAbove && counterOfferLow
+    ? {
+        label: 'YOUR COUNTER',
+        value: counterOfferLow === counterOfferHigh
+          ? `$${fmt(counterOfferLow)}/mo`
+          : `$${fmt(counterOfferLow)}–$${fmt(counterOfferHigh || counterOfferLow)}/mo`,
+        sub: `based on ${compsCount} comps`,
+        color: 'text-verdict-good',
+      }
+    : {
+        label: 'YOUR POSITION',
+        value: currentRent ? `$${fmt(currentRent)}/mo` : '$—/mo',
+        sub: medianCompRent ? `vs $${fmt(medianCompRent)} median` : 'vs area median',
+        color: 'text-foreground',
+      };
 
-  const ctaText = isAboveMarket
-    ? 'Unlock my counter-offer — $4.99'
-    : isFair
-      ? 'See my leverage — $4.99'
-      : isBelowMarket
-        ? 'See my full breakdown — $4.99'
-        : 'Unlock full analysis — $4.99';
-
-  const cardBase = 0.15;
-  const stackBase = cardBase + 0.08 * 3 + 0.3;
+  const card2 = {
+    label: 'NEARBY COMPS',
+    value: `${compsCount} listings`,
+    sub: medianCompRent ? `median $${fmt(medianCompRent)}/mo` : 'comparable units',
+    color: 'text-foreground',
+  };
 
   return (
     <motion.div
@@ -195,204 +182,153 @@ export default function AnalysisPaywall({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="mx-auto mt-5 w-full min-w-0 max-w-[480px] border-t-2 border-primary/20 px-3 pt-6 sm:mt-6 sm:px-0 sm:pt-8"
+      className="max-w-[480px] mx-auto mt-6 border-t-2 border-primary/20 pt-8 px-3 sm:px-0 min-w-0 overflow-x-hidden"
     >
+      {/* ── Badge ── */}
       <div className="text-center">
-        <span className="inline-flex max-w-full items-center rounded-full bg-primary/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-primary sm:text-[11px]">
-          {badgeText}
+        <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/8 text-primary text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest">
+          {badge}
         </span>
       </div>
 
-      <p className="mt-3 max-w-full break-words px-1 text-center font-display text-[19px] leading-[1.12] tracking-tight text-foreground sm:mt-4 sm:px-0 sm:text-[28px] sm:leading-tight">
+      {/* ── Headline ── */}
+      <h2 className="font-display text-[22px] sm:text-[28px] tracking-tight text-foreground leading-tight text-center mt-4">
         {headline}
-      </p>
+      </h2>
 
-      <p className="mt-2 max-w-full break-words px-1 text-center text-[13px] leading-relaxed text-muted-foreground sm:px-0 sm:text-[15px]">
+      {/* ── Subline ── */}
+      <p className="text-[14px] sm:text-[15px] text-muted-foreground mt-2 text-center leading-relaxed">
         {subline}
       </p>
 
-      {agitationLine && (
-        <p className="mt-3 hidden max-w-full break-words px-1 text-center text-[13px] italic text-muted-foreground/70 sm:mt-4 sm:block sm:px-0">
-          {agitationLine}
-        </p>
-      )}
+      {/* ── Blurred Preview Cards ── */}
+      <div className="mt-5 sm:mt-6">
+        <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0" role="list">
+          {[card1, card2, { label: 'YOUR REPLY', value: null, sub: 'ready to copy and send', color: '' }].map((card, i) => (
+            <motion.div
+              key={i}
+              role="listitem"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 + i * 0.08 }}
+              className="min-w-[140px] max-w-[160px] flex-shrink-0 snap-center sm:min-w-0 sm:max-w-none relative overflow-hidden rounded-xl border border-border/60 bg-card p-3 sm:p-4 min-h-[90px] sm:min-h-[100px]"
+            >
+              {/* Card content — no z-index, normal flow */}
+              <div aria-hidden="true">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{card.label}</p>
+                {card.value ? (
+                  <p className={`font-display text-[20px] font-bold mt-1 ${card.color}`}>{card.value}</p>
+                ) : (
+                  <div className="mt-2 space-y-2">
+                    <div className="h-2 rounded-full bg-muted-foreground/12 w-full" />
+                    <div className="h-2 rounded-full bg-muted-foreground/12 w-4/5" />
+                    <div className="h-2 rounded-full bg-muted-foreground/12 w-3/5" />
+                  </div>
+                )}
+                <p className="text-[10px] text-muted-foreground mt-1">{card.sub}</p>
+              </div>
 
-      <div className="mt-4 sm:hidden" role="list">
-        <div className="flex gap-2.5 overflow-x-auto pb-1 pr-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-          <PreviewCard1
-            verdict={verdict}
-            counterOfferLow={counterOfferLow}
-            counterOfferHigh={counterOfferHigh}
-            compsCount={compsCount}
-            currentRent={currentRent}
-            medianCompRent={medianCompRent}
-            delay={cardBase}
-          />
-          <PreviewCard2 compsCount={compsCount} medianCompRent={medianCompRent} delay={cardBase + 0.08} />
-          <PreviewCard3 delay={cardBase + 0.16} />
+              {/* Blur overlay — SIBLING, absolute, z-10 on top */}
+              <div
+                className="absolute inset-0 z-10 flex items-center justify-center bg-card/80 supports-[backdrop-filter]:backdrop-blur-[6px] supports-[backdrop-filter]:bg-card/60"
+                aria-hidden="true"
+              >
+                <Lock className="h-3.5 w-3.5 text-muted-foreground/40" />
+              </div>
+            </motion.div>
+          ))}
         </div>
-        <div className="mt-1.5 flex gap-1.5 justify-center">
-          <div className="h-1.5 w-1.5 rounded-full bg-primary/60" />
-          <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground/20" />
-          <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground/20" />
+
+        {/* Mobile scroll dots */}
+        <div className="flex gap-1.5 justify-center mt-2 sm:hidden">
+          <div className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+          <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/20" />
+          <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/20" />
         </div>
       </div>
 
-      <div className="mt-6 hidden grid-cols-3 gap-3 sm:grid" role="list">
-        <PreviewCard1
-          verdict={verdict}
-          counterOfferLow={counterOfferLow}
-          counterOfferHigh={counterOfferHigh}
-          compsCount={compsCount}
-          currentRent={currentRent}
-          medianCompRent={medianCompRent}
-          delay={cardBase}
-        />
-        <PreviewCard2 compsCount={compsCount} medianCompRent={medianCompRent} delay={cardBase + 0.08} />
-        <PreviewCard3 delay={cardBase + 0.16} />
-      </div>
-
-      <div className="mt-6 hidden space-y-2 sm:block">
-        {stackLines.map((line, i) => (
-          <StackLine key={i} text={line.text} tag={line.tag} delay={stackBase + i * 0.05} />
-        ))}
-      </div>
-
-      <p className="mx-auto mt-4 max-w-[22rem] break-words px-2 text-center text-[11px] leading-relaxed text-muted-foreground sm:mt-5 sm:max-w-none sm:px-0 sm:text-[13px] sm:leading-normal">
-        {commitmentText}
+      {/* ── Commitment hook ── */}
+      <p className="mt-5 text-center text-[12px] sm:text-[13px] text-muted-foreground">
+        {isAbove ? 'Your counter-offer is ready.' : 'Your analysis is ready.'}
       </p>
 
-      <div className="mx-auto mt-2 max-w-[22rem] px-2 text-center sm:mt-3 sm:max-w-none sm:px-0">
+      {/* ── Social proof ── */}
+      <div className="mt-3 text-center">
         <SocialProofLine />
       </div>
 
-      <div className="mt-4 sm:mt-5">
-        {walletAvailable !== false && (
-          <div className="mx-auto min-h-[48px] w-full max-w-[340px]">
-            <StripeExpressCheckout
-              onSuccess={handleWalletSuccess}
-              onFallbackToRedirect={handleFallback}
-              onReady={handleWalletReady}
-              analysisId={expressCheckoutProps.analysisId}
-              verdict={expressCheckoutProps.verdict}
-              zip={expressCheckoutProps.zip}
-              city={expressCheckoutProps.city}
-              savings={expressCheckoutProps.savings}
-              placement="analysis_gate"
-            />
-          </div>
-        )}
+      {/* ── Express Checkout ── */}
+      <div className="min-h-[48px] mt-5 mx-auto max-w-[340px] overflow-hidden">
+        <StripeExpressCheckout
+          onSuccess={handleWalletSuccess}
+          onFallbackToRedirect={handleFallback}
+          onReady={handleWalletReady}
+          analysisId={expressCheckoutProps.analysisId}
+          verdict={expressCheckoutProps.verdict}
+          zip={expressCheckoutProps.zip}
+          city={expressCheckoutProps.city}
+          savings={expressCheckoutProps.savings}
+          placement="analysis_gate"
+        />
+      </div>
 
+      {/* ── Card fallback CTA — ALWAYS visible, NO toggle ── */}
+      <div className="mt-3 flex justify-center">
         <button
-          onClick={() => {
-            trackEvent('checkout_started', {
-              method: 'card_fallback',
-              placement: 'analysis_gate',
-              verdict: expressCheckoutProps.verdict,
-              zip: expressCheckoutProps.zip,
-            });
-            onCheckout();
-          }}
+          onClick={handleCardCheckout}
           disabled={checkoutLoading}
-          className={walletAvailable
-            ? "mx-auto mt-2 flex min-h-[44px] items-center justify-center text-[12px] text-muted-foreground underline"
-            : "mx-auto mt-3 block min-h-[48px] w-full max-w-[340px] rounded-xl bg-primary px-4 py-4 text-[15px] font-bold text-primary-foreground shadow-md shadow-primary/25 transition-all hover:brightness-95 disabled:opacity-70"
+          className={
+            walletAvailable
+              ? 'min-h-[44px] flex items-center justify-center text-[12px] text-muted-foreground underline'
+              : 'w-full max-w-[340px] py-4 rounded-xl text-[15px] font-bold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[48px] disabled:opacity-70'
           }
         >
           {checkoutLoading
             ? 'Opening checkout...'
             : walletAvailable
-              ? 'Pay with card instead'
-              : ctaText}
+            ? 'Pay with card instead'
+            : ctaText}
         </button>
       </div>
 
-      <p className="mt-2 max-w-full break-words px-2 text-center text-[11px] text-muted-foreground sm:mt-3 sm:px-0 sm:text-[12px]">
+      {/* ── Risk reversal ── */}
+      <p className="mt-3 text-center text-[12px] text-muted-foreground">
         Not useful? Email us. Full refund.
       </p>
 
-      <div className="mt-1 px-2 pb-4 text-center text-[10px] leading-relaxed text-muted-foreground/50 sm:mt-2 sm:px-0 sm:text-[11px]">
-        <p className="break-words">One-time payment · Instant access · No account needed</p>
-        <p>Secured by Stripe</p>
-      </div>
+      {/* ── Trust footer ── */}
+      <p className="mt-2 text-center text-[11px] text-muted-foreground/50">
+        One-time payment · Instant access · No account needed
+      </p>
+      <p className="text-center text-[11px] text-muted-foreground/50">
+        Secured by Stripe
+      </p>
 
-      {agitationLine && (
-        <p className="mt-2 max-w-full break-words px-1 text-center text-[12px] italic text-muted-foreground/70 sm:hidden">
-          {agitationLine}
+      {/* ── Agitation (mobile: below trust as exit-scroll hook) ── */}
+      {agitation && (
+        <p className="mt-4 text-center text-[12px] sm:text-[13px] text-muted-foreground/70 italic">
+          {agitation}
         </p>
       )}
 
-      <div className="mt-4 space-y-2 border-t border-border/40 pt-4 sm:hidden">
-        {stackLines.map((line, i) => (
-          <StackLine key={i} text={line.text} tag={line.tag} delay={0} />
+      {/* ── Value stack (below the fold on mobile) ── */}
+      <div className="border-t border-border/40 pt-4 mt-4 space-y-2 pb-4">
+        {valueStack.map((item, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, delay: 0.5 + i * 0.05 }}
+            className="flex items-start gap-2.5 text-[12px] sm:text-[13px]"
+          >
+            <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+            <span className="text-foreground">{item.text}</span>
+            <span className="text-muted-foreground/60 ml-auto text-[10px] sm:text-[11px] whitespace-nowrap hidden min-[360px]:inline">
+              {item.tag}
+            </span>
+          </motion.div>
         ))}
       </div>
     </motion.div>
-  );
-}
-
-function PreviewCard1({
-  verdict,
-  counterOfferLow,
-  counterOfferHigh,
-  compsCount,
-  currentRent,
-  medianCompRent,
-  delay,
-}: {
-  verdict: string;
-  counterOfferLow?: number;
-  counterOfferHigh?: number;
-  compsCount: number;
-  currentRent?: number;
-  medianCompRent?: number;
-  delay: number;
-}) {
-  const isAbove = verdict === 'above';
-
-  if (isAbove && counterOfferLow) {
-    return (
-      <BlurredCard delay={delay}>
-        <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground sm:text-[10px]">YOUR COUNTER</p>
-        <p className="break-words font-display text-[18px] font-bold text-verdict-good sm:text-[20px]">
-          {counterOfferLow === counterOfferHigh
-            ? `$${fmt(counterOfferLow)}/mo`
-            : `$${fmt(counterOfferLow)} – $${fmt(counterOfferHigh ?? counterOfferLow)}`}
-        </p>
-        <p className="text-[9px] text-muted-foreground sm:text-[10px]">based on {compsCount} comps</p>
-      </BlurredCard>
-    );
-  }
-
-  return (
-    <BlurredCard delay={delay}>
-      <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground sm:text-[10px]">YOUR POSITION</p>
-      <p className="break-words font-display text-[18px] font-bold text-foreground sm:text-[20px]">${currentRent ? fmt(currentRent) : '—'}/mo</p>
-      <p className="text-[9px] text-muted-foreground sm:text-[10px]">vs ${medianCompRent ? fmt(medianCompRent) : '—'} median</p>
-    </BlurredCard>
-  );
-}
-
-function PreviewCard2({ compsCount, medianCompRent, delay }: { compsCount: number; medianCompRent?: number; delay: number }) {
-  return (
-    <BlurredCard delay={delay}>
-      <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground sm:text-[10px]">NEARBY COMPS</p>
-      <p className="break-words font-display text-[18px] font-bold text-foreground sm:text-[20px]">{compsCount} listings</p>
-      <p className="text-[9px] text-muted-foreground sm:text-[10px]">median ${medianCompRent ? fmt(medianCompRent) : '—'}/mo</p>
-    </BlurredCard>
-  );
-}
-
-function PreviewCard3({ delay }: { delay: number }) {
-  return (
-    <BlurredCard delay={delay}>
-      <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground sm:text-[10px]">YOUR REPLY</p>
-      <div className="mt-2 space-y-2">
-        <div className="h-2 w-full rounded-full bg-muted-foreground/12" />
-        <div className="h-2 w-4/5 rounded-full bg-muted-foreground/12" />
-        <div className="h-2 w-3/5 rounded-full bg-muted-foreground/12" />
-      </div>
-      <p className="mt-1 text-[9px] text-muted-foreground sm:text-[10px]">ready to copy & send</p>
-    </BlurredCard>
   );
 }
