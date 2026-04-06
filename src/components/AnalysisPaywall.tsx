@@ -70,6 +70,7 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
 
     trackEvent('checkout_started', {
       method: 'express_checkout',
+      express_type: event?.expressPaymentType || 'unknown',
       placement: 'analysis_gate',
       verdict: expressCheckoutProps.verdict,
       zip: expressCheckoutProps.zip,
@@ -246,7 +247,10 @@ export default function AnalysisPaywall({
   const [intentFailed, setIntentFailed] = useState(false);
   const [redirectLoading, setRedirectLoading] = useState(false);
   const ctaRef = useRef<HTMLDivElement>(null);
+  const ctaBtnRef = useRef<HTMLDivElement>(null);
   const impressionTracked = useRef(false);
+  const ctaVisibleTracked = useRef(false);
+  const compsViewedTracked = useRef(false);
 
   const { analysisId, verdict: checkoutVerdict, zip, city: checkoutCity, savings } = expressCheckoutProps;
 
@@ -261,6 +265,36 @@ export default function AnalysisPaywall({
           trackEvent('analysis_paywall_impression', {
             verdict: checkoutVerdict,
             placement: 'analysis_gate',
+            zip,
+          });
+          if (!compsViewedTracked.current && sampleComps && sampleComps.length > 0) {
+            compsViewedTracked.current = true;
+            trackEvent('paywall_comps_viewed', {
+              verdict: checkoutVerdict,
+              comps_shown: sampleComps.length,
+              zip,
+            });
+          }
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.5 },
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [checkoutVerdict, zip, sampleComps]);
+
+  useEffect(() => {
+    const el = ctaBtnRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !ctaVisibleTracked.current) {
+          ctaVisibleTracked.current = true;
+          trackEvent('paywall_cta_visible', {
+            verdict: checkoutVerdict,
             zip,
           });
           observer.disconnect();
@@ -433,7 +467,7 @@ export default function AnalysisPaywall({
       )}
 
       {intentFailed ? (
-        <div className="mt-4 sm:mt-5 flex justify-center">
+        <div ref={ctaBtnRef} className="mt-4 sm:mt-5 flex justify-center">
           <button
             onClick={handleRedirectFallback}
             disabled={redirectLoading || checkoutLoading}
