@@ -308,7 +308,7 @@ export default function AnalysisPaywall({
       </div>
 
       <p className="mt-2 max-w-full break-words px-2 text-center text-[11px] text-muted-foreground sm:mt-3 sm:px-0 sm:text-[12px]">
-        Not useful? Reply to your receipt for a full refund.
+        Not useful? Email us. Full refund.
       </p>
 
       <div className="mt-1 px-2 pb-4 text-center text-[10px] leading-relaxed text-muted-foreground/50 sm:mt-2 sm:px-0 sm:text-[11px]">
