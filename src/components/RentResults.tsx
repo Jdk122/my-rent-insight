@@ -1035,7 +1035,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         ) : (
                           <p className="text-[15px] text-muted-foreground">
                             {isAboveMarket && calc
-                              ? 'See how much you could save — and get the exact reply to send.'
+                              ? 'See how much you could save. Your reply letter is ready.'
                               : isFair
                               ? 'See your leverage and get the reply that keeps your rate fair.'
                               : 'See your full market breakdown and what to do next.'}
@@ -1166,6 +1166,15 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 Based on local market data for {city}.
               </p>
 
+              {/* ── Check a different address — above no-increase paywall ── */}
+              {!isPaid && (
+                <div className="mt-4 flex flex-col items-center gap-2">
+                  <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
+                    ← Check a different address
+                  </button>
+                </div>
+              )}
+
               {/* ── Paywall for no-increase users ── */}
               {!isPaid && (
                 <AnalysisPaywall
@@ -1174,6 +1183,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   city={city}
                   currentRent={formData.currentRent}
                   medianCompRent={medianCompRent ?? undefined}
+                  turnoverCost={Math.round(formData.currentRent * 3)}
                   onCheckout={handleCheckout}
                   checkoutLoading={checkoutLoading}
                   onPaid={onPaid}
@@ -1185,15 +1195,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     savings: 0,
                   }}
                 />
-              )}
-
-              {/* ── Check a different address — above no-increase paywall ── */}
-              {!isPaid && (
-                <div className="mt-4 flex flex-col items-center gap-2">
-                  <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
-                    ← Check a different address
-                  </button>
-                </div>
               )}
               {isPaid && (
                 <div className="mt-4 flex flex-col items-center gap-2">
