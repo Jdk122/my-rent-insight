@@ -220,6 +220,8 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
           </div>
         </>
       )}
+    </>
+  );
 }
 
 export default function AnalysisPaywall({
