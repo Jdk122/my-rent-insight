@@ -15,7 +15,7 @@ const SocialProofLine = ({ inline }: { inline?: boolean }) => {
 
   const text =
     count >= 500
-      ? `Join ${count.toLocaleString()} renters who've checked their increase`
+      ? `${count.toLocaleString()} renters have used this to reply to their landlord`
       : 'Free. No account required.';
 
   if (inline) return <>{text}</>;
