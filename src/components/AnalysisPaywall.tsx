@@ -238,6 +238,7 @@ export default function AnalysisPaywall({
   medianCompRent,
   turnoverCost,
   increaseAmount,
+  sampleComps,
 }: AnalysisPaywallProps) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [intentLoading, setIntentLoading] = useState(true);
