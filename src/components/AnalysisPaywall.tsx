@@ -282,6 +282,28 @@ export default function AnalysisPaywall({
 
     observer.observe(el);
     return () => observer.disconnect();
+  }, [checkoutVerdict, zip, sampleComps]);
+
+  useEffect(() => {
+    const el = ctaBtnRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !ctaVisibleTracked.current) {
+          ctaVisibleTracked.current = true;
+          trackEvent('paywall_cta_visible', {
+            verdict: checkoutVerdict,
+            zip,
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.5 },
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
   }, [checkoutVerdict, zip]);
 
   useEffect(() => {
