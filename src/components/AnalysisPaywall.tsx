@@ -488,9 +488,8 @@ export default function AnalysisPaywall({
       </p>
       <p className="text-center text-[11px] text-muted-foreground/50 flex items-center justify-center gap-1">
         Secured by
-        <svg className="h-[14px] w-auto inline-block" viewBox="0 0 60 25" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-label="Stripe">
-          <path d="M5 10.1c0-.6.5-.9 1.3-.9 1.2 0 2.6.4 3.8 1V6.5c-1.3-.5-2.5-.7-3.8-.7C3.4 5.8 1 7.6 1 10.3c0 4.2 5.8 3.5 5.8 5.3 0 .7-.6 1-1.5 1-1.3 0-2.9-.5-4.2-1.3v3.8c1.4.6 2.9.9 4.2.9 3 0 5.1-1.5 5.1-4.3C10.4 11.2 5 12 5 10.1zM17.2 3.3l-3.9.8v3.4h-1.7v3.3h1.7v4.8c0 2 1 3.5 3.5 3.5 1 0 1.8-.2 2.3-.5v-3.2c-.4.2-1 .3-1.4.3-.8 0-1.4-.3-1.4-1.3v-3.6h2.8V7.5h-2.8V3.3zM24 8.8l-.2-1.3h-3.4v10.8h3.9v-7.3c.9-1.2 2.5-1 3-.8V7.5c-.5-.2-2.4-.5-3.3 1.3zM28.3 7.5h3.9v10.8h-3.9V7.5zm0-4.2l3.9-.8v3.2l-3.9.8V3.3zM38.5 5.8c-1.5 0-2.5.7-3.1 1.2l-.2-1h-3.4v14.5l3.9-.8v-3.5c.6.4 1.4 1 2.7 1 2.7 0 5.2-2.2 5.2-7C43.6 6.2 41.3 5.8 38.5 5.8zm-.9 10.3c-.9 0-1.4-.3-1.8-.7v-5.6c.4-.5.9-.8 1.8-.8 1.4 0 2.3 1.5 2.3 3.5 0 2.1-.9 3.6-2.3 3.6zM52.5 5.8c-3.8 0-6.2 3.2-6.2 7.2s2.6 7.2 6.5 7.2c1.9 0 3.3-.5 4.4-1.1v-3.1c-1.1.6-2.3.9-3.8.9-1.5 0-2.8-.5-3-2.3h7.5c0-.2 0-1 0-1.4-.1-4.3-2-7.4-5.4-7.4zm-2.2 5.8c0-1.7 1-2.4 2-2.4s1.9.7 1.9 2.4h-3.9z"/>
-        </svg>
+        <img src={stripeLogo} alt="Stripe" className="h-[14px] w-auto inline-block opacity-50" />
+      </p>
       </p>
 
       <div className="border-t border-border/40 pt-3 mt-3 sm:mt-4 space-y-1.5 pb-4">
