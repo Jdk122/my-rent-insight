@@ -1117,6 +1117,14 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   onCheckout={handleCheckout}
                   checkoutLoading={checkoutLoading}
                   onPaid={onPaid}
+                  counterOfferLow={counterOffer?.counterLow}
+                  counterOfferHigh={counterOffer?.counterHigh}
+                  medianCompRent={medianCompRent ?? undefined}
+                  newRent={newRent}
+                  marketYoy={marketYoy}
+                  increasePct={increasePct}
+                  turnoverCost={Math.round(formData.currentRent * 3)}
+                  increaseAmount={increaseAmount}
                   expressCheckoutProps={{
                     analysisId,
                     verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : isBelowMarket ? 'below' : 'none',
