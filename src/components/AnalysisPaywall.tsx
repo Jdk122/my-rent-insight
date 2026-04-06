@@ -489,7 +489,7 @@ export default function AnalysisPaywall({
         Secured by Stripe
       </p>
 
-      <div className="border-t border-border/40 pt-4 mt-4 sm:mt-5 space-y-2.5 pb-4">
+      <div className="border-t border-border/40 pt-3 mt-3 sm:mt-4 space-y-1.5 pb-4">
         {valueStack.map((item, i) => (
           <motion.div
             key={i}
