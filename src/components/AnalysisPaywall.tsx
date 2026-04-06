@@ -362,9 +362,9 @@ export default function AnalysisPaywall({
         : `See how your rent stacks up against ${compsLabel} nearby listings.`;
 
   const subline = isAbove
-    ? `Based on ${compsLabel} nearby comps renting for less.`
+    ? 'Based on comps and market data.'
     : isFair
-      ? `Based on ${compsLabel} nearby comps.`
+      ? 'Based on comps and market data.'
       : null;
 
   const ctaText = isAbove
