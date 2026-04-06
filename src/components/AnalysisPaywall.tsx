@@ -498,7 +498,7 @@ export default function AnalysisPaywall({
           />
         </Elements>
       ) : (
-        <div className="mt-5 flex justify-center">
+        <div className="mt-4 sm:mt-5 flex justify-center">
           <button
             disabled
             className="w-full max-w-[340px] py-4 rounded-xl text-[16px] sm:text-[17px] font-bold bg-primary text-primary-foreground shadow-md shadow-primary/25 min-h-[56px] opacity-70"
