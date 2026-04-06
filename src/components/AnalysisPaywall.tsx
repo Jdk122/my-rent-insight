@@ -159,7 +159,7 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
         <button
           onClick={handleCardReveal}
           disabled={checkoutLoading || showCardForm}
-          className="w-full max-w-[340px] py-5 rounded-xl text-[18px] sm:text-[19px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
+          className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
         >
           {checkoutLoading ? 'Opening checkout...' : ctaText}
         </button>
@@ -206,7 +206,7 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
 
       {walletAvailable !== false && (
         <>
-          <p className="text-[11px] text-muted-foreground text-center mt-4 mb-2">or pay instantly with</p>
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground text-center mt-4 mb-2">or pay instantly with</p>
           <div className="min-h-[40px]">
             <ExpressCheckoutElement
               onReady={handleExpressReady}
@@ -403,12 +403,12 @@ export default function AnalysisPaywall({
         </span>
       </div>
 
-      <h2 className="font-display text-[22px] sm:text-[28px] tracking-tight text-foreground leading-tight text-center mt-2 sm:mt-3">
+      <h2 className="font-display text-[20px] sm:text-[28px] tracking-tight text-foreground leading-tight text-center mt-2 sm:mt-3">
         {headline}
       </h2>
 
       {subline && (
-        <p className="mt-2 text-center text-[14px] sm:text-[15px] text-muted-foreground">
+        <p className="mt-2 text-center text-[13px] sm:text-[15px] text-muted-foreground">
           {subline}
         </p>
       )}
@@ -416,18 +416,18 @@ export default function AnalysisPaywall({
       {sampleComps && sampleComps.length >= 2 && (
         <div className="mt-4 sm:mt-5 space-y-2 max-w-[340px] mx-auto">
           {sampleComps.slice(0, 2).map((comp, i) => (
-            <div key={i} className="rounded-lg border border-border/60 bg-card px-4 py-3 flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-[13px] font-medium text-foreground truncate">{comp.address}</p>
-                <p className="text-[11px] text-muted-foreground">{comp.beds}bd / {comp.baths}ba</p>
-              </div>
-              <div className="relative overflow-hidden rounded-md px-3 py-1 shrink-0">
-                <span className="font-display text-[15px] font-bold text-foreground" aria-hidden="true">$X,XXX/mo</span>
-                <div className="absolute inset-0 z-10 bg-card/80 supports-[backdrop-filter]:backdrop-blur-[5px] supports-[backdrop-filter]:bg-card/60" aria-hidden="true" />
+            <div key={i} className="rounded-lg border border-border/60 bg-card px-4 py-3">
+              <p className="text-[13px] font-medium text-foreground leading-snug">{comp.address}</p>
+              <div className="flex items-center justify-between mt-1.5">
+                <span className="text-[11px] text-muted-foreground">{comp.beds}bd / {comp.baths}ba</span>
+                <div className="relative overflow-hidden rounded-md px-2 py-0.5">
+                  <span className="text-[13px] font-bold text-foreground" aria-hidden="true">$X,XXX/mo</span>
+                  <div className="absolute inset-0 z-10 bg-card/80 supports-[backdrop-filter]:backdrop-blur-[5px] supports-[backdrop-filter]:bg-card/60" aria-hidden="true" />
+                </div>
               </div>
             </div>
           ))}
-          <p className="text-[11px] text-muted-foreground text-center">+ {compsCount - 2} more comps inside</p>
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground text-center">+ {compsCount - 2} more comps inside</p>
         </div>
       )}
 
@@ -436,7 +436,7 @@ export default function AnalysisPaywall({
           <button
             onClick={handleRedirectFallback}
             disabled={redirectLoading || checkoutLoading}
-            className="w-full max-w-[340px] py-5 rounded-xl text-[18px] sm:text-[19px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
+            className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
           >
             {redirectLoading || checkoutLoading ? 'Opening checkout...' : ctaText}
           </button>
@@ -460,7 +460,7 @@ export default function AnalysisPaywall({
         <div className="mt-4 sm:mt-5 flex justify-center">
           <button
             disabled
-            className="w-full max-w-[340px] py-5 rounded-xl text-[18px] sm:text-[19px] font-extrabold bg-primary text-primary-foreground shadow-md shadow-primary/25 min-h-[56px] opacity-70"
+            className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground shadow-md shadow-primary/25 min-h-[56px] opacity-70"
           >
             <span className="inline-flex items-center justify-center gap-2">
               <RefreshCw className="h-4 w-4 animate-spin" />
@@ -496,11 +496,11 @@ export default function AnalysisPaywall({
             initial={{ opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 0.5 + i * 0.05 }}
-            className="flex items-start gap-2.5 text-[12px] sm:text-[13px]"
+            className="flex items-start gap-2 text-[11px] sm:text-[13px]"
           >
-            <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+            <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary shrink-0 mt-0.5" />
             <span className="text-foreground text-left flex-1">{item.text}</span>
-            <span className="text-muted-foreground/60 text-[10px] sm:text-[11px] whitespace-nowrap shrink-0 mt-0.5 hidden min-[360px]:inline">
+            <span className="text-muted-foreground/60 text-[9px] sm:text-[11px] whitespace-nowrap shrink-0 mt-0.5 hidden min-[360px]:inline">
               {item.tag}
             </span>
           </motion.div>
