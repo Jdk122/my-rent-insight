@@ -530,7 +530,7 @@ export default function AnalysisPaywall({
         Secured by Stripe
       </p>
 
-      <div className="border-t border-border/40 pt-4 mt-5 space-y-2.5 pb-4">
+      <div className="border-t border-border/40 pt-4 mt-4 sm:mt-5 space-y-2.5 pb-4">
         {valueStack.map((item, i) => (
           <motion.div
             key={i}
@@ -540,8 +540,8 @@ export default function AnalysisPaywall({
             className="flex items-start gap-2.5 text-[12px] sm:text-[13px]"
           >
             <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-            <span className="text-foreground">{item.text}</span>
-            <span className="text-muted-foreground/60 ml-auto text-[10px] sm:text-[11px] whitespace-nowrap hidden min-[360px]:inline">
+            <span className="text-foreground text-left flex-1">{item.text}</span>
+            <span className="text-muted-foreground/60 text-[10px] sm:text-[11px] whitespace-nowrap shrink-0 mt-0.5 hidden min-[360px]:inline">
               {item.tag}
             </span>
           </motion.div>
