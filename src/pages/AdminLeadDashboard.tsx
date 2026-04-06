@@ -745,7 +745,7 @@ function DashboardContent() {
                       <td className="px-2 py-2">{r.fairness_score ?? '—'}</td>
                       <td className="px-2 py-2">
                         <span className="flex items-center gap-1">
-                          {r.purchased && <span title="Purchased — $1.99">💰</span>}
+                          {r.purchased && <span title="Purchased — $4.99">💰</span>}
                           {r.verdict_label ? (
                             <span className={`inline-block px-1.5 py-0.5 rounded text-[11px] font-medium border ${verdictColor(r.verdict_label)}`}>
                               {r.verdict_label}
