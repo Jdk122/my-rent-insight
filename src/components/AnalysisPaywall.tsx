@@ -130,27 +130,13 @@ export default function AnalysisPaywall({
   const badgeText = isAboveMarket ? 'Your Counter-Offer Kit' : 'Your Rent Analysis Kit';
 
   const headline = (() => {
-    if (isAboveMarket && annualSavings && annualSavings > 0) {
-      return (
-        <>
-          You&apos;re paying <span className="font-bold text-destructive">${fmt(annualSavings)}/yr</span> more than the market supports.
-        </>
-      );
-    }
     if (isAboveMarket) {
-      return <>{compsCount} apartments near you rent for less than your proposed rent.</>;
+      return <>You&apos;re paying <span className="font-bold text-destructive">more</span> than the market supports.</>;
     }
     if (isFair && turnoverCost) {
       return (
         <>
           It would cost your landlord <span className="font-bold text-foreground">${fmt(turnoverCost)}</span> to replace you.
-        </>
-      );
-    }
-    if (isBelowMarket && annualSavings) {
-      return (
-        <>
-          You&apos;re paying <span className="font-bold text-verdict-good">${fmt(Math.abs(annualSavings))}</span> less than your neighbors this year.
         </>
       );
     }
