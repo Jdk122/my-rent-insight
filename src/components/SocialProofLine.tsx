@@ -21,7 +21,7 @@ const SocialProofLine = ({ inline }: { inline?: boolean }) => {
   if (inline) return <>{text}</>;
 
   return (
-    <p className="text-xs text-muted-foreground">
+    <p className="text-xs text-center break-words text-muted-foreground">
       {text}
     </p>
   );
