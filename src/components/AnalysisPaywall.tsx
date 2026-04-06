@@ -131,7 +131,7 @@ export default function AnalysisPaywall({
 
   const headline = (() => {
     if (isAboveMarket) {
-      return <>You&apos;re paying <span className="font-bold text-destructive">more</span> than the market supports.</>;
+      return <>You&apos;re paying <span className="font-bold text-destructive">more</span> than your neighbors.</>;
     }
     if (isFair && turnoverCost) {
       return (
@@ -141,31 +141,31 @@ export default function AnalysisPaywall({
       );
     }
     if (isBelowMarket) {
-      return <>You&apos;re getting a better deal than most renters in {city}.</>;
+      return <>You&apos;re paying less than your neighbors.</>;
     }
-    return <>See how your rent compares to {compsCount} nearby listings.</>;
+    return <>See how your rent stacks up.</>;
   })();
 
   const subline = isAboveMarket
-    ? 'Here’s the data to negotiate it down — and the exact reply to send.'
+    ? 'The data is ready. So is your reply letter.'
     : isFair
-      ? 'Here’s how to use that as leverage in your renewal conversation.'
+      ? 'That number is your leverage. Your reply letter uses it.'
       : isBelowMarket
-        ? 'Here’s how to lock in this rate before your landlord catches on.'
-        : `Full market breakdown for ${city}, ready in seconds.`;
+        ? 'Lock this in before your landlord looks at the market.'
+        : 'Full market breakdown. Ready in seconds.';
 
   const agitationLine = isAboveMarket && increaseAmount
-    ? `Every month without a reply is another $${fmt(increaseAmount)} your landlord keeps.`
+    ? `Every month you wait, that's another $${fmt(increaseAmount)} gone.`
     : isFair
-      ? 'Most renters don’t reply. That’s what landlords count on.'
+      ? 'Most renters never reply. Landlords know that.'
       : null;
 
   const stackLines = isAboveMarket
     ? [
         { text: `Counter-offer range from ${compsCount} nearby comps`, tag: '($200+ value)' },
-        { text: 'Landlord turnover cost breakdown', tag: '(data they do not share)' },
+        { text: 'Landlord turnover cost breakdown', tag: "(data they don't share)" },
         { text: 'Ready-to-send negotiation reply', tag: '($225+ if a lawyer wrote it)' },
-        { text: 'Full market trends + evidence report', tag: '(hours of research, done)' },
+        { text: 'Full market trends and evidence report', tag: '(hours of research, done)' },
       ]
     : [
         { text: `Full comp analysis with ${compsCount} nearby listings`, tag: '($200+ value)' },
@@ -175,16 +175,16 @@ export default function AnalysisPaywall({
       ];
 
   const commitmentText = isAboveMarket
-    ? 'You’ve already done the hard part. Your counter‑offer is ready.'
-    : 'You’ve already done the hard part. Your analysis is ready.';
+    ? 'Your counter-offer is ready.'
+    : 'Your analysis is ready.';
 
   const ctaText = isAboveMarket
-    ? 'Unlock my counter-offer — $1.99'
+    ? 'Unlock my counter-offer — $4.99'
     : isFair
-      ? 'See my leverage — $1.99'
+      ? 'See my leverage — $4.99'
       : isBelowMarket
-        ? 'See my full breakdown — $1.99'
-        : 'Unlock full analysis — $1.99';
+        ? 'See my full breakdown — $4.99'
+        : 'Unlock full analysis — $4.99';
 
   const cardBase = 0.15;
   const stackBase = cardBase + 0.08 * 3 + 0.3;
