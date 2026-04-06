@@ -70,6 +70,7 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
 
     trackEvent('checkout_started', {
       method: 'express_checkout',
+      express_type: event?.expressPaymentType || 'unknown',
       placement: 'analysis_gate',
       verdict: expressCheckoutProps.verdict,
       zip: expressCheckoutProps.zip,
