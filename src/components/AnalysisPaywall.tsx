@@ -486,10 +486,6 @@ export default function AnalysisPaywall({
       <p className="mt-1.5 sm:mt-2 text-center text-[11px] text-muted-foreground/50">
         One-time payment · Instant access · No account needed
       </p>
-      <p className="text-center text-[11px] text-muted-foreground/50 flex items-center justify-center gap-1">
-        Secured by
-        <img src={stripeLogo} alt="Stripe" className="h-[14px] w-auto inline-block opacity-50" />
-      </p>
 
       <div className="border-t border-border/40 pt-3 mt-3 sm:mt-4 space-y-1.5 pb-4">
         {valueStack.map((item, i) => (
