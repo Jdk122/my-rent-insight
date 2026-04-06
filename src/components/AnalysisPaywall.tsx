@@ -523,7 +523,7 @@ export default function AnalysisPaywall({
         Not useful? Email us. Full refund.
       </p>
 
-      <p className="mt-2 text-center text-[11px] text-muted-foreground/50">
+      <p className="mt-1.5 sm:mt-2 text-center text-[11px] text-muted-foreground/50">
         One-time payment · Instant access · No account needed
       </p>
       <p className="text-center text-[11px] text-muted-foreground/50">
