@@ -412,10 +412,15 @@ export default function AnalysisPaywall({
       )}
 
       <div className="mt-4 sm:mt-5 flex justify-center">
-        <div className="rounded-xl border border-border/60 bg-card px-5 py-4 text-center min-w-[180px]">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">NEARBY COMPS</p>
-          <p className="font-display text-[22px] sm:text-[24px] font-bold text-foreground mt-1">{compsCount} listings</p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">{medianCompRent ? `median $${fmt(medianCompRent)}/mo` : `in ${city}`}</p>
+        <div className="rounded-xl border border-border/60 bg-card px-5 py-4 text-center min-w-[180px] relative overflow-hidden">
+          <div aria-hidden="true">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">YOUR COUNTER-OFFER</p>
+            <p className="font-display text-[22px] sm:text-[24px] font-bold text-verdict-good mt-1">{counterOfferLow ? `$${fmt(counterOfferLow)}/mo` : '$---/mo'}</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">based on {compsCount} comps</p>
+          </div>
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-card/80 supports-[backdrop-filter]:backdrop-blur-[6px] supports-[backdrop-filter]:bg-card/60" aria-hidden="true">
+            <Lock className="h-4 w-4 text-muted-foreground/40" />
+          </div>
         </div>
       </div>
 
