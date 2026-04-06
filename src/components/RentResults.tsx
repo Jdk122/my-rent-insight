@@ -1157,6 +1157,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   verdict="none"
                   compsCount={compsWithRent.length}
                   city={city}
+                  currentRent={formData.currentRent}
                   onCheckout={handleCheckout}
                   checkoutLoading={checkoutLoading}
                   onPaid={onPaid}
@@ -1167,6 +1168,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     city: rentData.city,
                     savings: 0,
                   }}
+                  medianCompRent={medianCompRent ?? undefined}
                 />
               )}
 
