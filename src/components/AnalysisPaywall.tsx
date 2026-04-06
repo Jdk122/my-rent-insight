@@ -5,6 +5,7 @@ import { Elements, ExpressCheckoutElement, PaymentElement, useElements, useStrip
 import { supabase } from '@/integrations/supabase/client';
 import { stripePromise } from '@/lib/stripe';
 import SocialProofLine from './SocialProofLine';
+import stripeLogo from '@/assets/stripe-logo.png';
 import { trackEvent } from '@/lib/analytics';
 import { toast } from 'sonner';
 
