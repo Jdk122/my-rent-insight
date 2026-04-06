@@ -207,20 +207,19 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
         <>
           <p className="text-[11px] text-muted-foreground text-center mt-4 mb-2">or pay instantly with</p>
           <div className="min-h-[40px]">
-          <ExpressCheckoutElement
-            onReady={handleExpressReady}
-            onConfirm={handleExpressConfirm}
-            onCancel={handleExpressCancel}
-            options={{
-              buttonHeight: 40,
-              buttonType: { applePay: 'buy', googlePay: 'buy' },
-              emailRequired: true,
-            }}
-          />
-        </div>
+            <ExpressCheckoutElement
+              onReady={handleExpressReady}
+              onConfirm={handleExpressConfirm}
+              onCancel={handleExpressCancel}
+              options={{
+                buttonHeight: 40,
+                buttonType: { applePay: 'buy', googlePay: 'buy' },
+                emailRequired: true,
+              }}
+            />
+          </div>
+        </>
       )}
-    </>
-  );
 }
 
 export default function AnalysisPaywall({
