@@ -827,7 +827,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         className="w-full"
         style={{ background: 'hsl(var(--verdict-bg))' }}
       >
-        <div className="max-w-[620px] mx-auto px-5 sm:px-6">
+        <div className="max-w-[620px] mx-auto px-5 sm:px-6 overflow-x-hidden">
           <motion.section
             id="section-verdict"
             {...fade(0)}
