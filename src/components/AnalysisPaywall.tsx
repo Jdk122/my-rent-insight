@@ -455,12 +455,14 @@ export default function AnalysisPaywall({
                 <p className="text-[10px] text-muted-foreground mt-1">{card.sub}</p>
               </div>
 
-              <div
-                className="absolute inset-0 z-10 flex items-center justify-center bg-card/80 supports-[backdrop-filter]:backdrop-blur-[6px] supports-[backdrop-filter]:bg-card/60"
-                aria-hidden="true"
-              >
-                <Lock className="h-3.5 w-3.5 text-muted-foreground/40" />
-              </div>
+              {i !== 1 && (
+                <div
+                  className="absolute inset-0 z-10 flex items-center justify-center bg-card/80 supports-[backdrop-filter]:backdrop-blur-[6px] supports-[backdrop-filter]:bg-card/60"
+                  aria-hidden="true"
+                >
+                  <Lock className="h-3.5 w-3.5 text-muted-foreground/40" />
+                </div>
+              )}
             </motion.div>
           ))}
         </div>
