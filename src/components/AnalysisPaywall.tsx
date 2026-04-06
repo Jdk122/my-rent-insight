@@ -353,7 +353,7 @@ export default function AnalysisPaywall({
   const compsLabel = compsCount > 0 ? compsCount : 'several';
 
   const headline = isAbove
-    ? `$${fmt((increaseAmount || 0) * 12)} more this year. Or $4.99 to push back.`
+    ? `$${fmt((increaseAmount || 0) * 12)} more this year. $4.99 to push back.`
     : isFair
       ? `Your landlord would spend $${fmt(turnoverCost || Math.round((currentRent || 1500) * 3))} to replace you. $4.99 shows you how to use that.`
       : isBelow
@@ -361,13 +361,13 @@ export default function AnalysisPaywall({
         : `See how your rent stacks up against ${compsLabel} nearby listings.`;
 
   const subline = isAbove
-    ? `We found ${compsLabel} comparable units renting for less than you.`
+    ? `Based on ${compsLabel} nearby comps renting for less.`
     : isFair
       ? `We found ${compsLabel} comparable units near you.`
       : null;
 
   const ctaText = isAbove
-    ? `Unlock my counter-offer\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`
+    ? `Get my counter-offer\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`
     : isFair
       ? `See my leverage\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`
       : isBelow
@@ -427,7 +427,7 @@ export default function AnalysisPaywall({
               </div>
             </div>
           ))}
-          <p className="text-[10px] sm:text-[11px] text-muted-foreground text-center">+ {compsCount - 2} more comps inside</p>
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground text-center">+ {compsCount - 2} more inside</p>
         </div>
       )}
 
