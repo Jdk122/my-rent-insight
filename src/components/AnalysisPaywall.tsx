@@ -195,8 +195,8 @@ export default function AnalysisPaywall({
 
   // ── Commitment hook ──
   const commitmentText = isAboveMarket
-    ? 'You've already done the hard part. Your counter-offer is ready.'
-    : 'You've already done the hard part. Your analysis is ready.';
+    ? "You\u2019ve already done the hard part. Your counter-offer is ready."
+    : "You\u2019ve already done the hard part. Your analysis is ready.";
 
   // ── CTA text ──
   const ctaText = isAboveMarket
