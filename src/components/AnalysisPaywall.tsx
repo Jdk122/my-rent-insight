@@ -403,7 +403,7 @@ export default function AnalysisPaywall({
         </span>
       </div>
 
-      <h2 className="font-display text-[22px] sm:text-[28px] tracking-tight text-foreground leading-tight text-center mt-2 sm:mt-3">
+      <h2 className="font-display text-[20px] sm:text-[28px] tracking-tight text-foreground leading-tight text-center mt-2 sm:mt-3">
         {headline}
       </h2>
 
