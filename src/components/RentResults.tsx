@@ -1187,12 +1187,21 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                 />
               )}
 
-              {/* ── Check a different address ── */}
-              <div className="mt-4 flex flex-col items-center gap-2">
-                <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
-                  ← Check a different address
-                </button>
-              </div>
+              {/* ── Check a different address — above no-increase paywall ── */}
+              {!isPaid && (
+                <div className="mt-4 flex flex-col items-center gap-2">
+                  <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
+                    ← Check a different address
+                  </button>
+                </div>
+              )}
+              {isPaid && (
+                <div className="mt-4 flex flex-col items-center gap-2">
+                  <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
+                    ← Check a different address
+                  </button>
+                </div>
+              )}
             </>
           )}
         </motion.section>
