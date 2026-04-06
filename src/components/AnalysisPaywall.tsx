@@ -258,7 +258,7 @@ export default function AnalysisPaywall({
       </div>
 
       {/* ── Express Checkout ── */}
-      <div className="min-h-[48px] mt-5">
+      <div className="min-h-[48px] mt-5 overflow-hidden">
         <StripeExpressCheckout
           onSuccess={handleWalletSuccess}
           onFallbackToRedirect={handleFallback}
