@@ -416,14 +416,14 @@ export default function AnalysisPaywall({
       {sampleComps && sampleComps.length >= 2 && (
         <div className="mt-4 sm:mt-5 space-y-2 max-w-[340px] mx-auto">
           {sampleComps.slice(0, 2).map((comp, i) => (
-            <div key={i} className="rounded-lg border border-border/60 bg-card px-4 py-3 flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-[13px] font-medium text-foreground truncate">{comp.address}</p>
-                <p className="text-[11px] text-muted-foreground">{comp.beds}bd / {comp.baths}ba</p>
-              </div>
-              <div className="relative overflow-hidden rounded-md px-3 py-1 shrink-0">
-                <span className="font-display text-[15px] font-bold text-foreground" aria-hidden="true">$X,XXX/mo</span>
-                <div className="absolute inset-0 z-10 bg-card/80 supports-[backdrop-filter]:backdrop-blur-[5px] supports-[backdrop-filter]:bg-card/60" aria-hidden="true" />
+            <div key={i} className="rounded-lg border border-border/60 bg-card px-4 py-3">
+              <p className="text-[13px] font-medium text-foreground leading-snug">{comp.address}</p>
+              <div className="flex items-center justify-between mt-1.5">
+                <span className="text-[11px] text-muted-foreground">{comp.beds}bd / {comp.baths}ba</span>
+                <div className="relative overflow-hidden rounded-md px-2 py-0.5">
+                  <span className="text-[13px] font-bold text-foreground" aria-hidden="true">$X,XXX/mo</span>
+                  <div className="absolute inset-0 z-10 bg-card/80 supports-[backdrop-filter]:backdrop-blur-[5px] supports-[backdrop-filter]:bg-card/60" aria-hidden="true" />
+                </div>
               </div>
             </div>
           ))}
