@@ -425,7 +425,7 @@ export default function AnalysisPaywall({
       </h2>
 
       {agitation && (
-        <p className="mt-3 text-center text-[13px] sm:text-[14px] text-muted-foreground/80 italic">
+        <p className="mt-2 sm:mt-3 text-center text-[13px] sm:text-[14px] text-muted-foreground/80 italic">
           {agitation}
         </p>
       )}
