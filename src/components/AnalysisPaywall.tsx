@@ -386,28 +386,6 @@ export default function AnalysisPaywall({
         { text: 'Ready-to-send reply letter', tag: '($225+ if a lawyer wrote it)' },
       ];
 
-  const card1 = isAbove && counterOfferLow
-    ? {
-        label: 'YOUR COUNTER',
-        value: counterOfferLow === counterOfferHigh
-          ? `$${fmt(counterOfferLow)}/mo`
-          : `$${fmt(counterOfferLow)}–$${fmt(counterOfferHigh || counterOfferLow)}/mo`,
-        sub: `based on ${compsLabel} comps`,
-        color: 'text-verdict-good',
-      }
-    : {
-        label: 'YOUR POSITION',
-        value: currentRent ? `$${fmt(currentRent)}/mo` : '$—/mo',
-        sub: medianCompRent ? `vs $${fmt(medianCompRent)} median` : 'vs area median',
-        color: 'text-foreground',
-      };
-
-  const card2 = {
-    label: 'NEARBY COMPS',
-    value: `${compsLabel} listings`,
-    sub: medianCompRent ? `median $${fmt(medianCompRent)}/mo` : 'comparable units',
-    color: 'text-foreground',
-  };
 
   return (
     <motion.div
@@ -433,47 +411,11 @@ export default function AnalysisPaywall({
         </p>
       )}
 
-      <div className="mt-4 sm:mt-5">
-        <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-2 px-2 scrollbar-hide sm:grid sm:grid-cols-3 sm:overflow-visible sm:mx-0 sm:px-0 sm:pb-0" role="list">
-          {[card1, card2, { label: 'YOUR REPLY', value: null, sub: 'ready to copy and send', color: '' }].map((card, i) => (
-            <motion.div
-              key={i}
-              role="listitem"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 + i * 0.08 }}
-              className="min-w-[140px] max-w-[160px] flex-shrink-0 snap-center sm:min-w-0 sm:max-w-none relative overflow-hidden rounded-xl border border-border/60 bg-card p-3 sm:p-4 min-h-[90px] sm:min-h-[100px]"
-            >
-              <div aria-hidden="true">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{card.label}</p>
-                {card.value ? (
-                  <p className={`font-display text-[18px] sm:text-[20px] font-bold mt-1 ${card.color}`}>{card.value}</p>
-                ) : (
-                  <div className="mt-2 space-y-2">
-                    <div className="h-2 rounded-full bg-muted-foreground/12 w-full" />
-                    <div className="h-2 rounded-full bg-muted-foreground/12 w-4/5" />
-                    <div className="h-2 rounded-full bg-muted-foreground/12 w-3/5" />
-                  </div>
-                )}
-                <p className="text-[10px] text-muted-foreground mt-1">{card.sub}</p>
-              </div>
-
-              {i !== 1 && (
-                <div
-                  className="absolute inset-0 z-10 flex items-center justify-center bg-card/80 supports-[backdrop-filter]:backdrop-blur-[6px] supports-[backdrop-filter]:bg-card/60"
-                  aria-hidden="true"
-                >
-                  <Lock className="h-3.5 w-3.5 text-muted-foreground/40" />
-                </div>
-              )}
-            </motion.div>
-          ))}
-        </div>
-
-        <div className="flex gap-1.5 justify-center mt-2 sm:hidden">
-          <div className="w-1.5 h-1.5 rounded-full bg-primary/60" />
-          <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/20" />
-          <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/20" />
+      <div className="mt-4 sm:mt-5 flex justify-center">
+        <div className="rounded-xl border border-border/60 bg-card px-5 py-4 text-center min-w-[180px]">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">NEARBY COMPS</p>
+          <p className="font-display text-[22px] sm:text-[24px] font-bold text-foreground mt-1">{compsCount} listings</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">{medianCompRent ? `median $${fmt(medianCompRent)}/mo` : `in ${city}`}</p>
         </div>
       </div>
 
