@@ -377,10 +377,10 @@ export default function AnalysisPaywall({
 
   const valueStack = isAbove
     ? [
-        { text: `Counter-offer range from ${compsLabel} nearby comps`, tag: '($200+ value)' },
+        { text: `Counter-offer from ${compsLabel} nearby comps`, tag: '($200+ value)' },
         { text: 'Landlord turnover cost breakdown', tag: '(data they don\'t share)' },
-        { text: 'Ready-to-send negotiation reply', tag: '($225+ if a lawyer wrote it)' },
-        { text: 'Full market trends and evidence report', tag: '(hours of research, done)' },
+        { text: 'Ready-to-send reply letter', tag: '($225+ if a lawyer wrote it)' },
+        { text: 'Market trends and evidence report', tag: '(hours of research, done)' },
       ]
     : [
         { text: `Full comp analysis with ${compsLabel} nearby listings`, tag: '($200+ value)' },
