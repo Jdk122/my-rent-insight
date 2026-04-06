@@ -412,7 +412,7 @@ export default function AnalysisPaywall({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="w-full max-w-[480px] mx-auto mt-8 pt-6 px-4 min-w-0 overflow-hidden box-border"
+      className="w-full max-w-[480px] mx-auto mt-4 sm:mt-6 pt-3 sm:pt-6 px-4 min-w-0 overflow-hidden box-border"
     >
       <div className="text-center">
         <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/8 text-primary text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest">
