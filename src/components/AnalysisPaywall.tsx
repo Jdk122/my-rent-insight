@@ -353,7 +353,7 @@ export default function AnalysisPaywall({
   const compsLabel = compsCount > 0 ? compsCount : 'several';
 
   const headline = isAbove
-    ? `$${fmt((increaseAmount || 0) * 12)} more this year. Or $4.99 to push back.`
+    ? `$${fmt((increaseAmount || 0) * 12)} more this year. $4.99 to push back.`
     : isFair
       ? `Your landlord would spend $${fmt(turnoverCost || Math.round((currentRent || 1500) * 3))} to replace you. $4.99 shows you how to use that.`
       : isBelow
