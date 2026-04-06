@@ -182,7 +182,7 @@ export default function AnalysisPaywall({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="max-w-[480px] mx-auto mt-6 border-t-2 border-primary/20 pt-8"
+      className="max-w-[480px] mx-auto mt-6 border-t-2 border-primary/20 pt-8 px-3 sm:px-0"
     >
       {/* ── Badge ── */}
       <div className="text-center">
