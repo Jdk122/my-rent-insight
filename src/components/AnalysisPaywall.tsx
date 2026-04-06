@@ -39,7 +39,7 @@ function BlurredCard({ children, delay }: { children: React.ReactNode; delay: nu
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay, ease: [0.16, 1, 0.3, 1] }}
-      className="relative flex-shrink-0 snap-center overflow-hidden rounded-xl border border-border/60 bg-card min-h-[90px] min-w-[132px] max-w-[148px] sm:min-h-[100px] sm:min-w-0 sm:max-w-none"
+      className="relative flex-shrink-0 snap-center overflow-hidden rounded-xl border border-border/60 bg-card min-h-[82px] min-w-[124px] max-w-[138px] sm:min-h-[100px] sm:min-w-0 sm:max-w-none"
       role="listitem"
     >
       <div className="p-3 sm:p-4">
@@ -47,8 +47,8 @@ function BlurredCard({ children, delay }: { children: React.ReactNode; delay: nu
       </div>
       <motion.div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-card/80 supports-[backdrop-filter]:bg-card/60 supports-[backdrop-filter]:backdrop-blur-[6px]"
-        animate={{ opacity: [0.55, 0.72, 0.55] }}
+        className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-card/90 supports-[backdrop-filter]:bg-card/70 supports-[backdrop-filter]:backdrop-blur-[6px]"
+        animate={{ opacity: [0.68, 0.82, 0.68] }}
         transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
       >
         <Lock size={14} className="text-muted-foreground/40" aria-hidden="true" />
@@ -163,17 +163,17 @@ export default function AnalysisPaywall({
   })();
 
   const subline = isAboveMarket
-    ? "Here’s the data to negotiate it down — and the exact reply to send."
+    ? 'Here’s the data to negotiate it down — and the exact reply to send.'
     : isFair
-      ? "Here’s how to use that as leverage in your renewal conversation."
+      ? 'Here’s how to use that as leverage in your renewal conversation.'
       : isBelowMarket
-        ? "Here’s how to lock in this rate before your landlord catches on."
+        ? 'Here’s how to lock in this rate before your landlord catches on.'
         : `Full market breakdown for ${city}, ready in seconds.`;
 
   const agitationLine = isAboveMarket && increaseAmount
     ? `Every month without a reply is another $${fmt(increaseAmount)} your landlord keeps.`
     : isFair
-      ? "Most renters don’t reply. That’s what landlords count on."
+      ? 'Most renters don’t reply. That’s what landlords count on.'
       : null;
 
   const stackLines = isAboveMarket
@@ -191,7 +191,7 @@ export default function AnalysisPaywall({
       ];
 
   const commitmentText = isAboveMarket
-    ? 'You’ve already done the hard part. Your counter-offer is ready.'
+    ? 'You’ve already done the hard part. Your counter‑offer is ready.'
     : 'You’ve already done the hard part. Your analysis is ready.';
 
   const ctaText = isAboveMarket
@@ -211,7 +211,7 @@ export default function AnalysisPaywall({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="mx-auto mt-6 w-full min-w-0 max-w-[480px] border-t-2 border-primary/20 px-4 pt-8 sm:px-0"
+      className="mx-auto mt-5 w-full min-w-0 max-w-[480px] border-t-2 border-primary/20 px-3 pt-6 sm:mt-6 sm:px-0 sm:pt-8"
     >
       <div className="text-center">
         <span className="inline-flex max-w-full items-center rounded-full bg-primary/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-primary sm:text-[11px]">
@@ -219,22 +219,22 @@ export default function AnalysisPaywall({
         </span>
       </div>
 
-      <p className="mt-4 max-w-full break-words px-1 text-center font-display text-[20px] leading-tight tracking-tight text-foreground sm:px-0 sm:text-[28px]">
+      <p className="mt-3 max-w-full break-words px-1 text-center font-display text-[19px] leading-[1.12] tracking-tight text-foreground sm:mt-4 sm:px-0 sm:text-[28px] sm:leading-tight">
         {headline}
       </p>
 
-      <p className="mt-2 max-w-full break-words px-1 text-center text-[14px] leading-relaxed text-muted-foreground sm:px-0 sm:text-[15px]">
+      <p className="mt-2 max-w-full break-words px-1 text-center text-[13px] leading-relaxed text-muted-foreground sm:px-0 sm:text-[15px]">
         {subline}
       </p>
 
       {agitationLine && (
-        <p className="mt-4 hidden max-w-full break-words px-1 text-center text-[13px] italic text-muted-foreground/70 sm:block sm:px-0">
+        <p className="mt-3 hidden max-w-full break-words px-1 text-center text-[13px] italic text-muted-foreground/70 sm:mt-4 sm:block sm:px-0">
           {agitationLine}
         </p>
       )}
 
-      <div className="mt-5 sm:hidden" role="list">
-        <div className="flex gap-3 overflow-x-auto pb-2 pr-2">
+      <div className="mt-4 sm:hidden" role="list">
+        <div className="flex gap-2.5 overflow-x-auto pb-1 pr-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           <PreviewCard1
             verdict={verdict}
             counterOfferLow={counterOfferLow}
@@ -247,7 +247,7 @@ export default function AnalysisPaywall({
           <PreviewCard2 compsCount={compsCount} medianCompRent={medianCompRent} delay={cardBase + 0.08} />
           <PreviewCard3 delay={cardBase + 0.16} />
         </div>
-        <div className="mt-2 flex gap-1.5 justify-center">
+        <div className="mt-1.5 flex gap-1.5 justify-center">
           <div className="h-1.5 w-1.5 rounded-full bg-primary/60" />
           <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground/20" />
           <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground/20" />
@@ -274,15 +274,15 @@ export default function AnalysisPaywall({
         ))}
       </div>
 
-      <p className="mt-5 max-w-full break-words px-2 text-center text-[12px] text-muted-foreground sm:px-0 sm:text-[13px]">
+      <p className="mx-auto mt-4 max-w-[22rem] break-words px-2 text-center text-[11px] leading-relaxed text-muted-foreground sm:mt-5 sm:max-w-none sm:px-0 sm:text-[13px] sm:leading-normal">
         {commitmentText}
       </p>
 
-      <div className="mt-3 px-2 text-center sm:px-0">
+      <div className="mx-auto mt-2 max-w-[22rem] px-2 text-center sm:mt-3 sm:max-w-none sm:px-0">
         <SocialProofLine />
       </div>
 
-      <div className="mt-5">
+      <div className="mt-4 sm:mt-5">
         {walletAvailable !== false && (
           <div className="mx-auto min-h-[48px] w-full max-w-[340px]">
             <StripeExpressCheckout
@@ -310,17 +310,26 @@ export default function AnalysisPaywall({
             onCheckout();
           }}
           disabled={checkoutLoading}
-          className="mx-auto mt-3 block min-h-[48px] w-full max-w-[340px] rounded-xl bg-primary px-4 py-4 text-[15px] font-bold text-primary-foreground shadow-md shadow-primary/25 transition-all hover:brightness-95 disabled:opacity-70 sm:mt-2 sm:py-3.5 sm:shadow-none sm:hover:bg-foreground/90 sm:hover:brightness-100"
+          className="mx-auto mt-2 block min-h-[44px] w-full max-w-[340px] rounded-xl bg-primary px-4 py-3 text-[15px] font-bold text-primary-foreground shadow-md shadow-primary/25 transition-all hover:brightness-95 disabled:opacity-70 sm:mt-2 sm:min-h-[48px] sm:py-3.5 sm:shadow-none sm:hover:bg-foreground/90 sm:hover:brightness-100"
         >
-          {checkoutLoading ? 'Opening checkout...' : walletAvailable ? <><span className="sm:hidden">{ctaText}</span><span className="hidden sm:inline">Or pay with card — $1.99</span></> : ctaText}
+          {checkoutLoading
+            ? 'Opening checkout...'
+            : walletAvailable
+              ? (
+                <>
+                  <span className="sm:hidden">{ctaText}</span>
+                  <span className="hidden sm:inline">Or pay with card — $1.99</span>
+                </>
+              )
+              : ctaText}
         </button>
       </div>
 
-      <p className="mt-3 max-w-full break-words px-2 text-center text-[12px] text-muted-foreground sm:px-0">
+      <p className="mt-2 max-w-full break-words px-2 text-center text-[11px] text-muted-foreground sm:mt-3 sm:px-0 sm:text-[12px]">
         Not useful? Reply to your receipt for a full refund.
       </p>
 
-      <div className="mt-2 px-2 pb-4 text-center text-[11px] text-muted-foreground/50 sm:px-0">
+      <div className="mt-1 px-2 pb-4 text-center text-[10px] leading-relaxed text-muted-foreground/50 sm:mt-2 sm:px-0 sm:text-[11px]">
         <p className="break-words">One-time payment · Instant access · No account needed</p>
         <p>Secured by Stripe</p>
       </div>
@@ -362,22 +371,22 @@ function PreviewCard1({
   if (isAbove && counterOfferLow) {
     return (
       <BlurredCard delay={delay}>
-        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">YOUR COUNTER</p>
-        <p className="break-words font-display text-[20px] font-bold text-verdict-good">
+        <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground sm:text-[10px]">YOUR COUNTER</p>
+        <p className="break-words font-display text-[18px] font-bold text-verdict-good sm:text-[20px]">
           {counterOfferLow === counterOfferHigh
             ? `$${fmt(counterOfferLow)}/mo`
             : `$${fmt(counterOfferLow)} – $${fmt(counterOfferHigh ?? counterOfferLow)}`}
         </p>
-        <p className="text-[10px] text-muted-foreground">based on {compsCount} comps</p>
+        <p className="text-[9px] text-muted-foreground sm:text-[10px]">based on {compsCount} comps</p>
       </BlurredCard>
     );
   }
 
   return (
     <BlurredCard delay={delay}>
-      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">YOUR POSITION</p>
-      <p className="break-words font-display text-[20px] font-bold text-foreground">${currentRent ? fmt(currentRent) : '—'}/mo</p>
-      <p className="text-[10px] text-muted-foreground">vs ${medianCompRent ? fmt(medianCompRent) : '—'} median</p>
+      <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground sm:text-[10px]">YOUR POSITION</p>
+      <p className="break-words font-display text-[18px] font-bold text-foreground sm:text-[20px]">${currentRent ? fmt(currentRent) : '—'}/mo</p>
+      <p className="text-[9px] text-muted-foreground sm:text-[10px]">vs ${medianCompRent ? fmt(medianCompRent) : '—'} median</p>
     </BlurredCard>
   );
 }
@@ -385,9 +394,9 @@ function PreviewCard1({
 function PreviewCard2({ compsCount, medianCompRent, delay }: { compsCount: number; medianCompRent?: number; delay: number }) {
   return (
     <BlurredCard delay={delay}>
-      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">NEARBY COMPS</p>
-      <p className="break-words font-display text-[20px] font-bold text-foreground">{compsCount} listings</p>
-      <p className="text-[10px] text-muted-foreground">median ${medianCompRent ? fmt(medianCompRent) : '—'}/mo</p>
+      <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground sm:text-[10px]">NEARBY COMPS</p>
+      <p className="break-words font-display text-[18px] font-bold text-foreground sm:text-[20px]">{compsCount} listings</p>
+      <p className="text-[9px] text-muted-foreground sm:text-[10px]">median ${medianCompRent ? fmt(medianCompRent) : '—'}/mo</p>
     </BlurredCard>
   );
 }
@@ -395,13 +404,13 @@ function PreviewCard2({ compsCount, medianCompRent, delay }: { compsCount: numbe
 function PreviewCard3({ delay }: { delay: number }) {
   return (
     <BlurredCard delay={delay}>
-      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">YOUR REPLY</p>
+      <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground sm:text-[10px]">YOUR REPLY</p>
       <div className="mt-2 space-y-2">
         <div className="h-2 w-full rounded-full bg-muted-foreground/12" />
         <div className="h-2 w-4/5 rounded-full bg-muted-foreground/12" />
         <div className="h-2 w-3/5 rounded-full bg-muted-foreground/12" />
       </div>
-      <p className="mt-1 text-[10px] text-muted-foreground">ready to copy & send</p>
+      <p className="mt-1 text-[9px] text-muted-foreground sm:text-[10px]">ready to copy & send</p>
     </BlurredCard>
   );
 }
