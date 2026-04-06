@@ -40,11 +40,14 @@ function BlurredCard({ children, delay }: { children: React.ReactNode; delay: nu
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay, ease: [0.16, 1, 0.3, 1] }}
-      className="rounded-xl border border-border/60 bg-card p-3 sm:p-4 relative overflow-hidden min-h-[90px] sm:min-h-[100px] min-w-[140px] max-w-[160px] sm:max-w-none sm:min-w-0 flex-shrink-0 snap-center"
+      className="rounded-xl border border-border/60 bg-card relative overflow-hidden min-h-[90px] sm:min-h-[100px] min-w-[140px] max-w-[160px] sm:max-w-none sm:min-w-0 flex-shrink-0 snap-center"
       role="listitem"
     >
-      {children}
-      {/* Blur overlay */}
+      {/* Content behind blur */}
+      <div className="p-3 sm:p-4">
+        {children}
+      </div>
+      {/* Blur overlay — covers entire card */}
       <motion.div
         aria-hidden="true"
         className="absolute inset-0 z-10 flex items-center justify-center bg-card/80 supports-[backdrop-filter]:backdrop-blur-[6px] supports-[backdrop-filter]:bg-card/60"
@@ -397,7 +400,7 @@ function PreviewCard1({
     return (
       <BlurredCard delay={delay}>
         <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">YOUR COUNTER</p>
-        <p className="font-display text-[20px] text-verdict-good font-bold">${fmt(counterOfferLow)} – ${fmt(counterOfferHigh ?? counterOfferLow)}</p>
+        <p className="font-display text-[20px] text-verdict-good font-bold">{counterOfferLow === counterOfferHigh ? `$${fmt(counterOfferLow)}/mo` : `$${fmt(counterOfferLow)} – $${fmt(counterOfferHigh ?? counterOfferLow)}`}</p>
         <p className="text-[10px] text-muted-foreground">based on {compsCount} comps</p>
       </BlurredCard>
     );
