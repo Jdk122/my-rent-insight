@@ -206,7 +206,7 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
 
       {walletAvailable !== false && (
         <>
-          <p className="text-[11px] text-muted-foreground text-center mt-4 mb-2">or pay instantly with</p>
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground text-center mt-4 mb-2">or pay instantly with</p>
           <div className="min-h-[40px]">
             <ExpressCheckoutElement
               onReady={handleExpressReady}

@@ -1033,7 +1033,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                           )}
                         </div>
                         ) : (
-                          <p className="text-[15px] text-muted-foreground">
+                          <p className="text-[14px] sm:text-[15px] text-muted-foreground">
                             {isAboveMarket && calc
                               ? 'See how much you could save. Your reply letter is ready.'
                               : isFair
