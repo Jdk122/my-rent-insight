@@ -959,7 +959,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     dynamicMessage={
                       <div className="space-y-2">
                         <h1
-                          className="font-display text-[1.35rem] sm:text-[clamp(1.5rem,4.5vw,2.2rem)] text-foreground leading-[1.15] tracking-tight text-balance"
+                          className="font-display text-[1.2rem] sm:text-[clamp(1.5rem,4.5vw,2.2rem)] text-foreground leading-[1.15] tracking-tight text-balance"
                           style={{ letterSpacing: '-0.02em' }}
                         >
                           {isAboveMarket && calc ? (
