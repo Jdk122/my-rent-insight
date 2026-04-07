@@ -524,7 +524,7 @@ export default function AnalysisPaywall({
       </div>
 
       <p className="mt-3 sm:mt-4 text-center text-[12px] text-muted-foreground">
-        Not useful? Email us. Full refund.
+        Not useful? Full refund, no questions.
       </p>
 
       {/* CTA zone — observed for sticky bar */}
