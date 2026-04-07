@@ -163,21 +163,9 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
 
   return (
     <div className="flex flex-col gap-0">
-      {/* Main CTA button — always visible first */}
-      <div className="mt-4 flex justify-center">
-        <button
-          onClick={handleCardReveal}
-          disabled={checkoutLoading || showCardForm}
-          className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
-        >
-          {checkoutLoading ? 'Opening checkout...' : ctaText}
-        </button>
-      </div>
-
-      {/* Express checkout — below CTA */}
+      {/* Express checkout — primary action */}
       {walletAvailable !== false && (
-        <div className="mt-3">
-          <p className="text-[11px] text-muted-foreground text-center mb-2">or pay instantly with</p>
+        <div className="mt-4">
           <div className="min-h-[40px]">
             <ExpressCheckoutElement
               onReady={handleExpressReady}
@@ -192,6 +180,18 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
           </div>
         </div>
       )}
+
+      {/* Card fallback — secondary */}
+      <p className="text-[11px] text-muted-foreground text-center my-2">or pay with card</p>
+      <div className="flex justify-center">
+        <button
+          onClick={handleCardReveal}
+          disabled={checkoutLoading || showCardForm}
+          className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-foreground/80 text-background hover:bg-foreground/90 shadow-md min-h-[56px] disabled:opacity-70 transition-all"
+        >
+          {checkoutLoading ? 'Opening checkout...' : ctaText}
+        </button>
+      </div>
 
       {/* Inline card form */}
       {showCardForm && (
@@ -434,12 +434,12 @@ export default function AnalysisPaywall({
       : null;
 
   const ctaText = isAbove
-    ? `Unlock my counter-offer\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`
+    ? `Get my counter-offer for ${PAYMENT_AMOUNT_LABEL}`
     : isFair
-      ? `See my leverage\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`
+      ? `See my leverage for ${PAYMENT_AMOUNT_LABEL}`
       : isBelow
-        ? `See my full breakdown\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`
-        : `Unlock full analysis\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`;
+        ? `Get my full breakdown for ${PAYMENT_AMOUNT_LABEL}`
+        : `Get full analysis for ${PAYMENT_AMOUNT_LABEL}`;
 
   const valueStack = isAbove
     ? [
@@ -514,7 +514,7 @@ export default function AnalysisPaywall({
         ))}
       </div>
 
-      <p className="mt-3 sm:mt-4 text-center text-[12px] text-muted-foreground">
+      <p className="mt-3 text-center text-[12px] text-muted-foreground">
         Not useful? Full refund, no questions.
       </p>
 
