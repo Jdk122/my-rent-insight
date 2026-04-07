@@ -162,29 +162,28 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
   }, [elements, onPaid, stripe]);
 
   return (
-    <>
-      {/* Mobile: Express checkout first, then card fallback */}
+    <div className="flex flex-col">
+      {/* Express checkout — first on mobile (order-1), last on desktop (sm:order-3) */}
       {walletAvailable !== false && (
-        <div className="mt-4 sm:mt-5 sm:order-last order-first">
-          <div className="sm:hidden">
-            <div className="min-h-[40px]">
-              <ExpressCheckoutElement
-                onReady={handleExpressReady}
-                onConfirm={handleExpressConfirm}
-                onCancel={handleExpressCancel}
-                options={{
-                  buttonHeight: 48,
-                  buttonType: { applePay: 'buy', googlePay: 'buy' },
-                  emailRequired: true,
-                }}
-              />
-            </div>
+        <div className="order-1 sm:order-3 mt-4 sm:mt-0">
+          <p className="text-[11px] text-muted-foreground text-center mb-2 hidden sm:block sm:mt-4">or pay instantly with</p>
+          <div className="min-h-[40px]">
+            <ExpressCheckoutElement
+              onReady={handleExpressReady}
+              onConfirm={handleExpressConfirm}
+              onCancel={handleExpressCancel}
+              options={{
+                buttonHeight: 44,
+                buttonType: { applePay: 'buy', googlePay: 'buy' },
+                emailRequired: true,
+              }}
+            />
           </div>
         </div>
       )}
 
-      {/* Mobile: card as secondary; Desktop: card as primary */}
-      <div className={`flex justify-center ${walletAvailable ? 'mt-3 sm:mt-4 sm:order-first' : 'mt-4 sm:mt-5'}`}>
+      {/* Card CTA — second on mobile (order-2), first on desktop (sm:order-1) */}
+      <div className={`order-2 sm:order-1 flex justify-center ${walletAvailable ? 'mt-3 sm:mt-4' : 'mt-4 sm:mt-5'}`}>
         <button
           onClick={handleCardReveal}
           disabled={checkoutLoading || showCardForm}
@@ -203,13 +202,14 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
         </button>
       </div>
 
+      {/* Card form — order-3 on mobile, order-2 on desktop */}
       {showCardForm && (
         <motion.form
           onSubmit={handleCardSubmit}
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           transition={{ duration: 0.24 }}
-          className="mt-3 w-full max-w-[380px] mx-auto"
+          className="order-3 sm:order-2 mt-3 w-full max-w-[380px] mx-auto"
         >
           <div className="rounded-xl border border-border/60 bg-card p-4 text-left shadow-sm">
             <PaymentElement
@@ -241,23 +241,8 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
           </button>
         </motion.form>
       )}
-
-      {/* Desktop: express checkout below card CTA */}
-      {walletAvailable !== false && (
-        <div className="hidden sm:block">
-          <p className="text-[11px] text-muted-foreground text-center mt-4 mb-2">or pay instantly with</p>
-          <div className="min-h-[40px]">
-            <ExpressCheckoutElement
-              onReady={handleExpressReady}
-              onConfirm={handleExpressConfirm}
-              onCancel={handleExpressCancel}
-              options={{
-                buttonHeight: 40,
-                buttonType: { applePay: 'buy', googlePay: 'buy' },
-                emailRequired: true,
-              }}
-            />
-          </div>
+    </div>
+  );
         </div>
       )}
     </>
