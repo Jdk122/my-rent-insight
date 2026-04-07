@@ -187,8 +187,8 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
         <button
           onClick={handleCardReveal}
           disabled={checkoutLoading || showCardForm}
-          className="w-full max-w-[340px] mx-auto py-3.5 rounded-xl text-[15px] font-bold hover:brightness-95 shadow-sm transition-colors disabled:opacity-70"
-          style={{ backgroundColor: 'hsl(200 80% 44%)', color: '#fff' }}
+          className="w-full max-w-[340px] mx-auto py-3.5 rounded-xl text-[15px] font-bold hover:brightness-95 transition-colors disabled:opacity-70"
+          style={{ backgroundColor: 'hsl(220 18% 13%)', color: '#fff' }}
         >
           {checkoutLoading ? 'Opening checkout...' : ctaText}
         </button>
