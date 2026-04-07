@@ -120,7 +120,7 @@ function PaywallContent({
           className="w-full px-4 py-3 rounded-lg text-sm font-semibold transition-opacity disabled:opacity-60"
           style={{ backgroundColor: 'hsl(220 18% 13%)', color: '#fff' }}
         >
-          {checkoutLoading ? 'Loading…' : '{checkoutLoading ? 'Loading…' : 'Pay with card for $1.99'}'}
+          {checkoutLoading ? 'Loading…' : 'Pay with card for $1.99'}
         </button>
       </div>
 
