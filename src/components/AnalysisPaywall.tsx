@@ -48,12 +48,17 @@ const PAYMENT_AMOUNT_CENTS = 499;
 const PAYMENT_AMOUNT_LABEL = '$4.99';
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
-function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, onPaid }: PaywallCheckoutInnerProps) {
+function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, onPaid, onCardFormToggle }: PaywallCheckoutInnerProps) {
   const stripe = useStripe();
   const elements = useElements();
   const [walletAvailable, setWalletAvailable] = useState<boolean | null>(null);
   const [showCardForm, setShowCardForm] = useState(false);
   const [cardLoading, setCardLoading] = useState(false);
+
+  const toggleCardForm = useCallback((open: boolean) => {
+    setShowCardForm(open);
+    onCardFormToggle?.(open);
+  }, [onCardFormToggle]);
 
   const handleExpressReady = useCallback(({ availablePaymentMethods }: { availablePaymentMethods: Record<string, boolean> | null }) => {
     if (!availablePaymentMethods || Object.keys(availablePaymentMethods).length === 0) {
