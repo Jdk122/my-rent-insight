@@ -527,7 +527,8 @@ export default function AnalysisPaywall({
             <button
               onClick={handleRedirectFallback}
               disabled={redirectLoading || checkoutLoading}
-              className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
+              className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold hover:brightness-95 shadow-md min-h-[56px] disabled:opacity-70 transition-all"
+              style={{ backgroundColor: 'hsl(200 80% 44%)', color: '#fff' }}
             >
               {redirectLoading || checkoutLoading ? 'Opening checkout...' : ctaText}
             </button>
