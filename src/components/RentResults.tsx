@@ -1035,7 +1035,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                         ) : (
                            <p className="text-[14px] sm:text-[15px] text-muted-foreground">
                              {isAboveMarket && calc
-                               ? `Your proposed rent is ${calc.percentAbove}% above market.`
+                               ? `That adds up to $${Math.round(calc.extraPerYear).toLocaleString()} more this year.`
                                : isFair
                                ? 'See your leverage and get the reply that keeps your rate fair.'
                                : 'See your full market breakdown and what to do next.'}
