@@ -480,7 +480,7 @@ export default function AnalysisPaywall({
       {sampleComps && sampleComps.length >= 2 && (
         <div className="mt-4 sm:mt-5 space-y-2 max-w-[340px] mx-auto">
           {sampleComps.slice(0, 2).map((comp, i) => (
-            <div key={i} className="rounded-lg border border-border bg-card px-4 py-3">
+            <div key={i} className="rounded-lg border border-border/60 bg-card px-4 py-3">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[12px] font-medium text-foreground leading-snug min-w-0 flex-1 truncate">{comp.address}</p>
                 <span className="text-[10px] text-muted-foreground shrink-0">{comp.beds}bd/{comp.baths}ba</span>
