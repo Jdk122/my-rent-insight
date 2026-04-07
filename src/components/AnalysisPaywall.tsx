@@ -118,7 +118,7 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
       verdict: expressCheckoutProps.verdict,
       zip: expressCheckoutProps.zip,
     });
-    setShowCardForm(true);
+    toggleCardForm(true);
   }, [expressCheckoutProps.verdict, expressCheckoutProps.zip]);
 
   const handleCardSubmit = useCallback(async (event: FormEvent<HTMLFormElement>) => {
