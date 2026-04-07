@@ -474,11 +474,6 @@ export default function AnalysisPaywall({
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       className="w-full max-w-[480px] mx-auto mt-2 sm:mt-4 pt-0 sm:pt-2 px-4 min-w-0 overflow-hidden box-border"
     >
-      <div className="text-center">
-        <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/8 text-primary text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest">
-          {badge}
-        </span>
-      </div>
 
       <h2 className="font-display text-[20px] sm:text-[28px] tracking-tight text-foreground leading-tight text-center mt-2 sm:mt-3">
         {headline}
