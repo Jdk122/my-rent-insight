@@ -1132,11 +1132,18 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   increasePct={increasePct}
                   turnoverCost={Math.round(formData.currentRent * 3)}
                   increaseAmount={increaseAmount}
-                  sampleComps={compsWithRent.slice(0, 2).map(c => ({
-                    address: c.formattedAddress?.split(',').slice(0, 2).join(',').trim() || 'Nearby unit',
-                    beds: c.bedrooms ?? 1,
-                    baths: c.bathrooms ?? 1,
-                  }))}
+                   sampleComps={(() => {
+                     const getStreet = (c: typeof compsWithRent[0]) => (c.formattedAddress?.split(',')[0]?.trim() || '');
+                     const picked = [compsWithRent[0]];
+                     const firstStreet = getStreet(compsWithRent[0]);
+                     const diverse = compsWithRent.slice(1).find(c => getStreet(c) !== firstStreet);
+                     picked.push(diverse || compsWithRent[1]);
+                     return picked.filter(Boolean).map(c => ({
+                       address: c.formattedAddress?.split(',').slice(0, 2).join(',').trim() || 'Nearby unit',
+                       beds: c.bedrooms ?? 1,
+                       baths: c.bathrooms ?? 1,
+                     }));
+                   })()}
                   expressCheckoutProps={{
                     analysisId,
                     verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : isBelowMarket ? 'below' : 'none',
