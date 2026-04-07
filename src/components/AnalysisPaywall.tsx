@@ -41,6 +41,7 @@ interface PaywallCheckoutInnerProps {
   ctaText: string;
   expressCheckoutProps: AnalysisPaywallProps['expressCheckoutProps'];
   onPaid?: (email?: string) => void;
+  onCardFormToggle?: (open: boolean) => void;
 }
 
 const PAYMENT_AMOUNT_CENTS = 499;
