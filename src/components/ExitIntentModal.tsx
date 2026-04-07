@@ -72,7 +72,7 @@ function PaywallContent({
   const [walletAvailable, setWalletAvailable] = useState(true);
 
   const headline = isAboveMarket
-    ? 'Your verdict: above market. The full analysis is $4.99.'
+    ? 'Above market. Counter with proof for $4.99.'
     : 'Your full analysis is just $4.99.';
 
   const subtext = isAboveMarket
