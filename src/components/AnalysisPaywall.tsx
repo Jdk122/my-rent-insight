@@ -204,7 +204,7 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
           </div>
           <button
             type="button"
-            onClick={() => setShowCardForm(false)}
+            onClick={() => toggleCardForm(false)}
             className="mt-2 text-[12px] text-muted-foreground underline w-full text-center"
           >
             Cancel
