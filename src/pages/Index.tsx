@@ -438,7 +438,7 @@ const Index = () => {
               ← New check
             </button>
           )}
-          {results && hasIncrease && isAboveMarket && isUnlocked && (
+          {results && hasIncrease && isAboveMarket && isPaid && (
             <button
               onClick={() => {
                 document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' });
