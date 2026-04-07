@@ -182,13 +182,12 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
       )}
 
       {/* Card fallback — secondary */}
-      <p className="text-[11px] text-center my-2" style={{ color: 'hsl(215 12% 38%)' }}>or pay with card</p>
+      <p className="text-[11px] text-muted-foreground text-center my-2">or pay with card</p>
       <div className="flex justify-center">
         <button
           onClick={handleCardReveal}
           disabled={checkoutLoading || showCardForm}
-          className="w-full max-w-[340px] mx-auto py-3.5 rounded-xl text-[15px] font-bold hover:brightness-95 transition-colors disabled:opacity-70"
-          style={{ backgroundColor: 'hsl(220 18% 13%)', color: '#fff' }}
+          className="w-full max-w-[340px] mx-auto py-3.5 rounded-xl text-[15px] font-bold bg-foreground text-background hover:bg-foreground/90 transition-colors disabled:opacity-70"
         >
           {checkoutLoading ? 'Opening checkout...' : ctaText}
         </button>
@@ -481,7 +480,7 @@ export default function AnalysisPaywall({
       {sampleComps && sampleComps.length >= 2 && (
         <div className="mt-4 sm:mt-5 space-y-2 max-w-[340px] mx-auto">
           {sampleComps.slice(0, 2).map((comp, i) => (
-            <div key={i} className="rounded-lg border border-border bg-card px-4 py-3">
+            <div key={i} className="rounded-lg border border-border/60 bg-card px-4 py-3">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[12px] font-medium text-foreground leading-snug min-w-0 flex-1 truncate">{comp.address}</p>
                 <span className="text-[10px] text-muted-foreground shrink-0">{comp.beds}bd/{comp.baths}ba</span>
@@ -507,7 +506,7 @@ export default function AnalysisPaywall({
             transition={{ duration: 0.3, delay: 0.5 + i * 0.05 }}
             className="flex items-start gap-2 text-[11px] sm:text-[13px]"
           >
-            <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 mt-0.5" style={{ color: 'hsl(200 80% 44%)' }} />
+            <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary shrink-0 mt-0.5" />
             <span className="text-foreground text-left flex-1">{item.text}</span>
             <span className="text-muted-foreground text-[9px] whitespace-nowrap shrink-0 mt-0.5 hidden min-[360px]:inline">
               {item.tag}
