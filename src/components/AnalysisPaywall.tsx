@@ -600,7 +600,6 @@ export default function AnalysisPaywall({
     </>
   );
 }
-  const badge = isAbove ? 'Your Counter-Offer Kit' : 'Your Rent Analysis Kit';
   const compsLabel = compsCount > 0 ? compsCount : 'several';
 
   const headline = isAbove
