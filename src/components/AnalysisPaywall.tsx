@@ -434,12 +434,12 @@ export default function AnalysisPaywall({
       : null;
 
   const ctaText = isAbove
-    ? `Unlock my counter-offer\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`
+    ? `Get my counter-offer for ${PAYMENT_AMOUNT_LABEL}`
     : isFair
-      ? `See my leverage\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`
+      ? `See my leverage for ${PAYMENT_AMOUNT_LABEL}`
       : isBelow
-        ? `See my full breakdown\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`
-        : `Unlock full analysis\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`;
+        ? `Get my full breakdown for ${PAYMENT_AMOUNT_LABEL}`
+        : `Get full analysis for ${PAYMENT_AMOUNT_LABEL}`;
 
   const valueStack = isAbove
     ? [
