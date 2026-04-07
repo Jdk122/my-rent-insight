@@ -162,11 +162,10 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
   }, [elements, onPaid, stripe]);
 
   return (
-    <div className="flex flex-col">
-      {/* Express checkout — first on mobile (order-1), last on desktop (sm:order-3) */}
+    <div className="flex flex-col gap-0">
+      {/* Express checkout — always first */}
       {walletAvailable !== false && (
-        <div className="order-1 sm:order-3 mt-4 sm:mt-0">
-          <p className="text-[11px] text-muted-foreground text-center mb-2 hidden sm:block sm:mt-4">or pay instantly with</p>
+        <div className="mt-4">
           <div className="min-h-[40px]">
             <ExpressCheckoutElement
               onReady={handleExpressReady}
@@ -182,34 +181,35 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
         </div>
       )}
 
-      {/* Card CTA — second on mobile (order-2), first on desktop (sm:order-1) */}
-      <div className={`order-2 sm:order-1 flex justify-center ${walletAvailable ? 'mt-3 sm:mt-4' : 'mt-4 sm:mt-5'}`}>
-        <button
-          onClick={handleCardReveal}
-          disabled={checkoutLoading || showCardForm}
-          className={`w-full max-w-[340px] rounded-xl transition-all disabled:opacity-70 ${
-            walletAvailable
-              ? 'py-3 text-[13px] sm:py-5 sm:text-[18px] font-semibold sm:font-extrabold text-muted-foreground underline sm:no-underline sm:bg-primary sm:text-primary-foreground sm:hover:brightness-95 sm:shadow-md sm:shadow-primary/25 sm:min-h-[56px]'
-              : 'py-5 text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px]'
-          }`}
-        >
-          {checkoutLoading ? 'Opening checkout...' : walletAvailable
-            ? <span className="sm:hidden">or pay with card — {PAYMENT_AMOUNT_LABEL}</span>
-            : null}
-          {checkoutLoading ? null : walletAvailable
-            ? <span className="hidden sm:inline">{ctaText}</span>
-            : ctaText}
-        </button>
+      {/* "or pay with card" divider + card CTA */}
+      <div className={`flex justify-center ${walletAvailable ? 'mt-3' : 'mt-4'}`}>
+        {walletAvailable ? (
+          <button
+            onClick={handleCardReveal}
+            disabled={checkoutLoading || showCardForm}
+            className="py-2.5 text-[13px] font-semibold text-muted-foreground underline disabled:opacity-70 transition-all"
+          >
+            or pay with card — {PAYMENT_AMOUNT_LABEL}
+          </button>
+        ) : (
+          <button
+            onClick={handleCardReveal}
+            disabled={checkoutLoading || showCardForm}
+            className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
+          >
+            {checkoutLoading ? 'Opening checkout...' : ctaText}
+          </button>
+        )}
       </div>
 
-      {/* Card form — order-3 on mobile, order-2 on desktop */}
+      {/* Inline card form */}
       {showCardForm && (
         <motion.form
           onSubmit={handleCardSubmit}
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           transition={{ duration: 0.24 }}
-          className="order-3 sm:order-2 mt-3 w-full max-w-[380px] mx-auto"
+          className="mt-3 w-full max-w-[380px] mx-auto"
         >
           <div className="rounded-xl border border-border/60 bg-card p-4 text-left shadow-sm">
             <PaymentElement
@@ -505,11 +505,11 @@ export default function AnalysisPaywall({
               </div>
             </div>
           ))}
-          <p className="text-[10px] sm:text-[11px] text-muted-foreground text-center">+ {compsCount - 2} more comps inside</p>
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground/60 text-center">{compsCount - 2} more comps included</p>
         </div>
       )}
 
-      {/* Value stack — above CTA */}
+      {/* Value stack — above payment */}
       <div className="border-t border-border/40 pt-3 mt-4 sm:mt-5 space-y-1.5">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3">What's inside</p>
         {valueStack.map((item, i) => (
