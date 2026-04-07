@@ -600,7 +600,6 @@ export default function AnalysisPaywall({
     </>
   );
 }
-  const compsLabel = compsCount > 0 ? compsCount : 'several';
 
   const headline = isAbove
     ? <>{'$'}{fmt((increaseAmount || 0) * 12)} more this year.{' '}<span className="whitespace-nowrap">Or $4.99 to push back.</span></>
