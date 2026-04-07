@@ -182,12 +182,13 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
       )}
 
       {/* Card fallback — secondary */}
-      <p className="text-[11px] text-muted-foreground text-center my-2">or pay with card</p>
+      <p className="text-[11px] text-center my-2" style={{ color: 'hsl(215 12% 38%)' }}>or pay with card</p>
       <div className="flex justify-center">
         <button
           onClick={handleCardReveal}
           disabled={checkoutLoading || showCardForm}
-          className="w-full max-w-[340px] mx-auto py-3.5 rounded-xl text-[15px] font-bold bg-primary text-primary-foreground hover:brightness-95 shadow-sm shadow-primary/25 transition-colors disabled:opacity-70"
+          className="w-full max-w-[340px] mx-auto py-3.5 rounded-xl text-[15px] font-bold hover:brightness-95 shadow-sm transition-colors disabled:opacity-70"
+          style={{ backgroundColor: 'hsl(200 80% 44%)', color: '#fff' }}
         >
           {checkoutLoading ? 'Opening checkout...' : ctaText}
         </button>
@@ -218,7 +219,8 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
             <button
               type="submit"
               disabled={cardLoading || !stripe}
-              className="w-full mt-4 py-3.5 rounded-lg text-[15px] font-bold bg-primary text-primary-foreground hover:brightness-95 shadow-sm shadow-primary/25 min-h-[48px] disabled:opacity-70 transition-all"
+              className="w-full mt-4 py-3.5 rounded-lg text-[15px] font-bold hover:brightness-95 shadow-sm min-h-[48px] disabled:opacity-70 transition-all"
+              style={{ backgroundColor: 'hsl(200 80% 44%)', color: '#fff' }}
             >
               {cardLoading ? 'Processing...' : `Pay ${PAYMENT_AMOUNT_LABEL}`}
             </button>
@@ -479,13 +481,13 @@ export default function AnalysisPaywall({
       {sampleComps && sampleComps.length >= 2 && (
         <div className="mt-4 sm:mt-5 space-y-2 max-w-[340px] mx-auto">
           {sampleComps.slice(0, 2).map((comp, i) => (
-            <div key={i} className="rounded-lg border border-border/60 bg-card px-4 py-3">
+            <div key={i} className="rounded-lg border border-border bg-card px-4 py-3">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[12px] font-medium text-foreground leading-snug min-w-0 flex-1 truncate">{comp.address}</p>
                 <span className="text-[10px] text-muted-foreground shrink-0">{comp.beds}bd/{comp.baths}ba</span>
-                <div className="relative overflow-hidden rounded-md px-1.5 py-0.5 shrink-0">
-                  <span className="text-[11px] font-bold text-foreground" aria-hidden="true">$X,XXX</span>
-                  <div className="absolute inset-0 z-10 bg-card/80 supports-[backdrop-filter]:backdrop-blur-[5px] supports-[backdrop-filter]:bg-card/60" aria-hidden="true" />
+                <div className="relative overflow-hidden rounded-md px-2 py-0.5 shrink-0">
+                  <span className="text-[11px] font-bold text-foreground" aria-hidden="true">$X,XXX/mo</span>
+                  <div className="absolute inset-0 z-10 bg-card/80 backdrop-blur-[5px]" aria-hidden="true" />
                 </div>
               </div>
             </div>
@@ -505,7 +507,7 @@ export default function AnalysisPaywall({
             transition={{ duration: 0.3, delay: 0.5 + i * 0.05 }}
             className="flex items-start gap-2 text-[11px] sm:text-[13px]"
           >
-            <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary shrink-0 mt-0.5" />
+            <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 mt-0.5" style={{ color: 'hsl(200 80% 44%)' }} />
             <span className="text-foreground text-left flex-1">{item.text}</span>
             <span className="text-muted-foreground text-[9px] whitespace-nowrap shrink-0 mt-0.5 hidden min-[360px]:inline">
               {item.tag}
@@ -525,7 +527,8 @@ export default function AnalysisPaywall({
             <button
               onClick={handleRedirectFallback}
               disabled={redirectLoading || checkoutLoading}
-              className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
+              className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold hover:brightness-95 shadow-md min-h-[56px] disabled:opacity-70 transition-all"
+              style={{ backgroundColor: 'hsl(200 80% 44%)', color: '#fff' }}
             >
               {redirectLoading || checkoutLoading ? 'Opening checkout...' : ctaText}
             </button>
@@ -550,7 +553,8 @@ export default function AnalysisPaywall({
           <div className="mt-4 sm:mt-5 flex justify-center">
             <button
               disabled
-              className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground shadow-md shadow-primary/25 min-h-[56px] opacity-70"
+              className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold shadow-md min-h-[56px] opacity-70"
+              style={{ backgroundColor: 'hsl(200 80% 44%)', color: '#fff' }}
             >
               <span className="inline-flex items-center justify-center gap-2">
                 <RefreshCw className="h-4 w-4 animate-spin" />
@@ -584,7 +588,8 @@ export default function AnalysisPaywall({
           <div className="px-4 pt-3 flex flex-col items-center gap-1.5">
             <button
               onClick={handleStickyClick}
-              className="w-full max-w-[340px] py-3.5 rounded-xl text-[15px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[48px] transition-all"
+              className="w-full max-w-[340px] py-3.5 rounded-xl text-[15px] font-extrabold hover:brightness-95 shadow-md min-h-[48px] transition-all"
+              style={{ backgroundColor: 'hsl(200 80% 44%)', color: '#fff' }}
             >
               {ctaText}
             </button>
