@@ -480,7 +480,7 @@ export default function AnalysisPaywall({
       </h2>
 
       {subline && (
-        <p className="mt-2 text-center text-[13px] sm:text-[15px] text-muted-foreground">
+        <p className="mt-2.5 text-center text-[13px] sm:text-[15px] text-muted-foreground">
           {subline}
         </p>
       )}
