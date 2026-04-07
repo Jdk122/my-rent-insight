@@ -252,8 +252,11 @@ export default function AnalysisPaywall({
   const [intentLoading, setIntentLoading] = useState(true);
   const [intentFailed, setIntentFailed] = useState(false);
   const [redirectLoading, setRedirectLoading] = useState(false);
+  const [cardFormOpen, setCardFormOpen] = useState(false);
+  const [stickyVisible, setStickyVisible] = useState(false);
   const ctaRef = useRef<HTMLDivElement>(null);
   const ctaBtnRef = useRef<HTMLDivElement>(null);
+  const ctaZoneRef = useRef<HTMLDivElement>(null);
   const impressionTracked = useRef(false);
   const ctaVisibleTracked = useRef(false);
   const compsViewedTracked = useRef(false);
