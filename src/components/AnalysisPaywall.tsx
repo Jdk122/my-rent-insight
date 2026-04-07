@@ -444,16 +444,16 @@ export default function AnalysisPaywall({
 
   const valueStack = isAbove
     ? [
-        { text: 'Your exact counter-offer number', tag: `(${compsLabel} sources)` },
-        { text: 'Your landlord\'s replacement cost', tag: '(leverage)' },
-        { text: 'A reply letter, ready to send', tag: '(done)' },
-        { text: 'Full market evidence report', tag: '(done)' },
+        { text: 'Your exact counter-offer number', tag: '($200+ value)' },
+        { text: 'Your landlord\'s replacement cost', tag: '(data they won\'t share)' },
+        { text: 'A reply letter, ready to send', tag: '($225+ if a lawyer wrote it)' },
+        { text: 'Full market evidence report', tag: '(hours of research, done)' },
       ]
     : [
-        { text: `Full analysis from ${compsLabel} independent sources`, tag: '(not a guess)' },
-        { text: 'Your landlord\'s replacement cost', tag: '(leverage)' },
-        { text: 'Local market trends and comparable listings', tag: '(done)' },
-        { text: 'A reply letter customized to your situation', tag: '(done)' },
+        { text: `Full comp breakdown, ${compsLabel} data sources`, tag: '($200+ value)' },
+        { text: 'Your landlord\'s replacement cost', tag: '(data they won\'t share)' },
+        { text: `Market trends for ${city}`, tag: '(hours of research, done)' },
+        { text: 'A reply letter, ready to send', tag: '($225+ if a lawyer wrote it)' },
       ];
 
 
