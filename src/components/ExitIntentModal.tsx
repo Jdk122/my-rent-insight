@@ -297,6 +297,7 @@ const ExitIntentModal = ({
         if (scrollY > maxScroll) maxScroll = scrollY;
 
         if (scrollPct < 0.6 && maxScroll / pageHeight > 0.6 && (maxScroll - scrollY) > 300) {
+          if (Date.now() - mountedAt.current < MIN_DELAY_MS) return;
           firedRef.current = true;
           sessionStorage.setItem(SESSION_KEY, '1');
           setOpen(true);
