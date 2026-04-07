@@ -182,13 +182,12 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
       )}
 
       {/* Card fallback — secondary */}
-      <p className="text-[11px] text-center my-2" style={{ color: 'hsl(215 12% 38%)' }}>or pay with card</p>
+      <p className="text-[11px] text-muted-foreground text-center my-2">or pay with card</p>
       <div className="flex justify-center">
         <button
           onClick={handleCardReveal}
           disabled={checkoutLoading || showCardForm}
-          className="w-full max-w-[340px] mx-auto py-3.5 rounded-xl text-[15px] font-bold hover:brightness-95 transition-colors disabled:opacity-70"
-          style={{ backgroundColor: 'hsl(220 18% 13%)', color: '#fff' }}
+          className="w-full max-w-[340px] mx-auto py-3.5 rounded-xl text-[15px] font-bold bg-foreground text-background hover:bg-foreground/90 transition-colors disabled:opacity-70"
         >
           {checkoutLoading ? 'Opening checkout...' : ctaText}
         </button>
