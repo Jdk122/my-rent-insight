@@ -514,7 +514,7 @@ export default function AnalysisPaywall({
         ))}
       </div>
 
-      <p className="mt-3 sm:mt-4 text-center text-[12px] text-muted-foreground">
+      <p className="mt-3 text-center text-[12px] text-muted-foreground">
         Not useful? Full refund, no questions.
       </p>
 
