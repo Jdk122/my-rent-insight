@@ -1132,11 +1132,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   increasePct={increasePct}
                   turnoverCost={Math.round(formData.currentRent * 3)}
                   increaseAmount={increaseAmount}
-                  sampleComps={compsWithRent.slice(0, 2).map(c => ({
-                    address: c.formattedAddress?.split(',').slice(0, 2).join(',').trim() || 'Nearby unit',
-                    beds: c.bedrooms ?? 1,
-                    baths: c.bathrooms ?? 1,
-                  }))}
+                  sampleComps={(() => {
+                    const getStreet = (addr: string | undefined) => addr?.split(',')[0]?.trim() || '';
+                    const comp1 = compsWithRent[0];
+                    const comp2 = compsWithRent.find((c, i) => i > 0 && getStreet(c.formattedAddress) !== getStreet(comp1?.formattedAddress)) || compsWithRent[1];
+                    return [comp1, comp2].filter(Boolean).map(c => ({
+                      address: c.formattedAddress?.split(',').slice(0, 2).join(',').trim() || 'Nearby unit',
+                      beds: c.bedrooms ?? 1,
+                      baths: c.bathrooms ?? 1,
+                    }));
+                  })()}
                   expressCheckoutProps={{
                     analysisId,
                     verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : isBelowMarket ? 'below' : 'none',
@@ -1170,11 +1175,16 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   onCheckout={handleCheckout}
                   checkoutLoading={checkoutLoading}
                   onPaid={onPaid}
-                  sampleComps={compsWithRent.slice(0, 2).map(c => ({
-                    address: c.formattedAddress?.split(',').slice(0, 2).join(',').trim() || 'Nearby unit',
-                    beds: c.bedrooms ?? 1,
-                    baths: c.bathrooms ?? 1,
-                  }))}
+                  sampleComps={(() => {
+                    const getStreet = (addr: string | undefined) => addr?.split(',')[0]?.trim() || '';
+                    const comp1 = compsWithRent[0];
+                    const comp2 = compsWithRent.find((c, i) => i > 0 && getStreet(c.formattedAddress) !== getStreet(comp1?.formattedAddress)) || compsWithRent[1];
+                    return [comp1, comp2].filter(Boolean).map(c => ({
+                      address: c.formattedAddress?.split(',').slice(0, 2).join(',').trim() || 'Nearby unit',
+                      beds: c.bedrooms ?? 1,
+                      baths: c.bathrooms ?? 1,
+                    }));
+                  })()}
                   expressCheckoutProps={{
                     analysisId,
                     verdict: 'none',
