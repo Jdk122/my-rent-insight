@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect, type FormEvent } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Check, RefreshCw } from 'lucide-react';
 import { Elements, ExpressCheckoutElement, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -41,18 +41,24 @@ interface PaywallCheckoutInnerProps {
   ctaText: string;
   expressCheckoutProps: AnalysisPaywallProps['expressCheckoutProps'];
   onPaid?: (email?: string) => void;
+  onCardFormToggle?: (open: boolean) => void;
 }
 
 const PAYMENT_AMOUNT_CENTS = 499;
 const PAYMENT_AMOUNT_LABEL = '$4.99';
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
-function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, onPaid }: PaywallCheckoutInnerProps) {
+function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, onPaid, onCardFormToggle }: PaywallCheckoutInnerProps) {
   const stripe = useStripe();
   const elements = useElements();
   const [walletAvailable, setWalletAvailable] = useState<boolean | null>(null);
   const [showCardForm, setShowCardForm] = useState(false);
   const [cardLoading, setCardLoading] = useState(false);
+
+  const toggleCardForm = useCallback((open: boolean) => {
+    setShowCardForm(open);
+    onCardFormToggle?.(open);
+  }, [onCardFormToggle]);
 
   const handleExpressReady = useCallback(({ availablePaymentMethods }: { availablePaymentMethods: Record<string, boolean> | null }) => {
     if (!availablePaymentMethods || Object.keys(availablePaymentMethods).length === 0) {
@@ -112,7 +118,7 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
       verdict: expressCheckoutProps.verdict,
       zip: expressCheckoutProps.zip,
     });
-    setShowCardForm(true);
+    toggleCardForm(true);
   }, [expressCheckoutProps.verdict, expressCheckoutProps.zip]);
 
   const handleCardSubmit = useCallback(async (event: FormEvent<HTMLFormElement>) => {
@@ -198,7 +204,7 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
           </div>
           <button
             type="button"
-            onClick={() => setShowCardForm(false)}
+            onClick={() => toggleCardForm(false)}
             className="mt-2 text-[12px] text-muted-foreground underline w-full text-center"
           >
             Cancel
@@ -246,8 +252,11 @@ export default function AnalysisPaywall({
   const [intentLoading, setIntentLoading] = useState(true);
   const [intentFailed, setIntentFailed] = useState(false);
   const [redirectLoading, setRedirectLoading] = useState(false);
+  const [cardFormOpen, setCardFormOpen] = useState(false);
+  const [stickyVisible, setStickyVisible] = useState(false);
   const ctaRef = useRef<HTMLDivElement>(null);
   const ctaBtnRef = useRef<HTMLDivElement>(null);
+  const ctaZoneRef = useRef<HTMLDivElement>(null);
   const impressionTracked = useRef(false);
   const ctaVisibleTracked = useRef(false);
   const compsViewedTracked = useRef(false);
@@ -381,6 +390,26 @@ export default function AnalysisPaywall({
     }
   }, [analysisId, checkoutCity, checkoutVerdict, savings, zip]);
 
+  // Sticky bar: show when CTA zone scrolls out of view on mobile
+  useEffect(() => {
+    const el = ctaZoneRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setStickyVisible(!entry.isIntersecting);
+      },
+      { threshold: 0 },
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const handleStickyClick = useCallback(() => {
+    ctaZoneRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, []);
+
   const isAbove = verdict === 'above';
   const isFair = verdict === 'at-market';
   const isBelow = verdict === 'below';
@@ -425,6 +454,7 @@ export default function AnalysisPaywall({
 
 
   return (
+    <>
     <motion.div
       ref={ctaRef}
       initial={{ opacity: 0, y: 12 }}
@@ -466,62 +496,8 @@ export default function AnalysisPaywall({
         </div>
       )}
 
-      {intentFailed ? (
-        <div ref={ctaBtnRef} className="mt-4 sm:mt-5 flex justify-center">
-          <button
-            onClick={handleRedirectFallback}
-            disabled={redirectLoading || checkoutLoading}
-            className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
-          >
-            {redirectLoading || checkoutLoading ? 'Opening checkout...' : ctaText}
-          </button>
-        </div>
-      ) : clientSecret ? (
-        <Elements
-          stripe={stripePromise}
-          options={{
-            clientSecret,
-            appearance: { theme: 'stripe' },
-          }}
-        >
-          <PaywallCheckoutInner
-            checkoutLoading={checkoutLoading}
-            ctaText={ctaText}
-            expressCheckoutProps={expressCheckoutProps}
-            onPaid={onPaid}
-          />
-        </Elements>
-      ) : (
-        <div className="mt-4 sm:mt-5 flex justify-center">
-          <button
-            disabled
-            className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground shadow-md shadow-primary/25 min-h-[56px] opacity-70"
-          >
-            <span className="inline-flex items-center justify-center gap-2">
-              <RefreshCw className="h-4 w-4 animate-spin" />
-              {intentLoading ? 'Loading secure checkout...' : ctaText}
-            </span>
-          </button>
-        </div>
-      )}
-
-      <div className="mt-3 text-center">
-        <SocialProofLine />
-      </div>
-
-      <p className="mt-1.5 sm:mt-2 text-center text-[11px] text-muted-foreground/60 italic">
-        Analysis based on data pulled today. Rates shift weekly.
-      </p>
-
-      <p className="mt-2 sm:mt-3 text-center text-[12px] text-muted-foreground">
-        Not useful? Email us. Full refund.
-      </p>
-
-      <p className="mt-1.5 sm:mt-2 text-center text-[11px] text-muted-foreground/50">
-        One-time payment · Instant access · No account needed
-      </p>
-
-      <div className="border-t border-border/40 pt-3 mt-3 sm:mt-4 space-y-1.5 pb-4">
+      {/* Value stack — above CTA */}
+      <div className="border-t border-border/40 pt-3 mt-4 sm:mt-5 space-y-1.5">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3">What's inside</p>
         {valueStack.map((item, i) => (
           <motion.div
@@ -539,6 +515,90 @@ export default function AnalysisPaywall({
           </motion.div>
         ))}
       </div>
+
+      <p className="mt-3 sm:mt-4 text-center text-[12px] text-muted-foreground">
+        Not useful? Email us. Full refund.
+      </p>
+
+      {/* CTA zone — observed for sticky bar */}
+      <div ref={ctaZoneRef}>
+        {intentFailed ? (
+          <div ref={ctaBtnRef} className="mt-4 sm:mt-5 flex justify-center">
+            <button
+              onClick={handleRedirectFallback}
+              disabled={redirectLoading || checkoutLoading}
+              className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
+            >
+              {redirectLoading || checkoutLoading ? 'Opening checkout...' : ctaText}
+            </button>
+          </div>
+        ) : clientSecret ? (
+          <Elements
+            stripe={stripePromise}
+            options={{
+              clientSecret,
+              appearance: { theme: 'stripe' },
+            }}
+          >
+            <PaywallCheckoutInner
+              checkoutLoading={checkoutLoading}
+              ctaText={ctaText}
+              expressCheckoutProps={expressCheckoutProps}
+              onPaid={onPaid}
+              onCardFormToggle={setCardFormOpen}
+            />
+          </Elements>
+        ) : (
+          <div className="mt-4 sm:mt-5 flex justify-center">
+            <button
+              disabled
+              className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground shadow-md shadow-primary/25 min-h-[56px] opacity-70"
+            >
+              <span className="inline-flex items-center justify-center gap-2">
+                <RefreshCw className="h-4 w-4 animate-spin" />
+                {intentLoading ? 'Loading secure checkout...' : ctaText}
+              </span>
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-3 text-center">
+        <SocialProofLine />
+      </div>
+
+      <p className="mt-1.5 sm:mt-2 text-center text-[11px] text-muted-foreground/50 pb-4">
+        One-time payment · Instant access · No account needed
+      </p>
     </motion.div>
+
+    {/* Sticky bottom CTA bar — mobile only */}
+    <AnimatePresence>
+      {stickyVisible && !cardFormOpen && (
+        <motion.div
+          initial={{ y: 80, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 80, opacity: 0 }}
+          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          className="fixed bottom-0 inset-x-0 z-50 sm:hidden border-t border-border/60 bg-card/80 supports-[backdrop-filter]:backdrop-blur-md supports-[backdrop-filter]:bg-card/60"
+          style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
+        >
+          <div className="px-4 pt-3 flex flex-col items-center gap-1.5">
+            <button
+              onClick={handleStickyClick}
+              className="w-full max-w-[340px] py-3.5 rounded-xl text-[15px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[48px] transition-all"
+            >
+              {ctaText}
+            </button>
+            <p className="text-[10px] text-muted-foreground">
+              One-time · Instant access · Full refund if not useful
+            </p>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+    </>
   );
 }
+
+
