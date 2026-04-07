@@ -481,13 +481,13 @@ export default function AnalysisPaywall({
       {sampleComps && sampleComps.length >= 2 && (
         <div className="mt-4 sm:mt-5 space-y-2 max-w-[340px] mx-auto">
           {sampleComps.slice(0, 2).map((comp, i) => (
-            <div key={i} className="rounded-lg border border-border/60 bg-card px-4 py-3">
+            <div key={i} className="rounded-lg border border-border bg-card px-4 py-3">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[12px] font-medium text-foreground leading-snug min-w-0 flex-1 truncate">{comp.address}</p>
                 <span className="text-[10px] text-muted-foreground shrink-0">{comp.beds}bd/{comp.baths}ba</span>
-                <div className="relative overflow-hidden rounded-md px-1.5 py-0.5 shrink-0">
-                  <span className="text-[11px] font-bold text-foreground" aria-hidden="true">$X,XXX</span>
-                  <div className="absolute inset-0 z-10 bg-card/80 supports-[backdrop-filter]:backdrop-blur-[5px] supports-[backdrop-filter]:bg-card/60" aria-hidden="true" />
+                <div className="relative overflow-hidden rounded-md px-2 py-0.5 shrink-0">
+                  <span className="text-[11px] font-bold text-foreground" aria-hidden="true">$X,XXX/mo</span>
+                  <div className="absolute inset-0 z-10 bg-card/80 backdrop-blur-[5px]" aria-hidden="true" />
                 </div>
               </div>
             </div>
