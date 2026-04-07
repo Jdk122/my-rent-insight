@@ -588,7 +588,8 @@ export default function AnalysisPaywall({
           <div className="px-4 pt-3 flex flex-col items-center gap-1.5">
             <button
               onClick={handleStickyClick}
-              className="w-full max-w-[340px] py-3.5 rounded-xl text-[15px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[48px] transition-all"
+              className="w-full max-w-[340px] py-3.5 rounded-xl text-[15px] font-extrabold hover:brightness-95 shadow-md min-h-[48px] transition-all"
+              style={{ backgroundColor: 'hsl(200 80% 44%)', color: '#fff' }}
             >
               {ctaText}
             </button>
