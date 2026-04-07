@@ -390,9 +390,216 @@ export default function AnalysisPaywall({
     }
   }, [analysisId, checkoutCity, checkoutVerdict, savings, zip]);
 
+  // Sticky bar: show when CTA zone scrolls out of view on mobile
+  useEffect(() => {
+    const el = ctaZoneRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setStickyVisible(!entry.isIntersecting);
+      },
+      { threshold: 0 },
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const handleStickyClick = useCallback(() => {
+    ctaZoneRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, []);
+
   const isAbove = verdict === 'above';
   const isFair = verdict === 'at-market';
   const isBelow = verdict === 'below';
+  const badge = isAbove ? 'Your Counter-Offer Kit' : 'Your Rent Analysis Kit';
+  const compsLabel = compsCount > 0 ? compsCount : 'several';
+
+  const headline = isAbove
+    ? <>{'$'}{fmt((increaseAmount || 0) * 12)} more this year.{' '}<span className="whitespace-nowrap">Or $4.99 to push back.</span></>
+    : isFair
+      ? <>{`Your landlord would spend $${fmt(turnoverCost || Math.round((currentRent || 1500) * 3))} to replace you.`}{' '}<span className="whitespace-nowrap">$4.99 shows you how to use that.</span></>
+      : isBelow
+        ? `You're getting a better deal than most renters in ${city}.`
+        : `See how your rent stacks up against ${compsLabel} nearby listings.`;
+
+  const subline = isAbove
+    ? `${compsLabel} comps · local market trends · turnover data`
+    : isFair
+      ? `${compsLabel} comps · local market trends · turnover data`
+      : null;
+
+  const ctaText = isAbove
+    ? `Unlock my counter-offer\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`
+    : isFair
+      ? `See my leverage\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`
+      : isBelow
+        ? `See my full breakdown\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`
+        : `Unlock full analysis\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`;
+
+  const valueStack = isAbove
+    ? [
+        { text: `Counter-offer from ${compsLabel} nearby comps`, tag: '($200+ value)' },
+        { text: 'Landlord turnover cost breakdown', tag: '(data they don\'t share)' },
+        { text: 'Ready-to-send reply letter', tag: '($225+ if a lawyer wrote it)' },
+        { text: 'Market trends and evidence report', tag: '(hours of research, done)' },
+      ]
+    : [
+        { text: `Full comp analysis with ${compsLabel} nearby listings`, tag: '($200+ value)' },
+        { text: `Market trend breakdown for ${city}`, tag: '(hours of research, done)' },
+        { text: 'Landlord turnover cost analysis', tag: '(your hidden leverage)' },
+        { text: 'Ready-to-send reply letter', tag: '($225+ if a lawyer wrote it)' },
+      ];
+
+
+  return (
+    <>
+    <motion.div
+      ref={ctaRef}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="w-full max-w-[480px] mx-auto mt-2 sm:mt-4 pt-0 sm:pt-2 px-4 min-w-0 overflow-hidden box-border"
+    >
+      <div className="text-center">
+        <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/8 text-primary text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest">
+          {badge}
+        </span>
+      </div>
+
+      <h2 className="font-display text-[20px] sm:text-[28px] tracking-tight text-foreground leading-tight text-center mt-2 sm:mt-3">
+        {headline}
+      </h2>
+
+      {subline && (
+        <p className="mt-2 text-center text-[13px] sm:text-[15px] text-muted-foreground">
+          {subline}
+        </p>
+      )}
+
+      {sampleComps && sampleComps.length >= 2 && (
+        <div className="mt-4 sm:mt-5 space-y-2 max-w-[340px] mx-auto">
+          {sampleComps.slice(0, 2).map((comp, i) => (
+            <div key={i} className="rounded-lg border border-border/60 bg-card px-4 py-3">
+              <p className="text-[13px] font-medium text-foreground leading-snug">{comp.address}</p>
+              <div className="flex items-center justify-between mt-1.5">
+                <span className="text-[11px] text-muted-foreground">{comp.beds}bd / {comp.baths}ba</span>
+                <div className="relative overflow-hidden rounded-md px-2 py-0.5">
+                  <span className="text-[13px] font-bold text-foreground" aria-hidden="true">$X,XXX/mo</span>
+                  <div className="absolute inset-0 z-10 bg-card/80 supports-[backdrop-filter]:backdrop-blur-[5px] supports-[backdrop-filter]:bg-card/60" aria-hidden="true" />
+                </div>
+              </div>
+            </div>
+          ))}
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground text-center">+ {compsCount - 2} more comps inside</p>
+        </div>
+      )}
+
+      {/* Value stack — above CTA */}
+      <div className="border-t border-border/40 pt-3 mt-4 sm:mt-5 space-y-1.5">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3">What's inside</p>
+        {valueStack.map((item, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, delay: 0.5 + i * 0.05 }}
+            className="flex items-start gap-2 text-[11px] sm:text-[13px]"
+          >
+            <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary shrink-0 mt-0.5" />
+            <span className="text-foreground text-left flex-1">{item.text}</span>
+            <span className="text-muted-foreground text-[9px] sm:text-[11px] whitespace-nowrap shrink-0 mt-0.5 hidden min-[360px]:inline">
+              {item.tag}
+            </span>
+          </motion.div>
+        ))}
+      </div>
+
+      <p className="mt-3 sm:mt-4 text-center text-[12px] text-muted-foreground">
+        Not useful? Email us. Full refund.
+      </p>
+
+      {/* CTA zone — observed for sticky bar */}
+      <div ref={ctaZoneRef}>
+        {intentFailed ? (
+          <div ref={ctaBtnRef} className="mt-4 sm:mt-5 flex justify-center">
+            <button
+              onClick={handleRedirectFallback}
+              disabled={redirectLoading || checkoutLoading}
+              className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
+            >
+              {redirectLoading || checkoutLoading ? 'Opening checkout...' : ctaText}
+            </button>
+          </div>
+        ) : clientSecret ? (
+          <Elements
+            stripe={stripePromise}
+            options={{
+              clientSecret,
+              appearance: { theme: 'stripe' },
+            }}
+          >
+            <PaywallCheckoutInner
+              checkoutLoading={checkoutLoading}
+              ctaText={ctaText}
+              expressCheckoutProps={expressCheckoutProps}
+              onPaid={onPaid}
+              onCardFormToggle={setCardFormOpen}
+            />
+          </Elements>
+        ) : (
+          <div className="mt-4 sm:mt-5 flex justify-center">
+            <button
+              disabled
+              className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground shadow-md shadow-primary/25 min-h-[56px] opacity-70"
+            >
+              <span className="inline-flex items-center justify-center gap-2">
+                <RefreshCw className="h-4 w-4 animate-spin" />
+                {intentLoading ? 'Loading secure checkout...' : ctaText}
+              </span>
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-3 text-center">
+        <SocialProofLine />
+      </div>
+
+      <p className="mt-1.5 sm:mt-2 text-center text-[11px] text-muted-foreground/50 pb-4">
+        One-time payment · Instant access · No account needed
+      </p>
+    </motion.div>
+
+    {/* Sticky bottom CTA bar — mobile only */}
+    <AnimatePresence>
+      {stickyVisible && !cardFormOpen && (
+        <motion.div
+          initial={{ y: 80, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 80, opacity: 0 }}
+          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          className="fixed bottom-0 inset-x-0 z-50 sm:hidden border-t border-border/60 bg-card/80 supports-[backdrop-filter]:backdrop-blur-md supports-[backdrop-filter]:bg-card/60"
+          style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
+        >
+          <div className="px-4 pt-3 flex flex-col items-center gap-1.5">
+            <button
+              onClick={handleStickyClick}
+              className="w-full max-w-[340px] py-3.5 rounded-xl text-[15px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[48px] transition-all"
+            >
+              {ctaText}
+            </button>
+            <p className="text-[10px] text-muted-foreground">
+              One-time · Instant access · Full refund if not useful
+            </p>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+    </>
+  );
+}
   const badge = isAbove ? 'Your Counter-Offer Kit' : 'Your Rent Analysis Kit';
   const compsLabel = compsCount > 0 ? compsCount : 'several';
 
