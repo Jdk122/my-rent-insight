@@ -507,7 +507,7 @@ export default function AnalysisPaywall({
             transition={{ duration: 0.3, delay: 0.5 + i * 0.05 }}
             className="flex items-start gap-2 text-[11px] sm:text-[13px]"
           >
-            <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary shrink-0 mt-0.5" />
+            <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 mt-0.5" style={{ color: 'hsl(200 80% 44%)' }} />
             <span className="text-foreground text-left flex-1">{item.text}</span>
             <span className="text-muted-foreground text-[9px] whitespace-nowrap shrink-0 mt-0.5 hidden min-[360px]:inline">
               {item.tag}
