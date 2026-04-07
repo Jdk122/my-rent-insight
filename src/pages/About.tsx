@@ -49,7 +49,7 @@ const About = () => {
             RenewalReply was built to solve a simple problem: renters had no easy way to check whether their rent increase was reasonable.
           </p>
           <p>
-            RenewalReply closes that gap. The tool pulls federal housing data (HUD Small Area Fair Market Rents), real nearby listings, and local rent trends to give you an objective, data-backed assessment of your rent increase — typically in under 10 seconds.
+RenewalReply closes that gap. The tool pulls federal housing data, real nearby listings, and local rent trends to give you an objective, data-backed assessment of your rent increase, typically in under 10 seconds.
           </p>
           <p>
             It's completely free and no account is required.
