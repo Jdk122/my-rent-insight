@@ -163,9 +163,21 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
 
   return (
     <div className="flex flex-col gap-0">
-      {/* Express checkout — always first */}
+      {/* Main CTA button — always visible first */}
+      <div className="mt-4 flex justify-center">
+        <button
+          onClick={handleCardReveal}
+          disabled={checkoutLoading || showCardForm}
+          className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
+        >
+          {checkoutLoading ? 'Opening checkout...' : ctaText}
+        </button>
+      </div>
+
+      {/* Express checkout — below CTA */}
       {walletAvailable !== false && (
-        <div className="mt-4">
+        <div className="mt-3">
+          <p className="text-[11px] text-muted-foreground text-center mb-2">or pay instantly with</p>
           <div className="min-h-[40px]">
             <ExpressCheckoutElement
               onReady={handleExpressReady}
@@ -180,27 +192,6 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
           </div>
         </div>
       )}
-
-      {/* "or pay with card" divider + card CTA */}
-      <div className={`flex justify-center ${walletAvailable ? 'mt-3' : 'mt-4'}`}>
-        {walletAvailable ? (
-          <button
-            onClick={handleCardReveal}
-            disabled={checkoutLoading || showCardForm}
-            className="py-2.5 text-[13px] font-semibold text-muted-foreground underline disabled:opacity-70 transition-all"
-          >
-            or pay with card — {PAYMENT_AMOUNT_LABEL}
-          </button>
-        ) : (
-          <button
-            onClick={handleCardReveal}
-            disabled={checkoutLoading || showCardForm}
-            className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
-          >
-            {checkoutLoading ? 'Opening checkout...' : ctaText}
-          </button>
-        )}
-      </div>
 
       {/* Inline card form */}
       {showCardForm && (
