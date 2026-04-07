@@ -1033,13 +1033,13 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                           )}
                         </div>
                         ) : (
-                          <p className="text-[14px] sm:text-[15px] text-muted-foreground">
-                            {isAboveMarket && calc
-                              ? 'See how much you could save.'
-                              : isFair
-                              ? 'See your leverage and get the reply that keeps your rate fair.'
-                              : 'See your full market breakdown and what to do next.'}
-                          </p>
+                           <p className="text-[14px] sm:text-[15px] text-muted-foreground">
+                             {isAboveMarket && calc
+                               ? `That adds up to $${Math.round(calc.extraPerYear).toLocaleString()} more this year.`
+                               : isFair
+                               ? 'See your leverage and get the reply that keeps your rate fair.'
+                               : 'See your full market breakdown and what to do next.'}
+                           </p>
                         )}
                         {isPaid && isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !counterExceedsProposed && (
                           <p className="text-xs text-muted-foreground/70 mt-1">

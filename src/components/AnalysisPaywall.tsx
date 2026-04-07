@@ -426,11 +426,10 @@ export default function AnalysisPaywall({
   const isAbove = verdict === 'above';
   const isFair = verdict === 'at-market';
   const isBelow = verdict === 'below';
-  const badge = isAbove ? 'Your Counter-Offer Kit' : 'Your Rent Analysis Kit';
   const compsLabel = compsCount > 0 ? compsCount : 'several';
 
   const headline = isAbove
-    ? <>{'$'}{fmt((increaseAmount || 0) * 12)} more this year.{' '}<span className="whitespace-nowrap">Or $4.99 to push back.</span></>
+    ? <>{'$'}{fmt((increaseAmount || 0) * 12)} more this year.{' '}<span className="whitespace-nowrap">Or $4.99 to counter with proof.</span></>
     : isFair
       ? <>{`Your landlord would spend $${fmt(turnoverCost || Math.round((currentRent || 1500) * 3))} to replace you.`}{' '}<span className="whitespace-nowrap">$4.99 shows you how to use that.</span></>
       : isBelow
@@ -438,9 +437,9 @@ export default function AnalysisPaywall({
         : `See how your rent stacks up against ${compsLabel} nearby listings.`;
 
   const subline = isAbove
-    ? `${compsLabel} comps · local market trends · turnover data`
+    ? `Built from ${compsLabel} independent data sources. Not a guess.`
     : isFair
-      ? `${compsLabel} comps · local market trends · turnover data`
+      ? `Built from ${compsLabel} independent data sources. Not a guess.`
       : null;
 
   const ctaText = isAbove
@@ -453,16 +452,16 @@ export default function AnalysisPaywall({
 
   const valueStack = isAbove
     ? [
-        { text: `Counter-offer from ${compsLabel} nearby comps`, tag: '($200+ value)' },
-        { text: 'Landlord turnover cost breakdown', tag: '(data they don\'t share)' },
-        { text: 'Ready-to-send reply letter', tag: '($225+ if a lawyer wrote it)' },
-        { text: 'Market trends and evidence report', tag: '(hours of research, done)' },
+        { text: `Your counter-offer number, calculated from ${compsLabel} independent sources`, tag: '(not a guess)' },
+        { text: 'What it costs your landlord to replace you', tag: '(your leverage)' },
+        { text: 'A negotiation letter, written and ready to send', tag: '(just hit send)' },
+        { text: 'The full market evidence behind every dollar', tag: '(done for you)' },
       ]
     : [
-        { text: `Full comp analysis with ${compsLabel} nearby listings`, tag: '($200+ value)' },
-        { text: `Market trend breakdown for ${city}`, tag: '(hours of research, done)' },
-        { text: 'Landlord turnover cost analysis', tag: '(your hidden leverage)' },
-        { text: 'Ready-to-send reply letter', tag: '($225+ if a lawyer wrote it)' },
+        { text: `Full analysis from ${compsLabel} independent rent data sources`, tag: '(not a guess)' },
+        { text: 'What it costs your landlord to replace you', tag: '(your leverage)' },
+        { text: 'Local market trends and comparable listings', tag: '(done for you)' },
+        { text: 'A reply letter customized to your situation', tag: '(just hit send)' },
       ];
 
 
@@ -475,11 +474,6 @@ export default function AnalysisPaywall({
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       className="w-full max-w-[480px] mx-auto mt-2 sm:mt-4 pt-0 sm:pt-2 px-4 min-w-0 overflow-hidden box-border"
     >
-      <div className="text-center">
-        <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/8 text-primary text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest">
-          {badge}
-        </span>
-      </div>
 
       <h2 className="font-display text-[20px] sm:text-[28px] tracking-tight text-foreground leading-tight text-center mt-2 sm:mt-3">
         {headline}
