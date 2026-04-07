@@ -242,12 +242,8 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
         </motion.form>
       )}
     </div>
-  );
-        </div>
-      )}
-    </>
-  );
 }
+
 
 export default function AnalysisPaywall({
   verdict,
