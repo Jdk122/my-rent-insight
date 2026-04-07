@@ -163,13 +163,43 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
 
   return (
     <>
-      <div className="mt-4 sm:mt-5 flex justify-center">
+      {/* Mobile: Express checkout first, then card fallback */}
+      {walletAvailable !== false && (
+        <div className="mt-4 sm:mt-5 sm:order-last order-first">
+          <div className="sm:hidden">
+            <div className="min-h-[40px]">
+              <ExpressCheckoutElement
+                onReady={handleExpressReady}
+                onConfirm={handleExpressConfirm}
+                onCancel={handleExpressCancel}
+                options={{
+                  buttonHeight: 48,
+                  buttonType: { applePay: 'buy', googlePay: 'buy' },
+                  emailRequired: true,
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile: card as secondary; Desktop: card as primary */}
+      <div className={`flex justify-center ${walletAvailable ? 'mt-3 sm:mt-4 sm:order-first' : 'mt-4 sm:mt-5'}`}>
         <button
           onClick={handleCardReveal}
           disabled={checkoutLoading || showCardForm}
-          className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
+          className={`w-full max-w-[340px] rounded-xl transition-all disabled:opacity-70 ${
+            walletAvailable
+              ? 'py-3 text-[13px] sm:py-5 sm:text-[18px] font-semibold sm:font-extrabold text-muted-foreground underline sm:no-underline sm:bg-primary sm:text-primary-foreground sm:hover:brightness-95 sm:shadow-md sm:shadow-primary/25 sm:min-h-[56px]'
+              : 'py-5 text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px]'
+          }`}
         >
-          {checkoutLoading ? 'Opening checkout...' : ctaText}
+          {checkoutLoading ? 'Opening checkout...' : walletAvailable
+            ? <span className="sm:hidden">or pay with card — {PAYMENT_AMOUNT_LABEL}</span>
+            : null}
+          {checkoutLoading ? null : walletAvailable
+            ? <span className="hidden sm:inline">{ctaText}</span>
+            : ctaText}
         </button>
       </div>
 
@@ -212,9 +242,10 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
         </motion.form>
       )}
 
+      {/* Desktop: express checkout below card CTA */}
       {walletAvailable !== false && (
-        <>
-          <p className="text-[10px] sm:text-[11px] text-muted-foreground text-center mt-4 mb-2">or pay instantly with</p>
+        <div className="hidden sm:block">
+          <p className="text-[11px] text-muted-foreground text-center mt-4 mb-2">or pay instantly with</p>
           <div className="min-h-[40px]">
             <ExpressCheckoutElement
               onReady={handleExpressReady}
@@ -227,7 +258,7 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
               }}
             />
           </div>
-        </>
+        </div>
       )}
     </>
   );
