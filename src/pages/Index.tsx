@@ -438,7 +438,7 @@ const Index = () => {
               ← New check
             </button>
           )}
-          {results && hasIncrease && isAboveMarket && isUnlocked && (
+          {results && hasIncrease && isAboveMarket && isPaid && (
             <button
               onClick={() => {
                 document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' });
@@ -455,7 +455,7 @@ const Index = () => {
               <span className="sm:hidden">Copy letter →</span>
             </button>
           )}
-          {results && !(hasIncrease && isAboveMarket) && isUnlocked && (
+          {results && !(hasIncrease && isAboveMarket) && isPaid && (
             <button
               onClick={() => {
                 document.getElementById('section-share')?.scrollIntoView({ behavior: 'smooth' });
