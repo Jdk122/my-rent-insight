@@ -437,9 +437,9 @@ export default function AnalysisPaywall({
         : `See how your rent stacks up against ${compsLabel} nearby listings.`;
 
   const subline = isAbove
-    ? `Built from ${compsLabel} independent data sources. Not a guess.`
+    ? `From ${compsLabel} independent data sources.`
     : isFair
-      ? `Built from ${compsLabel} independent data sources. Not a guess.`
+      ? `From ${compsLabel} independent data sources.`
       : null;
 
   const ctaText = isAbove
