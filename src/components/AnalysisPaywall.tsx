@@ -509,7 +509,7 @@ export default function AnalysisPaywall({
         </div>
       )}
 
-      {/* Value stack — above CTA */}
+      {/* Value stack — above payment */}
       <div className="border-t border-border/40 pt-3 mt-4 sm:mt-5 space-y-1.5">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3">What's inside</p>
         {valueStack.map((item, i) => (
