@@ -182,12 +182,13 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
       )}
 
       {/* Card fallback — secondary */}
-      <p className="text-[11px] text-muted-foreground text-center my-2">or pay with card</p>
+      <p className="text-[11px] text-center my-2" style={{ color: 'hsl(215 12% 38%)' }}>or pay with card</p>
       <div className="flex justify-center">
         <button
           onClick={handleCardReveal}
           disabled={checkoutLoading || showCardForm}
-          className="w-full max-w-[340px] mx-auto py-3.5 rounded-xl text-[15px] font-bold bg-primary text-primary-foreground hover:brightness-95 shadow-sm shadow-primary/25 transition-colors disabled:opacity-70"
+          className="w-full max-w-[340px] mx-auto py-3.5 rounded-xl text-[15px] font-bold hover:brightness-95 shadow-sm transition-colors disabled:opacity-70"
+          style={{ backgroundColor: 'hsl(200 80% 44%)', color: '#fff' }}
         >
           {checkoutLoading ? 'Opening checkout...' : ctaText}
         </button>
@@ -218,7 +219,8 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
             <button
               type="submit"
               disabled={cardLoading || !stripe}
-              className="w-full mt-4 py-3.5 rounded-lg text-[15px] font-bold bg-primary text-primary-foreground hover:brightness-95 shadow-sm shadow-primary/25 min-h-[48px] disabled:opacity-70 transition-all"
+              className="w-full mt-4 py-3.5 rounded-lg text-[15px] font-bold hover:brightness-95 shadow-sm min-h-[48px] disabled:opacity-70 transition-all"
+              style={{ backgroundColor: 'hsl(200 80% 44%)', color: '#fff' }}
             >
               {cardLoading ? 'Processing...' : `Pay ${PAYMENT_AMOUNT_LABEL}`}
             </button>
