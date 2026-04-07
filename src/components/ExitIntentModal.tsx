@@ -117,9 +117,10 @@ function PaywallContent({
         <button
           onClick={handleCardClick}
           disabled={checkoutLoading}
-          className="w-full bg-primary text-primary-foreground px-4 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-60"
+          className="w-full px-4 py-3 rounded-lg text-sm font-semibold transition-opacity disabled:opacity-60"
+          style={{ backgroundColor: 'hsl(220 18% 13%)', color: '#fff' }}
         >
-          {checkoutLoading ? 'Loading…' : 'Pay with card — $4.99'}
+          {checkoutLoading ? 'Loading…' : 'Pay with card for $4.99'}
         </button>
       </div>
 
