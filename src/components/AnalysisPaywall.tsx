@@ -44,8 +44,8 @@ interface PaywallCheckoutInnerProps {
   onCardFormToggle?: (open: boolean) => void;
 }
 
-const PAYMENT_AMOUNT_CENTS = 499;
-const PAYMENT_AMOUNT_LABEL = '$4.99';
+const PAYMENT_AMOUNT_CENTS = 199;
+const PAYMENT_AMOUNT_LABEL = '$1.99';
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
 function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, onPaid, onCardFormToggle }: PaywallCheckoutInnerProps) {
@@ -421,9 +421,9 @@ export default function AnalysisPaywall({
   const compsLabel = compsCount > 0 ? compsCount : 'several';
 
   const headline = isAbove
-    ? <><span className="text-destructive">${fmt((increaseAmount || 0) * 12)}</span> more this year.{' '}<span className="whitespace-nowrap">Or $4.99 to counter with proof.</span></>
+    ? <><span className="text-destructive">${fmt((increaseAmount || 0) * 12)}</span> more this year.{' '}<span className="whitespace-nowrap">? <><span className="text-destructive">${fmt((increaseAmount || 0) * 12)}</span> more this year.{' '}<span className="whitespace-nowrap">Or $1.99 to counter with proof.</span></></span></>
     : isFair
-      ? <>{`Your landlord would spend $${fmt(turnoverCost || Math.round((currentRent || 1500) * 3))} to replace you.`}{' '}<span className="whitespace-nowrap">$4.99 shows you how to use that.</span></>
+      ? <>{`Your landlord would spend $${fmt(turnoverCost || Math.round((currentRent || 1500) * 3))} to replace you.`}{' '}<span className="whitespace-nowrap">? <>{`Your landlord would spend $${fmt(turnoverCost || Math.round((currentRent || 1500) * 3))} to replace you.`}{' '}<span className="whitespace-nowrap">$1.99 shows you how to use that.</span></></span></>
       : isBelow
         ? `You're getting a better deal than most renters in ${city}.`
         : `See how your rent stacks up against ${compsLabel} nearby listings.`;

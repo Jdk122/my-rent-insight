@@ -39,7 +39,7 @@ serve(async (req) => {
       apiVersion: "2023-10-16",
     });
 
-    const amount = priceCents || 499;
+    const amount = priceCents || 199;
 
     const metadata = {
       analysisId: analysisId || "",

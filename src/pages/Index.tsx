@@ -388,7 +388,7 @@ const Index = () => {
                 "name": "Is RenewalReply free?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Your verdict is completely free. The detailed analysis with comparable rents, counter-offer range, and negotiation letter is $4.99."
+                  "text": "Your verdict is completely free. The detailed analysis with comparable rents, counter-offer range, and "text": "Your verdict is completely free. The detailed analysis with comparable rents, counter-offer range, and negotiation letter is $1.99.""
                 }
               },
               {
