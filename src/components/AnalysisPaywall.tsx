@@ -495,7 +495,7 @@ export default function AnalysisPaywall({
       )}
 
       {/* Value stack — above payment */}
-      <div className="border-t border-border/40 pt-3 mt-4 sm:mt-5 space-y-1">
+      <div className="border-t border-border/40 pt-3 mt-3 space-y-1">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-2.5">What you get</p>
         {valueStack.map((item, i) => (
           <motion.div
