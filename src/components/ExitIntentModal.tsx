@@ -256,11 +256,14 @@ const ExitIntentModal = ({
 
   const mode = getMode(isPaid, expressCheckoutProps, capturedEmail);
 
+  const mountedAt = useRef(Date.now());
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (sessionStorage.getItem(SESSION_KEY)) return;
     if (sessionStorage.getItem('rr_mobile_scroll_prompt')) return;
 
+    const MIN_DELAY_MS = 12_000; // Don't fire within first 12s
     const isMobile = window.innerWidth < 768;
 
     if (!isMobile) {
@@ -268,6 +271,7 @@ const ExitIntentModal = ({
       const handleMouseLeave = (e: MouseEvent) => {
         if (e.clientY > 10) return;
         if (firedRef.current) return;
+        if (Date.now() - mountedAt.current < MIN_DELAY_MS) return;
         firedRef.current = true;
         sessionStorage.setItem(SESSION_KEY, '1');
         setOpen(true);
