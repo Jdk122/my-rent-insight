@@ -468,7 +468,7 @@ function DashboardContent() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <StatCard label="Paywall Clicks" value={`${stats.paywall_clicks ?? 0}`} />
           <StatCard label="Purchases" value={`${stats.purchases ?? 0}`} />
-          <StatCard label="Revenue" value={`$${((stats.purchases ?? 0) * 4.99).toFixed(2)}`} />
+          <StatCard label="Revenue" value={`$${((stats.purchases ?? 0) * 1.99).toFixed(2)}`} />
           <StatCard label="Click → Purchase %" value={stats.paywall_clicks > 0 ? `${Math.round(((stats.purchases ?? 0) / stats.paywall_clicks) * 100)}%` : '0%'} />
         </div>
 
@@ -745,7 +745,7 @@ function DashboardContent() {
                       <td className="px-2 py-2">{r.fairness_score ?? '—'}</td>
                       <td className="px-2 py-2">
                         <span className="flex items-center gap-1">
-                          {r.purchased && <span title="Purchased — $4.99">💰</span>}
+                          {r.purchased && <span title="Purchased — $1.99">💰</span>}
                           {r.verdict_label ? (
                             <span className={`inline-block px-1.5 py-0.5 rounded text-[11px] font-medium border ${verdictColor(r.verdict_label)}`}>
                               {r.verdict_label}
