@@ -601,9 +601,6 @@ export default function AnalysisPaywall({
   );
 }
 
-  const headline = isAbove
-    ? <>{'$'}{fmt((increaseAmount || 0) * 12)} more this year.{' '}<span className="whitespace-nowrap">Or $4.99 to push back.</span></>
-    : isFair
       ? <>{`Your landlord would spend $${fmt(turnoverCost || Math.round((currentRent || 1500) * 3))} to replace you.`}{' '}<span className="whitespace-nowrap">$4.99 shows you how to use that.</span></>
       : isBelow
         ? `You're getting a better deal than most renters in ${city}.`
