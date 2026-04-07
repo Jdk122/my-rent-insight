@@ -65,6 +65,7 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
       setWalletAvailable(false);
       return;
     }
+
     setWalletAvailable(true);
   }, []);
 
@@ -83,7 +84,9 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
 
     const { error } = await stripe.confirmPayment({
       elements,
-      confirmParams: { return_url: window.location.href },
+      confirmParams: {
+        return_url: window.location.href,
+      },
       redirect: 'if_required',
     });
 
@@ -138,7 +141,9 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
 
     const { error } = await stripe.confirmPayment({
       elements,
-      confirmParams: { return_url: window.location.href },
+      confirmParams: {
+        return_url: window.location.href,
+      },
       redirect: 'if_required',
     });
 
@@ -158,16 +163,17 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
 
   return (
     <div className="flex flex-col">
-      {/* Express checkout — PRIMARY, always first */}
+      {/* Express checkout — first on mobile (order-1), last on desktop (sm:order-3) */}
       {walletAvailable !== false && (
-        <div className="mt-4">
+        <div className="order-1 sm:order-3 mt-4 sm:mt-0">
+          <p className="text-[11px] text-muted-foreground text-center mb-2 hidden sm:block sm:mt-4">or pay instantly with</p>
           <div className="min-h-[40px]">
             <ExpressCheckoutElement
               onReady={handleExpressReady}
               onConfirm={handleExpressConfirm}
               onCancel={handleExpressCancel}
               options={{
-                buttonHeight: 48,
+                buttonHeight: 44,
                 buttonType: { applePay: 'buy', googlePay: 'buy' },
                 emailRequired: true,
               }}
@@ -176,34 +182,34 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
         </div>
       )}
 
-      {/* "or pay with card" divider */}
-      {walletAvailable && (
-        <p className="text-[10px] sm:text-[11px] text-muted-foreground text-center mt-3 mb-2">or pay with card</p>
-      )}
-
-      {/* Card CTA — SECONDARY */}
-      <div className="flex justify-center">
+      {/* Card CTA — second on mobile (order-2), first on desktop (sm:order-1) */}
+      <div className={`order-2 sm:order-1 flex justify-center ${walletAvailable ? 'mt-3 sm:mt-4' : 'mt-4 sm:mt-5'}`}>
         <button
           onClick={handleCardReveal}
           disabled={checkoutLoading || showCardForm}
           className={`w-full max-w-[340px] rounded-xl transition-all disabled:opacity-70 ${
             walletAvailable
-              ? 'py-3.5 text-[14px] sm:text-[16px] font-bold bg-foreground/80 text-background hover:bg-foreground/90 shadow-sm min-h-[48px]'
+              ? 'py-3 text-[13px] sm:py-5 sm:text-[18px] font-semibold sm:font-extrabold text-muted-foreground underline sm:no-underline sm:bg-primary sm:text-primary-foreground sm:hover:brightness-95 sm:shadow-md sm:shadow-primary/25 sm:min-h-[56px]'
               : 'py-5 text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px]'
           }`}
         >
-          {checkoutLoading ? 'Opening checkout...' : ctaText}
+          {checkoutLoading ? 'Opening checkout...' : walletAvailable
+            ? <span className="sm:hidden">or pay with card — {PAYMENT_AMOUNT_LABEL}</span>
+            : null}
+          {checkoutLoading ? null : walletAvailable
+            ? <span className="hidden sm:inline">{ctaText}</span>
+            : ctaText}
         </button>
       </div>
 
-      {/* Card form */}
+      {/* Card form — order-3 on mobile, order-2 on desktop */}
       {showCardForm && (
         <motion.form
           onSubmit={handleCardSubmit}
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           transition={{ duration: 0.24 }}
-          className="mt-3 w-full max-w-[380px] mx-auto"
+          className="order-3 sm:order-2 mt-3 w-full max-w-[380px] mx-auto"
         >
           <div className="rounded-xl border border-border/60 bg-card p-4 text-left shadow-sm">
             <PaymentElement
@@ -211,7 +217,9 @@ function PaywallCheckoutInner({ checkoutLoading, ctaText, expressCheckoutProps, 
                 layout: 'tabs',
                 defaultValues: {
                   billingDetails: {
-                    address: { country: 'US' },
+                    address: {
+                      country: 'US',
+                    },
                   },
                 },
               }}
@@ -262,7 +270,6 @@ export default function AnalysisPaywall({
   const ctaRef = useRef<HTMLDivElement>(null);
   const ctaBtnRef = useRef<HTMLDivElement>(null);
   const ctaZoneRef = useRef<HTMLDivElement>(null);
-  const mainCtaRef = useRef<HTMLDivElement>(null);
   const impressionTracked = useRef(false);
   const ctaVisibleTracked = useRef(false);
   const compsViewedTracked = useRef(false);
@@ -356,7 +363,9 @@ export default function AnalysisPaywall({
       setIntentLoading(false);
     });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [analysisId, checkoutCity, checkoutVerdict, savings, zip]);
 
   const handleRedirectFallback = useCallback(async () => {
@@ -396,11 +405,8 @@ export default function AnalysisPaywall({
 
   // Sticky bar: show when CTA zone scrolls out of view on mobile
   useEffect(() => {
-    const el = mainCtaRef.current;
+    const el = ctaZoneRef.current;
     if (!el) return;
-
-    const mq = window.matchMedia('(max-width: 639px)');
-    if (!mq.matches) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -414,50 +420,49 @@ export default function AnalysisPaywall({
   }, []);
 
   const handleStickyClick = useCallback(() => {
-    mainCtaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    ctaZoneRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, []);
 
   const isAbove = verdict === 'above';
   const isFair = verdict === 'at-market';
   const isBelow = verdict === 'below';
+  const badge = isAbove ? 'Your Counter-Offer Kit' : 'Your Rent Analysis Kit';
   const compsLabel = compsCount > 0 ? compsCount : 'several';
 
   const headline = isAbove
-    ? <>Your landlord is counting on you not knowing the number.{' '}<span className="whitespace-nowrap">$4.99 says you do.</span></>
+    ? <>{'$'}{fmt((increaseAmount || 0) * 12)} more this year.{' '}<span className="whitespace-nowrap">Or $4.99 to push back.</span></>
     : isFair
-      ? <>It would cost your landlord thousands to replace you.{' '}<span className="whitespace-nowrap">$4.99 shows you exactly how much.</span></>
+      ? <>{`Your landlord would spend $${fmt(turnoverCost || Math.round((currentRent || 1500) * 3))} to replace you.`}{' '}<span className="whitespace-nowrap">$4.99 shows you how to use that.</span></>
       : isBelow
-        ? `You're getting a better deal than most renters in ${city}. See the proof.`
+        ? `You're getting a better deal than most renters in ${city}.`
         : `See how your rent stacks up against ${compsLabel} nearby listings.`;
 
-  const subhead = isAbove
-    ? 'Get the exact counter-offer number, backed by 6 data sources \u2014 not a guess.'
+  const subline = isAbove
+    ? `${compsLabel} comps · local market trends · turnover data`
     : isFair
-      ? 'See your leverage number and get a negotiation letter backed by 6 data sources.'
-      : isBelow
-        ? `Full breakdown with ${compsLabel} nearby comps and market evidence.`
-        : `Full analysis with ${compsLabel} nearby comps and market data.`;
+      ? `${compsLabel} comps · local market trends · turnover data`
+      : null;
 
   const ctaText = isAbove
-    ? `Get my counter-offer \u2014 ${PAYMENT_AMOUNT_LABEL}`
+    ? `Unlock my counter-offer\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`
     : isFair
-      ? `See my leverage \u2014 ${PAYMENT_AMOUNT_LABEL}`
+      ? `See my leverage\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`
       : isBelow
-        ? `Get my full breakdown \u2014 ${PAYMENT_AMOUNT_LABEL}`
-        : `Get full analysis \u2014 ${PAYMENT_AMOUNT_LABEL}`;
+        ? `See my full breakdown\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`
+        : `Unlock full analysis\u2009\u2014\u2009${PAYMENT_AMOUNT_LABEL}`;
 
   const valueStack = isAbove
     ? [
-        { text: 'The exact number to counter with', tag: '(from 6 data sources)' },
-        { text: "Your landlord's cost to replace you", tag: "(they won't tell you this)" },
-        { text: 'A reply letter you can send today \u2014 done', tag: '(no awkward emails)' },
-        { text: 'The market evidence behind every dollar', tag: '(a weekend of research, finished)' },
+        { text: `Counter-offer from ${compsLabel} nearby comps`, tag: '($200+ value)' },
+        { text: 'Landlord turnover cost breakdown', tag: '(data they don\'t share)' },
+        { text: 'Ready-to-send reply letter', tag: '($225+ if a lawyer wrote it)' },
+        { text: 'Market trends and evidence report', tag: '(hours of research, done)' },
       ]
     : [
-        { text: `Full comp breakdown with ${compsLabel} nearby listings`, tag: '(from 6 data sources)' },
-        { text: `Market trend data for ${city}`, tag: '(a weekend of research, finished)' },
-        { text: "Your landlord's cost to replace you", tag: '(your hidden leverage)' },
-        { text: 'A reply letter customized to your situation', tag: '(no awkward emails)' },
+        { text: `Full comp analysis with ${compsLabel} nearby listings`, tag: '($200+ value)' },
+        { text: `Market trend breakdown for ${city}`, tag: '(hours of research, done)' },
+        { text: 'Landlord turnover cost analysis', tag: '(your hidden leverage)' },
+        { text: 'Ready-to-send reply letter', tag: '($225+ if a lawyer wrote it)' },
       ];
 
 
@@ -470,17 +475,22 @@ export default function AnalysisPaywall({
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       className="w-full max-w-[480px] mx-auto mt-2 sm:mt-4 pt-0 sm:pt-2 px-4 min-w-0 overflow-hidden box-border"
     >
-      {/* Headline */}
+      <div className="text-center">
+        <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/8 text-primary text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest">
+          {badge}
+        </span>
+      </div>
+
       <h2 className="font-display text-[20px] sm:text-[28px] tracking-tight text-foreground leading-tight text-center mt-2 sm:mt-3">
         {headline}
       </h2>
 
-      {/* Subhead */}
-      <p className="text-[13px] sm:text-[15px] text-muted-foreground text-center mt-2">
-        {subhead}
-      </p>
+      {subline && (
+        <p className="mt-2 text-center text-[13px] sm:text-[15px] text-muted-foreground">
+          {subline}
+        </p>
+      )}
 
-      {/* Blurred comp cards */}
       {sampleComps && sampleComps.length >= 2 && (
         <div className="mt-4 sm:mt-5 space-y-2 max-w-[340px] mx-auto">
           {sampleComps.slice(0, 2).map((comp, i) => (
@@ -499,9 +509,9 @@ export default function AnalysisPaywall({
         </div>
       )}
 
-      {/* WHAT YOU GET value stack */}
+      {/* Value stack — above CTA */}
       <div className="border-t border-border/40 pt-3 mt-4 sm:mt-5 space-y-1.5">
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3">What you get</p>
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3">What's inside</p>
         {valueStack.map((item, i) => (
           <motion.div
             key={i}
@@ -519,59 +529,51 @@ export default function AnalysisPaywall({
         ))}
       </div>
 
-      {/* Urgency line */}
-      <p className="text-[11px] sm:text-[12px] text-amber-600 dark:text-amber-400 font-medium text-center mt-3">
-        This analysis uses data pulled today. Rates shift weekly — your counter-offer is strongest now.
-      </p>
-
-      {/* Refund guarantee */}
-      <p className="mt-3 sm:mt-4 text-center text-[12px] font-medium text-muted-foreground">
-        If this doesn't help, we'll refund every penny. No questions asked.
+      <p className="mt-3 sm:mt-4 text-center text-[12px] text-muted-foreground">
+        Not useful? Email us. Full refund.
       </p>
 
       {/* CTA zone — observed for sticky bar */}
-      <div ref={mainCtaRef}>
-        <div ref={ctaZoneRef}>
-          {intentFailed ? (
-            <div ref={ctaBtnRef} className="mt-4 sm:mt-5 flex justify-center">
-              <button
-                onClick={handleRedirectFallback}
-                disabled={redirectLoading || checkoutLoading}
-                className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
-              >
-                {redirectLoading || checkoutLoading ? 'Opening checkout...' : ctaText}
-              </button>
-            </div>
-          ) : clientSecret ? (
-            <Elements
-              stripe={stripePromise}
-              options={{
-                clientSecret,
-                appearance: { theme: 'stripe' },
-              }}
+      <div ref={ctaZoneRef}>
+        {intentFailed ? (
+          <div ref={ctaBtnRef} className="mt-4 sm:mt-5 flex justify-center">
+            <button
+              onClick={handleRedirectFallback}
+              disabled={redirectLoading || checkoutLoading}
+              className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground hover:brightness-95 shadow-md shadow-primary/25 min-h-[56px] disabled:opacity-70 transition-all"
             >
-              <PaywallCheckoutInner
-                checkoutLoading={checkoutLoading}
-                ctaText={ctaText}
-                expressCheckoutProps={expressCheckoutProps}
-                onPaid={onPaid}
-                onCardFormToggle={setCardFormOpen}
-              />
-            </Elements>
-          ) : (
-            <div className="mt-4 sm:mt-5 flex justify-center">
-              <button
-                disabled
-                className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground shadow-md shadow-primary/25 min-h-[56px] opacity-70"
-              >
-                <span className="inline-flex items-center justify-center gap-2">
-                  <RefreshCw className="h-4 w-4 animate-spin" />
-                  {intentLoading ? 'Loading secure checkout...' : ctaText}
-                </span>
-              </button>
-            </div>
-          )}
-        </div>
+              {redirectLoading || checkoutLoading ? 'Opening checkout...' : ctaText}
+            </button>
+          </div>
+        ) : clientSecret ? (
+          <Elements
+            stripe={stripePromise}
+            options={{
+              clientSecret,
+              appearance: { theme: 'stripe' },
+            }}
+          >
+            <PaywallCheckoutInner
+              checkoutLoading={checkoutLoading}
+              ctaText={ctaText}
+              expressCheckoutProps={expressCheckoutProps}
+              onPaid={onPaid}
+              onCardFormToggle={setCardFormOpen}
+            />
+          </Elements>
+        ) : (
+          <div className="mt-4 sm:mt-5 flex justify-center">
+            <button
+              disabled
+              className="w-full max-w-[340px] py-5 rounded-xl text-[16px] sm:text-[18px] font-extrabold bg-primary text-primary-foreground shadow-md shadow-primary/25 min-h-[56px] opacity-70"
+            >
+              <span className="inline-flex items-center justify-center gap-2">
+                <RefreshCw className="h-4 w-4 animate-spin" />
+                {intentLoading ? 'Loading secure checkout...' : ctaText}
+              </span>
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="mt-3 text-center">
@@ -611,3 +613,5 @@ export default function AnalysisPaywall({
     </>
   );
 }
+
+
