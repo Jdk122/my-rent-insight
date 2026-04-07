@@ -61,10 +61,10 @@ RenewalReply closes that gap. The tool pulls federal housing data, real nearby l
           <h2 className="text-lg font-semibold text-foreground mb-4">What Makes RenewalReply Different</h2>
           <div className="space-y-4 text-[15px] leading-relaxed text-muted-foreground">
             <p>
-              Most rent tools show you a single number from a single source. RenewalReply cross-references <strong className="text-foreground">multiple independent data sources</strong> — including HUD Fair Market Rents, HUD 50th Percentile Rents, Apartment List transacted rent trends, Zillow ZORI and ZHVI market indices, and real-time comparable listings — to generate a composite Fairness Score across four dimensions.
+              Most rent tools show you a single number from a single source. RenewalReply cross-references <strong className="text-foreground">multiple independent data sources</strong>, including government fair market rents, transacted rent trends, market indices, and real-time comparable listings, to generate a composite Fairness Score across four dimensions.
             </p>
             <p>
-              The result is a <strong className="text-foreground">multi-dimensional analysis</strong> that accounts for local trends, comparable units, government benchmarks, and market momentum — not just one data point.
+              The result is a <strong className="text-foreground">multi-dimensional analysis</strong> that accounts for local trends, comparable units, government benchmarks, and market momentum. Not just one data point.
             </p>
           </div>
         </div>
