@@ -505,7 +505,7 @@ export default function AnalysisPaywall({
               </div>
             </div>
           ))}
-          <p className="text-[10px] sm:text-[11px] text-muted-foreground text-center">+ {compsCount - 2} more comps inside</p>
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground/60 text-center">{compsCount - 2} more comps included</p>
         </div>
       )}
 
