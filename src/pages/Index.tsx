@@ -364,7 +364,7 @@ const Index = () => {
             onReset={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             onScrollToTop={() => {
               setResults(null);
-              setIsPaid(false);
+              
               setFormKey(k => k + 1);
               setCapturedEmailRaw(getRememberedEmail());
               window.scrollTo({ top: 0, behavior: 'smooth' });
