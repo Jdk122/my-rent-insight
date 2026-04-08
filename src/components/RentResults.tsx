@@ -1172,8 +1172,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   )}
                   {isAboveMarket && counterOffer && !counterExceedsProposed && (
                     <>
-                      {true ? (
-                        <>
                           <div className="context-row-highlight mt-2">
                             <span className="context-label">Fair counter-offer</span>
                             <span className="context-value text-verdict-good font-bold">
@@ -1189,15 +1187,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                               </p>
                             </div>
                           )}
-                        </>
-                      ) : (
-                        <div className="context-row-highlight mt-2">
-                          <span className="context-label">Your counter-offer</span>
-                          <span className="text-[13px] text-muted-foreground">
-                            Included with your reply below
-                          </span>
-                        </div>
-                      )}
                     </>
                   )}
                   {isAboveMarket && counterExceedsProposed && (
