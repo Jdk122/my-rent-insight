@@ -11,9 +11,6 @@ import LoadingAnalysis from '@/components/LoadingAnalysis';
 import { getRememberedEmail, rememberEmail } from '@/lib/emailMemory';
 import PageNav from '@/components/PageNav';
 import RentReportingCTA from '@/components/RentReportingCTA';
-import { getAnalysisFingerprint, addPaidAnalysis, isAnalysisPaid } from '@/lib/analysisFingerprint';
-import { supabase } from '@/integrations/supabase/client';
-import { notifySubmission } from '@/lib/notifySubmission';
 
 const RentResults = lazy(() => import('@/components/RentResults'));
 const SEOFooter = lazy(() => import('@/components/SEOFooter'));
@@ -24,7 +21,6 @@ const RentIncreaseCalculator = () => {
   const [results, setResults] = useState<{ formData: RentFormData; rentData: RentLookupResult } | null>(null);
   const [contactOpen, setContactOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isPaid, setIsPaid] = useState(false);
   const [capturedEmail, setCapturedEmailRaw] = useState(() => getRememberedEmail());
   const setCapturedEmail = (email: string) => {
     setCapturedEmailRaw(email);
@@ -34,156 +30,11 @@ const RentIncreaseCalculator = () => {
   const propertyLookup = usePropertyLookup();
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Handle ?paid=true return from Stripe redirect
-  useEffect(() => {
-    if (searchParams.get('paid') !== 'true') return;
-    const sessionId = searchParams.get('session_id') || '';
-    try {
-      const raw = localStorage.getItem('rr_checkout_state');
-      if (raw) {
-        const savedState = JSON.parse(raw);
-        if (savedState.formData && savedState.rentData) {
-          setResults({ formData: savedState.formData, rentData: savedState.rentData });
-          if (savedState.capturedEmail) setCapturedEmailRaw(savedState.capturedEmail);
-          addPaidAnalysis({ sessionId: sessionId || 'stripe-redirect', fingerprint: savedState.analysisFingerprint, timestamp: Date.now() });
-          setIsPaid(true);
-          window.history.replaceState({}, '', window.location.pathname);
-          localStorage.removeItem('rr_checkout_state');
-          trackEvent('purchase_completed', { verdict: savedState.verdict, zip: savedState.formData.zip });
 
-          // Retrieve Stripe session email and upsert into leads
-          if (sessionId) {
-            supabase.functions.invoke('retrieve-checkout-session', {
-              body: { sessionId },
-            }).then(({ data }) => {
-              if (data?.email) {
-                const stripeEmail = data.email;
-                if (!savedState.capturedEmail) {
-                  setCapturedEmailRaw(stripeEmail);
-                  import('@/lib/emailMemory').then(({ rememberEmail }) => rememberEmail(stripeEmail));
-                }
-                supabase.from('lead_events' as any).insert({
-                  event_type: 'purchase_completed',
-                  email: stripeEmail,
-                  zip: savedState.formData.zip,
-                  verdict: savedState.verdict,
-                }).then(() => {});
-                notifySubmission({
-                  email: stripeEmail,
-                  zip: savedState.formData.zip || null,
-                  verdict_label: savedState.verdict || null,
-                  purchase: true,
-                }, 'purchase_stripe_redirect');
-              }
-            }).catch((err) => console.error('[retrieve-checkout-session] failed:', err));
-          } else {
-            supabase.from('lead_events' as any).insert({
-              event_type: 'purchase_completed',
-              email: savedState.capturedEmail || 'anonymous@checkout',
-              zip: savedState.formData.zip,
-              verdict: savedState.verdict,
-            }).then(() => {});
-            notifySubmission({
-              email: savedState.capturedEmail || null,
-              zip: savedState.formData.zip || null,
-              verdict_label: savedState.verdict || null,
-              purchase: true,
-            }, 'purchase_stripe_redirect');
-          }
 
-          setTimeout(() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' }), 500);
-          return;
-        }
-      }
-    } catch { /* ignore */ }
-    window.history.replaceState({}, '', window.location.pathname);
-  }, [searchParams]);
-
-  // Restore checkout state on back-button (no payment)
-  useEffect(() => {
-    if (results || searchParams.get('paid') === 'true') return;
-    try {
-      const raw = localStorage.getItem('rr_checkout_state');
-      if (raw) {
-        const saved = JSON.parse(raw);
-        if (saved.formData && saved.rentData && Date.now() - saved.timestamp < 3600000) {
-          setResults({ formData: saved.formData, rentData: saved.rentData });
-          if (saved.capturedEmail) setCapturedEmailRaw(saved.capturedEmail);
-        }
-      }
-    } catch { /* ignore */ }
-  }, []);
-
-  // Check fingerprint when results change
-  useEffect(() => {
-    if (!results) return;
-    const fp = getAnalysisFingerprint(results.formData);
-    if (isAnalysisPaid(fp)) setIsPaid(true);
-  }, [results]);
 
   const [verdictStr, setVerdictStr] = useState<'above' | 'at-market' | 'below'>('at-market');
 
-  const handlePaid = useCallback((walletEmail?: string) => {
-    if (!results) return;
-    const fp = getAnalysisFingerprint(results.formData);
-    addPaidAnalysis({ sessionId: 'wallet-' + Date.now(), fingerprint: fp, timestamp: Date.now() });
-    setIsPaid(true);
-
-    const email = walletEmail || capturedEmail || 'anonymous@checkout';
-
-    if (walletEmail && !capturedEmail) {
-      setCapturedEmailRaw(walletEmail);
-      rememberEmail(walletEmail);
-    }
-
-    trackEvent('purchase_completed', { verdict: verdictStr, zip: results.formData.zip });
-    supabase.from('lead_events' as any).insert({
-      event_type: 'purchase_completed',
-      email,
-      zip: results.formData.zip,
-      verdict: verdictStr,
-    }).then(() => {});
-    notifySubmission({
-      email: email !== 'anonymous@checkout' ? email : null,
-      zip: results.formData.zip || null,
-      verdict_label: verdictStr,
-      purchase: true,
-    }, 'purchase_wallet');
-
-    if (walletEmail) {
-      const fd = results.formData;
-      const rd = results.rentData;
-      const increasePct = fd.rentIncrease && fd.currentRent
-        ? fd.increaseIsPercent
-          ? fd.rentIncrease
-          : ((fd.rentIncrease / fd.currentRent) * 100)
-        : null;
-
-      supabase.rpc('upsert_lead', {
-        p_email: walletEmail,
-        p_capture_source: 'stripe_express_checkout',
-        p_address: fd.fullAddress || null,
-        p_city: rd.city || null,
-        p_state: rd.state || null,
-        p_zip: fd.zip || null,
-        p_bedrooms: fd.bedrooms ?? null,
-        p_current_rent: fd.currentRent ?? null,
-        p_proposed_rent: fd.currentRent && fd.rentIncrease
-          ? fd.increaseIsPercent
-            ? Math.round(fd.currentRent * (1 + fd.rentIncrease / 100))
-            : fd.currentRent + fd.rentIncrease
-          : null,
-        p_increase_pct: increasePct ?? null,
-        p_verdict: verdictStr || null,
-        p_hud_fmr_value: rd.fmr ?? null,
-        p_tool_type: 'renewal',
-      } as any).then(({ error: rpcError }) => {
-        if (rpcError) console.warn('[lead] upsert_lead failed (wallet):', rpcError.message);
-      });
-    }
-
-    setTimeout(() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' }), 300);
-  }, [results, capturedEmail, verdictStr]);
 
   const prefill = useMemo(() => {
     const zip = searchParams.get('zip');
@@ -402,12 +253,10 @@ const RentIncreaseCalculator = () => {
               propertyData={propertyLookup.data}
               propertyLoading={propertyLookup.loading}
               propertyError={propertyLookup.error}
-              onReset={() => { setResults(null); setIsPaid(false); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              onScrollToTop={() => { setResults(null); setIsPaid(false); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              onReset={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              onScrollToTop={() => { setResults(null); setFormKey(k => k + 1); setCapturedEmailRaw(getRememberedEmail()); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               capturedEmail={capturedEmail}
               onEmailCaptured={setCapturedEmail}
-              isPaid={isPaid}
-              onPaid={handlePaid}
               onVerdictReady={setVerdictStr}
             />
           </Suspense>
