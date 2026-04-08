@@ -1322,7 +1322,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   annualSavings={excessAnnual}
                   proposedRentAboveMedian={isAboveMarket}
                   onScrollToLetter={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
-                  hasCounterOffer={!!(isAboveMarket && counterOffer && !counterExceedsProposed && !true)}
+                  hasCounterOffer={false}
                 />
               </section>
             )}
