@@ -63,8 +63,6 @@ interface RentResultsProps {
   onEmailCaptured?: (email: string) => void;
   onVerdictReady?: (verdict: 'above' | 'at-market' | 'below') => void;
   isDemo?: boolean;
-  isPaid?: boolean;
-  onPaid?: (email?: string) => void;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -75,7 +73,7 @@ const fade = (delay: number) => ({
   transition: { duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] as const },
 });
 
-const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop, capturedEmail: externalEmail, onEmailCaptured: externalOnEmail, onVerdictReady, isDemo = false, isPaid = false, onPaid }: RentResultsProps) => {
+const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop, capturedEmail: externalEmail, onEmailCaptured: externalOnEmail, onVerdictReady, isDemo = false }: RentResultsProps) => {
   const [internalEmail, setInternalEmail] = useState('');
   const capturedEmail = externalEmail ?? internalEmail;
   const isUnlocked = !!capturedEmail || !EMAIL_GATE_ENABLED;
