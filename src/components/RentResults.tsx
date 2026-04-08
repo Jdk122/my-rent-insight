@@ -39,7 +39,6 @@ import PartnerCTA from './PartnerCTA';
 import MoveCTA from './MoveCTA';
 import ExitIntentModal from './ExitIntentModal';
 import MobileScrollPrompt from './MobileScrollPrompt';
-import AnalysisPaywall from './AnalysisPaywall';
 import PostConversionFlow from './PostConversionFlow';
 import LeaseReminderCapture from './LeaseReminderCapture';
 import FeedbackWidget from './FeedbackWidget';
@@ -49,7 +48,6 @@ import { EMAIL_GATE_ENABLED, GATE_VARIANT } from '@/lib/featureFlags';
 import { DEAL_CITIES } from '@/data/dealsCities';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { demoRentcast } from '@/data/demoData';
-import { getAnalysisFingerprint } from '@/lib/analysisFingerprint';
 
 interface RentResultsProps {
   formData: RentFormData;
@@ -63,8 +61,6 @@ interface RentResultsProps {
   onEmailCaptured?: (email: string) => void;
   onVerdictReady?: (verdict: 'above' | 'at-market' | 'below') => void;
   isDemo?: boolean;
-  isPaid?: boolean;
-  onPaid?: (email?: string) => void;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -75,7 +71,7 @@ const fade = (delay: number) => ({
   transition: { duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] as const },
 });
 
-const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop, capturedEmail: externalEmail, onEmailCaptured: externalOnEmail, onVerdictReady, isDemo = false, isPaid = false, onPaid }: RentResultsProps) => {
+const RentResults = ({ formData, rentData, propertyData, propertyLoading, propertyError, onReset, onScrollToTop, capturedEmail: externalEmail, onEmailCaptured: externalOnEmail, onVerdictReady, isDemo = false }: RentResultsProps) => {
   const [internalEmail, setInternalEmail] = useState('');
   const capturedEmail = externalEmail ?? internalEmail;
   const isUnlocked = !!capturedEmail || !EMAIL_GATE_ENABLED;
@@ -93,7 +89,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
   const [selectedIntent, setSelectedIntent] = useState<'stay' | 'move' | null>(null);
   const analysisLogged = useRef(isDuplicateAnalysis);
   const gateViewedRef = useRef(false);
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   // Rehydrate user_intent from analyses on mount
   useEffect(() => {
@@ -628,50 +623,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
     updateAnalysis({ results_shared: true });
   }, [updateAnalysis]);
 
-  const handleCheckout = useCallback(async () => {
-    const verdictStr = isAboveMarket ? 'above' : isFair ? 'at-market' : 'below';
-    const savings = increaseAmount * 12;
-    trackEvent('toolkit_click', { verdict: verdictStr, savings, placement: 'verdict_area', zip: rentData.zip });
-
-    supabase.from('lead_events' as any).insert({
-      event_type: 'toolkit_click',
-      email: capturedEmail || 'anonymous@checkout',
-      analysis_id: analysisId ?? undefined,
-      zip: rentData.zip,
-      verdict: verdictStr,
-    }).then(() => {});
-
-    const fingerprint = getAnalysisFingerprint(formData);
-    const checkoutState = {
-      formData,
-      rentData,
-      capturedEmail,
-      analysisFingerprint: fingerprint,
-      verdict: verdictStr,
-      timestamp: Date.now(),
-    };
-    localStorage.setItem('rr_checkout_state', JSON.stringify(checkoutState));
-
-    setCheckoutLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-        body: {
-          analysisId,
-          verdict: verdictStr,
-          zip: rentData.zip,
-          city: rentData.city,
-          savings,
-          returnUrl: window.location.origin + window.location.pathname,
-        },
-      });
-      if (error || !data?.url) throw new Error(error?.message || 'No checkout URL returned');
-      window.location.href = data.url;
-    } catch (err) {
-      console.error('Checkout failed:', err);
-      toast.error('Something went wrong. Please try again.');
-      setCheckoutLoading(false);
-    }
-  }, [isAboveMarket, isFair, increaseAmount, rentData, capturedEmail, analysisId, formData]);
 
   const leadContext = useMemo(() => ({
     analysisId,
@@ -719,20 +670,18 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   const navSections = useMemo(() => {
     const sections = [{ id: 'section-verdict', label: 'Verdict' }];
-    if (isPaid) {
-      if (hasIncrease && medianCompRent && hasEnoughComps) {
-        sections.push({ id: 'section-comps', label: 'Comps' });
-      }
-      if (hasIncrease && calc) {
-        sections.push({ id: 'section-letter', label: 'Letter' });
-      }
-      if (hasRentControl) {
-        sections.push({ id: 'section-rights', label: 'Rights' });
-      }
-      sections.push({ id: 'section-share', label: 'Share' });
+    if (hasIncrease && medianCompRent && hasEnoughComps) {
+      sections.push({ id: 'section-comps', label: 'Comps' });
     }
+    if (hasIncrease && calc) {
+      sections.push({ id: 'section-letter', label: 'Letter' });
+    }
+    if (hasRentControl) {
+      sections.push({ id: 'section-rights', label: 'Rights' });
+    }
+    sections.push({ id: 'section-share', label: 'Share' });
     return sections;
-  }, [isPaid, hasIncrease, medianCompRent, hasEnoughComps, calc, hasRentControl]);
+  }, [hasIncrease, medianCompRent, hasEnoughComps, calc, hasRentControl]);
 
   const shareReportPayload = useMemo(() => ({
     zip: rentData.zip,
@@ -759,7 +708,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
   return (
     <>
-      {isPaid && <SectionNav sections={navSections} />}
+      <SectionNav sections={navSections} />
 
       {/* Exit Intent Modal — paywall pitch / share / email capture */}
       <ExitIntentModal
@@ -771,25 +720,10 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         onEmailCaptured={setCapturedEmail}
         shareReportPayload={shareReportPayload}
         onReportGenerated={(url) => { setReportUrl(url); }}
-        isPaid={isPaid}
-        isAboveMarket={isAboveMarket}
-        onPaid={onPaid}
-        onCheckout={handleCheckout}
-        checkoutLoading={checkoutLoading}
-        savings={increaseAmount * 12}
-        analysisId={analysisId}
-        expressCheckoutProps={{
-          analysisId,
-          verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : isBelowMarket ? 'below' : 'none',
-          zip: rentData.zip,
-          city: rentData.city,
-          savings: increaseAmount * 12,
-        }}
       />
 
       {/* Mobile Scroll Prompt (mobile only) — only when paid */}
-      {isPaid && (
-        <MobileScrollPrompt
+      <MobileScrollPrompt
           capturedEmail={capturedEmail}
           leadContext={leadContext}
           verdictLabel={verdictLabel}
@@ -800,10 +734,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
           shareReportPayload={shareReportPayload}
           onReportGenerated={(url) => { setReportUrl(url); }}
         />
-      )}
 
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           PHASE 1: FREE CREDIBILITY LAYER
+           VERDICT SECTION
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       {showRentWarning && (
         <div className="mx-auto max-w-md mb-4 px-4 py-3 rounded-lg border border-amber-300/50 bg-amber-50/50 dark:bg-amber-950/20 text-center relative">
@@ -981,7 +914,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <>Good news: <span className="text-verdict-good">your rent isn't going up.</span></>
                           )}
                         </h1>
-                        {isPaid ? (
                         <div className="text-center">
                           {isAboveMarket && calc ? (
                             counterExceedsProposed ? (
@@ -1032,12 +964,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <p className="text-[15px] text-muted-foreground">Rents in {city} moved {marketYoy}% this year. Your rent staying flat means you're coming out ahead.</p>
                           )}
                         </div>
-                        ) : (
-                           <p className="text-[14px] sm:text-[15px] text-muted-foreground">
-                             {`Based on ${compsWithRent.length} comps and local data for ${city}.`}
-                           </p>
-                        )}
-                        {isPaid && isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !counterExceedsProposed && (
+                        {isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !counterExceedsProposed && (
                           <p className="text-xs text-muted-foreground/70 mt-1">
                             Area rents moved {marketYoy}% this year.
                           </p>
@@ -1057,8 +984,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
               {/* unpaid headline block removed — gauge dynamicMessage handles it */}
 
-              {/* ── Stat dashboard strip — only when paid ── */}
-              {isPaid && (
+              {/* ── Stat dashboard strip ── */}
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -1085,10 +1011,9 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       </div>
                   ))}
                 </motion.div>
-              )}
 
-              {/* ── Primary CTA — only when paid ── */}
-              {isPaid && hasIncrease && (
+              {/* ── Primary CTA ── */}
+              {hasIncrease && (
                 <button
                   onClick={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
                   className="w-full mt-4 py-3.5 rounded-lg bg-primary text-primary-foreground text-[15px] font-semibold tracking-tight hover:brightness-95 transition-all shadow-sm shadow-primary/20"
@@ -1096,7 +1021,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   {isAboveMarket ? 'Your reply is ready. Scroll down ↓' : isBelowMarket ? 'Protect this rate ↓' : 'Your reply is ready. Scroll down ↓'}
                 </button>
               )}
-              {isPaid && hasIncrease && (
+              {hasIncrease && (
                 <p className="text-[11px] text-muted-foreground/60 mt-1.5 text-center">
                   {isAboveMarket
                     ? `Based on ${compsWithRent.length} nearby comp${compsWithRent.length !== 1 ? 's' : ''}`
@@ -1109,46 +1034,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
 
 
-              {/* ── Analysis Paywall — when unpaid ── */}
-              {!isPaid && (
-                <AnalysisPaywall
-                  verdict={isAboveMarket ? 'above' : isFair ? 'at-market' : isBelowMarket ? 'below' : 'none'}
-                  compsCount={compsWithRent.length}
-                  city={city}
-                  annualSavings={excessAnnual}
-                  currentRent={formData.currentRent}
-                  onCheckout={handleCheckout}
-                  checkoutLoading={checkoutLoading}
-                  onPaid={onPaid}
-                  counterOfferLow={counterOffer?.counterLow}
-                  counterOfferHigh={counterOffer?.counterHigh}
-                  medianCompRent={medianCompRent ?? undefined}
-                  newRent={newRent}
-                  marketYoy={marketYoy}
-                  increasePct={increasePct}
-                  turnoverCost={Math.round(formData.currentRent * 3)}
-                  increaseAmount={increaseAmount}
-                   sampleComps={(() => {
-                     const getStreet = (c: typeof compsWithRent[0]) => (c.formattedAddress?.split(',')[0]?.trim() || '');
-                     const picked = [compsWithRent[0]];
-                     const firstStreet = getStreet(compsWithRent[0]);
-                     const diverse = compsWithRent.slice(1).find(c => getStreet(c) !== firstStreet);
-                     picked.push(diverse || compsWithRent[1]);
-                     return picked.filter(Boolean).map(c => ({
-                       address: c.formattedAddress?.split(',').slice(0, 2).join(',').trim() || 'Nearby unit',
-                       beds: c.bedrooms ?? 1,
-                       baths: c.bathrooms ?? 1,
-                     }));
-                   })()}
-                  expressCheckoutProps={{
-                    analysisId,
-                    verdict: isAboveMarket ? 'above' : isFair ? 'at-market' : isBelowMarket ? 'below' : 'none',
-                    zip: rentData.zip,
-                    city: rentData.city,
-                    savings: excessAnnual,
-                  }}
-                />
-              )}
 
             </>
           ) : (
@@ -1161,58 +1046,20 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </p>
 
 
-              {/* ── Paywall for no-increase users ── */}
-              {!isPaid && (
-                <AnalysisPaywall
-                  verdict="none"
-                  compsCount={compsWithRent.length}
-                  city={city}
-                  currentRent={formData.currentRent}
-                  medianCompRent={medianCompRent ?? undefined}
-                  turnoverCost={Math.round(formData.currentRent * 3)}
-                  onCheckout={handleCheckout}
-                  checkoutLoading={checkoutLoading}
-                  onPaid={onPaid}
-                   sampleComps={(() => {
-                     const getStreet = (c: typeof compsWithRent[0]) => (c.formattedAddress?.split(',')[0]?.trim() || '');
-                     const picked = [compsWithRent[0]];
-                     const firstStreet = getStreet(compsWithRent[0]);
-                     const diverse = compsWithRent.slice(1).find(c => getStreet(c) !== firstStreet);
-                     picked.push(diverse || compsWithRent[1]);
-                     return picked.filter(Boolean).map(c => ({
-                       address: c.formattedAddress?.split(',').slice(0, 2).join(',').trim() || 'Nearby unit',
-                       beds: c.bedrooms ?? 1,
-                       baths: c.bathrooms ?? 1,
-                     }));
-                   })()}
-                  expressCheckoutProps={{
-                    analysisId,
-                    verdict: 'none',
-                    zip: rentData.zip,
-                    city: rentData.city,
-                    savings: 0,
-                  }}
-                />
-              )}
-              {isPaid && (
-                <div className="mt-4 flex flex-col items-center gap-2">
+              <div className="mt-4 flex flex-col items-center gap-2">
                   <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
                     ← Check a different address
                   </button>
                 </div>
-              )}
             </>
           )}
         </motion.section>
         </div>
       </div>
 
-      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           PHASE 3: PAID CONTENT
-         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+
       <div className="w-full bg-card">
         <div className="max-w-[620px] mx-auto px-5 sm:px-6">
-        {isPaid && (
           <>
 
             {/* ━━━ EVIDENCE SECTION ━━━ */}
@@ -1319,8 +1166,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   )}
                   {isAboveMarket && counterOffer && !counterExceedsProposed && (
                     <>
-                      {isPaid ? (
-                        <>
                           <div className="context-row-highlight mt-2">
                             <span className="context-label">Fair counter-offer</span>
                             <span className="context-value text-verdict-good font-bold">
@@ -1336,15 +1181,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                               </p>
                             </div>
                           )}
-                        </>
-                      ) : (
-                        <div className="context-row-highlight mt-2">
-                          <span className="context-label">Your counter-offer</span>
-                          <span className="text-[13px] text-muted-foreground">
-                            Included with your reply below
-                          </span>
-                        </div>
-                      )}
                     </>
                   )}
                   {isAboveMarket && counterExceedsProposed && (
@@ -1469,7 +1305,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   annualSavings={excessAnnual}
                   proposedRentAboveMedian={isAboveMarket}
                   onScrollToLetter={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
-                  hasCounterOffer={!!(isAboveMarket && counterOffer && !counterExceedsProposed && !isPaid)}
+                  hasCounterOffer={false}
                 />
               </section>
             )}
@@ -1564,8 +1400,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             )}
 
             {/* ━━━ Universal rent reporting CTA — after letter ━━━ */}
-            {isPaid && (
-              <section className="py-3 sm:py-4">
+            <section className="py-3 sm:py-4">
                 <PartnerCTA
                   variant="rent_reporting"
                   analysisId={analysisId}
@@ -1579,7 +1414,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   proposedRent={formData.rentIncrease != null ? (formData.increaseIsPercent ? formData.currentRent * (1 + formData.rentIncrease / 100) : formData.currentRent + formData.rentIncrease) : undefined}
                 />
               </section>
-            )}
 
             {/* ━━━ Moving help CTA (above-market only) — after letter ━━━ */}
             {isAboveMarket && (
@@ -1648,8 +1482,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
 
             {/* ━━━ Lease reminder — universal, utility-first ━━━ */}
-            {isPaid && (
-              <section className="pb-4 pt-2">
+            <section className="pb-4 pt-2">
                 {capturedEmail ? (
                   <PostConversionFlow
                     email={capturedEmail}
@@ -1670,7 +1503,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   />
                 )}
               </section>
-            )}
 
             {/* ━━━ Footer zone — compact utility area ━━━ */}
             <div className="mt-1 border-t border-border pt-3 space-y-3">
@@ -1761,7 +1593,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </p>
             </div>
           </>
-        )}
 
         </div>
       </div>

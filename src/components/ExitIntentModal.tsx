@@ -8,7 +8,6 @@ import { notifySubmission } from '@/lib/notifySubmission';
 import { toast } from 'sonner';
 import { X, MessageCircle, Mail, Link2 } from 'lucide-react';
 import type { LeadContext } from './EmailCapture';
-import StripeExpressCheckout from './StripeExpressCheckout';
 
 interface ExitIntentModalProps {
   capturedEmail: string;
@@ -20,118 +19,18 @@ interface ExitIntentModalProps {
   toolType?: 'renewal' | 'wsip';
   shareReportPayload?: SharedReportPayload;
   onReportGenerated?: (url: string) => void;
-  isPaid?: boolean;
-  isAboveMarket?: boolean;
-  onPaid?: (email?: string) => void;
-  onCheckout?: () => void;
-  checkoutLoading?: boolean;
-  savings?: number;
-  analysisId?: string | null;
-  expressCheckoutProps?: {
-    analysisId?: string | null;
-    verdict: string;
-    zip: string;
-    city: string;
-    savings: number;
-  };
 }
 
 const SESSION_KEY = 'rr_exit_intent_shown';
 
-type ModalMode = 'share' | 'paywall' | 'capture';
+type ModalMode = 'share' | 'capture';
 
-function getMode(isPaid: boolean, expressCheckoutProps: ExitIntentModalProps['expressCheckoutProps'], capturedEmail: string): ModalMode {
-  if (isPaid) return 'share';
-  if (expressCheckoutProps) return 'paywall';
-  if (!capturedEmail) return 'capture';
-  return 'share';
+function getMode(capturedEmail: string): ModalMode {
+  if (capturedEmail) return 'share';
+  return 'capture';
 }
 
-/* ─── Paywall content (Mode 2) ─── */
-function PaywallContent({
-  isAboveMarket,
-  savings,
-  expressCheckoutProps,
-  onPaid,
-  onCheckout,
-  checkoutLoading,
-  onDismiss,
-  verdictLabel,
-  zip,
-}: {
-  isAboveMarket?: boolean;
-  savings?: number;
-  expressCheckoutProps: NonNullable<ExitIntentModalProps['expressCheckoutProps']>;
-  onPaid?: (email?: string) => void;
-  onCheckout?: () => void;
-  checkoutLoading?: boolean;
-  onDismiss: () => void;
-  verdictLabel: string;
-  zip: string;
-}) {
-  const [walletAvailable, setWalletAvailable] = useState(true);
-
-  const headline = isAboveMarket
-    ? 'Above market. Counter with proof for $1.99.'
-    : 'Your full analysis is just $1.99.';
-
-  const subtext = isAboveMarket
-    ? 'See your counter-offer number, comps, and negotiation letter.'
-    : 'See the comps and evidence behind your verdict.';
-
-  const handleWalletSuccess = useCallback((email?: string) => {
-    trackEvent('purchase_completed', { verdict: verdictLabel, zip, method: 'exit_intent_wallet' });
-    onPaid?.(email);
-  }, [onPaid, verdictLabel, zip]);
-
-  const handleFallback = useCallback(() => {
-    setWalletAvailable(false);
-  }, []);
-
-  const handleCardClick = () => {
-    trackEvent('toolkit_click', { placement: 'exit_intent', verdict: verdictLabel, zip });
-    onCheckout?.();
-  };
-
-  return (
-    <div className="text-center space-y-4">
-      <h3 className="font-display text-lg font-semibold text-foreground">
-        {headline}
-      </h3>
-      <p className="text-sm text-muted-foreground">{subtext}</p>
-
-      <div className="space-y-3">
-        {walletAvailable && (
-          <StripeExpressCheckout
-            onSuccess={handleWalletSuccess}
-            onFallbackToRedirect={handleFallback}
-            analysisId={expressCheckoutProps.analysisId}
-            verdict={expressCheckoutProps.verdict}
-            zip={expressCheckoutProps.zip}
-            city={expressCheckoutProps.city}
-            savings={expressCheckoutProps.savings}
-            placement="exit_intent"
-          />
-        )}
-
-        <button
-          onClick={handleCardClick}
-          disabled={checkoutLoading}
-          className="w-full px-4 py-3 rounded-lg text-sm font-semibold transition-opacity disabled:opacity-60"
-          style={{ backgroundColor: 'hsl(220 18% 13%)', color: '#fff' }}
-        >
-          {checkoutLoading ? 'Loading…' : 'Pay with card for $1.99'}
-        </button>
-      </div>
-
-      <button onClick={onDismiss} className="text-xs text-muted-foreground hover:text-foreground transition-colors underline">
-        No thanks, I'll handle it myself
-      </button>
-    </div>
-  );
-}
-
-/* ─── Share content (Mode 1) ─── */
+/* ─── Share content ─── */
 function ShareContent({
   toolType,
   onShare,
@@ -166,7 +65,7 @@ function ShareContent({
   );
 }
 
-/* ─── Email capture content (Mode 3) ─── */
+/* ─── Email capture content ─── */
 function CaptureContent({
   toolType,
   onSubmit,
@@ -239,14 +138,6 @@ const ExitIntentModal = ({
   toolType = 'renewal',
   shareReportPayload,
   onReportGenerated,
-  isPaid = false,
-  isAboveMarket,
-  onPaid,
-  onCheckout,
-  checkoutLoading,
-  savings,
-  analysisId,
-  expressCheckoutProps,
 }: ExitIntentModalProps) => {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
@@ -254,7 +145,7 @@ const ExitIntentModal = ({
   const [loading, setLoading] = useState(false);
   const firedRef = useRef(false);
 
-  const mode = getMode(isPaid, expressCheckoutProps, capturedEmail);
+  const mode = getMode(capturedEmail);
 
   const mountedAt = useRef(Date.now());
 
@@ -263,11 +154,10 @@ const ExitIntentModal = ({
     if (sessionStorage.getItem(SESSION_KEY)) return;
     if (sessionStorage.getItem('rr_mobile_scroll_prompt')) return;
 
-    const MIN_DELAY_MS = 12_000; // Don't fire within first 12s
+    const MIN_DELAY_MS = 12_000;
     const isMobile = window.innerWidth < 768;
 
     if (!isMobile) {
-      // Desktop: mouse leave toward top
       const handleMouseLeave = (e: MouseEvent) => {
         if (e.clientY > 10) return;
         if (firedRef.current) return;
@@ -277,7 +167,7 @@ const ExitIntentModal = ({
         setOpen(true);
         trackEvent('prompt_shown', {
           prompt: 'exit_intent',
-          type: isPaid ? 'share' : expressCheckoutProps ? 'paywall' : 'capture',
+          type: capturedEmail ? 'share' : 'capture',
           tool: toolType,
           verdict: verdictLabel,
           zip,
@@ -286,7 +176,6 @@ const ExitIntentModal = ({
       document.addEventListener('mouseleave', handleMouseLeave);
       return () => document.removeEventListener('mouseleave', handleMouseLeave);
     } else {
-      // Mobile: scroll-up after deep scroll
       let maxScroll = 0;
       const handleScroll = () => {
         if (firedRef.current) return;
@@ -303,7 +192,7 @@ const ExitIntentModal = ({
           setOpen(true);
           trackEvent('prompt_shown', {
             prompt: 'exit_intent_mobile',
-            type: isPaid ? 'share' : expressCheckoutProps ? 'paywall' : 'capture',
+            type: capturedEmail ? 'share' : 'capture',
             tool: toolType,
             verdict: verdictLabel,
             zip,
@@ -313,7 +202,7 @@ const ExitIntentModal = ({
       window.addEventListener('scroll', handleScroll, { passive: true });
       return () => window.removeEventListener('scroll', handleScroll);
     }
-  }, [capturedEmail, verdictLabel, zip, isPaid, savings, expressCheckoutProps, toolType]);
+  }, [capturedEmail, verdictLabel, zip, toolType]);
 
   const handleDismiss = () => {
     trackEvent('prompt_dismissed', { prompt: 'exit_intent', type: mode, zip });
@@ -446,11 +335,6 @@ const ExitIntentModal = ({
     })();
   };
 
-  const handlePaidFromModal = useCallback((walletEmail?: string) => {
-    onPaid?.(walletEmail);
-    setOpen(false);
-  }, [onPaid]);
-
   if (!open) return null;
 
   return (
@@ -464,19 +348,7 @@ const ExitIntentModal = ({
           <X className="w-5 h-5" />
         </button>
 
-        {mode === 'paywall' && expressCheckoutProps ? (
-          <PaywallContent
-            isAboveMarket={isAboveMarket}
-            savings={savings}
-            expressCheckoutProps={expressCheckoutProps}
-            onPaid={handlePaidFromModal}
-            onCheckout={onCheckout}
-            checkoutLoading={checkoutLoading}
-            onDismiss={handleDismiss}
-            verdictLabel={verdictLabel}
-            zip={zip}
-          />
-        ) : mode === 'share' ? (
+        {mode === 'share' ? (
           <ShareContent toolType={toolType} onShare={handleShare} />
         ) : (
           <CaptureContent
