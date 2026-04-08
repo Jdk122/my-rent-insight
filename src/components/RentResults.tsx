@@ -964,7 +964,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                             <p className="text-[15px] text-muted-foreground">Rents in {city} moved {marketYoy}% this year. Your rent staying flat means you're coming out ahead.</p>
                           )}
                         </div>
-                        {true && isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !counterExceedsProposed && (
+                        {isAboveMarket && bldg.hasBuildingData && bldg.buildingComps.length >= 3 && calc && !counterExceedsProposed && (
                           <p className="text-xs text-muted-foreground/70 mt-1">
                             Area rents moved {marketYoy}% this year.
                           </p>
@@ -1014,7 +1014,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               )}
 
               {/* ── Primary CTA — only when paid ── */}
-              {true && hasIncrease && (
+              {hasIncrease && (
                 <button
                   onClick={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
                   className="w-full mt-4 py-3.5 rounded-lg bg-primary text-primary-foreground text-[15px] font-semibold tracking-tight hover:brightness-95 transition-all shadow-sm shadow-primary/20"
@@ -1022,7 +1022,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   {isAboveMarket ? 'Your reply is ready. Scroll down ↓' : isBelowMarket ? 'Protect this rate ↓' : 'Your reply is ready. Scroll down ↓'}
                 </button>
               )}
-              {true && hasIncrease && (
+              {hasIncrease && (
                 <p className="text-[11px] text-muted-foreground/60 mt-1.5 text-center">
                   {isAboveMarket
                     ? `Based on ${compsWithRent.length} nearby comp${compsWithRent.length !== 1 ? 's' : ''}`
