@@ -736,7 +736,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
         />
 
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           PHASE 1: FREE CREDIBILITY LAYER
+           VERDICT SECTION
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       {showRentWarning && (
         <div className="mx-auto max-w-md mb-4 px-4 py-3 rounded-lg border border-amber-300/50 bg-amber-50/50 dark:bg-amber-950/20 text-center relative">
@@ -984,8 +984,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
               {/* unpaid headline block removed — gauge dynamicMessage handles it */}
 
-              {/* ── Stat dashboard strip — only when paid ── */}
-                              <motion.div
+              {/* ── Stat dashboard strip ── */}
+                <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.5 }}
@@ -1011,9 +1011,8 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                       </div>
                   ))}
                 </motion.div>
-              )}
 
-              {/* ── Primary CTA — only when paid ── */}
+              {/* ── Primary CTA ── */}
               {hasIncrease && (
                 <button
                   onClick={() => document.getElementById('section-letter')?.scrollIntoView({ behavior: 'smooth' })}
@@ -1035,7 +1034,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
 
 
-              {/* ── Analysis Paywall — when unpaid ── */}
 
             </>
           ) : (
@@ -1048,25 +1046,21 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </p>
 
 
-              {/* ── Paywall for no-increase users ── */}
-                              <div className="mt-4 flex flex-col items-center gap-2">
+              <div className="mt-4 flex flex-col items-center gap-2">
                   <button onClick={onReset} className="text-xs text-muted-foreground/50 md:text-muted-foreground hover:text-foreground transition-colors">
                     ← Check a different address
                   </button>
                 </div>
-              )}
             </>
           )}
         </motion.section>
         </div>
       </div>
 
-      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           PHASE 3: PAID CONTENT
-         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+
       <div className="w-full bg-card">
         <div className="max-w-[620px] mx-auto px-5 sm:px-6">
-                  <>
+          <>
 
             {/* ━━━ EVIDENCE SECTION ━━━ */}
             <section id="section-evidence" className="pt-6 sm:pt-10 pb-4 sm:pb-8">
@@ -1406,7 +1400,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
             )}
 
             {/* ━━━ Universal rent reporting CTA — after letter ━━━ */}
-                          <section className="py-3 sm:py-4">
+            <section className="py-3 sm:py-4">
                 <PartnerCTA
                   variant="rent_reporting"
                   analysisId={analysisId}
@@ -1420,7 +1414,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   proposedRent={formData.rentIncrease != null ? (formData.increaseIsPercent ? formData.currentRent * (1 + formData.rentIncrease / 100) : formData.currentRent + formData.rentIncrease) : undefined}
                 />
               </section>
-            )}
 
             {/* ━━━ Moving help CTA (above-market only) — after letter ━━━ */}
             {isAboveMarket && (
@@ -1489,7 +1482,7 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
 
 
             {/* ━━━ Lease reminder — universal, utility-first ━━━ */}
-                          <section className="pb-4 pt-2">
+            <section className="pb-4 pt-2">
                 {capturedEmail ? (
                   <PostConversionFlow
                     email={capturedEmail}
@@ -1510,7 +1503,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   />
                 )}
               </section>
-            )}
 
             {/* ━━━ Footer zone — compact utility area ━━━ */}
             <div className="mt-1 border-t border-border pt-3 space-y-3">
@@ -1601,7 +1593,6 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </p>
             </div>
           </>
-        )}
 
         </div>
       </div>
