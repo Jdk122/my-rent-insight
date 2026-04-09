@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { AFFILIATE_LINKS } from '@/lib/affiliateConfig';
 
 interface PartnerCTAProps {
-  variant: 'rent_reporting' | 'moving_help';
+  variant: 'rent_reporting' | 'moving_help' | 'renters_insurance';
   analysisId: string | null;
   verdict: string;
   toolUsed: string;
