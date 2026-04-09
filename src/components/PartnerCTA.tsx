@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { AFFILIATE_LINKS } from '@/lib/affiliateConfig';
 
 interface PartnerCTAProps {
-  variant: 'rent_reporting' | 'moving_help';
+  variant: 'rent_reporting' | 'moving_help' | 'renters_insurance';
   analysisId: string | null;
   verdict: string;
   toolUsed: string;
@@ -52,6 +52,37 @@ function getRentReportingCopy(verdict: string, currentRent?: number | null, prop
   };
 }
 
+function getRentersInsuranceCopy(verdict: string) {
+  const v = verdict.toLowerCase();
+
+  if (v.includes('overpaying') || v.includes('above market') || v.includes('above')) {
+    return {
+      headline: 'Negotiating? Make sure you\'re covered first.',
+      subtext: 'If your landlord doesn\'t budge, you may end up moving. Lock in renters insurance now — it takes 2 minutes and starts at $5/mo.',
+      buttonLabel: 'Get a free quote →',
+    };
+  }
+  if (v.includes('at market') || v.includes('moderate')) {
+    return {
+      headline: 'Your rent is fair. Your stuff should be covered too.',
+      subtext: 'Renters insurance protects your belongings for as little as $5/mo. Most landlords require it anyway.',
+      buttonLabel: 'Get a free quote →',
+    };
+  }
+  if (v.includes('good deal') || v.includes('below')) {
+    return {
+      headline: 'Great deal on rent. Now protect what\'s inside.',
+      subtext: 'You\'re saving on rent. Renters insurance covers your belongings from theft, fire, and water damage starting at $5/mo.',
+      buttonLabel: 'Get a free quote →',
+    };
+  }
+  return {
+    headline: 'Renters insurance from $5/mo.',
+    subtext: 'Protect your belongings from theft, fire, and water damage. Takes 2 minutes. Most landlords require it.',
+    buttonLabel: 'Get a free quote →',
+  };
+}
+
 const MOVING_HELP_COPY = {
   headline: 'Moving? Save on your move.',
   subtext: 'Compare local movers and get instant quotes. Real reviews, transparent pricing, and help when you need it.',
@@ -72,11 +103,17 @@ const PartnerCTA = ({
 }: PartnerCTAProps) => {
   const impressionFired = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const linkType = variant === 'moving_help' ? 'partner_moving_help' as const : 'partner_rent_reporting' as const;
+  const linkType = variant === 'renters_insurance'
+    ? 'partner_renters_insurance' as const
+    : variant === 'moving_help'
+      ? 'partner_moving_help' as const
+      : 'partner_rent_reporting' as const;
 
   const copy = variant === 'moving_help'
     ? MOVING_HELP_COPY
-    : getRentReportingCopy(verdict, currentRent, proposedRent);
+    : variant === 'renters_insurance'
+      ? getRentersInsuranceCopy(verdict)
+      : getRentReportingCopy(verdict, currentRent, proposedRent);
 
   useEffect(() => {
     const el = containerRef.current;
