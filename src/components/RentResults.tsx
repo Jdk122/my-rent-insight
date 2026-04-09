@@ -1399,8 +1399,21 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
               </motion.section>
             )}
 
-            {/* ━━━ Universal rent reporting CTA — after letter ━━━ */}
-            <section className="py-3 sm:py-4">
+            {/* ━━━ Affiliate CTAs — ordered by intent ━━━ */}
+            {isAboveMarket ? (
+              <section className="py-3 sm:py-4 space-y-3">
+                <PartnerCTA
+                  variant="renters_insurance"
+                  analysisId={analysisId}
+                  verdict={verdictLabel}
+                  toolUsed="renewal"
+                  city={city}
+                  zip={rentData.zip}
+                  placement="post_letter_insurance"
+                  email={capturedEmail}
+                  currentRent={formData.currentRent}
+                  proposedRent={formData.rentIncrease != null ? (formData.increaseIsPercent ? formData.currentRent * (1 + formData.rentIncrease / 100) : formData.currentRent + formData.rentIncrease) : undefined}
+                />
                 <PartnerCTA
                   variant="rent_reporting"
                   analysisId={analysisId}
@@ -1408,16 +1421,11 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                   toolUsed="renewal"
                   city={city}
                   zip={rentData.zip}
-                  placement="post_comps_universal"
+                  placement="post_letter_reporting"
                   email={capturedEmail}
                   currentRent={formData.currentRent}
                   proposedRent={formData.rentIncrease != null ? (formData.increaseIsPercent ? formData.currentRent * (1 + formData.rentIncrease / 100) : formData.currentRent + formData.rentIncrease) : undefined}
                 />
-              </section>
-
-            {/* ━━━ Moving help CTA (above-market only) — after letter ━━━ */}
-            {isAboveMarket && (
-              <section className="py-3 sm:py-4 space-y-2 sm:space-y-3">
                 <PartnerCTA
                   variant="moving_help"
                   analysisId={analysisId}
@@ -1448,6 +1456,33 @@ const RentResults = ({ formData, rentData, propertyData, propertyLoading, proper
                     </div>
                   );
                 })()}
+              </section>
+            ) : (
+              <section className="py-3 sm:py-4 space-y-3">
+                <PartnerCTA
+                  variant="rent_reporting"
+                  analysisId={analysisId}
+                  verdict={verdictLabel}
+                  toolUsed="renewal"
+                  city={city}
+                  zip={rentData.zip}
+                  placement="post_letter_reporting"
+                  email={capturedEmail}
+                  currentRent={formData.currentRent}
+                  proposedRent={formData.rentIncrease != null ? (formData.increaseIsPercent ? formData.currentRent * (1 + formData.rentIncrease / 100) : formData.currentRent + formData.rentIncrease) : undefined}
+                />
+                <PartnerCTA
+                  variant="renters_insurance"
+                  analysisId={analysisId}
+                  verdict={verdictLabel}
+                  toolUsed="renewal"
+                  city={city}
+                  zip={rentData.zip}
+                  placement="post_letter_insurance"
+                  email={capturedEmail}
+                  currentRent={formData.currentRent}
+                  proposedRent={formData.rentIncrease != null ? (formData.increaseIsPercent ? formData.currentRent * (1 + formData.rentIncrease / 100) : formData.currentRent + formData.rentIncrease) : undefined}
+                />
               </section>
             )}
 
